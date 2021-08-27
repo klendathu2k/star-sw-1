@@ -12,14 +12,14 @@
 #define ClassStMessageCounter
 
 #include "StMessTypeList.h"
-#include <Stsstream.h>
-#include <Stiostream.h>
+#include <sstream>
+#include <iostream>
 
 typedef StVector(char*) messCharVec;
 typedef StVector(char*)::iterator messCharVecIter;
 
 
-class StMessageCounter : public ostrstream {
+class StMessageCounter : public std::ostringstream {
  private:
    static StMessageCounter* mInstance;
    StMessTypeList* messTypeList;

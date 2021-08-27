@@ -16,17 +16,18 @@
 #include <string.h>
 #include "StMessage.h"
 #include "StMessageCounter.h"
-#include "Stsstream.h"
+//#include "Stsstream.h"
+#include <sstream>
 #include "StMessageStream.h"
 using namespace std;
 static StMessageCounter* messCounter = StMessageCounter::Instance();
 
-static ostrstream messBuffer;
+static std::ostringstream messBuffer;
 static char space = ' ';
 static char tab = '\t';
 
 int StMessage::repeats=1;
-static ostrstream lastMessBuffer;
+static std::ostringstream lastMessBuffer;
 
 #ifdef __ROOT__
 ClassImp(StMessage)
@@ -106,21 +107,21 @@ int StMessage::Print(int nChars) {
       messBuffer << endofline;                           // "\n" end-line
     }
   }
-  const char* addedMessage=0;
+  std::string addedMessage;
   if (nChars == 0) {
     addedMessage = messCounter->str();                   // Any limit message
   } else {
     if (nChars>0) {
       if (messBuffer.tellp() >= nChars)
         messBuffer.seekp(nChars-1);   // set end-of-string at nChars
-      int noReturns = strcspn(messBuffer.str(),endofline);
+      int noReturns = strcspn(messBuffer.str().c_str(),endofline);
       if (noReturns < messBuffer.tellp()) messBuffer.seekp(noReturns);
     } else
       nChars = 0;
   }
   messBuffer << ends;
   if (!repeats) {
-    if (!strcmp(messBuffer.str(),lastMessBuffer.str())) {
+    if (!strcmp(messBuffer.str().c_str(),lastMessBuffer.str().c_str())) {
       return messBuffer.tellp();
     } else {
       lastMessBuffer.seekp(0);
@@ -129,12 +130,12 @@ int StMessage::Print(int nChars) {
   }
   if ((option & kMessOptO) || (nChars != 0)) {
     myout << messBuffer.str();
-    if (addedMessage) myout << addedMessage;
+    if (addedMessage!="") myout << addedMessage;
     myout.flush();
   }
   if ((option & kMessOptE) && (nChars == 0)) {
     myerr << messBuffer.str();
-    if (addedMessage) myerr << addedMessage;
+    if (addedMessage!="") myerr << addedMessage;
     myerr.flush();
   }
   return messBuffer.tellp();

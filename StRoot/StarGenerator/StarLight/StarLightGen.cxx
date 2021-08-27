@@ -12,6 +12,7 @@ ClassImp(StarLightGen);
 
 #include "inputParameters.h"
 #include "TString.h"
+#include <fstream>
 
 // ----------------------------------------------------------------------------
 // Remap STARlight's random number generator to Star Random

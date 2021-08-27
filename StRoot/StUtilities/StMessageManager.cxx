@@ -28,7 +28,7 @@
 // ostream& operator<<(ostream& os, StMessage* stm) 
 std::ostream& StMessageManager::OperatorShift(std::ostream& os, StMessage* stm)
 {
-  if (((&os) == (ostream*) gMessMgr) && (stm == endm)) {
+  if (((&os) == (std::ostream*) gMessMgr) && (stm == endm)) {
     gMessMgr->Print();                 // This was a StMessage terminator
   } else {
     if (stm) os << stm->GetMessage();  // Output this message to the ostream
@@ -99,7 +99,7 @@ StMessageManager::~StMessageManager() {
     delete (*current);
   for (size_t i=1; i<messCollection.size(); i++)
     delete (messCollection[i]);
-  myout << "WARNING!!! DELETING StMessageManager!" << endl;
+  myout << "WARNING!!! DELETING StMessageManager!" << std::endl;
   gMessMgr = 0;
 }
 //_____________________________________________________________________________
@@ -115,7 +115,7 @@ StMessMgr* StMessageManager::Instance() {
   return mInstance;
 }
 //_____________________________________________________________________________
-ostrstream& StMessageManager::Message(const char* mess, const char* type,
+std::ostringstream& StMessageManager::Message(const char* mess, const char* type,
   const char* opt,const char *,int) {
 //
 // Message declarator - creates a new message if mess is not empty,
@@ -216,12 +216,12 @@ void StMessageManager::Print() {
       } else {
         seekp(0);
         myerr << "StMessage: ERROR!!! StMessageManager BUFFER TOO SMALL!"
-          << endl;
+	      << std::endl;
       }
       *this << std::ends;
     }
 
-    BuildMessage(str(), curType, curOpt);
+    BuildMessage(str().c_str(), curType, curOpt);
     building = 0;
 
   } else {
@@ -229,7 +229,7 @@ void StMessageManager::Print() {
     if (gMessage) {
       gMessage->Print(-1);
     } else {
-      myout << "No current message." << endl;
+      myout << "No current message." << std::endl;
     }
   }
 }
@@ -345,7 +345,7 @@ void StMessageManager::Summary(size_t nTerms) {
   size_t k;
   int agree;
   char* temp;
-  myout << "  ***** StMessageManager message summary *****" << endl;
+  myout << "  ***** StMessageManager message summary *****" << std::endl;
   toks.resize(nMess);
   for (i=0; i<nMess; i++) {
     done.push_back(0);
@@ -389,7 +389,7 @@ void StMessageManager::Summary(size_t nTerms) {
         myout << ">999999";
       } else {
         for (j=tellp(); j<6; j++) myout << ".";
-        myout << " " << count << endl;
+        myout << " " << count << std::endl;
       }
     }
     mType[i] = NULL;

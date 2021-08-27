@@ -56,7 +56,7 @@ public:
   virtual void           UseBTOF(bool useBTOF = true){mUseBtof=useBTOF;}
   virtual void           UseCTB (bool useCTB  = true){mUseCtb =useCTB ;}
 
-  virtual void           printInfo(ostream& = cout) const=0;
+  virtual void           printInfo(std::ostream& = cout) const=0;
 
   // General (default)
   virtual void           SetMode(Int_t mode=0 ) {mMode = mode;}

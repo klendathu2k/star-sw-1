@@ -36,7 +36,7 @@ public:
     
     // mandatory implementations
     int fit(StEvent*);
-    void printInfo(ostream& = cout)const;
+    void printInfo(std::ostream& = std::cout)const;
 
     
     // member not from base class

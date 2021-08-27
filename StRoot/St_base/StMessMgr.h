@@ -102,15 +102,18 @@ class StMessage;
 class messVec;
 #endif
 
-#include <Stsstream.h>
-#include <Stiostream.h>
+//#include <Stsstream.h>
+//#include <Stiostream.h>
 
-class StMessMgr : public ostrstream {
-   friend ostream& operator<<(ostream& ,StMessage*);
-   friend ostream& operator++(StMessMgr&);
-   friend ostream& operator-(StMessMgr&);
-   friend ostream& operator--(StMessMgr&);
-   friend ostream& operator~(StMessMgr&);
+#include <sstream>
+#include <iostream>
+
+class StMessMgr : public std::ostringstream {
+   friend std::ostream& operator<<(std::ostream& ,StMessage*);
+   friend std::ostream& operator++(StMessMgr&);
+   friend std::ostream& operator-(StMessMgr&);
+   friend std::ostream& operator--(StMessMgr&);
+   friend std::ostream& operator~(StMessMgr&);
    friend class StBFChain;
    
  private:
@@ -132,7 +135,7 @@ class StMessMgr : public ostrstream {
    virtual std::ostream& OperatorShift(std::ostream& os, StMessage* stm) = 0;
 
 // Generic Messages:
-   virtual ostrstream& Message(const char* mess="", const char* type="",
+   virtual std::ostringstream& Message(const char* mess="", const char* type="",
          const char* opt=0,const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual       void Print() =0;
    virtual        int PrintList(messVec* list) =0;
@@ -208,7 +211,7 @@ protected:
          
 public:
 // Info Messages:
-   virtual ostrstream& Info(const char* mess="", const char* opt="O",const char *sourceFileName=0, int lineNumber=-1)=0;
+   virtual std::ostringstream& Info(const char* mess="", const char* opt="O",const char *sourceFileName=0, int lineNumber=-1)=0;
    virtual        int PrintInfos() =0;
    virtual const messVec* GetInfos() =0;
    virtual StMessage* FindInfo(const char* s1, const char* s2="",
@@ -217,7 +220,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Warning Messages:
-   virtual ostrstream& Warning(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1)= 0;
+   virtual std::ostringstream& Warning(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual        int PrintWarnings() =0;
    virtual const messVec* GetWarnings() =0;
    virtual StMessage* FindWarning(const char* s1, const char* s2="",
@@ -226,7 +229,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Error Messages:
-   virtual ostrstream& Error(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1) = 0;
+   virtual std::ostringstream& Error(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintErrors() =0;
    virtual const messVec* GetErrors() =0;
    virtual StMessage* FindError(const char* s1, const char* s2="",
@@ -235,7 +238,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Debug Messages:
-   virtual ostrstream& Debug(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
+   virtual std::ostringstream& Debug(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual        int PrintDebug() =0;
    virtual const messVec* GetDebugs() =0;
    virtual StMessage* FindDebug(const char* s1, const char* s2="",
@@ -244,7 +247,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // QAInfo Messages:
-   virtual ostrstream& QAInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
+   virtual std::ostringstream& QAInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintQAInfo() =0;
    virtual const messVec* GetQAInfos() =0;
    virtual StMessage* FindQAInfo(const char* s1, const char* s2="",
@@ -253,7 +256,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // UCMInfo Messages:
-   virtual ostrstream& UCMInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
+   virtual std::ostringstream& UCMInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintUCMInfo() =0;
    virtual const messVec* GetUCMInfos() =0;
    virtual StMessage* FindUCMInfo(const char* s1, const char* s2="",
@@ -262,12 +265,12 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // "As is" Messages:
-   virtual ostrstream& out(const char* mess="") = 0;
-   virtual ostrstream& err(const char* mess="") = 0;
+   virtual std::ostringstream& out(const char* mess="") = 0;
+   virtual std::ostringstream& err(const char* mess="") = 0;
 
    virtual       void PrintInfo() =0;
    // Fatal Messages:
-   virtual ostrstream& Fatal(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
+   virtual std::ostringstream& Fatal(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
 
 #ifdef __ROOT__
    ClassDef(StMessMgr,0)
@@ -310,24 +313,24 @@ inline StTurnLogger::~StTurnLogger()
 
      
 //______________________________________________________________________________
-inline ostream& operator<<(ostream& os, StMessage* stm) {
+inline std::ostream& operator<<(std::ostream& os, StMessage* stm) {
    return gMessMgr->OperatorShift(os,stm);
 }
 
 //______________________________________________________________________________
-inline ostream& operator++(StMessMgr&) {
+inline std::ostream& operator++(StMessMgr&) {
   return gMessMgr->Info();
 }
 //______________________________________________________________________________
-inline ostream& operator--(StMessMgr&) {
+inline std::ostream& operator--(StMessMgr&) {
   return gMessMgr->Error();
 }
 //______________________________________________________________________________
-inline ostream& operator~(StMessMgr&) {
+inline std::ostream& operator~(StMessMgr&) {
   return gMessMgr->out();
 }
 //______________________________________________________________________________
-inline ostream& operator-(StMessMgr&) {
+inline std::ostream& operator-(StMessMgr&) {
   return gMessMgr->err();
 }
 

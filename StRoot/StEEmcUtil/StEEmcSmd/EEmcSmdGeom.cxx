@@ -495,7 +495,7 @@ TVector3  EEmcSmdGeom::getstripEnd(const StructEEmcStrip &strip,
 
 // methods of printout
 /// printout global geometry parameters
-void EEmcSmdGeom::printGeom(ostream& os) const {
+void EEmcSmdGeom::printGeom(std::ostream& os) const {
   os << "------EEmcSmdGeom::printGeom()------" << endl;
   os << " " << "z[3]          = " 
      << " " << getEEmcSmdParam().zPlane[0] 
@@ -511,7 +511,7 @@ void EEmcSmdGeom::printGeom(ostream& os) const {
 }
 
 /// printout sector-specific geometry parameters
-void EEmcSmdGeom::printSector(const StructEEmcSmdSector sector, ostream& os) const {
+void EEmcSmdGeom::printSector(const StructEEmcSmdSector sector, std::ostream& os) const {
   float delPhi;
   int iUV = kEEmcSmdMapUV[sector.planeId-1][sector.sectorId-1];
   delPhi = (sector.phiMax - sector.phiMin)/degree;
@@ -535,7 +535,7 @@ void EEmcSmdGeom::printSector(const StructEEmcSmdSector sector, ostream& os) con
 }
 
 /// printout strip-specific geometry parameters
-void EEmcSmdGeom::printStrip(const StructEEmcStrip strip, ostream& os) const {
+void EEmcSmdGeom::printStrip(const StructEEmcStrip strip, std::ostream& os) const {
   char UVChar; 	
   if(strip.stripStructId.sectorId == 0) UVChar = 'X';
   else
@@ -562,7 +562,7 @@ void EEmcSmdGeom::printStrip(const StructEEmcStrip strip, ostream& os) const {
 }
 
 /// printout stripStructId
-void EEmcSmdGeom::printStripId(const StructEEmcStripId stripStructId, ostream& os) const {
+void EEmcSmdGeom::printStripId(const StructEEmcStripId stripStructId, std::ostream& os) const {
   char UVChar; 	
   if(stripStructId.sectorId == 0) UVChar = 'X';
   else
@@ -583,7 +583,7 @@ void EEmcSmdGeom::printStripId(const StructEEmcStripId stripStructId, ostream& o
 #if 0
 // printout delPhi and centerPhi used in ITTF
 void EEmcSmdGeom::printSectorPhis(const Int_t iPlane, const Int_t iSec,
-                                                              ostream& os ) {
+                                                              std::ostream& os ) {
   int iUV;
   iUV = kEEmcSmdMapUV[iPlane][iSec];
 
@@ -755,7 +755,7 @@ TVector3 EEmcSmdGeom::getIntersection ( const StructEEmcStrip *u,
 /****************************************************************************/
 
 // output strip for smd strips
-ostream& operator<<(ostream &os, const StructEEmcStrip &strip)
+std::ostream& operator<<(std::ostream &os, const StructEEmcStrip &strip)
 {
   const Char_t *nameUV[]={"U","V"};
   TString stripname="";

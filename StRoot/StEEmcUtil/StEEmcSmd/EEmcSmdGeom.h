@@ -66,7 +66,7 @@ struct StructEEmcStrip{
   float length;                    // length of strip 
 };
 
-ostream& operator<<(ostream &os, const StructEEmcStrip &strip);
+std::ostream& operator<<(std::ostream &os, const StructEEmcStrip &strip);
 
 // Define vector of strip pointers and its Iterator
 #ifndef ST_NO_TEMPLATE_DEF_ARGS
@@ -203,11 +203,11 @@ public:
   // methods of printout 
   //
 
-  void printGeom(ostream& os = cout) const;
-  void printSector(const StructEEmcSmdSector Sector, ostream& os = cout) const;
-  void printStrip(const StructEEmcStrip Strip, ostream& os = cout) const;
-  void printStripId(const StructEEmcStripId StripId, ostream& os = cout) const;
-  //void printSectorPhis(const Int_t iPlane, const Int_t iSec,ostream& os = cout);
+  void printGeom(std::ostream& os = cout) const;
+  void printSector(const StructEEmcSmdSector Sector, std::ostream& os = cout) const;
+  void printStrip(const StructEEmcStrip Strip, std::ostream& os = cout) const;
+  void printStripId(const StructEEmcStripId StripId, std::ostream& os = cout) const;
+  //void printSectorPhis(const Int_t iPlane, const Int_t iSec,std::ostream& os = cout);
 
   ClassDef(EEmcSmdGeom,1)  // STAR Endcap Electromagnetic Calorimeter SMD Geometry Class
 };

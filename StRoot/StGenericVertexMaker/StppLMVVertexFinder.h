@@ -23,7 +23,7 @@ class StppLMVVertexFinder: public StGenericVertexFinder , StCtbUtility {
     // mandatory implementations
     virtual         ~StppLMVVertexFinder();
     int             fit(StEvent*);         
-    void            printInfo(ostream& = cout) const;
+    void            printInfo(std::ostream& = std::cout) const;
     void            Clear();
 
     // over-written method

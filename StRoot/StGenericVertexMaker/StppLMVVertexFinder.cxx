@@ -228,7 +228,7 @@ StppLMVVertexFinder::fit(StEvent* event) {
 //======================================================
 //======================================================
 void
-StppLMVVertexFinder::printInfo(ostream& os) const
+StppLMVVertexFinder::printInfo(std::ostream& os) const
 {
     os << "StppLMVVertexFinder - Fit Statistics:" << endl;
     os << "found prim vertices ................ " <<size() << endl;

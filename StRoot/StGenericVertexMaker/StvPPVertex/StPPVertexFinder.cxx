@@ -322,11 +322,11 @@ StPPVertexFinder::~StPPVertexFinder()
 
 //======================================================
 //======================================================
-void StPPVertexFinder::printInfo(ostream& os) const
+void StPPVertexFinder::printInfo(std::ostream& os) const
 {
-  os << "StPPVertexFinder ver=1 - Fit Statistics:" << endl;
+  os << "StPPVertexFinder ver=1 - Fit Statistics:" << std::endl;
   
-  os << "StPPVertexFinder::result "<<mVertexData.size()<<" vertices found\n" << endl;
+  os << "StPPVertexFinder::result "<<mVertexData.size()<<" vertices found\n" << std::endl;
 
   int nTpcM=0, nTpcV=0;
   unsigned int i;
@@ -466,7 +466,7 @@ assert(event);
     if(!matchTrack2Membrane(track,t)) 	{ntrk[5]++; continue;}  // kill if nFitP too small	   
     ntrk[6]++;
 
-    //cout <<"\n#e itr="<<k<<" gPt="<<track->getPt()<<" gEta="<<track->getPseudoRapidity()<<" nFitP="<<track->getFitPointCount()<<" of "<<track->getMaxPointCount()<<" poolSize="<< mTrackData->size()<<"  myW="<<t.weight<<endl;
+    //cout <<"\n#e itr="<<k<<" gPt="<<track->getPt()<<" gEta="<<track->getPseudoRapidity()<<" nFitP="<<track->getFitPointCount()<<" of "<<track->getMaxPointCount()<<" poolSize="<< mTrackData->size()<<"  myW="<<t.weight<<std::endl;
     //printf(" t.weight AA=%f\n", t.weight);
 
     hA[ 1]->Fill(track->fitTraits().chi2());
@@ -859,7 +859,7 @@ bool StPPVertexFinder::examinTrackDca(const StGlobalTrack *track,TrackData &t)
 {
 
   //1 StGlobalTrackNode* inNode=track->getInnerMostNode();
-  //1 cout <<"#e  track->getPseudoRapidity()="<<track->getPseudoRapidity()<<" track->getFitPointCount()="<<track->getFitPointCount()<<endl;
+  //1 cout <<"#e  track->getPseudoRapidity()="<<track->getPseudoRapidity()<<" track->getFitPointCount()="<<track->getFitPointCount()<<std::endl;
   
   // .......... test DCA to beam .............
   const StDcaGeometry *dcaGeo = track->dcaGeometry();
@@ -867,7 +867,7 @@ bool StPPVertexFinder::examinTrackDca(const StGlobalTrack *track,TrackData &t)
 
   double rxy=dcaGeo->impact();
 
-  //1 cout<<"#e @beam global DCA x:"<< bmNode->x_g()<<" y:"<< bmNode->y_g()<<" z:"<< bmNode->z_g()<<" Rxy="<< rxy <<endl;
+  //1 cout<<"#e @beam global DCA x:"<< bmNode->x_g()<<" y:"<< bmNode->y_g()<<" z:"<< bmNode->z_g()<<" Rxy="<< rxy <<std::endl;
   if(fabs(rxy)        	> mMaxTrkDcaRxy) 	return false;
   if(fabs(dcaGeo->z())	> mMaxZrange   )	return false ; 
 
@@ -876,7 +876,7 @@ bool StPPVertexFinder::examinTrackDca(const StGlobalTrack *track,TrackData &t)
   double psipsi = dcaErr[kPsiPsi];
   double xyErr = (0.5*(impimp + rxy*rxy*psipsi));
   
-  //1 cout<<"#e inBeam |P|="<<bmNode->getP()<<" pT="<<bmNode->getPt()<<" local x="<<xL(bmNode)<<" y="<<yL(bmNode)<<" +/- "<<eyL(bmNode)<<" z="<<zL(bmNode)<<" +/- "<<ezL(bmNode)<<endl;
+  //1 cout<<"#e inBeam |P|="<<bmNode->getP()<<" pT="<<bmNode->getPt()<<" local x="<<xL(bmNode)<<" y="<<yL(bmNode)<<" +/- "<<eyL(bmNode)<<" z="<<zL(bmNode)<<" +/- "<<ezL(bmNode)<<std::endl;
 
   t.zDca=dcaGeo->z();
   t.ezDca=sqrt(dcaErr[kZZ]);
@@ -980,7 +980,7 @@ void StPPVertexFinder::matchTrack2CTB(const StGlobalTrack* track,TrackData &t)
   float phi=posCTB.phi();
   if(phi<0) phi+=2*M_PI;// now phi is [0,2Pi] as for CTB slats
   float eta=posCTB.pseudoRapidity();
-  //1 cout<<"#e @ctbNode xyz="<<posCTB<<" eta="<<eta<<" phi/deg="<<phi/3.1416*180<<" path/cm="<<path<<endl;
+  //1 cout<<"#e @ctbNode xyz="<<posCTB<<" eta="<<eta<<" phi/deg="<<phi/3.1416*180<<" path/cm="<<path<<std::endl;
   if(fabs(eta)<1) hA[10]->Fill(posCTB.z());
 
   int iBin=ctbList->addTrack(eta,phi);
@@ -1018,7 +1018,7 @@ void StPPVertexFinder::matchTrack2BEMC(const StGlobalTrack* track,TrackData &t, 
   if(phi<0) phi+=2*M_PI;// now phi is [0,2Pi] as for Cyl slats
   float eta=posCyl.pseudoRapidity();
   
-  // cout<<"#e @bemcNode xyz="<<posCyl<<" etaDet="<<eta<<" phi/deg="<<phi/3.1416*180<<" path/cm="<<path<<endl;
+  // cout<<"#e @bemcNode xyz="<<posCyl<<" etaDet="<<eta<<" phi/deg="<<phi/3.1416*180<<" path/cm="<<path<<std::endl;
 
   if(fabs(eta)<1) hA[11]->Fill(posCyl.z());
   
@@ -1056,7 +1056,7 @@ void StPPVertexFinder::matchTrack2EEMC(const StGlobalTrack* track,TrackData &t,f
   StThreeVectorD n=StThreeVectorD(0,0,1);
 
   double path = hlx.pathLength(rSmd,n);
-  //cout<<" EEMC match: path="<<path<<endl;
+  //cout<<" EEMC match: path="<<path<<std::endl;
   if(path>maxPath) return; // too long extrapolation
 
   StThreeVectorD r = hlx.at(path);
@@ -1422,7 +1422,7 @@ bool StPPVertexFinder::isPostCrossingTrack(const StGlobalTrack* track)
  * Watch the DB  time stamp !
  *
  * Revision 1.15  2005/09/03 16:41:53  balewski
- * bug fix: <<endm replaced with <<endl
+ * bug fix: <<endm replaced with <<std::endl
  *
  * Revision 1.14  2005/08/30 22:08:43  balewski
  * drop '*' from declaration of   mTrackData &  mVertexData

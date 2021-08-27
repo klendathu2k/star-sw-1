@@ -211,6 +211,8 @@
 #include "StRoot/StFgtDbMaker/StFgtDb.h"
 #include "StFgtA2CMaker.h"
 
+#include <fstream>
+
 /// Class constructors - does nothing else than setting name
 StFgtA2CMaker::StFgtA2CMaker( const Char_t* name ) : StMaker( name ), mAcceptLongPulses(true), 
 						     mStatusMask(0xff), mAbsThres(-10000), mRelThres(4.0),mClusterThreshold(1.0), 
@@ -551,7 +553,7 @@ void StFgtA2CMaker::readPedFile(Int_t elecid, Float_t &ped, Float_t &pedrms){
     LOG_INFO << "Reading pedestal from a text file ="<<mPedFilename.data()<<endm;
     int eid,tbin;
     float p,s;
-    ifstream file;
+    std::ifstream file;
     memset(mPed,0,sizeof(mPed));
     memset(mPedRMS,0,sizeof(mPedRMS));
     file.open(mPedFilename.data());
@@ -577,7 +579,7 @@ void StFgtA2CMaker::readStatusFile(Int_t elecid, UInt_t &status){
     LOG_INFO << "Reading status from a text file ="<<mStatusFilename.data()<<endm;
     unsigned int eid,stat;
     TString statread;
-    ifstream file;
+    std::ifstream file;
     memset(mStatus,1,sizeof(mStatus));
     file.open(mStatusFilename.data());
     if(file.is_open()){

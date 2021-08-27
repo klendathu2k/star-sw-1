@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "TString.h"
+#include <iostream>
 
 #include "EEmcDbCrate.h"
 
@@ -34,8 +35,8 @@ void EEmcDbCrate::print() const{
    LOG_INFO<<Form("EEmcDbCrate:: crID=%3d crIDswitch=%3d fiber=%d nCh=%d nHead=%d type=%c useIt=%d\n",name, crID, crIDswitch,fiber,nCh,nHead,type,useIt)<<endm;
 }
 
-ostream &
-EEmcDbCrate::print( ostream &out ) const
+std::ostream &
+EEmcDbCrate::print( std::ostream &out ) const
 {
   out << "DbCrate: ";
   if ( isEmpty() ) {
@@ -46,7 +47,7 @@ EEmcDbCrate::print( ostream &out ) const
   return out;
 }
 
-ostream &operator<<(ostream &out, const EEmcDbCrate &crate )
+std::ostream &operator<<(std::ostream &out, const EEmcDbCrate &crate )
 {
   return crate.print(out);
 }

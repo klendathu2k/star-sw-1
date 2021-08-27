@@ -84,7 +84,7 @@ int StFixedVertexFinder::fit(StEvent* event)
   return size();
 }
 
-void StFixedVertexFinder::printInfo(ostream& os)const{
+void StFixedVertexFinder::printInfo(std::ostream& os)const{
     os << "StFixedVertexFinder - fixed vertex" << endl;
     os << "Fixed position: x=" << mFixedX << " y=" << mFixedY << " z=" << mFixedZ << endl;
 }

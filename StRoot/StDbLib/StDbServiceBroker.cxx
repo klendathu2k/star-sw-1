@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <fstream>
 #ifndef __STDB_STANDALONE__
 #include "StMessMgr.h"
 #else

@@ -26,10 +26,10 @@ class EEmcDbCrate {
   int isEmpty() const;
   void exportAscii(FILE *fd) const;
   //  int importAscii(FILE *fd);
-  ostream &print( ostream &out ) const;
+  std::ostream &print( std::ostream &out ) const;
 };
 
-ostream &operator<<(ostream &out, const EEmcDbCrate &crate );
+std::ostream &operator<<(std::ostream &out, const EEmcDbCrate &crate );
 
 #endif 
 

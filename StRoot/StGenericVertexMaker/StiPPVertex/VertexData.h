@@ -5,6 +5,7 @@
  */
 
 #include <TVector3.h>
+#include <iostream>
 
 class VertexData {
  public:
@@ -21,6 +22,6 @@ class VertexData {
   // methods
   VertexData(int vertexId=0);
   VertexData(const TVector3& position);
-  void print(ostream& os) const;
+  void print(std::ostream& os) const;
 };
 #endif

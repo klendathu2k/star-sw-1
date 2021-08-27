@@ -102,7 +102,7 @@ public:
   // mandatory implementations
   virtual  ~StPPVertexFinder();
   int       fit(StEvent*);        
-  void      printInfo(ostream& = cout) const;
+  void      printInfo(std::ostream& = std::cout) const;
  
   // over-written method
   virtual void  Init();

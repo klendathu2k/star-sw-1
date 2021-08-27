@@ -21,7 +21,7 @@ class VertexData {
   
   // methods
   VertexData();
-  void print(ostream& os) const;
+  void print(std::ostream& os) const;
 };
 }// end namespace StEvPPV
 #endif
