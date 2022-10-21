@@ -1,7 +1,8 @@
 #!/usr/bin/csh -f 
 
 echo ----------------------------------------------
-cat buildRoot6
+echo buildRoot6 $argv
+cat buildRoot6 
 echo ----------------------------------------------
 
 setup 64b
@@ -16,4 +17,6 @@ module load star-env-0.2.3-root-6.16.00
 module load zlib-1.2.12
 #module load vc-1.4.1
 
-cons 
+setenv STAR .
+
+cons $argv
