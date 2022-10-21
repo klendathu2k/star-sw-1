@@ -1,0 +1,19 @@
+#!/usr/bin/csh -f 
+
+echo ----------------------------------------------
+cat buildRoot6
+echo ----------------------------------------------
+
+setup 64b
+stardev
+
+setenv SKIP_MORE "StiCA TPCCATracker "
+#setenv SKIP_MORE ""
+setenv SKIP_DIRS "StEbyePool StEbyePool StHighptPool StAngleCorrMaker StSpinMaker StEbyeScaTagsMaker StEbye2ptMaker StDaqClfMaker StFtpcV0Maker StStrangePool GeoTestMaker StSpinPool StFgtPool StShadowMaker StFwdTrackMaker ${SKIP_MORE}"
+
+module use /cvmfs/star.sdcc.bnl.gov/star-spack/spack/share/spack/modules/linux-rhel7-x86_64/
+module load star-env-0.2.3-root-6.16.00
+module load zlib-1.2.12
+#module load vc-1.4.1
+
+cons 
