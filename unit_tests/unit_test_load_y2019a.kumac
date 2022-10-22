@@ -1,0 +1,6 @@
+MACRO unit_test_load_y2019a
+DETP GEOM y2019a
+GEXE .$STAR_HOST_SYS/lib/StarAgmlUtil.so
+GEXE .$STAR_HSOT_SYS/lib/xgeometry.so
+EXIT
+RETURN
