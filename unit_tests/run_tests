@@ -1,0 +1,14 @@
+#!/usr/bin/tcsh -f
+
+set tests = ( \
+    unit_tests/unit_test_null_macro.C \
+    unit_tests/unit_test_load_bfc.C   \
+    unit_tests/unit_test_load_agml.C  \
+    unit_tests/unit_test_load_y2019a.C \
+)
+
+foreach test ( $tests )
+  root4star -q -b $test >& $test:t:r.log
+  echo "[$test:t:r] $status"
+end
+
