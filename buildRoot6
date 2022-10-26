@@ -15,6 +15,7 @@ setenv SKIP_DIRS "StEbyePool StEbyePool StHighptPool StAngleCorrMaker StSpinMake
 module use /cvmfs/star.sdcc.bnl.gov/star-spack/spack/share/spack/modules/linux-rhel7-x86_64/
 module load star-env-0.2.3-root-6.16.00
 module load zlib-1.2.12
+module load root-6.16.00
 #module load vc-1.4.1
 
 setenv STAR .
