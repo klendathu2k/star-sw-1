@@ -7,12 +7,12 @@
 #include "TGeoManager.h"
 
 Float_t AgUStep::rmin = 0.0;
-Float_t AgUStep::rmax = 200.0;
+Float_t AgUStep::rmax = 1800.0;
 Float_t AgUStep::zmin =-200.0;
-Float_t AgUStep::zmax = 200.0;
+Float_t AgUStep::zmax = 800.0;
 Int_t   AgUStep::verbose = 0;
 Int_t   AgUStep::mnTruth =  0;
-Int_t   AgUStep::mxTruth = -1;
+Int_t   AgUStep::mxTruth = 1;
 
 extern "C" {
 
@@ -196,9 +196,33 @@ AgUStep *AgUStep::Instance() {
   return sInstance; 
 }
 
+void AgUStep::AddMaterialHist( const char* name, const char* title, int nb, double xmn, double xmx ) {
+
+  TString name_ = name;
+  mMaterialHist.push_back( new TH1F(name, title, nb, xmn, xmx) );
+  mMaterialSumHist.push_back( new TH1F(name_+"_sum", title, nb, xmn, xmx) );
+
+}
+
+void AgUStep::AddMaterialHist( const char* name, const char* title, int nb, double xmn, double xmx, int nby, double ymn, double ymx ) {
+
+  TString name_ = name;
+  mMaterialHist.   push_back( (TH1F*)(new TH2F(name, title, nb, xmn, xmx, nby, ymn, ymx)) );
+  mMaterialSumHist.push_back( (TH1F*)(new TH2F(name_+"_sum", title, nb, xmn, xmx, nby, ymn, ymx)) );
+  if ( mTrackCountHist==0 ) {
+    mTrackCountHist =new TH1F("track_count", "Number of tracks", nb, xmn, xmx);
+    mTrackCountHist2=new TH2F("track_count2", "Number of tracks", nb, xmn, xmx, nby, ymn, ymx);
+  }
+
+}
+
 AgUStep::AgUStep() : TNamed("AgUStep","AgSTAR user stepping routine"),
 		     mTree(0),
 		     mFile(0),
+		     mMaterialHist(),
+		     mMaterialSumHist(),
+		     mTrackCountHist(0),
+		     mTrackCountHist2(0),
 		     mEvent( new Event() ),
 		     mTrack(0),
 		     idEvent(-1),
@@ -239,9 +263,10 @@ void AgUStep::operator()()
   Double_t _a = cmate->a;
   Double_t _z = cmate->z;
   Double_t _dens = cmate->dens;
+  Double_t _radl = cmate->radl; // should be in cm...
 
   Double_t r = TMath::Sqrt(x*x+y*y);      
-  if (r > rmax || TMath::Abs(z) > 200 ) // limited to inner tracking region
+  if (r > rmax || TMath::Abs(z) > 400 ) // limited to inner tracking region
     {
       ctrak->istop = 2; // stop the track
       return; // track is exiting region of interest
@@ -273,11 +298,11 @@ void AgUStep::operator()()
       aStep   = 0;
       nStep   = 0;
       idTruth++;
-      //      LOG_INFO << "  New Track " << idTruth << endm;
-
       // Add track to this event
       mTrack = mEvent->AddTrack();
       mTrack->idTruth = idTruth;
+
+      if ( mTrack->idTruth >= mnTruth && mTrack->idTruth <= mxTruth ) mTrackCountHist->Fill( mTrack->eta );
       
     }
   
@@ -320,9 +345,9 @@ void AgUStep::operator()()
   //  if (!gGeoManager) return; // step through before complete init?
 
   // Print out current path...
-  //LOG_INFO << "N level = " << cvolu->nlevel << endm;
+  //  LOG_INFO << "N level = " << cvolu->nlevel << endm;
   TString path = "";
-  TString leaf = "";
+  TString leaf = ""; // top volume
   for ( Int_t i=0;i<cvolu->nlevel;i++ )
     {
       path += "/"; 
@@ -345,16 +370,48 @@ void AgUStep::operator()()
 	mStep->cnums[i] = 0;
       }
       leaf = volume;
-
     }
-  
+    
   /////////////////////////////////////////////////////////////////////////
   //
   // At this point the step is considered ended.  We only handle verbose
   // level printouts below.
   //
   //////////////////////////////////////////////////////////////////////////
+
+  //  LOG_INFO << "idtruth = " << mTrack->idTruth << std::endl;
+
   if ( mTrack->idTruth < mnTruth || mTrack->idTruth > mxTruth ) return;
+
+  double eta = mTrack->eta;
+  double phi = mTrack->phi;
+  double radlen  = _radl;
+  double nradlen = 0.0;
+  if ( radlen > 0.0 ) {
+    nradlen = mStep->step / radlen; // number of radiation lengths
+    for ( auto h : mMaterialSumHist ) { // sum all material w/in volume
+      TString myname = h->GetName();
+      myname.ReplaceAll("_sum","");
+      if ( path.Contains( myname.Data() ) ) {
+	if ( h->IsA() == TClass::GetClass("TH1F") ) {
+	  h->Fill( eta, nradlen );
+	}
+	else {
+	  ((TH2F*)h)->Fill( eta, phi, nradlen );
+	}
+      }
+    }
+    for ( auto h : mMaterialHist ) {
+      if ( leaf.Contains( h->GetName() ) ) { // sum only the material in the volume
+	if ( h->IsA() == TClass::GetClass("TH1F") ) {
+	  h->Fill( eta, nradlen );
+	}
+	else {
+	  ((TH2F*)h)->Fill( eta, phi, nradlen );
+	}
+      }
+    }
+  }
 
   
   if ( verbose ) {
@@ -386,16 +443,29 @@ void AgUStep::Init( const Char_t *filename )
   mFile = TFile::Open( filename, "recreate" );
   mTree = new TTree( "stepping", "custom stepping tree" );
   mTree->Branch("Event", &mEvent, 32000, 99); // Add the event to the ttree
+
 }
 
 void AgUStep::Finish()
 {
+
+  if ( mTrackCountHist ) {
+    mFile->cd();
+    mTrackCountHist->Write();
+    mTrackCountHist2->Write();
+    for ( auto h : mMaterialHist    ) h->Write();
+    for ( auto h : mMaterialSumHist ) h->Write();
+
+  }
+
   if (mTree&&mFile) {
     mTree->Fill();
-
     mFile->cd();
     mTree->Write();
     //  mFile->Write();
-    delete mFile;
   }
+
+  if ( mFile ) delete mFile;
+
+
 }

@@ -6,6 +6,12 @@
 #include "TFile.h"
 #include "TRefArray.h"
 #include "TGiant3.h"
+#include "TH1F.h"
+#include "TH2F.h"
+
+#ifndef __CINT__
+#include <vector>
+#endif
 
 
 // // class AgUTrackStep : public TObject
@@ -118,12 +124,22 @@ public:
   static Int_t   mnTruth;//=0;
   static Int_t   mxTruth;//=-1;
 
+  void AddMaterialHist( const char* name, const char* title, int nb, double xmn, double xmx );
+  void AddMaterialHist( const char* name, const char* title, int nbx, double xmn, double xmx, int nby, double ymn, double ymx );
+
 private:
 protected:
 
   static AgUStep *sInstance;
   TTree *mTree;
   TFile *mFile;
+
+#ifndef __CINT__
+  std::vector< TH1F* >    mMaterialHist;
+  std::vector< TH1F* > mMaterialSumHist;
+  TH1F*  mTrackCountHist;
+  TH2F*  mTrackCountHist2;
+#endif
 
 public:
   Event *mEvent; // Current event 
