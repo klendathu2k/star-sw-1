@@ -19,9 +19,25 @@ TF1 *ptDist  = 0;
 TF1 *etaDist = 0;
 
 // ----------------------------------------------------------------------------
+void Particles() {
+  StarParticleData &data = StarParticleData::instance();
+
+  TString name  = "geantino";
+  TString title = "Little giant";
+  Double_t mass    = 0.0;
+  Bool_t   stable  = true;
+  Double_t width   = 2.5E-19;
+  Double_t charg3  = 0;
+  TString  _class  = "hadron";
+  Int_t    pdgCode = 9999999999;
+  Int_t    g3Code  = 48; // must exist in gstar_part.g
+      
+  TParticlePDG *part = data.AddParticle(name, title, mass, stable, width, charg3, _class, pdgCode, 0, g3Code );  
+}
+// ----------------------------------------------------------------------------
 void geometry( TString tag, Bool_t agml=true )
 {
-  TString cmd = "DETP GEOM "; cmd += tag;
+  TString cmd = "DETP GEOM "; cmd += tag; 
   if ( !geant_maker ) geant_maker = (St_geant_Maker *)chain->GetMaker("geant");
   geant_maker -> LoadGeometry(cmd);
   //  if ( agml ) command("gexec $STAR_LIB/libxgeometry.so");
@@ -41,20 +57,17 @@ void trig( Int_t n=1 )
     chain->Clear();
 
     // Generate 1 mu minus at high pT
-    kinematics->Kine( 1, "mu+", 10.0, 50.0, 2.8, 3.9 );
+    kinematics->Kine( 1, "geantino", 10.0, 50.0, 2.8, 3.9 );
+    //kinematics->Kine( 1, "mu+", 10.0, 50.0, 2.8, 3.9 );
 		      
-    // // Generate 4 muons flat in pT and eta 
-    // kinematics->Kine(4, "mu+", 0., 5., -2.0, +2.0 );
-
-    // // Generate 4 neutral pions according to a PT and ETA distribution
-    // kinematics->Dist(4, "pi0", ptDist, etaDist );
-
     // Generate the event
     chain->Make();
 
     // Print the event
-    //    _primary->event()->Print();
-    //    command("gprint hits");
+    //_primary->event()->Print();
+    if ( i<10 ) {
+      command("gprint kine");
+    }
   }
 }
 // ----------------------------------------------------------------------------
@@ -141,8 +154,7 @@ void starsim( Int_t nevents=50000, Int_t rngSeed=1234 )
   AgUStep::zmin = 255.6510;
   AgUStep::zmax = 369.5846;
 
-
-
+  Particles();
 
   //
   // Create the primary event generator and insert it
@@ -187,17 +199,6 @@ void starsim( Int_t nevents=50000, Int_t rngSeed=1234 )
   command( "STRA 0" );
   command( "physi"  );
   
-
-  //
-  // Setup PT and ETA distributions
-  //
-
-  Double_t pt0 = 3.0;
-  ptDist = new TF1("ptDist","(x/[0])/(1+(x/[0])^2)^6",0.0,10.0);
-  ptDist->SetParameter(0, pt0);
-  ptDist->Draw();
-
-  etaDist = new TF1("etaDist","-TMath::Erf(x+2.6)*TMath::Erf(x-2.6)",-0.8,+0.8);
 
   //
   // Trigger on nevents
