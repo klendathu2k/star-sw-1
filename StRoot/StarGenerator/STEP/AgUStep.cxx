@@ -302,7 +302,10 @@ void AgUStep::operator()()
       mTrack = mEvent->AddTrack();
       mTrack->idTruth = idTruth;
 
-      if ( mTrack->idTruth >= mnTruth && mTrack->idTruth <= mxTruth ) mTrackCountHist->Fill( mTrack->eta );
+      if ( mTrack->idTruth >= mnTruth && mTrack->idTruth <= mxTruth ) {
+	mTrackCountHist->Fill( mTrack->eta );
+	mTrackCountHist2->Fill( mTrack->eta );
+      }
       
     }
   
