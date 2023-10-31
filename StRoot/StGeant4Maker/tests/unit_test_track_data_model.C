@@ -52,10 +52,7 @@ void unit_test_track_data_model() {
   // // Generate 10 e+
   // for ( int i=0;i<9;i++ ) 
   //   add_particle( "e+", 0.4251, 3.1415/4, 10.0 );
-  //  throw_particle( "e+", 0.4251, 3.1415/4, 10.0 );
-
   throw_particle( "mu+", 0.4251, 3.1415/4, 10.0 );
-
   timer.Stop();
   
   auto* chain = StMaker::GetChain();
@@ -318,7 +315,6 @@ void unit_test_track_data_model() {
     }
 
   }
-
 
   // Print the track list
   track_table->Print(0, track_table->GetNRows());
