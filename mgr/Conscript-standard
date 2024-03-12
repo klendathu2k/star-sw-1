@@ -731,16 +731,10 @@ if ( $pkg !~ /^sim$/ && $pkg !~ /^gen$/ ) {
 	$CPPPATH .= $main::PATH_SEPARATOR . $g4prefix . "/include/Geant4/";
 
 	# Add G4 vmc to include path  (presumes that spack has added this to ROOT_INCLUDE_PATH ...)
-<<<<<<< HEAD
 	# Add vmc package to include path (ditto)
 	my @paths = split ":", $ENV{ROOT_INCLUDE_PATH};
 	foreach my $p (@paths) {
 	    if ($p =~ /geant4-vmc/ ) {
-=======
-	my @paths = split ":", $ENV{ROOT_INCLUDE_PATH};
-	foreach my $p (@paths) {
-	    if ($p =~ /geant4-vmc/) {
->>>>>>> b3285d74da... [g4star] Expose partcile stack for the geant4 application.
 		print $p, "\n";		
 		$CPPPATH .= $main::PATH_SEPARATOR . $p . "/geant4vmc";
 	    }	    
