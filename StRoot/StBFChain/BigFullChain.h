@@ -213,9 +213,11 @@ Bfc_st BFC[] = { // standard chains
    ,                                                                                       "","","",kFALSE},
   {"RC.pp.y2005"     ,"","","pp2005a,tofdat,OSpaceZ2,OGridLeak3D"                         ,"","","",kFALSE},
   {"RC.pp.y2006"     ,"","","pp2006b,OSpaceZ2,OGridLeak3D"                                ,"","","",kFALSE},
+
   {"RC.y2007"        ,"","","DbV20080418,B2007g,IAna,VFMinuit3,emcDY2,ftpc,trgd,"
    "ZDCvtx,svtIT,ssdIT,Corr4,OSpaceZ2,OGridLeak3D"                                        ,"","","",kFALSE},
   {"RC.y2007.NoSvt"  ,"","","DbV20080418,B2007g,IAna,VFMinuit3,emcDY2,ftpc,"
+
    "trgd,ZDCvtx,Corr4,OSpaceZ2,OGridLeak3D"                                               ,"","","",kFALSE},
   {"RC.y2008"        ,"","","DbV20080712,P2008,OSpaceZ2,OGridLeak3D,beamLine"             ,"","","",kFALSE},
   {"RC.y2008.notof"  ,"","","DbV20080712,P2008,-ToF,-tofDat,-tofrMatch,-tofpMatch,-tofCalib,OSpaceZ2,"
@@ -743,6 +745,7 @@ Bfc_st BFC[] = { // standard chains
   {"B2007g","","","ry2007g,MakeEvent,in,tpc_daq,tpcI,fcf,svt_daq,SvtD,ssddat,sptd,Idst,tags,Tree,evout"
    ,                                           "","","Base chain for 2007 ITTF geo g (tpc+svt+ssd)",kFALSE},
   {"P2007"       ,"" ,"",
+
    "B2007,IAna,VFMinuit,emcDY2,ftpc,trgd,ZDCvtx,svtIT,ssdIT,Corr5"
    ,                        "","","Production chain for 2007 data (+ l3, tof, ftpc, e/b-emc, trgd)",kFALSE},
 
@@ -755,6 +758,7 @@ Bfc_st BFC[] = { // standard chains
    ,                  "","","Production chain for 2007 data Corr3 (+ l3, tof, ftpc, e/b-emc, trgd)",kFALSE},
   {"P2007b"      ,"" ,"",
    "B2007,IAna,VFMinuit,emcDY2,ftpc,trgd,ZDCvtx,svtIT,ssdIT,Corr4"
+
    ,                  "","","Production chain for 2007 data Corr4 (+ l3, tof, ftpc, e/b-emc, trgd)",kFALSE},
   {"B2008" ,"","","ry2008,in,tpc_daq,tpcI,fcf,Idst,tags,Tree,evout","",""
    ,                                                               "Base chain for 2008 ITTF (tpc)",kFALSE},
@@ -816,10 +820,12 @@ Bfc_st BFC[] = { // standard chains
   {"B2010c","","","ry2010c,in,tpcX,ITTF,tpcDB,TpcHitMover,Idst,tags,Tree,evout","",""
    ,                                                               "Base chain for 2010 ITTF (tpc)",kFALSE},
 
+
   {"P2010a","" ,"",  // initial chain - Add some to all of BEmcChkStat,QAalltrigs,trgd,btof,Corr3
    "B2010,BAna,VFMinuit,emcDY2,ftpc,trgd,ZDCvtx,NosvtIT,NossdIT,analysis"
    ,                         "","","Production chain for 2010 data - no Corr (+ l3, ftpc, e/b-emc)",kFALSE},
   {"pp2010a","" ,"", // initial chain - Add some to all of BEmcChkStat,QAalltrigs,trgd,btof,Corr3,VFPPVnoCTB
+
    "B2010,BAna,ppOpt,emcDY2,trgd,ftpc,ZDCvtx,NosvtIT,NossdIT,analysis"
    ,                  "","","Production chain for 2010 data - no Corr (+ l3, ftpc, e/b-emc, no VF)",kFALSE},
   {"P2010c","" ,"",  // use of y2010c geometry
@@ -834,10 +840,11 @@ Bfc_st BFC[] = { // standard chains
   {"B2011","","","ry2011,in,tpcX,ITTF,tpcDB,TpcHitMover,Idst,tags,Tree,evout","",""
    ,                                                               "Base chain for 2011 ITTF (tpc)",kFALSE},
 
-  {"P2011a","" ,"",  // initial chain - Add some to all of BEmcChkStat,QAalltrigs,trgd,btof,Corr3
+  {"P2011a","" ,"",  // initial chain - Add some to all of BEmcChkStat,QAalltrigs,trgd,btof,Corr3,-hitfilt
    "B2011,BAna,VFMinuit,emcDY2,ftpc,trgd,ZDCvtx,NosvtIT,NossdIT,analysis"
    ,                         "","","Production chain for 2011 data - no Corr (+ l3, ftpc, e/b-emc)",kFALSE},
-  {"pp2011a","" ,"", // initial chain - Add some to all of BEmcChkStat,QAalltrigs,btof,Corr3,VFPPVnoCTB
+  {"pp2011a","" ,"", // initial chain - Add some to all of BEmcChkStat,QAalltrigs,btof,Corr3,-hitfilt,VFPPVnoCTB
+
    "B2011,BAna,ppOpt,emcDY2,trgd,ftpc,ZDCvtx,NosvtIT,NossdIT,analysis"
    ,                  "","","Production chain for 2011 data - no Corr (+ l3, ftpc, e/b-emc, no VF)",kFALSE},
 
@@ -1044,6 +1051,7 @@ Bfc_st BFC[] = { // standard chains
 
   {"P2021a","" ,"",
    "B2021a,ITTF,BAna,iTpcIT,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis"
+
    ,    "","",        "Base chain for year 2021 AA data - no Corr (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
 
   // 2021 updated chains
@@ -1078,6 +1086,7 @@ Bfc_st BFC[] = { // standard chains
    "","",                                                      "Base chain for run 2023 data (tpc)",kFALSE},
 
   {"P2023a","" ,"",
+
    "B2023a,ITTF,BAna,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
            "","",        "Base chain for year 2023 AA data, using CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
 
@@ -1096,6 +1105,7 @@ Bfc_st BFC[] = { // standard chains
 
   {"pp2024a","" ,"",
    "B2024a,ITTF,BAna,ppOpt,ImpBToFt0Mode,VFPPVnoCTB,beamline3D,l3onl,epdhit,btof,mtd,emcDY2,ftt,fcs,trgd,ZDCvtx,analysis",
+
    "","","Production chain for year 2024 pp data, using CorrY (+ l3, epd, mtd, btof, fcs, ftt, e/b-emc)",kFALSE},
 
   {"P2024a","" ,"",
@@ -1161,6 +1171,7 @@ Bfc_st BFC[] = { // standard chains
   {"NoLocalCintDb","" ,"",""                                      ,"","","Switch off local Cint Db",kFALSE},
   {"NoMySQLDb"   ,""  ,"",""                                           ,"","","Switch off MySQL Db",kFALSE},
   {"NoCintCalDb" ,""  ,"","NoLocalCintDb"                         ,"","","Switch off local Cint Db",kFALSE},
+  {"NoTFGLDbTag" ,""  ,"",""                                ,"","","Switch off TFG specific Db tag",kFALSE},
   {"dbSnapshot"  ,""  ,"",""                                         ,"","","Create?use dbSnapshot",kFALSE},
   {"NoEvent"     ,""  ,"","-event,-analysis"      ,"","","Switch Off StEvent and StAnalysis Makers",kFALSE},
   {"MakeDoc"     ,""  ,"",""                   ,"","","Make HTML documentation for the given Chain",kFALSE},
@@ -1202,8 +1213,11 @@ Bfc_st BFC[] = { // standard chains
    ,                                                     "... Corr4+SCEbyE,OGridLeak3D,OSpaceZ2...",kFALSE},
   {"CorrX"       ,"" ,"","ExB,OShortR,OBmap,OPr13,OIFC,OSectorAlign,NewTpcAlignment"
    ",-AlignSectors,-OBmap2D,-OClock,-OTwist"                             ,"","","New Tpc Alignment",kFALSE},
-  {"CorrY"       ,"" ,"","ExB,OShortR,OBmap,OPr40,OIFC,OSectorAlign,NewTpcAlignment,OSpaceZ2,OGridLeakFull"
+  {"CorrY"       ,"" ,"","ExB,OShortR,OBmap,OPr40,-OPr13OIFC,OSectorAlign,NewTpcAlignment,OSpaceZ2,OGridLeakFull"
    ",-AlignSectors,-OBmap2D,-OClock,-OTwist"                             ,"","","New Tpc Alignment",kFALSE},
+  {"Alignment2024","" ,"","NewTpcAlignment"                         ,"","","Turn on Alignment 2024",kFALSE},
+  {"CorrZ","" ,"","Alignment2024,TFGdbOpt,-CorrY,-CorrX,ExB,OShortR,OBmap,OPr40,-Opr13,OIFC,OSpaceZ2"
+   ",OGridLeakFull,-OBmap2D,-OClock,-OTwist,-OSectorAlign"              ,"","","Tpc Alignment 2024",kFALSE},
   {"ExB"         ,""  ,"","",""                                       ,"","Activate ExB correction",kFALSE},
   {"EB1"         ,""  ,"","",""                                     ,"","Force ExB configuration 1",kFALSE},
   {"EB2"         ,""  ,"","",""                                     ,"","Force ExB configuration 2",kFALSE},
@@ -1260,6 +1274,7 @@ Bfc_st BFC[] = { // standard chains
   {"useLDV" ,""  ,"","",""                                   ,"","... uses laserDV database flavor",kFALSE},
   {"useCDV" ,""  ,"","",""                                       ,"","... uses ofl database flavor",kFALSE},
   {"useNewLDV" ,""  ,"","",""                                    ,"","... uses ofl database flavor",kFALSE},
+  {"TFGdbOpt" ,""  ,"","",""                ,"","... uses TFG database flavor for alignemnt tables",kFALSE},
   {"------------","-----------","-----------","------------------------------------------","","","",kFALSE},
   {"Tables      ","-----------","-----------","------------------------------------------","","","",kFALSE},
   {"------------","-----------","-----------","------------------------------------------","","","",kFALSE},
@@ -1857,8 +1872,9 @@ Bfc_st BFC[] = { // standard chains
   {"ETofQa",     "",     "ETofChain", "db, ETofUtil, muDst", "StETofQAMaker",    "StETofQAMaker",
                                                                                     "ETOF QA maker",kFALSE},
 
-  {"ETofA",      "",     "",          "etofdat,ETofCalib,etofhit,ETofMatch",  "",  "",  
-                                                                "... ETOF chain options for data",  kFALSE},
+
+  {"ETofA",  "", "","etofdat,ETofCalib,etofhit,ETofMatch","","","... ETOF chain options for data",  kFALSE},
+
 
 
   // the below needs to be done earlier to save time - leaving here for documentation purposes as two
