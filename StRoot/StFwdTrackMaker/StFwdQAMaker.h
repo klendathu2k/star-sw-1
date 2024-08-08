@@ -15,7 +15,9 @@
 #include "StEvent/StEnumerations.h"
 #include "StThreeVectorD.hh"
 
+
 #include <map>
+
 
 class StMuFwdTrack;
 class StMuFwdTrackProjection;
@@ -200,12 +202,14 @@ class StFwdQAMaker : public StMaker {
     void FillTracks();
     void FillMcTracks();
 
+
     void ProcessFwdTracks();
     void ProcessFwdMuTracks();
 
     void setMuDstInput() { mAnalyzeMuDst = true; }
     void setLocalOutputFile( TString f ) { mLocalOutputFile = f; }
     void setTreeFilename( TString f ) {mTreeFilename = f;}
+
 
   protected:
     TFile *mTreeFile = nullptr;
@@ -219,7 +223,6 @@ class StFwdQAMaker : public StMaker {
     StMuFcsCollection *mMuFcsCollection = nullptr;
     StFwdTrackMaker *mFwdTrackMaker = nullptr;
     StFcsDb *mFcsDb = nullptr;
-
 
 //========================================================= new stuff
     std::map<TString, TH1*> mHists;

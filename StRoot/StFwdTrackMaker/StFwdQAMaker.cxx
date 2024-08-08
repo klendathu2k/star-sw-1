@@ -91,7 +91,9 @@ FcsHitWithStarXYZ::FcsHitWithStarXYZ( StMuFcsHit *hit, StFcsDb *fcsDb ) {
 }
 
 StFwdQAMaker::StFwdQAMaker() : StMaker("fwdQAMaker"), mTreeFile(nullptr), mTree(nullptr) {
+
     setLocalOutputFile( "./fwdHists.root" ); // default off
+
 }
 
 int StFwdQAMaker::Init() {
@@ -114,8 +116,6 @@ int StFwdQAMaker::Init() {
 
     mTreeData.reco.createBranch(mTree, "reco");
     mTreeData.seeds.createBranch(mTree, "seeds");
-
-
 
     //========================================================================================================= adding histograms (new)
     AddHist( mHists["fwdMultFailed"] =      new TH1F("fwdMultFailed", ";N_{ch}^{FWD}; counts", 100, 0, 100) );
@@ -169,8 +169,6 @@ int StFwdQAMaker::Init() {
     return kStOk;
 }
 
-
-
 int StFwdQAMaker::Finish() {
 
     if ( mTreeFile && mTree ){
@@ -201,7 +199,6 @@ int StFwdQAMaker::Finish() {
     return kStOk;
 }
 
-
 int StFwdQAMaker::Make() {
     LOG_INFO << "FWD Report:" << endm;
     StEvent *mStEvent = static_cast<StEvent *>(GetInputDS("StEvent"));
@@ -209,6 +206,7 @@ int StFwdQAMaker::Make() {
         // report number of fwd tracks
         auto fwdTracks = mStEvent->fwdTrackCollection();
         LOG_INFO << "Number of FwdTracks (StFwdTrackCollection): " << fwdTracks->tracks().size() << endm;
+
         if ( mStEvent->fttCollection() ){
             LOG_INFO << "Number of Ftt Points (StEvent)" << mStEvent->fttCollection()->points().size() << endm;
         }
@@ -216,12 +214,12 @@ int StFwdQAMaker::Make() {
     LOG_INFO << "SETUP START" << endm;
     // setup the datasets / makers
 
-
     mMuDstMaker = (StMuDstMaker *)GetMaker("MuDst");
     if(mMuDstMaker) {
         mMuDst = mMuDstMaker->muDst();
         mMuForwardTrackCollection = mMuDst->muFwdTrackCollection();
         mMuFcsCollection = mMuDst->muFcsCollection();
+
         if (mMuDst->event())
             mTreeData.header.run = mMuDst->event()->runNumber();
         if (mMuForwardTrackCollection){
@@ -235,12 +233,12 @@ int StFwdQAMaker::Make() {
     }
 
     mFcsDb = static_cast<StFcsDb *>(GetDataSet("fcsDb"));
+
     mFwdTrackMaker = (StFwdTrackMaker*) GetMaker( "fwdTrack" );
     if (!mFwdTrackMaker) {
         LOG_WARN << "No StFwdTrackMaker found, skipping StFwdQAMaker" << endm;
         // return kStOk;
     }
-
 
     LOG_DEBUG << "SETUP COMPLETE" << endm;
     ProcessFwdTracks();
@@ -271,6 +269,7 @@ void StFwdQAMaker::FillFstPoints(){
     for ( unsigned int index = 0; index < fst->numberOfHits(); index++){
         StMuFstHit * muFstHit = fst->getHit( index );
         mTreeData.fstPoints.add( muFstHit );
+
     } // index
 }
 
@@ -295,6 +294,7 @@ void StFwdQAMaker::FillTracks() {
                 break;
             }
         }
+
     } else {
         LOG_WARN << "No StMuFwdTrackCollection found" << endm;
     }
@@ -383,6 +383,7 @@ void StFwdQAMaker::FillFttClusters(){
             mTreeData.fttPoints.add( c );
         }
     }
+
     else{
         LOG_INFO << "no muFttCollection " << endm;
     }
@@ -704,4 +705,5 @@ void StFwdQAMaker::ProcessFwdMuTracks(  ){
     getHist("fwdMultFST")->Fill( fwdMultFST );
     getHist("fwdMultHcalMatch")->Fill( fwdMultHcalMatch );
     getHist("fwdMultEcalMatch")->Fill( fwdMultEcalMatch );
+
 }
