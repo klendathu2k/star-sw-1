@@ -84,7 +84,7 @@ void loadStar(TString mytag="dev2021", Bool_t agml = true  )
       if ( arg.Contains("=") ) {
 	// Generally skip, but output triggers geantout chain option
 	if ( arg.Contains("output") ) {
-	  chainOpts += " geantout ";
+	  chainOpts += " geant4out ";
 	}
 	// By specifying a filter, load the stargeneratorfilt package
 	if ( arg.Contains("filter") ) {
