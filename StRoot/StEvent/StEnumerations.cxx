@@ -21,6 +21,10 @@ void detectorId(int *ids=0, char** cds=0)
 
  // Look for local enumerations (when developing) before global
  TString myPath("./StRoot/StEvent/StEnumerations.h");
+ gSystem->ExpandPathName(myPath);
+
+ gROOT->ProcessLine("#include <StEnumerations.h>");
+
  int notExi = gSystem->AccessPathName(myPath.Data(),kFileExists);
  if (notExi) {
    myPath = "$STAR/StRoot/StEvent/StEnumerations.h";
