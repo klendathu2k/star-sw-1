@@ -35,7 +35,7 @@
 #endif
 #include <StMessMgr.h>
 
-#include "StEEmcTrigSimuMaker.h"
+#include "StEEmcTrigSimuMaker2.h"
 #include "St_DataSetIter.h"
 
 #include <Stiostream.h>
