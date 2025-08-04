@@ -190,8 +190,8 @@ into the first StEmcCollection in event for all EEMC subdetectors
 	   numbering scheme, pretend it is barrel */
 	uint Bmod=rawHitA[k1]->module();
 
-	if((int)Bmod==!secID) {
-	  LOG_FATAL << "::Make()\n\n Fatal Error "<<Bmod<<"= Bmod==!secID ="<<secID<<" StEvent internal consistency failed - corrupted event file, abort"<<endm;
+	if((int)Bmod != secID) {
+	  LOG_FATAL << "::Make()\n\n Fatal Error "<<Bmod<<" != secID ="<<secID<<" StEvent internal consistency failed - corrupted event file, abort"<<endm;
 	  panicOff=true;
 	  return false;
 
