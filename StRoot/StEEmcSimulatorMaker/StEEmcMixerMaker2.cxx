@@ -24,6 +24,8 @@
 #include "StEmcRawMaker/StEEmcPrint.h"
 
 
+// ROOT dictionary generation is intentionally disabled for this class,
+// as it is not streamed or used in ROOT I/O.
 //ClassImp(StEEmcMixerMaker)
 
 //-------------------------------------------------------------------
