@@ -7,9 +7,6 @@
 #include "St_DataSetIter.h"
 #include "StEventTypes.h"
 
-
-
-
 #include "StEEmcUtil/EEevent/EEeventDst.h"
 #include "StEEmcUtil/EEevent/EEsectorDst.h"
 #include "StEEmcUtil/EEevent/EEtwHitDst.h"
@@ -20,8 +17,7 @@
 
 
 //--------------------------------------------
-void 
-StEEmcFastMaker::Clear(Option_t *) {
+void StEEmcFastMaker::Clear(Option_t *) {
   meeve->Clear();  
   if(mEmcCollectionIsLocal) { // special use
     delete mLocalStEmcCollection;

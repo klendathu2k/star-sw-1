@@ -83,6 +83,7 @@ class StEmcCollection;
 */
 
 
+
 class StEEmcFastMaker : public StMaker {
 
  public:
