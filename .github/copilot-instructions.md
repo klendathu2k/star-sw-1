@@ -79,7 +79,8 @@ Follow best practices unless overridden below. Formatting style not mandated exc
 
 ## ROOT [c++]
 * Prefer C++ types over ROOT types, except persistent classes.
-* Prefer `<cmath>` over ROOT math.
+** e.g. prefer int, float, double, char, bool over Int_t, Float_t, Double_t, Char_t, Bool_t.
+* Prefer `<cmath>` over ROOT math (TMath::*).
 
 ## Introspection [c++]
 * Prefer `auto` over `decltype`.
