@@ -24,6 +24,8 @@
 #include "StEmcRawMaker/StEEmcPrint.h"
 
 
+// ROOT dictionary generation is intentionally disabled for this class,
+// as it is not streamed or used in ROOT I/O.
 //ClassImp(StEEmcMixerMaker)
 
 //-------------------------------------------------------------------
@@ -129,7 +131,7 @@ StEEmcMixerMaker::Make(){
   LOG_DEBUG <<"::Make() --------------  print Ecoll-A after mixing ----------------"<<endm;
   if(Debug())   eemcPrint.print(ecolA);
   
-  LOG_DEBUG <<"::Make() -------------- print data: Ecoll-A+B ----- after mrging -----"<<endm;   
+  LOG_DEBUG <<"::Make() -------------- print data: Ecoll-A+B ----- after merging -----"<<endm;   
   if(Debug())    eemcPrint.printChange(ecolA,ecolB,Form("after merging"));
   return kStOK; 
 }
@@ -188,8 +190,8 @@ into the first StEmcCollection in event for all EEMC subdetectors
 	   numbering scheme, pretend it is barrel */
 	uint Bmod=rawHitA[k1]->module();
 
-	if((int)Bmod==!secID) {
-	  LOG_FATAL << "::Make()\n\n Fatal Error "<<Bmod<<"= Bmod==!secID ="<<secID<<" StEvent internal consistency failed - corrupted event file, abort"<<endm;
+	if((int)Bmod != secID) {
+	  LOG_FATAL << "::Make()\n\n Fatal Error "<<Bmod<<" != secID ="<<secID<<" StEvent internal consistency failed - corrupted event file, abort"<<endm;
 	  panicOff=true;
 	  return false;
 
@@ -244,7 +246,7 @@ into the first StEmcCollection in event for all EEMC subdetectors
 	  */
 
      if(myHitB.size())
-       LOG_WARN<<Form("%s::Make() merging:  %d  hits in  collB  for sect=%d are dropped\n since those channels are not avaliable in collA, \n a create is probably masked out\n",GetName(), myHitB.size(),secID)<<endm;
+       LOG_WARN<<Form("%s::Make() merging:  %d  hits in  collB  for sect=%d are dropped\n since those channels are not available in collA, \n a crate is probably masked out\n",GetName(), myHitB.size(),secID)<<endm;
      // printf("mixEnd idet=%d sect=%d Nhit A=%d B=%d\n",det,secID,rawHitA.size(),myHitB.size());
      
     } // loop over sector
