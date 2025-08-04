@@ -25,9 +25,7 @@ www.star.bnl.gov/STAR/eemc -->How To
 #define STAR_StEmcTrigSimuMaker
 
 
-#ifndef StMaker_H
 #include "StMaker.h"
-#endif
 
 
 

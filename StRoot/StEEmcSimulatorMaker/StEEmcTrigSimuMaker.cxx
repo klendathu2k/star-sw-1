@@ -50,7 +50,7 @@
 #include "StEvent.h"
 
 
-ClassImp(StEEmcTrigSimuMaker)
+//$$$ClassImp(StEEmcTrigSimuMaker)
 StEEmcTrigSimuMaker::StEEmcTrigSimuMaker(const char *name):StMaker(name){
   //
 }

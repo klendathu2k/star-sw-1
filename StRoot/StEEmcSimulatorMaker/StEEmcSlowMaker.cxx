@@ -17,8 +17,6 @@
 #include "StEEmcUtil/database/StEEmcDb.h"
 
 
-
-
 //________________________________________________
 StEEmcSlowMaker::StEEmcSlowMaker(const Char_t *name, const Char_t*)
 : StMaker(name) {

@@ -29,7 +29,8 @@ class StEEmcDb;
 class EEmcDbItem;
                                                
 class StEEmcMixerMaker : public  StMaker {
- private:
+
+private:
   Bool_t        panicOff; // once activated disables Endcap embedding
   StEEmcDb *mEEDb;
   

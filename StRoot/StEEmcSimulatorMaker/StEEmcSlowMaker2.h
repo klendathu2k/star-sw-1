@@ -3,6 +3,7 @@
 #ifndef STAR_StEEmcSlowMaker2
 #define STAR_StEEmcSlowMaker2
 
+
 /*!
  *                                                                     
  * \class  StEEmcSlowMaker

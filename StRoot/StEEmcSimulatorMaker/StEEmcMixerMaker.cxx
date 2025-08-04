@@ -24,7 +24,7 @@
 #include "StEmcRawMaker/StEEmcPrint.h"
 
 
-ClassImp(StEEmcMixerMaker)
+//ClassImp(StEEmcMixerMaker)
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
