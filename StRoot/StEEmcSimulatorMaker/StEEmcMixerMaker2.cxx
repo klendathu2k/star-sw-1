@@ -131,7 +131,7 @@ StEEmcMixerMaker::Make(){
   LOG_DEBUG <<"::Make() --------------  print Ecoll-A after mixing ----------------"<<endm;
   if(Debug())   eemcPrint.print(ecolA);
   
-  LOG_DEBUG <<"::Make() -------------- print data: Ecoll-A+B ----- after mrging -----"<<endm;   
+  LOG_DEBUG <<"::Make() -------------- print data: Ecoll-A+B ----- after merging -----"<<endm;   
   if(Debug())    eemcPrint.printChange(ecolA,ecolB,Form("after merging"));
   return kStOK; 
 }
