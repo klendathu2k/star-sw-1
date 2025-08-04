@@ -246,7 +246,7 @@ into the first StEmcCollection in event for all EEMC subdetectors
 	  */
 
      if(myHitB.size())
-       LOG_WARN<<Form("%s::Make() merging:  %d  hits in  collB  for sect=%d are dropped\n since those channels are not avaliable in collA, \n a create is probably masked out\n",GetName(), myHitB.size(),secID)<<endm;
+       LOG_WARN<<Form("%s::Make() merging:  %d  hits in  collB  for sect=%d are dropped\n since those channels are not available in collA, \n a crate is probably masked out\n",GetName(), myHitB.size(),secID)<<endm;
      // printf("mixEnd idet=%d sect=%d Nhit A=%d B=%d\n",det,secID,rawHitA.size(),myHitB.size());
      
     } // loop over sector
