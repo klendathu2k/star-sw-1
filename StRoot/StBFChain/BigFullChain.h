@@ -1078,7 +1078,7 @@ Bfc_st BFC[] = { // standard chains
 
   {"pp2022a","" ,"",
    "B2022a,ITTF,BAna,ppOpt,ImpBToFt0Mode,VFPPVnoCTB,beamline3D,l3onl,etofa,btof,mtd,emcDY2,FttDat,fcs,trgd,ZDCvtx,analysis",
-      "","","Production chain for year 2022 pp data - CorrY (+ l3, epd, mtf, b/etof, fcs, e/b-emc)",kFALSE},
+      "","","Production chain for year 2022 pp data, using CorrY (+ l3, epd, mtf, b/etof, fcs, e/b-emc)",kFALSE},
 
   // 2023 initial chains
   {"B2023a" ,"","",
@@ -1086,8 +1086,8 @@ Bfc_st BFC[] = { // standard chains
    "","",                                                      "Base chain for run 2023 data (tpc)",kFALSE},
 
   {"P2023a","" ,"",
-   "B2023a,ITTF,BAna,iTpcIT,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
-           "","",        "Base chain for year 2023 AA data - CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
+   "B2023a,ITTF,BAna,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
+           "","",        "Base chain for year 2023 AA data, using CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
 
   // 2024 initial chains
   {"B2024a"  ,"","",
@@ -1096,11 +1096,20 @@ Bfc_st BFC[] = { // standard chains
 
   {"pp2024a","" ,"",
    "B2024a,ITTF,BAna,ppOpt,ImpBToFt0Mode,VFPPVnoCTB,beamline3D,l3onl,epdhit,btof,mtd,emcDY2,ftt,fcs,trgd,ZDCvtx,analysis",
-   "","","Production chain for year 2024 pp data - CorrY (+ l3, epd, mtd, btof, fcs, ftt, e/b-emc)",kFALSE},
+   "","","Production chain for year 2024 pp data, using CorrY (+ l3, epd, mtd, btof, fcs, ftt, e/b-emc)",kFALSE},
 
   {"P2024a","" ,"",
-   "B2024a,ITTF,BAna,iTpcIT,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
-           "","",        "Base chain for year 2024 AA data - CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
+   "B2024a,ITTF,BAna,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
+           "","",        "Base chain for year 2024 AA data, using CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
+
+  // 2025 initial chains
+  {"B2025"  ,"","",
+   "ry2025,in,tpcX,UseXgeom,iTpcIT,CorrY,AgML,tpcDB,TpcHitMover,Idst,tags,Tree,picoWrite,picoVtxDefault,picoCovMtxWrite",
+    "","",                                                     "Base chain for run 2025 data (tpc)",kFALSE},
+
+  {"P2025","" ,"",
+   "B2025,ITTF,BAna,VFMinuit,etofa,btof,mtd,l3onl,emcDY2,epdHit,trgd,ZDCvtx,analysis",
+           "","",        "Base chain for year 2025 AA data, using CorrY (+ l3, epd, mtd, b/etof, b-emc)",kFALSE},
 
 
   // Other chains/Calibration
@@ -1465,6 +1474,13 @@ Bfc_st BFC[] = { // standard chains
    ,                                                                                "MTD hit maker",kFALSE},
   {"mtdTrkMask","","","db","StMtdTrackingMaskMaker"      ,"StMtdEvtFilterMaker","MTD track masking",kFALSE},
 
+  // GMT
+  {"gmt",        "","","gmtDat,gmtClu",                                      "","","Gmt data Chain",kFALSE},
+  {"gmtDat",     "","","event","StGmtRawMaker","StGmtRawMaker",                   "GMT Data reader",kFALSE},
+  {"gmtClu",     "","","gmtutil","StGmtClusterMaker","Spectrum,StGmtClusterMaker","GMT cluster maker",kFALSE},
+  {"gmtCosmics", "","","Cosmics,gmt","","",  "Save only events with GMT clusters and Cosmic tracks",kFALSE},
+  {"gmtClusTree","","","","","",                                                STAR_CHAIN_OBSOLETE,kFALSE},
+
   // EPD
   {"epdHit",    "", "", "epdDb,event",            "StEpdHitMaker", "StEpdHitMaker","EPD hit maker", kFALSE},
 
@@ -1804,8 +1820,6 @@ Bfc_st BFC[] = { // standard chains
    ,                      "StEventUtilities,StiUtilities,StiMaker","Sti tracker",kFALSE},
   {"StiCA"      ,"Sti","","Sti","StiMaker","TPCCATracker"                          ,"StiCA tracker",kFALSE},
   {"StiCAPerf","","","","",                             "TPCCATrackerPerformance", "CA Performance",kFALSE},
-  {"StiCA"    ,"Sti","","Sti,StiLib,StiCALib,StiLibs,SCL,StEvent,StDbT,TpcIT,compend,tbutil","StiMaker"
-   ,                                "StEventUtilities,libEG,StiUtilities,StiMaker","Sti+CA tracker",kFALSE},
   {"HLTCA"    ,""  ,"Sti","",                  "StHLTCAMaker","StHLTCAMaker",  "HLT reconstruction",kFALSE},
   {"KFVertex" ,""  ,"Sti","-genvtx,-VFMinuit,-VFFV,-VFMCE,-VFppLMV,-VFPPVnoCTB,-VFPPV,-Kink2,-V02,-Xi2"
    ,"StKFVertexMaker",      "MathMore,Spectrum",  "...KFParticle based multi vertex reconstruction",kFALSE},
@@ -2000,6 +2014,8 @@ Bfc_st BFC[] = { // standard chains
    ,                              "StSvtPoolEventT,StSvtPoolSvtMatchedTree","Create SvtMatchedTree",kFALSE},
   {"LAna"        ,"","","in,detDb,StEvent,tpcDb","StLaserAnalysisMaker"
    ,                                                   "StLaserAnalysisMaker","Laser data Analysis",kFALSE},
+  // GMT
+  {"gmtAligner"    ,"","","detDb", "StGmtAlignmentMaker","StGmtAlignmentMaker","GMT cluster plotting",kFALSE},
   {"EandBDir","","","in,StEvent,TpcHitMover,nodefault"
    ,   "StEandBDirMaker","MathMore,Spectrum,StEandBDirMaker",                   "get E&B direction",kFALSE},
   {"SpinTag"     ,"","",""                                               ,"","",STAR_CHAIN_OBSOLETE,kFALSE},
