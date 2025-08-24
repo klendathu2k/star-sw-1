@@ -2,11 +2,10 @@
 // 
 // $Id: StEEmcFastMaker.cxx,v 1.23 2010/08/05 21:23:45 stevens4 Exp $
 
-#include "St_DataSetIter.h"
-#include "StEventTypes.h"
-
 #include "StEEmcFastMaker.h"
 
+#include "St_DataSetIter.h"
+#include "StEventTypes.h"
 
 #include "StEEmcUtil/EEevent/EEeventDst.h"
 #include "StEEmcUtil/EEevent/EEsectorDst.h"
@@ -17,11 +16,8 @@
 #include "StEEmcUtil/EEmcGeom/EEmcGeomDefs.h"
 
 
-ClassImp(StEEmcFastMaker)
-
 //--------------------------------------------
-void 
-StEEmcFastMaker::Clear(Option_t *) {
+void StEEmcFastMaker::Clear(Option_t *) {
   meeve->Clear();  
   if(mEmcCollectionIsLocal) { // special use
     delete mLocalStEmcCollection;

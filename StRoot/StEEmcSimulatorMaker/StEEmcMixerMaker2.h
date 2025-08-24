@@ -13,7 +13,7 @@ of two StEmcCollections objects:
 and merges ONLY ADC hits for all EEMC pixels. 
 Hits of the second event are added to the first one.
 
-  The maker has full conectivity to the EEMC database through StEEmcDb, 
+  The maker has full connectivity to the EEMC database through StEEmcDb, 
   so it will calculate ADC from geant DE using actual gains for hits from secondary event.
   If a gain does not exist this pixel from secondary file is dropped.  
   
