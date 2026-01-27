@@ -1686,6 +1686,7 @@ Bfc_st BFC[] = { // standard chains
                                                                                   "ETOF digi maker",kFALSE},
   {"ETofCalib", "",  "ETofChain", "db, ETofUtil, muDst", "StETofCalibMaker", "StETofCalibMaker",
                                                                                  "ETOF calibration",kFALSE},
+
   {"ETofSim" ,  "",        "ETofChain", "",                    "StETofSimMaker",  "StETofSimMaker",
                                                                                    "ETOF simulator",kFALSE},
 
@@ -1888,10 +1889,7 @@ Bfc_st BFC[] = { // standard chains
                                                                                  "ETOF match maker",kFALSE},
   {"ETofQa",     "",     "ETofChain", "db, ETofUtil, muDst", "StETofQAMaker",    "StETofQAMaker",
                                                                                     "ETOF QA maker",kFALSE},
-
-  {"ETofA",  "", "","etofdat,ETofCalib,etofhit,ETofMatch","","","... ETOF chain options for data",  kFALSE},
-
-
+  {"ETofA",      "",     "",          "etofdat,ETofCalib,etofhit,ETofMatch","","","ETOF chain options for data",  kFALSE},
   // the below needs to be done earlier to save time - leaving here for documentation purposes as two
   // makers are part of the same library (let's not forget this)
   //{"mtdTrkMask"  ,"","","db",    "StMtdTrackingMaskMaker","StMtdEvtFilterMaker","MTD track masking",kFALSE},
