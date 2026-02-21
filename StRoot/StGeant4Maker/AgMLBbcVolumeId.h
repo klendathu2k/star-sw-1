@@ -20,7 +20,32 @@ public:
   
   virtual int id( int* numbv ) const { 
 
-    int _id = 1000 * numbv[0] + 100 * numbv[1] + 10 * numbv[2] + numbv[3];
+    int _id = 0;
+
+    // In the old geometry (before the 2018 EPD upgrade), BBC large tiles were included, 
+    // so the BBCA volume (Annulus) was placed twice (small and large). 
+    // This made it a multi-placed volume, so it was included in the numbv array:
+    // numbv[0] = BBCM (West/East: 1 or 2)
+    // numbv[1] = BBCA (Annulus Small/Large: 1 or 2)
+    // numbv[2] = THXM (Triple Module: 1 to 6)
+    // numbv[3] = SHXT (Single Module: 1 to 3)
+
+    // In the new geometry (2018 onwards), BBC large tiles were removed.
+    // BBCA is only placed once (small tiles only)
+    // The array elements shift left by one:
+    // numbv[0] = BBCM (West/East: 1 or 2)
+    // numbv[1] = THXM (Triple Module: 1 to 6)
+    // numbv[2] = SHXT (Single Module: 1 to 3)
+    // numbv[3] = 0 (Empty)
+
+    if (numbv[3] == 0) {
+      // New geometry: BBCA level is missing from numbv. 
+      // We hardcode the annulus level to 1 (Small tiles).
+      _id = 1000 * numbv[0] + 100 * 1 + 10 * numbv[1] + numbv[2];
+    } else {
+      // Old geometry: All 4 levels are present in numbv
+      _id = 1000 * numbv[0] + 100 * numbv[1] + 10 * numbv[2] + numbv[3];
+    }
 
     return _id;
 
