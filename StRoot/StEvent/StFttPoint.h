@@ -12,6 +12,9 @@
 #ifndef StFttPoint_h
 #define StFttPoint_h
 
+/// @file StFttPoint.h
+/// @brief Data structure for a reconstructed space point in the Forward sTGC Tracker (FTT).
+
 #include "StThreeVectorD.hh"
 #include "StObject.h"
 #include "StEnumerations.h"
@@ -19,6 +22,10 @@
 
 class StFttCluster;
 
+/// @brief Represents a reconstructed space point (cluster centroid / track intercept) in the FTT.
+///
+/// A point is formed by combining up to four cluster projections (one per readout direction)
+/// and stores both local strip-unit coordinates and global STAR coordinates.
 class StFttPoint : public StObject {
 public:
     StFttPoint();
@@ -46,14 +53,14 @@ public:
     void print(int option=0);
 
 private:
-    UChar_t mPlane;
-    UChar_t mQuadrant;
-    Float_t  mX=0.0;         // x-position in local coordinate
-    Float_t  mY=0.0;         // y-position in local coordinate
-    StFttCluster *mClusters[4];
-    StThreeVectorD  mXYZ;    // Photon position in STAR coordinate
-    UShort_t mIdTruth=0; // Truth ID
-    UShort_t mQaTruth=0; // Truth quality
+    UChar_t mPlane;                ///< FTT detector plane index.
+    UChar_t mQuadrant;             ///< FTT detector quadrant index.
+    Float_t  mX=0.0;              ///< Local x-position in strip-unit grid coordinates.
+    Float_t  mY=0.0;              ///< Local y-position in strip-unit grid coordinates.
+    StFttCluster *mClusters[4];    ///< Parent clusters, indexed by readout direction (up to 4).
+    StThreeVectorD  mXYZ;          ///< Global STAR coordinate position of the point (cm).
+    UShort_t mIdTruth=0;          ///< MC truth track ID for embedding studies.
+    UShort_t mQaTruth=0;          ///< MC truth quality (fraction of charge from the truth track, %).
 
     ClassDef(StFttPoint, 3)
 };

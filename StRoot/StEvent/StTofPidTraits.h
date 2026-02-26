@@ -40,48 +40,70 @@
 #ifndef StTofPidTraits_hh
 #define StTofPidTraits_hh
 
+/// @file StTofPidTraits.h
+/// @brief Particle identification traits for a track matched to the legacy STAR TOF detector.
+
 #include "StTrackPidTraits.h"
 
+/// @brief Particle identification traits for a track matched to the legacy STAR TOF detector.
 class StTofPidTraits : public StTrackPidTraits {
 public:
+    /// @brief Default constructor.
     StTofPidTraits();
+    /// @brief Constructs with tray/module/cell address and time-of-flight observables.
     StTofPidTraits(int, int, int, float, float, float);
+    /// @brief Destructor.
     ~StTofPidTraits();
     
     //StTofPidTraits(const StTofPidTraits&) {/* nopt */}
     //StTofPidTraits& operator=(const StTofPidTraits&) {/* nopt */}
 
+    /// @brief Returns the TOF tray number of the matched cell.
     int     tray() const;
+    /// @brief Returns the module number within the tray.
     int     module() const;
+    /// @brief Returns the cell number within the module.
     int     cell() const;
+    /// @brief Returns the measured time of flight [ns].
     float   tof() const;
+    /// @brief Returns the track path length from the interaction vertex to the hit [cm].
     float   pathLength() const;
+    /// @brief Returns the particle velocity β = v/c.
     float   beta() const;
 
+    /// @brief Returns the number of sigma from the electron hypothesis.
     float   sigmaElectron() const;
+    /// @brief Returns the number of sigma from the pion hypothesis.
     float   sigmaPion() const;
+    /// @brief Returns the number of sigma from the kaon hypothesis.
     float   sigmaKaon() const;
+    /// @brief Returns the number of sigma from the proton hypothesis.
     float   sigmaProton() const;
         
+    /// @brief Sets the number of sigma from the electron hypothesis.
     void    setSigmaElectron(float);
+    /// @brief Sets the number of sigma from the pion hypothesis.
     void    setSigmaPion(float);
+    /// @brief Sets the number of sigma from the kaon hypothesis.
     void    setSigmaKaon(float);
+    /// @brief Sets the number of sigma from the proton hypothesis.
     void    setSigmaProton(float);
 
+    /// @brief Prints the PID traits to the given option string.
     void    Print(Option_t *opt = "") const;
 
 private:
-    Int_t     mTray;
-    Int_t     mModule;
-    Int_t     mCell;
-    Float_t   mTof;
-    Float_t   mPathLength;
-    Float_t   mBeta;
+    Int_t     mTray;    ///< TOF tray number of the matched cell
+    Int_t     mModule;  ///< Module number within the tray
+    Int_t     mCell;    ///< Cell number within the module
+    Float_t   mTof;     ///< Measured time of flight [ns]
+    Float_t   mPathLength;  ///< Track path length from vertex to hit [cm]
+    Float_t   mBeta;    ///< Particle velocity β = v/c
 
-    Float_t   mSigmaElectron;
-    Float_t   mSigmaPion;
-    Float_t   mSigmaKaon;
-    Float_t   mSigmaProton;
+    Float_t   mSigmaElectron;  ///< Number of sigma from electron hypothesis
+    Float_t   mSigmaPion;      ///< Number of sigma from pion hypothesis
+    Float_t   mSigmaKaon;      ///< Number of sigma from kaon hypothesis
+    Float_t   mSigmaProton;    ///< Number of sigma from proton hypothesis
 
     ClassDef(StTofPidTraits,2)
 };

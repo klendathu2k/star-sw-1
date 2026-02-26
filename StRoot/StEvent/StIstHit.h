@@ -10,6 +10,8 @@
 
 #ifndef StIstHit_hh
 #define StIstHit_hh
+/// @file StIstHit.h
+/// @brief Intermediate Silicon Tracker (IST) hit class for the STAR HFT.
 
 #include "StarClassLibrary/StMemoryPool.hh"
 #include "StEvent/StHit.h"
@@ -18,32 +20,51 @@
 using namespace StIstConsts;
 
 
+/// @brief Reconstructed hit in the STAR Intermediate Silicon Tracker (IST), a 1D strip cluster.
 class StIstHit : public StHit
 {
 public:
+   /// @brief Constructor with geometry and cluster properties.
    StIstHit(unsigned char ladder = -1, unsigned char sensor = -1, float Charge = 0., float ChargeErr = 0.,
       unsigned char maxTB = 0, unsigned char nRawHits = 1, unsigned char nRawHitsZ = 0,
       unsigned char nRawHitsRPhi = 0);
+   /// @brief Constructor with global position, hardware address, and charge.
    StIstHit(const StThreeVectorF &position, const StThreeVectorF &error, unsigned int hwPosition, float charge,
       unsigned char trackRefCount = 0);
 
+   /// @brief Returns the detector identifier (kIstId).
    StDetectorId detector() const;
+   /// @brief Sets the detector identifier.
    void    setDetectorId(StDetectorId);
 
+   /// @brief Returns the ladder number (derived from hardware position).
    unsigned char getLadder() const;
+   /// @brief Returns the sensor number within the ladder (derived from hardware position).
    unsigned char getSensor() const;
+   /// @brief Returns the time bin with maximum charge deposition.
    unsigned char getMaxTimeBin() const;
+   /// @brief Returns the charge measurement uncertainty.
    float         getChargeErr() const;
+   /// @brief Returns the total cluster size (number of raw hits).
    unsigned char getNRawHits() const;
+   /// @brief Returns the cluster size along the z (beam) direction.
    unsigned char getNRawHitsZ() const;
+   /// @brief Returns the cluster size along the r-phi direction.
    unsigned char getNRawHitsRPhi() const;
+   /// @brief Returns the local hit coordinate along the given axis.
    float         localPosition(unsigned int ) const;
 
+   /// @brief Sets the time bin index with maximum charge.
    void setMaxTimeBin(unsigned char tb);
+   /// @brief Sets the charge uncertainty.
    void setChargeErr(float chargeErr);
+   /// @brief Sets the total cluster size.
    void setNRawHits(unsigned char nRawHits);
+   /// @brief Sets the cluster size in z.
    void setNRawHitsZ(unsigned char nRawHitsZ);
+   /// @brief Sets the cluster size in r-phi.
    void setNRawHitsRPhi(unsigned char nRawHitsRPhi);
+   /// @brief Sets the local hit position within the sensor.
    void setLocalPosition(float, float, float);
     
    void* operator new(size_t sz, void *p) { return p; }
@@ -57,7 +78,7 @@ protected:
    UChar_t mNRawHitsZ;         ///< cluster size in Z direction
    UChar_t mNRawHitsRPhi;      ///< cluster size in r-phi direction
    Float_t mLocalPosition[3];  ///< local position of hit inside the sensor
-   StDetectorId mDetectorId;
+   StDetectorId mDetectorId; ///< Detector identifier.
 
    static StMemoryPool mPool;  //!
 

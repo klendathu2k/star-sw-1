@@ -1,3 +1,7 @@
+/// @file StDetectorId.h
+/// @brief Obsolete header — all detector-ID enumerations have moved to StEnumerations.h.
+///
+/// @deprecated Include StEnumerations.h directly.
 #ifndef StDetectorId_hh
 #define StDetectorId_hh
 #include "StEnumerations.h"

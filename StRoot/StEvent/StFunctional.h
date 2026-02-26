@@ -1,5 +1,6 @@
 /*!
  * \file StFunctional.h
+ * \brief Abstract functor interfaces used for track/hit selection and PID in StEvent.
  */
 /***************************************************************************
  *
@@ -39,6 +40,10 @@ class StTrackPidTraits;
 
 /*!
  * \struct StTrackFilter
+ * \brief Abstract functor that accepts or rejects a track.
+ *
+ * Derive a concrete filter and implement @c operator() to select tracks
+ * matching arbitrary criteria (e.g. quality cuts, detector acceptance).
  */
 struct StTrackFilter
 {
@@ -47,6 +52,10 @@ struct StTrackFilter
 
 /*!
  * \struct StHitFilter
+ * \brief Abstract functor that accepts or rejects a hit.
+ *
+ * Derive a concrete filter and implement @c operator() to select hits
+ * matching arbitrary criteria (e.g. detector, quality flag).
  */
 struct StHitFilter
 {
@@ -55,6 +64,10 @@ struct StHitFilter
 
 /*!
  * \struct StPidAlgorithm
+ * \brief Abstract functor that assigns a particle identity to a track.
+ *
+ * Concrete implementations (e.g. StTpcDedxPidAlgorithm) examine the
+ * track's PID traits and return the best-matching StParticleDefinition.
  */
 struct StPidAlgorithm
 {

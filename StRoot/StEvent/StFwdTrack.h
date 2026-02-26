@@ -17,6 +17,9 @@
 #ifndef StFwdTrack_hh
 #define StFwdTrack_hh
 
+/// @file StFwdTrack.h
+/// @brief Data structures for forward-rapidity tracks reconstructed by the STAR Forward Tracker.
+
 #include "Stiostream.h"
 #include "StObject.h"
 #include <vector>
@@ -27,6 +30,7 @@
 class StFcsCluster;
 
 
+/// @brief Stores the projected position and momentum of a forward track at a specific sub-detector plane.
 struct StFwdTrackProjection : public StObject {
     StFwdTrackProjection() {}
     StFwdTrackProjection ( const StFwdTrackProjection & other) {
@@ -57,10 +61,10 @@ struct StFwdTrackProjection : public StObject {
         mMom   = other.mMom;
         memcpy( mCov, other.mCov, sizeof(mCov) ); 
     }
-    StThreeVectorD mXYZ;
-    StThreeVectorD mMom;
-    unsigned char mDetId;
-    float mCov[9];
+    StThreeVectorD mXYZ;   ///< Projected position at the detector surface (cm, global STAR coordinates).
+    StThreeVectorD mMom;   ///< Projected momentum at the detector surface (GeV/c).
+    unsigned char mDetId;  ///< Detector identifier for this projection surface.
+    float mCov[9];         ///< 3×3 position covariance matrix (row-major, cm²).
 
     float dx(){
         return sqrt( mCov[0] );
@@ -75,6 +79,7 @@ struct StFwdTrackProjection : public StObject {
     ClassDef(StFwdTrackProjection, 1)
 };
 
+/// @brief Stores a single seed-step hit point used in forward track finding.
 struct StFwdTrackSeedPoint : public StObject {
     StFwdTrackSeedPoint() {}
     StFwdTrackSeedPoint(    StThreeVectorD xyz, 
@@ -90,14 +95,19 @@ struct StFwdTrackSeedPoint : public StObject {
     short detectorId() const { return mSector / 10; }
     short sector() const { return mSector % 10; }
     
-    StThreeVectorD mXYZ;
-    unsigned short mTrackId;
-    short mSector; // = detId * 10 + sector
-    float mCov[9];
+    StThreeVectorD mXYZ;    ///< 3D position of the seed point (cm, global STAR coordinates).
+    unsigned short mTrackId; ///< Track candidate identifier.
+    short mSector;           ///< Packed detector/sector code: detId × 10 + sector.
+    float mCov[9];           ///< 3×3 position covariance matrix (row-major, cm²).
     
     ClassDef(StFwdTrackSeedPoint, 1)
 };
 
+/// @brief Represents a reconstructed track in the STAR forward rapidity region.
+///
+/// Combines hits from the Forward Silicon Tracker (FST) and Forward sTGC Tracker (FTT),
+/// fitted with GenFit.  Stores fit quality, kinematic state, projections to sub-detectors,
+/// and optional associations to FCS calorimeter clusters.
 class StFwdTrack : public StObject {
 
 public:
@@ -105,9 +115,9 @@ public:
     // dtor needed for releasing associations
     ~StFwdTrack(  );
 
-    vector<StFwdTrackProjection> mProjections;
-    vector<StFwdTrackSeedPoint> mFTTPoints;
-    vector<StFwdTrackSeedPoint> mFSTPoints;
+    vector<StFwdTrackProjection> mProjections; ///< Track projections to each instrumented sub-detector plane.
+    vector<StFwdTrackSeedPoint> mFTTPoints;    ///< Seed points from the Forward sTGC Tracker (FTT).
+    vector<StFwdTrackSeedPoint> mFSTPoints;    ///< Seed points from the Forward Silicon Tracker (FST).
 
     StFwdTrackProjection getProjectionFor(  int detectorId, 
                             size_t index = 0 );
@@ -195,26 +205,26 @@ public:
 protected:
 
     // Track quality and convergence
-    bool mDidFitConverge; // did the fit converge
-    bool mDidFitConvergeFully; // did the fit converge fully (fwd and bkw)
-    short mNumberOfFailedPoints; // number of points that failed to converge
-    short mNumberOfSeedPoints; // number of points used in the seed step
-    short mNumberOfFitPoints; // number of points used in the fit (seed + vertex)
-    float mChi2; // chi2 of the fit
-    float mNDF; // number of degrees of freedom
-    float mPval; // p-value of the fit
-    short mCharge; // charge of the track
-    StThreeVectorD mPrimaryMomentum; // momentum at the primary vertex
-    StPtrVecFcsCluster mEcalClusters; // ECAL clusters
-    StPtrVecFcsCluster mHcalClusters; // HCAL clusters
+    bool mDidFitConverge;        ///< True if the GenFit track fit converged.
+    bool mDidFitConvergeFully;   ///< True if the fit converged in both forward and backward directions.
+    short mNumberOfFailedPoints; ///< Number of track points that failed the fit update step.
+    short mNumberOfSeedPoints;   ///< Number of hits used in the track seeding step.
+    short mNumberOfFitPoints;    ///< Number of hits used in the final fit (seed hits + vertex constraint).
+    float mChi2;                 ///< Chi-squared of the track fit.
+    float mNDF;                  ///< Number of degrees of freedom of the track fit.
+    float mPval;                 ///< P-value of the track fit.
+    short mCharge;               ///< Electric charge of the track (-1, 0, or +1).
+    StThreeVectorD mPrimaryMomentum; ///< Momentum vector at the primary vertex (GeV/c).
+    StPtrVecFcsCluster mEcalClusters; ///< Associated FCS electromagnetic calorimeter clusters.
+    StPtrVecFcsCluster mHcalClusters; ///< Associated FCS hadronic calorimeter clusters.
     
-    UShort_t mIdTruth; // MC track id
-    UShort_t mQATruth; // MC track quality (percentage of hits coming from corresponding MC track)
+    UShort_t mIdTruth;  ///< MC truth track ID for embedding studies.
+    UShort_t mQATruth;  ///< MC truth quality (percentage of hits from the corresponding MC track).
 
-    float mDCA[3]; // DCA to the primary vertex
-    // vtx index is used to pack the vertex index and the track type 
+    float mDCA[3];      ///< Distance of closest approach to the primary vertex (x, y, z in cm).
+    /// @brief Packed byte: bits 7–2 = vertex index (6 bits), bits 1–0 = track type (2 bits).
     UChar_t mVtxIndex;
-    UShort_t mGlobalTrackIndex;
+    UShort_t mGlobalTrackIndex; ///< Index of the corresponding global track in the global track collection.
     
     ClassDef(StFwdTrack,4)
 };

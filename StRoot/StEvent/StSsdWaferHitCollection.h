@@ -25,24 +25,32 @@
 #ifndef StSsdWaferHitCollection_hh
 #define StSsdWaferHitCollection_hh
 
+/// @file StSsdWaferHitCollection.h
+/// @brief Defines the StSsdWaferHitCollection class holding SSD hits for a single wafer.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StSsdHit;
 
+/// @brief Collection of SSD hits on a single silicon wafer.
 class StSsdWaferHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StSsdWaferHitCollection();
     // StSsdWaferHitCollection(const StSsdWaferHitCollection&); use default
     // const StSsdWaferHitCollection&
     // operator=(const StSsdWaferHitCollection&);               use default
+    /// @brief Destructor.
     ~StSsdWaferHitCollection();
     
+    /// @brief Returns a reference to the vector of hits on this wafer.
     StSPtrVecSsdHit&       hits();
+    /// @brief Returns a const reference to the vector of hits on this wafer.
     const StSPtrVecSsdHit& hits() const;
 
 private:
-    StSPtrVecSsdHit mHits;
+    StSPtrVecSsdHit mHits;   ///<  Hits reconstructed on this wafer.
     
     ClassDef(StSsdWaferHitCollection,1)
 };

@@ -42,70 +42,106 @@
 #ifndef StTofCell_hh
 #define StTofCell_hh
 
+/// @file StTofCell.h
+/// @brief Legacy STAR Time of Flight (TOF) detector cell matched to a track.
+
 #include "StObject.h"
 #include "StThreeVectorD.hh"
 #include "StContainers.h"
 
 class StTrack;
 
+/// @brief A matched cell in the legacy STAR Time of Flight (TOF) detector.
 class StTofCell : public StObject {
 public:
+    /// @brief Default constructor.
     StTofCell();
+    /// @brief Constructs with full geometry, electronic, and track information.
     StTofCell(int, int, int, int, int, int, StTrack*,
 	    float, int, const StThreeVectorD&);
+    /// @brief Constructs with condensed geometry, electronic, and track information.
     StTofCell(int, int, int, int, StTrack*,
 	    float, int, const StThreeVectorD&);
+    /// @brief Destructor.
     ~StTofCell();
     
+    /// @brief Equality comparison operator.
     int operator==(const StTofCell&) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofCell&) const;
     
+    /// @brief Returns the TOF tray index.
     int                   trayIndex() const;
+    /// @brief Returns the module index within the tray.
     int                   moduleIndex() const;
+    /// @brief Returns the cell index within the module.
     int                   cellIndex() const;
+    /// @brief Returns the DAQ channel index.
     int                   daqIndex() const;
+    /// @brief Returns the raw ADC value.
     int                   adc() const;
+    /// @brief Returns the raw TDC value.
     int                   tdc() const;
+    /// @brief Returns the leading-edge time [ns].
     double                leadingEdgeTime() const;
+    /// @brief Returns the trailing-edge time [ns].
     double                trailingEdgeTime() const;
+    /// @brief Returns the time-over-threshold (trailing minus leading edge time) [ns].
     float                 tot() const;
+    /// @brief Returns a pointer to the associated reconstructed track.
     StTrack*              associatedTrack();
+    /// @brief Returns a const pointer to the associated reconstructed track.
     const StTrack*        associatedTrack() const;
+    /// @brief Returns the z-coordinate of the hit position [cm].
     float                 zHit() const;
+    /// @brief Returns the track-to-cell matching quality flag.
     int                   matchFlag() const;
+    /// @brief Returns the 3D hit position [cm].
     const StThreeVectorD& position() const;
     
+    /// @brief Sets the TOF tray index.
     void      setTrayIndex(int);
+    /// @brief Sets the module index within the tray.
     void      setModuleIndex(int);
+    /// @brief Sets the cell index within the module.
     void      setCellIndex(int);
+    /// @brief Sets the DAQ channel index.
     void      setDaqIndex(int);
+    /// @brief Sets the raw ADC value.
     void      setAdc(int);
+    /// @brief Sets the raw TDC value.
     void      setTdc(int);
+    /// @brief Sets the leading-edge time [ns].
     void      setLeadingEdgeTime(double);
+    /// @brief Sets the trailing-edge time [ns].
     void      setTrailingEdgeTime(double);
+    /// @brief Sets the pointer to the associated reconstructed track.
     void      setAssociatedTrack(StTrack*);
+    /// @brief Sets the z-coordinate of the hit position [cm].
     void      setZHit(float);
+    /// @brief Sets the track-to-cell matching quality flag.
     void      setMatchFlag(int);
+    /// @brief Sets the 3D hit position [cm].
     void      setPosition(const StThreeVectorD&);
 
 protected:
-    Int_t    mTrayIndex;
-    Int_t    mModuleIndex;
-    Int_t    mCellIndex;
-    Int_t    mDaqIndex;
-    Int_t    mAdc;
-    Int_t    mTdc;
-    Double_t mLeadingEdgeTime;
-    Double_t mTrailingEdgeTime;
+    Int_t    mTrayIndex;       ///< TOF tray index
+    Int_t    mModuleIndex;     ///< Module index within tray
+    Int_t    mCellIndex;       ///< Cell index within module
+    Int_t    mDaqIndex;        ///< DAQ channel index
+    Int_t    mAdc;             ///< Raw ADC value
+    Int_t    mTdc;             ///< Raw TDC value
+    Double_t mLeadingEdgeTime;   ///< Leading-edge time [ns]
+    Double_t mTrailingEdgeTime;  ///< Trailing-edge time [ns]
     //    StTrack* mAssociatedTrack;   //$LINK
 #ifdef __CINT__
     StObjLink        mAssociatedTrack;		
 #else
     StLink<StTrack>  mAssociatedTrack;		
 #endif //__CINT__
-    Float_t  mZhit;
-    Int_t    mMatchFlag;
-    StThreeVectorD mPosition;
+    Float_t  mZhit;            ///< Z coordinate of the hit position [cm]
+    Int_t    mMatchFlag;       ///< Track-to-cell matching quality flag
+    StThreeVectorD mPosition;  ///< 3D hit position [cm]
 
     ClassDef(StTofCell,4)
 };

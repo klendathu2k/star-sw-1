@@ -22,12 +22,16 @@
 #ifndef _ST_FGT_COLLECTION_H_
 #define _ST_FGT_COLLECTION_H_
 
+/// @file StFgtCollection.h
+/// @brief Event-level container for all Forward GEM Tracker (FGT) data in StEvent.
+
 #include "StObject.h"
 #include "StFgtStripCollection.h"
 #include "StFgtHitCollection.h"
 #include "StFgtPointCollection.h"
 #include "StEnumerations.h"
 
+/// @brief Top-level container for all Forward GEM Tracker (FGT) strip, hit, and point data for one event.
 class StFgtCollection : public StObject {
 public:
     // constructors
@@ -63,10 +67,10 @@ public:
 protected:
     friend class StMuDstMaker; // needed for StMuDstMaker
     
-    StFgtStripCollection mStripCollection[kFgtNumDiscs];
-    StFgtHitCollection mHitCollection[kFgtNumDiscs];
-    StFgtPointCollection mPointCollection;
-    size_t mNumTimeBins;
+    StFgtStripCollection mStripCollection[kFgtNumDiscs]; ///< Strip collections, one per FGT disc.
+    StFgtHitCollection mHitCollection[kFgtNumDiscs];     ///< Hit (1D cluster) collections, one per FGT disc.
+    StFgtPointCollection mPointCollection;               ///< Collection of reconstructed 2D points across all discs.
+    size_t mNumTimeBins;                                 ///< Number of ADC time bins sampled per strip.
 private:   
     ClassDef(StFgtCollection,2);
 }; 

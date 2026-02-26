@@ -38,47 +38,75 @@
  **************************************************************************/
 #ifndef StPxlHit_hh
 #define StPxlHit_hh
+/// @file StPxlHit.h
+/// @brief Pixel Detector (PXL) hit class for the STAR HFT innermost layer.
 #include "StHit.h"
 #include "StMemoryPool.hh"
 #include "StEnumerations.h"
 
+/// @brief Reconstructed hit in the STAR Pixel Detector (PXL), the innermost HFT layer.
 class StPxlHit : public StHit
 {
 public:
+    /// @brief Default constructor.
     StPxlHit();
+    /// @brief Constructor with full local position, geometry, charge, and truth information.
     StPxlHit(const double localPos[3], unsigned int sector, unsigned int ladder,
              unsigned int sensor, const StThreeVectorF& position, const StThreeVectorF& error,
              unsigned int hwPosition, float charge, unsigned char trackRefCount = 0,
              unsigned short idTruth=0, unsigned short quality=0, unsigned short id=0);
+    /// @brief Constructor with local position, geometry, and Monte Carlo truth label.
     StPxlHit(const double localPos[3], unsigned int sector, unsigned int ladder,
              unsigned int sensor, unsigned short idTruth);
+    /// @brief Constructor with cluster centroid (mean row/column) and geometry indices.
     StPxlHit(float meanRow, float meanColumn, unsigned int sector, unsigned int ladder,
              unsigned int sensor);
+    /// @brief Destructor.
     ~StPxlHit();
-    
+
+    /// @brief Returns the detector identifier (kPxlId).
     StDetectorId detector() const;
-    
+
+    /// @brief Returns the sector number (1–10).
     unsigned int sector() const;
+    /// @brief Returns the ladder number within the sector (1–4).
     unsigned int ladder() const;
+    /// @brief Returns the sensor number within the ladder (1–10).
     unsigned int sensor() const;
+    /// @brief Returns the mean cluster row in pixel coordinates.
     float meanRow() const;
+    /// @brief Returns the mean cluster column in pixel coordinates.
     float meanColumn() const;
+    /// @brief Returns the number of raw hits (pixels) forming this cluster.
     unsigned int nRawHits() const;
+    /// @brief Returns the PXL layer number (1 for inner, 2 for outer ladders).
     unsigned int layer() const ;
-    
+
+    /// @brief Returns the local hit coordinate along the given axis (0=u, 1=v, 2=transverse).
     float localPosition(unsigned int) const;
+    /// @brief Returns a pointer to the three-element local position array (u, v, transverse).
     const float* localPosition() const;
+    /// @brief Sets the local hit position (u, v, transverse) within the sensor.
     void  setLocalPosition(float, float, float);
+    /// @brief Sets the local v-coordinate (sensor normal direction) of the hit.
     void  setLocalY(float y);
-    
+
+    /// @brief Sets the sector number.
     void setSector(unsigned char);
+    /// @brief Sets the ladder number.
     void setLadder(unsigned char);
+    /// @brief Sets the sensor number.
     void setSensor(unsigned char);
+    /// @brief Sets the detector identifier.
     void setDetectorId(StDetectorId);
+    /// @brief Sets the mean cluster row.
     void setMeanRow(float);
+    /// @brief Sets the mean cluster column.
     void setMeanColumn(float);
+    /// @brief Sets the number of raw hits (cluster size).
     void setNRawHits(unsigned char);
-    
+
+    /// @brief Returns true; PXL hits are sortable by hardware position.
     virtual bool isSortable() const;
     
     void* operator new(size_t sz,void *p)     { return p;}
@@ -86,19 +114,18 @@ public:
     void  operator delete(void* p) { mPool.free(p); }
     
 protected:
-    UChar_t mSector; //Sector : 1-10
-    UChar_t mLadder; //Ladder : 1-4 
-    UChar_t mSensor; //Sensor : 1-10
-    Float_t mMeanRow; // mean row : mean row of the pxl cluster
-    Float_t mMeanColumn; // mean column : mean column of the pxl cluster
-    UChar_t mNRawHits; // nRawHits
-    //local position of hit inside the wafer 
-    // 3D : u,v,TPS
+    UChar_t mSector;         ///< Sector number (1–10).
+    UChar_t mLadder;         ///< Ladder number within the sector (1–4).
+    UChar_t mSensor;         ///< Sensor number within the ladder (1–10).
+    Float_t mMeanRow;        ///< Mean row of the PXL cluster in pixel coordinates.
+    Float_t mMeanColumn;     ///< Mean column of the PXL cluster in pixel coordinates.
+    UChar_t mNRawHits;       ///< Number of raw pixel hits (cluster size).
+    /// @brief Local hit position within the sensor wafer: (u, v, transverse).
     Float_t mLocalPosition[3];
     
     // this has to go once the playing and testing is over.
     // should be hard wired in member function.
-    StDetectorId mDetectorId;
+    StDetectorId mDetectorId; ///< Detector identifier.
     
     static StMemoryPool mPool;  //!
     

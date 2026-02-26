@@ -13,6 +13,8 @@
 
 #ifndef StGmtPoint_hh
 #define StGmtPoint_hh
+/// @file StGmtPoint.h
+/// @brief GMT 2D point class formed by pairing two orthogonal 1D strip clusters.
 
 // StEvent headers
 #include "StHit.h"

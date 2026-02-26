@@ -28,10 +28,14 @@
 #ifndef StEmcClusterCollection_hh
 #define StEmcClusterCollection_hh
 
+/// @file StEmcClusterCollection.h
+/// @brief Collection of EMC clusters for a single calorimeter detector.
+
 #include "StContainers.h"
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Owns the set of reconstructed EMC clusters for one sub-detector and records the cluster-finder provenance.
 class StEmcClusterCollection : public StObject {
 public:
     StEmcClusterCollection();
@@ -39,26 +43,35 @@ public:
     // StEmcClusterCollection& operator=(const StEmcClusterCollection&); use default
     virtual ~StEmcClusterCollection();
     
+    /// @brief Returns the identifier of the sub-detector these clusters belong to.
     StDetectorId detector() const;
+    /// @brief Sets the sub-detector identifier.
     void setDetector(StDetectorId);
     
+    /// @brief Returns the number of clusters in this collection.
     int numberOfClusters() const;
+    /// @brief Returns the list of clusters in this collection.
     StSPtrVecEmcCluster&       clusters();
     const StSPtrVecEmcCluster& clusters() const;
 
+    /// @brief Adds a cluster to this collection (takes ownership).
     void addCluster(StEmcCluster*);
     
+    /// @brief Returns the identifier of the cluster-finder algorithm used.
     int  clusterFinderId() const;
+    /// @brief Returns the version number of the cluster-finder parameter set.
     int  clusterFinderParamVersion() const;
+    /// @brief Sets the cluster-finder algorithm identifier.
     void setClusterFinderId(int);
+    /// @brief Sets the cluster-finder parameter version number.
     void setClusterFinderParamVersion(int);
     
 private:
-    StDetectorId        mDetector;
-    StSPtrVecEmcCluster mClusters;
+    StDetectorId        mDetector;              ///< Identifier of the sub-detector owning these clusters.
+    StSPtrVecEmcCluster mClusters;              ///< Owned list of reconstructed clusters.
     
-    Int_t        mClusterFinderId;
-    Int_t        mClusterFinderParamVersion;
+    Int_t        mClusterFinderId;              ///< Identifier of the cluster-finder algorithm.
+    Int_t        mClusterFinderParamVersion;    ///< Version of the cluster-finder parameter set.
     
     ClassDef(StEmcClusterCollection,1)
 };

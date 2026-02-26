@@ -10,6 +10,9 @@
 #ifndef StFstHit_hh
 #define StFstHit_hh
 
+/// @file StFstHit.h
+/// @brief Data structure for an individual FST reconstructed hit (1D cluster).
+
 #include "StarClassLibrary/StMemoryPool.hh"
 #include "StEvent/StHit.h"
 #include "StEvent/StEnumerations.h"
@@ -17,6 +20,10 @@
 
 #include <iostream>
 
+/// @brief Represents a single reconstructed hit (1D cluster of strips) in the Forward Silicon Tracker (FST).
+///
+/// Position is stored as the mean R-strip and phi-strip indices within the sensor,
+/// in addition to the global 3D position inherited from StHit.
 class StFstHit : public StHit
 {
 public:
@@ -61,16 +68,16 @@ public:
    void  operator delete(void* p)         { mPool.free(p); }
 
 protected:
-   UChar_t mApv;            ///< Apv id the hit belongs to
-   UChar_t mMaxTimeBin;        ///< max charge time bin
-   Float_t mMeanRStrip;        ///< Hit's mean rstrip
-   Float_t mMeanPhiStrip;      ///< Hit's mean phistrip
-   Float_t mChargeErr;         ///< charge uncertainty
-   UChar_t mNRawHits;          ///< nRawHits: cluster size
-   UChar_t mNRawHitsR;         ///< cluster size in Z direction
-   UChar_t mNRawHitsPhi;      ///< cluster size in r-phi direction
-   Float_t mLocalPosition[3];  ///< local position of hit inside the sensor
-   StDetectorId mDetectorId;
+   UChar_t mApv;               ///< APV chip ID to which this hit belongs.
+   UChar_t mMaxTimeBin;        ///< Time bin index of the maximum charge sample.
+   Float_t mMeanRStrip;        ///< Mean R-strip index of the cluster (charge-weighted centroid).
+   Float_t mMeanPhiStrip;      ///< Mean phi-strip index of the cluster (charge-weighted centroid).
+   Float_t mChargeErr;         ///< Uncertainty on the reconstructed cluster charge.
+   UChar_t mNRawHits;          ///< Total cluster size (number of raw hits).
+   UChar_t mNRawHitsR;         ///< Cluster size in the radial (R) strip direction.
+   UChar_t mNRawHitsPhi;       ///< Cluster size in the azimuthal (phi) strip direction.
+   Float_t mLocalPosition[3];  ///< Local position of the hit within the sensor (x, y, z) in cm.
+   StDetectorId mDetectorId;   ///< Detector identifier (kFstId).
 
    static StMemoryPool mPool;  //!
 

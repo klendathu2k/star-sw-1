@@ -186,263 +186,456 @@
 #ifndef StTriggerData_hh
 #define StTriggerData_hh
 
+/// @file StTriggerData.h
+/// @brief Abstract base class for STAR trigger data, providing access to all trigger detector readouts.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 #include "StMessMgr.h"
 
+/// @brief Abstract base class providing a uniform interface to STAR trigger data
+///        from all sub-detectors across all run years.
+///        Concrete implementations exist per run year (e.g., StTriggerData2019).
+///        The @p prepost argument selects pre-/post-crossing data: 0 = triggered
+///        crossing, negative = pre-crossing, positive = post-crossing (range -5 to +5).
 class StTriggerData : public StObject {
 public:
     StTriggerData();
     virtual ~StTriggerData();
     
+    /// @brief Read/decode raw trigger data (no-op in most implementations).
     virtual void readData() {};
+    /// @brief Dump the trigger data contents to stdout for debugging.
     virtual void dump() const = 0;   // dump data into text
+    /// @brief Enable or increase debug output verbosity.
     virtual void setDebug(unsigned int); 
+    /// @brief Blind run-identifying information for unblinded analysis (Run 18+).
     virtual void blindRunInfo();     // for run18 blinding analysis
        
     // version and data type information   
+    /// @brief Return the run year associated with this trigger data.
     virtual int year() const;                          // year of the data
+    /// @brief Return the trigger data format version number.
     virtual unsigned int version() const = 0;          // TrgDataType Version Number 
+    /// @brief Return the number of pre-crossing data samples stored.
     virtual unsigned int numberOfPreXing() const = 0;  // # of pre xing data for detectors
+    /// @brief Return the number of post-crossing data samples stored.
     virtual unsigned int numberOfPostXing() const = 0; // # of post xing data for detectors
+    /// @brief Return the error flag word; non-zero indicates data corruption.
     virtual unsigned int errorFlag() const;            // error flag
   
     // generic trigger infomations
+    /// @brief Return the DAQ event number.
     virtual unsigned int eventNumber() const;
+    /// @brief Return the trigger token identifying this crossing.
     virtual unsigned int token() const = 0;
+    /// @brief Return the L0 hardware trigger word.
     virtual unsigned int triggerWord() const = 0;
+    /// @brief Return the trigger action word (detector/algorithm decision bits).
     virtual unsigned int actionWord() const = 0;  
+    /// @brief Return the ZDC killer bit (suppresses ZDC trigger when set).
     virtual unsigned int zdcKillerBit() const;
+    /// @brief Return the trigger busy status word.
     virtual unsigned short busyStatus() const;
+    /// @brief Return the DSM input word.
     virtual unsigned short dsmInput() const;
+    /// @brief Return the trigger token from the TCU.
     virtual unsigned short trgToken() const;
+    /// @brief Return the DSM address word.
     virtual unsigned short dsmAddress() const;
+    /// @brief Return the additional bits word.
     virtual unsigned short mAddBits() const;
+    /// @brief Return bunch-crossing data for the given @p channel.
     virtual unsigned short bcData(int channel) const;
 
+    /// @brief Return the trigger detector mask.
     virtual unsigned short getTrgDetMask() const;
+    /// @brief Return the trigger crate mask.
     virtual unsigned int   getTrgCrateMask() const;
 
     //L2 results offsets 
+    /// @brief Return the memory offset into the L2 result block for algorithm @p id.
     virtual int L2ResultsOffset(StL2AlgorithmId id) const;  
+    /// @brief Return true if the L2 algorithm result of type @p id fired.
     bool isL2Triggered(StL2TriggerResultType id) const;
+    /// @brief Return the 64-bit L2 trigger summary word.
     virtual unsigned long long l2sum() const;
 
     // bunch and spin bits
+    /// @brief Return the TCU bunch counter value.
     virtual unsigned int tcuCounter() const;
+    /// @brief Return the RCC (revolution-clock counter) for the given @p crate.
     virtual unsigned int rccCounter(int crate) const;
+    /// @brief Return the full 48-bit bunch counter value.
     virtual unsigned long long bunchCounter() const;
+    /// @brief Return the high 32 bits of the bunch counter.
     virtual unsigned int bunchCounterHigh() const;
+    /// @brief Return the low 32 bits of the bunch counter.
     virtual unsigned int bunchCounterLow() const;
+    /// @brief Return the 48-bit bunch crossing identifier.
     virtual unsigned int bunchId48Bit() const;
+    /// @brief Return the 7-bit bunch crossing identifier.
     virtual unsigned int bunchId7Bit() const;
+    /// @brief Return revolution tick counter 1.
     virtual unsigned int revTick1() const;
+    /// @brief Return revolution tick counter 2.
     virtual unsigned int revTick2() const;
+    /// @brief Return revolution tick counter 3.
     virtual unsigned int revTick3() const;
+    /// @brief Return the combined spin bit word for both beams.
     virtual unsigned int spinBit() const;
+    /// @brief Return spin bit: yellow beam filled.
     virtual unsigned int spinBitYellowFilled() const;
+    /// @brief Return spin bit: yellow beam spin-up.
     virtual unsigned int spinBitYellowUp() const;
+    /// @brief Return spin bit: yellow beam spin-down.
     virtual unsigned int spinBitYellowDown() const;
+    /// @brief Return spin bit: yellow beam unpolarized.
     virtual unsigned int spinBitYellowUnpol() const;
+    /// @brief Return spin bit: blue beam filled.
     virtual unsigned int spinBitBlueFilled() const;
+    /// @brief Return spin bit: blue beam spin-up.
     virtual unsigned int spinBitBlueUp() const;
+    /// @brief Return spin bit: blue beam spin-down.
     virtual unsigned int spinBitBlueDown() const;
+    /// @brief Return spin bit: blue beam unpolarized.
     virtual unsigned int spinBitBlueUnpol() const;
   
     // high level DSM infos
+    /// @brief Return the TCU bits word from the last DSM layer.
     virtual unsigned short tcuBits() const = 0;
+    /// @brief Return the last (final) DSM layer output for @p channel.
     virtual unsigned short lastDSM(int channel) const;
+    /// @brief Return the vertex DSM value for @p channel.
     virtual unsigned short vertexDSM(int channel) const;
+    /// @brief Return the CTB layer-1 DSM value for @p channel.
     virtual unsigned short ctbLayer1DSM(int channel) const;
+    /// @brief Return the CTB layer-2 DSM value for @p channel.
     virtual unsigned short ctbLayer2DSM(int channel) const;
+    /// @brief Return the BEMC layer-1 DSM value for @p channel.
     virtual unsigned short bemcLayer1DSM(int channel, int prepost=0) const;
+    /// @brief Return the EEMC layer-1 DSM value for @p channel.
     virtual unsigned short eemcLayer1DSM(int channel, int prepost=0) const;
+    /// @brief Return the combined EMC layer-2 DSM value for @p channel.
     virtual unsigned short emcLayer2DSM(int channel) const;
+    /// @brief Return the TPC mask DSM value for @p channel.
     virtual unsigned short tpcMaskDSM(int channel) const;
+    /// @brief Return the raw FPD layer-1 DSM value for given direction and @p channel.
     virtual unsigned short fpdLayer1DSMRaw(StBeamDirection eastwest, int channel, int prepost=0) const;
+    /// @brief Return the decoded FPD layer-1 DSM value for given direction, module, and board.
     virtual unsigned short fpdLayer1DSM(StBeamDirection eastwest, int module, int board, int prepsot=0) const;
+    /// @brief Return the raw FPD layer-2 DSM value for @p channel.
     virtual unsigned short fpdLayer2DSMRaw(int channel) const;
+    /// @brief Return the decoded FPD layer-2 DSM value for given direction and module.
     virtual unsigned short fpdLayer2DSM(StBeamDirection eastwest, int module) const;
 
     // CTB
+    /// @brief Return the raw CTB (Central Trigger Barrel) word at @p address.
     virtual unsigned short ctbRaw(int address, int prepost=0) const;
+    /// @brief Return the CTB MIP count for PMT @p pmt.
     virtual unsigned short ctb(int pmt, int prepost=0) const;
+    /// @brief Return the CTB MIP count for the given tray and slat.
     virtual unsigned short ctbTraySlat(int tray, int slat, int prepost=0) const;
+    /// @brief Return the summed CTB MIP count across all trays and slats.
     virtual unsigned short ctbSum(int prepost=0) const;
 
     // MWC
+    /// @brief Return the MWC (Multi-Wire Chamber) hit count for @p sector.
     virtual unsigned short mwc(int sector, int prepost=0) const;
 
     // ZDC 
+    /// @brief Return true if ZDC (Zero Degree Calorimeter) data is present.
     virtual bool zdcPresent(int prepost=0) const;
+    /// @brief Return raw ZDC ADC value at hardware @p channel.
     virtual unsigned short zdcAtChannel(int channel, int prepost=0) const;
+    /// @brief Return raw ZDC ADC value at hardware @p address.
     virtual unsigned short zdcAtAddress(int address, int prepost=0) const;
+    /// @brief Return un-attenuated ZDC ADC sum for east or west arm.
     virtual unsigned short zdcUnAttenuated(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return attenuated ZDC ADC sum for east or west arm.
     virtual unsigned short zdcAttenuated(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return ZDC ADC value for PMT @p pmt in east or west arm.
     virtual unsigned short zdcADC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return ZDC TDC value for east or west arm.
     virtual unsigned short zdcTDC(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return ZDC TDC value for individual PMT @p pmt in east or west arm.
     virtual unsigned short zdcPmtTDC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return ZDC hardware ADC sum.
     virtual unsigned short zdcHardwareSum(int prepost=0) const;
     // ZDC DSM L1
+    /// @brief Return ZDC DSM layer-1 earliest TDC for east or west.
     virtual unsigned short zdcEarliestTDC(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return true if ZDC sum ADC is above threshold (DSM L1).
     virtual bool zdcSumADCaboveThreshold(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return true if ZDC front ADC is above threshold (DSM L1).
     virtual bool zdcFrontADCaboveThreshold(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return true if ZDC back ADC is above threshold (DSM L1).
     virtual bool zdcBackADCaboveThreshold(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return ZDC DSM layer-1 truncated ADC sum for east or west.
     virtual unsigned short zdcTruncatedSum(StBeamDirection eastwest, int prepost=0) const;
     // ZDC DSM L2
+    /// @brief Return true if ZDC sum ADC is above threshold (DSM L2).
     virtual bool zdcSumADCaboveThresholdL2(StBeamDirection eastwest) const;
+    /// @brief Return true if ZDC front ADC is above threshold (DSM L2).
     virtual bool zdcFrontADCaboveThresholdL2(StBeamDirection eastwest) const;
+    /// @brief Return true if ZDC back ADC is above threshold (DSM L2).
     virtual bool zdcBackADCaboveThresholdL2(StBeamDirection eastwest) const;
+    /// @brief Return ZDC east-west time difference from DSM layer-2.
     virtual unsigned short zdcTimeDifference() const;
     // ZDC DSM L3
+    /// @brief Return true if ZDC sum ADC is above threshold (last DSM layer).
     virtual bool zdcSumADCaboveThresholdL3(StBeamDirection eastwest) const;
+    /// @brief Return true if ZDC front ADC is above threshold (last DSM layer).
     virtual bool zdcFrontADCaboveThresholdL3(StBeamDirection eastwest) const;
+    /// @brief Return true if ZDC back ADC is above threshold (last DSM layer).
     virtual bool zdcBackADCaboveThresholdL3(StBeamDirection eastwest) const;
+    /// @brief Return true if ZDC time difference is within the coincidence window (last DSM).
     virtual bool zdcTimeDifferenceInWindow() const;
 
     //ZDCSMD
+    /// @brief Return true if ZDC Shower Maximum Detector (SMD) data is present.
     virtual bool zdcSMDPresent(int prepost=0) const;
+    /// @brief Return ZDC SMD strip ADC for given direction (east/west), orientation (vert/horiz), and strip number.
     virtual unsigned short zdcSMD(StBeamDirection eastwest, int verthori, int strip, int prepost=0) const;
+    /// @brief Return ZDC SMD strip with highest ADC for given direction and orientation.
     virtual unsigned short zdcSMDHighestStrip(StBeamDirection eastwest, int verthori, int prepost=0) const;
 
     // EMC
+    /// @brief Return the BEMC high-tower ADC for trigger patch @p patch_id.
     virtual unsigned char bemcHighTower(int patch_id, int prepost=0) const;
+    /// @brief Return the BEMC jet-patch ADC sum for patch @p patch_id.
     virtual unsigned char bemcJetPatch (int patch_id, int prepost=0) const;
+    /// @brief Return the EEMC high-tower ADC for trigger patch @p patch_id.
     virtual unsigned char eemcHighTower(int patch_id, int prepost=0) const;
+    /// @brief Return the EEMC jet-patch ADC sum for patch @p patch_id.
     virtual unsigned char eemcJetPatch (int patch_id, int prepost=0) const;
+    /// @brief Return the highest BEMC tower ADC in this crossing.
     virtual unsigned char bemcHighestTowerADC(int prepost=0) const;
+    /// @brief Return the highest EEMC tower ADC in this crossing.
     virtual unsigned char eemcHighestTowerADC(int prepost=0) const;
 
     // BBC bbcTDC
+    /// @brief Return BBC (Beam-Beam Counter) ADC for PMT @p pmt in east or west arm.
     virtual unsigned short bbcADC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return BBC TDC for PMT @p pmt in east or west arm.
     virtual unsigned short bbcTDC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return BBC 5-bit TDC value for PMT @p pmt in east or west arm.
     virtual unsigned short bbcTDC5bit(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return BBC small-tile ADC sum for east or west arm.
     virtual unsigned short bbcADCSum(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return BBC large-tile ADC sum for east or west arm.
     virtual unsigned short bbcADCSumLargeTile(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return BBC earliest small-tile TDC for east or west arm.
     virtual unsigned short bbcEarliestTDC(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return BBC small-tile east-west time difference.
     virtual unsigned short bbcTimeDifference() const;
+    /// @brief Return BBC TAC (time-to-amplitude converter) sum.
     virtual unsigned short bbcTacSum() const;
+    /// @brief Return BBC earliest large-tile TDC for east or west arm.
     virtual unsigned short bbcEarliestTDCLarge(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return BBC large-tile east-west time difference.
     virtual unsigned short bbcTimeDifferenceLarge() const;
+    /// @brief Return BBC BB101 board data for @p ch channel.
     virtual unsigned short bbcBB101(int ch, int prepost=0) const;
+    /// @brief Return BBC BB102 board data for @p ch channel.
     virtual unsigned short bbcBB102(int ch, int prepost=0) const;
   
     // FPD  module #: north=0, south=1, top=2, bottom=3, north preshower=4, south preshower=5
+    /// @brief Return FPD (Forward Pion Detector) ADC for the given direction, module, and PMT.
     virtual unsigned short fpd(StBeamDirection eastwest, int module, int pmt, int prepost=0) const; 
+    /// @brief Return FPD ADC sum for the given direction and module.
     virtual unsigned short fpdSum(StBeamDirection eastwest, int module) const;
   
     // FMS 
+    /// @brief Return the number of QT (charge-to-time) data words for FMS.
     virtual unsigned short nQTdata(int prepost=0) const;
+    /// @brief Return a pointer to the raw QT data array for FMS.
     virtual unsigned int*  QTdata(int prepost=0) const;
+    /// @brief Return the FMS ADC value for crate @p crt, address @p adr, channel @p ch.
     virtual unsigned short fmsADC(int crt, int adr, int ch, int prepost=0) const;
+    /// @brief Return the FMS TDC value for crate @p crt, address @p adr, channel @p ch.
     virtual unsigned short fmsTDC(int crt, int adr, int ch, int prepost=0) const;
 
     //EPD
+    /// @brief Return EPD (Event Plane Detector) earliest TDC for east or west.
     virtual unsigned short epdEarliestTDC(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return EPD east-west time difference.
     virtual unsigned short epdTimeDifference() const;
+    /// @brief Return true if EPD registers a layer-2 DSM hit for east or west.
     virtual bool           epdHitLayer2(StBeamDirection eastwest) const;
+    /// @brief Return EPD layer-1 DSM value for channel @p ch.
     virtual unsigned short epdLayer1(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-1a DSM value for channel @p ch.
     virtual unsigned short epdLayer1a(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-1b DSM value for channel @p ch.
     virtual unsigned short epdLayer1b(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-0 threshold (tile-sum) for channel @p ch.
     virtual unsigned short epdLayer0t(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-0a value for channel @p ch.
     virtual unsigned short epdLayer0a(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-0 hit-flag byte for channel @p ch.
     virtual unsigned char  epdLayer0h(int ch, int prepost=0) const;
+    /// @brief Return EPD ADC for crate @p crt, address @p adr, channel @p ch.
     virtual unsigned short epdADC(int crt, int adr, int ch, int prepost=0) const;
+    /// @brief Return EPD TDC for crate @p crt, address @p adr, channel @p ch.
     virtual unsigned short epdTDC(int crt, int adr, int ch, int prepost=0) const;    
+    /// @brief Return EPD hit multiplicity for east or west.
     virtual unsigned short epdNHits(StBeamDirection eastwest, int prepost=0) const;    
+    /// @brief Return EPD hit multiplicity from QT board for given crate, QT, and multiplicity type.
     virtual unsigned short epdNHitsQT(int crate, int qt, int mult12, int prepost=0) const;
+    /// @brief Return EPD layer-0a multiplicity for channel @p ch.
     virtual unsigned short epdLayer0aMult(int ch, int prepost=0) const;
+    /// @brief Return EPD layer-0 hit-flag multiplicity for channel @p ch and type @p mult12.
     virtual unsigned short epdLayer0hMult(int ch, int mult12, int prepost=0) const;
+    /// @brief Return EPD layer-1b ring multiplicity for east or west and @p ring.
     virtual unsigned short epdLayer1bMult(StBeamDirection eastwest, int ring, int prepost=0) const;
+    /// @brief Return total EPD hit multiplicity (east + west).
     virtual unsigned short epdMultTotal(int prepost=0) const;
+    /// @brief Return EPD hit multiplicity asymmetry (east - west).
     virtual unsigned short epdMultDiff(int prepost=0) const;
 
     // VPD
+    /// @brief Return VPD (Vertex Position Detector) ADC for PMT @p pmt in east or west arm.
     virtual unsigned short vpdADC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return VPD TDC for PMT @p pmt in east or west arm.
     virtual unsigned short vpdTDC(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return VPD high-threshold ADC for PMT @p pmt in east or west arm.
     virtual unsigned short vpdADCHighThr(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return VPD high-threshold TDC for PMT @p pmt in east or west arm.
     virtual unsigned short vpdTDCHighThr(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return VPD earliest TDC for east or west arm.
     virtual unsigned short vpdEarliestTDC(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return VPD earliest high-threshold TDC for east or west arm.
     virtual unsigned short vpdEarliestTDCHighThr(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return VPD ADC sum for east or west arm.
     virtual unsigned short vpdADCSum(StBeamDirection eastwest, int prepost=0) const;
+    /// @brief Return VPD east-west time difference used for vertex reconstruction.
     virtual unsigned short vpdTimeDifference() const;
+    /// @brief Return VPD mean time difference (in ns) for the given crossing.
     virtual float          vpdMeanTimeDifference(int prepost=0) const;
+    /// @brief Return BBC/VPD VP101 board data for channel @p ch.
     virtual unsigned short bbcVP101(int ch, int prepost = 0) const;
 
     //MXQ crate
+    /// @brief Return MXQ crate data at the given address and slot.
     virtual unsigned short mxqAtSlotAddress(int address, int prepost=0, int slot=0) const;
 
     //MTD
+    /// @brief Return MTD (Muon Telescope Detector) QT data for board @p qtid at @p address.
     virtual unsigned short mtdQtAtCh(int qtid, int address, int prepost) const;
+    /// @brief Return MTD data at hardware @p address.
     virtual unsigned short mtdAtAddress(int address, int prepost=0) const;
+    /// @brief Return MTD GEM detector data at hardware @p address.
     virtual unsigned short mtdgemAtAddress(int address, int prepost=0) const;
+    /// @brief Return MTD (third generation) data at hardware @p address.
     virtual unsigned short mtd3AtAddress(int address, int prepost=0) const;
+    /// @brief Return MTD ADC for PMT @p pmt in east or west arm.
     virtual unsigned short mtdAdc(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return MTD TDC for PMT @p pmt in east or west arm.
     virtual unsigned short mtdTdc(StBeamDirection eastwest, int pmt, int prepost=0) const;
+    /// @brief Return MTD DSM byte at channel @p ch.
     virtual unsigned char  mtdDsmAtCh(int ch, int prepost=0) const;
+    /// @brief Return true if MTD DSM reports a hit at PMT @p pmt.
     virtual bool           mtdDsmHit(int pmt, int prepost=0) const;
+    /// @brief Return MTD-VPD TAC (time-to-amplitude converter) difference.
     virtual unsigned short mtdVpdTacDiff() const;
+    /// @brief Return MTD (fourth generation) data at hardware @p address.
     virtual unsigned short mtd4AtAddress(int address, int prepost=0) const;
 
     //TOF
+    /// @brief Return TOF (Time-of-Flight) data at hardware @p address.
     virtual unsigned short tofAtAddress(int address, int prepost=0) const;
+    /// @brief Return TOF hit multiplicity for tray @p tray.
     virtual unsigned short tofTrayMultiplicity(int tray, int prepost=0) const;
+    /// @brief Return total TOF hit multiplicity across all trays.
     virtual unsigned short tofMultiplicity(int prepost=0) const;
+    /// @brief Return TF201 DSM channel @p ch value.
     virtual unsigned short dsmTF201Ch(int ch) const;
 
     //PP2PP
+    /// @brief Return pp2pp ADC for given beam direction, plane orientation, up/down/in/out, and channel.
     virtual unsigned short pp2ppADC(StBeamDirection eastwest, int vh, int udio, int ch, int prepost=0) const;
+    /// @brief Return pp2pp TAC for given beam direction, plane, up/down/in/out, and channel.
     virtual unsigned short pp2ppTAC(StBeamDirection eastwest, int vh, int udio, int ch, int prepost=0) const;
+    /// @brief Return pp2pp DSM word.
     virtual unsigned long  pp2ppDSM(int prepost=0) const;
 
     // auxiliary information
+    /// @brief Return the ZDC-derived vertex z-position (cm).
     float zdcVertexZ() const;
+    /// @brief Set the ZDC-derived vertex z-position (cm).
     void  setZdcVertexZ(float);
     
     // Experts only!
+    /// @brief Return a raw pointer to the underlying trigger data structure.
     virtual char* getTriggerStructure() = 0;
+    /// @brief Return the total size in bytes of the raw trigger data.
     virtual int getRawSize() const = 0;
+    /// @brief Return pointer to BEMC east DSM layer-0 data.
     virtual unsigned char*  getDsm0_BEMCE(int prepost=0) const =0;
+    /// @brief Return pointer to BEMC west DSM layer-0 data.
     virtual unsigned char*  getDsm0_BEMCW(int prepost=0) const =0;
+    /// @brief Return pointer to BEMC DSM layer-1 data.
     virtual unsigned short* getDsm1_BEMC(int prepost=0)  const =0;
+    /// @brief Return pointer to EEMC DSM layer-0 data.
     virtual unsigned char*  getDsm0_EEMC(int prepost=0)  const =0;
+    /// @brief Return pointer to EEMC DSM layer-1 data.
     virtual unsigned short* getDsm1_EEMC(int prepost=0)  const =0;
+    /// @brief Return pointer to combined EMC DSM layer-2 data.
     virtual unsigned short* getDsm2_EMC()                const =0;
+    /// @brief Return pointer to last (layer-3) DSM data.
     virtual unsigned short* getDsm3()                    const =0;
+    /// @brief Return pointer to FMS DSM layer-0 data.
     virtual unsigned char*  getDsm_FMS(int prepost=0)    const;
+    /// @brief Return pointer to FMS DSM layer-01 data.
     virtual unsigned char*  getDsm01_FMS(int prepost=0)  const;
+    /// @brief Return pointer to FMS DSM layer-02 data.
     virtual unsigned char*  getDsm02_FMS(int prepost=0)  const;
+    /// @brief Return pointer to FMS DSM layer-1 data.
     virtual unsigned short* getDsm1_FMS(int prepost=0)   const;
+    /// @brief Return pointer to FMS DSM layer-2 data.
     virtual unsigned short* getDsm2_FMS() const;
+    /// @brief Return the length (in words) of the L2 result block.
     virtual unsigned int    l2ResultLength() const = 0;  // Length of raw info
+    /// @brief Return a pointer to the raw L2 result data.
     virtual const unsigned int* l2Result() const = 0;  // Pointer to raw info
 
     // StFmsHitMaker only!!!
+    /// @brief Zero out the FMS data block (used by StFmsHitMaker to prevent double-counting).
     virtual void killFMS();
 
 protected:
+    /// @brief Map pre/post crossing index to internal array address; returns negative if out of range.
     int prepostAddress(int prepost) const; //get pre&post xsing addess, return negative if bad.
         
     // Service routine to decode EMC layer0 DSM info into 12bit input values
+    /// @brief Decode a 12-bit EMC input value from DSM layer-0 raw data.
     unsigned short decodeEmc12bit(const int dsm, const int channel, const unsigned char *raw) const;
   
     // Byte swapping functions
+    /// @brief Swap bytes of a 32-bit word (big/little endian conversion).
     void swapI(unsigned int *);
+    /// @brief Swap the two bytes of each 16-bit sub-word in a packed 32-bit word.
     void swapSCC(unsigned int *);
+    /// @brief Swap adjacent bytes within each 16-bit half of a 32-bit word.
     void swapSS(unsigned int *);
+    /// @brief Apply swapI to an array of @p n 32-bit words.
     void swapIn(unsigned int *, unsigned int);
+    /// @brief Apply swapSS to an array of @p n/2 32-bit words.
     void swapSSn(unsigned int *, unsigned int);
+    /// @brief Apply swapSCC to an array of @p n 32-bit words.
     void swapSCCn(unsigned int *, unsigned int);
 
     // QT data decoding
     enum {MaxQTData = 529}; //!
+    /// @brief Decode a QT (charge-to-time) board data block into ADC and TAC arrays.
     void decodeQT(unsigned int ndata, unsigned int *data, unsigned short adc[16][32], unsigned char tac[16][32]);
 
 protected:
-    int   mYear;
-    float mZdcVertexZ;    
-    int   mRun;
-    unsigned int mErrorFlag;
+    int   mYear;          ///< Run year for this trigger data instance.
+    float mZdcVertexZ;    ///< ZDC-derived vertex z-position in cm.
+    int   mRun;           ///< Run number.
+    unsigned int mErrorFlag; ///< Error flag word; non-zero indicates data corruption.
 
     unsigned int mDebug; //!
 

@@ -40,54 +40,80 @@
 #ifndef StTofSlat_hh
 #define StTofSlat_hh
 
+/// @file StTofSlat.h
+/// @brief Legacy STAR TOF scintillator slat matched to a reconstructed track.
+
 #include "StObject.h"
 #include "StThreeVectorF.hh"
 #include "StContainers.h"
 class StTrack;
 
+/// @brief Legacy STAR TOF scintillator slat matched to a reconstructed track.
 class StTofSlat : public StObject {
 public:
+    /// @brief Default constructor.
     StTofSlat();
+    /// @brief Constructs with slat index, ADC/TDC values, associated track, and position.
     StTofSlat(unsigned short, unsigned short, unsigned short, StTrack*,
               float, unsigned short, unsigned short);
+    /// @brief Destructor.
     ~StTofSlat();
     
+    /// @brief Equality comparison operator.
     int operator==(const StTofSlat&) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofSlat&) const;
 
+    /// @brief Returns the slat index.
     unsigned short        slatIndex() const;
+    /// @brief Returns the raw ADC value.
     unsigned short        adc() const;
+    /// @brief Returns the raw TDC value.
     unsigned short        tdc() const;
+    /// @brief Returns a pointer to the associated reconstructed track.
     StTrack*              associatedTrack();
+    /// @brief Returns a const pointer to the associated reconstructed track.
     const StTrack*        associatedTrack() const;
+    /// @brief Returns the z-coordinate of the hit position [cm].
     float                 zHit() const;
+    /// @brief Returns the hit profile bitmask within the slat.
     unsigned short        hitProf() const;
+    /// @brief Returns the track-to-slat matching quality flag.
     unsigned short        matchFlag() const;
+    /// @brief Returns the 3D hit position [cm].
     const StThreeVectorF& position() const;
     
+    /// @brief Sets the slat index.
     void setSlatIndex(unsigned short);
+    /// @brief Sets the raw ADC value.
     void setAdc(unsigned short);
+    /// @brief Sets the raw TDC value.
     void setTdc(unsigned short);
+    /// @brief Sets the pointer to the associated reconstructed track.
     void setAssociatedTrack(StTrack*);
+    /// @brief Sets the z-coordinate of the hit position [cm].
     void setZHit(float);
+    /// @brief Sets the hit profile bitmask.
     void setHitProf(unsigned short);
+    /// @brief Sets the track-to-slat matching quality flag.
     void setMatchFlag(unsigned short);
+    /// @brief Sets the 3D hit position [cm].
     void setPosition(const StThreeVectorF&);
     
 protected:
-    UShort_t  mSlatIndex;
-    UShort_t  mAdc;
-    UShort_t  mTdc;
+    UShort_t  mSlatIndex;  ///< Slat index
+    UShort_t  mAdc;        ///< Raw ADC value
+    UShort_t  mTdc;        ///< Raw TDC value
     // StTrack  *mAssociatedTrack; //$LINK
 #ifdef __CINT__
     StObjLink        mAssociatedTrack;		
 #else
     StLink<StTrack>  mAssociatedTrack;		
 #endif //__CINT__
-    Float_t   mZhit;
-    UShort_t  mHitProf;
-    UShort_t  mMatchFlag;
-    StThreeVectorF mPosition;
+    Float_t   mZhit;       ///< Z coordinate of the hit position [cm]
+    UShort_t  mHitProf;    ///< Hit profile bitmask within the slat
+    UShort_t  mMatchFlag;  ///< Track-to-slat matching quality flag
+    StThreeVectorF mPosition;  ///< 3D hit position [cm]
 
     ClassDef(StTofSlat,4)
 };

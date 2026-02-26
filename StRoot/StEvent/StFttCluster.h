@@ -1,6 +1,9 @@
 #ifndef STFTTCLUSTER_H
 #define STFTTCLUSTER_H
 
+/// @file StFttCluster.h
+/// @brief Data structure for a strip cluster in the Forward sTGC Tracker (FTT).
+
 #include "StObject.h"
 #include <Stiostream.h>
 #include "StContainers.h"  // For StPtrVecFttRawHit
@@ -10,6 +13,10 @@ class StFttRawHit;
 class StFttPoint;
 class StFttDb;
 
+/// @brief Represents a group of adjacent strips forming a cluster on one FTT plane/row.
+///
+/// Stores charge sum (0th moment), centroid position (1st moment), width (2nd moment),
+/// and associations to contributing raw hits, neighbouring clusters, and fitted points.
 class StFttCluster : public StObject {
 public:
     StFttCluster();
@@ -54,20 +61,20 @@ public:
     // void print(Option_t *option="") const;
 
 private:
-    Int_t mId=-1;             // Eventwise cluster ID
-    UChar_t mPlane;
-    UChar_t mQuadrant;
-    UChar_t mRow;
-    UChar_t mOrientation = kFttUnknownOrientation;        // Orientation of cluster
-    Int_t mNStrips=0;         // Number of strips
-    Float_t mSumAdc=0.0;      // Total ADC (0th moment)
-    Float_t mX=0.0;             // Mean x ("center of gravity") in local grid coordinate (1st moment)
-    Float_t mSigma=0.0;        // 2nd moment
-    StPtrVecFttRawHit mRawHits;            // Tower hits of the current cluster
-    StPtrVecFttCluster mNeighbors;    // Neighbor clusters
-    StPtrVecFttPoint mPoints;        // Fitted points (photons) in the cluster
-    UShort_t mIdTruth=0; // Truth ID
-    UShort_t mQaTruth=0; // Truth Quality
+    Int_t mId=-1;              ///< Event-unique cluster identifier.
+    UChar_t mPlane;            ///< FTT detector plane index.
+    UChar_t mQuadrant;         ///< FTT detector quadrant index.
+    UChar_t mRow;              ///< Strip row within the quadrant.
+    UChar_t mOrientation = kFttUnknownOrientation; ///< Strip orientation (horizontal/vertical/unknown).
+    Int_t mNStrips=0;          ///< Number of strips contributing to the cluster.
+    Float_t mSumAdc=0.0;       ///< Total integrated ADC charge (0th moment).
+    Float_t mX=0.0;            ///< Charge-weighted centroid in local grid coordinates (1st moment).
+    Float_t mSigma=0.0;        ///< RMS width along the major axis (2nd moment).
+    StPtrVecFttRawHit mRawHits;     ///< Raw hits (strips) contributing to this cluster.
+    StPtrVecFttCluster mNeighbors;  ///< Adjacent clusters sharing a boundary strip.
+    StPtrVecFttPoint mPoints;       ///< Reconstructed space points (track intercepts) associated with this cluster.
+    UShort_t mIdTruth=0; ///< MC truth track ID for embedding studies.
+    UShort_t mQaTruth=0; ///< MC truth quality (fraction of charge from the truth track, %).
 
     ClassDef(StFttCluster, 4)
 };

@@ -1,8 +1,9 @@
 /*!
  * \file StVertexDefinitions.h
- * 
+ * \brief Preprocessor constants for vertex-type identifiers (Fortran-compatible).
+ *
  * \author unknown
- * 
+ *
  * Numbering scheme for vertex types.
  * The definitions listed here are used in StEnumeration
  * to define the actual enumerations to be used in C/C++
@@ -33,14 +34,14 @@
 #ifndef StVertexDefinitions_hh
 #define StVertexDefinitions_hh
 
-#define kUndefinedVertexIdentifier           0                         /*! \def kUndefinedVertexIdentifier */
-#define kEventVertexIdentifier               1                         /*! \def kEventVertexIdentifier */
-#define kV0DecayIdentifier                   2                         /*! \def kV0DecayIdentifier */
-#define kXiDecayIdentifier                   3                         /*! \def kXiDecayIdentifier */
-#define kKinkDecayIdentifier                 4                         /*! \def kKinkDecayIdentifier */
-#define kOtherTypeIdentifier                 5                         /*! \def kOtherTypeIdentifier */
-#define kFtpcEastCalibrationVertexIdentifier 6                         /*! \def kFtpcEastCalibrationVertexIdentifier */
-#define kFtpcWestCalibrationVertexIdentifier 7                         /*! \def kFtpcWestCalibrationVertexIdentifier */
+#define kUndefinedVertexIdentifier           0                         ///< Unknown or undefined vertex type
+#define kEventVertexIdentifier               1                         ///< Primary collision vertex
+#define kV0DecayIdentifier                   2                         ///< V0 decay vertex (e.g. K0s, Lambda)
+#define kXiDecayIdentifier                   3                         ///< Xi (cascade) decay vertex
+#define kKinkDecayIdentifier                 4                         ///< Kink decay vertex
+#define kOtherTypeIdentifier                 5                         ///< Other / unclassified vertex type
+#define kFtpcEastCalibrationVertexIdentifier 6                         ///< FTPC east laser calibration vertex
+#define kFtpcWestCalibrationVertexIdentifier 7                         ///< FTPC west laser calibration vertex
 
 #endif
 

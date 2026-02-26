@@ -28,24 +28,32 @@
 #ifndef StTpcPadrowHitCollection_hh
 #define StTpcPadrowHitCollection_hh
 
+/// @file StTpcPadrowHitCollection.h
+/// @brief Collection of TPC hits belonging to a single padrow within a sector.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StTpcHit;
 
+/// @brief Collection of TPC hits belonging to a single padrow within a sector.
 class StTpcPadrowHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StTpcPadrowHitCollection();
+    /// @brief Destructor.
     ~StTpcPadrowHitCollection();
     // StTpcPadrowHitCollection(const StTpcPadrowHitCollection&); use default
     // const StTpcPadrowHitCollection&
     // operator=(const StTpcPadrowHitCollection&);                use default
-    
+
+    /// @brief Returns a mutable reference to the vector of hits in this padrow.
     StSPtrVecTpcHit&       hits();
+    /// @brief Returns a const reference to the vector of hits in this padrow.
     const StSPtrVecTpcHit& hits() const;
 
 private:
-    StSPtrVecTpcHit mHits;
+    StSPtrVecTpcHit mHits; ///< Vector of pointers to TPC hits in this padrow.
     
     ClassDef(StTpcPadrowHitCollection,1)
 };

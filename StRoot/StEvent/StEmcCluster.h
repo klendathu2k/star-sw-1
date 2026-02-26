@@ -52,10 +52,14 @@
 #ifndef StEmcCluster_hh
 #define StEmcCluster_hh
 
+/// @file StEmcCluster.h
+/// @brief Reconstructed cluster in the STAR Electromagnetic Calorimeter (EMC).
+
 #include <Stiostream.h>
 #include "StHit.h"
 #include "StContainers.h"
 
+/// @brief Reconstructed cluster of adjacent hits in one STAR EMC sub-detector.
 class StEmcCluster : public StHit {
 public:
     StEmcCluster();
@@ -63,44 +67,65 @@ public:
     // StEmcCluster(const StEmcCluster&);            use default
     // StEmcCluster& operator=(const StEmcCluster&); use default
     
+    /// @brief Returns the pseudorapidity (η) of the cluster centroid.
     float eta() const;
+    /// @brief Returns the azimuthal angle (φ) of the cluster centroid [rad].
     float phi() const;
+    /// @brief Returns the RMS spread of the cluster in η.
     float sigmaEta() const;
+    /// @brief Returns the RMS spread of the cluster in φ [rad].
     float sigmaPhi() const;
+    /// @brief Returns the total energy deposited in the cluster [GeV].
     float energy() const;
+    /// @brief Returns the number of raw hits belonging to this cluster.
     int   nHits() const;
+    /// @brief Returns the number of neighboring clusters.
     int   nNeighbors() const;
+    /// @brief Returns the number of tracks associated with this cluster.
     int   nTracks() const;
     
+    /// @brief Returns the list of raw hits belonging to this cluster.
     StPtrVecEmcRawHit&        hit();
     const StPtrVecEmcRawHit&  hit() const;
+    /// @brief Returns the list of neighboring clusters.
     StPtrVecEmcCluster&       neighbor();
     const StPtrVecEmcCluster& neighbor() const;
+    /// @brief Returns the list of tracks associated with this cluster.
     StPtrVecTrack&            track();
     const StPtrVecTrack&      track() const;
     
+    /// @brief Sets the pseudorapidity (η) centroid of the cluster.
     void setEta(float);
+    /// @brief Sets the azimuthal angle (φ) centroid of the cluster [rad].
     void setPhi(float);
+    /// @brief Sets the RMS spread of the cluster in η.
     void setSigmaEta(float);
+    /// @brief Sets the RMS spread of the cluster in φ [rad].
     void setSigmaPhi(float);
+    /// @brief Sets the total energy of the cluster [GeV].
     void setEnergy(float);
     
+    /// @brief Returns the detector identifier for this cluster.
     StDetectorId   detector() const;
     
+    /// @brief Adds a raw hit to this cluster.
     void addHit(StEmcRawHit*);
+    /// @brief Adds a neighboring cluster.
     void addNeighbor(StEmcCluster*);
+    /// @brief Adds a track associated with this cluster.
     void addTrack(StTrack*);
+    /// @brief Prints cluster information to the output stream (ROOT interface).
     void Print(Option_t *option = "") const;
     
 private:
-    Float_t mEta;
-    Float_t mPhi;
-    Float_t mSigmaEta;
-    Float_t mSigmaPhi;
-    Float_t mEnergy;
-    StPtrVecEmcRawHit  mHits;
-    StPtrVecEmcCluster mNeighbors;
-    StPtrVecTrack      mTracks;
+    Float_t mEta;                  ///< Pseudorapidity (η) centroid of the cluster.
+    Float_t mPhi;                  ///< Azimuthal angle (φ) centroid of the cluster [rad].
+    Float_t mSigmaEta;             ///< RMS spread of the cluster in η.
+    Float_t mSigmaPhi;             ///< RMS spread of the cluster in φ [rad].
+    Float_t mEnergy;               ///< Total energy deposited in the cluster [GeV].
+    StPtrVecEmcRawHit  mHits;      ///< Raw hits belonging to this cluster.
+    StPtrVecEmcCluster mNeighbors; ///< Adjacent clusters sharing a boundary.
+    StPtrVecTrack      mTracks;    ///< Tracks associated with this cluster.
     
     ClassDef(StEmcCluster,2)
 };

@@ -17,6 +17,9 @@
 #ifndef StFttCollection_hh
 #define StFttCollection_hh
 
+/// @file StFttCollection.h
+/// @brief Event-level container for all Forward sTGC Tracker (FTT) data in StEvent.
+
 #include "Stiostream.h"
 #include "StObject.h"
 #include "StEnumerations.h"
@@ -26,6 +29,10 @@ class StFttRawHit;
 class StFttCluster;
 class StFttPoint;
 
+/// @brief Top-level container for all FTT raw hits, strip clusters, and reconstructed points in one event.
+///
+/// Owns all stored objects; do not delete pointers retrieved from this class.
+/// All objects added via @c add*() must be heap-allocated with @c new.
 class StFttCollection : public StObject {
 public:
     StFttCollection();
@@ -49,9 +56,9 @@ public:
     void print(int option=1);
     
 private:
-    StSPtrVecFttRawHit  mRawHits;
-    StSPtrVecFttCluster mClusters; 
-    StSPtrVecFttPoint   mPoints;  
+    StSPtrVecFttRawHit  mRawHits;   ///< All FTT raw strip hits in the event.
+    StSPtrVecFttCluster mClusters;  ///< All FTT strip clusters in the event.
+    StSPtrVecFttPoint   mPoints;    ///< All FTT reconstructed space points in the event.
 
     ClassDef(StFttCollection,1)
 

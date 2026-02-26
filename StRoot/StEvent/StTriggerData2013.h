@@ -23,9 +23,14 @@
 #ifndef StTriggerData2013_hh
 #define StTriggerData2013_hh
 
+/// @file StTriggerData2013.h
+/// @brief Concrete StTriggerData implementation for STAR Run 13 (year 2013) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2013.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 13 (year 2013) trigger data format.
+///        Adds MXQ crate access, MTD 3rd/4th generation readout, and TF201 DSM channel access.
 class StTriggerData2013 : public StTriggerData {
     
 public:
@@ -188,7 +193,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2013 trigger data block (expert use only).
     TriggerDataBlk2013*  getTriggerStructure2013();  
     int                  getRawSize() const;
     
@@ -212,7 +219,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2013 *mData;
+    TriggerDataBlk2013 *mData; ///< Pointer to the raw 2013 trigger data block.
     
     EvtDescData2013*  EvtDesc;  //!
     L1_DSM_Data2013*  L1_DSM;   //!

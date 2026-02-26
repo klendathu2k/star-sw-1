@@ -1,7 +1,4 @@
-/*!
- * \class StFmsTriggerDetector 
- * \author Akio Ogawa, Apr 2007
- */
+/// @brief FMS (Forward Meson Spectrometer) trigger detector: stores QT ADC/TDC data and DSM trigger sums.
 /***************************************************************************
  *
  * $Id: StFmsTriggerDetector.h,v 2.6 2010/01/13 17:51:55 ullrich Exp $
@@ -33,42 +30,57 @@
  **************************************************************************/
 #ifndef StFmsTriggerDetector_hh
 #define StFmsTriggerDetector_hh
+
+/// @file StFmsTriggerDetector.h
+/// @brief FMS trigger detector data: QT board ADC/TDC and DSM outputs.
+
 #include "StObject.h"
 
 class StTriggerData;
 
+/// @brief Stores FMS trigger data including QT board ADC/TDC values and DSM layer outputs.
 class StFmsTriggerDetector : public StObject {
 public: 
+    /// @brief Default constructor.
     StFmsTriggerDetector();
+    /// @brief Constructor: populate from raw trigger data.
     StFmsTriggerDetector(const StTriggerData&);
+    /// @brief Destructor.
     virtual ~StFmsTriggerDetector();
     // StFmsTriggerDetector(const StFmsTriggerDetector&);            use default
     // StFmsTriggerDetector& operator=(const StFmsTriggerDetector&); use default
 
+    /// @brief Clear the flag used to indicate valid data.
     void clearFlag();
  
+    /// @brief Return the number of QT data words (hits).
     unsigned int   nHit() const;
+    /// @brief Return raw QT data word at the given index.
     unsigned int   hit(int line) const;
+    /// @brief Return decoded ADC value for the given crate/address/daughter-card/channel.
     unsigned short adc(int crate,  int addr,  int dcard,  int dch);
+    /// @brief Return decoded TDC value for the given crate/address/daughter-card/channel.
     unsigned short tdc(int crate,  int addr,  int dcard,  int dch);
 
-    unsigned char  DSM(int ch) const {return mDSM[ch];}
-    unsigned char  DSM01(int ch) const {return mDSM01[ch];}
-    unsigned char  DSM02(int ch) const {return mDSM02[ch];}
-    unsigned short DSM1(int ch) const {return mDSM1[ch];}
-    unsigned short DSM2(int ch) const {return mDSM2[ch];}
+    unsigned char  DSM(int ch) const {return mDSM[ch];}   ///< Return DSM layer-0 output byte for channel @p ch.
+    unsigned char  DSM01(int ch) const {return mDSM01[ch];} ///< Return DSM01 output byte for channel @p ch.
+    unsigned char  DSM02(int ch) const {return mDSM02[ch];} ///< Return DSM02 output byte for channel @p ch.
+    unsigned short DSM1(int ch) const {return mDSM1[ch];}  ///< Return DSM layer-1 output word for channel @p ch.
+    unsigned short DSM2(int ch) const {return mDSM2[ch];}  ///< Return DSM layer-2 output word for channel @p ch.
 
+    /// @brief Dump all trigger data to standard output for debugging.
     void  dump();
         
 protected:
+    /// @brief Decode raw QT data words into ADC/TDC arrays.
     void decode();
-    unsigned short getNHT(int) const;
-    unsigned short getADR(int) const;
-    unsigned short getCRT(int) const;
-    unsigned short getADC(int) const;
-    unsigned short getTDC(int) const;
-    unsigned short getQT8(int) const;
-    unsigned short getCHA(int) const; 
+    unsigned short getNHT(int) const; ///< Extract hit-count field from a QT word.
+    unsigned short getADR(int) const; ///< Extract address field from a QT word.
+    unsigned short getCRT(int) const; ///< Extract crate field from a QT word.
+    unsigned short getADC(int) const; ///< Extract ADC field from a QT word.
+    unsigned short getTDC(int) const; ///< Extract TDC field from a QT word.
+    unsigned short getQT8(int) const; ///< Extract QT8 field from a QT word.
+    unsigned short getCHA(int) const; ///< Extract channel field from a QT word. 
     
 protected:
     enum {
@@ -87,13 +99,13 @@ protected:
     }; //!
     
     char mBeg[1];//!
-    UInt_t   mNumQTdata;
-    UInt_t   mQTdata[mMaxLine];
-    Char_t   mDSM[mMaxDSM];
-    Char_t   mDSM01[mMaxDSM01];
-    Char_t   mDSM02[mMaxDSM02];
-    UShort_t mDSM1[mMaxDSM1];
-    UShort_t mDSM2[mMaxDSM2];
+    UInt_t   mNumQTdata;  ///< Number of valid QT data words.
+    UInt_t   mQTdata[mMaxLine]; ///< Raw QT data words from the FMS electronics.
+    Char_t   mDSM[mMaxDSM];   ///< DSM layer-0 output bytes.
+    Char_t   mDSM01[mMaxDSM01]; ///< DSM01 output bytes.
+    Char_t   mDSM02[mMaxDSM02]; ///< DSM02 output bytes.
+    UShort_t mDSM1[mMaxDSM1];   ///< DSM layer-1 output words.
+    UShort_t mDSM2[mMaxDSM2];   ///< DSM layer-2 output words.
 
     int  mNumHeader; //!
     unsigned short mADC[mMaxCrate][mMaxAddr][mMaxDCard][mMaxChan]; //!

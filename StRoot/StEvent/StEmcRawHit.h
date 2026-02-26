@@ -46,45 +46,67 @@
 #ifndef StEmcRawHit_hh
 #define StEmcRawHit_hh
 
+/// @file StEmcRawHit.h
+/// @brief Raw ADC hit in one cell of the STAR Electromagnetic Calorimeter (EMC).
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
 class StEmcGeom;
 
+/// @brief Raw ADC hit in a single cell of one STAR EMC sub-detector, identified by module, eta bin, and sub-division.
 class StEmcRawHit : public StObject {
 public:
     StEmcRawHit();
+    /// @brief Constructs a raw hit with detector id, module, eta bin, sub-division, and ADC value.
     StEmcRawHit(StDetectorId, unsigned int, unsigned int, unsigned int, unsigned int);
+    /// @brief Constructs a raw hit with detector id, module, eta bin, sub-division, ADC value, and calibrated energy.
     StEmcRawHit(StDetectorId, unsigned int, unsigned int, unsigned int, unsigned int, float);
+    /// @brief Copy constructor.
     StEmcRawHit(const StEmcRawHit&);
     // StEmcRawHit& operator=(const StEmcRawHit&); use default
     ~StEmcRawHit();
     
+    /// @brief Returns the sub-detector identifier for this hit.
     StDetectorId    detector() const;
+    /// @brief Unpacks the packed cell id into module, eta bin, and sub-division indices.
     void            modEtaSub(int &m, int &e, int &s) const;
+    /// @brief Returns the software cell id as used by StEmcGeom for the given detector.
     unsigned int    softId(int det) const; // as in StEmcGeom;
 
+    /// @brief Returns the module index of the hit cell.
     unsigned int    module() const;
+    /// @brief Returns the η-bin index of the hit cell within the module.
     unsigned int    eta() const;
+    /// @brief Returns the φ sub-division (sub) index of the hit cell.
     int             sub() const;
+    /// @brief Returns the calibration type flag applied to this hit.
     unsigned int    calibrationType() const;
+    /// @brief Returns the raw ADC value of this hit.
     unsigned int    adc() const;
+    /// @brief Returns the calibrated energy of this hit [GeV].
     float           energy() const;
     
+    /// @brief Sets the packed cell identifier from detector id, module, eta bin, and sub-division.
     void setId(StDetectorId, unsigned int, unsigned int, unsigned int);
+    /// @brief Sets the calibration type flag.
     void setCalibrationType(const unsigned int);
+    /// @brief Sets the raw ADC value.
     void setAdc(const unsigned int);
+    /// @brief Sets the calibrated energy [GeV].
     void setEnergy(const float);
+    /// @brief Prints hit information to the output stream (ROOT interface).
     void     Print(Option_t *option="") const;
 protected:
+    /// @brief Extracts a bit field from @a mId starting at bit @a pos with @a len bits.
     unsigned int    bits(unsigned int, unsigned int) const;
     
 protected:
-    UInt_t    mId;
-    UInt_t    mAdc;
-    Float_t   mEnergy;
+    UInt_t    mId;     ///< Packed cell identifier encoding detector, module, eta bin, and sub-division.
+    UInt_t    mAdc;    ///< Raw ADC value and calibration type flag (packed).
+    Float_t   mEnergy; ///< Calibrated energy deposited in this cell [GeV].
     
-    static StEmcGeom* mGeom;
+    static StEmcGeom* mGeom; ///< Pointer to the shared EMC geometry object (used for softId conversion).
 
     ClassDef(StEmcRawHit,1)
 }; 

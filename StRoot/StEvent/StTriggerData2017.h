@@ -30,9 +30,15 @@
 #ifndef StTriggerData2017_hh
 #define StTriggerData2017_hh
 
+/// @file StTriggerData2017.h
+/// @brief Concrete StTriggerData implementation for STAR Run 17 (year 2017) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2017.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 17 (year 2017) trigger data format.
+///        Adds initial EPD (Event Plane Detector) ADC/TDC readout, BBC 5-bit TDC,
+///        and BB101/BB102 board access.
 class StTriggerData2017 : public StTriggerData {
     
 public:
@@ -212,7 +218,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2017 trigger data block (expert use only).
     TriggerDataBlk2017*  getTriggerStructure2017();  
     int                  getRawSize() const;
     
@@ -236,7 +244,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2017 *mData;
+    TriggerDataBlk2017 *mData; ///< Pointer to the raw 2017 trigger data block.
     
     EvtDescData2017*  EvtDesc;  //!
     L1_DSM_Data2017*  L1_DSM;   //!

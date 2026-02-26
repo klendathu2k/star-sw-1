@@ -34,12 +34,16 @@
 #ifndef StBTofHit_hh
 #define StBTofHit_hh
 
+/// @file StBTofHit.h
+/// @brief Reconstructed hit in the STAR Barrel Time of Flight (BTOF) detector.
+
 #include <Stiostream.h>
 #include "StHit.h"
 #include "StContainers.h"
 
 class StTrack;
 
+/// @brief Reconstructed hit in the STAR Barrel Time of Flight (BTOF) detector.
 class StBTofHit : public StHit {
 public:
     enum {
@@ -47,34 +51,54 @@ public:
         kNModule =  32,  //! 32 modules per tray
         kNCell     = 6   //! 6 cells per module
     };
+    /// @brief Default constructor.
     StBTofHit();
+    /// @brief Destructor.
     ~StBTofHit() {}
+    /// @brief Returns the tray number (1–120).
     Int_t             tray()             const { return mTray; }
+    /// @brief Returns the module number within the tray (1–32).
     Int_t             module()           const { return mModule; }
+    /// @brief Returns the cell number within the module (1–6).
     Int_t             cell()             const { return mCell; }
+    /// @brief Returns a unique module ID across all trays.
     Int_t             ID()               const { return kNModule*(tray()-1) + module() - 1;}
+    /// @brief Returns the leading-edge time [ns].
     Double_t          leadingEdgeTime()  const { return mLeadingEdgeTime; }
+    /// @brief Returns the trailing-edge time [ns].
     Double_t          trailingEdgeTime() const { return mTrailingEdgeTime; }
+    /// @brief Returns the time-over-threshold (trailing minus leading edge time) [ns].
     Double_t          tot()              const { return mTrailingEdgeTime - mLeadingEdgeTime; }
+    /// @brief Returns a pointer to the associated reconstructed track.
     StTrack*          associatedTrack();
+    /// @brief Returns a const pointer to the associated reconstructed track.
     const StTrack*    associatedTrack() const;
+    /// @brief Sets the tray number.
     void setTray(UChar_t trayId)            { mTray = trayId; }
+    /// @brief Sets the module number within the tray.
     void setModule(UChar_t moduleId)        { mModule = moduleId; }
+    /// @brief Sets the cell number within the module.
     void setCell(UChar_t cellId)            { mCell = cellId; }
+    /// @brief Sets the leading-edge time [ns].
     void setLeadingEdgeTime(Double_t time)  { mLeadingEdgeTime = time; }
+    /// @brief Sets the trailing-edge time [ns].
     void setTrailingEdgeTime(Double_t time) { mTrailingEdgeTime = time; }
+    /// @brief Sets the pointer to the associated reconstructed track.
     void setAssociatedTrack(StTrack*);
+    /// @brief Returns the 3D hit position [cm].
     const StThreeVectorF& position() const;
+    /// @brief Returns the pad width of the BTOF detector [cm].
     static Float_t    padWidth()            { return mBTofPadWidth;}
+    /// @brief Returns the detector identifier for this hit.
     StDetectorId   detector() const;
 
 protected:
-    UChar_t   mTray;
-    UChar_t   mModule;
-    UChar_t   mCell;
-    Double_t  mLeadingEdgeTime;
-    Double_t  mTrailingEdgeTime;
-    const static Float_t mBTofPadWidth;
+    UChar_t   mTray;               ///< Tray number (1–120)
+    UChar_t   mModule;             ///< Module number within tray (1–32)
+    UChar_t   mCell;               ///< Cell number within module (1–6)
+    Double_t  mLeadingEdgeTime;    ///< Leading-edge time [ns]
+    Double_t  mTrailingEdgeTime;   ///< Trailing-edge time [ns]
+    const static Float_t mBTofPadWidth;  ///< Pad width of the BTOF detector [cm]
     //    StTrack *mAssociatedTrack;   //$LINK
 #ifdef __CINT__
     StObjLink        mAssociatedTrack;

@@ -26,172 +26,117 @@
 #ifndef STETOFDIGI_H
 #define STETOFDIGI_H
 
+/// @file StETofDigi.h
+/// @brief Electronic digitisation from a single MRPC strip-end in the STAR Endcap TOF (eTOF) detector.
+
 #include <Stiostream.h>
 #include "StObject.h"
 
 class StETofHit;
 
-
+/// @brief Electronic digitisation from a single MRPC strip-end in the STAR Endcap TOF (eTOF) detector.
 class StETofDigi : public StObject {
 public:
-    /**
-    ** @brief Default constructor.
-    **/
+    /// @brief Default constructor.
     StETofDigi();
 
-    /**
-    ** @brief Constructor with detailled assignment.
-    ** @param[in] sector        sector Id.
-    ** @param[in] zPlane        eTof Z-plane.
-    ** @param[in] counter       counter Id.
-    ** @param[in] strip         strip Id.
-    ** @param[in] side          channel Side (optional, used for strips). (cf CbmTofAddress) 
-    ** @param[in] time          absolute raw time [ns].
-    ** @param[in] tot           raw Time Over Threshold [ns].
-    **/
+    /// @brief Constructs from detector geometry address and raw time/ToT.
     StETofDigi( const unsigned int sector, const unsigned int zPlane, const unsigned int counter,
                 const unsigned int strip, const unsigned int side,
                 const double& time, const double& tot );
 
-    /**
-    ** @brief Constructor with detailled assignment.
-    ** @param[in] rocId	        Readout Controller Id.
-    ** @param[in] get4Id        Get4 Chip Id.
-    ** @param[in] elChan        Get4 Channel Id (electronic channel).
-    ** @param[in] time          Absolute raw time [ns].
-    ** @param[in] tot           raw Time Over Threshold [ns].
-    **/
+    /// @brief Constructs from hardware (ROC/Get4/channel) address and raw time/ToT.
     StETofDigi( const unsigned int rocId, const unsigned int get4Id, const unsigned int elChan,   
                 const double& time, const double& tot );
 
-    /**
-    ** @brief Copy constructor.
-    **/
+    /// @brief Copy constructor.
     StETofDigi( const StETofDigi& );
 
-    /**
-    ** @brief Destructor.
-    **/
+    /// @brief Destructor.
     ~StETofDigi();
 
-    /**
-    ** @brief Raw Time.
-    **/
+    /// @brief Returns the uncalibrated raw time [ns].
     double rawTime()          const;
 
-    /**
-    ** @brief calibrated time
-    **/
+    /// @brief Returns the calibrated time [ns].
     double calibTime()        const;
 
-
-
-    /**
-    ** @brief Alias for GetRawTot.
-    **/
+    /// @brief Alias for rawTot(); returns the uncalibrated time-over-threshold [ns].
     double rawCharge()        const;
-    /**
-    ** @brief Getter for uncalibrated Tot.
-    **/
+    /// @brief Returns the uncalibrated time-over-threshold [ns].
     double rawTot()           const; 
-    /**
-    ** @brief Alias for GetRawTot.
-    **/
+    /// @brief Alias for calibTot(); returns the calibrated time-over-threshold [ns].
     double calibCharge()      const;
-    /**
-    ** @brief Getter for calibrated Tot.
-    **/
+    /// @brief Returns the calibrated time-over-threshold [ns].
     double calibTot()         const;
 
-
-
-    /**
-    ** @brief Sector.
-    **/
+    /// @brief Returns the STAR sector number.
     unsigned int sector()     const;
-    /**
-    ** @brief ZPlane.
-    **/
+    /// @brief Returns the eTOF z-plane number.
     unsigned int zPlane()     const;
-    /**
-    ** @brief Counter.
-    **/
+    /// @brief Returns the counter (MRPC module) number.
     unsigned int counter()    const;
-    /**
-    ** @brief Strip.
-    **/
+    /// @brief Returns the strip number within the counter.
     unsigned int strip()      const;
-    /**
-    ** @brief Alias for strip.
-    **/
+    /// @brief Alias for strip(); returns the strip number.
     unsigned int chan()       const;
-    /**
-    ** @brief Side.
-    **/
+    /// @brief Returns the readout side (1=top, 2=bottom).
     unsigned int side()       const;
 
-
-    /**
-    ** @brief electronic Channel.
-    **/
+    /// @brief Returns the electronic channel number within the Get4 chip.
     unsigned int elChan()     const;
-    /**
-    ** @brief get4Id.
-    **/
+    /// @brief Returns the Get4 TDC chip ID.
     unsigned int get4Id()     const;
-    /**
-    ** @brief RocId.
-    **/
+    /// @brief Returns the Readout Controller (ROC) ID.
     unsigned int rocId()      const;
 
-
-    /**
-    ** @brief pointer to the hit which has been reconstructed from this digi
-    **/
+    /// @brief Returns a pointer to the reconstructed hit associated with this digi.
     StETofHit* associatedHit();
-    /**
-    ** @brief pointer to the hit which has been reconstructed from this digi
-    **/
+    /// @brief Returns a const pointer to the reconstructed hit associated with this digi.
     StETofHit* associatedHit() const;
 
-
-    /**
-    ** @brief Sorting using the time, assumes Digis are in same reference frame (e.g. same epoch).
-    **/
+    /// @brief Less-than operator; sorts by time within the same reference frame.
     bool operator < ( const StETofDigi& rhs ) const; //ordering operator
 
+    /// @brief Compares this digi with another StObject by time.
     int compare( const StObject*    obj  )    const;
+    /// @brief Compares this digi with another StETofDigi by time.
     int compare( const StETofDigi*  digi )    const;
     
-
-    /** Modifiers **/
+    /// @brief Sets the geometry address (sector, z-plane, counter, channel, side).
     void setGeoAddress( const unsigned int iSector, const unsigned int iZPlane, const unsigned int iCounter,
                         const unsigned int iChannel, const unsigned int iSide );
+    /// @brief Sets the hardware address (ROC ID, Get4 ID, electronic channel).
     void setHwAddress( const unsigned int iRocId, const unsigned int iGet4Id, const unsigned int iElChan );
 
+    /// @brief Sets the raw time [ns].
     void setRawTime(   const double& time );  //ns
+    /// @brief Sets the raw time-over-threshold [ns].
     void setRawTot(    const double& tot  );  //ns
+    /// @brief Sets the calibrated time [ns].
     void setCalibTime( const double& time );
+    /// @brief Sets the calibrated time-over-threshold [ns].
     void setCalibTot(  const double& tot  );
     
+    /// @brief Sets the pointer to the associated reconstructed hit.
     void setAssociatedHit( StETofHit* hit );
 
 
 private:
-    UInt_t      mSector;
-    UInt_t      mZPlane;
-    UInt_t      mCounter;
-    UInt_t      mStrip;
-    UInt_t      mSide;
+    UInt_t      mSector;   ///< STAR sector number
+    UInt_t      mZPlane;   ///< eTOF z-plane number
+    UInt_t      mCounter;  ///< Counter (MRPC module) number
+    UInt_t      mStrip;    ///< Strip number within the counter
+    UInt_t      mSide;     ///< Readout side (1=top, 2=bottom)
 
-    UInt_t      mRocId;
-    UInt_t      mGet4Id;
-    UInt_t      mElChan;
+    UInt_t      mRocId;    ///< Readout Controller (ROC) ID
+    UInt_t      mGet4Id;   ///< Get4 TDC chip ID
+    UInt_t      mElChan;   ///< Electronic channel number within the Get4 chip
 
-    Double_t    mRawTime;
-    Double_t    mCalibTime;
-    Double_t    mRawTot;
-    Double_t    mCalibTot;
+    Double_t    mRawTime;    ///< Uncalibrated raw time [ns]
+    Double_t    mCalibTime;  ///< Calibrated time [ns]
+    Double_t    mRawTot;     ///< Uncalibrated time-over-threshold [ns]
+    Double_t    mCalibTot;   ///< Calibrated time-over-threshold [ns]
 
     StETofHit*  mAssociatedHit; //$LINK
 

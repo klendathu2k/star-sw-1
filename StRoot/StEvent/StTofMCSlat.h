@@ -34,30 +34,46 @@
 #ifndef StTofMCSlat_hh
 #define StTofMCSlat_hh
 
+/// @file StTofMCSlat.h
+/// @brief Monte Carlo TOF slat extending StTofSlat with simulation truth information.
+
 #include "StTofSlat.h"
 #include "StTofMCInfo.h"
 
+/// @brief Monte Carlo TOF slat extending StTofSlat with simulation truth information.
 class StTofMCSlat : public StTofSlat {
 public:
+    /// @brief Default constructor.
     StTofMCSlat();
+    /// @brief Constructs from a Monte Carlo info object.
     StTofMCSlat(const StTofMCInfo&);
+    /// @brief Destructor.
     ~StTofMCSlat();
     
+    /// @brief Equality comparison operator.
     int operator==(const StTofMCSlat&) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofMCSlat&) const;
 
+    /// @brief Returns the Monte Carlo truth information for this slat.
     const StTofMCInfo&  mcInfo() const;
 
+    /// @brief Sets the Monte Carlo truth information for this slat.
     void                setMCInfo(const StTofMCInfo&);
 
+    /// @brief Sets the number of Monte Carlo hits in this slat.
     void                setNHits(int nHits);
+    /// @brief Sets the number of photoelectrons produced.
     void                setNPhe(int nPhe);
+    /// @brief Sets the energy deposit [GeV].
     void                setDe(float de);
+    /// @brief Sets the step length of the Monte Carlo track [cm].
     void                setDs(float ds);
+    /// @brief Sets the Monte Carlo time of flight [ns].
     void                setTof(float tof);
 
 protected:
-    StTofMCInfo  mTofMCInfo; 
+    StTofMCInfo  mTofMCInfo;  ///< Monte Carlo truth information for this slat
 
     ClassDef(StTofMCSlat,1)
 };

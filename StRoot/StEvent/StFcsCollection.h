@@ -23,6 +23,9 @@
 #ifndef StFcsCollection_hh
 #define StFcsCollection_hh
 
+/// @file StFcsCollection.h
+/// @brief Event-level collection of all FCS hits, clusters, and photon points.
+
 #include "Stiostream.h"
 #include "StObject.h"
 #include "StEnumerations.h"
@@ -33,41 +36,48 @@ class StFcsCluster;
 class StFcsPoint;
 //class StFcsPointPair;
 
+/// @brief Container owning all FCS hits, clusters, and photon points for one event.
 class StFcsCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StFcsCollection();
+    /// @brief Destructor; frees all owned objects.
     ~StFcsCollection();
     
-    void addHit(unsigned int det, StFcsHit*);            // Add a hit 
-    StSPtrVecFcsHit& hits(unsigned int det);             // Return the hit list
-    const StSPtrVecFcsHit& hits(unsigned int det) const; // Return the hit list
-    unsigned int numberOfHits(unsigned int det) const;   // Return the number of hits
+    void addHit(unsigned int det, StFcsHit*);            ///< Add a hit to the collection for detector @p det.
+    StSPtrVecFcsHit& hits(unsigned int det);             ///< Return the hit list for detector @p det.
+    const StSPtrVecFcsHit& hits(unsigned int det) const; ///< Return the hit list for detector @p det (const).
+    unsigned int numberOfHits(unsigned int det) const;   ///< Return the number of hits for detector @p det.
 
-    void addCluster(unsigned int det, StFcsCluster*);            // Add a cluster
-    StSPtrVecFcsCluster& clusters(unsigned int det);             // Return the cluster list
-    const StSPtrVecFcsCluster& clusters(unsigned int det) const; // Return the cluster list
-    unsigned int numberOfClusters(unsigned int det) const;       // Return the number of clusters
+    void addCluster(unsigned int det, StFcsCluster*);            ///< Add a cluster for detector @p det.
+    StSPtrVecFcsCluster& clusters(unsigned int det);             ///< Return the cluster list for detector @p det.
+    const StSPtrVecFcsCluster& clusters(unsigned int det) const; ///< Return the cluster list (const).
+    unsigned int numberOfClusters(unsigned int det) const;       ///< Return the number of clusters for detector @p det.
 
-    void addPoint(unsigned int det, StFcsPoint*);            // Add a point
-    StSPtrVecFcsPoint& points(unsigned int det);             // Return the point list
-    const StSPtrVecFcsPoint& points(unsigned int det) const; // Return the point list
-    unsigned int numberOfPoints(unsigned int det) const;     // Return the number of points
+    void addPoint(unsigned int det, StFcsPoint*);            ///< Add a photon point for detector @p det.
+    StSPtrVecFcsPoint& points(unsigned int det);             ///< Return the photon point list for detector @p det.
+    const StSPtrVecFcsPoint& points(unsigned int det) const; ///< Return the photon point list (const).
+    unsigned int numberOfPoints(unsigned int det) const;     ///< Return the number of photon points for detector @p det.
 
+    /// @brief Flag whether FCS data existed in the DAQ file.
     void setDataExist(int v) {mDataExist=v;}
-    int isDataExist() {return mDataExist;}
+    int isDataExist() {return mDataExist;} ///< Return 1 if FCS data existed in the DAQ file.
 
+    /// @brief Return the packed FCS reconstruction flag word.
     int fcsReconstructionFlag()      const;
+    /// @brief Set the packed FCS reconstruction flag word.
     void setFcsReconstructionFlag(int v);
 
+    /// @brief Print collection summary.
     void print(int option=1);
     
 private:
-    StSPtrVecFcsHit     mHits[kFcsNDet+1];   //+1 for empty channel
-    StSPtrVecFcsCluster mClusters[kFcsNDet]; 
-    StSPtrVecFcsPoint   mPoints[kFcsNDet];  
+    StSPtrVecFcsHit     mHits[kFcsNDet+1];   ///< Hit arrays per sub-detector (+1 spare for empty channel).
+    StSPtrVecFcsCluster mClusters[kFcsNDet]; ///< Cluster arrays per sub-detector.
+    StSPtrVecFcsPoint   mPoints[kFcsNDet];   ///< Photon point arrays per sub-detector.
 
-    Int_t mFcsReconstructionFlag=0;     // undefined for now
-    Int_t mDataExist=0;                 // if FCS data existed in daq file
+    Int_t mFcsReconstructionFlag=0;     ///< Packed FCS reconstruction flags (layout TBD).
+    Int_t mDataExist=0;                 ///< 1 if FCS data existed in the DAQ file, 0 otherwise.
 
     ClassDef(StFcsCollection,2)
 };

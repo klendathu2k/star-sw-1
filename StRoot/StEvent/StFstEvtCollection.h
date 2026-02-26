@@ -11,6 +11,9 @@
 #ifndef StFstEvtCollection_hh
 #define StFstEvtCollection_hh
 
+/// @file StFstEvtCollection.h
+/// @brief Event-level collection of FST raw hits stored in StEvent.
+
 #include "Stiostream.h"
 #include "StObject.h"
 #include "StContainers.h"
@@ -19,18 +22,24 @@
 
 class StFstRawHit;
 
+/// @brief Top-level container for all Forward Silicon Tracker (FST) raw hit data in one event.
 class StFstEvtCollection : public StObject
 {
 public:
    StFstEvtCollection();
    ~StFstEvtCollection() {}
 
+   /// @brief Add a raw hit to the collection (takes ownership).
    void          addRawHit(StFstRawHit *);
+   /// @brief Return the total number of raw hits in this event.
    unsigned int  numberOfRawHits() const;
 
+   /// @brief Return a reference to the vector of raw hits.
    StSPtrVecFstRawHit       &rawHits();
+   /// @brief Return a const reference to the vector of raw hits.
    const StSPtrVecFstRawHit &rawHits() const;
 
+   /// @brief Print a summary of the collection contents.
    void print(int option=1);
 
 private:

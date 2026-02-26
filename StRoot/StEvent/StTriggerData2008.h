@@ -32,9 +32,14 @@
 #ifndef StTriggerData2008_hh
 #define StTriggerData2008_hh
 
+/// @file StTriggerData2008.h
+/// @brief Concrete StTriggerData implementation for STAR Run 8 (year 2008) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2008.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 8 (year 2008) trigger data format.
+///        Adds TOF multiplicity readout compared to the 2007 format.
 class StTriggerData2008 : public StTriggerData {
 public:
     StTriggerData2008();
@@ -147,7 +152,9 @@ public:
     unsigned short tofMultiplicity(int prepost=0) const;
 
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2008 trigger data structure (expert use only).
     TrgDataType2008*     getTriggerStructure2008();  
     int                  getRawSize() const;
 
@@ -168,7 +175,7 @@ public:
     const unsigned int*  l2Result() const;
     
 protected:
-    TrgDataType2008 *mData;
+    TrgDataType2008 *mData; ///< Pointer to the raw 2008 trigger data structure.
 
     ClassDef(StTriggerData2008,1) 
 };

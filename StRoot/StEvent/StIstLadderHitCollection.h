@@ -10,6 +10,8 @@
 
 #ifndef StIstLadderHitCollection_hh
 #define StIstLadderHitCollection_hh
+/// @file StIstLadderHitCollection.h
+/// @brief IST hit collection for a single ladder of the STAR Intermediate Silicon Tracker.
 
 #include "StObject.h"
 #include "StIstSensorHitCollection.h"
@@ -17,19 +19,25 @@
 
 using namespace StIstConsts;
 
+/// @brief Collection of IST hits for a single ladder of the Intermediate Silicon Tracker.
 class StIstLadderHitCollection : public StObject
 {
 public:
+   /// @brief Default constructor.
    StIstLadderHitCollection();
+   /// @brief Destructor.
    ~StIstLadderHitCollection();
 
+   /// @brief Returns the total number of hits across all sensors in this ladder.
    unsigned int  numberOfHits() const;
 
+   /// @brief Returns a pointer to the hit collection for the given sensor (0-indexed).
    StIstSensorHitCollection       *sensor(unsigned int);
+   /// @brief Returns a const pointer to the hit collection for the given sensor (0-indexed).
    const StIstSensorHitCollection *sensor(unsigned int) const;
 
 private:
-   StIstSensorHitCollection  mSensors[kIstNumSensorsPerLadder];
+   StIstSensorHitCollection  mSensors[kIstNumSensorsPerLadder]; ///< Per-sensor hit collections.
 
    ClassDef(StIstLadderHitCollection, 1)
 };

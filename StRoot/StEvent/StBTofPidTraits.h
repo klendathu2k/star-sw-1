@@ -25,65 +25,107 @@
 #ifndef StBTofPidTraits_hh
 #define StBTofPidTraits_hh
 
+/// @file StBTofPidTraits.h
+/// @brief Particle identification traits for a track matched to the STAR Barrel Time of Flight (BTOF) detector.
+
 #include "StTrackPidTraits.h"
 #include "StBTofHit.h"
 #include "StThreeVectorF.hh"
 
+/// @brief Particle identification traits for a track matched to the STAR Barrel TOF (BTOF) detector.
 class StBTofPidTraits : public StTrackPidTraits {
 public:
+    /// @brief Default constructor.
     StBTofPidTraits();
+    /// @brief Destructor.
     ~StBTofPidTraits();
     
+    /// @brief Returns a pointer to the associated BTOF hit.
     StBTofHit*       tofHit();
+    /// @brief Returns a const pointer to the associated BTOF hit.
     const StBTofHit* tofHit() const;
 
     /// Matching information
+    /// @brief Returns the track-to-hit matching quality flag.
     unsigned char    matchFlag() const;
+    /// @brief Returns the local Y coordinate of the extrapolated track [cm].
     float            yLocal() const;
+    /// @brief Returns the local Z coordinate of the extrapolated track [cm].
     float            zLocal() const;
+    /// @brief Returns the local incident angle of the track [rad].
     float            thetaLocal() const;
     
+    /// @brief Returns the extrapolated track position at the BTOF hit.
     StThreeVectorF&         position();
+    /// @brief Returns the const extrapolated track position at the BTOF hit.
     const StThreeVectorF&   position() const;
 
     /// timing for PID
+    /// @brief Returns the time-over-threshold of the BTOF hit [ns].
     float   tot() const;
+    /// @brief Returns the measured time of flight [ns].
     float   timeOfFlight() const;
+    /// @brief Returns the track path length from the interaction vertex to the hit [cm].
     float   pathLength() const;
+    /// @brief Returns the particle velocity β = v/c.
     float   beta() const;
     
     /// PID functions
+    /// @brief Returns the number of sigma from the electron hypothesis.
     float   sigmaElectron() const;
+    /// @brief Returns the number of sigma from the pion hypothesis.
     float   sigmaPion() const;
+    /// @brief Returns the number of sigma from the kaon hypothesis.
     float   sigmaKaon() const;
+    /// @brief Returns the number of sigma from the proton hypothesis.
     float   sigmaProton() const;
     
+    /// @brief Returns the probability of the electron hypothesis.
     float   probElectron() const;
+    /// @brief Returns the probability of the pion hypothesis.
     float   probPion() const;
+    /// @brief Returns the probability of the kaon hypothesis.
     float   probKaon() const;
+    /// @brief Returns the probability of the proton hypothesis.
     float   probProton() const;
 
-    ///
+    /// @brief Sets the pointer to the associated BTOF hit.
     void    setTofHit(StBTofHit*);
             
+    /// @brief Sets the track-to-hit matching quality flag.
     void    setMatchFlag(unsigned char);
+    /// @brief Sets the local Y coordinate of the extrapolated track [cm].
     void    setYLocal(float);
+    /// @brief Sets the local Z coordinate of the extrapolated track [cm].
     void    setZLocal(float);
+    /// @brief Sets the local incident angle of the track [rad].
     void    setThetaLocal(float);
+    /// @brief Sets the extrapolated track position at the BTOF hit.
     void    setPosition( const StThreeVectorF&);                            
 
+    /// @brief Sets the measured time of flight [ns].
     void    setTimeOfFlight(float);
+    /// @brief Sets the track path length [cm].
     void    setPathLength(float);
+    /// @brief Sets the particle velocity β = v/c.
     void    setBeta(float);
 
+    /// @brief Sets the number of sigma from the electron hypothesis.
     void    setSigmaElectron(float);
+    /// @brief Sets the number of sigma from the pion hypothesis.
     void    setSigmaPion(float);
+    /// @brief Sets the number of sigma from the kaon hypothesis.
     void    setSigmaKaon(float);
+    /// @brief Sets the number of sigma from the proton hypothesis.
     void    setSigmaProton(float);
 
+    /// @brief Sets the probability of the electron hypothesis.
     void    setProbElectron(float);
+    /// @brief Sets the probability of the pion hypothesis.
     void    setProbPion(float);
+    /// @brief Sets the probability of the kaon hypothesis.
     void    setProbKaon(float);
+    /// @brief Sets the probability of the proton hypothesis.
     void    setProbProton(float);
 
 private:
@@ -94,25 +136,25 @@ private:
     StLink<StBTofHit>  mBTofHit;
 #endif //__CINT__
 
-    UChar_t   mMatchFlag;
-    Float_t   mYLocal;
-    Float_t   mZLocal;
-    Float_t   mThetaLocal;
-    StThreeVectorF  mPosition;
+    UChar_t   mMatchFlag;    ///< Track-to-hit matching quality flag
+    Float_t   mYLocal;       ///< Local Y coordinate of extrapolated track [cm]
+    Float_t   mZLocal;       ///< Local Z coordinate of extrapolated track [cm]
+    Float_t   mThetaLocal;   ///< Local incident angle of track [rad]
+    StThreeVectorF  mPosition;  ///< Extrapolated track position at the BTOF hit [cm]
 
-    Float_t   mTimeOfFlight;
-    Float_t   mPathLength;
-    Float_t   mBeta;
+    Float_t   mTimeOfFlight;   ///< Measured time of flight [ns]
+    Float_t   mPathLength;     ///< Track path length from vertex to hit [cm]
+    Float_t   mBeta;           ///< Particle velocity β = v/c
 
-    Float_t   mSigmaElectron;
-    Float_t   mSigmaPion;
-    Float_t   mSigmaKaon;
-    Float_t   mSigmaProton;
+    Float_t   mSigmaElectron;  ///< Number of sigma from electron hypothesis
+    Float_t   mSigmaPion;      ///< Number of sigma from pion hypothesis
+    Float_t   mSigmaKaon;      ///< Number of sigma from kaon hypothesis
+    Float_t   mSigmaProton;    ///< Number of sigma from proton hypothesis
     
-    Float_t   mProbElectron;
-    Float_t   mProbPion;
-    Float_t   mProbKaon;
-    Float_t   mProbProton;
+    Float_t   mProbElectron;   ///< Probability of electron hypothesis
+    Float_t   mProbPion;       ///< Probability of pion hypothesis
+    Float_t   mProbKaon;       ///< Probability of kaon hypothesis
+    Float_t   mProbProton;     ///< Probability of proton hypothesis
 
     ClassDef(StBTofPidTraits,1)
 };

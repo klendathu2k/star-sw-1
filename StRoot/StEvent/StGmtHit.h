@@ -11,6 +11,8 @@
 
 #ifndef StGmtHit_hh
 #define StGmtHit_hh
+/// @file StGmtHit.h
+/// @brief Global Muon Tracker (GMT) hit class representing a 1D strip cluster.
 
 // C++ headers
 #include <map>

@@ -26,52 +26,77 @@
 #ifndef StFmsPointPair_h
 #define StFmsPointPair_h
 
+/// @file StFmsPointPair.h
+/// @brief Pair (or group) of FMS photon points for di-photon invariant mass analysis.
+
 #include "StLorentzVectorD.hh"
 #include "StThreeVectorD.hh"
 #include "StObject.h"
 #include "StEnumerations.h"
 #include "StFmsPoint.h"
 
+/// @brief A pair (or group) of FMS photon points used for pi0/eta/EMJet reconstruction.
 class StFmsPointPair : public StObject {
 public:
+    /// @brief Default constructor.
     StFmsPointPair();
+    /// @brief Constructor with a single photon point.
     StFmsPointPair(StFmsPoint* p);
+    /// @brief Constructor from two photon points.
     StFmsPointPair(StFmsPoint* p1, StFmsPoint* p2);
+    /// @brief Destructor.
     ~StFmsPointPair();
         
+    /// @brief Return the number of photon points in this pair/group.
     int nPoints() const;
+    /// @brief Add a photon point to this group.
     void addPoint(StFmsPoint* p);
+    /// @brief Return all photon points.
     vector<StFmsPoint*>& points();
+    /// @brief Return the photon point at index v.
     StFmsPoint* point(int v);
   
+    /// @brief Return the combined four-momentum of all points.
     const StLorentzVectorD& fourMomentum() const;
+    /// @brief Return the combined energy.
     float energy() const;
+    /// @brief Return the combined transverse momentum.
     float pT() const;
+    /// @brief Return the pseudorapidity.
     float eta() const;
+    /// @brief Return the azimuthal angle.
     float phi() const;
+    /// @brief Return the invariant mass of the point pair (GeV/c^2).
     float mass() const;
-    float dgg() const;            //only make sense if nPoint=2
-    float zgg() const;            //only make sense if nPoint=2
+    float dgg() const;            ///< Opening distance between the two photons (meaningful for nPoints=2).
+    float zgg() const;            ///< Energy asymmetry |E1-E2|/(E1+E2) (meaningful for nPoints=2).
+    /// @brief Return the energy-weighted x centroid of the pair.
     float x() const;  
+    /// @brief Return the energy-weighted y centroid of the pair.
     float y() const;;
-    unsigned int fpsPid() const;  //each digit {0=bad,1=gamma,2=hadron,3=electton}
+    unsigned int fpsPid() const;  ///< FPS PID word: each decimal digit encodes one point's PID (1=gamma, 2=hadron, 3=electron).
                                   //for pair(npoint=2), 11=gg, 22=hh, 33=ee, 13=ge,etc
                                   //for nPoint>2, LSD is first point and MSD is last 
 
-    enum StFmsPointPairConsts {kFmsPointMaxCone=3}; //!
+    enum StFmsPointPairConsts {kFmsPointMaxCone=3}; //!< Maximum number of isolation cone sizes.
+    /// @brief Return the radius of isolation cone number @p cone.
     float coneRadius(int cone) const;
+    /// @brief Return the FMS energy sum inside isolation cone number @p cone.
     float coneEnergy(int cone) const;
+    /// @brief Return the fraction of pair energy inside isolation cone number @p cone.
     float coneEnergyFraction(int cone) const;
+    /// @brief Set the energy deposited in isolation cone number @p cone.
     void setConeEnergy(int cone, float energy);
 
+    /// @brief Print point-pair properties.
     void print(int option=0);
 
 private:
-    vector<StFmsPoint*> mPoints;    //!
-    StLorentzVectorD mFourMomentum; //!  
-    UInt_t  mFpsPid;                //! 
-    Float_t mConeRadius[kFmsPointMaxCone]; //! cone radius
-    Float_t mConeEnergy[kFmsPointMaxCone]; //! sum of fms hit(cell) energy within a cone
+    vector<StFmsPoint*> mPoints;    //!< Constituent photon points (transient).
+    StLorentzVectorD mFourMomentum; //!< Combined four-momentum (transient).
+    UInt_t  mFpsPid;                //!< Packed FPS PID word (transient).
+    Float_t mConeRadius[kFmsPointMaxCone]; //!< Isolation cone radii (transient).
+    Float_t mConeEnergy[kFmsPointMaxCone]; //!< Energy sums within each isolation cone (transient).
 
     ClassDef(StFmsPointPair, 1)
 };

@@ -1,6 +1,7 @@
 /*!
- * \class StZdcTriggerDetector 
+ * \class StZdcTriggerDetector
  * \author Thomas Ullrich, Sep 1999
+ * \brief ZDC (Zero Degree Calorimeter) trigger detector ADC/TDC data for one event.
  */
 /***************************************************************************
  *
@@ -51,48 +52,72 @@
  **************************************************************************/
 #ifndef StZdcTriggerDetector_hh
 #define StZdcTriggerDetector_hh
+
+/// @file StZdcTriggerDetector.h
+/// @brief ZDC (Zero Degree Calorimeter) trigger detector ADC/TDC data and SMD strip data.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
 class dst_TrgDet_st;
 class StTriggerData;
 
+/// @brief Stores ZDC (Zero Degree Calorimeter) ADC sums, individual PMT ADC/TDC values,
+///        Shower Maximum Detector (SMD) strip data, and a vertex-z estimate from ZDC timing.
+///        The ZDC detects spectator neutrons in the very forward region (|eta|>6),
+///        used for minimum-bias and centrality triggering in heavy-ion collisions.
 class StZdcTriggerDetector : public StObject {
 public:
     StZdcTriggerDetector();
+    /// @brief Construct from legacy DST trigger detector table.
     StZdcTriggerDetector(const dst_TrgDet_st&);
+    /// @brief Construct from decoded StTriggerData.
     StZdcTriggerDetector(const StTriggerData&);
     // StZdcTriggerDetector(const StZdcTriggerDetector&);            use default
     // StZdcTriggerDetector& operator=(const StZdcTriggerDetector&); use default
     virtual ~StZdcTriggerDetector();
     
+    /// @brief Return the ADC sum for east or west ZDC arm.
     float         adcSum(StBeamDirection) const;
+    /// @brief Return the combined (east + west) ZDC ADC sum.
     float         adcSum() const;
+    /// @brief Return the number of ZDC ADC/TDC words stored.
     unsigned int  numberOfZdcWords() const;
+    /// @brief Return the raw ADC value at hardware index @p i.
     float         adc(unsigned int) const;
+    /// @brief Return the raw TDC value at hardware index @p i.
     float         tdc(unsigned int) const;
+    /// @brief Return the z-vertex position (cm) estimated from ZDC timing.
     float         vertexZ() const;
+    /// @brief Return the ZDC SMD strip ADC for given direction (east/west), orientation (vert=0/horiz=1), and strip @p strip.
     float         zdcSmd(StBeamDirection eastwest, int verthori, int strip) const;
 
+    /// @brief Set the raw ADC value at hardware index @p i.
     void setAdc(unsigned int, float);
+    /// @brief Set the raw TDC value at hardware index @p i.
     void setTdc(unsigned int, float);
+    /// @brief Set the ADC sum for east or west arm.
     void setAdcSum(StBeamDirection, float);
+    /// @brief Set the combined (east + west) ADC sum.
     void setAdcSum(float);
+    /// @brief Set the z-vertex position (cm) from ZDC timing.
     void setVertexZ(float);
+    /// @brief Set a ZDC SMD strip value for given direction, orientation, and strip.
     void setZdcSmd(StBeamDirection eastwest, int verthori, int strip, float val);
 
+    /// @brief Deprecated: use numberOfZdcWords() instead.
     unsigned int   numberOfZdcCounters() const;  // usage depreciated, to be removed soon
     
 protected:
-    enum {mMaxZdcWords = 16};
-    Float_t  mAdc[mMaxZdcWords];
-    Float_t  mTdc[mMaxZdcWords];
-    Float_t  mSumAdc[2];
-    Float_t  mSum;
-    Float_t  mVertexZ;
+    enum {mMaxZdcWords = 16}; ///< Maximum number of ZDC ADC/TDC words.
+    Float_t  mAdc[mMaxZdcWords];        ///< Raw ADC values for each ZDC channel.
+    Float_t  mTdc[mMaxZdcWords];        ///< Raw TDC values for each ZDC channel.
+    Float_t  mSumAdc[2];                ///< ADC sum for east [0] and west [1] arms.
+    Float_t  mSum;                      ///< Combined east+west ZDC ADC sum.
+    Float_t  mVertexZ;                  ///< Z-vertex estimate from ZDC timing (cm).
 
-    Float_t  mZdcSmdEast[mMaxZdcWords];
-    Float_t  mZdcSmdWest[mMaxZdcWords];
+    Float_t  mZdcSmdEast[mMaxZdcWords]; ///< ZDC SMD strip ADC values for the east arm.
+    Float_t  mZdcSmdWest[mMaxZdcWords]; ///< ZDC SMD strip ADC values for the west arm.
     
     ClassDef(StZdcTriggerDetector,3)
 };

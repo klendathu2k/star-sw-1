@@ -1,8 +1,10 @@
+/// @file StEventClusteringHints.h
+/// @brief Declaration of StEventClusteringHints, which maps StEvent class names to I/O branch names.
 /*!
- * \class StEventClusteringHints 
- * \author Thomas Ullrich, Apr 2001
+ * \class StEventClusteringHints
+ * \brief Maps top-level StEvent class names to their ROOT I/O branch names.
  *
- *               The class can distinguish between two modes
+ * The class can distinguish between two modes
  *               miniDST and DST mode in which clustering hints
  *               are different.
  *               With clustering hints we mean the association

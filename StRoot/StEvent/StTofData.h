@@ -33,44 +33,67 @@
 #ifndef StTofData_hh
 #define StTofData_hh
 
+/// @file StTofData.h
+/// @brief Raw electronic data from the legacy TOFp detector (TOFp + pVPD).
+
 #include "StObject.h"
 
+/// @brief Raw electronic data from a single channel of the legacy TOFp detector system.
 class StTofData : public StObject {
 public:
+    /// @brief Default constructor.
     StTofData();
+    /// @brief Constructs with all raw data fields.
     StTofData(unsigned short, unsigned short, unsigned short, short, unsigned short, unsigned int, unsigned int);
+    /// @brief Destructor.
     ~StTofData();    
 
+    /// @brief Equality comparison operator.
     int operator==(const StTofData&) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofData&) const;
 
+    /// @brief Returns the data channel index.
     unsigned short  dataIndex() const;
+    /// @brief Returns the raw ADC value.
     unsigned short  adc() const;
+    /// @brief Returns the raw TDC value.
     unsigned short  tdc() const;
+    /// @brief Returns the time calibration (TC) value.
              short  tc() const;
+    /// @brief Returns the slewing correction (SC) value.
     unsigned short  sc() const;
 
+    /// @brief Returns the leading-edge TDC count.
     unsigned int    leadingTdc() const;
+    /// @brief Returns the trailing-edge TDC count.
     unsigned int    trailingTdc() const;
  
+    /// @brief Sets the data channel index.
     void      setDataIndex(unsigned short);
+    /// @brief Sets the raw ADC value.
     void      setAdc(unsigned short);
+    /// @brief Sets the raw TDC value.
     void      setTdc(unsigned short);
+    /// @brief Sets the time calibration (TC) value.
     void      setTc(short);
+    /// @brief Sets the slewing correction (SC) value.
     void      setSc(unsigned short);
 
+    /// @brief Sets the leading-edge TDC count.
     void      setLeadingTdc(unsigned int);
+    /// @brief Sets the trailing-edge TDC count.
     void      setTrailingTdc(unsigned int);
 
 protected:
-    UShort_t  mDataIndex;
-    UShort_t  mAdc;
-    UShort_t  mTdc;
-    Short_t   mTc;
-    UShort_t  mSc;    
+    UShort_t  mDataIndex;  ///< Data channel index
+    UShort_t  mAdc;        ///< Raw ADC value
+    UShort_t  mTdc;        ///< Raw TDC value
+    Short_t   mTc;         ///< Time calibration value
+    UShort_t  mSc;         ///< Slewing correction value
 
-    UInt_t    mLeadingTdc;
-    UInt_t    mTrailingTdc;
+    UInt_t    mLeadingTdc;   ///< Leading-edge TDC count
+    UInt_t    mTrailingTdc;  ///< Trailing-edge TDC count
 
     ClassDef(StTofData,3)
 };

@@ -10,24 +10,30 @@
 
 #ifndef StIstSensorHitCollection_hh
 #define StIstSensorHitCollection_hh
+/// @file StIstSensorHitCollection.h
+/// @brief IST hit collection for a single sensor of the STAR Intermediate Silicon Tracker.
 
 #include "StObject.h"
 #include "StContainers.h"
 
 class StIstHit;
 
+/// @brief Collection of IST hits for a single sensor of the Intermediate Silicon Tracker.
 class StIstSensorHitCollection : public StObject
 {
 public:
+   /// @brief Default constructor.
    StIstSensorHitCollection();
+   /// @brief Destructor.
    ~StIstSensorHitCollection();
 
+   /// @brief Returns a reference to the vector of hits on this sensor.
    StSPtrVecIstHit       &hits();
+   /// @brief Returns a const reference to the vector of hits on this sensor.
    const StSPtrVecIstHit &hits() const;
 
 private:
-   StSPtrVecIstHit mHits; ///< Inherits from StStrArray which takes care of deleting the objects
-                          ///< pointed by the pointers in this array. This is different from the std::vector
+   StSPtrVecIstHit mHits; ///< Owned hit collection; StStrArray manages object lifetimes.
 
    ClassDef(StIstSensorHitCollection, 1)
 };

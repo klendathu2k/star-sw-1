@@ -18,6 +18,9 @@
 #ifndef STFCSCLUSTER_H
 #define STFCSCLUSTER_H
 
+/// @file StFcsCluster.h
+/// @brief Cluster of adjacent FCS (Forward Calorimeter System) towers.
+
 #include "StLorentzVectorD.hh"
 
 #include "StObject.h"
@@ -28,78 +31,104 @@
 class StFcsPoint;
 class StFwdTrack;
 
+/// @brief A group of adjacent FCS towers formed by energy deposits from one or more particles.
 class StFcsCluster : public StObject {
 public:
+    /// @brief Default constructor.
     StFcsCluster();
+    /// @brief Destructor.
     ~StFcsCluster();
     
-    int id() const; // Cluster ID
-    unsigned short detectorId() const;
-    int category() const;
-    int nTowers() const;
-    int nNeighbor() const;
-    int nPoints() const;
-    float energy() const;
-    float x() const;  // Mean x ("center of gravity") in local grid coordinate (1st moment).
-    float y() const;  // Mean y ("center of gravity") in local grid coordinate (1st moment).
-    float sigmaMax() const; // Maximum 2nd moment (along major axis).
-    float sigmaMin() const; // Minimum 2nd moment.
-    float theta() const;    // Angle in x-y plane that defines the direction of least-2nd-sigma
-    float chi2Ndf1Photon() const; // chi^2/ndf for 1-photon fit to the cluster.
-    float chi2Ndf2Photon() const; // chi^2/ndf for 2-photon fit to the cluster.
-    const StLorentzVectorD& fourMomentum() const; // Cluster four-momentum (px, py, pz, E)
+    int id() const; ///< Eventwise cluster ID.
+    unsigned short detectorId() const; ///< FCS sub-detector ID.
+    int category() const; ///< Cluster category (see StFcsClusterCategory).
+    int nTowers() const; ///< Number of non-zero-energy tower hits in this cluster.
+    int nNeighbor() const; ///< Number of neighbouring clusters.
+    int nPoints() const; ///< Number of fitted photon points in this cluster.
+    float energy() const; ///< Total cluster energy (GeV).
+    float x() const;  ///< Mean x position (centroid) in local tower-grid coordinates (1st moment).
+    float y() const;  ///< Mean y position (centroid) in local tower-grid coordinates (1st moment).
+    float sigmaMax() const; ///< Maximum 2nd moment (along the major axis).
+    float sigmaMin() const; ///< Minimum 2nd moment (along the minor axis).
+    float theta() const;    ///< Angle in the x-y plane defining the minor-axis direction (radians).
+    float chi2Ndf1Photon() const; ///< chi^2/ndf for the 1-photon shape fit.
+    float chi2Ndf2Photon() const; ///< chi^2/ndf for the 2-photon shape fit.
+    const StLorentzVectorD& fourMomentum() const; ///< Cluster four-momentum.
 
+    /// @brief Set the eventwise cluster ID.
     void setId(int cluid);
+    /// @brief Set the detector ID.
     void setDetectorId(unsigned short detector);
+    /// @brief Set the cluster category.
     void setCategory(int catag);
+    /// @brief Set the number of towers.
     void setNTowers(int numbTower);
+    /// @brief Set the total cluster energy.
     void setEnergy(float energy);
+    /// @brief Set the x centroid in local coordinates.
     void setX(float x0);
+    /// @brief Set the y centroid in local coordinates.
     void setY(float y0);
+    /// @brief Set the minimum 2nd moment.
     void setSigmaMin(float sigmaMax);
+    /// @brief Set the maximum 2nd moment.
     void setSigmaMax(float sigmaMax);
+    /// @brief Set the minor-axis angle.
     void setTheta(float theta);
+    /// @brief Set chi^2/ndf for the 1-photon fit.
     void setChi2Ndf1Photon(float chi2ndfph1);
+    /// @brief Set chi^2/ndf for the 2-photon fit.
     void setChi2Ndf2Photon(float chi2ndfph2);
+    /// @brief Set the cluster four-momentum.
     void setFourMomentum(StLorentzVectorD p4);
     // Hits
+    /// @brief Return the list of tower hits in this cluster.
     StPtrVecFcsHit& hits();
     const StPtrVecFcsHit& hits() const;
     // Neighbors
+    /// @brief Add a neighbouring cluster.
     void addNeighbor(StFcsCluster* neighbor);
+    /// @brief Return the list of neighbouring clusters.
     StPtrVecFcsCluster& neighbor();
     const StPtrVecFcsCluster& neighbor() const;    
     // Points
+    /// @brief Return the list of fitted photon points.
     StPtrVecFcsPoint& points();
     const StPtrVecFcsPoint& points() const;
+    /// @brief Add a single fitted photon point.
     void addPoint(StFcsPoint* p);
+    /// @brief Add two fitted photon points (2-photon fit result).
     void addPoint(StFcsPoint* p1, StFcsPoint* p2);
-     //Tracks
+    // Tracks
+    /// @brief Return the list of associated forward tracks.
     StPtrVecFwdTrack& tracks();
     const StPtrVecFwdTrack& tracks() const;
+    /// @brief Associate a forward track with this cluster.
     void addTrack(StFwdTrack* p);
+    /// @brief Sort associated tracks by descending transverse momentum.
     void sortTrackByPT();
 
+    /// @brief Print cluster properties.
     void print(Option_t *option="") const;
 
 private:
-    Int_t mId=-1;             // Eventwise cluster ID
-    UShort_t mDetectorId=0;   // Detector starts from 1
-    Int_t mCategory=0;        // Category of cluster (see StFcsClusterCategory)
-    Int_t mNTowers=0;         // Number of non-zero-energy tower hits in the cluster
-    Float_t mEnergy=0.0;      // Total energy contained in this cluster (0th moment)
-    Float_t mX=0.0;  // Mean x ("center of gravity") in local grid coordinate (1st moment)
-    Float_t mY=0.0;  // Mean y ("center of gravity") in local grid coordinate (1st moment)
-    Float_t mSigmaMin=0.0;        // Minimum 2nd moment
-    Float_t mSigmaMax=0.0;        // Maximum 2nd moment (along major axis)
-    Float_t mTheta=0.0;           //Angle in x-y plane that defines the direction of least-2nd-sigma
-    Float_t mChi2Ndf1Photon=0.0;  // &chi;<sup>2</sup> / ndf for 1-photon fit
-    Float_t mChi2Ndf2Photon=0.0;  // &chi;<sup>2</sup> / ndf for 2-photon fit
-    StLorentzVectorD mFourMomentum;  // Cluster four momentum
-    StPtrVecFcsHit mHits;            // Tower hits of the current cluster
-    StPtrVecFcsCluster mNeighbor;    // Neighbor clusters
-    StPtrVecFcsPoint mPoints;        // Fitted points (photons) in the cluster
-    StPtrVecFwdTrack mTracks;        // Associated Tracks
+    Int_t mId=-1;             ///< Eventwise cluster ID.
+    UShort_t mDetectorId=0;   ///< FCS sub-detector ID, starts from 1.
+    Int_t mCategory=0;        ///< Cluster category (see StFcsClusterCategory).
+    Int_t mNTowers=0;         ///< Number of non-zero-energy tower hits.
+    Float_t mEnergy=0.0;      ///< Total cluster energy, i.e. 0th moment (GeV).
+    Float_t mX=0.0;  ///< Mean x centroid in local tower-grid coordinates (1st moment).
+    Float_t mY=0.0;  ///< Mean y centroid in local tower-grid coordinates (1st moment).
+    Float_t mSigmaMin=0.0;        ///< Minimum 2nd moment (minor-axis width).
+    Float_t mSigmaMax=0.0;        ///< Maximum 2nd moment (major-axis width).
+    Float_t mTheta=0.0;           ///< Angle of the minor axis in the x-y plane (radians).
+    Float_t mChi2Ndf1Photon=0.0;  ///< chi^2/ndf for the 1-photon shape fit.
+    Float_t mChi2Ndf2Photon=0.0;  ///< chi^2/ndf for the 2-photon shape fit.
+    StLorentzVectorD mFourMomentum;  ///< Cluster four-momentum.
+    StPtrVecFcsHit mHits;            ///< Tower hits belonging to this cluster.
+    StPtrVecFcsCluster mNeighbor;    ///< Neighbouring clusters.
+    StPtrVecFcsPoint mPoints;        ///< Fitted photon points in this cluster.
+    StPtrVecFwdTrack mTracks;        ///< Forward tracks associated with this cluster.
 
     ClassDef(StFcsCluster, 3)
 };

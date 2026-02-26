@@ -24,9 +24,14 @@
 #ifndef StTriggerData2012_hh
 #define StTriggerData2012_hh
 
+/// @file StTriggerData2012.h
+/// @brief Concrete StTriggerData implementation for STAR Run 12 (year 2012) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2012.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 12 (year 2012) trigger data format.
+///        Adds TPC mask DSM, MTD VPD TAC difference, and updated BBC/ZDC large-tile access.
 class StTriggerData2012 : public StTriggerData {
     
 public:
@@ -183,7 +188,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2012 trigger data block (expert use only).
     TriggerDataBlk2012*  getTriggerStructure2012();  
     int                  getRawSize() const;
     
@@ -207,7 +214,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2012 *mData;
+    TriggerDataBlk2012 *mData; ///< Pointer to the raw 2012 trigger data block.
     
     EvtDescData2012*  EvtDesc;  //!
     L1_DSM_Data2012*  L1_DSM;   //!

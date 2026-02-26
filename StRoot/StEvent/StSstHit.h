@@ -28,44 +28,66 @@
 #ifndef StSstHit_hh
 #define StSstHit_hh
 
+/// @file StSstHit.h
+/// @brief Defines the StSstHit class representing a reconstructed hit in the Silicon Strip Tracker.
+
 #include "StHit.h"
 #include "StMemoryPool.hh"
 
+/// @brief Reconstructed hit in the STAR Silicon Strip Tracker (SST), the upgrade replacement for the SSD.
 class StSstHit : public StHit {
 public:
+    /// @brief Default constructor.
     StSstHit();
+    /// @brief Constructor with global position, position error, hardware address, charge, and fit flag.
     StSstHit(const StThreeVectorF&,
              const StThreeVectorF&,
              unsigned int, float, unsigned char = 0);
     // StSstHit(const StSstHit&);            use default
     // StSstHit& operator=(const StSstHit&); use default
+    /// @brief Destructor.
     ~StSstHit();
 
     void* operator new(size_t sz,void *p)     { return p;}
     void* operator new(size_t)     { return mPool.alloc(); }
     void  operator delete(void* p) { mPool.free(p); }    
 
-    unsigned int ladder() const;              // ladder=[1-20]
-    unsigned int wafer() const;               // wafer=[1-16]
+    /// @brief Returns the ladder number [1-20].
+    unsigned int ladder() const;
+    /// @brief Returns the wafer number on the ladder [1-16].
+    unsigned int wafer() const;
+    /// @brief Returns the central strip index on the N-side of the hit cluster.
     unsigned int centralStripNSide() const;  
+    /// @brief Returns the central strip index on the P-side of the hit cluster.
     unsigned int centralStripPSide() const;  
+    /// @brief Returns the cluster size (number of strips) on the N-side.
     unsigned int clusterSizeNSide() const;   
+    /// @brief Returns the cluster size (number of strips) on the P-side.
     unsigned int clusterSizePSide() const;
+    /// @brief Returns the local hit position along the given coordinate axis (0, 1, or 2).
     float        localPosition(unsigned int) const;
+    /// @brief Returns the sector number [1-4] for the given ladder index.
     static unsigned int sector(unsigned int);
+    /// @brief Returns the sector number [1-4] for this hit.
     unsigned int sector() const;
+    /// @brief Sets the local hit position along three coordinate axes.
     void         setLocalPosition(float, float, float);
+    /// @brief Sets the ADC values for the P-side (index 0) and N-side (index 1) of the hit cluster.
     void         setADC(unsigned short, unsigned short); 
+    /// @brief Returns the ADC value for the given side (0 = P-side, 1 = N-side).
     int          getADC(unsigned int) const; 
+    /// @brief Returns the geometry volume ID encoding ladder and wafer.
     virtual int  volumeID() const;
+    /// @brief Prints hit information to the output stream.
     void         Print(const Option_t *option="") const;
     
+    /// @brief Returns the detector identifier (kSstId).
     StDetectorId detector() const;
 
 protected:
-    static StMemoryPool mPool;  //!
-    Float_t mLocalPosition[3];
-    UShort_t   mADC[2]; 
+    static StMemoryPool mPool;  //! Memory pool for efficient hit allocation (not streamed).
+    Float_t mLocalPosition[3];  ///<  Local hit position: [0] = P-side, [1] = N-side, [2] = z.
+    UShort_t   mADC[2];         ///<  ADC values: [0] = P-side cluster, [1] = N-side cluster.
     
 private:
     enum {mWaferPerLadder=16};

@@ -19,9 +19,13 @@
 #ifndef _ST_FGT_STRIP_H_
 #define _ST_FGT_STRIP_H_
 
+/// @file StFgtStrip.h
+/// @brief Data structure for an individual FGT readout strip.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Stores the raw ADC samples, pedestal, and reconstructed charge for one FGT readout strip.
 class StFgtStrip : public StObject {    
 public:
     // constructors
@@ -62,15 +66,15 @@ public:
     
 protected:
     // data members
-    Int_t   mGeoId;                // indexing: 6 disk * 4 quad * 2 planes * 720 strips
-    Short_t mAdc[kFgtNumTimeBins]; // note "StRoot/RTS/src/DAQ_FGT/daq_fgt.h" uses UShort_t
-    Short_t mMaxAdc;               // max over the time bins
-    Short_t mClusterSeedType;      // See types in StFgtConsts.h
-    Float_t mCharge;               // before GEM, units (C), relation: ADC = ped + charge*gain(r,phi,disc)
-    Float_t mChargeUncert;
-    Int_t   mRdo, mArm, mApv, mChan; // elec coords, straight out of the DAQ file
-    Float_t mPed;
-    Float_t mPedErr;
+    Int_t   mGeoId;                ///< Geometry strip ID: encodes disc × quadrant × plane × strip number.
+    Short_t mAdc[kFgtNumTimeBins]; ///< ADC samples for each time bin (note: DAQ uses UShort_t).
+    Short_t mMaxAdc;               ///< Maximum ADC value across all time bins.
+    Short_t mClusterSeedType;      ///< Cluster seed classification (see StFgtConsts.h).
+    Float_t mCharge;               ///< Reconstructed charge (C); ADC = ped + charge × gain(r,φ,disc).
+    Float_t mChargeUncert;         ///< Uncertainty on the reconstructed charge.
+    Int_t   mRdo, mArm, mApv, mChan; ///< Electronics coordinates (RDO, ARM, APV, channel) as read from DAQ.
+    Float_t mPed;                  ///< Pedestal value for this strip channel.
+    Float_t mPedErr;               ///< Statistical uncertainty on the pedestal.
     
     static Int_t mDefaultTimeBin;
     
@@ -81,7 +85,7 @@ private:
     ClassDef(StFgtStrip,1);
 };
 
-// Functor for sorting the strips in the strip weight map.
+/// @brief Functor for ordering StFgtStrip pointers by geometry ID (used in std::map).
 struct stripPtrLessThan {
     bool operator() (const StFgtStrip* strip1, const StFgtStrip* strip2) const;
 };

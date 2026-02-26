@@ -31,9 +31,13 @@
 #ifndef StEmcModule_hh
 #define StEmcModule_hh
 
+/// @file StEmcModule.h
+/// @brief One readout module of a STAR EMC sub-detector, containing a set of raw hits.
+
 #include "StObject.h"
 #include "StContainers.h"
 
+/// @brief One readout module of a STAR EMC sub-detector, grouping the raw hits within that module.
 class StEmcModule : public StObject {
 public:
     StEmcModule();
@@ -41,10 +45,14 @@ public:
     // StEmcModule(const StEmcModule&);            use default
     // StEmcModule& operator=(const StEmcModule&); use default
     
-  unsigned int numberOfHits() const;
-  void    printNumberOfHits() const;        // *MENU*
-  double  getEnergy(const int pri=0) const; // *MENU*
+    /// @brief Returns the number of raw hits stored in this module.
+    unsigned int numberOfHits() const;
+    /// @brief Prints the hit count for this module (ROOT browser menu entry).
+    void    printNumberOfHits() const;        // *MENU*
+    /// @brief Returns the total energy deposited in this module [GeV].
+    double  getEnergy(const int pri=0) const; // *MENU*
 
+    /// @brief Returns the list of raw hits in this module.
     StSPtrVecEmcRawHit&       hits();
     const StSPtrVecEmcRawHit& hits() const;
 
@@ -53,7 +61,7 @@ public:
     virtual bool  IsFolder() const;
     
 private:
-    StSPtrVecEmcRawHit mHits;
+    StSPtrVecEmcRawHit mHits; ///< Raw hits stored in this module.
     ClassDef(StEmcModule,1)
  };
 #endif

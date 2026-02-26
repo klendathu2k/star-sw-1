@@ -11,6 +11,8 @@
 
 #ifndef StGmtCollection_hh
 #define StGmtCollection_hh
+/// @file StGmtCollection.h
+/// @brief Top-level data collection for the STAR Global Muon Tracker (GMT).
 
 // StRoot headers
 #include "StObject.h"

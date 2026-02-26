@@ -37,34 +37,46 @@
 #ifndef StRichPhotonInfo_hh
 #define StRichPhotonInfo_hh
 
+/// @file StRichPhotonInfo.h
+/// @brief Geometric information for a single Cherenkov photon candidate associated with a RICH hit.
+
 #include <Stiostream.h>
 
 #include "StObject.h"
 
 #include "StEnumerations.h"
 
+/// @brief Per-photon geometry record: distance, uncertainty, and azimuthal angle on the RICH pad plane.
 class StRichPhotonInfo : public StObject {
 public:
+    /// @brief Default constructor.
     StRichPhotonInfo();
+    /// @brief Constructor with distance, sigma, and azimuthal angle.
     StRichPhotonInfo(double, double, double);
-    
+
     virtual ~StRichPhotonInfo();
     //StRichPhotonInfo(const StRichPhotonInfo&){ /* nopt */ }
     //StRichPhotonInfo& operator=(const StRichPhotonInfo&){/* nopt */}
 
+    /// @brief Sets the distance from the Cherenkov ring centre to this photon hit.
     void    setD(float);
+    /// @brief Sets the uncertainty on the distance d.
     void    setSigma(float);
+    /// @brief Sets the azimuthal angle of this photon hit on the pad plane.
     void    setAzimuth(float);
-    
+
+    /// @brief Returns the distance from the Cherenkov ring centre to this photon hit.
     float d()       const;
+    /// @brief Returns the uncertainty on the distance d.
     float sigma()   const;
+    /// @brief Returns the azimuthal angle of this photon hit on the pad plane.
     float azimuth() const;
-    
+
 protected:
-    Float_t    mD;
-    Float_t    mSigma;
-    Float_t    mAzimuth;
-    
+    Float_t    mD;       ///< Distance from the Cherenkov ring centre to the photon hit
+    Float_t    mSigma;   ///< Uncertainty on mD
+    Float_t    mAzimuth; ///< Azimuthal angle of the photon hit on the pad plane
+
     ClassDef(StRichPhotonInfo,1)
 };
 

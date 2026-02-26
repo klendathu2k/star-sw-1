@@ -34,23 +34,33 @@
 #ifndef StTofMCHit_hh
 #define StTofMCHit_hh
 
+/// @file StTofMCHit.h
+/// @brief Monte Carlo TOF hit extending StTofHit with simulation truth information.
+
 #include <Stiostream.h>
 #include "StTofHit.h"
 
+/// @brief Monte Carlo TOF hit extending StTofHit with simulation truth information.
 class StTofMCHit : public StTofHit {
 public:
+    /// @brief Default constructor.
     StTofMCHit();
+    /// @brief Destructor.
     ~StTofMCHit();
 
+    /// @brief Returns the Monte Carlo track ID.
     int   trkId() const;
+    /// @brief Returns the GEANT particle ID (gId).
     int   gId()   const;
 
+    /// @brief Sets the Monte Carlo track ID.
     void  setTrkId(Int_t);
+    /// @brief Sets the GEANT particle ID.
     void  setGId(Int_t);
 
 protected:
-    Int_t     mTrkId;
-    Int_t     mGId;
+    Int_t     mTrkId;  ///< Monte Carlo track ID
+    Int_t     mGId;    ///< GEANT particle ID
 
     ClassDef(StTofMCHit,2)
 };

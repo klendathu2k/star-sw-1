@@ -34,6 +34,10 @@
  */    
 #ifndef StTriggerIdCollection_hh
 #define StTriggerIdCollection_hh
+
+/// @file StTriggerIdCollection.h
+/// @brief Collection of trigger ID sets (L1, L2, L3, nominal) for a single event.
+
 #include "StTriggerId.h"
 
 class StTriggerIdCollection : public StObject {
@@ -41,24 +45,33 @@ public:
     StTriggerIdCollection();
     ~StTriggerIdCollection();
 
-    const StTriggerId* nominal() const; // Most users should use this one
+    const StTriggerId* nominal() const; ///< Most-used accessor: trigger IDs agreed upon by all trigger levels.
+    /// @brief Return the L1 trigger ID set.
     const StTriggerId* l1() const;
+    /// @brief Return the L2 trigger ID set.
     const StTriggerId* l2() const;
+    /// @brief Return the L3 trigger ID set.
     const StTriggerId* l3() const;
+    /// @brief Return the expanded L3 trigger ID set.
     const StTriggerId* l3Expanded() const;
 
+    /// @brief Set the L1 trigger ID object (takes ownership).
     void setL1(StTriggerId*);
+    /// @brief Set the L2 trigger ID object (takes ownership).
     void setL2(StTriggerId*);
+    /// @brief Set the L3 trigger ID object (takes ownership).
     void setL3(StTriggerId*);
+    /// @brief Set the expanded L3 trigger ID object (takes ownership).
     void setL3Expanded(StTriggerId*);
+    /// @brief Set the nominal trigger ID object (takes ownership).
     void setNominal(StTriggerId*);
     
 private:
-    StTriggerId  *mL1TriggerId;
-    StTriggerId  *mL2TriggerId;
-    StTriggerId  *mL3TriggerId;
-    StTriggerId  *mL3ExpandedTriggerId;
-    StTriggerId  *mNominalTriggerId; 
+    StTriggerId  *mL1TriggerId;         ///< L1 trigger ID set.
+    StTriggerId  *mL2TriggerId;         ///< L2 trigger ID set.
+    StTriggerId  *mL3TriggerId;         ///< L3 trigger ID set.
+    StTriggerId  *mL3ExpandedTriggerId; ///< Expanded L3 trigger ID set.
+    StTriggerId  *mNominalTriggerId;    ///< Nominal (consensus) trigger ID set.
     
     ClassDef(StTriggerIdCollection,2)
 };

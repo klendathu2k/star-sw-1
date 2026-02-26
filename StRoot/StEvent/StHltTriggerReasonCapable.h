@@ -17,10 +17,14 @@
 #ifndef StHltTriggerReasonCapable_hh
 #define StHltTriggerReasonCapable_hh
 
+/// @file StHltTriggerReasonCapable.h
+/// @brief Base class for HLT physics objects that can serve as a trigger reason.
+
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StArray.h"
 
+/// @brief Abstract base class for HLT physics objects that can be the reason for an online trigger decision.
 class StHltTriggerReasonCapable : public StObject {
 public:
     StHltTriggerReasonCapable();

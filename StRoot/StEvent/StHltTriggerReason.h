@@ -17,43 +17,50 @@
 #ifndef StHltTriggerReason_hh
 #define StHltTriggerReason_hh
 
+/// @file StHltTriggerReason.h
+/// @brief HLT trigger reason record linking a trigger type to the physics object that fired it.
+
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StArray.h"
 
 class StHltTriggerReasonCapable;
 
-enum StHltTriggerReasonType { 
-	kHighPt = 0x10000,                  ///< enum of high pt
-	kDiElectron = 0x20000,              ///< enum of di-electron
-	kHeavyFragment = 0x40000,           ///< enum of heavy fragment
-	kAllEvents = 0x80000,               ///< enum of all events
-	kRandomEvents = 0x100000,           ///< enum of random events
-	kBESGoodEvents = 0x200000,          ///< enum of BES good events
+/// @brief Enumeration of HLT trigger reason types identifying which physics signature fired the trigger.
+enum StHltTriggerReasonType {
+	kHighPt         = 0x10000,  ///< High transverse-momentum track trigger.
+	kDiElectron     = 0x20000,  ///< Di-electron pair trigger.
+	kHeavyFragment  = 0x40000,  ///< Heavy nuclear fragment trigger.
+	kAllEvents      = 0x80000,  ///< Accept-all events trigger.
+	kRandomEvents   = 0x100000, ///< Random event sampling trigger.
+	kBESGoodEvents  = 0x200000, ///< Beam energy scan good-event trigger.
 };  
 
+/// @brief Associates an HLT trigger reason bit with the physics object that caused the trigger.
 class StHltTriggerReason : public StObject {
 public:
     StHltTriggerReason();
     ~StHltTriggerReason();
-    
+
+    /// @brief Trigger reason bit identifying the physics signature that fired.
     StHltTriggerReasonType reasonBit() const;
+    /// @brief Pointer to the physics object that fired the trigger (StHltHighPt, StHltHeavyFragment, or StHltDiElectron).
     StHltTriggerReasonCapable* reason();
     const StHltTriggerReasonCapable* reason() const;
-    
+
+    /// @brief Set the trigger reason bit.
     void setReasonBit(StHltTriggerReasonType);
+    /// @brief Set the pointer to the triggering physics object.
     void setReason(StHltTriggerReasonCapable*);
     
     
 private:
-    StHltTriggerReasonType mReasonBit;
+    StHltTriggerReasonType mReasonBit; ///< Trigger reason bit identifying the physics signature.
 #ifdef __CINT__
     StObjLink mReason;
 #else
-    StLink<StHltTriggerReasonCapable> mReason;
+    StLink<StHltTriggerReasonCapable> mReason; ///< Pointer to the triggering physics object (StHltHighPt, StHltHeavyFragment, or StHltDiElectron).
 #endif //__CINT__
-    
-    ///< can be an pointer to StHltHighPt StHltHeavyFragment or StHltDielectron
     
     ClassDef(StHltTriggerReason,1)
 };

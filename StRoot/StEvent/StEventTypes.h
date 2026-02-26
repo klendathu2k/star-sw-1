@@ -170,6 +170,13 @@
 #ifndef StEventTypes_hh
 #define StEventTypes_hh
 
+/// @file StEventTypes.h
+/// @brief Convenience header that includes the complete StEvent class hierarchy.
+///
+/// Including this single header makes all StEvent detector-data, track,
+/// vertex, trigger, and PID classes available.  It is the recommended
+/// include for code that needs broad access to StEvent objects.
+
 #include "StContainers.h"
  
 #include "StBbcTriggerDetector.h"

@@ -34,10 +34,15 @@
 #ifndef StTriggerData2007_hh
 #define StTriggerData2007_hh
 
+/// @file StTriggerData2007.h
+/// @brief Concrete StTriggerData implementation for STAR Run 7 (year 2007) trigger data.
+
 #include "StTriggerData.h"
 
 struct TrgDataType2007;
 
+/// @brief Concrete implementation of StTriggerData for Run 7 (year 2007) trigger data format.
+///        Adds VPD and MTD readout compared to the 2005 format.
 class StTriggerData2007 : public StTriggerData {
 public:
     StTriggerData2007();
@@ -146,7 +151,9 @@ public:
     unsigned short mtdTdc(StBeamDirection eastwest, int pmt, int prepost=0) const;
 
     // experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2007 trigger data structure (expert use only).
     TrgDataType2007*     getTriggerStructure2007();  
     int                  getRawSize() const;
 
@@ -167,7 +174,7 @@ public:
     const unsigned int*  l2Result() const;
     
 protected:
-    TrgDataType2007 *mData;
+    TrgDataType2007 *mData; ///< Pointer to the raw 2007 trigger data structure.
 
     ClassDef(StTriggerData2007,1) 
 };

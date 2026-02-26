@@ -26,157 +26,118 @@
 #ifndef STETOFHIT_H
 #define STETOFHIT_H
 
+/// @file StETofHit.h
+/// @brief Reconstructed hit in the STAR Endcap TOF (eTOF) detector, formed from two or more MRPC strip digis.
+
 #include <Stiostream.h>
 #include "StObject.h"
 
 class StTrack;
 
-
+/// @brief Reconstructed hit in the STAR Endcap TOF (eTOF) MRPC detector.
 class StETofHit : public StObject {
 public:
-    /**
-    ** @brief Default constructor.
-    **/
+    /// @brief Default constructor.
     StETofHit();
 
-
-    /**
-    ** @brief Constructor with detailled assignment.
-    ** @param[in] sector        sector Id.
-    ** @param[in] zPlane        eTof Z-Plane.
-    ** @param[in] counter       counter Id.
-    ** @param[in] time          absolute raw time [ns].
-    ** @param[in] tot           raw Time Over Threshold [ns].
-    ** @param[in] clusterSize   number of strips that are clustered in one hit
-    ** @param[in] localX        local X position on detector [cm].
-    ** @param[in] localY        local Y position on detector [cm].
-    **/
+    /// @brief Constructs with full geometry and measurement information.
     StETofHit( const unsigned int sector, const unsigned int zPlane, const unsigned int counter,
                const double& time, const double& tot, const unsigned int clusterSize,
                const double& localX, const double& localY );
 
-
-    /**
-    ** @brief Copy constructor.
-    **/
+    /// @brief Copy constructor.
     StETofHit( const StETofHit& );
 
-
-    /**
-    ** @brief Destructor.
-    **/
+    /// @brief Destructor.
     ~StETofHit();
 
-
-    /**
-    ** @brief Sector.
-    **/
+    /// @brief Returns the STAR sector number.
     unsigned int sector()      const;
-    /**
-    ** @brief ZPlane.
-    **/
+    /// @brief Returns the eTOF z-plane number.
     unsigned int zPlane()      const;
-    /**
-    ** @brief Counter.
-    **/
+    /// @brief Returns the counter (MRPC module) number.
     unsigned int counter()     const;
 
-
-    /**
-    ** @brief Time.
-    **/
+    /// @brief Returns the calibrated hit time [ns].
     double time()              const;
 
-    /**
-    ** @brief Total Tot.
-    **/
+    /// @brief Returns the summed time-over-threshold of the contributing digis [ns].
     double totalTot()          const;
 
-
-    /**
-    ** @brief Cluster size
-    **/
+    /// @brief Returns the number of strips contributing to this hit.
     unsigned int clusterSize() const;
 
-
-    /**
-    ** @brief X-position.
-    **/
+    /// @brief Returns the local X position on the counter [cm].
     double localX()            const;
-    /**
-    ** @brief Y-position.
-    **/
+    /// @brief Returns the local Y position on the counter [cm].
     double localY()            const;
 
-
-    /**
-    ** @brief pointer to the track which has been matched to this hit
-    **/
+    /// @brief Returns a pointer to the reconstructed track matched to this hit.
     StTrack* associatedTrack();
     
-    /**
-    ** @brief pointer to the track which has been matched to this hit
-    **/
+    /// @brief Returns a const pointer to the reconstructed track matched to this hit.
     StTrack* associatedTrack() const;
 
-
-    /**
-    ** @brief mc-true associated track id in simulation
-    **/
+    /// @brief Returns the Monte Carlo truth track ID.
     unsigned int idTruth()     const;
-    /**
-    ** @brief quality of this information (percentage of charge produced by mIdTruth)
-    **/
+    /// @brief Returns the quality of the MC truth association (% of charge from mIdTruth).
     unsigned int qaTruth()     const;
 
-
-    /**
-    ** @brief Sorting using the time, assumes Digis are in same reference frame (e.g. same epoch).
-    **/
+    /// @brief Less-than operator; sorts by time within the same reference frame.
     bool operator<( const StETofHit& rhs ) const; 
     
+    /// @brief Compares this hit with another StObject by time.
     int compare( const StObject*  obj )    const;
+    /// @brief Compares this hit with another StETofHit by time.
     int compare( const StETofHit* hit )    const;
 
-
-    /** Modifiers **/
+    /// @brief Sets the hardware address (sector, z-plane, counter).
     void setHwAddress( const unsigned int iSector, const unsigned int iZPlane, const unsigned int iCounter);
 
+    /// @brief Sets the sector number.
     void setSector(  const unsigned int sector   );
+    /// @brief Sets the z-plane number.
     void setZPlane(  const unsigned int zPlane   );
+    /// @brief Sets the counter number.
     void setCounter( const unsigned int counter  );
 
+    /// @brief Sets the summed time-over-threshold [ns].
     void setTotalTot   ( const double& tot   );
+    /// @brief Sets the calibrated hit time [ns].
     void setTime       ( const double& time  );
 
+    /// @brief Sets the number of strips contributing to this hit.
     void setClusterSize( const unsigned int clustSize );
 
+    /// @brief Sets the local X position on the counter [cm].
     void setLocalX     ( const double& X     );
+    /// @brief Sets the local Y position on the counter [cm].
     void setLocalY     ( const double& Y     );
 
-
+    /// @brief Sets the pointer to the matched reconstructed track.
     void setAssociatedTrack( StTrack* trk );
 
+    /// @brief Sets the Monte Carlo truth track ID and quality.
     void setIdTruth( unsigned short idtruth, unsigned short qatruth=0 );
 
 
 private:
-    UInt_t      mSector;
-    UInt_t      mZPlane;
-    UInt_t      mCounter;
+    UInt_t      mSector;   ///< STAR sector number
+    UInt_t      mZPlane;   ///< eTOF z-plane number
+    UInt_t      mCounter;  ///< Counter (MRPC module) number
     
-    Double_t    mTime;
-    Double_t    mTotalTot;
+    Double_t    mTime;      ///< Calibrated hit time [ns]
+    Double_t    mTotalTot;  ///< Summed time-over-threshold [ns]
 
-    UInt_t      mClusterSize;
+    UInt_t      mClusterSize;  ///< Number of contributing strips
 
-    Double_t    mLocalX;
-    Double_t    mLocalY;
+    Double_t    mLocalX;  ///< Local X position on counter [cm]
+    Double_t    mLocalY;  ///< Local Y position on counter [cm]
 
     StTrack*    mAssociatedTrack;  //$LINK
 
-    UShort_t     mIdTruth;
-    UShort_t     mQuality;
+    UShort_t     mIdTruth;  ///< Monte Carlo truth track ID
+    UShort_t     mQuality;  ///< Quality of MC truth association (% charge from mIdTruth)
 
 
 

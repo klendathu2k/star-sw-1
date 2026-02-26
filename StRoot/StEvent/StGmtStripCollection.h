@@ -1,6 +1,5 @@
 /**
- * \class StGmtCollection
- * \brief Holds collections of GMT strips
+ * \class StGmtStripCollection
  * 
  * Collection of GMT strips for StEvent. Basically a wrapper 
  * for an StSPtrVecGmtStrip (based on StFgtStripCollection)
@@ -12,6 +11,8 @@
 
 #ifndef StGmtStripCollection_hh
 #define StGmtStripCollection_hh
+/// @file StGmtStripCollection.h
+/// @brief Collection of GMT strips for a single module of the Global Muon Tracker.
 
 // STAR headers
 #include "StObject.h"
@@ -27,44 +28,43 @@ class StGmtStripCollection : public StObject {
   /// Destructor
   ~StGmtStripCollection();
     
-  // WARNING: never use getStripVec().push_back() or equivelants. 
+  // WARNING: never use getStripVec().push_back() or equivalents. 
   // Instead use StGmtStripCollection::getStrip to add a new strip.
 
-  /// Access vector with strips
+  /// @brief Returns a reference to the internal vector of strips.
   StSPtrVecGmtStrip& getStripVec()             { return mStripVec; }
-  /// Access vector with strips
+  /// @brief Returns a const reference to the internal vector of strips.
   const StSPtrVecGmtStrip& getStripVec() const { return mStripVec; }
-    
-    // sort internal vector by geoId
+
+    /// @brief Sorts the internal strip vector by geoId.
     void sortByGeoId();
 
-    // sort internal vector by coordinate number
+    /// @brief Sorts the internal strip vector by coordinate number.
     void sortByCoord();
-    // sort internal vector by coordinate number
+    /// @brief Partially sorts the internal strip vector by coordinate number.
     void partialSortByCoord();
 
-    // sort internal vector by layer (X first then Y)
+    /// @brief Sorts the internal strip vector by layer (X strips first, then Y).
     void sortByLayer();
 
-    // remove all hits with negative geoIds
+    /// @brief Removes all strips with negative geoIds (flagged as invalid).
     void removeFlagged();
-    
-    // size of internal vector
-    size_t getNumStrips() const;
-    
-    // modify/access the moduleId
-    short getModule() const;
-    void setModule( short module );
-    
-    // Clear
-    void Clear( Option_t *opt = "" );
-    
-    // Get pointer to a strip -- note: this is the only way to modify a
-    // strip.  New strip is created if it does not exist, but only
-    // using StGmtStrip() constructor.  Ownership is retained by the
-    // collection.
 
+    /// @brief Returns the number of strips in the collection.
+    size_t getNumStrips() const;
+
+    /// @brief Returns the module index.
+    short getModule() const;
+    /// @brief Sets the module index.
+    void setModule( short module );
+
+    /// @brief Clears the collection.
+    void Clear( Option_t *opt = "" );
+
+    /// @brief Returns a pointer to the strip with the given geoId; creates it if absent.
+    /// Ownership is retained by this collection.
     StGmtStrip* getStrip( int Id );
+    /// @brief Returns a pointer to a strip located via a sorted search by geoId.
     StGmtStrip* getSortedStrip( int Id );
     
  protected:  

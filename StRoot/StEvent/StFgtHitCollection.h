@@ -21,11 +21,15 @@
 #ifndef _ST_FGT_HIT_COLLECTION_H_
 #define _ST_FGT_HIT_COLLECTION_H_
 
+/// @file StFgtHitCollection.h
+/// @brief Collection of FGT 1D cluster (hit) objects for one disc in StEvent.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StFgtHit;
 
+/// @brief Container of StFgtHit objects (1D clusters) associated with a single FGT disc.
 class StFgtHitCollection : public StObject {
 public:
     // constructors
@@ -49,8 +53,8 @@ public:
     
 protected:
     // the data member
-    Short_t mDisc;
-    StSPtrVecFgtHit mHitVec;
+    Short_t mDisc;              ///< FGT disc index (0-based).
+    StSPtrVecFgtHit mHitVec;    ///< Persistent vector of hits (1D clusters) on this disc.
     
 private:   
     ClassDef(StFgtHitCollection,1);

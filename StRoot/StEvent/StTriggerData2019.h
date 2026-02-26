@@ -21,9 +21,15 @@
 #ifndef StTriggerData2019_hh
 #define StTriggerData2019_hh
 
+/// @file StTriggerData2019.h
+/// @brief Concrete StTriggerData implementation for STAR Run 19 (year 2019) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2019.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 19 (year 2019) trigger data format.
+///        Adds full EPD DSM layer hierarchy (layer0/layer1/layer1a/layer1b), EPD multiplicity
+///        access, EPD earliest TDC, and revolution-tick counters.
 class StTriggerData2019 : public StTriggerData {
     
 public:
@@ -224,7 +230,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2019 trigger data block (expert use only).
     TriggerDataBlk2019*  getTriggerStructure2019();  
     int                  getRawSize() const;
     
@@ -248,7 +256,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2019 *mData;
+    TriggerDataBlk2019 *mData; ///< Pointer to the raw 2019 trigger data block.
     
     EvtDescData2019*  EvtDesc;  //!
     L1_DSM_Data2019*  L1_DSM;   //!

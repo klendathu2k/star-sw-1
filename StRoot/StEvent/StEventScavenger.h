@@ -1,5 +1,13 @@
+/// @file StEventScavenger.h
+/// @brief Declaration of StEventScavenger, a utility class for removing data collections from StEvent.
 /*!
  * \class StEventScavenger
+ * \brief Utility class providing static methods to remove (zombie) data collections from StEvent.
+ *
+ * All removal methods mark the target object as a ROOT zombie rather than
+ * calling @c delete, in keeping with ROOT ownership semantics.  This is
+ * used to slim down StEvent objects in memory or when writing miniDSTs.
+ *
  * \author Thomas Ullrich, Sep 2000
  */
 /***************************************************************************

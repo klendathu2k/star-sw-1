@@ -32,29 +32,40 @@
 #ifndef StSvtLadderHitCollection_hh
 #define StSvtLadderHitCollection_hh
 
+/// @file StSvtLadderHitCollection.h
+/// @brief Defines the StSvtLadderHitCollection class grouping SVT hits by ladder within a barrel.
+
 #include "StObject.h"
 #include "StSvtWaferHitCollection.h"
 
+/// @brief Collection of SVT hits belonging to a single ladder, organized by wafer.
 class StSvtLadderHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StSvtLadderHitCollection();
+    /// @brief Destructor.
     ~StSvtLadderHitCollection();
     // StSvtLadderHitCollection(const StSvtLadderHitCollection&); use default
     // const StSvtLadderHitCollection&
     // operator=(const StSvtLadderHitCollection&);                use default
     
+    /// @brief Returns the total number of hits across all wafers on this ladder.
     unsigned int  numberOfHits() const;
+    /// @brief Returns the number of wafer sub-collections on this ladder.
     unsigned int  numberOfWafers() const;
     
+    /// @brief Returns a pointer to the hit collection for the given wafer index.
     StSvtWaferHitCollection*       wafer(unsigned int);
+    /// @brief Returns a const pointer to the hit collection for the given wafer index.
     const StSvtWaferHitCollection* wafer(unsigned int) const;
 
+    /// @brief Sets the parent barrel index (used to configure wafer capacities).
     void setBarrelNumber(int);
     
 private:
     enum { mMaxNumberOfWafers = 7 };
-    Int_t                    mBarrelNumber;
-    StSvtWaferHitCollection  mWafers[mMaxNumberOfWafers];
+    Int_t                    mBarrelNumber;                    ///<  Parent barrel index [1-3].
+    StSvtWaferHitCollection  mWafers[mMaxNumberOfWafers];      ///<  Array of wafer hit collections.
     
     ClassDef(StSvtLadderHitCollection,1)
 };

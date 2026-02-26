@@ -43,37 +43,52 @@
 #ifndef StTpcPixel_hh
 #define StTpcPixel_hh
 
+/// @file StTpcPixel.h
+/// @brief Single ADC pixel (pad × time-bin sample) from the TPC readout.
+
 #include "StObject.h"
 #include "Stiostream.h"
 #include "StEnumerations.h"
 
+/// @brief Single ADC pixel (one pad × one time-bin sample) from the TPC readout.
 class StTpcPixel : public StObject {
 public:
+    /// @brief Construct a TPC pixel with detector, sector, padrow, pad, time-bin, ADC, and MC truth info.
     StTpcPixel(unsigned char Detector = 0, unsigned char Sector = 0, unsigned char Row = 0,
                unsigned char Pad = 0, unsigned short TimeBin = 0,unsigned short Adc=0, 
                int IdTruth=0, short Id=0) :
         mDetector(Detector),  mSector(Sector), mRow(Row), 
         mPad(Pad), mTimeBin(TimeBin), mAdc(Adc), mIdTruth(IdTruth), mId(Id) {}
+    /// @brief Destructor.
     virtual ~StTpcPixel() {}
-    unsigned char   detector() const;  
-    unsigned char   sector()   const;   
-    unsigned char   padrow()   const;      
-    unsigned char   pad()      const;      
-    unsigned short  timebin()  const;  
-    unsigned short  adc()      const;    
+    /// @brief Returns the detector identifier.
+    unsigned char   detector() const;
+    /// @brief Returns the TPC sector number (1–24).
+    unsigned char   sector()   const;
+    /// @brief Returns the TPC padrow number.
+    unsigned char   padrow()   const;
+    /// @brief Returns the pad number within the padrow.
+    unsigned char   pad()      const;
+    /// @brief Returns the time-bin index within the drift window.
+    unsigned short  timebin()  const;
+    /// @brief Returns the raw ADC value for this pixel.
+    unsigned short  adc()      const;
+    /// @brief Returns the Monte Carlo truth track ID associated with this pixel.
     int             idTruth()  const;
-    short           id()       const;  
+    /// @brief Returns the cluster ID this pixel is assigned to.
+    short           id()       const;
+    /// @brief Prints pixel information to the given output option.
     virtual void Print(Option_t *option="") const;
-    
+
 protected:
-    UChar_t   mDetector; 
-    UChar_t   mSector;   
-    UChar_t   mRow;      
-    UChar_t   mPad;      
-    UShort_t  mTimeBin;  
-    UShort_t  mAdc;      
-    Int_t     mIdTruth;
-    Short_t   mId; // Cluster Id
+    UChar_t   mDetector; ///< Detector identifier.
+    UChar_t   mSector;   ///< TPC sector number (1–24).
+    UChar_t   mRow;      ///< Padrow number within the sector.
+    UChar_t   mPad;      ///< Pad number within the padrow.
+    UShort_t  mTimeBin;  ///< Time-bin index within the drift window.
+    UShort_t  mAdc;      ///< Raw ADC value for this pad × time-bin sample.
+    Int_t     mIdTruth;  ///< Monte Carlo truth track ID.
+    Short_t   mId;       ///< Cluster ID this pixel belongs to.
     
     ClassDef(StTpcPixel, 2)  //StTpcPixel structure
 };

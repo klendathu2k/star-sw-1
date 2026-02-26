@@ -1,5 +1,13 @@
+/// @file StEventBranch.h
+/// @brief Declaration of StEventBranch, which manages a named I/O branch within StEvent.
 /*!
- * \class StEventBranch 
+ * \class StEventBranch
+ * \brief Represents a named ROOT I/O branch that aggregates a subset of StEvent data.
+ *
+ * StEventBranch groups related StEvent sub-objects under a named branch for
+ * selective reading and writing (e.g. "dst", "minidst").  It interacts with
+ * the ROOT tree / XRef machinery via StXRef.
+ *
  * \author Victor Perev, May 2001
  */
 /***************************************************************************

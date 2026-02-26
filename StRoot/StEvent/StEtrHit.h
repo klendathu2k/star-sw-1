@@ -28,22 +28,33 @@
 #ifndef StEtrHit_hh
 #define StEtrHit_hh
 
+/// @file StEtrHit.h
+/// @brief Reconstructed hit class for the ETR (Endcap Tracking prototype) detector.
+
 #include "StHit.h"
 #include "StMemoryPool.hh"
 
 class StEtrPoint;
 
+/// @brief Reconstructed hit in the Endcap Tracking (ETR) prototype detector.
 class StEtrHit : public StHit {
 public:
+    /// @brief Default constructor.
     StEtrHit();
+    /// @brief Construct with hit position, geometry indices, and deposited charge.
     StEtrHit(const StThreeVectorF&  position,
               int sector, int layer, int section, float charge);
+    /// @brief Destructor.
     ~StEtrHit();
+    /// @brief Returns the detector identifier (kEtrId).
     StDetectorId detector() const {return kEtrId;}
 
-    int section() const;        // 0-29
-    int sector()  const;        // 0-11
-    int layer()   const;        // 0-2
+    /// @brief Returns the pad section index (0–29).
+    int section() const;
+    /// @brief Returns the azimuthal sector index (0–11).
+    int sector()  const;
+    /// @brief Returns the radial layer index (0–2).
+    int layer()   const;
 protected:
     ClassDef(StEtrHit,1)
 };

@@ -47,6 +47,9 @@
 #ifndef StFmsCollection_hh
 #define StFmsCollection_hh
 
+/// @file StFmsCollection.h
+/// @brief Event-level collection of all FMS hits, clusters, points, and point pairs.
+
 #include "Stiostream.h"
 #include "StObject.h"
 #include "StContainers.h"
@@ -57,36 +60,48 @@ class StFmsPoint;
 class StFmsPointPair;
 class StFpsSlat;
 
+/// @brief Container owning all FMS hits, clusters, photon points, and point pairs for one event.
 class StFmsCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StFmsCollection();
+    /// @brief Destructor; frees all owned objects.
     ~StFmsCollection();
     
-    void addHit(StFmsHit*);           // Add a hit to the collection
-    void addCluster(StFmsCluster*);   // Add a cluster to the collection
-    void addPoint(StFmsPoint*);       // Add a point to the collection
+    void addHit(StFmsHit*);           ///< Add a hit to the collection.
+    void addCluster(StFmsCluster*);   ///< Add a cluster to the collection.
+    void addPoint(StFmsPoint*);       ///< Add a photon point to the collection.
     
-    unsigned int numberOfHits() const;   // Return the number of hits in the collection
-    unsigned int numberOfClusters() const; // Return the number of clusters in the collection
-    unsigned int numberOfPoints() const;   // Return the number of points in the collection
+    unsigned int numberOfHits() const;   ///< Return the total number of hits.
+    unsigned int numberOfClusters() const; ///< Return the total number of clusters.
+    unsigned int numberOfPoints() const;   ///< Return the total number of photon points.
     
-    StSPtrVecFmsHit& hits();   // Return the hit list
+    StSPtrVecFmsHit& hits();   ///< Return the list of FMS hits.
     const StSPtrVecFmsHit& hits() const;
     
-    StSPtrVecFmsCluster& clusters();   // Return the cluster list
+    StSPtrVecFmsCluster& clusters();   ///< Return the list of FMS clusters.
     const StSPtrVecFmsCluster& clusters() const;
     
-    StSPtrVecFmsPoint& points();    // Return the point list
+    StSPtrVecFmsPoint& points();    ///< Return the list of photon points.
     const StSPtrVecFmsPoint& points() const;
    
+    /// @brief Return the packed FMS reconstruction flag word.
     int fmsReconstructionFlag()      const;
+    /// @brief Return 1 if small-cell clusters are merged into large-cell clusters.
     int isMergeSmallToLarge()        const;
+    /// @brief Return 1 if a global cluster refit was performed.
     int isGlobalRefit()              const;
+    /// @brief Return 1 if a 1-photon fit retry was attempted for poor 2-photon fits.
     int isTry1PhotonFit()            const;
+    /// @brief Return 1 if the new cluster categorization algorithm was used.
     int isNewClusterCategorization() const;
+    /// @brief Return 1 if shower shape scaling was applied.
     int isScaleShowerShape()         const;
+    /// @brief Return the shower shape scale factor for the large-cell FMS.
     float scaleShowerShapeLarge()    const;
+    /// @brief Return the shower shape scale factor for the small-cell FMS.
     float scaleShowerShapeSmall()    const;
+    /// @brief Set the packed FMS reconstruction flag word.
     void setFmsReconstructionFlag(int v);
     void setMergeSmallToLarge(int v);
     void setGlobalRefit(int v);
@@ -95,35 +110,44 @@ public:
     void setScaleShowerShape(int v);
     void setScaleShowerShape(float l, float s);
 
-    void fillFpsSlat();            //update FPS slat info based on FMS hits
-    void fillFpsAssociation();     //update FPS-FMS association info based on FMS points
-    StSPtrVecFpsSlat& fpsSlats();  //Return the fps slats array
-    StFpsSlat* fps(int slatid);    //return FPS slat for a given slatid
+    void fillFpsSlat();            ///< Populate FPS slat information from FMS hits.
+    void fillFpsAssociation();     ///< Update FPS–FMS spatial association from photon points.
+    StSPtrVecFpsSlat& fpsSlats();  ///< Return the array of FPS (FPD Pre-Shower) slats.
+    StFpsSlat* fps(int slatid);    ///< Return the FPS slat for a given slat ID.
 
+    /// @brief Build all photon point pairs from the current point list.
     void fillFmsPointPair();
+    /// @brief Return the number of point pairs.
     unsigned int numberOfPointPairs();    
+    /// @brief Return all point pairs sorted by descending E1 then E2.
     vector<StFmsPointPair*>& pointPairs();    
+    /// @brief Return point pairs sorted by descending total energy.
     vector<StFmsPointPair*>& pointPairsEnergySorted();    
+    /// @brief Return point pairs sorted by descending total transverse energy.
     vector<StFmsPointPair*>& pointPairsETSorted();    
+    /// @brief Return point pairs sorted by proximity to the pi0 mass.
     vector<StFmsPointPair*>& pointPairsPi0MassSorted();    
     
+    /// @brief Sort photon points by descending energy.
     void sortPointsByEnergy();
+    /// @brief Sort photon points by descending transverse energy.
     void sortPointsByET();
 
+    /// @brief Print collection summary.
     void print(int option=1);
     
 private:
-    StSPtrVecFmsHit     mHits;      // Owns all FMS hits
-    StSPtrVecFmsCluster mClusters;  // Owns all FMS clusters
-    StSPtrVecFmsPoint   mPoints;    // Owns all FMS points (photons)
-    StSPtrVecFpsSlat    mFpsSlats;  //! Owns, but does not save it to file but auto generate on fly
+    StSPtrVecFmsHit     mHits;      ///< Owns all FMS tower hits.
+    StSPtrVecFmsCluster mClusters;  ///< Owns all FMS clusters.
+    StSPtrVecFmsPoint   mPoints;    ///< Owns all FMS photon points.
+    StSPtrVecFpsSlat    mFpsSlats;  //!< Owns FPS slats; transient (auto-generated, not persisted).
 
-    vector<StFmsPointPair*> mPointPairs;              //! Pairs of points, all combinations, sorted by decending E1 then E2
-    vector<StFmsPointPair*> mPointPairsEnergySorted;  //! sorted by total decending E
-    vector<StFmsPointPair*> mPointPairsETSorted;      //!  sorted by total decending ET
-    vector<StFmsPointPair*> mPointPairsPi0MassSorted; //! sotted from close to pi0 mass to far
+    vector<StFmsPointPair*> mPointPairs;              //!< All point pairs sorted by descending E1 then E2.
+    vector<StFmsPointPair*> mPointPairsEnergySorted;  //!< Point pairs sorted by descending total energy.
+    vector<StFmsPointPair*> mPointPairsETSorted;      //!< Point pairs sorted by descending total ET.
+    vector<StFmsPointPair*> mPointPairsPi0MassSorted; //!< Point pairs sorted by proximity to pi0 mass.
 
-    Int_t mFmsReconstructionFlag;   // LSB=(0=small/large separately, 1=merge small cell to large)
+    Int_t mFmsReconstructionFlag;   ///< Packed reconstruction flags (see setter methods for bit layout).
                                     // 2nd LSB=(0=No global refit, 1=performe global refit)
                                     // 3rd LSB=(0=No 1photon fit retry, 1=performe 1 photon fit if 2 photon fit is bad)
     Float_t mScaleShowerShapeLarge=1.0; 

@@ -28,32 +28,40 @@
 #ifndef StTofMCInfo_hh
 #define StTofMCInfo_hh
 
+/// @file StTofMCInfo.h
+/// @brief Monte Carlo truth information associated with a legacy TOF detector element.
+
 #include "StObject.h"
 
+/// @brief Monte Carlo truth record for a single hit in the legacy TOF detector.
 class StTofMCInfo : public StObject {
 public:
+    /// @brief Default constructor.
     StTofMCInfo();
+    /// @brief Constructs with all Monte Carlo truth fields.
     StTofMCInfo(int,   int,   int,   float, int,   float, 
 		float, float, float, float, float, float,    
 		float);
 
+    /// @brief Equality comparison operator.
     int operator==(const StTofMCInfo& MCInfo) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofMCInfo& MCInfo) const;
 
 public:
-    Int_t   mTrkId;
-    Int_t   mGId;
-    Int_t   mNHits;
-    Int_t   mNPhe; 
-    Float_t mDe;
-    Float_t mPTot;
-    Float_t mDs;
-    Float_t mSLength;
-    Float_t mPmLength;
-    Float_t mTof;
-    Float_t mTime;
-    Float_t mMTime;
-    Float_t mMTimeL;
+    Int_t   mTrkId;    ///< Monte Carlo track ID
+    Int_t   mGId;      ///< GEANT particle ID
+    Int_t   mNHits;    ///< Number of Monte Carlo hits in the detector element
+    Int_t   mNPhe;     ///< Number of photoelectrons produced
+    Float_t mDe;       ///< Energy deposit [GeV]
+    Float_t mPTot;     ///< Total momentum at the hit [GeV/c]
+    Float_t mDs;       ///< Step length of Monte Carlo track [cm]
+    Float_t mSLength;  ///< Track path length to the detector element [cm]
+    Float_t mPmLength; ///< Path length within the material [cm]
+    Float_t mTof;      ///< Monte Carlo time of flight [ns]
+    Float_t mTime;     ///< Absolute Monte Carlo time [ns]
+    Float_t mMTime;    ///< Mirror-reflected time [ns]
+    Float_t mMTimeL;   ///< Mirror-reflected leading-edge time [ns]
     
     ClassDef(StTofMCInfo,2)
 };

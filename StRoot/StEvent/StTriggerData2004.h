@@ -54,10 +54,14 @@
 #ifndef StTriggerData2004_hh
 #define StTriggerData2004_hh
 
+/// @file StTriggerData2004.h
+/// @brief Concrete StTriggerData implementation for STAR Run 4 (year 2004) trigger data.
+
 #include "StTriggerData.h"
 
 struct TrgDataType2004;
 
+/// @brief Concrete implementation of StTriggerData for Run 4 (year 2004) trigger data format.
 class StTriggerData2004 : public StTriggerData {
 public:
     StTriggerData2004();
@@ -150,7 +154,9 @@ public:
     unsigned char eemcHighestTowerADC(int prepost=0) const;
 
     // experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char* getTriggerStructure();
+    /// @brief Return a typed pointer to the 2004 trigger data structure (expert use only).
     TrgDataType2004* getTriggerStructure2004();  
     int getRawSize() const;
 
@@ -165,7 +171,7 @@ public:
     const unsigned int*  l2Result() const;
     
 protected:
-    TrgDataType2004 *mData;
+    TrgDataType2004 *mData; ///< Pointer to the raw 2004 trigger data structure.
     
     ClassDef(StTriggerData2004,1) 
 };

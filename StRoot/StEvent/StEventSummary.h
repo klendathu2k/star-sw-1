@@ -1,5 +1,10 @@
+/// @file StEventSummary.h
+/// @brief Declaration of StEventSummary, which holds aggregate quantities for a reconstructed event.
 /*!
- * \class StEventSummary 
+ * \class StEventSummary
+ * \brief Stores aggregate event-level quantities: track multiplicities, mean kinematic
+ *        variables, vertex position, magnetic field, and binned track/energy distributions.
+ *
  * \author Thomas Ullrich, July 1999
  */
 /***************************************************************************

@@ -26,9 +26,14 @@
 #ifndef StTriggerData2016_hh
 #define StTriggerData2016_hh
 
+/// @file StTriggerData2016.h
+/// @brief Concrete StTriggerData implementation for STAR Run 16 (year 2016) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2016.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 16 (year 2016) trigger data format.
+///        Adds full TCU/RCC bunch counter, MTD QT readout, and bbcVP101 access.
 class StTriggerData2016 : public StTriggerData {
     
 public:
@@ -198,7 +203,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2016 trigger data block (expert use only).
     TriggerDataBlk2016*  getTriggerStructure2016();  
     int                  getRawSize() const;
     
@@ -222,7 +229,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2016 *mData;
+    TriggerDataBlk2016 *mData; ///< Pointer to the raw 2016 trigger data block.
     
     EvtDescData2016*  EvtDesc;  //!
     L1_DSM_Data2016*  L1_DSM;   //!

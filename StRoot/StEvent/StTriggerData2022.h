@@ -21,9 +21,15 @@
 #ifndef StTriggerData2022_hh
 #define StTriggerData2022_hh
 
+/// @file StTriggerData2022.h
+/// @brief Concrete StTriggerData implementation for STAR Run 22 (year 2022) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2022.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 22 (year 2022) trigger data format.
+///        Inherits the Run 19 feature set; removes FPD and FMS DSM access; adds zdcKillerBit
+///        and additional EPD QT crates (EQ1/EQ2/EQ4).
 class StTriggerData2022 : public StTriggerData {
     
 public:
@@ -225,7 +231,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2022 trigger data block (expert use only).
     TriggerDataBlk2022*  getTriggerStructure2022();  
     int                  getRawSize() const;
     
@@ -250,7 +258,7 @@ public:
     //void killFMS();
     
 protected:
-    TriggerDataBlk2022 *mData;
+    TriggerDataBlk2022 *mData; ///< Pointer to the raw 2022 trigger data block.
     
     EvtDescData2022*  EvtDesc;  //!
     L1_DSM_Data2022*  L1_DSM;   //!

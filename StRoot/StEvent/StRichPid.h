@@ -44,6 +44,9 @@
 #ifndef StRichPid_hh
 #define StRichPid_hh
 
+/// @file StRichPid.h
+/// @brief RICH particle-identification hypothesis for a single particle species.
+
 #include "StObject.h"
 #include "StContainers.h"
 
@@ -54,89 +57,120 @@
 #include "StEnumerations.h"
 
 
+/// @brief RICH PID hypothesis for one particle species, containing ring statistics and associated hits.
 class StRichPid : public StObject {
 public:
+    /// @brief Default constructor.
     StRichPid();
     ~StRichPid();
+    /// @brief Constructor with particle type, MIP residual, and full/truncated ring statistics.
     StRichPid(StParticleDefinition* particle, StThreeVectorD resid,
               float totAzim,  float totArea,
               unsigned short totHits, float trunAzim,
               float trunArea, unsigned short trunHits);
-  
+
     // StRichPid(const StRichPid&) {}
     // StRichPid& operator=(const StRichPid&) {}
-  
+
     int operator==(const StRichPid&) const;
 
+    /// @brief Returns a const reference to the RICH hits associated with this hypothesis.
     const StPtrVecRichHit&      getAssociatedRichHits() const;
+    /// @brief Returns a mutable reference to the RICH hits associated with this hypothesis.
     StPtrVecRichHit&            getAssociatedRichHits();
+    /// @brief Adds a RICH hit to the list of hits associated with this hypothesis.
     void                        addHit(StRichHit*);
 
+    /// @brief Returns a const reference to the photon-geometry information vector.
     const StSPtrVecRichPhotonInfo& getPhotonInfo();
+    /// @brief Returns a pointer to the photon-geometry record at index i.
     StRichPhotonInfo*              getPhotonInfo(int);   // should be constant
+    /// @brief Appends a photon-geometry record to the collection.
     void                           addPhotonInfo(StRichPhotonInfo*);
 
+    /// @brief Sets the particle species hypothesis for this Cherenkov ring.
     void setRingType(StParticleDefinition* particle);
+    /// @brief Sets the residual between the MIP impact point and the ring centre.
     void setMipResidual(StThreeVectorD t);
-    
-    // whole ring
+
+    /// @brief Sets the total azimuthal coverage of the Cherenkov ring (radians).
     void setTotalAzimuth(float);
+    /// @brief Sets the total pad-plane area subtended by the Cherenkov ring.
     void setTotalArea(float);
+    /// @brief Sets the total number of photon hits on the full ring.
     void setTotalHits(unsigned short);
+    /// @brief Sets the photon hit density for the full ring.
     void setTotalDensity(float);
-    
+
+    /// @brief Returns the total azimuthal coverage of the Cherenkov ring (radians).
     float  getTotalAzimuth() const;
+    /// @brief Returns the total pad-plane area subtended by the Cherenkov ring.
     float  getTotalArea()    const;
+    /// @brief Returns the total number of photon hits on the full ring.
     unsigned short getTotalHits()    const;
+    /// @brief Returns the photon hit density for the full ring.
     float  getTotalDensity() const;
-    
-    // constant area cut
+
+    /// @brief Sets the truncated (constant-area cut) azimuthal coverage.
     void setTruncatedAzimuth(float);
+    /// @brief Sets the truncated pad-plane area after the constant-area cut.
     void setTruncatedArea(float);
+    /// @brief Sets the number of photon hits surviving the constant-area cut.
     void setTruncatedHits(unsigned short);
+    /// @brief Sets the photon hit density after the constant-area cut.
     void setTruncatedDensity(float);
 
+    /// @brief Returns the truncated azimuthal coverage after the constant-area cut.
     float  getTruncatedAzimuth() const;
+    /// @brief Returns the truncated pad-plane area after the constant-area cut.
     float  getTruncatedArea()    const;
+    /// @brief Returns the number of photon hits after the constant-area cut.
     unsigned short getTruncatedHits()    const;
+    /// @brief Returns the photon hit density after the constant-area cut.
     float  getTruncatedDensity() const;
 
+    /// @brief Returns the constant pad-plane area cut value used in truncated calculations.
     float  getConstantAreaCut()  const;
+    /// @brief Sets the constant pad-plane area cut value.
     void   setConstantAreaCut(float);
-    
+
+    /// @brief Returns a pointer to the particle species definition for this hypothesis.
     StParticleDefinition* getRingType()       const;
+    /// @brief Returns the PDG-encoded particle number for this hypothesis.
     int                 getParticleNumber() const;
 
-    
+    /// @brief Returns the residual between the MIP impact point and the ring centre.
     StThreeVectorD        getMipResidual() const;
-    
-    // Flag
+
+    /// @brief Returns true if the specified PID flag bit is set.
     bool isSet(StRichPidFlag) const;
+    /// @brief Sets the specified PID flag bit.
     void setBit(StRichPidFlag);
+    /// @brief Clears the specified PID flag bit.
     void unSetBit(StRichPidFlag);
-    
+
 private:
     StParticleDefinition*  mParticleType;//!
-    Int_t                  mParticleNumber;
-    
-    StPtrVecRichHit         mAssociatedHits;
-    StSPtrVecRichPhotonInfo mPhotonInfo;
+    Int_t                  mParticleNumber;     ///< PDG-encoded particle number
 
-    StThreeVectorD          mMipResidual;
+    StPtrVecRichHit         mAssociatedHits;    ///< RICH hits on the ring for this hypothesis (not owned)
+    StSPtrVecRichPhotonInfo mPhotonInfo;        ///< Per-photon geometry records
 
-    Float_t  mTotalAzimuth;
-    Float_t  mTotalArea;
-    UShort_t mTotalHits;
-    Float_t  mTotalDensity;
-    
-    Float_t  mTruncatedAzimuth;
-    Float_t  mTruncatedArea;
-    UShort_t mTruncatedHits;
-    Float_t  mTruncatedDensity;
+    StThreeVectorD          mMipResidual;       ///< Residual between MIP impact point and ring centre
 
-    Float_t  mConstantAreaCut;
-    
-    UInt_t   mFlags;
+    Float_t  mTotalAzimuth;     ///< Azimuthal coverage of the full ring (radians)
+    Float_t  mTotalArea;        ///< Pad-plane area of the full ring
+    UShort_t mTotalHits;        ///< Number of photon hits on the full ring
+    Float_t  mTotalDensity;     ///< Photon hit density on the full ring
+
+    Float_t  mTruncatedAzimuth; ///< Azimuthal coverage after constant-area cut
+    Float_t  mTruncatedArea;    ///< Pad-plane area after constant-area cut
+    UShort_t mTruncatedHits;    ///< Number of photon hits after constant-area cut
+    Float_t  mTruncatedDensity; ///< Photon hit density after constant-area cut
+
+    Float_t  mConstantAreaCut;  ///< Constant pad-plane area cut applied in truncated calculations
+
+    UInt_t   mFlags;            ///< PID status flag bit field
 
     ClassDef(StRichPid,1)
 };

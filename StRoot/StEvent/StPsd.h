@@ -33,26 +33,38 @@
  **************************************************************************/
 #ifndef StPsd_hh
 #define StPsd_hh
+
+/// @file StPsd.h
+/// @brief Base class for Physics Summary Data (PSD) objects in STAR.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Base class for Physics Summary Data (PSD) objects, identified by Physics Working Group and ID.
 class StPsd : public StObject {
 public:
+    /// @brief Default constructor.
     StPsd();
+    /// @brief Construct with Physics Working Group tag and identifier.
     StPsd(StPwg, int);
     // StPsd(const StPsd&);             use default
     // StPsd& operator=(const StPsd&);  used default
+    /// @brief Destructor.
     virtual ~StPsd();
 
+    /// @brief Returns the Physics Working Group (PWG) tag.
     StPwg   pwg() const;
+    /// @brief Returns the unique identifier within the PWG.
     int     id() const;
 
+    /// @brief Sets the Physics Working Group (PWG) tag.
     void    setPwg(StPwg);
+    /// @brief Sets the unique identifier within the PWG.
     void    setId(int);
     
 private:
-    StPwg   mPwg;
-    Int_t   mId;
+    StPwg   mPwg;   ///< Physics Working Group identifier.
+    Int_t   mId;    ///< Unique identifier within the PWG.
     
     ClassDef(StPsd,1)
 };

@@ -76,59 +76,90 @@
 #ifndef StSvtHit_hh
 #define StSvtHit_hh
 
+/// @file StSvtHit.h
+/// @brief Defines the StSvtHit class representing a reconstructed hit in the Silicon Vertex Tracker.
+
 #include "StHit.h"
 #include "StMemoryPool.hh"
 
+/// @brief Reconstructed hit in the STAR Silicon Vertex Tracker (SVT).
 class StSvtHit : public StHit {
 public:
+    /// @brief Default constructor.
     StSvtHit();
+    /// @brief Constructor with global position, position error, hardware address, charge, and fit flag.
     StSvtHit(const StThreeVectorF&,
              const StThreeVectorF&,
              unsigned int, float, unsigned char = 0);
     // StSvtHit(const StSvtHit&);            use default
     // StSvtHit& operator=(const StSvtHit&); use default
+    /// @brief Destructor.
     ~StSvtHit();
 
     void* operator new(size_t sz,void *p)     { return p;}
     void* operator new(size_t)     { return mPool.alloc(); }
     void  operator delete(void* p) { mPool.free(p); }
 
-    unsigned int layer() const;      // layer=[1,6]
+    /// @brief Returns the SVT layer number [1-6].
+    unsigned int layer() const;
+    /// @brief Returns the SVT layer number for the given barrel and ladder indices.
     static unsigned int layer(unsigned int barrel, unsigned int ladder);
-    unsigned int ladder() const;     // ladder=[1-8]
-    unsigned int wafer() const;      // wafer=[1-7]
-    unsigned int barrel() const;     // barrel=[1-3]
-    unsigned int hybrid() const;     // hybrid=[1-2]
-    unsigned int index() const;  // hybrid index
-    float anode() const;  // anode of hit in 1/4 slices
-    float timebucket() const; // timebucket of hit in 1/4 slices
-    float peakADC() const; // Peak ADC value of hit
+    /// @brief Returns the ladder number within the barrel [1-8].
+    unsigned int ladder() const;
+    /// @brief Returns the wafer number on the ladder [1-7].
+    unsigned int wafer() const;
+    /// @brief Returns the barrel number [1-3].
+    unsigned int barrel() const;
+    /// @brief Returns the hybrid number on the wafer [1-2].
+    unsigned int hybrid() const;
+    /// @brief Returns the hybrid index encoded in the hardware position word.
+    unsigned int index() const;
+    /// @brief Returns the anode position of the hit in units of 1/4 anode pitch.
+    float anode() const;
+    /// @brief Returns the time-bucket position of the hit in units of 1/4 time-bucket.
+    float timebucket() const;
+    /// @brief Returns the peak ADC value of the hit cluster.
+    float peakADC() const;
+    /// @brief Returns the local hit position along the given coordinate axis (0 or 1).
     float localPosition(unsigned int) const;
+    /// @brief Returns the number of anode strips associated with the hit cluster.
     int numberOfAnodes() const;
+    /// @brief Returns the number of pixels (anode × time-bucket) in the hit cluster.
     int numberOfPixels() const;
 
+    /// @brief Returns the shell identifier (East/West) for the given barrel and ladder.
     static unsigned int shell(unsigned int barrel, unsigned int ladder);
+    /// @brief Returns the shell identifier (East/West) for this hit.
     unsigned int shell() const;    
     
+    /// @brief Sets the peak ADC value of the hit cluster.
     void setPeak(float);
+    /// @brief Sets the anode position of the hit in units of 1/4 anode pitch.
     void setAnode(float);
+    /// @brief Sets the time-bucket position of the hit in units of 1/4 time-bucket.
     void setTimebucket(float);
+    /// @brief Sets the local hit position along both coordinate axes.
     void setLocalPosition(float, float);
+    /// @brief Returns the geometry volume ID encoding barrel, ladder, and wafer.
     virtual int volumeID() const;
+    /// @brief Sets the number of anode strips in the hit cluster.
     void setNumberOfAnodes(unsigned short);
+    /// @brief Sets the number of pixels in the hit cluster.
     void setNumberOfPixels(unsigned short);
+    /// @brief Prints hit information to the output stream.
     void Print(Option_t *option="") const;
     
+    /// @brief Returns the detector identifier (kSvtId).
     StDetectorId detector() const;
 
 protected:
-    static StMemoryPool mPool;  //!
-    Float_t mPeak;
-    Float_t mAnode;
-    Float_t mTimebucket;
-    Float_t mLocalPosition[2];
-    UShort_t mNumberOfAnodes;
-    UShort_t mNumberOfPixels;
+    static StMemoryPool mPool;  //! Memory pool for efficient hit allocation (not streamed).
+    Float_t mPeak;              ///<  Peak ADC value of the hit cluster.
+    Float_t mAnode;             ///<  Anode position of the hit in units of 1/4 anode pitch.
+    Float_t mTimebucket;        ///<  Time-bucket position of the hit in units of 1/4 time-bucket.
+    Float_t mLocalPosition[2];  ///<  Local hit position: [0] = anode direction, [1] = drift direction.
+    UShort_t mNumberOfAnodes;   ///<  Number of anode strips in the hit cluster.
+    UShort_t mNumberOfPixels;   ///<  Number of pixels (anode × time-bucket) in the hit cluster.
     
 private:
     enum {mNBarrel=3};

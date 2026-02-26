@@ -10,6 +10,8 @@
 
 #ifndef StIstHitCollection_hh
 #define StIstHitCollection_hh
+/// @file StIstHitCollection.h
+/// @brief Top-level hit collection for the STAR Intermediate Silicon Tracker (IST).
 
 #include "StObject.h"
 #include "StIstLadderHitCollection.h"
@@ -19,24 +21,33 @@ using namespace StIstConsts;
 
 class StIstHit;
 
+/// @brief Top-level collection of IST hits for the full Intermediate Silicon Tracker.
 class StIstHitCollection : public StObject
 {
 public:
+   /// @brief Default constructor.
    StIstHitCollection();
+   /// @brief Destructor.
    ~StIstHitCollection();
 
+   /// @brief Adds an IST hit to the appropriate ladder/sensor sub-collection.
    bool          addHit(StIstHit *);
+   /// @brief Returns the total number of hits across all ladders.
    unsigned int  numberOfHits() const;
 
+   /// @brief Returns the clustering algorithm type used for these hits.
    unsigned char getClusteringType() const;
+   /// @brief Sets the clustering algorithm type.
    void          setClusteringType(unsigned char clusteringType);
 
+   /// @brief Returns a pointer to the hit collection for the given ladder (0-indexed).
    StIstLadderHitCollection       *ladder(unsigned int);
+   /// @brief Returns a const pointer to the hit collection for the given ladder (0-indexed).
    const StIstLadderHitCollection *ladder(unsigned int) const;
 
 private:
-   StIstLadderHitCollection mLadders[kIstNumLadders];
-   UChar_t mClusteringType;  // clustering algorithm type
+   StIstLadderHitCollection mLadders[kIstNumLadders]; ///< Per-ladder hit collections.
+   UChar_t mClusteringType;  ///< Clustering algorithm type identifier.
 
    ClassDef(StIstHitCollection, 1)
 };

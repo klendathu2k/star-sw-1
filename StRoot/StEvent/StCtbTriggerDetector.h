@@ -1,6 +1,7 @@
 /*!
- * \class StCtbTriggerDetector 
+ * \class StCtbTriggerDetector
  * \author Thomas Ullrich, Sep 1999
+ * \brief CTB (Central Trigger Barrel) trigger detector MIP data for one event.
  */
 /***************************************************************************
  *
@@ -39,35 +40,58 @@
  **************************************************************************/
 #ifndef StCtbTriggerDetector_hh
 #define StCtbTriggerDetector_hh
+
+/// @file StCtbTriggerDetector.h
+/// @brief CTB (Central Trigger Barrel) trigger detector MIP signal data.
+
 #include "StObject.h"
 
 class dst_TrgDet_st;
 class StTriggerData;
 
+/// @brief Stores CTB (Central Trigger Barrel) MIP signal data per tray and slat
+///        for the triggered crossing and optional pre/post-crossing samples.
+///        The CTB is a scintillator barrel around the TPC used for charged-particle multiplicity triggering.
 class StCtbTriggerDetector : public StObject {
 public:
     StCtbTriggerDetector();
+    /// @brief Construct from legacy DST trigger detector table.
     StCtbTriggerDetector(const dst_TrgDet_st&);
+    /// @brief Construct from decoded StTriggerData.
     StCtbTriggerDetector(const StTriggerData&);
     virtual ~StCtbTriggerDetector();
     // StCtbTriggerDetector(const StCtbTriggerDetector&);            use default
     // StCtbTriggerDetector& operator=(const StCtbTriggerDetector&); use default
     
+    /// @brief Return the number of CTB trays.
     unsigned int   numberOfTrays() const;
+    /// @brief Return the number of slats per tray.
     unsigned int   numberOfSlats() const;
+    /// @brief Return the number of pre-crossing samples stored.
     unsigned int   numberOfPreSamples() const;
+    /// @brief Return the number of post-crossing samples stored.
     unsigned int   numberOfPostSamples() const;
+    /// @brief Return the number of auxiliary words per crossing.
     unsigned int   numberOfAuxWords() const;
+    /// @brief Return the MIP count for @p tray, slat @p slot, at crossing sample @p evt.
     float          mips(unsigned int tray, unsigned int slot, unsigned int evt = 0) const;
+    /// @brief Return the timing value for @p tray, slat @p slot, at crossing sample @p evt.
     char           time(unsigned int tray, unsigned int slot, unsigned int evt = 0) const;
+    /// @brief Return auxiliary word @p i at crossing sample @p evt.
     float          aux(unsigned int, unsigned int evt = 0) const;
 
+    /// @brief Return the summed MIP count over all trays and slats at crossing sample @p evt.
     double         mips(unsigned int evt = 0) const;     // sum over all trays, slot
 
+    /// @brief Set the MIP count for tray, slot, and crossing sample.
     void setMips(unsigned int, unsigned int, unsigned int, float);
+    /// @brief Set the timing value for tray, slot, and crossing sample.
     void setTime(unsigned int, unsigned int, unsigned int, char);
+    /// @brief Set auxiliary word at the given crossing sample.
     void setAux(unsigned int, unsigned int, float);
+    /// @brief Set the number of pre-crossing samples.
     void setNumberOfPreSamples(unsigned int);
+    /// @brief Set the number of post-crossing samples.
     void setNumberOfPostSamples(unsigned int);
     
 protected:
@@ -76,11 +100,11 @@ protected:
           mMaxEventSamples = 11,
           mMaxAux = 16};
     char mBeg[1];//!
-    Float_t  mMips[mMaxTrays][mMaxSlats][mMaxEventSamples];
-    Char_t   mTime[mMaxTrays][mMaxSlats][mMaxEventSamples];
-    Float_t  mAux[mMaxAux][mMaxEventSamples];
-    Int_t    mNumberOfPreSamples;
-    Int_t    mNumberOfPostSamples;
+    Float_t  mMips[mMaxTrays][mMaxSlats][mMaxEventSamples]; ///< MIP counts [tray][slat][crossing].
+    Char_t   mTime[mMaxTrays][mMaxSlats][mMaxEventSamples]; ///< Timing values [tray][slat][crossing].
+    Float_t  mAux[mMaxAux][mMaxEventSamples];               ///< Auxiliary words [word][crossing].
+    Int_t    mNumberOfPreSamples;                           ///< Number of stored pre-crossing samples.
+    Int_t    mNumberOfPostSamples;                          ///< Number of stored post-crossing samples.
     char mEnd[1];//!
     
     ClassDef(StCtbTriggerDetector,2)

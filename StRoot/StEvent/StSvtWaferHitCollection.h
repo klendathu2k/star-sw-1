@@ -28,24 +28,32 @@
 #ifndef StSvtWaferHitCollection_hh
 #define StSvtWaferHitCollection_hh
 
+/// @file StSvtWaferHitCollection.h
+/// @brief Defines the StSvtWaferHitCollection class holding SVT hits for a single wafer.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StSvtHit;
 
+/// @brief Collection of SVT hits on a single silicon wafer.
 class StSvtWaferHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StSvtWaferHitCollection();
     // StSvtWaferHitCollection(const StSvtWaferHitCollection&); use default
     // const StSvtWaferHitCollection&
     // operator=(const StSvtWaferHitCollection&);               use default
+    /// @brief Destructor.
     ~StSvtWaferHitCollection();
     
+    /// @brief Returns a reference to the vector of hits on this wafer.
     StSPtrVecSvtHit&       hits();
+    /// @brief Returns a const reference to the vector of hits on this wafer.
     const StSPtrVecSvtHit& hits() const;
 
 private:
-    StSPtrVecSvtHit mHits;
+    StSPtrVecSvtHit mHits;   ///<  Hits reconstructed on this wafer.
     
     ClassDef(StSvtWaferHitCollection,1)
 };

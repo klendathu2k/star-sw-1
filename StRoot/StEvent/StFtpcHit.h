@@ -62,53 +62,75 @@
 #ifndef StFtpcHit_hh
 #define StFtpcHit_hh
 
+/// @file StFtpcHit.h
+/// @brief Defines the StFtpcHit class representing a reconstructed hit in the Forward Time Projection Chamber.
+
 #include "StHit.h"
 #include "StMemoryPool.hh"
 
 class StFtpcPoint;
 
+/// @brief Reconstructed hit in the STAR Forward Time Projection Chamber (FTPC).
 class StFtpcHit : public StHit {
 public:
+    /// @brief Default constructor.
     StFtpcHit();
+    /// @brief Constructor with global position, position error, hardware address, charge, and fit flag.
     StFtpcHit(const StThreeVectorF&,
               const StThreeVectorF&,
               unsigned int, float, unsigned char = 0);
+    /// @brief Constructor from an StFtpcPoint reconstructed cluster object.
     StFtpcHit(const StFtpcPoint&);
     // StFtpcHit(const StFtpcHit&);            use default
     // StFtpcHit& operator=(const StFtpcHit&); use default
+    /// @brief Destructor.
     ~StFtpcHit();
 
     void* operator new(size_t sz,void *p)     { return p;}
     void* operator new(size_t)     { return mPool.alloc(); }
     void  operator delete(void* p) { mPool.free(p); }
   
-    unsigned int sector() const;        // 1-6
-    unsigned int plane() const;         // 1-20
+    /// @brief Returns the FTPC sector number [1-6].
+    unsigned int sector() const;
+    /// @brief Returns the FTPC readout plane number [1-20].
+    unsigned int plane() const;
+    /// @brief Returns the number of pads contributing to this hit cluster.
     unsigned int padsInHit() const;
+    /// @brief Returns the number of time bins contributing to this hit cluster.
     unsigned int timebinsInHit() const;
 
+    /// @brief Updates hit properties from an StFtpcPoint cluster object.
     void update(const StFtpcPoint&);
 
+    /// @brief Returns the hit centroid position in pad units.
     double padPosition() const;
+    /// @brief Returns the hit centroid position in time-bin units.
     double timePosition() const;
+    /// @brief Returns the standard deviation of the pad position.
     double sigmaPadPosition() const;
+    /// @brief Returns the standard deviation of the time-bin position.
     double sigmaTimePosition() const;
 
+    /// @brief Sets the hit centroid position in pad units.
     void setPadPosition(float);
+    /// @brief Sets the hit centroid position in time-bin units.
     void setTimePosition(float);
+    /// @brief Sets the standard deviation of the pad position.
     void setSigmaPadPosition(float);
+    /// @brief Sets the standard deviation of the time-bin position.
     void setSigmaTimePosition(float);
  
+    /// @brief Returns the detector identifier for this hit (East or West FTPC).
     StDetectorId   detector() const;
     
 
 protected:
-    static StMemoryPool mPool;  //!
+    static StMemoryPool mPool;  //! Memory pool for efficient hit allocation (not streamed).
 
-    Float_t    mPadPos;        // pad position of hit
-    Float_t    mTimePos;       // time position of hit
-    Float_t    mPadPosSigma;   // sigma pad position of hit
-    Float_t    mTimePosSigma;  // sigma time position of hit
+    Float_t    mPadPos;        ///<  Hit centroid position in pad units.
+    Float_t    mTimePos;       ///<  Hit centroid position in time-bin units.
+    Float_t    mPadPosSigma;   ///<  Standard deviation of the pad position.
+    Float_t    mTimePosSigma;  ///<  Standard deviation of the time-bin position.
    
     ClassDef(StFtpcHit,2)
 };

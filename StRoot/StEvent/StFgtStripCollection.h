@@ -23,12 +23,18 @@
 #ifndef _ST_FGT_STRIP_COLLECTION_H_
 #define _ST_FGT_STRIP_COLLECTION_H_
 
+/// @file StFgtStripCollection.h
+/// @brief Collection of FGT readout strips for one disc in StEvent.
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StFgtStrip.h"
 
 using namespace std;
 
+/// @brief Container of StFgtStrip objects for a single FGT disc, indexed by electronics ID.
+///
+/// Use @c getStrip() to add or retrieve strips; do not call @c push_back() on the underlying vector.
 class StFgtStripCollection : public StObject {
 public:
     // constructors
@@ -73,11 +79,10 @@ protected:
     
 protected:
     // the data members
-    Short_t mDisc;
-    StSPtrVecFgtStrip mStripVec;    
+    Short_t mDisc;                   ///< FGT disc index (0-based).
+    StSPtrVecFgtStrip mStripVec;     ///< Persistent vector of strips, ordered by geometry ID after sorting.
     
-    // temporary copy of the pointers, indexed by elec Id.
-    // used for the addStripInfo class
+    /// @brief Transient index of strip pointers by electronics ID (not streamed).
     StPtrVecFgtStrip mStripElecIdVec; //!  do not save none structural containers
     
 private:   

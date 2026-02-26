@@ -1,6 +1,7 @@
 /*!
- * \class StTrigger 
+ * \class StTrigger
  * \author Thomas Ullrich, Sep 1999
+ * \brief Base class representing a STAR trigger with action word and trigger word.
  */
 /***************************************************************************
  *
@@ -31,11 +32,16 @@
 #ifndef StTrigger_hh
 #define StTrigger_hh
 
+/// @file StTrigger.h
+/// @brief Base class for STAR trigger information (trigger word and action word).
+
 #include "StObject.h"
 
+/// @brief Base class for STAR trigger information storing the trigger word and action word.
 class StTrigger : public StObject {
 public:
     StTrigger();
+    /// @brief Construct with explicit action word @p aw and trigger word @p w.
     StTrigger(unsigned int aw, unsigned int w);
     // StTrigger(const StTrigger&);             use default
     // StTrigger& operator=(const StTrigger&);  use default
@@ -44,15 +50,19 @@ public:
     int operator==(const StTrigger&) const;
     int operator!=(const StTrigger&) const;
 
+    /// @brief Return the trigger action word (detector/algorithm decision bits).
     virtual unsigned int triggerActionWord() const;
+    /// @brief Return the trigger word (L0 hardware trigger bits).
     virtual unsigned int triggerWord() const;
 
+    /// @brief Set the trigger action word.
     virtual void setTriggerActionWord(unsigned int);
+    /// @brief Set the trigger word.
     virtual void setTriggerWord(unsigned int);
     
 protected:
-    UInt_t mTriggerActionWord;
-    UInt_t mTriggerWord;
+    UInt_t mTriggerActionWord; ///< Trigger action word (detector/algorithm decision bits).
+    UInt_t mTriggerWord;       ///< L0 hardware trigger word.
     
     ClassDef(StTrigger,2)  //StTrigger structure
 };

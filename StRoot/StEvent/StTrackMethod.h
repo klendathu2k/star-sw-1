@@ -1,3 +1,7 @@
+/// @file StTrackMethod.h
+/// @brief Obsolete header — all track-method enumerations have moved to StEnumerations.h.
+///
+/// @deprecated Include StEnumerations.h directly.
 #ifndef StTrackMethod_hh
 #define StTrackMethod_hh
 #include "StEnumerations.h"

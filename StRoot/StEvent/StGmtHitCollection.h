@@ -13,6 +13,8 @@
 
 #ifndef StGmtHitCollection_hh
 #define StGmtHitCollection_hh
+/// @file StGmtHitCollection.h
+/// @brief Collection of GMT hits for a single module of the Global Muon Tracker.
 
 // STAR headers
 #include "StObject.h"

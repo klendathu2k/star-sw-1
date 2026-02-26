@@ -1,6 +1,5 @@
 /**
- * \class StGmtCollection
- * \brief Holds collections of GMT points
+ * \class StGmtPointCollection
  * 
  * Collection of GMT points for StEvent. Basically a wrapper 
  * for an StSPtrVecGmtPoint (based on StFgtPointCollection)
@@ -12,6 +11,8 @@
 
 #ifndef StGmtPointCollection_hh
 #define StGmtPointCollection_hh
+/// @file StGmtPointCollection.h
+/// @brief Collection of GMT 2D points (paired strip clusters) for StEvent.
 
 // STAR headers
 #include "StObject.h"

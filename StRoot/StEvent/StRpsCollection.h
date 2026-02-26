@@ -23,39 +23,58 @@
 #ifndef StRpsCollection_hh
 #define StRpsCollection_hh
 
+/// @file StRpsCollection.h
+/// @brief Top-level container for Roman Pot System data in a single event.
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StRpsRomanPot.h"
 #include "StRpsTrackPoint.h"
 #include "StRpsTrack.h"
 
+/// @brief Top-level event data container for the Roman Pot System (RPS).
+///
+/// Holds the array of eight Roman Pot detectors and the associated reconstructed
+/// track points and global forward proton tracks for a single STAR event.
 class StRpsCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StRpsCollection();
     ~StRpsCollection();
     
+    /// @brief Returns the total number of Roman Pot detectors (always 8).
     unsigned int numberOfRomanPots() const;
     
+    /// @brief Returns a const pointer to the Roman Pot at the given index.
     const StRpsRomanPot* romanPot(unsigned int) const;
+    /// @brief Returns a pointer to the Roman Pot at the given index.
     StRpsRomanPot* romanPot(unsigned int);
     
+    /// @brief Returns a flat collection of all clusters from all Roman Pot planes.
     StPtrVecRpsCluster clusters() const;
+    /// @brief Returns the collection of reconstructed track points.
     StPtrVecRpsTrackPoint trackPoints() const;
+    /// @brief Returns the collection of reconstructed forward proton tracks.
     StPtrVecRpsTrack tracks() const;
+    /// @brief Returns the silicon detector bunch crossing number.
     unsigned char siliconBunch() const;
     
+    /// @brief Sets the silicon detector bunch crossing number.
     void setSiliconBunch(unsigned char);
+    /// @brief Adds a reconstructed track point to the collection.
     void addTrackPoint(const StRpsTrackPoint*);
+    /// @brief Adds a reconstructed forward proton track to the collection.
     void addTrack(const StRpsTrack*);
     
+    /// @brief Total number of Roman Pot detector stations in the RPS.
     enum {mNumberOfRomanPots = 8};
     
 private:
-    StRpsRomanPot mRomanPots[mNumberOfRomanPots];
-    UChar_t mSiliconBunch;
+    StRpsRomanPot mRomanPots[mNumberOfRomanPots]; ///< Array of all eight Roman Pot detector stations.
+    UChar_t mSiliconBunch;                        ///< Silicon detector bunch crossing number.
     
-    StSPtrVecRpsTrackPoint mTrackPoints;
-    StSPtrVecRpsTrack mTracks;
+    StSPtrVecRpsTrackPoint mTrackPoints; ///< Reconstructed track points (one per Roman Pot station).
+    StSPtrVecRpsTrack mTracks;           ///< Reconstructed forward proton tracks.
     
     ClassDef(StRpsCollection, 3)
 };

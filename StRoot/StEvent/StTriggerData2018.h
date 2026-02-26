@@ -24,9 +24,14 @@
 #ifndef StTriggerData2018_hh
 #define StTriggerData2018_hh
 
+/// @file StTriggerData2018.h
+/// @brief Concrete StTriggerData implementation for STAR Run 18 (year 2018) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2018.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 18 (year 2018) trigger data format.
+///        Adds EPD DSM layer access, VPD ADC sum, VPD mean time difference, and run-blinding support.
 class StTriggerData2018 : public StTriggerData {
     
 public:
@@ -214,7 +219,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
     
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2018 trigger data block (expert use only).
     TriggerDataBlk2018*  getTriggerStructure2018();  
     int                  getRawSize() const;
     
@@ -238,7 +245,7 @@ public:
     void killFMS();
     
 protected:
-    TriggerDataBlk2018 *mData;
+    TriggerDataBlk2018 *mData; ///< Pointer to the raw 2018 trigger data block.
     
     EvtDescData2018*  EvtDesc;  //!
     L1_DSM_Data2018*  L1_DSM;   //!

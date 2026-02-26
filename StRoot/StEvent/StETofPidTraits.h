@@ -19,6 +19,9 @@
 #ifndef STETOFPIDTRAITS_H
 #define STETOFPIDTRAITS_H
 
+/// @file StETofPidTraits.h
+/// @brief Particle identification traits for a track matched to the STAR Endcap Time of Flight (eTOF) detector.
+
 
 #include "StTrackPidTraits.h"
 #include "StETofHit.h"
@@ -27,64 +30,91 @@
 
 
 
+/// @brief Particle identification traits for a track matched to the STAR Endcap TOF (eTOF) detector.
 class StETofPidTraits : public StTrackPidTraits {
 public:
+    /// @brief Default constructor.
     StETofPidTraits();
+    /// @brief Destructor.
     ~StETofPidTraits();
     
+    /// @brief Returns a pointer to the associated eTOF hit.
     StETofHit*       etofHit();
+    /// @brief Returns a const pointer to the associated eTOF hit.
     const StETofHit* etofHit() const;
     
     /// matching information
+    /// @brief Returns the track-to-hit matching quality flag.
     unsigned short   matchFlag()  const;
+    /// @brief Returns the local X coordinate of the extrapolated track on the counter [cm].
     float            localX()     const;
+    /// @brief Returns the local Y coordinate of the extrapolated track on the counter [cm].
     float            localY()     const;
+    /// @brief Returns the local incident angle of the track [rad].
     float            thetaLocal() const;
+    /// @brief Returns the residual ΔX between matched track and hit [cm].
     float            deltaX()     const;
+    /// @brief Returns the residual ΔY between matched track and hit [cm].
     float            deltaY()     const;
     
+    /// @brief Returns the extrapolated track position at the eTOF hit.
     StThreeVectorF&         position();
+    /// @brief Returns the const extrapolated track position at the eTOF hit.
     const StThreeVectorF&   position() const;
     
     /// timing for PID
+    /// @brief Returns the measured time of flight [ns].
     float   timeOfFlight() const;
+    /// @brief Returns the track path length from the interaction vertex to the hit [cm].
     float   pathLength()   const;
+    /// @brief Returns the particle velocity β = v/c.
     float   beta()         const;
     
     /// PID functions  --  to be added (?)
 
 
     /// setters
+    /// @brief Sets the pointer to the associated eTOF hit.
     void    setETofHit( StETofHit* hit );
     
+    /// @brief Sets the track-to-hit matching quality flag.
     void    setMatchFlag( const unsigned short& flag );
 
+    /// @brief Sets the local X coordinate of the extrapolated track [cm].
     void    setLocalX(     const float& );
+    /// @brief Sets the local Y coordinate of the extrapolated track [cm].
     void    setLocalY(     const float& );
+    /// @brief Sets the local incident angle of the track [rad].
     void    setThetaLocal( const float& );
+    /// @brief Sets the residual ΔX between matched track and hit [cm].
     void    setDeltaX(     const float& );
+    /// @brief Sets the residual ΔY between matched track and hit [cm].
     void    setDeltaY(     const float& );
     
+    /// @brief Sets the extrapolated track position at the eTOF hit.
     void    setPosition( const StThreeVectorF& ); 
 
+    /// @brief Sets the measured time of flight [ns].
     void    setTimeOfFlight( const float& );
+    /// @brief Sets the track path length [cm].
     void    setPathLength(   const float& );
+    /// @brief Sets the particle velocity β = v/c.
     void    setBeta(         const float& );
     
 private:
     StETofHit* mETofHit;   //$LINK
 
-    UShort_t        mMatchFlag;        // match flag: 
-    Float_t         mLocalX;           // local X coordinate
-    Float_t         mLocalY;           // local Y coordinate
-    Float_t         mThetaLocal;       // angle of incident angle of track to volume normal
-    Float_t         mDeltaX;           // delta X between matched track-hit pair
-    Float_t         mDeltaY;           // delta Y between matched track-hit pair
-    StThreeVectorF  mPosition;
+    UShort_t        mMatchFlag;        ///< Track-to-hit matching quality flag
+    Float_t         mLocalX;           ///< Local X coordinate of extrapolated track [cm]
+    Float_t         mLocalY;           ///< Local Y coordinate of extrapolated track [cm]
+    Float_t         mThetaLocal;       ///< Local incident angle of track [rad]
+    Float_t         mDeltaX;           ///< Residual ΔX between matched track and hit [cm]
+    Float_t         mDeltaY;           ///< Residual ΔY between matched track and hit [cm]
+    StThreeVectorF  mPosition;         ///< Extrapolated track position at the eTOF hit [cm]
    
-    Float_t         mTimeOfFlight;     // measured time-of-flight
-    Float_t         mPathLength;       // path length obtained from track extrapolation
-    Float_t         mBeta;             // particle velocity    
+    Float_t         mTimeOfFlight;     ///< Measured time of flight [ns]
+    Float_t         mPathLength;       ///< Track path length from vertex to hit [cm]
+    Float_t         mBeta;             ///< Particle velocity β = v/c
 
 
     ClassDef( StETofPidTraits, 1 )

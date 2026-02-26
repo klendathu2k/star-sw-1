@@ -17,6 +17,9 @@
 #ifndef StHltHighPt_hh
 #define StHltHighPt_hh
 
+/// @file StHltHighPt.h
+/// @brief HLT high transverse-momentum track candidate selected online by the High Level Trigger.
+
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StArray.h"
@@ -26,74 +29,109 @@
 #include "StHltBEmcTowerHit.h"
 #include "StHltTriggerReasonCapable.h"
 
+/// @brief HLT high-pT track candidate with optional BTOF and BEMC matching information.
 class StHltHighPt : public StHltTriggerReasonCapable {
 
-public:    
+public:
+    /// @brief Default constructor.
     StHltHighPt();
+    /// @brief Destructor.
     ~StHltHighPt();
-    
+
+    /// @brief Primary track of the high-pT candidate.
     StHltTrack& primaryTrack();
     const StHltTrack& primaryTrack() const;
+    /// @brief Global track of the high-pT candidate.
     StHltTrack& globalTrack();
     const StHltTrack& globalTrack() const;
+    /// @brief BTOF hit matched to the high-pT candidate.
     StHltBTofHit& bTofHit();
     const StHltBTofHit& bTofHit() const;
+    /// @brief BEMC tower hit matched to the high-pT candidate.
     StHltBEmcTowerHit& bEmcTowerHit();
     const StHltBEmcTowerHit& bEmcTowerHit() const;
-    
+
+    /// @brief Serial number of the associated global track.
     int globalTrackSN() const;
+    /// @brief Serial number of the associated primary track.
     int primaryTrackSN() const;
+    /// @brief Serial number of the associated TOF hit.
     int tofHitSN() const;
+    /// @brief Serial number of the associated EMC tower hit.
     int emcTowerSN() const;
-    
+
+    /// @brief φ difference between track projection and matched BEMC tower (rad).
     double bEmcMatchPhiDiff() const;
+    /// @brief z-edge distance for BEMC tower match (cm).
     double bEmcMatchZEdge() const;
-    
+
+    /// @brief Projected BTOF channel for this candidate.
     float bTofProjChannel() const;
+    /// @brief Local y position within the matched BTOF cell (cm).
     float bTofCellLocalY() const;
+    /// @brief Local z position within the matched BTOF cell (cm).
     float bTofCellLocalZ() const;
+    /// @brief Track path length to the matched BTOF hit (cm).
     float bTofPathLength() const;
+    /// @brief Velocity β = v/c of the candidate.
     float beta() const;
+    /// @brief Measured time-of-flight (ns).
     float tof() const;
-    
+
+    /// @brief Set the global track.
     void setGlobalTrack(const StHltTrack &);
+    /// @brief Set the primary track.
     void setPrimaryTrack(const StHltTrack &);
+    /// @brief Set the matched BTOF hit.
     void setBTofHit(const StHltBTofHit &);
+    /// @brief Set the matched BEMC tower hit.
     void setBEmcTowerHit(const StHltBEmcTowerHit &);
+    /// @brief Set the global track serial number.
     void setGlobalTrackSN(int);
+    /// @brief Set the primary track serial number.
     void setPrimaryTrackSN(int);
+    /// @brief Set the TOF hit serial number.
     void setTofHitSN(int);
+    /// @brief Set the EMC tower hit serial number.
     void setEmcTowerSN(int);
+    /// @brief Set the BEMC φ match difference (rad).
     void setBEmcMatchPhiDiff(double);
+    /// @brief Set the BEMC z-edge match distance (cm).
     void setBEmcMatchZEdge(double);
+    /// @brief Set the projected BTOF channel.
     void setBTofProjChannel(float);
+    /// @brief Set the BTOF cell local y (cm).
     void setBTofCellLocalY(float);
+    /// @brief Set the BTOF cell local z (cm).
     void setBTofCellLocalZ(float);
-    void setBTofPathLength(float);	
+    /// @brief Set the BTOF path length (cm).
+    void setBTofPathLength(float);
+    /// @brief Set the velocity β.
     void setBeta(float);
+    /// @brief Set the measured time-of-flight (ns).
     void setTof(float);
     
 private:
     
-    StHltTrack mPrimaryTrack;         ///< primary track object of the highpt track
-    StHltTrack mGlobalTrack;          ///< global track object of the highpt track
-    StHltBTofHit mBTofHit;            ///< btof object of the highpt track
-    StHltBEmcTowerHit mBEmcTowerHit;  ///< bemc object of the highpt track
-    
-    double mBEmcMatchPhiDiff;
-    double mBEmcMatchZEdge;
-    
-    int mGlobalTrackSN;
-    int mPrimaryTrackSN;
-    int mTofHitSN;
-    int mEmcTowerSN;
-    
-    float mBTofProjChannel;
-    float mBTofCellLocalY;
-    float mBTofCellLocalZ;
-    float mBTofPathLength;
-    float mBeta;
-    float mTof;
+    StHltTrack mPrimaryTrack;         ///< Primary track of the high-pT candidate.
+    StHltTrack mGlobalTrack;          ///< Global track of the high-pT candidate.
+    StHltBTofHit mBTofHit;            ///< BTOF hit matched to the high-pT candidate.
+    StHltBEmcTowerHit mBEmcTowerHit;  ///< BEMC tower hit matched to the high-pT candidate.
+
+    double mBEmcMatchPhiDiff;  ///< φ difference for BEMC tower match (rad).
+    double mBEmcMatchZEdge;    ///< z-edge distance for BEMC tower match (cm).
+
+    int mGlobalTrackSN;   ///< Serial number of the associated global track.
+    int mPrimaryTrackSN;  ///< Serial number of the associated primary track.
+    int mTofHitSN;        ///< Serial number of the associated TOF hit.
+    int mEmcTowerSN;      ///< Serial number of the associated EMC tower hit.
+
+    float mBTofProjChannel;  ///< Projected BTOF channel.
+    float mBTofCellLocalY;   ///< Local y in matched BTOF cell (cm).
+    float mBTofCellLocalZ;   ///< Local z in matched BTOF cell (cm).
+    float mBTofPathLength;   ///< Track path length to the BTOF hit (cm).
+    float mBeta;             ///< Velocity β = v/c of the candidate.
+    float mTof;              ///< Measured time-of-flight (ns).
     
     ClassDef(StHltHighPt,1)
 };

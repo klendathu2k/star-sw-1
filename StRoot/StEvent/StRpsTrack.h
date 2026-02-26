@@ -29,51 +29,85 @@
 #ifndef StRpsTrack_hh
 #define StRpsTrack_hh
 
+/// @file StRpsTrack.h
+/// @brief Reconstructed forward proton track in the Roman Pot System.
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StThreeVectorF.hh"
 
 class StRpsTrackPoint;
 
+/// @brief Reconstructed forward proton track from the Roman Pot System (RPS).
+///
+/// A track is built from two local track points (one per RPS station in a detector
+/// branch) and carries the reconstructed three-momentum and derived observables:
+/// scattering angles theta and phi, azimuthal angle at the RP, fractional momentum
+/// loss xi, Mandelstam variable t, and pseudorapidity.
 class StRpsTrack : public StObject {
 public:
+    /// @brief Default constructor.
     StRpsTrack();
+    /// @brief Copy constructor.
     StRpsTrack(const StRpsTrack&);
     ~StRpsTrack();
 
+    /// @brief Assignment operator.
     StRpsTrack& operator=(const StRpsTrack&);
+    /// @brief Track reconstruction type: local (single-station), global (two-station), or undefined.
     enum StRpsTrackType { rpsLocal, rpsGlobal, rpsUndefined };
+    /// @brief Indices for the scattering angle components and their count.
     enum StRpsAngles { rpsAngleThetaX, rpsAngleThetaY, rpsAngleTheta, mNumberOfAngleTypes };
 
+    /// @brief Returns the track point for the given station index (0 or 1) in the branch.
     StRpsTrackPoint* trackPoint(unsigned int) const;
+    /// @brief Returns the reconstructed three-momentum vector (GeV/c).
     StThreeVectorF pVec() const;
+    /// @brief Returns the detector branch index (EU=0, ED=1, WU=2, WD=3).
     int branch() const;
+    /// @brief Returns the track reconstruction type.
     StRpsTrackType type() const;
+    /// @brief Returns a bitmask indicating which detector planes contributed to this track.
     unsigned int planesUsed() const;
     
+    /// @brief Returns the proton scattering angle (rad); component selected by @p angleType.
     double theta(unsigned int = rpsAngleTheta) const;
+    /// @brief Returns the scattering angle measured at the Roman Pot (rad); component selected by @p angleType.
     double thetaRp(unsigned int = rpsAngleTheta) const;
+    /// @brief Returns the azimuthal scattering angle phi (rad) from the momentum vector.
     double phi() const;
+    /// @brief Returns the azimuthal angle phi (rad) measured at the Roman Pot.
     double phiRp() const;
+    /// @brief Returns the Mandelstam variable t (GeV²) for the given beam momentum (GeV/c).
     double t(double) const;
+    /// @brief Returns the fractional momentum loss xi = (p_beam - p) / p_beam for the given beam momentum.
     double xi(double) const;
+    /// @brief Returns the magnitude of the reconstructed momentum (GeV/c).
     double p() const;
+    /// @brief Returns the transverse momentum (GeV/c).
     double pt() const;
+    /// @brief Returns the pseudorapidity of the reconstructed track.
     double eta() const;
+    /// @brief Returns the time-of-flight of the proton (ns).
     double time() const;
 
+    /// @brief Sets the track point for the given station index.
     void setTrackPoint(StRpsTrackPoint*, unsigned int);
+    /// @brief Sets the reconstructed three-momentum vector (GeV/c).
     void setP(const StThreeVectorF&);
+    /// @brief Sets the detector branch index.
     void setBranch(int);
+    /// @brief Sets the track reconstruction type.
     void setType(StRpsTrackType);
 
+    /// @brief Number of RPS stations contributing to a single branch track.
     enum {mNumberOfStationsInBranch = 2};
 
 private:
-    StPtrVecRpsTrackPoint mTrackPoints;	 // pointers to track points (local tracks)
-    StThreeVectorF mP;				// three-vector with reconstructed track momentum
-    Int_t          mBranch;			// detectors branch, EU=0, ED=1, WU=2, WD=3 
-    StRpsTrackType mType;			// type of the track
+    StPtrVecRpsTrackPoint mTrackPoints; ///< Pointers to the two local track points (one per RPS station in branch).
+    StThreeVectorF mP;                  ///< Reconstructed three-momentum vector (GeV/c).
+    Int_t          mBranch;             ///< Detector branch index: EU=0, ED=1, WU=2, WD=3.
+    StRpsTrackType mType;               ///< Track reconstruction type (local or global).
     
     ClassDef(StRpsTrack, 1)
 };

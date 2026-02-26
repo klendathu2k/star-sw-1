@@ -28,23 +28,31 @@
 #ifndef StFtpcSectorHitCollection_hh
 #define StFtpcSectorHitCollection_hh
 
+/// @file StFtpcSectorHitCollection.h
+/// @brief Defines the StFtpcSectorHitCollection class holding FTPC hits for a single sector.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StFtpcHit;
 
+/// @brief Collection of FTPC hits within a single azimuthal sector of a readout plane.
 class StFtpcSectorHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StFtpcSectorHitCollection();
     // StFtpcSectorHitCollection(const StFtpcSectorHitCollection&);            use default
     // StFtpcSectorHitCollection& operator=(const StFtpcSectorHitCollection&); use default
+    /// @brief Destructor.
     ~StFtpcSectorHitCollection();
     
+    /// @brief Returns a reference to the vector of hits in this sector.
     StSPtrVecFtpcHit&       hits();
+    /// @brief Returns a const reference to the vector of hits in this sector.
     const StSPtrVecFtpcHit& hits() const;
 
 private:
-    StSPtrVecFtpcHit mHits;
+    StSPtrVecFtpcHit mHits;   ///<  Hits reconstructed in this sector.
     
     ClassDef(StFtpcSectorHitCollection,1)
 };

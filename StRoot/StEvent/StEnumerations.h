@@ -241,21 +241,26 @@
 
 /*!
  * \enum StBeamDirection
+ * \brief Labels the two RHIC beam directions / beam colours.
  */
-enum StBeamDirection {east   = 0,
-                      yellow = 0,    // yellow beam is going west -> east
-                      west   = 1,
-                      blue   = 1};   // blue beam is going east -> west
+enum StBeamDirection {east   = 0,    ///< East direction (yellow beam travels west→east)
+                      yellow = 0,    ///< Yellow beam travels west→east (alias for east)
+                      west   = 1,    ///< West direction (blue beam travels east→west)
+                      blue   = 1};   ///< Blue beam travels east→west (alias for west)
 
 /*!
  * \enum StBeamPolarizationAxis
+ * \brief Orientation of the beam spin-polarization axis.
  */
-enum StBeamPolarizationAxis {transverse, longitudinal};
+enum StBeamPolarizationAxis {transverse,   ///< Polarization axis transverse to the beam direction
+                              longitudinal};///< Polarization axis along the beam direction
 
 /*!
  * \enum StChargeSign
+ * \brief Sign of a particle's electric charge.
  */
-enum StChargeSign {negative, positive};
+enum StChargeSign {negative, ///< Negatively charged particle
+                   positive}; ///< Positively charged particle
 
 /*!
  * \enum StDetectorId
@@ -312,52 +317,66 @@ enum StDetectorId {kUnknownId   = kUnknownIdentifier,
 
 /*!
  * \enum StTrackType
+ * \brief Classification of a reconstructed track by its reconstruction scope.
  */
-enum StTrackType {global, primary, tpt, secondary, estGlobal, estPrimary, massFit, massFitAtVx};
+enum StTrackType {global,      ///< Global track fitted to all hits, not constrained to any vertex
+                  primary,     ///< Primary track re-fitted with primary vertex constraint
+                  tpt,         ///< Track produced by the TPT (fast online tracker)
+                  secondary,   ///< Secondary (decay-daughter) track
+                  estGlobal,   ///< Global track from the EST (fast silicon+TPC) tracker
+                  estPrimary,  ///< Primary track from the EST tracker
+                  massFit,     ///< Global track re-fitted with a mass hypothesis
+                  massFitAtVx  ///< Mass-fit track additionally constrained to the vertex
+                 };
 
 /*!
  * \enum StTrackModel
+ * \brief Parametric model used to describe the track trajectory.
  */
-enum StTrackModel {helixModel, kalmanModel};
+enum StTrackModel {helixModel,   ///< Simple helix (constant-field approximation)
+                   kalmanModel}; ///< Full Kalman-filter track model
 
 /*!
  * \enum StTrackFinderMethod
+ * \brief Identifies the track-finding algorithm (finder) used during reconstruction.
  */
-enum StTrackFinderMethod {svtGrouper    = ksvtGrouperIdentifier,
-                          svtStk        = ksvtStkIdentifier,
-                          svtOther      = ksvtOtherIdentifier,
-                          tpcStandard   = ktpcStandardIdentifier,
-                          tpcOther      = ktpcOtherIdentifier,
-                          ftpcConformal = kftpcConformalIdentifier,
-                          ftpcCurrent   = kftpcCurrentIdentifier,
-                          svtTpcSvm     = ksvtTpcSvmIdentifier,
-                          svtTpcEst     = ksvtTpcEstIdentifier,
-                          svtTpcPattern = ksvtTpcPatternIdentifier,
-                          l3Standard    = kl3StandardIdentifier
+enum StTrackFinderMethod {svtGrouper    = ksvtGrouperIdentifier,  ///< SVT Grouper finder
+                          svtStk        = ksvtStkIdentifier,       ///< SVT Stk finder
+                          svtOther      = ksvtOtherIdentifier,     ///< SVT other finder
+                          tpcStandard   = ktpcStandardIdentifier,  ///< TPC standard (tpt/CA) finder
+                          tpcOther      = ktpcOtherIdentifier,     ///< TPC alternative finder
+                          ftpcConformal = kftpcConformalIdentifier,///< FTPC conformal mapping finder
+                          ftpcCurrent   = kftpcCurrentIdentifier,  ///< FTPC current-sheet finder
+                          svtTpcSvm     = ksvtTpcSvmIdentifier,    ///< SVT-TPC vector–vector matcher
+                          svtTpcEst     = ksvtTpcEstIdentifier,    ///< SVT-TPC TPC-vector/SVT-point matcher
+                          svtTpcPattern = ksvtTpcPatternIdentifier,///< SVT-TPC pattern finder
+                          l3Standard    = kl3StandardIdentifier    ///< Level-3 online standard finder
 };
 
 /*!
  * \enum StDedxMethod
+ * \brief Algorithm used to compute ionisation energy loss (dE/dx) from detector signals.
  */
-enum StDedxMethod {kUndefinedMethodId        = kUndefinedMethodIdentifier,
-                  kTruncatedMeanId           = kTruncatedMeanIdentifier,
-                  kEnsembleTruncatedMeanId   = kEnsembleTruncatedMeanIdentifier,
-                  kLikelihoodFitId           = kLikelihoodFitIdentifier,
-                  kWeightedTruncatedMeanId   = kWeightedTruncatedMeanIdentifier,
-                  kOtherMethodId             = kOtherMethodIdentifier,
-                  kOtherMethodId2            = kOtherMethodIdentifier2};
+enum StDedxMethod {kUndefinedMethodId        = kUndefinedMethodIdentifier,       ///< Unknown or undefined dE/dx method
+                  kTruncatedMeanId           = kTruncatedMeanIdentifier,          ///< Truncated-mean estimator
+                  kEnsembleTruncatedMeanId   = kEnsembleTruncatedMeanIdentifier,  ///< Ensemble truncated-mean estimator
+                  kLikelihoodFitId           = kLikelihoodFitIdentifier,          ///< Likelihood-fit estimator
+                  kWeightedTruncatedMeanId   = kWeightedTruncatedMeanIdentifier,  ///< Weighted truncated-mean estimator
+                  kOtherMethodId             = kOtherMethodIdentifier,            ///< Other method (first spare)
+                  kOtherMethodId2            = kOtherMethodIdentifier2};          ///< Other method (second spare)
 
 /*!
  * \enum StTrackFittingMethod
+ * \brief Algorithm used to fit the track trajectory to the measured hits.
  */
-enum StTrackFittingMethod {kUndefinedFitterId         = kUndefinedFitterIdentifier,
-                           kHelix2StepId              = kHelix2StepIdentifier,
-                           kHelix3DId                 = kHelix3DIdentifier,
-                           kKalmanFitId               = kKalmanFitIdentifier,
-                           kLine2StepId               = kLine2StepIdentifier,
-                           kLine3DId                  = kLine3DIdentifier,
-                           kL3FitId                   = kL3FitIdentifier,
-                           kITKalmanFitId             = kITKalmanFitIdentifier};
+enum StTrackFittingMethod {kUndefinedFitterId         = kUndefinedFitterIdentifier, ///< Unknown or undefined fitter
+                           kHelix2StepId              = kHelix2StepIdentifier,      ///< Helix fit: separate bending/non-bending plane fits
+                           kHelix3DId                 = kHelix3DIdentifier,         ///< Full 3-D helix fit
+                           kKalmanFitId               = kKalmanFitIdentifier,       ///< Kalman filter fit (local helix)
+                           kLine2StepId               = kLine2StepIdentifier,       ///< Straight-line fit: separate 2-D plane fits
+                           kLine3DId                  = kLine3DIdentifier,          ///< Full 3-D straight-line fit
+                           kL3FitId                   = kL3FitIdentifier,           ///< Level-3 online trigger fitter
+                           kITKalmanFitId             = kITKalmanFitIdentifier};    ///< ITTF Kalman fit
 /*!
   ETrackStatusBits
  */
@@ -389,19 +408,20 @@ enum ETrackStatusBits {
 };			     
 /*!
  * \enum StVertexId
+ * \brief Classification of a reconstructed vertex by its topological origin.
  */
-enum StVertexId {kUndefinedVtxId   = kUndefinedVertexIdentifier,
-                 kEventVtxId       = kEventVertexIdentifier,
-		         kPrimaryVtxId     = kEventVertexIdentifier,
-                 kV0VtxId          = kV0DecayIdentifier,
-                 kXiVtxId          = kXiDecayIdentifier,
-                 kKinkVtxId        = kKinkDecayIdentifier,
-                 kOtherVtxId       = kOtherTypeIdentifier,
-                 kFtpcEastCalVtxId = kFtpcEastCalibrationVertexIdentifier,
-                 kFtpcWestCalVtxId = kFtpcWestCalibrationVertexIdentifier,
-		         kBEAMConstrVtxId,
-                 kRejectedVtxId,
-                 kFwdVtxId
+enum StVertexId {kUndefinedVtxId   = kUndefinedVertexIdentifier,             ///< Unknown or undefined vertex type
+                 kEventVtxId       = kEventVertexIdentifier,                  ///< Primary collision vertex
+		         kPrimaryVtxId     = kEventVertexIdentifier,                  ///< Alias for kEventVtxId
+                 kV0VtxId          = kV0DecayIdentifier,                      ///< V0 decay vertex (e.g. K0s, Lambda)
+                 kXiVtxId          = kXiDecayIdentifier,                      ///< Xi (cascade) decay vertex
+                 kKinkVtxId        = kKinkDecayIdentifier,                    ///< Kink decay vertex
+                 kOtherVtxId       = kOtherTypeIdentifier,                    ///< Other / unclassified vertex
+                 kFtpcEastCalVtxId = kFtpcEastCalibrationVertexIdentifier,    ///< FTPC east laser calibration vertex
+                 kFtpcWestCalVtxId = kFtpcWestCalibrationVertexIdentifier,    ///< FTPC west laser calibration vertex
+		         kBEAMConstrVtxId,   ///< Vertex reconstructed with beam-line constraint
+                 kRejectedVtxId,    ///< Vertex candidate rejected during vertex finding
+                 kFwdVtxId          ///< Forward (FWD tracker) vertex
                  };
 
 /*!
@@ -464,45 +484,48 @@ enum StPwg         {generic,                                           /**< enum
 
 /*!
  * \enum StEmcCrateStatus
+ * \brief Operational status of an EMC electronics crate for a given event.
  */
-enum StEmcCrateStatus {crateUnknown       = 0,
-                       crateNotPresent    = 1,
-                       crateOK            = 2,
-                       crateHeaderCorrupt = 3};
+enum StEmcCrateStatus {crateUnknown       = 0,  ///< Crate status unknown
+                       crateNotPresent    = 1,  ///< Crate absent or powered off
+                       crateOK            = 2,  ///< Crate operational and data good
+                       crateHeaderCorrupt = 3}; ///< Crate data header corrupted
 
 /*!
  * \enum StarMaxSize
  */
 // maximal sizes of tracking part of STAR in cm (Victor)
-enum StarMaxTrackRangeSize {kStarMaxTrackRangeR =  500, // including MTD
-                            kStarMaxTrackRangeZ =  500,
-                            kStarMinTrackRangeZ = -kStarMaxTrackRangeZ};
+enum StarMaxTrackRangeSize {kStarMaxTrackRangeR =  500, ///< Maximum radial extent of STAR tracking volume (cm), includes MTD
+                            kStarMaxTrackRangeZ =  500, ///< Maximum longitudinal half-length of STAR tracking volume (cm)
+                            kStarMinTrackRangeZ = -kStarMaxTrackRangeZ}; ///< Minimum longitudinal extent (cm)
 
 /*!
  * \enum StVertexFinderId
+ * \brief Identifies the primary-vertex finding algorithm used for an event.
  */
-enum StVertexFinderId { undefinedVertexFinder = 0,
-                        lmvVertexFinder,
-                        pplmvVertexFinder,
-                        egrVertexFinder,
-                        minuitVertexFinder,
-                        ppvVertexFinder,
-                        ppvNoCtbVertexFinder,
-		    	        mcEventVertexFFinder,
-			            KFVertexFinder};
+enum StVertexFinderId { undefinedVertexFinder = 0,  ///< Unknown or unspecified vertex finder
+                        lmvVertexFinder,             ///< Low-Multiplicity Vertex finder (LMV)
+                        pplmvVertexFinder,           ///< pp LMV vertex finder
+                        egrVertexFinder,             ///< EGR (Minuit-based) vertex finder
+                        minuitVertexFinder,          ///< Generic Minuit minimisation vertex finder
+                        ppvVertexFinder,             ///< Post-Pass Vertex finder (PPV) with CTB
+                        ppvNoCtbVertexFinder,        ///< PPV vertex finder without CTB requirement
+		    	        mcEventVertexFFinder,        ///< Monte-Carlo truth vertex finder
+			            KFVertexFinder};             ///< Kalman Filter vertex finder (KFParticle)
 
 
 /*!
  * \enum StL2AlgorithmId
+ * \brief Identifies the Level-2 trigger algorithm producing a result.
  */
-enum StL2AlgorithmId { l2Diagnostic = 0,
-                       l2EmcCheck,
-                       l2Jpsi,
-                       l2Upsilon,
-                       l2Dijet,
-                       l2EmcPedestal,
-                       l2Pi0Gamma,
-                       l2DisplacedVertex};
+enum StL2AlgorithmId { l2Diagnostic = 0,     ///< Diagnostic / monitoring algorithm
+                       l2EmcCheck,            ///< EMC sanity-check algorithm
+                       l2Jpsi,               ///< J/ψ → e+e- trigger algorithm
+                       l2Upsilon,            ///< Υ → e+e- trigger algorithm
+                       l2Dijet,              ///< Di-jet trigger algorithm
+                       l2EmcPedestal,        ///< EMC pedestal-finding algorithm
+                       l2Pi0Gamma,           ///< π0/γ trigger algorithm
+                       l2DisplacedVertex};   ///< Displaced-vertex (heavy-flavour) algorithm
 
 /*!
  * \enum StPrimaryVertexOrder
@@ -515,15 +538,16 @@ enum StPrimaryVertexOrder {
 
 /*!
  * \enum StL2TriggerResultType
+ * \brief Identifies the type of Level-2 trigger result stored in StL2TriggerResult.
  */
 enum StL2TriggerResultType {
-    l2Trg2006BEMCGammaPi = 0,
-    l2Trg2006BEMCGammaPiRandom,
-    l2Trg2006EEMCGammaPi,
-    l2Trg2006EEMCGammaPiRandom,
-    l2Trg2006MonoJet,
-    l2Trg2006DiJet,
-    l2Trg2006RandomJet
+    l2Trg2006BEMCGammaPi = 0,     ///< 2006 Barrel EMC gamma/pi0 trigger
+    l2Trg2006BEMCGammaPiRandom,   ///< 2006 Barrel EMC gamma/pi0 random trigger
+    l2Trg2006EEMCGammaPi,         ///< 2006 Endcap EMC gamma/pi0 trigger
+    l2Trg2006EEMCGammaPiRandom,   ///< 2006 Endcap EMC gamma/pi0 random trigger
+    l2Trg2006MonoJet,             ///< 2006 mono-jet trigger
+    l2Trg2006DiJet,               ///< 2006 di-jet trigger
+    l2Trg2006RandomJet            ///< 2006 random-jet (reference) trigger
 };
 
 /*!
@@ -531,16 +555,16 @@ enum StL2TriggerResultType {
  */
 // constants related to electric coordinates
 enum StFgtElecConsts { 
-    kFgtNumRdos = 2,                    // rdo in {1,2}
-    kFgtNumArms = 6,                    // arm in 0-5, though 5 not used in run12.
-    kFgtNumChannels = 128,              // channel in 0-127
-    kFgtApvsPerAssembly = 12,           //
-    kFgtMaxApvId=kFgtApvsPerAssembly*2, // covers 0-23 
-    kFgtApvGap = 2,                     // i.e. apvs 10 & 11
-    kFgtApvsPerOct = 5,
-    kFgtApvsPerQuad = 10,
-    kFgtApvsPerArm = 20,
-    kFgtNumElecIds = kFgtNumChannels * kFgtApvsPerArm * kFgtNumArms * kFgtNumRdos  // elec id in 0 to kFgtNumElecIds-1
+    kFgtNumRdos = 2,                    ///< Number of RDOs (RDO indices in {1,2})
+    kFgtNumArms = 6,                    ///< Number of ARM boards per RDO (arm indices 0–5; 5 unused in Run12)
+    kFgtNumChannels = 128,              ///< Number of channels per APV chip (indices 0–127)
+    kFgtApvsPerAssembly = 12,           ///< APV chips per assembly board
+    kFgtMaxApvId=kFgtApvsPerAssembly*2, ///< Maximum APV ID value (covers indices 0–23)
+    kFgtApvGap = 2,                     ///< Gap in APV numbering (APVs 10 & 11 are unused)
+    kFgtApvsPerOct = 5,                 ///< APV chips per octant
+    kFgtApvsPerQuad = 10,               ///< APV chips per quadrant
+    kFgtApvsPerArm = 20,                ///< APV chips per ARM board
+    kFgtNumElecIds = kFgtNumChannels * kFgtApvsPerArm * kFgtNumArms * kFgtNumRdos  ///< Total electronic channel IDs (0 to kFgtNumElecIds-1)
 };
 
 /*!
@@ -548,19 +572,18 @@ enum StFgtElecConsts {
  */
 // constants related to physical coordinates
 enum StFgtPhysConsts {
-    kFgtNumDiscs = 6,
-    kFgtNumQuads = 4,
-    kFgtNumOctantsPerDisc = 8,
-    kFgtNumOctants = kFgtNumOctantsPerDisc*kFgtNumDiscs,
-    kFgtNumLayers = 2,
-    kFgtNumStrips = 720,
-    kFgtNumGeoIds = kFgtNumQuads * kFgtNumDiscs * kFgtNumLayers * kFgtNumStrips,   // geoId in 0 to kFgtNumGeoIds-1
-    kFgtNumPstripsPerOctant = 360,
-    kFgtNumRstripsPerOctant = 280,
-    kFgtLowerStripOctant = 'L',    // i.e. a strip is in octant "kFgtLowerStripOctant" if
-    kFgtHigherStripOctant = 'S',   // the strip index is below the number of strips per octant
-    // for that layer
-    kFgtNumStripsPerDisc = kFgtNumQuads  * kFgtNumLayers * kFgtNumStrips // includes both planes, geoId for given disc will not exceed this range after common disc-offset is subtracted 
+    kFgtNumDiscs = 6,                    ///< Number of FGT discs
+    kFgtNumQuads = 4,                    ///< Number of quadrants per disc
+    kFgtNumOctantsPerDisc = 8,           ///< Number of octants per disc
+    kFgtNumOctants = kFgtNumOctantsPerDisc*kFgtNumDiscs, ///< Total octants across all discs
+    kFgtNumLayers = 2,                   ///< Number of strip layers per disc (phi and r)
+    kFgtNumStrips = 720,                 ///< Maximum strip count per layer
+    kFgtNumGeoIds = kFgtNumQuads * kFgtNumDiscs * kFgtNumLayers * kFgtNumStrips, ///< Total geometric IDs (0 to kFgtNumGeoIds-1)
+    kFgtNumPstripsPerOctant = 360,       ///< Phi-strips per octant
+    kFgtNumRstripsPerOctant = 280,       ///< R-strips per octant
+    kFgtLowerStripOctant = 'L',          ///< Label for the lower-index strip octant
+    kFgtHigherStripOctant = 'S',         ///< Label for the higher-index strip octant
+    kFgtNumStripsPerDisc = kFgtNumQuads  * kFgtNumLayers * kFgtNumStrips ///< Strips per disc (both planes)
 };
 
 /*!
@@ -568,52 +591,53 @@ enum StFgtPhysConsts {
  */
 // unsorted constants
 enum StFgtGeneralConsts {
-    kFgtNumTimeBins = 15,
-    kFgtMaxAdc = 4096,
+    kFgtNumTimeBins = 15,   ///< Number of APV time-sample bins per event
+    kFgtMaxAdc = 4096,      ///< Maximum ADC value (12-bit)
 };
 
 /*!
  * \enum StFgtClusterSeed Type
+ * \brief Classification of an FGT strip cluster by its seed quality.
  */
 // cluster seed types
 enum StFgtClusterSeedType {
-    kFgtSeedTypeNo,
-    kFgtDeadStrip,
-    kFgtSeedType1,
-    kFgtSeedType2,
-    kFgtSeedType3,
-    kFgtSeedType4,
-    kFgtSeedType5,
-    kFgtSeedTypeMax,
-    kFgtClusterPart,
-    kFgtNextToDeadGuy,
-    kFgtClusterEndUp,
-    kFgtClusterEndDown,
-    kFgtStripShared,
-    kFgtClusterTooBig,
-    kFgtClusterSeedInSeaOfNoise,
-    kFgtNextToCluster,
-    kFgtKeepStrip
+    kFgtSeedTypeNo,                  ///< No seed found
+    kFgtDeadStrip,                   ///< Strip is dead / masked
+    kFgtSeedType1,                   ///< Seed type 1 (highest quality)
+    kFgtSeedType2,                   ///< Seed type 2
+    kFgtSeedType3,                   ///< Seed type 3
+    kFgtSeedType4,                   ///< Seed type 4
+    kFgtSeedType5,                   ///< Seed type 5
+    kFgtSeedTypeMax,                 ///< Sentinel: number of numbered seed types
+    kFgtClusterPart,                 ///< Strip is part of a cluster but not the seed
+    kFgtNextToDeadGuy,               ///< Strip is adjacent to a dead strip
+    kFgtClusterEndUp,                ///< Strip at the upper end of a cluster
+    kFgtClusterEndDown,              ///< Strip at the lower end of a cluster
+    kFgtStripShared,                 ///< Strip shared between two clusters
+    kFgtClusterTooBig,               ///< Cluster exceeds maximum allowed size
+    kFgtClusterSeedInSeaOfNoise,     ///< Seed surrounded by noisy strips
+    kFgtNextToCluster,               ///< Strip adjacent to a cluster
+    kFgtKeepStrip                    ///< Strip retained despite marginal signal
 };
 
 /** FPS/FMS/FHC/FPS/FPost detectorId */
 enum StFmsDetectorId{
-    kFpdNorthDetId=0,
-    kFpdSouthDetId=1,
-    kFpdNorthPrsDetId=2,
-    kFpdSouthPrsDetId=3,
-    kFpdNorthSMDVDetId=4,
-    kFpdSouthSMDVDetId=5,
-    kFpdNorthSMDHDetId=6,
-    kFpdSouthSMDHDetId=7,
-    kFmsNorthLargeDetId=8,
-    kFmsSouthLargeDetId=9,
-    kFmsNorthSmallDetId=10,
-    kFmsSouthSmallDetId=11,
-    kFhcNorthDetId=12,
-    kFhcSouthDetId=13,
-    kFpsDetId=14,
-    kFpostDetId=15
+    kFpdNorthDetId=0,       ///< FPD North large-cell calorimeter
+    kFpdSouthDetId=1,       ///< FPD South large-cell calorimeter
+    kFpdNorthPrsDetId=2,    ///< FPD North pre-shower detector
+    kFpdSouthPrsDetId=3,    ///< FPD South pre-shower detector
+    kFpdNorthSMDVDetId=4,   ///< FPD North SMD vertical strip
+    kFpdSouthSMDVDetId=5,   ///< FPD South SMD vertical strip
+    kFpdNorthSMDHDetId=6,   ///< FPD North SMD horizontal strip
+    kFpdSouthSMDHDetId=7,   ///< FPD South SMD horizontal strip
+    kFmsNorthLargeDetId=8,  ///< FMS North large-cell calorimeter
+    kFmsSouthLargeDetId=9,  ///< FMS South large-cell calorimeter
+    kFmsNorthSmallDetId=10, ///< FMS North small-cell calorimeter
+    kFmsSouthSmallDetId=11, ///< FMS South small-cell calorimeter
+    kFhcNorthDetId=12,      ///< FHC (Hadronic Calorimeter) North
+    kFhcSouthDetId=13,      ///< FHC South
+    kFpsDetId=14,           ///< Forward Preshower (FPS)
+    kFpostDetId=15          ///< Forward post-shower (FPost)
 };
 
 /** Categorization of a FMS tower cluster as 1- or 2-photon, or "not sure". */
@@ -626,85 +650,85 @@ enum StFmsClusterCategory {
 
 /** FPS basic constants */
 enum StFpsConstants {
-    kFpsNQuad=4,
-    kFpsNLayer=3,
-    kFpsNSlat=21,
-    kFpsMaxSlat=252,
-    kFpsNCandidate=4
+    kFpsNQuad=4,        ///< Number of FPS quadrants
+    kFpsNLayer=3,       ///< Number of scintillator layers per quadrant
+    kFpsNSlat=21,       ///< Number of slats per layer
+    kFpsMaxSlat=252,    ///< Maximum slat index (= kFpsNQuad * kFpsNLayer * kFpsNSlat)
+    kFpsNCandidate=4    ///< Maximum number of FPS photon candidates per event
 };
 
 /** FPost basic constants */
 enum StFpostConstants {
-    kFpostNQuad=2,
-    kFpostNLayer=5,
-    kFpostNSlat=43,
-    kFpostMaxSlat=241,
-    kFpostNCandidate=6
+    kFpostNQuad=2,       ///< Number of FPost quadrants
+    kFpostNLayer=5,      ///< Number of scintillator layers per quadrant
+    kFpostNSlat=43,      ///< Number of slats per layer
+    kFpostMaxSlat=241,   ///< Maximum slat index (= kFpostNQuad * kFpostNLayer * kFpostNSlat / 2 + ...)
+    kFpostNCandidate=6   ///< Maximum number of FPost photon candidates per event
 };
 
 /** FCS detectorId **/
 enum StFcsDetectorId{
-    kFcsEcalNorthDetId=0,
-    kFcsEcalSouthDetId=1,
-    kFcsHcalNorthDetId=2,
-    kFcsHcalSouthDetId=3,
-    kFcsPresNorthDetId=4,
-    kFcsPresSouthDetId=5
+    kFcsEcalNorthDetId=0,  ///< FCS ECAL (W-Shashlyk) North
+    kFcsEcalSouthDetId=1,  ///< FCS ECAL South
+    kFcsHcalNorthDetId=2,  ///< FCS HCAL (hadronic calorimeter) North
+    kFcsHcalSouthDetId=3,  ///< FCS HCAL South
+    kFcsPresNorthDetId=4,  ///< FCS pre-shower detector North
+    kFcsPresSouthDetId=5   ///< FCS pre-shower detector South
 };
 
 /** FCS basic constants **/
 enum StFcsConstants {
-    kFcsNDet=6,
-    kFcsEHP=3,
-    kFcsEcalHcal=2,
-    kFcsNorthSouth=2,
-    kFcsMaxId=748,
-    kFcsEcalNCol=22,
-    kFcsEcalNRow=34,
-    kFcsEcalMaxId=748,
-    kFcsHcalNCol=13,
-    kFcsHcalNRow=20,
-    kFcsHcalMaxId=260,
-    kFcsPresMaxId=192,
-    kFcsPresNCol=16,
-    kFcsPresNRow=12,
-    kFcsMaxDepCrate=5,
-    kFcsMaxDepBd=24,
-    kFcsMaxDepCh=32,
-    kFcsEcal4x4NCol=9,
-    kFcsEcal4x4NRow=15,
-    kFcsHcal4x4NCol=5,
-    kFcsHcal4x4NRow=9
+    kFcsNDet=6,           ///< Total number of FCS detector sub-systems
+    kFcsEHP=3,            ///< Index dimension: ECAL(0), HCAL(1), Preshower(2)
+    kFcsEcalHcal=2,       ///< Index dimension: ECAL(0), HCAL(1)
+    kFcsNorthSouth=2,     ///< Index dimension: North(0), South(1)
+    kFcsMaxId=748,        ///< Maximum channel ID across all FCS sub-detectors
+    kFcsEcalNCol=22,      ///< ECAL number of columns
+    kFcsEcalNRow=34,      ///< ECAL number of rows
+    kFcsEcalMaxId=748,    ///< ECAL maximum channel ID
+    kFcsHcalNCol=13,      ///< HCAL number of columns
+    kFcsHcalNRow=20,      ///< HCAL number of rows
+    kFcsHcalMaxId=260,    ///< HCAL maximum channel ID
+    kFcsPresMaxId=192,    ///< Pre-shower maximum channel ID
+    kFcsPresNCol=16,      ///< Pre-shower number of columns
+    kFcsPresNRow=12,      ///< Pre-shower number of rows
+    kFcsMaxDepCrate=5,    ///< Maximum number of DEP crates
+    kFcsMaxDepBd=24,      ///< Maximum number of DEP boards per crate
+    kFcsMaxDepCh=32,      ///< Maximum number of channels per DEP board
+    kFcsEcal4x4NCol=9,    ///< ECAL 4×4-tower trigger-patch columns
+    kFcsEcal4x4NRow=15,   ///< ECAL 4×4-tower trigger-patch rows
+    kFcsHcal4x4NCol=5,    ///< HCAL 4×4-tower trigger-patch columns
+    kFcsHcal4x4NRow=9     ///< HCAL 4×4-tower trigger-patch rows
 };
 
 /** StFtt Enums **/
 enum StFttConstants {
-    kFttHorizontal = 0,
-    kFttVertical = 1,
-    kFttDiagonalH = 2, // diagonal strips on the horizontal chamber
-    kFttDiagonalV = 3, // diagonal strips on the vertical chamber
-    kFttUnknownOrientation = 4,
-    kFttQuadrantA = 0,
-    kFttQuadrantB = 1,
-    kFttQuadrantC = 2,
-    kFttQuadrantD = 3,
-    kFttUnknownQuadrant = 4,
+    kFttHorizontal = 0,         ///< Horizontal strip orientation
+    kFttVertical = 1,           ///< Vertical strip orientation
+    kFttDiagonalH = 2,          ///< Diagonal strips on the horizontal chamber
+    kFttDiagonalV = 3,          ///< Diagonal strips on the vertical chamber
+    kFttUnknownOrientation = 4, ///< Unknown strip orientation
+    kFttQuadrantA = 0,          ///< FTT quadrant A
+    kFttQuadrantB = 1,          ///< FTT quadrant B
+    kFttQuadrantC = 2,          ///< FTT quadrant C
+    kFttQuadrantD = 3,          ///< FTT quadrant D
+    kFttUnknownQuadrant = 4,    ///< Unknown quadrant
 };
 
 /** RHICf basic constants **/
 enum StRHICfConstants {
-    kRHICfNtower=2,     // 0=small, 1=large                                                        
-    kRHICfNplate=16,    // longitudinal segmentations
-	kRHICfNrange=2,     // Wide and narrow Q/ch
-    kRHICfNlayer=4,     // bar layers (longitudinal)
-    kRHICfNxy=2,        // 0=x, 1=y 
-    kRHICfNbarSmall=20, // bar# (0-19 for small) 
-    kRHICfNbarLarge=40, // bar# (0-39 for large)
-    kRHICfNorder=2,     // particle#, order#
-    kRHICfNtdc=256,     // TDC
-	kRHICfNcad0=5,      // Local counts for DAQ
-	kRHICfNgpi0=19,     // Flags for GPI0                               
-	kRHICfNgpi1=17,     // Flags for GPI1                               
+    kRHICfNtower=2,     ///< Number of towers: 0 = small, 1 = large
+    kRHICfNplate=16,    ///< Number of longitudinal sampling plates
+    kRHICfNrange=2,     ///< Number of gain ranges (wide and narrow Q/charge)
+    kRHICfNlayer=4,     ///< Number of bar layers (longitudinal)
+    kRHICfNxy=2,        ///< Coordinate index: 0 = x, 1 = y
+    kRHICfNbarSmall=20, ///< Number of bars in the small tower (indices 0–19)
+    kRHICfNbarLarge=40, ///< Number of bars in the large tower (indices 0–39)
+    kRHICfNorder=2,     ///< Number of particle ordering indices
+    kRHICfNtdc=256,     ///< TDC channel count
+    kRHICfNcad0=5,      ///< Local counter count for DAQ
+    kRHICfNgpi0=19,     ///< Number of GPI0 flag bits
+    kRHICfNgpi1=17,     ///< Number of GPI1 flag bits
 };
 
 /** For more IST related constants see StRoot/StIstUtil/StistConsts.h */
@@ -723,14 +747,14 @@ namespace StIstConsts
  */
 // constants related to electric coordinates
 enum StGmtElecConsts {
-    kGmtNumRdos = 1,                    // rdo in {1}
-    kGmtNumArms = 2,                    // 1 arm in 2 halves (or groups) {0-1}
-    kGmtNumChannels = 128,              // channel in 0-127
-    kGmtApvsPerAssembly = 2,           //
-    kGmtMaxApvId= 15,                  // we only use ARM channels 0-3 and 12-15
-    kGmtApvGap = 8,                     // i.e. we use 0-3 and then 12-15
-    kGmtApvsPerArm = 24, 
-    kGmtNumElecIds = kGmtNumChannels * kGmtApvsPerArm * kGmtNumArms * kGmtNumRdos  // elec id in 0 to kGmtNumElecIds-1
+    kGmtNumRdos = 1,                    ///< Number of RDOs (RDO index = {1})
+    kGmtNumArms = 2,                    ///< Number of ARM halves (indices 0–1)
+    kGmtNumChannels = 128,              ///< Channels per APV chip (indices 0–127)
+    kGmtApvsPerAssembly = 2,            ///< APV chips per assembly
+    kGmtMaxApvId= 15,                   ///< Maximum APV ID (only indices 0–3 and 12–15 used)
+    kGmtApvGap = 8,                     ///< Gap in APV numbering (indices 4–11 unused)
+    kGmtApvsPerArm = 24,                ///< APV chips per ARM
+    kGmtNumElecIds = kGmtNumChannels * kGmtApvsPerArm * kGmtNumArms * kGmtNumRdos  ///< Total electronic channel IDs (0 to kGmtNumElecIds-1)
 };
 
 /*!
@@ -738,16 +762,15 @@ enum StGmtElecConsts {
  */
 // constants related to physical coordinates
 enum StGmtPhysConsts {
-    kGmtNumModules = 8,
-    kGmtNumLayers = 2,
-    kGmtNumStrips = 128,  // one X layer and one Y layer
-    kGmtNumConnectedStripsX = 126,  // 2 missing in X, 3 in Y
-    kGmtNumConnectedStripsY = 125,  // 2 missing in X, 3 in Y
-    kGmtNumGeoIds = kGmtNumModules * kGmtNumLayers * kGmtNumStrips,   // geoId in 0 to kGmtNumGeoIds-1
-    kGmtNumPstripsPerModule = 128,  // "pads" which are the Local Y coordinates
-    kGmtNumSstripsPerModule = 128,  // "strips" which are the Local X coordinates
-    // for that layer
-    kGmtNumStripsPerModule = kGmtNumStrips * kGmtNumLayers // accounts for X (strip) and Y (pad) layers
+    kGmtNumModules = 8,                  ///< Total number of GMT modules
+    kGmtNumLayers = 2,                   ///< Layers per module: one X (strip) and one Y (pad)
+    kGmtNumStrips = 128,                 ///< Strips per layer per module
+    kGmtNumConnectedStripsX = 126,       ///< Connected X-strips per module (2 missing)
+    kGmtNumConnectedStripsY = 125,       ///< Connected Y-strips per module (3 missing)
+    kGmtNumGeoIds = kGmtNumModules * kGmtNumLayers * kGmtNumStrips, ///< Total geometric IDs (0 to kGmtNumGeoIds-1)
+    kGmtNumPstripsPerModule = 128,       ///< Pad (local-Y) strips per module
+    kGmtNumSstripsPerModule = 128,       ///< Strip (local-X) channels per module
+    kGmtNumStripsPerModule = kGmtNumStrips * kGmtNumLayers ///< Total strips per module (X + Y layers)
 };
 
 /*!
@@ -755,11 +778,11 @@ enum StGmtPhysConsts {
  */
 // unsorted constants
 enum StGmtGeneralConsts {
-    kGmtNumTimeBins = 15,
-    kGmtNumTimeBinsForPed = 3,  // number of time bins to use for pedestal determination
-    kGmtMaxAdc = 4096,
-    kGmtPedCut = 3,   // pedestal subtracted threshold to temporarily tag a "hit" for 2nd pedestal pass
-    kGmtHitCut = 5 //HERE 5  
+    kGmtNumTimeBins = 15,               ///< Number of APV time-sample bins per event
+    kGmtNumTimeBinsForPed = 3,          ///< Time bins used for pedestal determination
+    kGmtMaxAdc = 4096,                  ///< Maximum ADC value (12-bit)
+    kGmtPedCut = 3,                     ///< Pedestal-subtracted threshold for first-pass hit tagging
+    kGmtHitCut = 5                      ///< Pedestal-subtracted threshold for final hit selection
 };
 
 const char *detectorNameById(StDetectorId id);

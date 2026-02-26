@@ -40,29 +40,39 @@
 #ifndef StRichPixel_hh
 #define StRichPixel_hh
 
+/// @file StRichPixel.h
+/// @brief Raw RICH detector pixel, storing pad address and ADC amplitude in a packed 32-bit word.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Raw RICH pad pixel: pad address (row, column) and ADC value packed into a single 32-bit word.
 class StRichPixel : public StObject {
 public:
+    /// @brief Default constructor.
     StRichPixel();
+    /// @brief Constructor from a packed 32-bit data word.
     StRichPixel(unsigned int packedData);
     // StRichPixel(const StRichPixel&);            use default
     // StRichPixel& operator=(const StRichPixel&); use default
     ~StRichPixel();
-    
+
     int operator==(const StRichPixel&) const;
     int operator!=(const StRichPixel&) const;
 
+    /// @brief Sets the packed data word containing pad address and ADC value.
     void            setPackedData(unsigned int);
-    
+
+    /// @brief Returns the pad (column) number, decoded from bits 7:0 of the packed word.
     unsigned short  pad() const;
+    /// @brief Returns the row number, decoded from bits 15:8 of the packed word.
     unsigned short  row() const;
+    /// @brief Returns the ADC value from bits 25:16; returns 1024 if the overflow bit (bit 26) is set.
     unsigned short  adc() const;
-    
+
 protected:
-    UInt_t  mPackedData;
-    
+    UInt_t  mPackedData;  ///< Packed 32-bit word: bits[7:0]=pad, bits[15:8]=row, bits[26:16]=ADC+overflow
+
     ClassDef(StRichPixel,1)
 };
 

@@ -33,34 +33,49 @@
 #ifndef StRichMCInfo_hh
 #define StRichMCInfo_hh
 
+/// @file StRichMCInfo.h
+/// @brief Monte Carlo truth record for a RICH pixel or hit, holding generator-level particle information.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Generator-level truth record attached to a RICH MC pixel or hit.
+///
+/// Stores simulator and GEANT identifiers, the parent track index, particle charge,
+/// and the GEANT process code that produced the signal — information not available in
+/// the standard g2t tables.
 class StRichMCInfo : public StObject {
 public:
+    /// @brief Default constructor.
     StRichMCInfo();
+    /// @brief Constructor with particle ID, GEANT ID, track index, charge, and process code.
     StRichMCInfo(int id, int gid,  int trk,
                  float q, int process);
     // StRichMCInfo(const StRichMCInfo&);            use default
     // StRichMCInfo& operator=(const StRichMCInfo&); use default
     ~StRichMCInfo();
-    
+
     int operator==(const StRichMCInfo&) const;
     int operator!=(const StRichMCInfo&) const;
 
+    /// @brief Returns the simulator particle identifier.
     int   id()      const;
+    /// @brief Returns the GEANT particle identifier.
     int   gid()     const;
+    /// @brief Returns the index of the parent Monte Carlo track.
     int   trackp()  const;
+    /// @brief Returns the electric charge of the particle.
     float charge()  const;
+    /// @brief Returns the GEANT process code that produced this hit.
     int   process() const;
-    
+
 protected:
-    Int_t     mId;
-    Int_t     mGid;
-    Int_t     mTrackp;
-    Float_t   mCharge;
-    Int_t     mProcess;
-    
+    Int_t     mId;       ///< Simulator particle identifier
+    Int_t     mGid;      ///< GEANT particle identifier
+    Int_t     mTrackp;   ///< Index of the parent Monte Carlo track
+    Float_t   mCharge;   ///< Electric charge of the particle
+    Int_t     mProcess;  ///< GEANT process code that produced the hit
+
     ClassDef(StRichMCInfo,1)
 };
 

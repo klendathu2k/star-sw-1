@@ -10,25 +10,31 @@
 #ifndef StFstSensorHitCollection_hh
 #define StFstSensorHitCollection_hh
 
+/// @file StFstSensorHitCollection.h
+/// @brief Collection of FST reconstructed hits for a single sensor.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StFstHit;
 
+/// @brief Container of StFstHit objects belonging to one FST sensor.
 class StFstSensorHitCollection : public StObject
 {
 public:
    StFstSensorHitCollection();
    ~StFstSensorHitCollection();
 
+   /// @brief Return the number of hits in this sensor.
    unsigned int numberOfHits() const;
 
+   /// @brief Return a reference to the hit vector for this sensor.
    StSPtrVecFstHit       &hits();
+   /// @brief Return a const reference to the hit vector for this sensor.
    const StSPtrVecFstHit &hits() const;
 
 private:
-   StSPtrVecFstHit mHits; ///< Inherits from StStrArray which takes care of deleting the objects
-                          ///< pointed by the pointers in this array. This is different from the std::vector
+   StSPtrVecFstHit mHits; ///< Hits on this sensor; ownership is managed by StStrArray (auto-deletes elements).
 
    ClassDef(StFstSensorHitCollection, 1)
 };

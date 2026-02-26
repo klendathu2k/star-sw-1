@@ -10,24 +10,31 @@
 #ifndef StFstWedgeHitCollection_hh
 #define StFstWedgeHitCollection_hh
 
+/// @file StFstWedgeHitCollection.h
+/// @brief Collection of FST reconstructed hits for a single wedge.
+
 #include "StObject.h"
 #include "StFstSensorHitCollection.h"
 #include "StEvent/StEnumerations.h"
 #include "StEvent/StFstConsts.h"
 
 
+/// @brief Container of StFstSensorHitCollection objects for one FST wedge (kFstNumSensorsPerWedge sensors).
 class StFstWedgeHitCollection : public StObject
 {
 public:
    StFstWedgeHitCollection();
 
+   /// @brief Return the total number of hits summed over all sensors in this wedge.
    unsigned int  numberOfHits() const;
 
+   /// @brief Return a pointer to the hit collection for sensor @p i (0-based).
    StFstSensorHitCollection       *sensor(unsigned int);
+   /// @brief Return a const pointer to the hit collection for sensor @p i (0-based).
    const StFstSensorHitCollection *sensor(unsigned int) const;
 
 private:
-   StFstSensorHitCollection  mSensors[kFstNumSensorsPerWedge];
+   StFstSensorHitCollection  mSensors[kFstNumSensorsPerWedge]; ///< Hit sub-collections, one per FST sensor in this wedge.
 
    ClassDef(StFstWedgeHitCollection, 1)
 };

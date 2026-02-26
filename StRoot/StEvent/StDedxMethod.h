@@ -1,3 +1,7 @@
+/// @file StDedxMethod.h
+/// @brief Obsolete header — all dE/dx method enumerations have moved to StEnumerations.h.
+///
+/// @deprecated Include StEnumerations.h directly.
 #ifndef StDedxMethod_hh
 #define StDedxMethod_hh
 #include "StEnumerations.h"

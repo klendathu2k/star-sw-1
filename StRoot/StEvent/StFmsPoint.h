@@ -32,17 +32,24 @@
 #ifndef StFmsPoint_h
 #define StFmsPoint_h
 
+/// @file StFmsPoint.h
+/// @brief Photon point reconstructed from an FMS cluster.
+
 #include "StLorentzVectorF.hh"
 #include "StThreeVectorF.hh"
 #include "StObject.h"
 #include "StFmsCluster.h"
 #include "StEnumerations.h"
 
+/// @brief A photon (or other particle) point fitted to an FMS tower cluster.
 class StFmsPoint : public StObject {
 public:
+    /// @brief Default constructor.
     StFmsPoint();
+    /// @brief Destructor.
     ~StFmsPoint();
 
+    /// @brief PID hypothesis flags from FPS pre-shower layer hit patterns.
     enum StFmsPointPidFlag {
         kFpsPidNoFps=0,       // hit no slat
         kFpsPidBad=1,         // hit status bad slat
@@ -60,40 +67,60 @@ public:
         kFpsPidUnknown=40     // L1>=1 L2>=1 L3==0    not sure what to do
     };
     
+    /// @brief Return a short string name for a given FPS PID flag value.
     const char* pidName(int i);
+    /// @brief Return the detector ID.
     unsigned short detectorId() const;
+    /// @brief Return the fitted photon energy.
     float energy() const;
-    float x() const;  // x position in cm at which point intersects the sub-detector in local coordinate
-    float y() const;  // y position in cm at which point intersects the sub-detector in local coordinate
-    int id() const;   // ID of the point in the current event.
-    StFmsCluster* cluster(); //  Parent cluster of the photon.
-    const StFmsCluster* cluster() const; //  Parent cluster of the photon.
-    int parentClusterId() const; // ID of the parent cluster containing this point.
-    int nParentClusterPhotons() const; // Number of points in the parent cluster.
-    const StThreeVectorF& XYZ() const; // XYZ position in global STAR coordinate
+    float x() const;  ///< x position (cm) in local sub-detector coordinates.
+    float y() const;  ///< y position (cm) in local sub-detector coordinates.
+    int id() const;   ///< Eventwise photon point ID.
+    StFmsCluster* cluster(); ///< Return the parent cluster of this photon point.
+    const StFmsCluster* cluster() const; ///< Return the parent cluster (const).
+    int parentClusterId() const; ///< ID of the parent cluster containing this point.
+    int nParentClusterPhotons() const; ///< Number of photon points in the parent cluster.
+    const StThreeVectorF& XYZ() const; ///< Position in global STAR coordinates (cm).
+    /// @brief Return the photon four-momentum.
     const StLorentzVectorF& fourMomentum() const;
+    /// @brief Set the detector ID.
     void setDetectorId(unsigned short detector);
+    /// @brief Set the fitted photon energy.
     void setEnergy(float energy);
+    /// @brief Set the x position in local coordinates.
     void setX(float xpos);
+    /// @brief Set the y position in local coordinates.
     void setY(float ypos);
+    /// @brief Set the eventwise photon ID.
     void setId(int phid);
+    /// @brief Set the parent cluster pointer.
     void setCluster(StFmsCluster* cluster);
+    /// @brief Set the parent cluster ID.
     void setParentClusterId(int cluid);
+    /// @brief Set the number of photons in the parent cluster.
     void setNParentClusterPhotons(int nclph);
+    /// @brief Set the photon position in global STAR coordinates.
     void setXYZ(const StThreeVectorF& p3);
+    /// @brief Set the photon four-momentum.
     void setFourMomentum(const StLorentzVectorF& p4);
     
-    int   fpsPid();                                //PID see enum above
+    int   fpsPid();                                ///< Return the FPS PID flag (see StFmsPointPidFlag enum).
+    /// @brief Return the number of FPS slat candidates for the given pre-shower layer.
     int   fpsNCandidate(int layer);
+    /// @brief Return the MIP signal for a given FPS layer and candidate slat.
     float fpsMip(int layer, int candidate=0);
+    /// @brief Return the FPS slat ID for a given layer and candidate.
     int   fpsSlatId(int layer, int candidate=0);
-    float fpsDistance(int layer, int candidate=0); // distance from edge to projected
-                                                   // location (negative means inside, positive outside)
+    float fpsDistance(int layer, int candidate=0); ///< Distance from slat edge to projected point (negative = inside).
+    /// @brief Set the FPS PID flag.
     void  setFpsPid(int v);
+    /// @brief Set FPS hit information for a given layer.
     void  setFps(int layer, float mip, int slatid, float dist);
+    /// @brief Reset all FPS hit information.
     void  resetFps();
-    void  orderFpsCandidates(int layer=0); //order Fps hit candidates from near to far (layer=0 for sorting all layers)
+    void  orderFpsCandidates(int layer=0); ///< Sort FPS hit candidates from nearest to farthest (layer=0 sorts all layers).
     
+    /// @brief Print photon point properties.
     void print(int option=0);
 
 private:
@@ -110,14 +137,13 @@ private:
     StLink<StFmsCluster>  mCluster;
 #endif //__CINT__
     StLorentzVectorF mFourMomentum;  ///< Photon 4-momentum
-    StThreeVectorF   mXYZ;           //Photon position in STAR coordinate
+    StThreeVectorF   mXYZ;           ///< Photon position in global STAR coordinates (cm).
 
-    Int_t   mFpsPid;                                  // see enum above
-    Int_t   mFpsNCandidate[kFpsNLayer];               // # of possible slat related to this point
-    Float_t mFpsMip[kFpsNLayer][kFpsNCandidate];      // # of MIPs
-    Int_t   mFpsSlatId[kFpsNLayer][kFpsNCandidate];   // slatid
-    Float_t mFpsDistance[kFpsNLayer][kFpsNCandidate]; // distance from edge to projected location
-                                                      // (negative means inside, positive outside)
+    Int_t   mFpsPid;                                  ///< FPS PID flag (see StFmsPointPidFlag).
+    Int_t   mFpsNCandidate[kFpsNLayer];               ///< Number of candidate FPS slats per layer.
+    Float_t mFpsMip[kFpsNLayer][kFpsNCandidate];      ///< MIP signal per layer per candidate slat.
+    Int_t   mFpsSlatId[kFpsNLayer][kFpsNCandidate];   ///< FPS slat ID per layer per candidate.
+    Float_t mFpsDistance[kFpsNLayer][kFpsNCandidate]; ///< Distance from slat edge to projected photon position per layer/candidate.
     ClassDef(StFmsPoint, 3)
 };
 

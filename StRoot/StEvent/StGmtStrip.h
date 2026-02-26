@@ -11,6 +11,8 @@
 
 #ifndef StGmtStrip_hh
 #define StGmtStrip_hh
+/// @file StGmtStrip.h
+/// @brief Global Muon Tracker (GMT) strip class holding raw ADC and calibration data.
 
 // STAR headers
 #include "StObject.h"
@@ -172,8 +174,8 @@ class StGmtStrip : public StObject {
 
   /// RDO number
   Int_t mRdo;
-  Int_t mArm; 
-  Int_t mApv;
+  Int_t mArm;  ///< ARM number within the RDO.
+  Int_t mApv;  ///< APV chip number within the ARM.
   /// Channel number
   Int_t mChan;
 
@@ -182,9 +184,8 @@ class StGmtStrip : public StObject {
   /// Pedestal standard deviation
   Float_t mPedStdDev;
   /// Pedestal RMS
-  Float_t mPedErr;  
-  // Is used in a cluster ?
-  Int_t mIsC; 
+  Float_t mPedErr;
+  Int_t mIsC; ///< Flag: 1 if this strip is used in a cluster, 0 otherwise.
   /// Time bin
   static Int_t mDefaultTimeBin;
     

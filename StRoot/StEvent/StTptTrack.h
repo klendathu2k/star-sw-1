@@ -34,14 +34,22 @@
 #ifndef StTptTrack_hh
 #define StTptTrack_hh
 
+/// @file StTptTrack.h
+/// @brief Track class produced by the TPT (TPC Pattern recognition and Tracking) algorithm.
+
 #include "StTrack.h"
 
+/// @brief Track produced by the TPT (TPC Pattern recognition and Tracking) online algorithm.
 class StTptTrack : public StTrack {
 public:
+    /// @brief Default constructor.
     StTptTrack();
+    /// @brief Destructor.
     ~StTptTrack();
 
+    /// @brief Returns the track type identifier (tpt track).
     StTrackType     type() const;
+    /// @brief Returns the primary vertex associated with this track (always null for TPT tracks).
     const StVertex* vertex() const;
 
     ClassDef(StTptTrack,1)

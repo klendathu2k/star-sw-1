@@ -1,6 +1,14 @@
 #ifndef StDetectorDefinitions_hh
 #define StDetectorDefinitions_hh
 
+/// @file StDetectorDefinitions.h
+/// @brief Integer identifier constants for all STAR sub-detectors.
+///
+/// These preprocessor constants define the numeric IDs assigned to each
+/// sub-detector in the STAR experiment.  The same values back the
+/// StDetectorId enumeration in StEnumerations.h and are also used by
+/// legacy Fortran code that cannot use C++ enumerations.
+
 /* Numbering scheme for detectors
 ** TPC             = 1
 ** SVT             = 2
@@ -49,115 +57,115 @@
 
 
 
-#define kUnknownIdentifier             0
-#define kTpcIdentifier                 1
-#define kSvtIdentifier                 2
-#define kRichIdentifier                3
-#define kFtpcWestIdentifier            4
-#define kFtpcEastIdentifier            5
-#define kTofIdentifier                 6
-#define kCtbIdentifier                 7
-#define kSsdIdentifier                 8
-#define kBarrelEmcTowerIdentifier      9
-#define kBarrelEmcPreShowerIdentifier 10
-#define kBarrelSmdEtaStripIdentifier  11
-#define kBarrelSmdPhiStripIdentifier  12
-#define kEndcapEmcTowerIdentifier     13
-#define kEndcapEmcPreShowerIdentifier 14
-#define kEndcapSmdUStripIdentifier    15
-#define kEndcapSmdVStripIdentifier    16
-#define kZdcWestIdentifier            17
-#define kZdcEastIdentifier            18
-#define kMwpcWestIdentifier           19
-#define kMwpcEastIdentifier           20
-#define kTpcSsdIdentifier             21
-#define kTpcSvtIdentifier             22
-#define kTpcSsdSvtIdentifier          23
-#define kSsdSvtIdentifier             24
-#define kPhmdCpvIdentifier            25
-#define kPhmdIdentifier               26
+#define kUnknownIdentifier             0  ///< Unknown or undefined detector
+#define kTpcIdentifier                 1  ///< Time Projection Chamber (TPC)
+#define kSvtIdentifier                 2  ///< Silicon Vertex Tracker (SVT)
+#define kRichIdentifier                3  ///< Ring-Imaging Cherenkov detector (RICH)
+#define kFtpcWestIdentifier            4  ///< Forward TPC, west
+#define kFtpcEastIdentifier            5  ///< Forward TPC, east
+#define kTofIdentifier                 6  ///< Time-of-Flight (TOF / BTof)
+#define kCtbIdentifier                 7  ///< Central Trigger Barrel (CTB)
+#define kSsdIdentifier                 8  ///< Silicon Strip Detector (SSD)
+#define kBarrelEmcTowerIdentifier      9  ///< Barrel EMC tower
+#define kBarrelEmcPreShowerIdentifier 10  ///< Barrel EMC pre-shower layer
+#define kBarrelSmdEtaStripIdentifier  11  ///< Barrel Shower Maximum Detector (SMD) eta strip
+#define kBarrelSmdPhiStripIdentifier  12  ///< Barrel SMD phi strip
+#define kEndcapEmcTowerIdentifier     13  ///< Endcap EMC tower
+#define kEndcapEmcPreShowerIdentifier 14  ///< Endcap EMC pre-shower layer
+#define kEndcapSmdUStripIdentifier    15  ///< Endcap SMD U-strip
+#define kEndcapSmdVStripIdentifier    16  ///< Endcap SMD V-strip
+#define kZdcWestIdentifier            17  ///< Zero Degree Calorimeter (ZDC), west
+#define kZdcEastIdentifier            18  ///< Zero Degree Calorimeter (ZDC), east
+#define kMwpcWestIdentifier           19  ///< Multi-Wire Proportional Chamber (MWPC), west
+#define kMwpcEastIdentifier           20  ///< Multi-Wire Proportional Chamber (MWPC), east
+#define kTpcSsdIdentifier             21  ///< Combined TPC + SSD tracking
+#define kTpcSvtIdentifier             22  ///< Combined TPC + SVT tracking
+#define kTpcSsdSvtIdentifier          23  ///< Combined TPC + SSD + SVT tracking
+#define kSsdSvtIdentifier             24  ///< Combined SSD + SVT tracking
+#define kPhmdCpvIdentifier            25  ///< Photon Multiplicity Detector charged-particle veto (PMD-CPV)
+#define kPhmdIdentifier               26  ///< Photon Multiplicity Detector (PMD)
 
 
 /*
 **  The following are for the inner and forward
 **  tracking upgrades. tu (Oct 11, 2007)
 */
-#define kPxlIdentifier                27
-#define kIstIdentifier                28
-#define kFgtIdentifier                29
+#define kPxlIdentifier                27  ///< HFT Pixel detector (PXL)
+#define kIstIdentifier                28  ///< HFT Intermediate Silicon Tracker (IST)
+#define kFgtIdentifier                29  ///< Forward GEM Tracker (FGT)
 
 /*
 **  The following are for the forward
 **  spectrometers (tu April 6, 2009)
 */
-#define kFpdWestIdentifier            30
-#define kFpdEastIdentifier            31 
-#define kFmsIdentifier                32
+#define kFpdWestIdentifier            30  ///< Forward Pion Detector (FPD), west
+#define kFpdEastIdentifier            31  ///< Forward Pion Detector (FPD), east
+#define kFmsIdentifier                32  ///< Forward Meson Spectrometer (FMS)
 
 /*
  **  The following are for the Roman Pot
  **  silicon detectors (pp2pp) (tu November 6, 2009)
  */
-#define kRpsIdentifier                33
+#define kRpsIdentifier                33  ///< Roman Pot silicon detectors (pp2pp / RPS)
 
 /*
  **  The following are for the Muon Telescope Detector
  */
-#define kMtdIdentifier                34
+#define kMtdIdentifier                34  ///< Muon Telescope Detector (MTD)
 
 /*
  **  The following are for the Endcap TRD in ETTIE detector
  */
-#define kEtrIdentifier                35
+#define kEtrIdentifier                35  ///< Endcap TRD (ETTIE) prototype
 
 /*
  **  The following are for the SST (Beware: not same as SSD)
  */
-#define kSstIdentifier                36
+#define kSstIdentifier                36  ///< HFT Silicon Strip Tracker (SST; distinct from SSD)
 /*
 **  The following is the addition of the GEM chambers
 **  to improve TPC tracking and alignment. RW (Mar 27, 2013)
 */
-#define kGmtIdentifier                37
+#define kGmtIdentifier                37  ///< GEM Muon Tagger (GMT) for TPC alignment
 
 /*
 ** Add the FTS tracker
 */
-#define kFtsIdentifier                38 
+#define kFtsIdentifier                38  ///< Forward Tracking System (FTS)
 
 /*
  ** iTPC
  */
-#define kiTpcIdentifier               39
+#define kiTpcIdentifier               39  ///< Inner TPC upgrade (iTPC)
 
 /*
  ** eTOF
  */
-#define kETofIdentifier               40
+#define kETofIdentifier               40  ///< Endcap Time-of-Flight (eTOF)
 
 /*
 ** Add the FCS Wcal and Hcal
 */
-#define kFcsWcalIdentifier            41 
-#define kFcsHcalIdentifier            42 
-#define kFcsPresIdentifier            43 
+#define kFcsWcalIdentifier            41  ///< Forward Calorimeter System (FCS) W-Shashlyk ECAL
+#define kFcsHcalIdentifier            42  ///< FCS hadronic calorimeter (HCAL)
+#define kFcsPresIdentifier            43  ///< FCS pre-shower detector
 
 /*
  ** Add the sTGC (Ftt)
  */
 
-#define kFttIdentifier                44 
+#define kFttIdentifier                44  ///< Forward sTGC Tracker (FTT)
 
 /*
  *  ** Add the Forward Silicon Tracker (Fst)
  *   */
 
-#define kFstIdentifier                45
+#define kFstIdentifier                45  ///< Forward Silicon Tracker (FST)
 
 /*
  ** RHICf
  */
-#define kRHICfIdentifier              46
+#define kRHICfIdentifier              46  ///< RHICf calorimeter (very forward neutral particle detector)
 
 /*
 **  The following are more or less virtual detectors.

@@ -1,6 +1,7 @@
 /*!
- * \class StBbcTriggerDetector 
+ * \class StBbcTriggerDetector
  * \author Akio Ogawa, Jan 2002
+ * \brief BBC (Beam-Beam Counter) trigger detector data for one event.
  */
 /***************************************************************************
  *
@@ -53,44 +54,76 @@
  **************************************************************************/
 #ifndef StBbcTriggerDetector_hh
 #define StBbcTriggerDetector_hh
+
+/// @file StBbcTriggerDetector.h
+/// @brief BBC (Beam-Beam Counter) trigger detector ADC/TDC data and derived quantities.
+
 #include "StObject.h"
 
 class dst_TrgDet_st;
 class StTriggerData;
 
+/// @brief Stores ADC, TDC, scalar, and pedestal data read out from the BBC
+///        (Beam-Beam Counter) trigger detector for one event.
+///        The BBC consists of small and large scintillator tiles on each side
+///        of the interaction point, used for luminosity monitoring and minimum-bias triggering.
+///        Note: some legacy accessor methods are unsupported for Run 3+ data.
 class StBbcTriggerDetector : public StObject {
 public:
     StBbcTriggerDetector();
+    /// @brief Construct from legacy DST trigger detector table.
     StBbcTriggerDetector(const dst_TrgDet_st&);
+    /// @brief Construct from decoded StTriggerData.
     StBbcTriggerDetector(const StTriggerData&);
     virtual ~StBbcTriggerDetector();
     // StBbcTriggerDetector(const StBbcTriggerDetector&);            use default
     // StBbcTriggerDetector& operator=(const StBbcTriggerDetector&); use default
     
+    /// @brief Return the total number of BBC PMT channels.
     unsigned int   numberOfPMTs() const;
+    /// @brief Return the number of hardware register words.
     unsigned int   numberOfRegisters() const;
+    /// @brief Return the number of pedestal data words.
     unsigned int   numberOfPedestalData() const;
+    /// @brief Return the number of scalar (rate counter) words.
     unsigned int   numberOfScalars() const;
     
+    /// @brief Return the ADC value for PMT at index @p i.
     unsigned short adc(unsigned int) const;
+    /// @brief Return the TDC value for PMT at index @p i.
     unsigned short tdc(unsigned int) const;
+    /// @brief Return the BBC hardware register word at index @p i.
     unsigned short bbcRegister(unsigned int) const;
+    /// @brief Return the pedestal data word at index @p i.
     unsigned short pedestalData(unsigned int) const;
+    /// @brief Return the scalar (rate counter) value at index @p i.
     unsigned int   scalar(unsigned int) const;
     
+    /// @brief Return the pedestal mean for PMT @p id.
     unsigned short pedestal(unsigned int id) const;
+    /// @brief Return the pedestal width (sigma) for PMT @p id.
     unsigned short pedestalWidth(unsigned int id) const;
+    /// @brief Return the MIP (minimum-ionizing particle) peak position for PMT @p id.
     unsigned short mip(unsigned int id) const;
+    /// @brief Return the MIP peak width for PMT @p id.
     unsigned short mipWidth(unsigned int id) const;
     
 
+    /// @brief Return the ADC sum over east small tiles.
     int   adcSumEast(); 
+    /// @brief Return the ADC sum over west small tiles.
     int   adcSumWest();
+    /// @brief Return the ADC sum over east large tiles.
     int   adcSumEastLarge(); 
+    /// @brief Return the ADC sum over west large tiles.
     int   adcSumWestLarge();
+    /// @brief Return the ADC sum over all small tiles (east + west).
     int   adcSum();
+    /// @brief Return the ADC sum over all large tiles (east + west).
     int   adcSumLarge();
+    /// @brief Return the ADC sum over all BBC tiles.
     int   adcSumAll();
+    /// @brief Return the online time difference (z-vertex proxy) from the layer-2 DSM.
     unsigned short onlineTimeDifference() const; // z vertex from Layer2 DSM in channel 
 
   /////////////////////////////////////////////
@@ -107,34 +140,44 @@ public:
   // No longer supported after 2003. Do not use
   //////////////////////////////////////////////
 
+    /// @brief Return the z-vertex position (cm) estimated from BBC timing.
     float zVertex(); //z vertex in cm
 
+    /// @brief Set the ADC value for PMT at index @p i.
     void  setAdc(unsigned int, unsigned short);
+    /// @brief Set the TDC value for PMT at index @p i.
     void  setTdc(unsigned int, unsigned short);
+    /// @brief Set the hardware register word at index @p i.
     void  setRegister(unsigned int, unsigned short);
+    /// @brief Set the pedestal data word at index @p i.
     void  setPedestal(unsigned int, unsigned short);
+    /// @brief Set the scalar value at index @p i.
     void  setScalar(unsigned int, unsigned int);
+    /// @brief Set the online time difference word from the layer-2 DSM.
     void  setOnlineTimeDifference(unsigned short);
+    /// @brief Print BBC data to stdout for debugging.
     void  dump();
     
+    /// @brief Return the run year encoded in this object.
     unsigned int   year() const;
+    /// @brief Set the run year for this object.
     void           setYear(unsigned int);
     
 protected:
     enum {
-        mMaxPMTs = 48,
-        mMaxRegisters = 2,
-        mMaxPedData = 128,
-        mMaxScalars = 32
+        mMaxPMTs = 48,     ///< Maximum number of BBC PMT channels.
+        mMaxRegisters = 2, ///< Number of BBC hardware register words.
+        mMaxPedData = 128, ///< Number of pedestal data words.
+        mMaxScalars = 32   ///< Number of scalar (rate counter) words.
     };
     char mBeg[1];//!
-    UShort_t mAdc[mMaxPMTs];
-    UShort_t mTdc[mMaxPMTs];
-    UShort_t mReg[mMaxRegisters];
-    UShort_t mPed[mMaxPedData];
-    UShort_t mScl[mMaxScalars];
-    UInt_t   mYear;
-    UInt_t   mDSMVTX;
+    UShort_t mAdc[mMaxPMTs];       ///< ADC values for each BBC PMT.
+    UShort_t mTdc[mMaxPMTs];       ///< TDC values for each BBC PMT.
+    UShort_t mReg[mMaxRegisters];  ///< BBC hardware register words.
+    UShort_t mPed[mMaxPedData];    ///< Pedestal data (mean, width, MIP peak, MIP width).
+    UShort_t mScl[mMaxScalars];    ///< Scalar (rate counter) values.
+    UInt_t   mYear;                ///< Run year for this data object.
+    UInt_t   mDSMVTX;              ///< Online time difference from DSM layer-2 (z-vertex proxy).
     char mEnd[1];//!
     ClassDef(StBbcTriggerDetector,5)
 };

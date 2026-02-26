@@ -40,25 +40,35 @@
 #ifndef StTpcSectorHitCollection_hh
 #define StTpcSectorHitCollection_hh
 
+/// @file StTpcSectorHitCollection.h
+/// @brief Collection of TPC hits belonging to a single readout sector, indexed by padrow.
+
 #include "StObject.h"
 #include "StTpcPadrowHitCollection.h"
 
+/// @brief Collection of TPC hits belonging to a single readout sector, indexed by padrow.
 class StTpcSectorHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
   StTpcSectorHitCollection() {}
+    /// @brief Destructor.
   ~StTpcSectorHitCollection() {}
     // StTpcSectorHitCollection(const StTpcSectorHitCollection&);            use default
     // StTpcSectorHitCollection& operator=(const StTpcSectorHitCollection&); use default
-    
+
+    /// @brief Returns the total number of hits across all padrows in this sector.
     unsigned int numberOfHits() const;
+    /// @brief Returns the maximum number of padrows supported (capacity).
     unsigned int numberOfPadrows() const { return mNumberOfPadrows; }
-    
+
+    /// @brief Returns a mutable pointer to the hit collection for the given padrow (1-based).
     StTpcPadrowHitCollection*       padrow(unsigned int);
+    /// @brief Returns a const pointer to the hit collection for the given padrow (1-based).
     const StTpcPadrowHitCollection* padrow(unsigned int) const;
 
 private:
     enum { mNumberOfPadrows = 100 }; // Keep in mind that it could be changed
-    StTpcPadrowHitCollection mPadrows[mNumberOfPadrows];
+    StTpcPadrowHitCollection mPadrows[mNumberOfPadrows]; ///< Per-padrow hit collections for this sector.
     
     ClassDef(StTpcSectorHitCollection,2)
 };

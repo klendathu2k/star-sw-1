@@ -30,41 +30,63 @@
 #ifndef StTofRawData_hh
 #define StTofRawData_hh
 
+/// @file StTofRawData.h
+/// @brief Raw TDC hit record from the STAR legacy Time of Flight detector (Run 5+).
+
 #include "StObject.h"
 
+/// @brief Raw TDC hit record from the STAR legacy TOF detector electronics (Run 5+).
 class StTofRawData : public StObject {
 public:
+    /// @brief Default constructor.
     StTofRawData();
 
+    /// @brief Constructs without tray information.
     StTofRawData(unsigned short, unsigned short, unsigned int, unsigned short);
+    /// @brief Constructs with tray, channel, TDC, and quality fields.
     StTofRawData(unsigned short, unsigned short, unsigned short, unsigned int, unsigned short);
+    /// @brief Constructs with tray, channel, TDC, trigger time, and quality fields.
     StTofRawData(unsigned short, unsigned short, unsigned short, unsigned int, unsigned int, unsigned short);
+    /// @brief Destructor.
     ~StTofRawData();    
 
+    /// @brief Equality comparison operator.
     int operator==(const StTofRawData&) const;
+    /// @brief Inequality comparison operator.
     int operator!=(const StTofRawData&) const;
 
-    unsigned short  leteFlag() const; // 1 - leading; 2 - trailing
+    unsigned short  leteFlag() const; ///< Returns the leading/trailing edge flag (1=leading, 2=trailing).
+    /// @brief Returns the tray number.
     unsigned short  tray() const;
+    /// @brief Returns the TDC channel number.
     unsigned short  channel() const;
+    /// @brief Returns the raw TDC count.
     unsigned int    tdc() const;
+    /// @brief Returns the trigger time TDC count.
     unsigned int    triggertime() const;
+    /// @brief Returns the data quality flag.
     unsigned short  quality() const;
 
+    /// @brief Sets the leading/trailing edge flag.
     void      setLeTeFlag(unsigned short);
+    /// @brief Sets the tray number.
     void      setTray(unsigned short);
+    /// @brief Sets the TDC channel number.
     void      setChannel(unsigned short);
+    /// @brief Sets the raw TDC count.
     void      setTdc(unsigned int);
+    /// @brief Sets the trigger time TDC count.
     void      setTriggertime(unsigned int);
+    /// @brief Sets the data quality flag.
     void      setQuality(unsigned short);
     
 protected:
-    UShort_t  mLeTeFlag;
-    UShort_t  mTray;
-    UShort_t  mChannel;
-    UInt_t    mTdc;
-    UInt_t    mTriggertime;
-    UShort_t  mQuality;
+    UShort_t  mLeTeFlag;     ///< Leading/trailing edge flag (1=leading, 2=trailing)
+    UShort_t  mTray;         ///< Tray number
+    UShort_t  mChannel;      ///< TDC channel number
+    UInt_t    mTdc;          ///< Raw TDC count
+    UInt_t    mTriggertime;  ///< Trigger time TDC count
+    UShort_t  mQuality;      ///< Data quality flag
 
     ClassDef(StTofRawData,3)
 };

@@ -11,11 +11,15 @@
 #ifndef StFwdTrackCollection_hh
 #define StFwdTrackCollection_hh
 
+/// @file StFwdTrackCollection.h
+/// @brief Event-level collection of forward-rapidity tracks stored in StEvent.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StFwdTrack;
 
+/// @brief Top-level container for all reconstructed StFwdTrack objects in one event.
 class StFwdTrackCollection : public StObject {
 public:
     StFwdTrackCollection();
@@ -27,7 +31,7 @@ public:
     unsigned int numberOfTracks() const;     // Return the number of tracks
 
 private:
-    StSPtrVecFwdTrack   mTracks;   //tracks
+    StSPtrVecFwdTrack   mTracks;   ///< Persistent vector of reconstructed forward tracks.
 
     ClassDef(StFwdTrackCollection,1)
 

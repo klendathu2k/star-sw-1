@@ -132,6 +132,16 @@
  **************************************************************************/
 #ifndef StContainers_hh
 #define StContainers_hh
+
+/// @file StContainers.h
+/// @brief Forward declarations and @c StCollectionDef expansions for all StEvent
+///        detector-object container types.
+///
+/// This header uses the @c StCollectionDef macro (from StArray.h) to generate
+/// the typedefs @c StSPtrVec<T> and @c StPtrVec<T> for every persistent object
+/// class in StEvent.  It is the single place to add a new collection type when
+/// a new detector class is introduced.
+
 #include "StArray.h"
 
 class StBTofHit;

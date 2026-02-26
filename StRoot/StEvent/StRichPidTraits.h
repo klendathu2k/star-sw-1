@@ -65,6 +65,9 @@
 #ifndef StRichPidTraits_hh
 #define StRichPidTraits_hh
 
+/// @file StRichPidTraits.h
+/// @brief RICH PID traits object, attaching particle-identification hypotheses to a reconstructed track.
+
 #include <Stiostream.h>
 #include "StTrackPidTraits.h"
 #include "StParticleDefinition.hh"
@@ -74,62 +77,89 @@
 #include "StParticleTypes.hh"
 
 
+/// @brief PID traits for the RICH detector, storing per-species hypotheses and track-level RICH quantities.
 class StRichPidTraits : public StTrackPidTraits {
 public:
+    /// @brief Default constructor.
     StRichPidTraits();
     ~StRichPidTraits();
-    
+
     StRichPidTraits(const StRichPidTraits&);
     StRichPidTraits& operator=(const StRichPidTraits&);
-    
+
+    /// @brief Adds a PID hypothesis to the collection.
     void                    addPid(StRichPid* );
-  
+
+    /// @brief Returns a const reference to all per-species PID hypotheses.
     const StSPtrVecRichPid& getAllPids() const;
+    /// @brief Returns a mutable reference to all per-species PID hypotheses.
     StSPtrVecRichPid&       getAllPids();
-    
+
+    /// @brief Returns a pointer to the PID hypothesis for the specified particle type.
     StRichPid*              getPid(StParticleDefinition* t);
+    /// @brief Returns a const pointer to the PID hypothesis for the specified particle type.
     const StRichPid*        getPid(StParticleDefinition* t)  const;
 
+    /// @brief Returns a mutable pointer to the Cherenkov spectra summary for this track.
     StRichSpectra*          getRichSpectra();
+    /// @brief Returns a const pointer to the Cherenkov spectra summary for this track.
     const StRichSpectra*    getRichSpectra() const;
 
+    /// @brief Sets the Cherenkov spectra summary object for this track.
     void                    setRichSpectra(StRichSpectra*);
 
+    /// @brief Sets the RICH reconstruction production version tag.
     void  setProductionVersion(int);
+    /// @brief Sets the track identifier.
     void  setId(int);
+    /// @brief Sets the overall PID probability for the best hypothesis.
     void  setProbability(float);
+    /// @brief Sets the pointer to the minimum-ionising particle hit in the RICH.
     void  setAssociatedMip(StRichHit*);
+    /// @brief Sets the residual between the MIP impact point and the projected track position.
     void  setMipResidual(const StThreeVectorF&);
+    /// @brief Sets the residual from the refitted track extrapolation to the RICH pad plane.
     void  setRefitResidual(const StThreeVectorF&);
+    /// @brief Sets the signed 2-D distance of closest approach to the primary vertex.
     void  setSignedDca2d(float);
+    /// @brief Sets the signed 3-D distance of closest approach to the primary vertex.
     void  setSignedDca3d(float);
-    
+
+    /// @brief Returns the RICH reconstruction production version tag.
     int   productionVersion() const;
+    /// @brief Returns the track identifier.
     int   id() const;
+    /// @brief Returns the overall PID probability for the best hypothesis.
     float probability() const;
 
+    /// @brief Returns a const pointer to the associated MIP hit in the RICH.
     const StRichHit*       associatedMip() const;
+    /// @brief Returns the residual between the MIP impact point and the projected track position.
     const StThreeVectorF&  mipResidual() const;
+    /// @brief Returns the residual from the refitted track extrapolation.
     const StThreeVectorF&  refitResidual() const;
+    /// @brief Returns the signed 2-D distance of closest approach to the primary vertex.
     float                  signedDca2d() const;
+    /// @brief Returns the signed 3-D distance of closest approach to the primary vertex.
     float                  signedDca3d() const;
-    
+
 private:
-    StSPtrVecRichPid  mThePids;
-    Int_t             mProductionVersion;
-    Int_t             mId;
-    Float_t           mProbability;
+    StSPtrVecRichPid  mThePids;           ///< Collection of per-species PID hypotheses
+    Int_t             mProductionVersion; ///< RICH reconstruction production version tag
+    Int_t             mId;                ///< Track identifier
+    Float_t           mProbability;       ///< Overall PID probability for the best hypothesis
+    /// @brief Pointer to the MIP hit in the RICH (type adapts between CINT and compiled builds).
 #ifdef __CINT__
-    StObjLink	      mAssociatedMip; 
+    StObjLink	      mAssociatedMip;
 #else
-    StLink<StRichHit> mAssociatedMip; 
+    StLink<StRichHit> mAssociatedMip;
 #endif //__CINT__
-    StThreeVectorF    mMipResidual;
-    StThreeVectorF    mRefitResidual;
-    Float_t           mSigned3dDca;
-    Float_t           mSigned2dDca;
-    StRichSpectra*    mRichSpectra;
-    
+    StThreeVectorF    mMipResidual;       ///< Residual between MIP impact and projected track position
+    StThreeVectorF    mRefitResidual;     ///< Residual from refitted track extrapolation
+    Float_t           mSigned3dDca;       ///< Signed 3-D DCA to primary vertex
+    Float_t           mSigned2dDca;       ///< Signed 2-D DCA to primary vertex
+    StRichSpectra*    mRichSpectra;       ///< Pointer to the Cherenkov spectra summary (not owned)
+
     ClassDef(StRichPidTraits,3)
 };
 

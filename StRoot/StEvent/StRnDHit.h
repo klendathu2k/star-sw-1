@@ -26,56 +26,92 @@
  **************************************************************************/
 #ifndef StRnDHit_hh
 #define StRnDHit_hh
+
+/// @file StRnDHit.h
+/// @brief Generic hit class for Research and Development (R&D) detector studies.
+
 #include "StHit.h"
 #include "StMemoryPool.hh"
 #include "StEnumerations.h"
 
+/// @brief Generic hit class for R&D (Research and Development) detector prototyping.
 class StRnDHit : public StHit
 {
 public:
+    /// @brief Default constructor.
     StRnDHit();
+    /// @brief Construct with full hit information for a given detector.
     StRnDHit(const StThreeVectorF& position,
 	   const StThreeVectorF& error,
 	   unsigned int hwPosition, float charge, unsigned char trackRefCount = 0,
 	   unsigned short idTruth=0,  unsigned short quality=0,  unsigned short id =0,
 	   StDetectorId = kUnknownId);
+    /// @brief Destructor.
     ~StRnDHit();
 
+    /// @brief Returns the detector identifier.
     StDetectorId detector() const;
+    /// @brief Returns the detector layer index.
     unsigned int    layer() const;
+    /// @brief Returns the detector ladder index.
     unsigned int    ladder() const;
+    /// @brief Returns the detector wafer index.
     unsigned int    wafer() const;
     
+    /// @brief Returns detector-specific spare integer 0.
     int    extraByte0() const;
+    /// @brief Returns detector-specific spare integer 1.
     int    extraByte1() const;
     
+    /// @brief Returns the key index from the associated StMcHit (MC truth).
     int    key() const;
+    /// @brief Returns the volume identifier from the associated StMcHit (MC truth).
     int    volumeId() const;
     
+    /// @brief Returns detector-specific spare double 0.
     double double0() const;
+    /// @brief Returns detector-specific spare double 1.
     double double1() const;
+    /// @brief Returns detector-specific spare double 2.
     double double2() const;
+    /// @brief Returns detector-specific spare double 3.
     double double3() const;
+    /// @brief Returns detector-specific spare double 4.
     double double4() const;
     
+    /// @brief Sets the detector layer index.
     void setLayer(short);
+    /// @brief Sets the detector ladder index.
     void setLadder(short);
+    /// @brief Sets the detector wafer index.
     void setWafer(short);
+    /// @brief Sets detector-specific spare integer 0.
     void setExtraByte0(int);
+    /// @brief Sets detector-specific spare integer 1.
     void setExtraByte1(int);
+    /// @brief Sets the detector identifier.
     void setDetectorId(StDetectorId);
     
+    /// @brief Sets the MC truth key index.
     void setKey(int);
+    /// @brief Sets the MC truth volume identifier.
     void setVolumeId(int);
     
+    /// @brief Sets detector-specific spare double 0.
     void setDouble0(double);
+    /// @brief Sets detector-specific spare double 1.
     void setDouble1(double);
+    /// @brief Sets detector-specific spare double 2.
     void setDouble2(double);
+    /// @brief Sets detector-specific spare double 3.
     void setDouble3(double);
+    /// @brief Sets detector-specific spare double 4.
     void setDouble4(double);
 
+  /// @brief Sets the 3×3 hit covariance matrix from a flat upper-triangle array.
   void setErrorMatrix(const float* M);
 
+  /// @brief Returns the 3×3 hit covariance matrix.
   StMatrixF       covariantMatrix() const;//{ return mErrMatrix; }
 
     void* operator new(size_t sz,void *p)     { return p;}
@@ -85,30 +121,30 @@ public:
     friend ostream& operator<<(ostream& os, const StRnDHit& h);
     
 protected:
-    Short_t mLayer; ///Layer
-    Short_t mLadder; ///Ladder
-    Short_t mWafer; ///Wafer
+    Short_t mLayer;   ///< Detector layer index.
+    Short_t mLadder;  ///< Detector ladder index.
+    Short_t mWafer;   ///< Detector wafer index.
     
     //Extras
-    Int_t mExtraByte0;
-    Int_t mExtraByte1;
+    Int_t mExtraByte0;  ///< Spare integer for detector-specific data (slot 0).
+    Int_t mExtraByte1;  ///< Spare integer for detector-specific data (slot 1).
     
     //info to get back to StMcHit pointer:
-    Int_t mKey; ///key from StMcHit
-    Int_t mVolumeId; ///VolumeId from StMcHit
+    Int_t mKey;       ///< Key index from StMcHit for MC truth association.
+    Int_t mVolumeId;  ///< Volume identifier from StMcHit for MC truth association.
     
     //and 5 overflow doubles
-    Double_t mDouble0;
-    Double_t mDouble1;
-    Double_t mDouble2;
-    Double_t mDouble3;
-    Double_t mDouble4;
+    Double_t mDouble0;  ///< Spare double for detector-specific data (slot 0).
+    Double_t mDouble1;  ///< Spare double for detector-specific data (slot 1).
+    Double_t mDouble2;  ///< Spare double for detector-specific data (slot 2).
+    Double_t mDouble3;  ///< Spare double for detector-specific data (slot 3).
+    Double_t mDouble4;  ///< Spare double for detector-specific data (slot 4).
 
     // this has to go once the playing and testing is over.
     // should be hard wired in member function.
-    StDetectorId mDetectorId;
+    StDetectorId mDetectorId;  ///< Detector identifier.
 
-  float mErrorMatrix[9];
+  float mErrorMatrix[9];  ///< Upper triangle of the 3×3 hit position covariance matrix.
     
     static StMemoryPool mPool;  //!
     

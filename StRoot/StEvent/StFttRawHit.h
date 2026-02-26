@@ -11,11 +11,18 @@
 #ifndef STFTTRAWHIT_H
 #define STFTTRAWHIT_H
 
+/// @file StFttRawHit.h
+/// @brief Data structure for a single FTT (Forward sTGC Tracker) raw strip hit.
+
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StEnumerations.h"
 
 
+/// @brief Stores the raw digitised signal from one FTT strip channel for a single bunch crossing.
+///
+/// Contains both the electronics readout coordinates (sector, RDO, FEB, VMM, channel)
+/// and the mapped detector coordinates (plane, quadrant, row, strip, orientation).
 class StFttRawHit : public StObject {
 public:
     /**
@@ -60,26 +67,26 @@ public:
     UShort_t qaTruth() const { return mQaTruth; }
 
 protected:
-    UChar_t mSector;
-    UChar_t mRDO;
-    UChar_t mFEB;
-    UChar_t mVMM;
-    UChar_t mChannel;
-    UShort_t mADC;
-    UShort_t mBCID;
-    Short_t mTB;  // from the trigger
-    Short_t mBCIDDelta;
-    Short_t mTime;  // calibrated BCID Delta
+    UChar_t mSector;      ///< Detector sector number.
+    UChar_t mRDO;         ///< RDO board number.
+    UChar_t mFEB;         ///< Front-End Board (FEB) number.
+    UChar_t mVMM;         ///< VMM ASIC chip number on the FEB.
+    UChar_t mChannel;     ///< Channel number on the VMM chip.
+    UShort_t mADC;        ///< Raw ADC pulse height.
+    UShort_t mBCID;       ///< Bunch-crossing ID at the time of the hit.
+    Short_t mTB;          ///< Time bin index relative to the trigger.
+    Short_t mBCIDDelta;   ///< Difference between hit BCID and trigger BCID.
+    Short_t mTime;        ///< Calibrated time (BCID delta converted to ns).
 
     // mapped information
-    UChar_t mPlane;
-    UChar_t mQuadrant;
-    UChar_t mRow;
-    UChar_t mStrip;
-    UChar_t mOrientation;
+    UChar_t mPlane;       ///< Mapped FTT detector plane index.
+    UChar_t mQuadrant;    ///< Mapped FTT quadrant index.
+    UChar_t mRow;         ///< Mapped strip row within the quadrant.
+    UChar_t mStrip;       ///< Mapped strip index within the row.
+    UChar_t mOrientation; ///< Strip orientation (horizontal or vertical).
 
-    UShort_t mIdTruth=0; // Truth ID
-    UShort_t mQaTruth=0; // Truth Quality
+    UShort_t mIdTruth=0;  ///< MC truth track ID for embedding studies.
+    UShort_t mQaTruth=0;  ///< MC truth quality (fraction of charge from the truth track, %).
 
     ClassDef( StFttRawHit, 4 );
 };

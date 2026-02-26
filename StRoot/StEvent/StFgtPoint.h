@@ -43,9 +43,15 @@
 #ifndef _ST_FGT_POINT_H_
 #define _ST_FGT_POINT_H_
 
+/// @file StFgtPoint.h
+/// @brief Data structure for an FGT reconstructed 2D point (pair of 1D clusters).
+
 #include "StHit.h"
 #include "StFgtHit.h"
 
+/// @brief Represents a reconstructed 2D space point in the Forward GEM Tracker (FGT),
+/// formed by pairing an R-strip hit with a phi-strip hit on the same disc and quadrant.
+/// If construction fails, @c mKey is set to -999; callers must check this.
 class StFgtPoint : public StHit {
 public:
     // constructors
@@ -79,12 +85,12 @@ public:
     
 protected:
     // data members
-    Int_t   mKey;                         // unique label
-    Float_t mChargeAsymmetry;
-    Int_t   mRank;
+    Int_t   mKey;              ///< Unique point identifier; -999 indicates a construction error.
+    Float_t mChargeAsymmetry; ///< Charge asymmetry between the R and phi 1D clusters.
+    Int_t   mRank;            ///< Quality rank used for point ordering.
     
-    StFgtHit *mHitR;   //! do not stream pointers
-    StFgtHit *mHitPhi;  //!
+    StFgtHit *mHitR;   //! Pointer to the associated R-strip hit (not streamed).
+    StFgtHit *mHitPhi; //! Pointer to the associated phi-strip hit (not streamed).
     
 private:   
     ClassDef(StFgtPoint,2);

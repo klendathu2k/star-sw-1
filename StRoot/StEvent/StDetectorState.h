@@ -1,5 +1,8 @@
+/// @file StDetectorState.h
+/// @brief Declaration of StDetectorState, recording the operational status of one STAR sub-detector.
 /*!
- * \class StDetectorState 
+ * \class StDetectorState
+ * \brief Records whether a specific STAR sub-detector was operational (good/bad) for an event.
  * \author Thomas Ullrich, Dec 2001
  */
 /***************************************************************************

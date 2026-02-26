@@ -74,9 +74,15 @@
 #ifndef StTriggerData2009_hh
 #define StTriggerData2009_hh
 
+/// @file StTriggerData2009.h
+/// @brief Concrete StTriggerData implementation for STAR Run 9 (year 2009) trigger data.
+
 #include "StTriggerData.h"
 #include "StDaqLib/TRG/trgStructures2009.h"
 
+/// @brief Concrete implementation of StTriggerData for Run 9 (year 2009) trigger data format.
+///        Introduces the block-based DAQ format with pre/post crossing QT readout,
+///        ZDC DSM layer access, full VPD high-threshold readout, pp2pp, MTD, and TOF.
 class StTriggerData2009 : public StTriggerData {
 public:
     StTriggerData2009();
@@ -85,6 +91,7 @@ public:
     ~StTriggerData2009();
     
     void readData() {readData(0,0);}
+    /// @brief Decode trigger data from @p data with byte-swap flag @p bs.
     void readData(const TriggerDataBlk2009* data, int bs);
     void dump() const;  //dump data into text
 
@@ -230,7 +237,9 @@ public:
     unsigned long  pp2ppDSM(int prepost=0) const;
 
     // Experts only
+    /// @brief Return the year-specific raw trigger structure pointer (expert use only).
     char*                getTriggerStructure();
+    /// @brief Return a typed pointer to the 2009 trigger data block (expert use only).
     TriggerDataBlk2009*  getTriggerStructure2009();  
     int                  getRawSize() const;
 
@@ -254,7 +263,7 @@ public:
     void killFMS();
 
 protected:
-    TriggerDataBlk2009 *mData;
+    TriggerDataBlk2009 *mData; ///< Pointer to the raw 2009 trigger data block.
   
     EvtDescData2009*  EvtDesc;  //!
     L1_DSM_Data2009*  L1_DSM;   //!

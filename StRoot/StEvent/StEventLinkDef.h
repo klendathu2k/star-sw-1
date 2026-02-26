@@ -1,3 +1,9 @@
+/// @file StEventLinkDef.h
+/// @brief ROOT/CINT dictionary link definitions for StEvent classes and enumerations.
+///
+/// This file is processed by rootcint to generate the I/O dictionary for all
+/// StEvent persistent classes, enumerations, and trigger-data structures.
+/// It must be kept in sync with the class list in StEvent.
 #ifdef __CINT__
 #pragma link off all globals;
 #pragma link off all classes;

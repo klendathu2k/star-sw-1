@@ -49,6 +49,10 @@
  **************************************************************************/
 #ifndef StTpcDedxPidAlgorithm_hh
 #define StTpcDedxPidAlgorithm_hh
+
+/// @file StTpcDedxPidAlgorithm.h
+/// @brief PID algorithm that identifies particles via TPC dE/dx measurements.
+
 #include <vector>
 #include "StFunctional.h"
 #include "StEnumerations.h"
@@ -59,20 +63,33 @@ using std::vector;
 
 class StDedxPidTraits;
 
+/// @brief PID algorithm that identifies particles using TPC dE/dx measurements.
+///
+/// Selects the best-matching particle hypothesis for a track by comparing the
+/// measured dE/dx to Bethe-Bloch expectations using the configured dE/dx method.
 class StTpcDedxPidAlgorithm : public StPidAlgorithm {
 public:
+    /// @brief Construct the algorithm with the specified dE/dx estimation method.
     StTpcDedxPidAlgorithm(StDedxMethod = kLikelihoodFitId);
+    /// @brief Destructor.
     ~StTpcDedxPidAlgorithm() {}
-    
+
+    /// @brief Evaluates the track PID traits and returns the best-matching particle definition.
     StParticleDefinition*  operator() (const StTrack&, const StSPtrVecTrackPidTraits&);
 
+    /// @brief Returns the dE/dx PID traits selected during the last operator() call; transient.
     const  StDedxPidTraits* traits() const { return mTraits; }
+    /// @brief Returns the number of sigma deviation from the expected dE/dx for the given particle hypothesis.
     Double_t numberOfSigma(const StParticleDefinition*) const;
 
 private:
+    /// @brief Last matched dE/dx PID traits; transient.
     const StDedxPidTraits*        mTraits;       //!
+    /// @brief Track evaluated during the last operator() call; transient.
     const StTrack*                mTrack;        //!
+    /// @brief dE/dx estimation method used for PID (e.g. truncated mean, likelihood fit); transient.
     StDedxMethod                  mDedxMethod;   //!
+    /// @brief Candidate particle definitions evaluated by the algorithm; transient.
 #if defined(ST_NO_TEMPLATE_DEF_ARGS)
     vector<StParticleDefinition*,
            allocator<StParticleDefinition*> > mParticles; //!

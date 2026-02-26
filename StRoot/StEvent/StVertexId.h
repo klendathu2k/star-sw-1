@@ -1,3 +1,7 @@
+/// @file StVertexId.h
+/// @brief Obsolete header — all vertex-ID enumerations have moved to StEnumerations.h.
+///
+/// @deprecated Include StEnumerations.h directly.
 #ifndef StVertexId_hh
 #define StVertexId_hh
 #include "StEnumerations.h"

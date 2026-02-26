@@ -28,25 +28,35 @@
 #ifndef StFtpcPlaneHitCollection_hh
 #define StFtpcPlaneHitCollection_hh
 
+/// @file StFtpcPlaneHitCollection.h
+/// @brief Defines the StFtpcPlaneHitCollection class grouping FTPC hits by readout plane.
+
 #include "StObject.h"
 #include "StFtpcSectorHitCollection.h"
 
+/// @brief Collection of FTPC hits belonging to a single readout plane, organized by sector.
 class StFtpcPlaneHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StFtpcPlaneHitCollection();
     // StFtpcPlaneHitCollection(const StFtpcPlaneHitCollection&);            use default
     // StFtpcPlaneHitCollection& operator=(const StFtpcPlaneHitCollection&); use default
+    /// @brief Destructor.
     ~StFtpcPlaneHitCollection();
     
+    /// @brief Returns the total number of hits across all sectors in this plane.
     unsigned int  numberOfHits() const;
+    /// @brief Returns the number of sector sub-collections in this plane.
     unsigned int  numberOfSectors() const;
     
+    /// @brief Returns a pointer to the hit collection for the given sector index.
     StFtpcSectorHitCollection*       sector(unsigned int);
+    /// @brief Returns a const pointer to the hit collection for the given sector index.
     const StFtpcSectorHitCollection* sector(unsigned int) const;
 
 private:
     enum { mNumberOfSectors = 6 };
-    StFtpcSectorHitCollection mSectors[mNumberOfSectors];
+    StFtpcSectorHitCollection mSectors[mNumberOfSectors];   ///<  Array of sector hit collections [0-5].
     
     ClassDef(StFtpcPlaneHitCollection,1)
 };

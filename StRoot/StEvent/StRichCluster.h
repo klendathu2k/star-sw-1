@@ -33,42 +33,62 @@
  ***************************************************************************/
 #ifndef StRichCluster_hh
 #define StRichCluster_hh
+
+/// @file StRichCluster.h
+/// @brief Persistent RICH pad-cluster object used in Cherenkov ring reconstruction.
 #include "StObject.h"
 
+/// @brief Cluster of adjacent RICH pads grouped during hit reconstruction.
 class StRichCluster : public StObject {
 public:
+    /// @brief Default constructor.
     StRichCluster();
     ~StRichCluster();
+    /// @brief Constructor with full cluster parameters.
     StRichCluster(int nPads, int nLocMax, int fPad, float ampSum, float amp2Sum, float rms2);
     //StRichCluster(const StRichCluster&) {}
     //StRichCluster& operator=(const StRichCluster&) {}
-    
+
     int    operator==(const StRichCluster&) const;
-    
+
+    /// @brief Returns the number of pads associated with this cluster.
     int    numberOfPads()        const;
+    /// @brief Returns the number of local maxima in this cluster.
     int    numberOfLocalMax()    const;
+    /// @brief Returns the index of the first pad in this cluster.
     int    firstPad()            const;
+    /// @brief Returns the minimum amplitude among all local maxima.
     float  minimumAmplitudeOfLocalMax() const;
+    /// @brief Returns the sum of all pad amplitudes in the cluster.
     float  amplitudeSum()        const;
+    /// @brief Returns the sum of squares of all pad amplitudes.
     float  amplitude2Sum()       const;
+    /// @brief Returns the stored square RMS of pad amplitudes.
     float  rms2()                const;
+    /// @brief Computes and stores the square RMS of pad amplitudes.
     float  rms2Calc();
-    
+
+    /// @brief Increments the local-maximum count by one.
     void   increaseNumberOfLocalMax();
+    /// @brief Increments the pad count by one.
     void   increaseNumberOfPads();
+    /// @brief Sets the index of the first pad in the cluster.
     void   setFirstPad(int index);
+    /// @brief Sets the total number of pads in the cluster.
     void   setNumberOfPads(int newNPads);
+    /// @brief Adds a pad amplitude to the running amplitude sums.
     void   updateAmplitude(float newamp);
+    /// @brief Sets the minimum local-maximum amplitude threshold.
     void   setMinimumAmplitudeOfLocalMax(float newLocMax);
-    
+
 private:
-    Int_t    mNumberOfPads;     // number of associated pads
-    Int_t    mNumberOfLocalMax; // number of local maxima
-    Int_t    mFirstPad;         // index of first cluster pad
-    Float_t  mMinimumAmplitudeOfLocalMax;   // lowest amplitude of all associated local maxima
-    Float_t  mAmplitudeSum;     // sum of all pad amplitudes
-    Float_t  mAmplitude2Sum;    // sum of squares of all pad amplitudes
-    Float_t  mRms2;             // square rms of pad amplitudes
+    Int_t    mNumberOfPads;                 ///< Number of associated pads
+    Int_t    mNumberOfLocalMax;             ///< Number of local maxima in the cluster
+    Int_t    mFirstPad;                     ///< Index of first cluster pad
+    Float_t  mMinimumAmplitudeOfLocalMax;   ///< Lowest amplitude among all associated local maxima
+    Float_t  mAmplitudeSum;                 ///< Sum of all pad amplitudes
+    Float_t  mAmplitude2Sum;                ///< Sum of squares of all pad amplitudes
+    Float_t  mRms2;                         ///< Square RMS of pad amplitudes
     ClassDef(StRichCluster,1)
 };
 

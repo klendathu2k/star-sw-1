@@ -31,6 +31,9 @@
 #ifndef _ST_FGT_HIT_H_
 #define _ST_FGT_HIT_H_
 
+/// @file StFgtHit.h
+/// @brief Data structure for an individual FGT 1D cluster (hit).
+
 #include <map>
 
 #include "StHit.h"
@@ -42,6 +45,10 @@
 // streamed.
 typedef std::map< StFgtStrip*, float, stripPtrLessThan > stripWeightMap_t;
 
+/// @brief Represents a single 1D cluster (hit) on one readout layer of the Forward GEM Tracker (FGT).
+///
+/// A hit corresponds to a group of adjacent strips whose charge exceeds a threshold.
+/// Position is stored in cylindrical coordinates (r, φ, z).
 class StFgtHit : public StHit {
 public:
     // constructors
@@ -113,21 +120,21 @@ protected:
     
 protected:
     // data members
-    Int_t   mKey;                                 // unique label
-    Float_t mR, mErrR, mPhi, mErrPhi;             // r, phi, z position and error
-    Int_t   mCentralStripGeoId;                   // obvious
-    Float_t mChargeUncert;                        // uncertanity on the charge
-    Short_t mMaxAdc;                              // max adc in all strips and timebin
-    Float_t mLandauNorm;
-    Float_t mLandauMpv;
-    Float_t mLandauSigma;
-    Float_t mLandauChi2;
-    Int_t   mNstrip;                              // number of strips in the hit
-    Int_t   mMaxTimeBin;                          // time bin for max adc
-    Int_t   mSeedType;                            // seed type
-    Float_t mEvenOddChargeAsy;                    // (even-odd)/sum charge for phi layer
-    // for keeping track of which strips constribute to which cluster (not persistant)
-    stripWeightMap_t mStripWeightMap;             //! 
+    Int_t   mKey;                    ///< Unique cluster identifier.
+    Float_t mR, mErrR, mPhi, mErrPhi; ///< Radial/azimuthal positions (cm, rad) and their uncertainties.
+    Int_t   mCentralStripGeoId;      ///< Geometry ID of the central strip of the cluster.
+    Float_t mChargeUncert;           ///< Uncertainty on the reconstructed cluster charge.
+    Short_t mMaxAdc;                 ///< Maximum ADC value across all strips and time bins.
+    Float_t mLandauNorm;             ///< Amplitude (normalisation) of the Landau fit to the charge distribution.
+    Float_t mLandauMpv;              ///< Most probable value (MPV) of the Landau fit.
+    Float_t mLandauSigma;            ///< Width parameter (sigma) of the Landau fit.
+    Float_t mLandauChi2;             ///< Reduced chi-squared of the Landau fit.
+    Int_t   mNstrip;                 ///< Number of strips contributing to the cluster.
+    Int_t   mMaxTimeBin;             ///< Time bin index with the maximum ADC value.
+    Int_t   mSeedType;               ///< Cluster seed type classification (see StFgtConsts.h).
+    Float_t mEvenOddChargeAsy;       ///< Charge asymmetry (even−odd)/sum for the phi strip layer.
+    /// @brief Map of contributing strips to their fractional charge weight (transient, not streamed).
+    stripWeightMap_t mStripWeightMap; //! 
     
 private:   
     ClassDef(StFgtHit,3);

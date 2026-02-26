@@ -20,11 +20,15 @@
 #ifndef _ST_FGT_POINT_COLLECTION_H_
 #define _ST_FGT_POINT_COLLECTION_H_
 
+/// @file StFgtPointCollection.h
+/// @brief Collection of FGT reconstructed 2D points (StFgtPoint) for StEvent.
+
 #include "StObject.h"
 #include "StContainers.h"
 
 class StFgtPoint;
 
+/// @brief Container of StFgtPoint objects (reconstructed 2D space points) for the entire FGT.
 class StFgtPointCollection : public StObject {
 public:
     // constructors
@@ -46,7 +50,7 @@ public:
     
 protected:
     // the data member
-    StSPtrVecFgtPoint mPointVec;
+    StSPtrVecFgtPoint mPointVec; ///< Persistent vector of reconstructed 2D space points.
     
 private:   
     ClassDef(StFgtPointCollection,1);

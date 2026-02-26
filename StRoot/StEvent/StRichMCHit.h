@@ -34,30 +34,40 @@
 #ifndef StRichMCHit_hh
 #define StRichMCHit_hh
 
+/// @file StRichMCHit.h
+/// @brief Persistent Monte Carlo RICH hit, extending StRichHit with simulation truth information.
+
 #include "StRichHit.h"
 #include "StRichMCInfo.h"
 
+/// @brief Monte Carlo RICH hit, pairing a reconstructed hit with its generator-level truth record.
 class StRichMCHit : public StRichHit {
 public:
+    /// @brief Default constructor.
     StRichMCHit();
+    /// @brief Constructor with global position and position error.
     StRichMCHit(const StThreeVectorF& xg, const StThreeVectorF& dx);
+    /// @brief Constructor with position, error, hardware position, charge, max ADC, and track counter.
     StRichMCHit(const StThreeVectorF& xg, const StThreeVectorF& dx,
               unsigned int hp, float q, float maxAdc, unsigned char tc);
+    /// @brief Full constructor including Monte Carlo truth information.
     StRichMCHit(const StThreeVectorF& xg, const StThreeVectorF& dx,
                 unsigned int hp, float q, float maxAdc, unsigned char tc,
                 StRichMCInfo& info);
-    
+
     ~StRichMCHit();
-    
+
     //StRichMCHit(const StRichMCHit&){}
     //StRichMCHit& operator=(const StRichMCHit&){}
 
+    /// @brief Sets the Monte Carlo truth record for this hit.
     void setMCInfo(const StRichMCInfo&);
+    /// @brief Returns the Monte Carlo truth record for this hit.
     const StRichMCInfo& getMCInfo() const;
 
 protected:
-    StRichMCInfo  mInfo;
-    
+    StRichMCInfo  mInfo;  ///< Monte Carlo truth information for this hit
+
     ClassDef(StRichMCHit,1)
 };
 
