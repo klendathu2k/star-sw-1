@@ -30,37 +30,54 @@
 #ifndef StPhmdHit_hh
 #define StPhmdHit_hh
 
+/// @file StPhmdHit.h
+/// @brief Single cell hit in the STAR Photon Multiplicity Detector (PMD/PHMD).
+
 #include <math.h>
 #include <Stiostream.h>
 #include "StObject.h"
 
+/// @brief Stores raw hit information for a single PMD cell (pad).
 class StPhmdHit : public StObject {
 public: 
     StPhmdHit();                     
     ~StPhmdHit();                     
 
-    int             superModule() const;  // function for supermodule no.
-    int             module() ;            // function for module
-    int             subDetector() const;  // function for subdetector
-    int             row() const;          // function for row
-    int             column() const;       // function for col
-    float           energy() const;       // function for edep
-    int             adc() const;          // function for adc
+    /// @brief Returns the global supermodule number [0,11].
+    int             superModule() const;
+    /// @brief Returns the module index in range [0,11], or -1 if out of range.
+    int             module() ;
+    /// @brief Returns the sub-detector identifier (PMD or CPV).
+    int             subDetector() const;
+    /// @brief Returns the cell row within the supermodule.
+    int             row() const;
+    /// @brief Returns the cell column within the supermodule.
+    int             column() const;
+    /// @brief Returns the energy deposition in the cell (GeV).
+    float           energy() const;
+    /// @brief Returns the raw ADC count for the cell.
+    int             adc() const;
     
+    /// @brief Sets the global supermodule number.
     void            setSuperModule(int);
+    /// @brief Sets the sub-detector identifier (PMD or CPV).
     void            setSubDetector(int);
+    /// @brief Sets the cell row within the supermodule.
     void            setRow(int);
+    /// @brief Sets the cell column within the supermodule.
     void            setColumn(int);
+    /// @brief Sets the energy deposition (GeV).
     void            setEnergy(float);
+    /// @brief Sets the raw ADC count.
     void            setAdc(int);
     
 private:
-    Int_t           mSuperModuleNumber;   // global supermodule no.
-    Int_t           mSubDetector;         // detector (PMD/CPV)
-    Int_t           mRow;                 // row no. in the supermodule 
-    Int_t           mCol;                 // col no. in the supermodule
-    Float_t         mEnergy;              // energy deposition
-    Int_t           mAdc;                 // adc
+    Int_t           mSuperModuleNumber;   ///< Global supermodule number [0,11].
+    Int_t           mSubDetector;         ///< Sub-detector identifier (PMD or CPV).
+    Int_t           mRow;                 ///< Cell row within the supermodule.
+    Int_t           mCol;                 ///< Cell column within the supermodule.
+    Float_t         mEnergy;              ///< Energy deposition in the cell (GeV).
+    Int_t           mAdc;                 ///< Raw ADC count.
     ClassDef(StPhmdHit,1)
 };
 

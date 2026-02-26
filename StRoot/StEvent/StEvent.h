@@ -200,6 +200,8 @@
  **************************************************************************/
 #ifndef StEvent_hh
 #define StEvent_hh
+/// @file StEvent.h
+/// @brief Top-level transient event container for all STAR detector data.
 
 #include "St_DataSet.h"
 #include "TString.h"
@@ -561,12 +563,15 @@ public:
     void setGmtCollection(StGmtCollection*);          ///< Attach the GMT collection.
     /// @}
 
+    /// @brief ROOT notification hook (used for I/O branch activation).
     virtual Bool_t Notify();
     
 protected:
-    mutable StSPtrVecObject  mContent;
-    static  TString          mCvsTag;
+    mutable StSPtrVecObject  mContent;  ///< Master container of all owned sub-objects (for I/O).
+    static  TString          mCvsTag;   ///< CVS tag of the StEvent library used to create this event.
+    /// @brief Split this event into separate ROOT branches for I/O.
     void    Split();
+    /// @brief Returns 1; indicates this is the main event branch (used by I/O framework).
      int    IsMain() const 	{return 1;}
     
 private:

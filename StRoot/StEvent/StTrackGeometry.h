@@ -51,37 +51,63 @@
  **************************************************************************/
 #ifndef StTrackGeometry_hh
 #define StTrackGeometry_hh
+/// @file StTrackGeometry.h
+/// @brief Abstract interface for track helix geometry (parameters) at a reference point.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 #include "StPhysicalHelixD.hh"
 #include "StThreeVectorF.hh"
 
+/// @brief Abstract interface for track helix geometry (parameters) at a reference point.
+///
+/// StTrackGeometry provides a common accessor API for helix-based track
+/// parameterisations in STAR.  The concrete implementation is StHelixModel.
+/// Parameters are defined at a reference point (origin) on the helix.
 class StTrackGeometry : public StObject {
 public:
+    /// @brief Default constructor.
     StTrackGeometry();
     // StTrackGeometry(const StTrackGeometry&);             use default
     // StTrackGeometry & operator=(const StTrackGeometry&); use default
     virtual ~StTrackGeometry();
 
+    /// @brief Geometry model identifier (e.g. kHelixModel).
     virtual StTrackModel           model() const = 0;
+    /// @brief Electric charge of the particle (+1 or -1).
     virtual short                  charge() const = 0;
+    /// @brief Helix sense relative to the magnetic field direction.
     virtual short                  helicity() const = 0;
+    /// @brief Signed track curvature κ; |κ| = |qB|/p_T (1/cm).
     virtual double                 curvature() const = 0;
+    /// @brief Azimuthal angle ψ of the track momentum at the origin (rad).
     virtual double                 psi() const = 0;
+    /// @brief Dip angle λ = arctan(p_z/p_T) of the track (rad).
     virtual double                 dipAngle() const = 0;
+    /// @brief Reference point on the helix (point of closest approach or innermost hit) (cm).
     virtual const StThreeVectorF&  origin() const = 0;
+    /// @brief Momentum vector at the origin (GeV/c).
     virtual const StThreeVectorF&  momentum() const = 0;
+    /// @brief Physical helix parameterisation at the reference point.
     virtual StPhysicalHelixD       helix() const = 0;
 
+    /// @brief Set the electric charge.
     virtual void setCharge(short) = 0;
+    /// @brief Set the helix sense.
     virtual void setHelicity(short) = 0;
-    virtual void setCurvature(double) = 0; 
+    /// @brief Set the signed curvature (1/cm).
+    virtual void setCurvature(double) = 0;
+    /// @brief Set the azimuthal angle ψ of the momentum at the origin (rad).
     virtual void setPsi(double) = 0;
+    /// @brief Set the dip angle λ (rad).
     virtual void setDipAngle(double) = 0;
+    /// @brief Set the reference point on the helix (cm).
     virtual void setOrigin(const StThreeVectorF&) = 0;
+    /// @brief Set the momentum vector at the origin (GeV/c).
     virtual void setMomentum(const StThreeVectorF&) = 0;
     
     virtual StTrackGeometry*       copy() const = 0;     // virtual constructor
+    /// @brief Returns non-zero if the track geometry is invalid (e.g. zero curvature).
     int     bad() const;
 
     ClassDef(StTrackGeometry,2)

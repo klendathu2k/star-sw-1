@@ -126,6 +126,8 @@
  **************************************************************************/
 #ifndef StHit_hh
 #define StHit_hh
+/// @file StHit.h
+/// @brief Abstract base class for all detector hits in STAR.
 
 #include "StMeasuredPoint.h"
 #include "StEnumerations.h"
@@ -176,14 +178,23 @@ public:
     /// @}
     
     
+    /// @brief Set the integrated charge.
     void setCharge(float);
+    /// @brief Set the hit status flag bitmask.
     void setFlag(unsigned short val) { mFlag = val; }
+    /// @brief Set the fit-used flag (non-zero if this hit was used in a track fit).
     void setFitFlag(unsigned char);
+    /// @brief Set the number of tracks referencing this hit.
     void setTrackReferenceCount(unsigned char);
+    /// @brief Set the packed hardware address.
     void setHardwarePosition(unsigned int);
+    /// @brief Set the 1-sigma position errors (cm).
     void setPositionError(const StThreeVectorF&);
+    /// @brief Set the hit identifier.
     void setId(int Id)			{mId = Id;}
+    /// @brief Set the Monte Carlo truth information (Geant track ID and quality).
     void setIdTruth(int idtru, int qatru=0);
+    /// @brief Set the pointer to the next hit in a sorted list (transient).
     void SetNextHit(StHit *next = 0) 	{mNextHit = next;}
 
     virtual StDetectorId   detector() const = 0;
@@ -192,15 +203,15 @@ public:
 protected:
     unsigned int bits(unsigned int, unsigned int) const;
     
-    UInt_t         mHardwarePosition;
-    StThreeVectorF mPositionError; 
-    Float_t        mCharge;
-    Int_t          mId;
-    Int_t          mIdTruth; // simulation track id 
-    UShort_t       mQuality; // quality of this information (percentage of charge produced by mIdTruth)
-    UChar_t        mFitFlag;
-    UChar_t        mTrackRefCount;
-    UShort_t       mFlag;
+    UInt_t         mHardwarePosition; ///< Packed hardware address (sector, row, pad, etc.).
+    StThreeVectorF mPositionError;    ///< 1-sigma position errors in local detector coordinates (cm).
+    Float_t        mCharge;           ///< Integrated charge (ADC counts × calibration factor).
+    Int_t          mId;               ///< Hit identifier (cluster or strip index).
+    Int_t          mIdTruth;          ///< Geant track ID of the primary contributor (simulation only).
+    UShort_t       mQuality;          ///< Fraction of charge from mIdTruth track (percent).
+    UChar_t        mFitFlag;          ///< Non-zero if this hit was used in a track fit.
+    UChar_t        mTrackRefCount;    ///< Number of tracks that reference this hit.
+    UShort_t       mFlag;             ///< Hit status flag bitmask.
     StHit*         mNextHit; //!
     ClassDef(StHit,8)
 };

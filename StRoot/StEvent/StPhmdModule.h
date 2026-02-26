@@ -22,21 +22,28 @@
 #ifndef StPhmdModule_hh
 #define StPhmdModule_hh
 
+/// @file StPhmdModule.h
+/// @brief Supermodule of the STAR Photon Multiplicity Detector (PMD/PHMD), holding cell hits.
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StPhmdHit.h"
 
+/// @brief Represents one PMD supermodule, containing the collection of cell hits within it.
 class StPhmdModule : public StObject {
 public:
     StPhmdModule();          
     ~StPhmdModule();         
  
+    /// @brief Returns the number of hits recorded in this supermodule.
     unsigned int            numberOfHits() const;
+    /// @brief Returns a reference to the vector of hits in this supermodule.
     StSPtrVecPhmdHit&       hits();
+    /// @brief Returns a const reference to the vector of hits in this supermodule.
     const StSPtrVecPhmdHit& hits() const;    
     
 private:
-    StSPtrVecPhmdHit mHits;
+    StSPtrVecPhmdHit mHits;   ///< Collection of PMD cell hits within this supermodule.
     ClassDef(StPhmdModule,1)
 };
 #endif

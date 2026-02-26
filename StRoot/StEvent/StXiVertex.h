@@ -51,60 +51,91 @@
  **************************************************************************/
 #ifndef StXiVertex_hh
 #define StXiVertex_hh
+/// @file StXiVertex.h
+/// @brief Vertex representing a cascade (Xi or Omega) decay: bachelor track plus an associated V0.
+
 #include "StVertex.h"
 #include "StEnumerations.h"
 
 class StV0Vertex;
 
+/// @brief Vertex representing a cascade (Ξ or Ω) decay: one bachelor charged track plus an associated V0.
+///
+/// StXiVertex stores the secondary decay position, bachelor-track momentum,
+/// link to the associated StV0Vertex, and DCA quantities for the cascade
+/// hypothesis reconstruction (Ξ→Λπ, Ω→ΛK, etc.).
 class StXiVertex : public StVertex {
 public:
+    /// @brief Default constructor; initialises all members to zero.
     StXiVertex();
     // StXiVertex(const StXiVertex&);            use default
     // StXiVertex& operator=(const StXiVertex&); use default
     ~StXiVertex();
 
+    /// @brief Returns kXiVtx.
     StVertexId            type() const;
+    /// @brief Number of bachelor daughter tracks (always 1).
     unsigned int          numberOfDaughters() const;
+    /// @brief The bachelor (charged) daughter track.
     StTrack*              daughter(unsigned int = 0);
     const StTrack*        daughter(unsigned int = 0) const;
+    /// @brief Bachelor tracks passing the supplied filter.
     StPtrVecTrack         daughters(StTrackFilter&);
 
+    /// @brief DCA of the bachelor track to the primary vertex (cm).
     float                 dcaBachelorToPrimaryVertex() const;
+    /// @brief DCA of the associated V0 to the primary vertex (cm).
     float                 dcaV0ToPrimaryVertex() const;
+    /// @brief DCA between the bachelor track and the V0 at the Xi decay point (cm).
     float                 dcaDaughters() const;
+    /// @brief DCA of the Xi candidate to the primary vertex (unsigned, cm).
     float                 dcaParentToPrimaryVertex() const;
+    /// @brief Signed DCA of the Xi candidate to the primary vertex (cm).
     float                 signedDcaParentToPrimaryVertex() const;
+    /// @brief Momentum of the bachelor track at the Xi vertex (GeV/c).
     const StThreeVectorF& momentumOfBachelor() const;
+    /// @brief Reconstructed momentum of the V0 at the Xi vertex (GeV/c).
     StThreeVectorF        momentumOfV0() const;
+    /// @brief Total Xi momentum (bachelor + V0) (GeV/c).
     StThreeVectorF        momentum() const;
+    /// @brief Associated V0 vertex (Λ or K0s decay point).
     StV0Vertex*           v0Vertex();
+    /// @brief The bachelor track.
     StTrack*              bachelor();
+    /// @brief Electric charge of the bachelor track.
     double                chargeOfBachelor();
 
+    /// @brief Set the DCA of the bachelor to the primary vertex (cm).
     void setDcaBachelorToPrimaryVertex(float);
+    /// @brief Set the bachelor track momentum at the Xi vertex (GeV/c).
     void setMomentumOfBachelor(const StThreeVectorF&);
+    /// @brief Set the DCA between the bachelor and the V0 (cm).
     void setDcaDaughters(float);
+    /// @brief Set the DCA of the Xi to the primary vertex (cm).
     void setDcaParentToPrimaryVertex(float);
+    /// @brief Set the associated V0 vertex link.
     void setV0Vertex(StV0Vertex*);
+    /// @brief Add the bachelor track link.
     void addDaughter(StTrack*);
+    /// @brief Remove the bachelor track link.
     void removeDaughter(StTrack*);
 
 protected:
 //  StTrack*               mDaughter;                   //$LINK
 #ifdef __CINT__
-    StObjLink              mDaughter;                   
+    StObjLink              mDaughter;                   ///< Link to the bachelor (charged) daughter track.
 #else
-    StLink<StTrack>        mDaughter;                   
+    StLink<StTrack>        mDaughter;                   ///< Link to the bachelor (charged) daughter track.
 #endif //__CINT__
-    Float_t                mDcaBachelorToPrimaryVertex;
-    StThreeVectorF         mMomentumOfBachelor;
-    Float_t                mDcaDaughters;
-    Float_t                mDcaParentToPrimaryVertex;
+    Float_t                mDcaBachelorToPrimaryVertex; ///< DCA of the bachelor to the primary vertex (cm).
+    StThreeVectorF         mMomentumOfBachelor;         ///< Bachelor track momentum at the Xi vertex (GeV/c).
+    Float_t                mDcaDaughters;               ///< DCA between the bachelor and the V0 (cm).
+    Float_t                mDcaParentToPrimaryVertex;   ///< DCA of the Xi candidate to the primary vertex (cm).
 //  StV0Vertex*            mV0Vertex;                   //$LINK
 #ifdef __CINT__
-    StObjLink              mV0Vertex;                   
+    StObjLink              mV0Vertex;                   ///< Link to the associated V0 vertex.
 #else
-    StLink<StV0Vertex>     mV0Vertex;                   
+    StLink<StV0Vertex>     mV0Vertex;                   ///< Link to the associated V0 vertex.
 #endif //__CINT__
     ClassDef(StXiVertex,2)
 };

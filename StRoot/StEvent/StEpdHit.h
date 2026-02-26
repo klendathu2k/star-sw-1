@@ -37,6 +37,9 @@
 #ifndef StEpdHit_h
 #define StEpdHit_h
 
+/// @file StEpdHit.h
+/// @brief Single tile hit in the STAR Event Plane Detector (EPD).
+
 #include <cstdlib>
 #include "StObject.h"
 

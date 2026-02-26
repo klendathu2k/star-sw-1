@@ -80,6 +80,9 @@
  **************************************************************************/
 #ifndef StPrimaryVertex_hh
 #define StPrimaryVertex_hh
+/// @file StPrimaryVertex.h
+/// @brief Reconstructed primary interaction vertex with quality metrics and daughter-track list.
+
 #include "StVertex.h"
 class StPrimaryVertex;
 ostream&  operator<<(ostream& os,  const StPrimaryVertex& v);
@@ -124,6 +127,7 @@ public:
     UShort_t numPostXTracks()            const {return mNumPostXTracks;}                  ///< Tracks with post-crossing hits.
     UShort_t numTracksTpcWestOnly() const {return mNumTracksTpcWestOnly;}                 ///< Tracks in TPC west sector only.
     UShort_t numTracksTpcEastOnly() const {return mNumTracksTpcEastOnly;}                 ///< Tracks in TPC east sector only.
+    /// @brief Recount matched/unmatched tracks and crossing track numbers from daughter list.
     void setTrackNumbers();
     void setNumMatchesWithCTB(UShort_t val)     {mNumMatchesWithCTB  = val;} 
     void setNumMatchesWithTOF(UShort_t val)  	{mNumMatchesWithTOF  = val;} 
@@ -149,28 +153,28 @@ public:
 private:
     void init();
 protected:
-    StSPtrVecPrimaryTrack    mDaughters;
+    StSPtrVecPrimaryTrack    mDaughters;            ///< Owned array of primary tracks from this vertex.
 
 private:
-    StVertexFinderId mVertexFinderId; 
+    StVertexFinderId mVertexFinderId;               ///< Identifier of the vertex finder algorithm used.
     Char_t           mBeg[1]; //! 
-    UShort_t         mNumTracksUsedInFinder;
-    UShort_t         mNumMatchesWithCTB; 
-    UShort_t         mNumMatchesWithTOF; 
-    UShort_t         mNumMatchesWithBEMC;
-    UShort_t         mNumMatchesWithEEMC;
-    UShort_t         mNumNotMatchesWithCTB; 
-    UShort_t         mNumNotMatchesWithTOF; 
-    UShort_t         mNumNotMatchesWithBEMC;
-    UShort_t         mNumNotMatchesWithEEMC;
-    UShort_t         mNumTracksCrossingCentralMembrane; 
-    Float_t          mMeanDip;
-    Float_t          mSumOfTrackPt;
-    Float_t          mRanking;
-    UShort_t         mNumTracksWithPromptHit;
-    UShort_t         mNumPostXTracks;
-    UShort_t         mNumTracksTpcWestOnly; 
-    UShort_t         mNumTracksTpcEastOnly; 
+    UShort_t         mNumTracksUsedInFinder;        ///< Number of tracks used by the vertex finder.
+    UShort_t         mNumMatchesWithCTB;            ///< Tracks matched to the CTB.
+    UShort_t         mNumMatchesWithTOF;            ///< Tracks matched to TOF/BTOF.
+    UShort_t         mNumMatchesWithBEMC;           ///< Tracks matched to BEMC.
+    UShort_t         mNumMatchesWithEEMC;           ///< Tracks matched to EEMC.
+    UShort_t         mNumNotMatchesWithCTB;         ///< Tracks actively not matched to CTB.
+    UShort_t         mNumNotMatchesWithTOF;         ///< Tracks actively not matched to TOF/BTOF.
+    UShort_t         mNumNotMatchesWithBEMC;        ///< Tracks actively not matched to BEMC.
+    UShort_t         mNumNotMatchesWithEEMC;        ///< Tracks actively not matched to EEMC.
+    UShort_t         mNumTracksCrossingCentralMembrane; ///< Tracks crossing the TPC central membrane.
+    Float_t          mMeanDip;                      ///< Mean dip angle of daughter tracks (rad).
+    Float_t          mSumOfTrackPt;                 ///< Scalar sum of daughter track \f$p_T\f$ (GeV/c).
+    Float_t          mRanking;                      ///< Vertex-finder quality ranking (higher = better).
+    UShort_t         mNumTracksWithPromptHit;       ///< Daughter tracks with a prompt (SVT/SSD) hit.
+    UShort_t         mNumPostXTracks;               ///< Daughter tracks with post-crossing TPC hits.
+    UShort_t         mNumTracksTpcWestOnly;         ///< Daughter tracks reconstructed in TPC west only.
+    UShort_t         mNumTracksTpcEastOnly;         ///< Daughter tracks reconstructed in TPC east only.
     Char_t           mEnd[1]; //!
     ClassDef(StPrimaryVertex,7)
 };

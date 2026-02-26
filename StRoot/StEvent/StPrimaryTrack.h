@@ -64,6 +64,8 @@
  **************************************************************************/
 #ifndef StPrimaryTrack_hh
 #define StPrimaryTrack_hh
+/// @file StPrimaryTrack.h
+/// @brief Reconstructed primary track (refitted through the primary vertex).
 
 #include "StTrack.h"
 class StPrimaryVertex;
@@ -75,17 +77,19 @@ class StPrimaryTrack : public StTrack {
   StPrimaryTrack();
   ~StPrimaryTrack()  {/* noop */}
 
-  StTrackType      type() const  { return primary; }
+  StTrackType      type() const  { return primary; }     ///< Returns the track type (primary).
+  /// @brief Returns the primary vertex this track is associated with.
   const StVertex*  vertex() const;
   
+  /// @brief Set the primary vertex link for this track.
   void setVertex(StVertex*);
   void Print(Option_t *option="") const {cout << option << *this << endl; }
  private:
   //  StPrimaryVertex*         	mVertex; 	//$LINK
 #ifdef __CINT__
-  StObjLink  		mVertex; 	
+  StObjLink  		mVertex; 	///< Link to the parent primary vertex.
 #else
-  StLink<StPrimaryVertex>  	mVertex; 	
+  StLink<StPrimaryVertex>  	mVertex; 	///< Link to the parent primary vertex.
 #endif //__CINT__
   ClassDef(StPrimaryTrack,2)
 };

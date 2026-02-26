@@ -47,6 +47,8 @@
  **************************************************************************/
 #ifndef StEventInfo_hh
 #define StEventInfo_hh
+/// @file StEventInfo.h
+/// @brief Per-event metadata (event number, timestamp, trigger mask, bunch-crossing) stored inside StEvent.
 
 #include "StObject.h"
 #include "TString.h"
@@ -78,13 +80,13 @@ public:
     void setEventSize(unsigned int);
     
 protected:
-    TString  mType;
-    Int_t    mRunId;
-    Int_t    mId;
-    Int_t    mTime;
-    UInt_t   mTriggerMask;
-    UInt_t   mBunchCrossingNumber[2];
-    UInt_t   mEventSize;
+    TString  mType;                    ///< Event type string (e.g. "physics", "laser").
+    Int_t    mRunId;                   ///< Run number.
+    Int_t    mId;                      ///< Event number within the run.
+    Int_t    mTime;                    ///< Unix timestamp of the event trigger.
+    UInt_t   mTriggerMask;             ///< Bitmask of fired L0 triggers.
+    UInt_t   mBunchCrossingNumber[2];  ///< RHIC bunch-crossing number words; [0]=lower 32 bits, [1]=upper 32 bits.
+    UInt_t   mEventSize;               ///< Raw event size in bytes.
 
     ClassDef(StEventInfo,2)
 };

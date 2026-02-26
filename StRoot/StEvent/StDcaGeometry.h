@@ -41,37 +41,66 @@
  **************************************************************************/
 #ifndef StDcaGeometry_hh
 #define StDcaGeometry_hh
+/// @file StDcaGeometry.h
+/// @brief Track geometry (helix parameters) at the point of closest approach to the beam line.
+
 #include "StObject.h"
 #include "StThreeVectorF.hh"
 #include "StPhysicalHelixD.hh"
 #include "THelixTrack.h"
 
+/// @brief Track geometry (helix parameters) at the point of closest approach to the beam line.
+///
+/// StDcaGeometry stores the compact five-parameter representation of a global
+/// track's helix at the beam-line DCA: signed impact parameter, z-coordinate,
+/// azimuthal angle ψ, signed inverse p_T, and tangent of the dip angle λ.
+/// The covariance of these five parameters is stored as a packed 15-element
+/// upper-triangle matrix.
 class StDcaGeometry : public StObject {
 public:
+    /// @brief Default constructor; initialises all parameters to zero.
     StDcaGeometry();
     virtual ~StDcaGeometry();
 
+    /// @brief Electric charge (+1 or -1); derived from the sign of the inverse p_T.
     Int_t            charge()    const {return (mPti>0)? -1:1;}  // synchro with StiTrackNode charge definition
-    Double_t         impact()    const {return mImp;}		  
-    Double_t         curvature() const {return mCurv;}		  
-    Double_t         psi()       const {return mPsi ;}		  
-    Double_t         dipAngle()  const {return atan(mTan);}	  
-    Double_t         tanDip()    const {return mTan ;}		  
-    Double_t         pt()        const {return 1./fabs(mPti);}	  
-    Double_t         z()         const {return mZ   ;}		  
-    Double_t         hz()        const {return mCurv/mPti;}	  
-    StThreeVectorF   origin()    const;         
-    StThreeVectorF   momentum()  const;        
+    /// @brief Signed impact parameter d_0 (cm); x = -d_0·sin ψ, y = d_0·cos ψ.
+    Double_t         impact()    const {return mImp;}
+    /// @brief Signed curvature κ = q·B·c / p_T (1/cm).
+    Double_t         curvature() const {return mCurv;}
+    /// @brief Azimuthal angle ψ of the track momentum at the DCA point (rad).
+    Double_t         psi()       const {return mPsi ;}
+    /// @brief Dip angle λ = arctan(p_z/p_T) at the DCA point (rad).
+    Double_t         dipAngle()  const {return atan(mTan);}
+    /// @brief Tangent of the dip angle λ (= p_z/p_T).
+    Double_t         tanDip()    const {return mTan ;}
+    /// @brief Transverse momentum at the DCA point (GeV/c).
+    Double_t         pt()        const {return 1./fabs(mPti);}
+    /// @brief z-coordinate of the track at the beam-line DCA (cm).
+    Double_t         z()         const {return mZ   ;}
+    /// @brief Curvature normalised by the signed inverse p_T (used for helix construction).
+    Double_t         hz()        const {return mCurv/mPti;}
+    /// @brief 3-D position at the DCA point (cm).
+    StThreeVectorF   origin()    const;
+    /// @brief Momentum vector at the DCA point (GeV/c).
+    StThreeVectorF   momentum()  const;
+    /// @brief Physical helix parameterisation at the DCA point.
     StPhysicalHelixD helix()     const;
+    /// @brief THelixTrack representation at the DCA point.
     THelixTrack      thelix()    const;
-    const float*     params()    const {return &mImp;}	  
-    const float*     errMatrix() const {return &mImpImp;} 
+    /// @brief Pointer to the raw parameter array [imp, z, psi, pti, tan, curv].
+    const float*     params()    const {return &mImp;}
+    /// @brief Pointer to the raw 15-element upper-triangle error matrix.
+    const float*     errMatrix() const {return &mImpImp;}
+    /// @brief Convert DCA parameters to Cartesian position and momentum with covariance.
     void GetXYZ(Double_t xyzp[6], Double_t CovXyzp[21]) const;
     virtual void     Print(Option_t *option = "") const;
     //
     // Experts only set function
     //
+    /// @brief Set all DCA parameters and their covariance matrix (float version).
     void set(const Float_t pars[6], const Float_t errs[15]);
+    /// @brief Set all DCA parameters and their covariance matrix (double version).
     void set(const Double_t pars[6], const Double_t errs[15]);
 
 private:

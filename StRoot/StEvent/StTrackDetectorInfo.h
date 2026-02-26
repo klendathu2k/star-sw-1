@@ -83,6 +83,9 @@
  **************************************************************************/
 #ifndef StTrackDetectorInfo_hh
 #define StTrackDetectorInfo_hh
+/// @file StTrackDetectorInfo.h
+/// @brief Stores hit references and per-detector hit-count summaries for a reconstructed track.
+
 #include "StContainers.h"
 #include "StObject.h"
 #include "StThreeVectorF.hh"
@@ -91,51 +94,74 @@
 class StHitFilter;
 class StHit;
 
+/// @brief Stores hit references and per-detector hit-count summaries for a reconstructed track.
+///
+/// StTrackDetectorInfo is shared between a StGlobalTrack and its sibling
+/// StPrimaryTrack objects (both reference the same instance through the
+/// StTrackNode).  It records the first/last hit positions, per-detector
+/// hit counts, and owning pointers to the actual StHit objects.
 class StTrackDetectorInfo : public StObject {
 public:
+    /// @brief Default constructor; initialises all counts to zero.
     StTrackDetectorInfo();
     // StTrackDetectorInfo(const StTrackDetectorInfo&);             use default
     // StTrackDetectorInfo & operator=(const StTrackDetectorInfo&); use default
     virtual ~StTrackDetectorInfo();
 
+    /// @brief Global position of the innermost hit on the track (cm).
     const StThreeVectorF& firstPoint() const;
+    /// @brief Global position of the outermost hit on the track (cm).
     const StThreeVectorF& lastPoint()  const;
 
+    /// @brief Total number of measured hits on the track (all detectors combined).
     unsigned short        numberOfPoints() const;
+    /// @brief Number of hits in the specified detector.
     unsigned short        numberOfPoints(StDetectorId) const;
     			 
+    /// @brief Number of hits explicitly linked via hit pointers (all detectors).
     unsigned short        numberOfReferencedPoints() const;
+    /// @brief Number of linked hits in the specified detector.
     unsigned short        numberOfReferencedPoints(StDetectorId) const;
     
+    /// @brief All hits from the specified detector associated with this track.
     StPtrVecHit           hits(StDetectorId) const;
+    /// @brief All hits passing the supplied filter.
     StPtrVecHit           hits(StHitFilter&) const;
+    /// @brief Non-const reference to the full hit pointer vector.
     StPtrVecHit&          hits();
+    /// @brief Const reference to the full hit pointer vector.
     const StPtrVecHit&    hits() const;
 
+    /// @brief Set the position of the innermost hit (cm).
     void setFirstPoint(const StThreeVectorF&);
+    /// @brief Set the position of the outermost hit (cm).
     void setLastPoint(const StThreeVectorF&);
+    /// @brief Set hit count for the specified detector.
     void setNumberOfPoints(unsigned char, StDetectorId);
+    /// @brief Add a hit to this detector info; optionally increment reference counter.
     void addHit(StHit*, bool = true);
+    /// @brief Remove a hit from this detector info.
     void removeHit(StHit*&);
+    /// @brief Returns non-zero if the detector info is invalid.
     int  bad() const;
     
 protected:
     void setNumberOfPoints(unsigned short);  // obsolete since ITTF
     
 private:
-    StThreeVectorF mFirstPoint;
-    StThreeVectorF mLastPoint;
-    UShort_t       mNumberOfPoints; // obsolete since ITTF
-    UChar_t        mNumberOfPointsTpc;
-    UChar_t        mNumberOfPointsFtpcWest;
-    UChar_t        mNumberOfPointsFtpcEast;
-    UChar_t        mNumberOfPointsSvt;
-    UChar_t        mNumberOfPointsSsd;
-    UChar_t        mNumberOfPointsOth;	// Other hits 
-    UChar_t        mNumberOfPointsIst;
-    UChar_t        mNumberOfPointsPxl;
+    StThreeVectorF mFirstPoint;             ///< Global position of the innermost hit (cm).
+    StThreeVectorF mLastPoint;              ///< Global position of the outermost hit (cm).
+    UShort_t       mNumberOfPoints;         ///< Total hit count (obsolete since ITTF; use per-detector members).
+    UChar_t        mNumberOfPointsTpc;      ///< Number of TPC hits.
+    UChar_t        mNumberOfPointsFtpcWest; ///< Number of FTPC west hits.
+    UChar_t        mNumberOfPointsFtpcEast; ///< Number of FTPC east hits.
+    UChar_t        mNumberOfPointsSvt;      ///< Number of SVT hits.
+    UChar_t        mNumberOfPointsSsd;      ///< Number of SSD hits.
+    UChar_t        mNumberOfPointsOth;      ///< Number of hits in other detectors.
+    UChar_t        mNumberOfPointsIst;      ///< Number of IST hits.
+    UChar_t        mNumberOfPointsPxl;      ///< Number of PXL hits.
 
-    StPtrVecHit    mHits;
+    StPtrVecHit    mHits;                   ///< Non-owning pointers to all hits associated with this track.
 
     ClassDef(StTrackDetectorInfo,4)
 };

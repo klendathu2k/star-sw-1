@@ -108,6 +108,9 @@
  **************************************************************************/
 #ifndef StTrackFitTraits_hh
 #define StTrackFitTraits_hh
+/// @file StTrackFitTraits.h
+/// @brief Track-fit quality quantities: fit-point counts, chi-squared, and covariance matrix.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 #include "StMatrixF.hh"
@@ -115,44 +118,66 @@
 
 class StParticleDefinition;
 
+/// @brief Track-fit quality quantities: per-detector fit-point counts, chi-squared, and covariance matrix.
+///
+/// One StTrackFitTraits object is embedded in every StTrack.  It stores
+/// the particle-hypothesis used in the fit (GEANT ID), per-detector fit-point
+/// counts, the chi-squared value, and the packed 5×5 track-parameter covariance
+/// matrix.  The primary-vertex constraint flag indicates whether the vertex
+/// position was included as a measurement in the fit.
 class StTrackFitTraits : public StObject {
 public:
+    /// @brief Default constructor; initialises all members to zero.
     StTrackFitTraits();
+    /// @brief Construct with legacy packed point count, GEANT PID, chi-squared pair, and covariance array.
     StTrackFitTraits(unsigned short, unsigned short, float[2], float[15]);
     // StTrackFitTraits(const StTrackFitTraits&);            use default
     // StTrackFitTraits& operator=(const StTrackFitTraits&); use default
     virtual ~StTrackFitTraits();
 
+    /// @brief Total number of hits used in the track fit (all detectors).
     unsigned short         numberOfFitPoints() const;
+    /// @brief Number of hits used in the fit from the specified detector.
     unsigned short         numberOfFitPoints(StDetectorId) const;
+    /// @brief Particle species hypothesis used in the fit.
     StParticleDefinition*  pidHypothesis() const;
+    /// @brief 5×5 track-parameter covariance matrix as StMatrixF.
     StMatrixF              covariantMatrix() const;
+    /// @brief Raw pointer to the packed upper-triangle covariance array (15 elements).
     const float*           covariance() const {return mCovariantMatrix.GetArray();}
+    /// @brief Chi-squared of the track fit; index 0 = total, 1 = vertex-constraint contribution.
     double                 chi2(unsigned int = 0) const;
+    /// @brief True if the primary vertex was included as a constraint in the fit.
     bool                   primaryVertexUsedInFit() const;
 
+    /// @brief Zero out the covariance matrix.
     void                   clearCovariantMatrix();
+    /// @brief Set the fit-point count for the specified detector.
     void                   setNumberOfFitPoints(unsigned char n, StDetectorId id=kUnknownId);
+    /// @brief Set the primary-vertex constraint flag.
     void                   setPrimaryVertexUsedInFit(bool);
     
+    /// @brief Set the particle hypothesis by GEANT ID.
     void                   setPidHypothesis(unsigned short);
+    /// @brief Set chi-squared value; index 0 = total, 1 = vertex contribution.
     void                   setChi2(float, unsigned int = 0);
+    /// @brief Set the packed upper-triangle covariance matrix from a 15-element array.
     void                   setCovariantMatrix(float[15]);
     
 protected:
-    UShort_t mPidHypothesis;       // GeantId
-    UShort_t mNumberOfFitPoints;   // obsolete since ITTF
-    UChar_t  mNumberOfFitPointsTpc;
-    UChar_t  mNumberOfFitPointsFtpcWest;
-    UChar_t  mNumberOfFitPointsFtpcEast;
-    UChar_t  mNumberOfFitPointsSvt;
-    UChar_t  mNumberOfFitPointsSsd;
-    UChar_t  mNumberOfFitPointsSst;
-    UChar_t  mNumberOfFitPointsPxl;
-    UChar_t  mNumberOfFitPointsIst;
-    Bool_t   mPrimaryVertexUsedInFit;
-    Float_t  mChi2[2];
-    TArrayF  mCovariantMatrix;
+    UShort_t mPidHypothesis;          ///< GEANT particle ID of the hypothesis used in the fit.
+    UShort_t mNumberOfFitPoints;      ///< Total fit-point count (obsolete since ITTF).
+    UChar_t  mNumberOfFitPointsTpc;   ///< Fit points in the TPC.
+    UChar_t  mNumberOfFitPointsFtpcWest; ///< Fit points in the FTPC west.
+    UChar_t  mNumberOfFitPointsFtpcEast; ///< Fit points in the FTPC east.
+    UChar_t  mNumberOfFitPointsSvt;   ///< Fit points in the SVT.
+    UChar_t  mNumberOfFitPointsSsd;   ///< Fit points in the SSD.
+    UChar_t  mNumberOfFitPointsSst;   ///< Fit points in the SST.
+    UChar_t  mNumberOfFitPointsPxl;   ///< Fit points in the PXL detector.
+    UChar_t  mNumberOfFitPointsIst;   ///< Fit points in the IST.
+    Bool_t   mPrimaryVertexUsedInFit; ///< Flag: primary vertex was used as a fit constraint.
+    Float_t  mChi2[2];               ///< Chi-squared: [0] total fit, [1] vertex-constraint contribution.
+    TArrayF  mCovariantMatrix;        ///< Packed upper-triangle of the 5×5 track-parameter covariance matrix.
     
     ClassDef(StTrackFitTraits,9) 
 };

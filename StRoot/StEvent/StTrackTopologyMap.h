@@ -60,65 +60,109 @@
  **************************************************************************/
 #ifndef StTrackTopologyMap_hh
 #define StTrackTopologyMap_hh
+/// @file StTrackTopologyMap.h
+/// @brief Compact bit-map encoding which detector layers a reconstructed track has hits in.
 
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StEnumerations.h"
 
+/// @brief Compact bit-map encoding which detector layers a reconstructed track has hits in.
+///
+/// The map is stored in two 32-bit words (mMap0, mMap1) covering TPC, SVT, FTPC,
+/// SSD, CTB, TOF, RICH, BEMC, EEMC, and other detectors, plus a 64-bit word
+/// (mMap_iTpc) for the inner TPC (iTPC) upgrade.  Bit-layout conventions follow
+/// the STAR topology-map definition document.
 class StTrackTopologyMap : public StObject {
 public:
-    StTrackTopologyMap();  
-    StTrackTopologyMap(unsigned int, unsigned int, unsigned long long = 0);  
-    StTrackTopologyMap(const unsigned long*, unsigned long long = 0);  
-    StTrackTopologyMap(const unsigned int*, unsigned long long = 0);  
+    /// @brief Default constructor; clears all bits.
+    StTrackTopologyMap();
+    /// @brief Construct from two 32-bit words and an optional iTPC 64-bit word.
+    StTrackTopologyMap(unsigned int, unsigned int, unsigned long long = 0);
+    /// @brief Construct from an array of unsigned long values and an optional iTPC word.
+    StTrackTopologyMap(const unsigned long*, unsigned long long = 0);
+    /// @brief Construct from an array of unsigned int values and an optional iTPC word.
+    StTrackTopologyMap(const unsigned int*, unsigned long long = 0);
     // StTrackTopologyMap(const StTrackTopologyMap&);            use default
     // StTrackTopologyMap& operator=(const StTrackTopologyMap&); use default
     ~StTrackTopologyMap();  
     
-    bool           primaryVertexUsed() const;     
-    unsigned int   numberOfHits(StDetectorId) const;   
-    bool           hasHitInDetector(StDetectorId) const;  
+    /// @brief True if the primary vertex was used in the track fit.
+    bool           primaryVertexUsed() const;
+    /// @brief Number of hits in the specified detector encoded in the map.
+    unsigned int   numberOfHits(StDetectorId) const;
+    /// @brief True if the track has at least one hit in the specified detector.
+    bool           hasHitInDetector(StDetectorId) const;
+    /// @brief True if the track has a hit in any of the specified detectors (up to 6).
     bool           hasHitInDetector(StDetectorId, StDetectorId,
                                     StDetectorId = kUnknownId, StDetectorId = kUnknownId,
-                                    StDetectorId = kUnknownId, StDetectorId = kUnknownId) const;  
-    bool           hasHitInRow(StDetectorId, unsigned int) const; // first row = 1     
-    bool           hasHitInSvtLayer(unsigned int) const;          // first layer = 1   
-    bool           hasHitInPxlLayer(unsigned int) const;          // first layer = 1   
-    bool           hasHitInIstLayer(unsigned int) const;          // first layer = 1   
-    bool           hasHitInSsdLayer(unsigned int) const;          // first layer = 1   
-    bool           hasHitInSstLayer(unsigned int) const;   
+                                    StDetectorId = kUnknownId, StDetectorId = kUnknownId) const;
+    /// @brief True if the track has a hit in the given row of the specified detector (first row = 1).
+    bool           hasHitInRow(StDetectorId, unsigned int) const;
+    /// @brief True if the track has a hit in the given SVT layer (first layer = 1).
+    bool           hasHitInSvtLayer(unsigned int) const;
+    /// @brief True if the track has a hit in the given PXL layer (first layer = 1).
+    bool           hasHitInPxlLayer(unsigned int) const;
+    /// @brief True if the track has a hit in the given IST layer (first layer = 1).
+    bool           hasHitInIstLayer(unsigned int) const;
+    /// @brief True if the track has a hit in the given SSD layer (first layer = 1).
+    bool           hasHitInSsdLayer(unsigned int) const;
+    /// @brief True if the track has a hit in the given SST layer (alias for SSD layer).
+    bool           hasHitInSstLayer(unsigned int) const;
+    /// @brief True if the track has an MWPC (TPC prompt) hit.
     bool           hasHitInMwpc() const;
+    /// @brief True if the track has a TPC prompt hit (alias for MWPC).
     bool           hasHitInTpcPrompt() const;
+    /// @brief True if the track has a CTB hit.
     bool           hasHitInCtb() const;
+    /// @brief True if the track has a TOF hit.
     bool           hasHitInTof() const;
+    /// @brief True if the track has a RICH hit.
     bool           hasHitInRich() const;
+    /// @brief True if the track has a BEMC hit.
     bool           hasHitInBemc() const;
+    /// @brief True if the track has an EEMC hit.
     bool           hasHitInEemc() const;
+    /// @brief True if the track has post-crossing TPC hits.
     bool           postXTrack() const;
+    /// @brief True if the track crosses the TPC central membrane.
     bool           membraneCrossingTrack() const;
     
-    bool           trackTpcOnly() const; 
-    bool           trackSvtOnly() const;  
-    bool           trackTpcSvt() const;  
-    bool           trackFtpcEast() const; 
-    bool           trackFtpcWest() const; 
-    bool           trackFtpc() const;     
+    /// @brief True if the track was reconstructed in the TPC only.
+    bool           trackTpcOnly() const;
+    /// @brief True if the track was reconstructed in the SVT only.
+    bool           trackSvtOnly() const;
+    /// @brief True if the track was reconstructed using SVT and TPC hits.
+    bool           trackTpcSvt() const;
+    /// @brief True if the track was reconstructed in the FTPC east.
+    bool           trackFtpcEast() const;
+    /// @brief True if the track was reconstructed in the FTPC west.
+    bool           trackFtpcWest() const;
+    /// @brief True if the track was reconstructed in either FTPC.
+    bool           trackFtpc() const;
     
-    bool           turnAroundFlag() const;    
-    unsigned long long  data(unsigned int) const;  
+    /// @brief True if the track has a turn-around point (spiral track).
+    bool           turnAroundFlag() const;
+    /// @brief Raw 64-bit topology map word by index (0 = mMap0/mMap1 combined, 1 = iTPC word).
+    unsigned long long  data(unsigned int) const;
     
+    /// @brief Largest gap (in rows) without a hit for the specified detector.
     int            largestGap(StDetectorId) const;
     
 protected:
-    bool bit(int) const;        // range 0-63
-    bool iTpcBit(int) const;    // range 0-63
+    /// @brief Test a single bit in the 64-bit combined TPC map (range 0–63).
+    bool bit(int) const;
+    /// @brief Test a single bit in the iTPC 64-bit map (range 0–63).
+    bool iTpcBit(int) const;
+    /// @brief True if the map uses the legacy FTPC encoding format.
     bool ftpcFormat() const;
-    bool hftFormat() const;  // TPC tracks with HFT (Run13++) hit format
+    /// @brief True if the map uses the HFT hit encoding format (Run 13+).
+    bool hftFormat() const;
     
 private:
-    UInt_t     mMap0;
-    UInt_t     mMap1;
-    ULong64_t  mMap_iTpc;
+    UInt_t     mMap0;      ///< First 32-bit word of the topology bit-map (TPC rows 1–32, SVT layers, etc.).
+    UInt_t     mMap1;      ///< Second 32-bit word of the topology bit-map (TPC rows 33–45, FTPC, fast detectors).
+    ULong64_t  mMap_iTpc;  ///< 64-bit word encoding iTPC (inner TPC) hit pattern.
     
     ClassDef(StTrackTopologyMap,2)
 };

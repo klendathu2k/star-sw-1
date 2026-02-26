@@ -196,6 +196,9 @@
  **************************************************************************/
 #ifndef StTrack_hh
 #define StTrack_hh
+/// @file StTrack.h
+/// @brief Abstract base class for a reconstructed charged-particle track.
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StEnumerations.h"
@@ -321,27 +324,49 @@ public:
     virtual void setWestTpcOnly()          {setBit(kWestTpcOnlyTrack);}
     virtual void setEastTpcOnly()          {setBit(kEastTpcOnlyTrack);}
     virtual void setFlagExtension(unsigned int i){mFlagExtension = i;}
+    /// @brief Set the track quality flag.
     void         setFlag(short);
+    /// @brief Set the unique track key within the event.
     void         setKey(int val) { mKey = val; }
+    /// @brief Set the encoded finder+fitter method identifier.
     void         setEncodedMethod(UShort_t);
+    /// @brief Set the signed DCA to the primary vertex (cm).
     void         setImpactParameter(float);
+    /// @brief Set the arc length of the fitted helix (cm).
     void         setLength(float);
+    /// @brief Set the detector topology map.
     void         setTopologyMap(const StTrackTopologyMap&);
+    /// @brief Set the inner helix geometry (takes ownership).
     void         setGeometry(StTrackGeometry*);
+    /// @brief Set the outer helix geometry (takes ownership).
     void         setOuterGeometry(StTrackGeometry*);
+    /// @brief Prepend an extended geometry to the linked list.
     void         addExtGeometry(StExtGeometry* extGeo);
+    /// @brief Set (replace) the track fit traits.
     void         setFitTraits(const StTrackFitTraits&);
+    /// @brief Add a PID traits object (takes ownership).
     void         addPidTraits(StTrackPidTraits*);
+    /// @brief Set the detector info (non-owning; shared with sibling tracks).
     void         setDetectorInfo(StTrackDetectorInfo*);
+    /// @brief Set the owning track node.
     void         setNode(StTrackNode*);
+    /// @brief Returns non-zero if the track is invalid.
     int          bad() const;
+    /// @brief Set the possible hit count for the specified detector.
     void         setNumberOfPossiblePoints(unsigned char, StDetectorId);
+    /// @brief Set the ITTF seed quality metric.
     void         setSeedQuality(UShort_t qa) 		{mSeedQuality = qa;}
+    /// @brief Monte Carlo track ID.
     int          idTruth() const 			{ return mIdTruth;}
+    /// @brief Fraction of hits from the Monte Carlo track (percent).
     int          qaTruth() const 			{ return mQuality; }
+    /// @brief Monte Carlo parent vertex ID.
     int          idParentVx() const {return mIdParentVx;}
+    /// @brief Set Monte Carlo truth information (track ID and quality).
     void         setIdTruth(int idtru,int qatru=0) 	{mIdTruth = idtru; mQuality = static_cast<unsigned short>(qatru);}
+    /// @brief Derive Monte Carlo truth from hit information.
     void         setIdTruth(); 				//setting on hits info
+    /// @brief Set the Monte Carlo parent vertex ID.
     void         setIdParentVx(int id) {mIdParentVx = id;}
    //----- bit manipulation
     void         setBit(unsigned int f, bool set) {(set) ? setBit(f) : reSetBit(f);}
@@ -355,31 +380,31 @@ public:
 protected:
     void         setNumberOfPossiblePoints(UShort_t); // obsolete
     Char_t                  mBeg[1]; //!
-    Int_t                   mKey;
-    Short_t                 mFlag;
-    UInt_t                  mFlagExtension; // bit wise fast detector matching status
-    UShort_t                mEncodedMethod;
-    UShort_t                mSeedQuality;   // ITTF: this is seed quality
-    UChar_t                 mNumberOfPossiblePointsTpc;
-    UChar_t                 mNumberOfPossiblePointsFtpcWest;
-    UChar_t                 mNumberOfPossiblePointsFtpcEast;
-    UChar_t                 mNumberOfPossiblePointsSvt;
-    UChar_t                 mNumberOfPossiblePointsSsd;
-    UChar_t                 mNumberOfPossiblePointsSst;
-    UChar_t                 mNumberOfPossiblePointsPxl;
-    UChar_t                 mNumberOfPossiblePointsIst;
-    UChar_t                 mNumberOfPossiblePointsFts;
-    Float_t                 mImpactParameter;
-    Float_t                 mLength;
-    StTrackGeometry*        mGeometry;
-    StTrackGeometry*        mOuterGeometry;
-    StExtGeometry*          mExtGeometry;
-    Int_t                   mIdTruth; // MC track id
-    UShort_t                mQuality; // quality of this information (percentage of hits coming from the above MC track)
-    Int_t                   mIdParentVx; // MC Parent vertex Id
+    Int_t                   mKey;                              ///< Unique track key within the event.
+    Short_t                 mFlag;                             ///< Track quality flag (positive=good, negative=bad).
+    UInt_t                  mFlagExtension;                    ///< Bitmask for fast-detector matching status.
+    UShort_t                mEncodedMethod;                    ///< Encoded finder+fitter method identifier.
+    UShort_t                mSeedQuality;                      ///< ITTF seed quality metric (replaces legacy point count).
+    UChar_t                 mNumberOfPossiblePointsTpc;        ///< Possible hit positions in the TPC.
+    UChar_t                 mNumberOfPossiblePointsFtpcWest;   ///< Possible hit positions in the FTPC west.
+    UChar_t                 mNumberOfPossiblePointsFtpcEast;   ///< Possible hit positions in the FTPC east.
+    UChar_t                 mNumberOfPossiblePointsSvt;        ///< Possible hit positions in the SVT.
+    UChar_t                 mNumberOfPossiblePointsSsd;        ///< Possible hit positions in the SSD.
+    UChar_t                 mNumberOfPossiblePointsSst;        ///< Possible hit positions in the SST.
+    UChar_t                 mNumberOfPossiblePointsPxl;        ///< Possible hit positions in the PXL detector.
+    UChar_t                 mNumberOfPossiblePointsIst;        ///< Possible hit positions in the IST.
+    UChar_t                 mNumberOfPossiblePointsFts;        ///< Possible hit positions in the FTS.
+    Float_t                 mImpactParameter;                  ///< Signed DCA to the primary vertex (cm).
+    Float_t                 mLength;                           ///< Arc length of the fitted helix (cm).
+    StTrackGeometry*        mGeometry;                         ///< Inner helix geometry (at innermost hit or DCA).
+    StTrackGeometry*        mOuterGeometry;                    ///< Outer helix geometry (at outermost hit).
+    StExtGeometry*          mExtGeometry;                      ///< Extended geometry at external detector surface (linked list).
+    Int_t                   mIdTruth;                          ///< Monte Carlo track ID.
+    UShort_t                mQuality;                          ///< Fraction of hits from mIdTruth MC track (percent).
+    Int_t                   mIdParentVx;                       ///< Monte Carlo parent vertex ID.
     Char_t                  mEnd[1]; //!
-    StTrackTopologyMap      mTopologyMap;
-    StTrackFitTraits        mFitTraits;
+    StTrackTopologyMap      mTopologyMap;                      ///< Bit-map of detector layers with hits.
+    StTrackFitTraits        mFitTraits;                        ///< Fit-quality quantities (embedded object).
     
 //  StTrackDetectorInfo         *mDetectorInfo;         //$LINK
 //  StTrackNode                 *mNode;                 //$LINK

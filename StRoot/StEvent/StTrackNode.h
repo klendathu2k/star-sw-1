@@ -36,25 +36,39 @@
  **************************************************************************/
 #ifndef StTrackNode_hh
 #define StTrackNode_hh
+/// @file StTrackNode.h
+/// @brief Groups a global track with its associated primary track(s) in a single node.
 
 #include "StObject.h"
 #include "StContainers.h"
 #include "StEnumerations.h"
 class StTrack;
 
+/// @brief Groups a global track with its associated primary track(s) sharing the same detector hits.
+///
+/// StTrackNode acts as an owner of one StGlobalTrack and zero or more
+/// StPrimaryTrack objects that were refitted from the same set of hits.
+/// All track nodes for an event are stored in StEvent::trackNodes().
 class StTrackNode : public StObject {
 public:
+    /// @brief Default constructor.
     StTrackNode();
     virtual ~StTrackNode();
 
+    /// @brief Add a track to this node; owned tracks are stored in mOwnedTracks.
     void           addTrack(StTrack*);
+    /// @brief Remove a track from this node's lists.
     void           removeTrack(StTrack*);
 
+    /// @brief Total number of tracks (owned + referenced) held by this node.
     unsigned int   entries() const;
+    /// @brief Track by sequential index over all tracks in this node.
     StTrack*       track(unsigned int);
     const StTrack* track(unsigned int) const;
 
+    /// @brief Number of tracks of the specified type held by this node.
     unsigned int   entries(StTrackType) const;
+    /// @brief Track of a given type by index (default 0 = first match).
     StTrack*       track(StTrackType, unsigned int = 0);
     const StTrack* track(StTrackType, unsigned int = 0) const;
 
@@ -62,8 +76,8 @@ private:
     StTrackNode(const StTrackNode&);
     StTrackNode& operator=(const StTrackNode&);
     
-    StSPtrVecTrack  mOwnedTracks;
-    StPtrVecTrack   mReferencedTracks;
+    StSPtrVecTrack  mOwnedTracks;      ///< Tracks owned (and memory-managed) by this node.
+    StPtrVecTrack   mReferencedTracks; ///< Non-owning pointers to tracks associated with this node.
 
     ClassDef(StTrackNode,1)
 };

@@ -54,6 +54,8 @@
  **************************************************************************/
 #ifndef StGlobalTrack_hh
 #define StGlobalTrack_hh
+/// @file StGlobalTrack.h
+/// @brief Reconstructed global track (fitted without vertex constraint), with DCA geometry.
 
 #include "StTrack.h"
 #include "StDcaGeometry.h"
@@ -67,16 +69,18 @@ class StGlobalTrack : public StTrack {
   StGlobalTrack& operator=(const StGlobalTrack&);
   ~StGlobalTrack() {SafeDelete(mDcaGeometry);}
   
-  StTrackType     type() const  { return global; }
-  const StVertex* vertex() const  { return 0; }
+  StTrackType     type() const  { return global; }       ///< Returns the track type (global).
+  const StVertex* vertex() const  { return 0; }          ///< Returns null; global tracks have no vertex constraint.
   
+  /// @brief Track geometry at the point of closest approach to the beam line.
   const StDcaGeometry* dcaGeometry() const  {return mDcaGeometry;}
   StDcaGeometry* dcaGeometry()  {return mDcaGeometry;}
+  /// @brief Set the DCA geometry (takes ownership of the pointer).
   void setDcaGeometry(StDcaGeometry* dca) {mDcaGeometry=dca;}
   
   void Print(Option_t *option="") const {cout << option << *this << endl; }
  protected:
-  StDcaGeometry *mDcaGeometry;
+  StDcaGeometry *mDcaGeometry; ///< Track geometry at the beam-line DCA (owned by this track).
   
   ClassDef(StGlobalTrack,2)
 };

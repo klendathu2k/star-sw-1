@@ -48,30 +48,43 @@
  **************************************************************************/
 #ifndef StTrackPidTraits_hh
 #define StTrackPidTraits_hh
+/// @file StTrackPidTraits.h
+/// @brief Abstract base class for particle identification (PID) traits attached to a track.
+
 #include "StObject.h"
 #include "StEnumerations.h"
 
 #ifndef DST_DEDX_H
 #define DST_DEDX_H
+/// @brief Legacy DST table entry for dE/dx PID information.
 struct dst_dedx_st {
-  Float_t dedx[3]; /* dE/dx summary info; mean,sigma of mean, log2(<dX>) */
-  Int_t id_track;  /* Foreign key to dst_track                           */
-  Int_t det_id;    /* Det ID-SVT,TPC,FTPC, use StDetectorDefinitions.h   */
-  Int_t method;    /* dE/dx calculation method (see  comments above)     */
-  Int_t ndedx;     /* number of points used in dE/dx calcu. + 100*((int)TrackLength) for fit */
+  Float_t dedx[3]; ///< dE/dx summary: mean, sigma of mean, log2(<dX>).
+  Int_t id_track;  ///< Foreign key to the associated track.
+  Int_t det_id;    ///< Detector identifier (SVT, TPC, FTPC; see StDetectorDefinitions.h).
+  Int_t method;    ///< dE/dx calculation method.
+  Int_t ndedx;     ///< Number of points in dE/dx calculation; upper bits encode track length.
 };
 #endif
+/// @brief Abstract base class for particle identification (PID) traits attached to a track.
+///
+/// Each concrete sub-class (e.g. StDedxPidTraits, StBTofPidTraits) stores
+/// PID information from a specific detector.  Instances are owned by the
+/// StSPtrVecTrackPidTraits container inside StTrack.
 class StTrackPidTraits : public StObject {
 public:
+    /// @brief Default constructor.
     StTrackPidTraits();
+    /// @brief Construct with a detector identifier.
     StTrackPidTraits(StDetectorId);
+    /// @brief Construct from a legacy DST dE/dx table entry.
     StTrackPidTraits(const dst_dedx_st&);
     virtual ~StTrackPidTraits();
     
+    /// @brief Detector that provided this PID measurement.
     Short_t detector() const;
 
 protected:
-    Short_t mDetectorId;
+    Short_t mDetectorId; ///< Detector identifier for this PID measurement.
 
     ClassDef(StTrackPidTraits,2)
 };

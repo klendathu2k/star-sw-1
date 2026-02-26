@@ -87,6 +87,9 @@
  **************************************************************************/
 #ifndef StVertex_hh
 #define StVertex_hh
+/// @file StVertex.h
+/// @brief Abstract base class for a reconstructed event vertex.
+
 #include "Riostream.h"
 #include "StMeasuredPoint.h"
 #include "StEnumerations.h"
@@ -130,27 +133,46 @@ public:
     virtual StPtrVecTrack  daughters(StTrackFilter&)    {NotImplemented("daughters"); return 0;}      ///< Daughters passing a user-supplied filter.
     /// @}
 
+    /// @brief Set the vertex status/type bitmask.
     virtual void setFlag(int val) { mFlag = val; }
+    /// @brief Set the 3×3 position covariance matrix from a 6-element packed array.
     virtual void setCovariantMatrix(float[6]);
+    /// @brief Set the 3×3 position covariance matrix from a 6-element double array.
             void setCovariantMatrix(const double val[6]) { std::copy(val, val+6, mCovariantMatrix); }
+    /// @brief Set the chi-squared of the vertex fit.
     virtual void setChiSquared(float val) { mChiSquared = val; }
+    /// @brief Set the chi-squared probability.
     virtual void setProbChiSquared(float val) { mProbChiSquared = val; }
+    /// @brief Set the parent track link.
     virtual void setParent(StTrack*);
     virtual void addDaughter(StTrack*) = 0;
     virtual void removeDaughter(StTrack*) = 0;
+    /// @brief Monte Carlo vertex ID.
     int          idTruth() const { return mIdTruth;}
+    /// @brief Fraction of tracks from the Monte Carlo vertex (percent).
     int          qaTruth() const { return mQuality; }
+    /// @brief Monte Carlo parent track ID.
     int          idParent() const { return mIdParent;}
+    /// @brief Set Monte Carlo truth information (vertex ID and quality).
     void         setIdTruth(int idtru, int qatru=0) {mIdTruth = idtru; mQuality = static_cast<unsigned short>(qatru);}
+    /// @brief Set the Monte Carlo parent track ID.
     void         setIdParent(Int_t id) {mIdParent = id;}
+    /// @brief Derive Monte Carlo truth from daughter track information.
     void         setIdTruth(); 				//setting on track info
 
-    virtual void setPrimaryVtx()      {SETBIT(mFlag,kPrimaryVtxId);} 
-    virtual void setV0Vtx()           {SETBIT(mFlag,kV0VtxId);}	   
-    virtual void setXiVtx()           {SETBIT(mFlag,kXiVtxId);}	   
-    virtual void setKinkVertex()      {SETBIT(mFlag,kKinkVtxId);}    
+    /// @brief Set the primary vertex flag bit.
+    virtual void setPrimaryVtx()      {SETBIT(mFlag,kPrimaryVtxId);}
+    /// @brief Set the V0 vertex flag bit.
+    virtual void setV0Vtx()           {SETBIT(mFlag,kV0VtxId);}
+    /// @brief Set the Xi vertex flag bit.
+    virtual void setXiVtx()           {SETBIT(mFlag,kXiVtxId);}
+    /// @brief Set the kink vertex flag bit.
+    virtual void setKinkVertex()      {SETBIT(mFlag,kKinkVtxId);}
+    /// @brief Set the beam-constrained vertex flag bit.
     virtual void setBeamConstrained() {SETBIT(mFlag,kBEAMConstrVtxId);}
+    /// @brief Set the rejected vertex flag bit.
     virtual void setRejected()        {SETBIT(mFlag,kRejectedVtxId);}
+    /// @brief Set the forward vertex flag bit.
     virtual void setFwdVertex()       {SETBIT(mFlag,kFwdVtxId);}
 
     bool        isPrimaryVtx()      const {return TESTBIT(mFlag,kPrimaryVtxId);}
@@ -161,24 +183,26 @@ public:
     bool        isRejected()        const {return TESTBIT(mFlag,kRejectedVtxId);}
     bool        isFwdVtx()          const {return TESTBIT(mFlag,kFwdVtxId);}
     void Print(Option_t *option="") const {cout << option << *this << endl; }
+    /// @brief Set the global minimum-fit-points threshold for counting good tracks.
     static void   SetNoFitPointCutForGoodTrack(UInt_t val) {fgNoFitPointCutForGoodTrack = val;}
+    /// @brief Return the minimum-fit-points threshold for counting good tracks.
     static UInt_t NoFitPointCutForGoodTrack() {return fgNoFitPointCutForGoodTrack;}
     
 protected:
     void          NotImplemented(const char *method) const;
 
 protected:
-    StVertexId    mType;
+    StVertexId    mType;                     ///< Vertex type identifier (primary, V0, Xi, kink, etc.).
     Char_t        mBeg[1]; //!
-    Int_t         mFlag;
-    Float_t       mCovariantMatrix[6];
-    Float_t       mChiSquared;
-    Float_t       mProbChiSquared;
-    Int_t         mIdTruth; // MC vertex id if any
-    UShort_t      mQuality; // quality of this information (percentage of tracks coming the above MC Vertex)
-    Int_t         mIdParent;// Id of MC parent track
+    Int_t         mFlag;                     ///< Status/type bitmask (see kPrimaryVtxId etc.).
+    Float_t       mCovariantMatrix[6];       ///< Packed upper-triangle of the 3×3 position covariance (cm²).
+    Float_t       mChiSquared;               ///< Chi-squared of the vertex fit.
+    Float_t       mProbChiSquared;           ///< Probability of the chi-squared value.
+    Int_t         mIdTruth;                  ///< Monte Carlo vertex ID.
+    UShort_t      mQuality;                  ///< Fraction of tracks from the Monte Carlo vertex (percent).
+    Int_t         mIdParent;                 ///< Monte Carlo parent track ID.
     Char_t        mEnd[1]; //!
-    static UInt_t fgNoFitPointCutForGoodTrack;
+    static UInt_t fgNoFitPointCutForGoodTrack; ///< Global minimum fit-point count for good-track counting.
 #ifdef __CINT__
     StObjLink     mParent;            
 #else

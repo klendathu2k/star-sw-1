@@ -27,53 +27,78 @@
 #ifndef STAR_StPhmdCluster
 #define STAR_StPhmdCluster
 
+/// @file StPhmdCluster.h
+/// @brief Reconstructed cluster in the STAR Photon Multiplicity Detector (PMD/PHMD).
+
 #include <math.h>
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StPhmdHit.h"
 #include "StContainers.h"
 
+/// @brief A reconstructed cluster of adjacent cells in the PHMD (Photon Multiplicity Detector).
 class StPhmdCluster : public StObject {
 public: 
     StPhmdCluster();           
     ~StPhmdCluster();          
 
+    /// @brief Returns the supermodule number containing this cluster.
     int           module() const;
+    /// @brief Returns the number of cells (hits) forming the cluster.
     int           numberOfCells() const;
+    /// @brief Returns the pseudorapidity (η) of the cluster centroid.
     float         eta() const;
+    /// @brief Returns the azimuthal angle (φ) of the cluster centroid (radians).
     float         phi() const;
+    /// @brief Returns the total energy deposition of the cluster (GeV).
     float         energy() const;
+    /// @brief Returns the spatial spread (σ) of the cluster.
     float         sigma() const;
+    /// @brief Returns the particle ID (PID) based on energy deposition.
     int           energyPid() const;
+    /// @brief Returns the particle ID (PID) from track matching.
     int           pid() const;
+    /// @brief Returns the Monte Carlo particle ID.
     int           mcPid() const;
     
+    /// @brief Sets the supermodule number.
     void          setModule(int);
+    /// @brief Sets the number of cells in the cluster.
     void          setNumberOfCells(int);
+    /// @brief Sets the pseudorapidity (η) of the cluster centroid.
     void          setEta(float);
+    /// @brief Sets the azimuthal angle (φ) of the cluster centroid (radians).
     void          setPhi(float);
+    /// @brief Sets the total energy deposition (GeV).
     void          setEnergy(float);
+    /// @brief Sets the spatial spread (σ) of the cluster.
     void          setSigma(float);
+    /// @brief Sets the particle ID (PID) based on energy deposition.
     void          setEnergyPid(int);
+    /// @brief Sets the particle ID (PID) from track matching.
     void          setPid(int);
+    /// @brief Sets the Monte Carlo particle ID.
     void          setMcPid(int);
     
+    /// @brief Adds a PMD hit to this cluster.
     void addHit(StPhmdHit*);
     
+    /// @brief Returns a reference to the vector of hits in this cluster.
     StPtrVecPhmdHit&        hit();
+    /// @brief Returns a const reference to the vector of hits in this cluster.
     const StPtrVecPhmdHit&  hit() const;    
 
 private:
-    Int_t             mModule;          // supermodule no
-    Int_t             mNumberOfCells;   // no. of cells in the cluster
-    Float_t           mEta;             // cluster eta
-    Float_t           mPhi;             // cluster phi
-    Float_t           mEnergy;          // cluster edep
-    Float_t           mSigma;           // sigma of the cluster
-    Int_t             mPID;             // cluster PID based on matching
-    Int_t             mEnergyPID;       // clusterPID based on edep
-    Int_t             mMcPID;           // Mc Cluster PID
-    StPtrVecPhmdHit   mHits;
+    Int_t             mModule;          ///< Supermodule number.
+    Int_t             mNumberOfCells;   ///< Number of cells (hits) forming the cluster.
+    Float_t           mEta;             ///< Pseudorapidity (η) of the cluster centroid.
+    Float_t           mPhi;             ///< Azimuthal angle (φ) of the cluster centroid (radians).
+    Float_t           mEnergy;          ///< Total energy deposition of the cluster (GeV).
+    Float_t           mSigma;           ///< Spatial spread (σ) of the cluster.
+    Int_t             mPID;             ///< Particle ID (PID) from track matching.
+    Int_t             mEnergyPID;       ///< Particle ID (PID) based on energy deposition.
+    Int_t             mMcPID;           ///< Monte Carlo particle ID.
+    StPtrVecPhmdHit   mHits;            ///< Collection of PMD hits belonging to this cluster.
 
     ClassDef(StPhmdCluster,1)
 };

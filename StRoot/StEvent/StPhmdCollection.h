@@ -22,6 +22,9 @@
 #ifndef StPhmdCollection_hh
 #define StPhmdCollection_hh
 
+/// @file StPhmdCollection.h
+/// @brief Event-level collection for the STAR Photon Multiplicity Detector (PMD and CPV planes).
+
 #include "StObject.h"
 #include "StContainers.h"
 #include "StEnumerations.h"
@@ -29,19 +32,23 @@
 
 class StPhmdDetector;
 
+/// @brief Top-level container for PHMD detector data, holding both the PMD and CPV sub-detector planes.
 class StPhmdCollection : public StObject {
 public:
     StPhmdCollection();
     ~StPhmdCollection();
     
+    /// @brief Returns a pointer to the detector plane identified by @p id (kPmdId or kCpvId).
     StPhmdDetector*          detector(StDetectorId);
+    /// @brief Returns a const pointer to the detector plane identified by @p id.
     const StPhmdDetector*    detector(StDetectorId) const;
     
+    /// @brief Registers a detector plane (PMD or CPV) with the collection.
     void setDetector(StPhmdDetector*);
     
 private:
-    StPhmdDetector*   mDetector;
-    StPhmdDetector*   mCpvDetector;
+    StPhmdDetector*   mDetector;      ///< Pointer to the PMD (photon) detector plane.
+    StPhmdDetector*   mCpvDetector;   ///< Pointer to the CPV (charged-particle veto) detector plane.
     ClassDef(StPhmdCollection,1)
 };
 

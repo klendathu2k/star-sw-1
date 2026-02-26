@@ -42,15 +42,24 @@
  **************************************************************************/
 #ifndef StMeasuredPoint_hh
 #define StMeasuredPoint_hh
+/// @file StMeasuredPoint.h
+/// @brief Abstract base class for any detector measurement with a 3-D position.
 
 #include <Stiostream.h>
 #include "StObject.h"
 #include "StThreeVectorF.hh"
 #include "StMatrixF.hh"
 
+/// @brief Abstract base class for measured space points with a 3-D position.
+///
+/// StMeasuredPoint provides the common position storage and interface for all
+/// detector hits and reconstructed vertices in STAR.  Derived classes must
+/// implement positionError() and covariantMatrix().
 class StMeasuredPoint : public StObject {
 public:
+    /// @brief Default constructor; initialises position to zero.
     StMeasuredPoint();
+    /// @brief Construct with a given 3-D position.
     StMeasuredPoint(const StThreeVectorF&);
     virtual ~StMeasuredPoint();
     // StMeasuredPoint(const StMeasuredPoint&);            use default
@@ -59,14 +68,18 @@ public:
     int operator==(const StMeasuredPoint&) const;
     int operator!=(const StMeasuredPoint&) const;
     
+    /// @brief 3-D position of the measured point (cm).
     virtual const StThreeVectorF& position() const;
+    /// @brief 1-sigma position errors (cm); pure virtual, implemented by sub-classes.
     virtual StThreeVectorF        positionError() const = 0;
+    /// @brief Full 3×3 position covariance matrix; pure virtual, implemented by sub-classes.
     virtual StMatrixF             covariantMatrix() const = 0;
     
+    /// @brief Set the 3-D position of this measured point.
     virtual void setPosition(const StThreeVectorF&);
     virtual void                  Print(Option_t *option="") const;
 protected:
-    StThreeVectorF mPosition;
+    StThreeVectorF mPosition; ///< 3-D position of the measured point (cm).
     ClassDef(StMeasuredPoint,1)
 };
 ostream&              operator<<(ostream& os, StMeasuredPoint const & v);

@@ -51,6 +51,8 @@
  **************************************************************************/
 #ifndef StRunInfo_hh
 #define StRunInfo_hh
+/// @file StRunInfo.h
+/// @brief Run-level metadata (beam species, energy, magnetic field, luminosity rates) stored inside StEvent.
 
 #include "StObject.h"
 #include "TString.h"
@@ -139,37 +141,37 @@ public:
 
     
 protected:
-    Int_t	mRunId;
+    Int_t	mRunId;                         ///< Run number.
     
-    UInt_t      mProductionTime;
-    TString     mProductionVersion;
+    UInt_t      mProductionTime;               ///< Unix timestamp when this data was reconstructed.
+    TString     mProductionVersion;            ///< Reconstruction software version string.
     
-    Float_t     mCenterOfMassEnergy;
-    Int_t       mBeamMassNumber[2];
+    Float_t     mCenterOfMassEnergy;           ///< \f$\sqrt{s_{NN}}\f$ in GeV.
+    Int_t       mBeamMassNumber[2];            ///< Mass number A of the beam species; [0]=east, [1]=west.
     
-    Double_t    mMagneticFieldZ;
-    Float_t     mTpcDriftVelocity[2];
-    Float_t     mSvtDriftVelocityScaler;
+    Double_t    mMagneticFieldZ;               ///< Solenoidal magnetic field along z (kG).
+    Float_t     mTpcDriftVelocity[2];          ///< TPC drift velocity (cm/µs); [0]=east half, [1]=west half.
+    Float_t     mSvtDriftVelocityScaler;       ///< SVT drift-velocity scale factor.
 
-    Double_t    mZdcEastRate;
-    Double_t    mZdcWestRate;
-    Double_t    mZdcCoincidenceRate;
-    Double_t    mBackgroundRate;
-    Double_t    mL0RateToRich;
-    Double_t    mBbcCoincidenceRate;
+    Double_t    mZdcEastRate;                  ///< ZDC east single-arm rate (Hz).
+    Double_t    mZdcWestRate;                  ///< ZDC west single-arm rate (Hz).
+    Double_t    mZdcCoincidenceRate;           ///< ZDC east–west coincidence rate (Hz).
+    Double_t    mBackgroundRate;               ///< Estimated beam-background rate (Hz).
+    Double_t    mL0RateToRich;                 ///< L0 trigger rate delivered to the RICH (Hz).
+    Double_t    mBbcCoincidenceRate;           ///< BBC east–west coincidence rate (Hz).
 
-    Float_t     mBeamEnergy[2];
-    Float_t     mInitialBeamIntensity[2];
-    Float_t     mBeamLifeTime[2];
-    Float_t     mBeamFillNumber[2];
+    Float_t     mBeamEnergy[2];                ///< Beam energy per nucleon (GeV); [0]=east, [1]=west.
+    Float_t     mInitialBeamIntensity[2];      ///< Initial beam intensity at fill start; [0]=east, [1]=west.
+    Float_t     mBeamLifeTime[2];              ///< Beam lifetime (hours); [0]=east, [1]=west.
+    Float_t     mBeamFillNumber[2];            ///< RHIC fill number; [0]=east, [1]=west.
 
-    Double_t    mBbcEastRate;
-    Double_t    mBbcWestRate;
-    Double_t    mBbcBlueBackgroundRate;
-    Double_t    mBbcYellowBackgroundRate;
+    Double_t    mBbcEastRate;                  ///< BBC east single-arm rate (Hz).
+    Double_t    mBbcWestRate;                  ///< BBC west single-arm rate (Hz).
+    Double_t    mBbcBlueBackgroundRate;        ///< BBC blue-beam background rate (Hz).
+    Double_t    mBbcYellowBackgroundRate;      ///< BBC yellow-beam background rate (Hz).
 
-    Int_t       mSpaceChargeCorrectionMode;
-    Float_t     mSpaceCharge;
+    Int_t       mSpaceChargeCorrectionMode;    ///< TPC space-charge correction mode flag.
+    Float_t     mSpaceCharge;                  ///< TPC space-charge correction value.
     
     ClassDef(StRunInfo,7)
 };
