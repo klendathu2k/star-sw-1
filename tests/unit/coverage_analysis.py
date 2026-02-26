@@ -338,10 +338,11 @@ class TestSet:
 
 
 def _build_test_sets() -> List[TestSet]:
-    scl = _STROOT / "StarClassLibrary"
-    sr  = _STROOT / "StarRoot"
-    tu  = _HERE / "StarClassLibrary"
-    tsr = _HERE / "StarRoot"
+    scl  = _STROOT / "StarClassLibrary"
+    sr   = _STROOT / "StarRoot"
+    sbfc = _STROOT / "StBFChain"
+    tu   = _HERE / "StarClassLibrary"
+    tsr  = _HERE / "StarRoot"
     tbfc = _HERE / "StBFChain"
 
     sets = [
@@ -350,6 +351,49 @@ def _build_test_sets() -> List[TestSet]:
             description="BigFullChain.h parser and option-table generator",
             test_files=[tbfc / "test_bigfullchain.py", tbfc / "conftest.py"],
             py_module=tbfc / "generate_options_table.py",
+        ),
+        TestSet(
+            name="StBFChain (C++)",
+            description="Bfc_st struct, StBFChain construction/getters/ParseString, StBFChainOpt delegation",
+            test_files=[tbfc / "test_StBFChain.cxx"],
+            header_files=[sbfc / "StBFChain.h", sbfc / "StBFChainOpt.h"],
+            class_names=["StBFChain", "StBFChainOpt"],
+            exclude={
+                # Methods requiring Setup() (gInterpreter / fBFC table / full
+                # maker chain) are integration-level concerns, not unit tests.
+                "Setup",           # calls gInterpreter->ProcessLine
+                "Make",            # delegates to StChain event loop
+                "Load",            # loads shared libraries at runtime
+                "Instantiate",     # creates ROOT maker objects via gInterpreter
+                "Init",            # calls StChain::Init; needs full chain
+                "AddAB",           # inserts StMaker into live chain
+                "AddAfter",        # trivial delegate to AddAB
+                "AddBefore",       # trivial delegate to AddAB
+                "SetFlags",        # requires fBFC option table (Setup)
+                "Set_IO_Files",    # requires gMessMgr and fBFC
+                "SetInputFile",    # requires gMessMgr and fBFC
+                "SetOutputFile",   # requires gMessMgr and fBFC
+                "kOpt",            # requires fBFC option table (Setup)
+                "SetDbOptions",    # requires live St_db_Maker instance
+                "SetGeantOptions", # requires live geometry maker instance
+                "SetTreeOptions",  # requires live StTreeMaker instance
+                "SetOption",       # requires fBFC option table (Setup)
+                "SetOptions",      # requires fBFC option table (Setup)
+                "SetOptionOff",    # trivial delegate to SetOption (needs fBFC)
+                "Finish",          # calls StChain::Finish; needs full chain
+                "GetOption",       # GetOption(Int_t) requires fBFC; overloads delegate
+                "GetOptionString", # requires fBFC option table (Setup)
+                "GetGeometry",     # dereferences fchainOpt (null before Setup)
+                "ProcessLine",     # calls gROOT->ProcessLine
+                # Parser false-positives: names from the constructor initializer
+                # list (fBFC(0), fSetFiles(0), FDate(0), etc.) that the regex
+                # matches as if they were method declarations.
+                "StChain",         # base-class ctor call in initializer list
+                "fBFC",            # data-member init: fBFC(0)
+                "fSetFiles",       # data-member init: fSetFiles(0)
+                "FDate",           # data-member init: FDate(0)
+                "fNoChainOptions", # data-member init: fNoChainOptions(0)
+            },
         ),
         TestSet(
             name="StThreeVector<T>",

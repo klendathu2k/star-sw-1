@@ -20,6 +20,7 @@ in the corresponding test files.
 | Test set | Declared | Called | Coverage |
 |----------|----------|--------|----------|
 | StBFChain (Python) | 6 | 1 | 17% |
+| StBFChain (C++) | 8 | 8 | 100% |
 | StThreeVector<T> | 42 | 42 | 100% |
 | StLorentzVector<T> | 39 | 39 | 100% |
 | TRMatrix group | 36 | 36 | 100% |
@@ -49,6 +50,28 @@ Tests: `tests/unit/StBFChain/test_bigfullchain.py`, `tests/unit/StBFChain/confte
 - `_is_separator`
 - `main`
 - `render_markdown`
+
+---
+
+## StBFChain (C++)
+
+*Bfc_st struct, StBFChain construction/getters/ParseString, StBFChainOpt delegation*
+
+Headers: `StRoot/StBFChain/StBFChain.h`, `StRoot/StBFChain/StBFChainOpt.h`  
+Tests: `tests/unit/StBFChain/test_StBFChain.cxx`  
+
+**8 / 8 methods covered (100%)**
+
+### Covered ✓
+
+- `GetCVS`
+- `GetFileIn`
+- `GetFileOut`
+- `GetTFile`
+- `ParseString`
+- `SetTFile`
+- `StBFChain`
+- `StBFChainOpt`
 
 ---
 

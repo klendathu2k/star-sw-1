@@ -18,6 +18,7 @@ my $STAR_ROOT = $env->{ENV}->{STAR} || ".";
 my $CPPPATH = $ObjDir
     . $main::PATH_SEPARATOR . $INCLUDE
     . $main::PATH_SEPARATOR . "#StRoot/St_base"
+    . $main::PATH_SEPARATOR . "#StRoot/StBFChain"
     . $main::PATH_SEPARATOR . "#StRoot/StChain"
     . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
     . $main::PATH_SEPARATOR . "#StRoot/StarRoot"
@@ -89,3 +90,16 @@ build_test( "test_StarRoot",
     "StarRoot/test_TAttr.cxx",
     "StarRoot/test_TUnixTime.cxx",
 );
+
+# StBFChain tests require the StBFChain shared library and its dependencies
+# (St_db_Maker, StIOMaker, StTreeMaker, StarMagField).  The test uses only the
+# parts of StBFChain that do not require a full STAR runtime (struct layout,
+# construction, ParseString, SetTFile/GetTFile, StBFChainOpt delegation).
+my $envBFC = $envTest->clone(
+    'LIBS' => "-lStBFChain -lSt_db_Maker -lStIOMaker -lStTreeMaker -lStarMagField "
+            . "-lStChallenger "
+            . $envTest->{LIBS},
+);
+my @bfc_objs = Objects $envBFC "StBFChain/test_StBFChain.cxx";
+Program $envBFC "test_StBFChain", (@catch_obj, @bfc_objs);
+Install $envBFC $BIN, "test_StBFChain";
