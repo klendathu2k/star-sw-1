@@ -21,9 +21,9 @@ in the corresponding test files.
 | StThreeVector<T> | 45 | 14 | 31% |
 | StLorentzVector<T> | 44 | 10 | 23% |
 | TRMatrix group | 42 | 13 | 31% |
-| TPolinom | 39 | 5 | 13% |
+| TPolinom | 39 | 6 | 15% |
 | TAttr | 9 | 9 | 100% |
-| TUnixTime | 13 | 8 | 62% |
+| TUnixTime | 13 | 13 | 100% |
 
 ---
 
@@ -239,7 +239,7 @@ Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`
 Headers: `StRoot/StarRoot/TPolinom.h`  
 Tests: `tests/unit/StarRoot/test_TPolinom.cxx`  
 
-**5 / 39 methods covered (13%)**
+**6 / 39 methods covered (15%)**
 
 ### Covered ✓
 
@@ -248,6 +248,7 @@ Tests: `tests/unit/StarRoot/test_TPolinom.cxx`
 - `SetCoeff`
 - `TPolinom`
 - `operator()`
+- `operator=`
 
 ### Not covered ✗
 
@@ -284,7 +285,6 @@ Tests: `tests/unit/StarRoot/test_TPolinom.cxx`
 - `Test2`
 - `TestCorr`
 - `Wtot`
-- `operator=`
 
 ---
 
@@ -318,25 +318,22 @@ Tests: `tests/unit/StarRoot/test_TAttr.cxx`
 Headers: `StRoot/StarRoot/TUnixTime.h`  
 Tests: `tests/unit/StarRoot/test_TUnixTime.cxx`  
 
-**8 / 13 methods covered (62%)**
+**13 / 13 methods covered (100%)**
 
 ### Covered ✓
 
 - `Convert`
+- `GetGString`
 - `GetGTime`
+- `GetLString`
+- `GetLTime`
 - `GetUTime`
 - `SetGTime`
+- `SetLTime`
 - `SetUTime`
 - `TUnixTime`
 - `operator()`
 - `operator+=`
-
-### Not covered ✗
-
-- `GetGString`
-- `GetLString`
-- `GetLTime`
-- `SetLTime`
 - `operator=`
 
 ---

@@ -251,6 +251,20 @@ def _extract_called_methods(test_paths: List[Path],
             if token in text:
                 called.add(op_name)
 
+        # 7b. Assignment operator= — detect "varname = expr" for variables of a
+        #     known class type.  Pattern: a declared-class variable (found by
+        #     "ClassName varname") subsequently assigned with bare "varname =".
+        if class_names:
+            cn_pat = '|'.join(re.escape(c) for c in class_names)
+            # Collect variable names declared as one of our class types
+            declared_vars: set = set()
+            for mv in re.finditer(r'\b(?:' + cn_pat + r')\s+(\w+)\s*[;({]', text):
+                declared_vars.add(mv.group(1))
+            # Look for  "varname =" (not ==, +=, -=, …)
+            for dv in declared_vars:
+                if re.search(r'\b' + re.escape(dv) + r'\s*=[^=]', text):
+                    called.add('operator=')
+
         # 8. Unary/binary operator* when used as  TRMatrix r = m * 2.0
         if re.search(r'=\s*\w+\s*\*\s*\w+', text):
             called.add('operator*')
