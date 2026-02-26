@@ -20,7 +20,7 @@ in the corresponding test files.
 | StLorentzVector<T> | 45 | 10 | 22% |
 | TRMatrix group | 47 | 13 | 28% |
 | TPolinom | 41 | 5 | 12% |
-| TAttr | 10 | 6 | 60% |
+| TAttr | 10 | 9 | 90% |
 | TUnixTime | 14 | 8 | 57% |
 
 ---
@@ -302,22 +302,22 @@ Tests: `tests/unit/StarRoot/test_TPolinom.cxx`
 Headers: `StRoot/StarRoot/TAttr.h`  
 Tests: `tests/unit/StarRoot/test_TAttr.cxx`  
 
-**6 / 10 methods covered (60%)**
+**9 / 10 methods covered (90%)**
 
 ### Covered ✓
 
 - `DAttr`
 - `IAttr`
+- `PrintAttr`
 - `RemAttr`
 - `SAttr`
 - `SetAttr`
+- `SetDebug`
 - `TAttr`
+- `UAttr`
 
 ### Not covered ✗
 
-- `PrintAttr`
-- `SetDebug`
-- `UAttr`
 - `~TAttr`
 
 ---

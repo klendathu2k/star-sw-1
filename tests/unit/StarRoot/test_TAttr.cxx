@@ -95,3 +95,81 @@ TEST_CASE("TAttr strips spaces from key", "[TAttr]") {
     CHECK(a.IAttr("mykey") == 5);
     CHECK(a.IAttr("my key") == 5);
 }
+
+// ---------------------------------------------------------------------------
+// Unsigned integer attributes (UAttr)
+// ---------------------------------------------------------------------------
+TEST_CASE("TAttr stores and retrieves unsigned integer attribute", "[TAttr]") {
+    TAttr a;
+    a.SetAttr("count", (ULong_t)42UL);
+    CHECK(a.UAttr("count") == 42UL);
+}
+
+TEST_CASE("TAttr UAttr returns zero for missing key", "[TAttr]") {
+    TAttr a;
+    CHECK(a.UAttr("missing") == 0UL);
+}
+
+TEST_CASE("TAttr stores large unsigned integer value", "[TAttr]") {
+    TAttr a;
+    ULong_t big = 3000000000UL;
+    a.SetAttr("big", big);
+    CHECK(a.UAttr("big") == big);
+}
+
+// ---------------------------------------------------------------------------
+// Bulk copy: SetAttr(const TAttr*)
+// ---------------------------------------------------------------------------
+TEST_CASE("TAttr copies all attributes from another TAttr", "[TAttr]") {
+    TAttr src("source");
+    src.SetAttr("x", (Long_t)10);
+    src.SetAttr("label", "hello");
+    src.SetAttr("ratio", 1.5);
+
+    TAttr dst("dest");
+    int n = dst.SetAttr(&src);
+    CHECK(n == 3);
+    CHECK(dst.IAttr("x") == 10);
+    CHECK(std::string(dst.SAttr("label")) == "hello");
+    CHECK(dst.DAttr("ratio") == Catch::Approx(1.5));
+}
+
+TEST_CASE("TAttr copying empty TAttr returns zero count", "[TAttr]") {
+    TAttr src("empty");
+    TAttr dst("dest");
+    CHECK(dst.SetAttr(&src) == 0);
+}
+
+// ---------------------------------------------------------------------------
+// PrintAttr
+// ---------------------------------------------------------------------------
+TEST_CASE("TAttr PrintAttr does not crash on empty map", "[TAttr]") {
+    TAttr a("empty");
+    CHECK_NOTHROW(a.PrintAttr());
+}
+
+TEST_CASE("TAttr PrintAttr does not crash with attributes present", "[TAttr]") {
+    TAttr a("data");
+    a.SetAttr("key1", "val1");
+    a.SetAttr("key2", (Long_t)99);
+    CHECK_NOTHROW(a.PrintAttr());
+}
+
+// ---------------------------------------------------------------------------
+// SetDebug (static)
+// ---------------------------------------------------------------------------
+TEST_CASE("TAttr SetDebug does not crash", "[TAttr]") {
+    CHECK_NOTHROW(TAttr::SetDebug(1));
+    CHECK_NOTHROW(TAttr::SetDebug(0));  // restore default
+}
+
+// ---------------------------------------------------------------------------
+// Destructor (explicit heap allocation)
+// ---------------------------------------------------------------------------
+TEST_CASE("TAttr destructor frees all entries without error", "[TAttr]") {
+    TAttr *a = new TAttr("heap");
+    a->SetAttr("x", (Long_t)1);
+    a->SetAttr("y", "two");
+    a->SetAttr("z", 3.0);
+    CHECK_NOTHROW(delete a);
+}
