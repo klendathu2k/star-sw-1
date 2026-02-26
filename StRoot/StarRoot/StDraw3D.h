@@ -1,3 +1,7 @@
+/*!
+ * \file StDraw3D.h
+ * \brief 3D event-display utility: draw STAR hits, tracks, and detector geometry in ROOT 3D viewers.
+ */
 #ifndef STAR_StDraw3D
 #define STAR_StDraw3D
 // $Id: StDraw3D.h,v 1.59 2011/10/03 23:55:38 perev Exp $
@@ -162,6 +166,15 @@ class view_3D;
   ///  \li \c TObject::Inspect() to inspect the model data-member values; 
   ///  \li \c TObject::GetObjectInfo to label the view with the current model information; 
   ///  \li \c TVirtualPadEditor to set the model attributes.
+/*!
+ * \class StDraw3D
+ * \brief 3D event-display controller: renders STAR event primitives (hits, tracks, towers)
+ *        in a ROOT 3D viewer against the STAR detector geometry.
+ * \details Implements the Model/View pattern: any user object can be associated as the
+ *          "model" while the class manages TVirtualViewer3D as the "view".  Pre-defined
+ *          drawing styles (EDraw3DStyle) map STAR object types onto ROOT color/style/size
+ *          attributes.  A global \c gDraw3D singleton is provided for convenience.
+ */
 class StDraw3D : public TObject
 {
    private:

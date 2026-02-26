@@ -20,6 +20,7 @@ my $CPPPATH = $ObjDir
     . $main::PATH_SEPARATOR . "#StRoot/St_base"
     . $main::PATH_SEPARATOR . "#StRoot/StChain"
     . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
+    . $main::PATH_SEPARATOR . "#StRoot/StarRoot"
     . $main::PATH_SEPARATOR . "#StRoot/Table"
     . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
 
@@ -28,7 +29,7 @@ my $LIBPATH = $LIB
     . $main::PATH_SEPARATOR . $ROOTSYS . "/lib";
 
 my $ROOTLIBS = $env->{ROOTLIBS} || "-lCore -lCint -lRIO -lThread -lMathCore";
-my $LIBS     = "-lSt_base -lStChain -lStarClassLibrary "
+my $LIBS     = "-lSt_base -lStChain -lStarClassLibrary -lStarRoot "
              . $ROOTLIBS . " "
              . $env->{CLIBS};
 
@@ -80,4 +81,11 @@ build_test( "test_StChain",
 build_test( "test_StarClassLibrary",
     "StarClassLibrary/test_StThreeVector.cxx",
     "StarClassLibrary/test_StLorentzVector.cxx",
+);
+
+build_test( "test_StarRoot",
+    "StarRoot/test_TRMatrix.cxx",
+    "StarRoot/test_TPolinom.cxx",
+    "StarRoot/test_TAttr.cxx",
+    "StarRoot/test_TUnixTime.cxx",
 );

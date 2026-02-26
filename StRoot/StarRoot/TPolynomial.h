@@ -1,3 +1,7 @@
+/*!
+ * \file TPolynomial.h
+ * \brief Namespace of ROOT TF1 polynomial factory utilities (Chebyshev, Legendre, power-law).
+ */
 #ifndef __TPolynomial_h__
 #define __TPolynomial_h__
 #include "Riostream.h"
@@ -5,6 +9,11 @@
 #include "TString.h"
 #include "TF1.h"
 
+/*!
+ * \brief Namespace providing ROOT TF1 polynomial factory and evaluation utilities.
+ * \details Supports Chebyshev ("Tcheb"), Legendre, and plain power-series polynomial
+ *          bases.  MakePoly() and MakePol() return a configured TF1 ready to be fitted.
+ */
 namespace TPolynomial {
   void MakePolySeries(Double_t x, Int_t type, Int_t Np, Double_t *P);
   Double_t CalcPoly(Double_t *x, Double_t *par);

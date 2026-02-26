@@ -1,9 +1,21 @@
+/*!
+ * \file TRMatrix.h
+ * \brief Rectangular double-precision matrix with row-major storage.
+ */
 #ifndef ROOT_TRMatrix
 #define ROOT_TRMatrix
 #include "TError.h"
 #include "TRArray.h"
 class TRSymMatrix;
 #include "TRSymMatrix.h"
+/*!
+ * \class TRMatrix
+ * \brief Rectangular double-precision matrix inheriting TRArray.
+ * \details Elements are stored row-major: element (i, j) maps to index \c j + i*ncols
+ *          in the underlying TArrayD.  Supports construction from scalar lists, other
+ *          matrices, and symmetric matrices, as well as multiplication and transposition
+ *          operations via ETRMatrixCreatorsOp.
+ */
 class TRMatrix : public TRArray {
  public:
   TRMatrix(Int_t nrows=0,Int_t ncols=0) : TRArray(nrows*ncols), fNrows(nrows), fNcols(ncols) {}

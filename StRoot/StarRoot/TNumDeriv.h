@@ -1,20 +1,34 @@
 // @(#)root/base:$Name:  $:$Id: TNumDeriv.h,v 1.2 2007/10/24 22:45:01 perev Exp $
 // Author: Victor Perev   05/07/03
 
+/*!
+ * \file TNumDeriv.h
+ * \brief Abstract numerical-derivative base class and test implementations.
+ */
 #ifndef ROOT_TNumDeriv
 #define ROOT_TNumDeriv
 #include <math.h>
 #include "TNamed.h"
 
+/*!
+ * \class TNumDeriv
+ * \brief Abstract base for numerical differentiation; override Fcn() to define the function.
+ * \details Uses a symmetric finite-difference formula with adaptive step control.
+ *          Call DFcn() to obtain the numerical derivative dFcn/dPar at the current argument.
+ */
 class TNumDeriv : public TNamed {
 public:
            TNumDeriv(const char *name):TNamed(name,"") {fStep=0.01;fIArg=0;fOutLim=0;};
   virtual ~TNumDeriv(){}
-  virtual Double_t   Fcn(Double_t  add=0.)=0;  	//Fcn,  must  be overloaded 
-          Double_t  DFcn(Double_t  add=0.);  	//dFcn/dPar         
+  /// Pure-virtual function to differentiate; \p add is the perturbation added to the active argument.
+  virtual Double_t   Fcn(Double_t  add=0.)=0;
+  /// Return the numerical derivative dFcn/dPar at the current argument using the current step size.
+  Double_t  DFcn(Double_t  add=0.);
           void      SetOutLimit(int lim=1) 	{fOutLim=lim	;}
-          void      SetStep(Double_t step)	{fStep  =step	;}
-          void      SetIArg(Int_t iarg)		{fIArg  =iarg	;}
+  /// Set the finite-difference step size (default 0.01).
+  void      SetStep(Double_t step)	{fStep  =step	;}
+  /// Select which argument index is differentiated.
+  void      SetIArg(Int_t iarg)		{fIArg  =iarg	;}
           Int_t     GetIArg()          		{return fIArg	;}
 
 	  Double_t  GetStep()			{return fStep	;}
@@ -35,6 +49,10 @@ ClassDef(TNumDeriv,0)
 
 
 
+/*!
+ * \class TNumDeriv1Test
+ * \brief Concrete TNumDeriv implementation for unit-testing first derivatives (f(x) = x³).
+ */
 class TNumDeriv1Test : public TNumDeriv {
 public:
            TNumDeriv1Test(double x) :TNumDeriv("DerivTest") {fX=x;SetStep(1e-3);}
@@ -46,6 +64,11 @@ public:
 ClassDef(TNumDeriv1Test,0)
 };
 
+/*!
+ * \class TNumDeriv2Test
+ * \brief Concrete TNumDeriv implementation for unit-testing second derivatives via TNumDeriv1Test.
+ * \details Wraps a TNumDeriv1Test and returns its DFcn() as Fcn(), thereby computing d²f/dx².
+ */
 class TNumDeriv2Test : public TNumDeriv {
 public:
            TNumDeriv2Test(double x) :TNumDeriv("DerivTest") {fDT=new TNumDeriv1Test(x);fDT->SetStep(0.1);}

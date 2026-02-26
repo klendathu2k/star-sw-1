@@ -1,3 +1,7 @@
+/*!
+ * \file TF1Fitter.h
+ * \brief Abstract TF1-based histogram fitter base (TF1Fitter) and concrete Gaussian/polynomial variants.
+ */
 #ifndef TH1Fitter_H
 #define TH1Fitter_H 1
 #include "TH1.h"
@@ -8,6 +12,12 @@
 #include "TNamed.h"
 
 //_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/*!
+ * \class TF1Fitter
+ * \brief Abstract TF1-based fitter that attaches to a TH1 and initialises fit parameters.
+ * \details Subclasses must override Init() to set parameter names/bounds and EvalPar() to
+ *          supply the function value.  SetHist() associates the histogram before fitting.
+ */
 class TF1Fitter : public TF1
 {
 public:
@@ -34,6 +44,10 @@ ClassDef(TF1Fitter,0)
 };
 
 //_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/*!
+ * \class TF1GausFitter
+ * \brief Concrete TF1Fitter implementing a single Gaussian (3 parameters: mean, sigma, amplitude).
+ */
 class TF1GausFitter : public TF1Fitter
 {
 public:
@@ -46,6 +60,10 @@ ClassDef(TF1GausFitter,0)
 };
 
 //_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/*!
+ * \class TF1TwoGausFitter
+ * \brief Concrete TF1Fitter implementing a sum of two Gaussians (6 parameters).
+ */
 class TF1TwoGausFitter : public TF1Fitter
 {
 public:
@@ -57,6 +75,10 @@ virtual double EvalPar(const double *x,const double *par);
 ClassDef(TF1TwoGausFitter,0)
 };
 //_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/*!
+ * \class TF1GausPol2Fitter
+ * \brief Concrete TF1Fitter implementing a Gaussian plus a quadratic polynomial (6 parameters).
+ */
 class TF1GausPol2Fitter : public TF1Fitter
 {
 public:

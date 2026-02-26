@@ -1,5 +1,9 @@
 // Author: Victor Perev   06/06/10
 
+/*!
+ * \file TRandomVector.h
+ * \brief Correlated Gaussian random vector generator from a symmetric covariance matrix.
+ */
 
 #ifndef ROOT_TRandomVector
 #define ROOT_TRandomVector
@@ -18,6 +22,14 @@
 #include "TVectorD.h"
 #include "TRandom.h"
 
+/*!
+ * \class TRandomVector
+ * \brief Generates correlated Gaussian random vectors from a symmetric covariance matrix.
+ * \details Diagonalises the covariance matrix via eigendecomposition, then draws independent
+ *          normal variates scaled by the square roots of the eigenvalues.  The result is
+ *          rotated back to the original basis.  Supports construction from TMatrixDSym,
+ *          diagonal TVectorD, or a raw packed array.
+ */
 class TRandomVector: public TObject
 {
 public:

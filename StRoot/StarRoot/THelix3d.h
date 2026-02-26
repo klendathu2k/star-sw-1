@@ -1,3 +1,7 @@
+/*!
+ * \file THelix3d.h
+ * \brief Full 3D helix with magnetic-field-aware propagation, derivative matrices, and 5-parameter error propagation.
+ */
 #ifndef THELIX3D_H
 #define THELIX3D_H
 #include <assert.h>
@@ -12,6 +16,12 @@ enum THelix3dE2{kKT=0,kKU=1,kKV=2, kKdDdL=3};
 typedef double Mtx33D_t[3][3];
 typedef double Mtx43D_t[4][3];
 
+/*!
+ * \class TkDir_t
+ * \brief Local track coordinate frame: a 4×3 matrix holding the tangent (T), and two orthogonal
+ *        unit vectors (U, V) plus the dDdL derivative row, used to transform errors between
+ *        local and global coordinate systems.
+ */
 class TkDir_t
 {
   public:
@@ -37,6 +47,13 @@ protected:
 };
 
 
+/*!
+ * \class THDer3d_t
+ * \brief Transport (derivative) matrix for 3D helix error propagation.
+ * \details Holds the 5×5 Jacobian \c mDer mapping track parameters from one arc-length
+ *          position to another, together with the local frames \c mTkDir[2] at the two
+ *          endpoints and the arc length \c mLen.
+ */
 class THDer3d_t
 {
 public:
@@ -59,6 +76,14 @@ Mtx55D_t mDer;
 TkDir_t mTkDir[2];
 };
 
+/*!
+ * \class THEmx3d_t
+ * \brief 5-parameter helix error matrix in the 3D local (U, V, F, L, Pinv) basis.
+ * \details Stores the 15 independent elements of the symmetric 5×5 covariance matrix
+ *          for THelix3d: U (transverse-horizontal), V (transverse-vertical), F (azimuth),
+ *          L (dip angle), Pinv (inverse total momentum signed by charge).
+ *          A TkDir_t local frame is carried alongside.
+ */
 class THEmx3d_t
 { 
 public:
@@ -99,6 +124,14 @@ mUP, mVP, mFP, mLP, mPP;
 double   mLen;
 int      mTimes[2];
 };
+/*!
+ * \class THelix3d
+ * \brief Full 3D helix track with magnetic-field-aware propagation and optional error matrix.
+ * \details Extends THelixTrack_ with an explicit 3D position \c fX3d[3], momentum \c fP3d[3],
+ *          direction \c fD3d[3], magnetic field \c fH3d[4], and charge.  Supports Runge–Kutta
+ *          stepping via TRungeKutta and propagates a THEmx3d_t covariance through THDer3d_t
+ *          Jacobians when derivatives are enabled.
+ */
 class THelix3d : public THelixTrack_ 
 {
 public:

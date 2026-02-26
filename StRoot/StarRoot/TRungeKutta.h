@@ -1,9 +1,19 @@
+/*!
+ * \file TRungeKutta.h
+ * \brief Runge–Kutta track propagator in an arbitrary magnetic field with optional error transport.
+ */
 #ifndef TRUNGEKUTTA_H
 #define TRUNGEKUTTA_H
 #include <assert.h>
 #include <list>
 #include "THelix3d.h"
 
+/*!
+ * \class TRKuttaMag
+ * \brief Abstract magnetic-field functor for TRungeKutta propagation.
+ * \details Subclass and override \c operator()(const double X[3], double B[3]) to supply the
+ *          magnetic field vector \c B (in kGauss) at position \c X (in cm).
+ */
 class TRKuttaMag 
 {
   public:
@@ -17,13 +27,28 @@ class TRKuttaMag
 };  
 #define kMicron 1e-4
 
+/*!
+ * \class TRungeKutta
+ * \brief Fourth-order Runge–Kutta track propagator in a non-uniform magnetic field.
+ * \details Propagates a charged particle track through an arbitrary field provided by a
+ *          TRKuttaMag functor.  Optionally carries a THEmx3d_t covariance matrix and
+ *          propagates it via THDer3d_t transport matrices when derivative mode is on.
+ *          Exposes the same DCA and Path interface as THelix3d.
+ */
 class TRungeKutta : public TObject 
 {
 public:
+/*! \class TRungeKutta::TRKutaPars_t
+ *  \brief Track state vector at one propagation step: position X[3], direction D[3],
+ *         momentum P[3], and signed inverse momentum Pinv.
+ */
 class TRKutaPars_t { public: double X[3],D[3],P[3],Pinv;
                    void Update(){for (int i=0;i<3;i++){P[i]=D[i]/fabs(Pinv);}}
                    void Print(const char *tit) const;
 		   };
+/*! \class TRungeKutta::TRKutaPoint
+ *  \brief Record of one step point: arc length Len, track state pars, and field B[3].
+ */
 class TRKutaPoint {public: double Len; TRKutaPars_t pars; double B[3];};
 
 

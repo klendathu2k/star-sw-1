@@ -1,3 +1,8 @@
+/*!
+ * \file THelixTrack_.h
+ * \brief Underscore-suffixed helix primitives (TCEmx_t_, THEmx_t_, TCircle_, THelixTrack_)
+ *        used internally by THelix3d and TRungeKutta.
+ */
 #ifndef THELIXTRACK__H
 #define THELIXTRACK__H
 #include <assert.h>
@@ -7,6 +12,12 @@
 typedef double Mtx33D_t[3][3];
 typedef double Mtx55D_t[5][5];
 
+/*!
+ * \class TCEmx_t_
+ * \brief Internal 3-parameter circle error matrix (H, A, C) used by THelixTrack_.
+ * \details Equivalent to TCEmx_t in THelixTrack.h but residing in the underscore namespace
+ *          to avoid symbol collisions when both headers are included simultaneously.
+ */
 class TCEmx_t_
 { 
 public:
@@ -28,6 +39,11 @@ mHA, mAA,
 mHC, mAC, mCC;
 };
 
+/*!
+ * \class THEmx_t_
+ * \brief Internal 5-parameter helix error matrix (H, A, C, Z, L) used by THelixTrack_.
+ * \details Equivalent to THEmx_t in THelixTrack.h; see that class for field semantics.
+ */
 class THEmx_t_
 { 
 public:
@@ -61,6 +77,11 @@ mHL, mAL, mCL, mZL, mLL;
 };
 
 
+/*!
+ * \class TCircle_
+ * \brief Internal 2D circle track in the (XY) plane used by THelixTrack_.
+ * \details Equivalent to TCircle in THelixTrack.h; see that class for full documentation.
+ */
 class TCircle_: public TObject
 {
 friend class THelixTrack_;
@@ -211,6 +232,13 @@ ClassDef(TCircleFitter_,0)
 };
 
 
+/*!
+ * \class THelixTrack_
+ * \brief Internal full 3D helix base used by THelix3d and TRungeKutta.
+ * \details Equivalent to THelixTrack in THelixTrack.h but without the fDRho field.
+ *          Provides arc-length stepping, surface crossing, DCA, and 5-parameter error
+ *          transport via THEmx_t_.  Concrete users should prefer THelixTrack or THelix3d.
+ */
 class THelixTrack_ : public TObject 
 {
 public:

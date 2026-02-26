@@ -1,8 +1,20 @@
+/*!
+ * \file THelixTrack.h
+ * \brief 2D circle and full 3D helix track representations with error matrices and fitters.
+ */
 #ifndef THELIXTRACK_H
 #define THELIXTRACK_H
 #include "TObject.h"
 #include "TArrayD.h"
 #include "TPolinom.h"
+
+/*!
+ * \class TCEmx_t
+ * \brief 3-parameter circle error matrix in the (H, A, C) basis.
+ * \details Stores the 6 independent elements of the symmetric 3×3 error matrix for
+ *          the TCircle parameterisation: H (signed impact parameter), A (azimuth angle),
+ *          C (curvature).  Element order: mHH, mHA, mAA, mHC, mAC, mCC.
+ */
 //..............................................................................
 class TCEmx_t
 { 
@@ -27,7 +39,13 @@ mHA, mAA,
 mHC, mAC, mCC;
 };
 
-//..............................................................................
+/*!
+ * \class THEmx_t
+ * \brief 5-parameter helix error matrix in the (H, A, C, Z, L) basis.
+ * \details Stores the 15 independent elements of the symmetric 5×5 error matrix for
+ *          THelixTrack: H (signed impact), A (azimuth), C (curvature), Z (z-intercept),
+ *          L (dip angle lambda).  Element layout follows packed lower-triangular order.
+ */
 class THEmx_t
 { 
 public:
@@ -60,7 +78,13 @@ mHL, mAL, mCL, mZL, mLL;
 };
 
 
-//..............................................................................
+/*!
+ * \class TCircle
+ * \brief 2D circle track representation in the transverse (XY) plane.
+ * \details Stores position \c fX[2], unit direction \c fD[2], and curvature \c fRho,
+ *          together with an optional TCEmx_t error matrix.  Provides arc-length
+ *          stepping, rotation, and DCA calculations.
+ */
 class TCircle: public TObject
 {
 friend class THelixTrack;
@@ -129,7 +153,12 @@ class TCircleFitterAux
   double wt;		//calculated weight
 
 };
-//..............................................................................
+/*!
+ * \class TCircleFitter
+ * \brief Least-squares circle fitter accumulating 2D (and optional z) measurements.
+ * \details Inherits TCircle; accepts hits via Add() / AddErr(), performs the fit with
+ *          Fit(), and exposes chi-square, NDF, z-intercept, and tan(lambda) after fitting.
+ */
 class TCircleFitter: public TCircle
 {
 public:
@@ -213,7 +242,13 @@ ClassDef(TCircleFitter,0)
 };
 
 
-//..............................................................................
+/*!
+ * \class THelixTrack
+ * \brief Full 3D helix track with optional 5-parameter error matrix (THEmx_t).
+ * \details Parameterised by position \c fX[3], unit direction \c fP[3] (with \c fP[2] = sin λ),
+ *          curvature \c fRho, and dip-angle cosine \c fCosL.  Provides arc-length stepping,
+ *          surface-crossing, and DCA calculations in both 2D and 3D.
+ */
 class THelixTrack : public TObject 
 {
 public:

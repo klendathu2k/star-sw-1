@@ -1,3 +1,8 @@
+/*!
+ * \file StCloseFileOnTerminate.h
+ * \brief Signal-handler classes that close open ROOT files on SIGTERM, with an optional
+ *        user-defined callback mechanism.
+ */
 #ifndef STAR_STCLOSEFILEONTERMINATE
 #define STAR_STCLOSEFILEONTERMINATE
 // $Id: StCloseFileOnTerminate.h,v 1.7 2011/06/20 22:36:48 fisyak Exp $

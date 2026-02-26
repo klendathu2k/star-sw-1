@@ -1,5 +1,10 @@
 // Author: Victor Perev   08/04/01
 
+/*!
+ * \file TTreeIter.h
+ * \brief TTree/TChain iterator with type-safe branch access by name (TTreeIter) and
+ *        its cast-helper (TTreeIterCast).
+ */
 
 #ifndef ROOT_TTreeIter
 #define ROOT_TTreeIter
@@ -16,6 +21,14 @@
 #include "TString.h"
 class TChain;
 class TTreeIterMem;
+
+/*!
+ * \class TTreeIterCast
+ * \brief Type-safe branch value accessor returned by TTreeIter::operator().
+ * \details Provides implicit conversion operators for all ROOT fundamental branch types
+ *          (Char_t, Int_t, Float_t, Double_t, etc., and their pointer variants).
+ *          Call Addr() to obtain the raw void* address of the branch buffer.
+ */
 class TTreeIterCast
 {
  public:
@@ -57,6 +70,14 @@ class TTreeIterCast
 };
 
 
+/*!
+ * \class TTreeIter
+ * \brief TTree/TChain iterator providing branch access by name with automatic type casting.
+ * \details Wraps a TChain and exposes each entry's branch values through
+ *          \c operator()(branchName), which returns a TTreeIterCast.  Assign the result
+ *          directly to any matching C++ type.  Use Next() to advance to the next entry,
+ *          AddFile() to chain additional files, and Reset() to rewind.
+ */
 class TTreeIter : public TNamed{
   
  protected:

@@ -1,5 +1,9 @@
 // Author: Victor Perev   08/04/01
 
+/*!
+ * \file TIdTruUtil.h
+ * \brief Monte Carlo truth-identity accumulator: selects the dominant idTruth contributor.
+ */
 
 #ifndef ROOT_TIdTruUtil
 #define ROOT_TIdTruUtil
@@ -13,6 +17,13 @@
 //////////////////////////////////////////////////////////////////////////
 #include "TNamed.h"
 #include <map>
+
+/*!
+ * \class TIdTruUtil
+ * \brief Accumulates Monte Carlo truth-identity (idTruth) contributions and returns the dominant one.
+ * \details Accepts multiple (idTru, quality) pairs via Add(), then on GetIdTru()/GetQua() selects the
+ *          idTruth with the largest summed quality weight.  Clear() resets the accumulator.
+ */
 class TIdTruUtil: public TNamed
 {
 public:

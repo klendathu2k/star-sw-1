@@ -1,10 +1,11 @@
 // @(#)root/base:$Name:  $:$Id: TCFit.h,v 1.4 2010/01/27 21:36:37 perev Exp $
 // Author: Victor Perev   05/07/2007
-// Class for Fit with constrains. 
-// TCFit   - fitter
-// TCFitData - base class to define data
-// TCFitV0   - Example of user class, inherited from TCFitData. This class
-//             Fit V0's
+
+/*!
+ * \file TCFit.h
+ * \brief Constrained least-squares fitter (TCFit) and its data-interface base class (TCFitData),
+ *        plus a V0 decay example (TCFitV0) and track-parameter helpers (TkPars, TkErrs, VxPars, VxErrs).
+ */
 
 
 #ifndef ROOT_TCFit
@@ -16,6 +17,13 @@
 class TCFitData;
 
 
+/*!
+ * \class TCFit
+ * \brief Constrained least-squares fitter operating on a TCFitData-derived problem description.
+ * \details Iterates Newton–Raphson steps to minimise a chi-square subject to equality
+ *          constraints.  The fit result is exposed through the FitResult enum.
+ *          Measured, slack, and constraint parameters are managed by TCFitData.
+ */
 class TCFit : public TNamed {
 public:
 enum FitResult {
@@ -86,6 +94,14 @@ class Deriv1st;
 class Deriv2nd;
 class TCFit;
 
+/*!
+ * \class TCFitData
+ * \brief Abstract data interface for TCFit: registers parameters, constraints, and supplies Fcn/Con derivatives.
+ * \details Subclass this, call AddPar() to register measured and slack parameters and constraints,
+ *          then override Approx() (initial approximation), Fcn() (chi-square function), and
+ *          Update() (called when parameters change).  Optionally override DFcn()/DDFcn() and
+ *          DCon() to supply analytic derivatives; numerical differences are used otherwise.
+ */
 class TCFitData : public TNamed {
 friend class Deriv1st;
 friend class Deriv2nd;

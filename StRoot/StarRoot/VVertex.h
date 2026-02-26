@@ -1,3 +1,7 @@
+/*!
+ * \file VVertex.h
+ * \brief Abstract base class for ESD and AOD vertices (ported from ALICE AliVVertex).
+ */
 #ifndef VVertex_H
 #define VVertex_H
 /* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
@@ -10,6 +14,16 @@
 
 #include <TNamed.h>
 
+/*!
+ * \class VVertex
+ * \brief Abstract base class representing a reconstructed interaction or decay vertex.
+ * \details Inherits from TNamed and provides a pure-virtual interface shared by ESD and AOD
+ *          vertex implementations.  Concrete subclasses must supply:
+ *          GetXYZ(), GetX(), GetY(), GetZ(), GetCovarianceMatrix(),
+ *          GetChi2perNDF(), GetChi2(), GetNDF(), GetNContributors(),
+ *          PrintIndices(), and Print().
+ * \note Originally adapted from ALICE AliVVertex.
+ */
 class VVertex: public TNamed {
 
 public:

@@ -1,8 +1,20 @@
+/*!
+ * \file TMDFParameters.h
+ * \brief Multi-dimensional function (MDF) parameterisation based on Chebyshev polynomials.
+ */
 #ifndef __TMDFParameters__
 #define __TMDFParameters__
 #include "TArrayI.h"
 #include "TArrayD.h"
 #include "TF2.h"
+/*!
+ * \class TMDFParameters
+ * \brief Evaluates a multi-dimensional function expanded in Chebyshev polynomials.
+ * \details Stores variable ranges, mean values, expansion coefficients, and their
+ *          uncertainties.  Eval() sums the Chebyshev expansion; dEval() returns the
+ *          uncertainty via error propagation.  A singleton pattern (Instance()) allows
+ *          global access from static ROOT callbacks.
+ */
 class TMDFParameters : public TObject {
  public:
   TMDFParameters(Double_t mean = 0, 

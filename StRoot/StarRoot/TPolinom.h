@@ -1,9 +1,21 @@
+/*!
+ * \file TPolinom.h
+ * \brief Polynomial evaluation with error propagation (TPolinom) and least-squares polynomial fitter (TPoliFitter).
+ */
 #ifndef TPOLINOM_H
 #define TPOLINOM_H
 #include "TObject.h"
 #include "TArrayD.h"
 #include "TMatrixD.h"
 
+/*!
+ * \class TPolinom
+ * \brief Polynomial with optional coefficient covariance matrix for error propagation.
+ * \details Stores \c fNP+1 coefficients in \c fCoe[] and the associated packed covariance
+ *          in \c fEmx[].  Provides evaluation, derivative, and variance-of-evaluation
+ *          methods.  The zero-arg default constructor creates an uninitialised polynomial
+ *          (npw = -1).
+ */
 class TPolinom : public TObject
 {
 public:
@@ -17,10 +29,14 @@ virtual ~TPolinom();
    void  Backward();
 virtual void   Print(const char* chopt = "") const;
 virtual void   Clear(const char *opt ="");
+  /// Evaluate the polynomial at \p x.
   double Eval (double x) const;
   double operator()(double x) const 	{return Eval(x);}
+  /// Evaluate the variance of the polynomial at \p x using the coefficient covariance matrix.
   double Evrr (double x) const;
+  /// Return the first derivative of the polynomial at \p x.
   double Deriv(double x) const;
+  /// Translate the polynomial origin: replace x with (x + \p x).
   void   Move(double x);
   const double *Coe() const 		{return fCoe;}
   const double *Emx()      const 	{return fEmx;}
@@ -40,6 +56,13 @@ ClassDef(TPolinom,0)
 };
 
 
+/*!
+ * \class TPoliFitter
+ * \brief Least-squares polynomial fitter accumulating (x, y, weight) data points.
+ * \details Extends TPolinom; coefficients are fitted via orthogonal polynomials.
+ *          After Fit(), the standard TPolinom interface (Eval, Deriv, Evrr) gives the
+ *          fitted polynomial and its propagated uncertainty.
+ */
 class TPoliFitter: public TPolinom
 {
 public:

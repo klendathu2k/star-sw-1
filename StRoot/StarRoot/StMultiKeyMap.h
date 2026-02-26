@@ -1,9 +1,20 @@
+/*!
+ * \file StMultiKeyMap.h
+ * \brief Multi-key binary-tree map: associate objects with multiple float keys and perform range queries.
+ */
 #ifndef MULTIKEYMAP_H
 #define MULTIKEYMAP_H
 #include <vector>
 class StMultiKeyMapIter;
 class StMultiKeyNode;
 
+/*!
+ * \class StMultiKeyMap
+ * \brief k-d tree map that associates arbitrary objects with an array of float keys.
+ * \details Objects are inserted with Add() together with their key arrays.  After all
+ *          insertions call MakeTree() to build the balanced binary search tree.  Use
+ *          StMultiKeyMapIter to perform box range queries.
+ */
 class StMultiKeyMap
 {
 friend class StMultiKeyMapIter;
@@ -34,6 +45,12 @@ std::vector<StMultiKeyNode*> mArr; //!
 
 
 
+/*!
+ * \class StMultiKeyNode
+ * \brief Single node in the StMultiKeyMap k-d tree, storing one object and its key array.
+ * \details Maintains left/right subtree pointers and balancing counts.  Users should not
+ *          create nodes directly; use StMultiKeyMap::Add() instead.
+ */
 class StMultiKeyNode
 {
 friend class StMultiKeyMapIter;
@@ -80,6 +97,13 @@ int    mId;
 };
 
 
+/*!
+ * \class StMultiKeyMapIter
+ * \brief Iterator for box range queries over a StMultiKeyMap k-d tree.
+ * \details Constructed with optional key-minimum and key-maximum arrays to restrict
+ *          iteration to objects whose keys fall within the specified hyper-rectangle.
+ *          Advance with \c operator++; dereference with \c operator* to get the current node.
+ */
 class StMultiKeyMapIter
 {
 public:

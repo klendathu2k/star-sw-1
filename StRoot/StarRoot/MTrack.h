@@ -1,6 +1,17 @@
+/*!
+ * \file MTrack.h
+ * \brief Simple track data structure with 6 state parameters and covariance matrix.
+ */
 #ifndef VTrack_H
 #define VTrack_H
 
+/*!
+ * \class MTrack
+ * \brief Lightweight track representation storing position, momentum, covariance, chi2, NDF, and charge.
+ * \details Holds six state parameters (x, y, z, px, py, pz) in \c fP[6], a packed 21-element
+ *          upper-triangular covariance matrix in \c fC[21], chi-square, degrees of freedom, and
+ *          the track charge. No ROOT persistency; intended for KF-style vertex-finding consumers.
+ */
 class MTrack
 {
 
@@ -83,12 +94,12 @@ public:
 
  private:
 
-  int ID;
-  double fP[6];  //coordinates of the vertex
-  double fC[21];  //Covariance matrix of the vertex parameters
-  double fChi2;  //chi-square of the vertex fitting
-  int fQ;     //charge
-  int fNDF;  //degree of freedom number
+  int ID;           ///< Unique track identifier
+  double fP[6];     ///< State vector: (x, y, z, px, py, pz)
+  double fC[21];    ///< Packed upper-triangular covariance matrix (21 independent elements)
+  double fChi2;     ///< Chi-square of the track fit
+  int fQ;           ///< Track charge
+  int fNDF;         ///< Number of degrees of freedom of the fit
 };
 
 #endif

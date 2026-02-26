@@ -1,3 +1,7 @@
+/*!
+ * \file StMultyKeyMap.h
+ * \brief Legacy multi-key map with binned k-d tree; "Multy" spelling is intentional for backward compatibility.
+ */
 #ifndef MULTYKEYMAP_H
 #define MULTYKEYMAP_H
 #include <vector>
@@ -6,6 +10,13 @@ class StMultyKeyMapIter;
 class StMultyKeyNode;
 class StMultyKeyMap;
 
+/*!
+ * \class StMultyKeyNode
+ * \brief Abstract base node for StMultyKeyMap tree entries.
+ * \details Concrete node types are StMultyKeyPair (leaf, holds an object and its keys)
+ *          and StMultyKeyDivd (internal split node).
+ * \note The "Multy" spelling is a legacy name retained for backward compatibility.
+ */
 class StMultyKeyNode
 {
 public:
@@ -44,6 +55,12 @@ int mId;
 };
 
 
+/*!
+ * \class StMultyKeyDivd
+ * \brief Internal split node for StMultyKeyMap's binned k-d tree.
+ * \details Stores the key index used for splitting, the bin boundaries (mDow, mStp),
+ *          and a variable-length array of child links.
+ */
 class StMultyKeyDivd: public StMultyKeyNode
 {
 friend class StMultyKeyMap;
@@ -69,6 +86,10 @@ FKeys_t mDow;
 FKeys_t mStp;
 };
 
+/*!
+ * \class StMultyKeyPair
+ * \brief Leaf node for StMultyKeyMap, associating one user object with its key array.
+ */
 class StMultyKeyPair: public StMultyKeyNode
 {
 friend class StMultyKeyMap;
@@ -88,6 +109,14 @@ const void *mObj;		//Some user object mapped to keys
 FKeys_t mKeys;			//keys for this object
 };
 
+/*!
+ * \class StMultyKeyMap
+ * \brief Binned k-d tree map that associates arbitrary objects with multiple float keys.
+ * \details Extends StMultyKeyDivd (the root split node).  Add objects with Add(), then
+ *          call MakeTree() to build the balanced tree.  StMultyKeyMapIter performs
+ *          hyper-rectangle range queries.
+ * \note The "Multy" spelling is intentional legacy; prefer StMultiKeyMap for new code.
+ */
 class StMultyKeyMap: public StMultyKeyDivd
 {
 friend class StMultyKeyMapIter;
@@ -125,6 +154,13 @@ std::list<StMultyKeyDivd*> mNodes; //!
 };
 
 
+/*!
+ * \class StMultyKeyMapIter
+ * \brief Iterator for box range queries over a StMultyKeyMap binned k-d tree.
+ * \details Constructed with optional kMin and kMax float arrays defining a
+ *          hyper-rectangle; only objects with all keys in [kMin, kMax] are yielded.
+ *          Advance with \c operator++; dereference with \c operator* for the current node.
+ */
 class StMultyKeyMapIter
 {
 public:

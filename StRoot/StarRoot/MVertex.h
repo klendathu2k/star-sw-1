@@ -1,6 +1,18 @@
+/*!
+ * \file MVertex.h
+ * \brief Simple vertex data structure with 3D position, covariance matrix, chi2, NDF, and contributor count.
+ */
 #ifndef MVertex_H
 #define MVertex_H
 
+/*!
+ * \class MVertex
+ * \brief Lightweight vertex representation storing (x, y, z), a 6-element covariance matrix,
+ *        chi-square, degrees of freedom, and the number of contributing tracks.
+ * \details Holds three position coordinates in \c fP[3] and a packed lower-triangular 3×3
+ *          covariance matrix in \c fC[6] (elements C00, C10, C11, C20, C21, C22).
+ *          No ROOT persistency; intended for KF-style vertex consumers.
+ */
 class MVertex
 {
  public:
@@ -57,11 +69,11 @@ class MVertex
 
  private:
 
-  double fP[3];  //coordinates of the vertex
-  double fC[6];  //Covariance matrix of the vertex parameters
-  double fChi2;  //chi-square of the vertex fitting
-  int fNContributors; // number of tracks, from which the vertex was builded
-  int fNDF;  //degree of freedom number
+  double fP[3];           ///< Vertex position: (x, y, z) in cm
+  double fC[6];           ///< Packed lower-triangular 3×3 covariance matrix: C00, C10, C11, C20, C21, C22
+  double fChi2;           ///< Chi-square of the vertex fit
+  int fNContributors;     ///< Number of tracks used to reconstruct this vertex
+  int fNDF;               ///< Number of degrees of freedom of the vertex fit
 };
 
 #endif

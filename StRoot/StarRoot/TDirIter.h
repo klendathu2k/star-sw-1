@@ -1,3 +1,7 @@
+/*!
+ * \file TDirIter.h
+ * \brief Recursive directory iterator with optional regular-expression file filtering.
+ */
 #ifndef ROOT_TDirIter
 #define ROOT_TDirIter
 
@@ -12,6 +16,14 @@
 #include "TRegexp.h"
 
 class TOBjArray;
+
+/*!
+ * \class TDirIter
+ * \brief Recursive directory iterator with optional regex-based file filtering.
+ * \details Traverses a directory tree up to \c maxlev levels deep, yielding one file path
+ *          per call to NextFile().  A glob-style pattern embedded in the initial path
+ *          string is converted to a TRegexp for file selection.
+ */
 class TDirIter
 {
 public:

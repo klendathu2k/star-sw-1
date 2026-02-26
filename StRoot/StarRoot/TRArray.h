@@ -1,3 +1,7 @@
+/*!
+ * \file TRArray.h
+ * \brief Base double-precision array class with named element operations and matrix-type enum.
+ */
 #ifndef ROOT_TRArray
 #define ROOT_TRArray
 #include <assert.h>
@@ -26,8 +30,17 @@
 
 
 
+/*!
+ * \class TRArray
+ * \brief Base double-precision array extending TArrayD with matrix semantics.
+ * \details Provides named-element operator(), validity flag, magnitude, and a suite of
+ *          arithmetic operators (+, -, *, /).  Subclassed by TRMatrix, TRSymMatrix,
+ *          TRDiagMatrix, and TRVector.
+ *          \c ETRMatrixType enumerates the storage layout used by each subclass.
+ */
 class TRArray : public TArrayD {
  public:
+  /// Matrix storage/layout type tag used by subclasses.
   enum ETRMatrixType {kUndefined, kVector, kRectangular, kSemiPosDefinedSymMatrix, kDiagonalMatrix};
   enum ETRMatrixCreatorsOp { kZero, kUnit, kTransposed, kInverted, kInvertedPosDef, kInvertedA,
 			     kMult, 

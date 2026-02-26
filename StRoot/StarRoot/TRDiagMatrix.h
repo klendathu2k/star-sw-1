@@ -1,8 +1,19 @@
+/*!
+ * \file TRDiagMatrix.h
+ * \brief Diagonal double-precision matrix storing only the diagonal elements.
+ */
 #ifndef ROOT_TRDiagMatrix
 #define ROOT_TRDiagMatrix
 #include "TRArray.h"
 class TRMatrix;
 class TRVector;
+/*!
+ * \class TRDiagMatrix
+ * \brief Diagonal double-precision matrix; only the \c n diagonal elements are stored.
+ * \details Reduces storage from n² to n elements.  Off-diagonal element access via
+ *          operator()(i,j) is defined but uses packed lower-triangular indexing for
+ *          compatibility with TRSymMatrix routines.
+ */
 class TRDiagMatrix : public TRArray {
  public:
   TRDiagMatrix(Int_t nrows=0) : TRArray(nrows), fNrows(nrows) {}

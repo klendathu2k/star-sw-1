@@ -1,9 +1,20 @@
+/*!
+ * \file TRVector.h
+ * \brief Column vector inheriting TRMatrix with convenience constructors and 3D conversions.
+ */
 #ifndef ROOT_TRVector
 #define ROOT_TRVector
 #include "TRMatrix.h"
 #include "TRSymMatrix.h"
 #include "TVector3.h"
 #include "StThreeVectorD.hh"
+/*!
+ * \class TRVector
+ * \brief Column vector inheriting TRMatrix (single column, n rows).
+ * \details Adds vector-specific operations (Cross(), Unit()), conversions to/from
+ *          TVector3 and StThreeVectorD, and arithmetic operators.  Storage is identical
+ *          to a single-column TRMatrix (row-major, ncols = 1).
+ */
 class TRVector : public TRMatrix {
  public:
   TRVector(Int_t nrows=0);

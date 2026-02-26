@@ -1,10 +1,14 @@
+/*!
+ * \file THack.h
+ * \brief Collection of static utility functions for low-level ROOT object manipulation.
+ */
 #ifndef ROOT_THack
 #define ROOT_THack
 
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// THack                                                             //
+// THack                                                                //
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
@@ -12,8 +16,14 @@ class TClonesArray;
 class TPad;
 class TDirectory;
 class TString;
-class TTree; 
+class TTree;
 
+/*!
+ * \class THack
+ * \brief Static utility class for low-level ROOT object manipulation not covered by the public API.
+ * \details Provides helpers for safe TClonesArray deletion/clearing, pad refresh, histogram
+ *          directory release, tokenised line parsing, and TTree writability checks.
+ */
 class THack 
 {
 public:

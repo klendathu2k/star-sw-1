@@ -1,3 +1,7 @@
+/*!
+ * \file TRSymMatrix.h
+ * \brief Symmetric double-precision matrix with packed lower-triangular storage.
+ */
 #ifndef ROOT_TRSymMatrix
 #define ROOT_TRSymMatrix
 #include "TRArray.h"
@@ -5,6 +9,14 @@
 class TRMatrix;
 class TRVector;
 class TDiagMatrix;
+/*!
+ * \class TRSymMatrix
+ * \brief Symmetric double-precision matrix with packed lower-triangular storage.
+ * \details Stores \c n*(n+1)/2 elements: element (i,j) (i≥j) maps to index
+ *          \c j + (j+1)*j/2.  Inversion is performed in-place via TCL::trsinv.
+ * \note The matrix is assumed to be positive semi-definite for the SpmInv() and
+ *       Inverse() operations.
+ */
 class TRSymMatrix : public TRArray {
  public:
   TRSymMatrix(Int_t nrows=0) : TRArray(nrows*(nrows+1)/2), fNrows(nrows) {}

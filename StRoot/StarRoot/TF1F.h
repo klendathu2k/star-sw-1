@@ -1,7 +1,18 @@
+/*!
+ * \file TF1F.h
+ * \brief TF1 subclass with a default fNpx of 200 and a cached save-array interpolation helper.
+ */
 #ifndef TF1F_h
 #define TF1F_h
 #include "TF1.h"
 #include <string.h>
+/*!
+ * \class TF1F
+ * \brief TF1 with a 200-point default sampling density and interpolated save-array lookup.
+ * \details Overrides Save() to record the function on a fine grid, and provides
+ *          GetSaveL() overloads for efficient interpolation without re-evaluating the
+ *          function formula.  Compatible with both ROOT 5 and ROOT 6 constructor APIs.
+ */
 class TF1F : public TF1 {
  public:
 #if ROOT_VERSION_CODE < 393216 /* = ROOT_VERSION(6,0,0) */

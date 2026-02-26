@@ -1,15 +1,25 @@
+/*!
+ * \file TH1Helper.h
+ * \brief Histogram statistics helper that computes mean, RMS, and integral over a sub-range.
+ */
 #ifndef ROOT_TH1Helper
 #define ROOT_TH1Helper
 
 
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// TH1Helper                                                             //
+// TH1Helper                                                            //
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 #include "TH1.h"
 
+/*!
+ * \class TH1Helper
+ * \brief Computes mean, RMS, and integral of a TH1 over a specified bin or x-value range.
+ * \details The range can be set by bin indices or by x-axis values.  Statistics are
+ *          recomputed lazily when the setter is called.
+ */
 class TH1Helper: public TObject
 {
 public:
