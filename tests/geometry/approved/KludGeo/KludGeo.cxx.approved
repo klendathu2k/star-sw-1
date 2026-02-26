@@ -1,0 +1,325 @@
+#include "KludGeo.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace KLUDGEO // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          ///@addtogroup KludGeo_vars     
+          ///@{        
+                int i;        
+                //        
+                /// int i        
+          ///@}     
+          kcfg_t *__kcfg = new kcfg_t; // dummy
+ AgMLStructure<kcfg_t,kcfg_info> KCFG("kcfg");
+kcfg_t &kcfg = KCFG;
+     
+          // Selectors for kcfg
+isEqual<kcfg_t, float> __kcfg_version__( __kcfg, &__kcfg->version );
+isEqual<kcfg_t, float> __kcfg_ntube__( __kcfg, &__kcfg->ntube );
+isEqual<kcfg_t, int> __kcfg__index__( __kcfg, &__kcfg->_index );
+     
+          
+	void              *kcfg_info::address   = &kcfg;
+	AgMLStructureBase   *kcfg_info::structure = &KCFG;
+     
+          ktub_t *__ktub = new ktub_t; // dummy
+ AgMLStructure<ktub_t,ktub_info> KTUB("ktub");
+ktub_t &ktub = KTUB;
+     
+          // Selectors for ktub
+isEqual<ktub_t, int> __ktub__index__( __ktub, &__ktub->_index );
+     
+          
+	void              *ktub_info::address   = &ktub;
+	AgMLStructureBase   *ktub_info::structure = &KTUB;
+     
+       KludGeo::KludGeo()     
+         : AgModule("KludGeo"," is a Kludge Geometry ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *KTUB::mInstance = 0;     
+          AgBlock *KTUB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new KTUB();        
+                   return mInstance;        
+          }     
+          void KTUB::Block( AgCreate create )     
+          {         
+                ///@addtogroup KTUB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material ALUMINIUM            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Material KLUDGE_MATERIAL a=ktub_aa(i) z=ktub_zz(i) dens=ktub_dd(i) isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Kludge_material");              
+                            mat.par("a")=ktub.aa[int(i)-1];              
+                            mat.par("z")=ktub.zz[int(i)-1];              
+                            mat.par("dens")=ktub.dd[int(i)-1];              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("KTUB");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_KTUB;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_KTUB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block KTUB     
+    // ----------------------------------------------------------------------- geoctr
+       void KludGeo::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup KludGeo_revision        
+             ///@{           
+                   /// Created: 04/01/2018           
+             ///@}        
+             ///@addtogroup KludGeo_revision        
+             ///@{           
+                   /// Author: Jason Webb           
+             ///@}        
+             AddBlock("KTUB", KTUB::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill kcfg
+++kcfg._index;
+kcfg.version = 1.0;
+// kcfg_docum.version = "default versioning";
+kcfg.ntube = 0;
+// kcfg_docum.ntube = "default none";
+KCFG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill ktub
+++ktub._index;
+{
+ktub_info::z::Type temp = {
+ktub_info::z::BaseType(-1000),
+ktub_info::z::BaseType(-900),
+ktub_info::z::BaseType(-800),
+ktub_info::z::BaseType(-700),
+ktub_info::z::BaseType(-600),
+ktub_info::z::BaseType(+600),
+ktub_info::z::BaseType(+700),
+ktub_info::z::BaseType(+800),
+ktub_info::z::BaseType(+900),
+ktub_info::z::BaseType(+1000)
+}
+;
+memcpy(&ktub.z, &temp, sizeof(temp));;
+}
+// ktub_docum.z = "z positions";
+{
+ktub_info::dz::Type temp = {
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5),
+ktub_info::dz::BaseType(0.5)
+}
+;
+memcpy(&ktub.dz, &temp, sizeof(temp));;
+}
+// ktub_docum.dz = "z positions";
+{
+ktub_info::rmn::Type temp = {
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.),
+ktub_info::rmn::BaseType(5.)
+}
+;
+memcpy(&ktub.rmn, &temp, sizeof(temp));;
+}
+// ktub_docum.rmn = "min radius";
+{
+ktub_info::rmx::Type temp = {
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.),
+ktub_info::rmx::BaseType(255.)
+}
+;
+memcpy(&ktub.rmx, &temp, sizeof(temp));;
+}
+// ktub_docum.rmx = "max radius";
+{
+ktub_info::aa::Type temp = {
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27),
+ktub_info::aa::BaseType(27)
+}
+;
+memcpy(&ktub.aa, &temp, sizeof(temp));;
+}
+// ktub_docum.aa = "Default is aluminum";
+{
+ktub_info::zz::Type temp = {
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13),
+ktub_info::zz::BaseType(13)
+}
+;
+memcpy(&ktub.zz, &temp, sizeof(temp));;
+}
+// ktub_docum.zz = "Default is aluminum";
+{
+ktub_info::dd::Type temp = {
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7),
+ktub_info::dd::BaseType(2.7)
+}
+;
+memcpy(&ktub.dd, &temp, sizeof(temp));;
+}
+// ktub_docum.dd = "Default is aluminum";
+KTUB.fill();
+        
+             /// USE kcfg _index=1;        
+             KCFG.use( __kcfg__index__ = 1 );
+        
+             /// USE ktub _index=1;        
+             KTUB.use( __ktub__index__ = 1 );
+        
+             /// Loop on i from 1 to kcfg.ntube step=1        
+             for ( i=1; (1>0)? (i<=kcfg.ntube):(i>=kcfg.ntube); i+=1 )        
+             {           
+                   _create = AgCreate("KTUB");           
+                   {              
+                         AgShape myshape; // undefined shape              
+                         ///Create KTUB              
+                         Create("KTUB");               
+                   }           
+                   {              
+                         AgPosition  place;              
+                         place.SetBlock("KTUB");              
+                         place.SetMother("CAVE");              
+                         /// Add daughter volume KTUB to mother CAVE              
+                         place.TranslateX(0);              
+                         /// Translate x = 0              
+                         place.TranslateY(0);              
+                         /// Translate y = 0              
+                         place.TranslateZ(ktub.z[int(i)-1]);              
+                         /// Translate z = ktub.z[int(i)-1]              
+                         place.par("only")=AgPosition::kMany;              
+                         /// Overlap: agposition::kmany              
+                         place.par("dz")=ktub.dz[int(i)-1];              
+                         place.par("rmin")=ktub.rmn[int(i)-1];              
+                         place.par("rmax")=ktub.rmx[int(i)-1];              
+                         _stacker -> Position( AgBlock::Find("KTUB"), place );              
+                   } // end placement of KTUB           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:Placeeffectivetube%2i",i)  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:z=%7.2f",ktub.z[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:dz=%7.3f",ktub.dz[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:rmin=%7.3f",ktub.rmn[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:rmax=%7.3f",ktub.rmx[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:A=%7.2f",ktub.aa[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:Z=%7.2f",ktub.zz[int(i)-1])  );           
+                   // - Info -            
+                   Info( GetName(), Form("KludGeo:dens=%7.2f",ktub.dd[int(i)-1])  );           
+             }        
+       }; // KludGeo     
+ }; // namespace KludGeo  
+ 

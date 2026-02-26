@@ -1,0 +1,251 @@
+      MODULE IstdGeo0    is the the STAR IST detector test
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created   12/06/14
+      Author Jonathan Bouchet
+      +CDE,agecom.
+      +CDE,gcunit.
+      real *4 aangle,bangle, raddeg, IniX, IniY, Module_Thk, Ladder_Thk, Ladder_Width,
+             Ladder_Length, xpos, ypos, zpos, ModuleRadius, Half
+
+      Integer *4 nl, ly, nu, cable, istLayer, debug
+
+      CONTENT IBMO,
+      IBAM,
+      IBLM,
+      IBSS,
+      IBSP
+      STRUCTURE ISMG { int Version,int SubVersion,Rin,Rout}
+      STRUCTURE ISBG { int Layer,int nLadder,int nUnit,Radius,Tilt,Gap}
+      STRUCTURE ISAN { int Version,Rmin,Thk}
+      STRUCTURE ISSS { int Version,ActiveW,ActiveH,ActiveThk,PassiveThk}
+      STRUCTURE PARO { int version,DX,DY,DZ,mult,int lad(24)}
+      STRUCTURE PARA { int version,DA,DB,DG,mult,int lad(24)}
+      FILL ISMG		! Mother Volume whole detector
+      Version = 1.0 !  Version, this goes to g2t_volume_id.g !!
+      SubVersion = 0 !  For future use with g2t_volume_id.g
+      Rin = 13.50 ! Inner Radius
+      Rout = 15.0 ! Outer Radius (Length = Ladder length)
+      ENDFILL
+      FILL ISBG		! Inner Silicon Tracker Parameters
+      Layer = 1.0 !  Layer index, just one layer left
+      nLadder = 24 !  Number of ladders in this layers
+      nUnit = 12 ! Number of sensors per ladder in this layer
+      Radius = 14.0 !  Radius centers of active silicon sensors
+      Tilt = 15.0 !  Tilt angle of the ladders
+      Gap = 0.0 !  Gaps btw the sensors
+      ENDFILL
+      FILL ISAN		! Radiation length equivalent tube
+      Version = 1 ! Version
+      Rmin = 14.2 ! InnerRadius (length = ladder length)
+      Thk = 0.0636 ! Thickness (1% RL silicon)
+      ENDFILL
+      FILL ISSS		! Silicon Sensor
+      Version = 1 !  Version
+      ActiveW = 3.6823 !  Active Area Width
+      ActiveH = 4.0400 !  Active area Height
+      ActiveThk = 0.0300 !  Active Area Thickness
+      PassiveThk = 0.0800 !  Passive Area Thickness
+      ENDFILL
+      FILL PARO		! default
+      version = 0 ! None
+      DX = 0 !  default : no shift
+      DY = 0 !  default : no shift
+      DZ = 0 !  default : no shift
+      mult = 0 !  default : no shift
+      lad  = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+                0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0} !  1..24
+      ENDFILL
+      FILL PARO		! shift
+      version = 1 ! None
+      DX = 0 !  shift for all ladders
+      DY = 0 !  default = no shift
+      DZ = 1 !  default = no shift
+      mult = 5 !  max is 1 cm
+      lad  = {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 
+                1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1} !  1..24
+      ENDFILL
+      FILL PARA		! default
+      version = 0 ! None
+      DA = 0 !  default = no rot
+      DB = 0 !  default = no rot.
+      DG = 0 !  default = no rot.
+      mult = 0 !  default = no rot.
+      lad  = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+                0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0} !  1..24
+      ENDFILL
+      FILL PARA		! rotation gamma
+      version = 1 ! None
+      DA = 0 !  no rot.
+      DB = 0 !  no rot.
+      DG = 1 !  rot. for all ladders
+      mult = 1 !  max is 1 degrees
+      lad  = {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 
+                1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1} !  1..24
+      ENDFILL
+      raddeg           = 3.14159265/180.0
+      Half = ISBG_Tilt/2.0
+      use ISMG version=1
+      use ISAN version=1
+      use ISSS version=1
+      use PARO version=0
+      use PARA version=0
+      Module_Thk = ISSS_ActiveThk+ISSS_PassiveThk
+      Ladder_Thk = Module_Thk
+      Ladder_Width = ISSS_ActiveW
+      debug = 0
+      Ladder_Length = ISBG_nUnit*ISSS_ActiveH
+      CREATE IBMO
+      CALL AgsReset 
+      CALL agml_position_begin('IBMO') 
+      %mother = 'IDSM' 
+      %title = 'IBMO' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- IBMO
+      BLOCK IBMO   Main volume in the AgML geometry
+      MATERIAL Air
+      ATTRIBUTE IBMO seen=0 colo=1
+      SHAPE tube rmin=ISMG_Rin rmax=ISMG_Rout,
+            dz=Ladder_Length/2.0
+      ModuleRadius = ISBG_Radius + Module_Thk/2.0 - ISSS_ActiveThk/2.0
+      DO nl = 1, ISBG_nLadder
+      aangle=(360.0/ISBG_nLadder)*nl - ISBG_Tilt
+      bangle=(aangle+ISBG_Tilt)*raddeg
+      IniX=0.0
+      IniY=0.0
+      IF ( debug==1 ) THEN
+      <W> PARO_DX*PARO_mult;  ('shift in X =', F6.4);
+      <W> PARO_DY*PARO_mult;  ('shift in Y =', F6.4);
+      <W> PARO_DZ*PARO_mult;  ('shift in Z =', F6.4);
+      ENDIF
+      xpos=ModuleRadius*sin((aangle+Half)*raddeg) + (PARO_DX*PARO_mult)*PARO_lad(nl)
+      ypos=ModuleRadius*cos((aangle+Half)*raddeg) + (PARO_DY*PARO_mult)*PARO_lad(nl)
+      zpos=0.0                                    + (PARO_DZ*PARO_mult)*PARO_lad(nl)
+      IF ( debug==1 ) THEN
+      <W> aangle;  ('aabgle=', F6.3);
+      <W> bangle;  ('bangle=', F6.3);
+      <W> xpos;  ('x=', F6.3);
+      <W> ypos;  ('y=', F6.3);
+      ENDIF
+      CREATE IBAM
+      IF ( debug==1 ) THEN
+      <W> PARA_DA*PARA_mult;  ('rot along X =', F6.4);
+      <W> PARA_DB*PARA_mult;  ('rot along Y =', F6.4);
+      <W> PARA_DG*PARA_mult;  ('rot along Z =', F6.4);
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBAM') 
+      %mother = 'IBMO' 
+      %title = 'IBAM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = real(-1*aangle-(ISBG_Tilt + PARA_DG*PARA_mult*PARA_lad(nl))) 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = real(-1*(PARA_DA*PARA_mult)*PARA_lad(nl)) 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphay = real(-1*(PARA_DB*PARA_mult)*PARA_lad(nl)) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBAM
+      BLOCK IBAM   is the mother of the whole lomg ladder
+      MATERIAL Air
+      ATTRIBUTE IBAM seen=0 colo=6
+      SHAPE box dx=Ladder_Width/2.0 dy=Ladder_Thk/2.0,
+            dz=Ladder_Length/2.0
+      DO nu = 1, ISBG_nUnit
+      CREATE IBLM
+      IF ( debug==1 ) THEN
+      <W> -1.0*Ladder_Length/2.+ISSS_ActiveH*(nu-0.5);  ('zpos=', F6.3);
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBLM') 
+      %mother = 'IBAM' 
+      %title = 'IBLM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-1.0*Ladder_Length/2.+ISSS_ActiveH*(nu-0.5)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBLM
+      BLOCK IBLM   mother of the sensor assembly
+      MATERIAL Air
+      ATTRIBUTE IBLM seen=0 colo=2
+      SHAPE box dx=Ladder_Width/2.0 dy=Module_Thk/2.0,
+            dz=ISSS_ActiveH/2.0
+      CREATE IBSS
+      CALL AgsReset 
+      CALL agml_position_begin('IBSS') 
+      %title = 'IBSS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((-1.0*Module_Thk/2.0)+(ISSS_ActiveThk/2.0)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSP
+      CALL AgsReset 
+      CALL agml_position_begin('IBSP') 
+      %title = 'IBSP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((1.0*Module_Thk/2.0)-(ISSS_PassiveThk/2.0)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSP
+      BLOCK IBSP   is the Silicon Sensor Passive Area
+      MATERIAL Silicon
+      MATERIAL PassiveSilicon isvol=0
+      ATTRIBUTE IBSP seen=1 colo=4
+      SHAPE box dx=ISSS_ActiveW/2.0 dy=ISSS_PassiveThk/2.0,
+            dz=ISSS_ActiveH/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSS
+      BLOCK IBSS   is the Silicon Sensor Active Area
+      MATERIAL Silicon
+      MATERIAL ISTSSensitive isvol=1
+      ATTRIBUTE IBSS seen=1 colo=2
+      SHAPE box dx=ISSS_ActiveW/2.0 dy=ISSS_ActiveThk/2.0,
+            dz=ISSS_ActiveH/2.0
+      HITS IBSS z:.001:S y:.001: x:.001: ptot:16:(0,100) cx:10: cy:10: cz:10: sleng:16:(0,500),
+            tof:16: step:.01: eloss:16:
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module IstdGeo0]	 <<==='; (A32,/,/);
+      END! Module IstdGeo0

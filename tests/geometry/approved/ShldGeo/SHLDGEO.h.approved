@@ -1,0 +1,446 @@
+#ifndef __SHLDGEO__ 
+#define __SHLDGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace SHLDGEO // $NMSPC 
+{ 
+   struct shlg_t {
+float version;
+float z;
+float dx;
+float dy;
+float dz;
+float baselevel;
+float basez;
+float basedx;
+float basedy;
+float slabx;
+float slabz;
+float slabdy;
+float slabdz;
+float fidz;
+float fidy;
+float holex;
+float holey;
+float floorthk;
+float floorlen;
+float floorwidth;
+float floorpos;
+int _index;
+};
+ 
+   struct _shlg_docum_ {
+string version;
+string z;
+string dx;
+string dy;
+string dz;
+string baselevel;
+string basez;
+string basedx;
+string basedy;
+string slabx;
+string slabz;
+string slabdy;
+string slabdz;
+string fidz;
+string fidy;
+string holex;
+string holey;
+string floorthk;
+string floorlen;
+string floorwidth;
+string floorpos;
+string _index;
+};
+ 
+    struct _shlg_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef float baselevel;
+  typedef float basez;
+  typedef float basedx;
+  typedef float basedy;
+  typedef float slabx;
+  typedef float slabz;
+  typedef float slabdy;
+  typedef float slabdz;
+  typedef float fidz;
+  typedef float fidy;
+  typedef float holex;
+  typedef float holey;
+  typedef float floorthk;
+  typedef float floorlen;
+  typedef float floorwidth;
+  typedef float floorpos;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct shlg_info {
+typedef shlg_t Type;
+static const char *name(){ return "shlg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baselevel {
+  static const char *name() { return  "baselevel"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, baselevel ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct basez {
+  static const char *name() { return  "basez"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, basez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct basedx {
+  static const char *name() { return  "basedx"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, basedx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct basedy {
+  static const char *name() { return  "basedy"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, basedy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabx {
+  static const char *name() { return  "slabx"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, slabx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabz {
+  static const char *name() { return  "slabz"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, slabz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabdy {
+  static const char *name() { return  "slabdy"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, slabdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabdz {
+  static const char *name() { return  "slabdz"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, slabdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct fidz {
+  static const char *name() { return  "fidz"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, fidz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct fidy {
+  static const char *name() { return  "fidy"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, fidy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct holex {
+  static const char *name() { return  "holex"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, holex ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct holey {
+  static const char *name() { return  "holey"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, holey ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct floorthk {
+  static const char *name() { return  "floorthk"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, floorthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct floorlen {
+  static const char *name() { return  "floorlen"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, floorlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct floorwidth {
+  static const char *name() { return  "floorwidth"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, floorwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct floorpos {
+  static const char *name() { return  "floorpos"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, floorpos ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct shlg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shlg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- SHLX -- 
+   ///@defgroup SHLX_doc 
+   ///@class SHLX 
+   ///@brief is the shield mother volume in the STAR cave [TGeoVolume] 
+   class SHLX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHLX() : AgBlock("SHLX","is the shield mother volume in the STAR cave [TGeoVolume]"){ 
+      }; 
+      ~SHLX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLR -- 
+   ///@defgroup SFLR_doc 
+   ///@class SFLR 
+   ///@brief is the floor [TGeoVolume] 
+   class SFLR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLR() : AgBlock("SFLR","is the floor [TGeoVolume]"){ 
+      }; 
+      ~SFLR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHBS -- 
+   ///@defgroup SHBS_doc 
+   ///@class SHBS 
+   ///@brief is the shield base [TGeoVolume] 
+   class SHBS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHBS() : AgBlock("SHBS","is the shield base [TGeoVolume]"){ 
+      }; 
+      ~SHBS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHLS -- 
+   ///@defgroup SHLS_doc 
+   ///@class SHLS 
+   ///@brief is the lateral slab [TGeoVolume] 
+   class SHLS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHLS() : AgBlock("SHLS","is the lateral slab [TGeoVolume]"){ 
+      }; 
+      ~SHLS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHBI -- 
+   ///@defgroup SHBI_doc 
+   ///@class SHBI 
+   ///@brief is the back iron slab [TGeoVolume] 
+   class SHBI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHBI() : AgBlock("SHBI","is the back iron slab [TGeoVolume]"){ 
+      }; 
+      ~SHBI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHFI -- 
+   ///@defgroup SHFI_doc 
+   ///@class SHFI 
+   ///@brief is the forward iron slab [TGeoVolume] 
+   class SHFI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHFI() : AgBlock("SHFI","is the forward iron slab [TGeoVolume]"){ 
+      }; 
+      ~SHFI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHOL -- 
+   ///@defgroup SHOL_doc 
+   ///@class SHOL 
+   ///@brief is the hole in the forward iron slab [TGeoVolume] 
+   class SHOL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHOL() : AgBlock("SHOL","is the hole in the forward iron slab [TGeoVolume]"){ 
+      }; 
+      ~SHOL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class SHLDGEO 
+   /// \brief  is the shielding  
+   class SHLDGEO : public AgModule 
+   { 
+      public: 
+      SHLDGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~SHLDGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace SHLDGEO 
+#endif // __SHLDGEO__ 

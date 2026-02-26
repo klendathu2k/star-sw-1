@@ -1,0 +1,678 @@
+#ifndef __MAGPGEO__ 
+#define __MAGPGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace MAGPGEO // $NMSPC 
+{ 
+   struct magg_t {
+float version;
+float rmax;
+float length;
+float test;
+int _index;
+};
+ 
+   struct _magg_docum_ {
+string version;
+string rmax;
+string length;
+string test;
+string _index;
+};
+ 
+    struct _magg_types_ {
+  typedef float version;
+  typedef float rmax;
+  typedef float length;
+  typedef float test;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct magg_info {
+typedef magg_t Type;
+static const char *name(){ return "magg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct magg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)magg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct magg_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)magg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct magg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)magg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct test {
+  static const char *name() { return  "test"; }
+  static size_t Offset(){ return offsetof( struct magg_t, test ); }
+  static void* address(){ 
+         size_t iadd = (size_t)magg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct magg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)magg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mbar_t {
+float coilrmn;
+float coilrmx;
+float coillen;
+float retyrmn;
+float retylen;
+float barwidin;
+float barwidou;
+float barheigh;
+float ringrmn;
+float ncoil;
+float zcoil[6];
+float dzcoil[6];
+float dzpancake;
+float dypancake;
+float rwater;
+int _index;
+};
+ 
+   struct _mbar_docum_ {
+string coilrmn;
+string coilrmx;
+string coillen;
+string retyrmn;
+string retylen;
+string barwidin;
+string barwidou;
+string barheigh;
+string ringrmn;
+string ncoil;
+string zcoil;
+string dzcoil;
+string dzpancake;
+string dypancake;
+string rwater;
+string _index;
+};
+ 
+    struct _mbar_types_ {
+  typedef float coilrmn;
+  typedef float coilrmx;
+  typedef float coillen;
+  typedef float retyrmn;
+  typedef float retylen;
+  typedef float barwidin;
+  typedef float barwidou;
+  typedef float barheigh;
+  typedef float ringrmn;
+  typedef float ncoil;
+  typedef float zcoil[6];
+  typedef float dzcoil[6];
+  typedef float dzpancake;
+  typedef float dypancake;
+  typedef float rwater;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mbar_info {
+typedef mbar_t Type;
+static const char *name(){ return "mbar_t"; }
+struct coilrmn {
+  static const char *name() { return  "coilrmn"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, coilrmn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coilrmx {
+  static const char *name() { return  "coilrmx"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, coilrmx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coillen {
+  static const char *name() { return  "coillen"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, coillen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct retyrmn {
+  static const char *name() { return  "retyrmn"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, retyrmn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct retylen {
+  static const char *name() { return  "retylen"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, retylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct barwidin {
+  static const char *name() { return  "barwidin"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, barwidin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct barwidou {
+  static const char *name() { return  "barwidou"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, barwidou ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct barheigh {
+  static const char *name() { return  "barheigh"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, barheigh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ringrmn {
+  static const char *name() { return  "ringrmn"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, ringrmn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ncoil {
+  static const char *name() { return  "ncoil"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, ncoil ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zcoil {
+  static const char *name() { return  "zcoil"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, zcoil ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[6];
+};
+struct dzcoil {
+  static const char *name() { return  "dzcoil"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, dzcoil ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[6];
+};
+struct dzpancake {
+  static const char *name() { return  "dzpancake"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, dzpancake ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dypancake {
+  static const char *name() { return  "dypancake"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, dypancake ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rwater {
+  static const char *name() { return  "rwater"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, rwater ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mbar_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mbar_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mend_t {
+float polermn;
+float polez;
+float polermx;
+float tcoilrmn;
+float tcoilrmx;
+float polecavr;
+float polecavd;
+float tcoildz;
+float etacut;
+int _index;
+};
+ 
+   struct _mend_docum_ {
+string polermn;
+string polez;
+string polermx;
+string tcoilrmn;
+string tcoilrmx;
+string polecavr;
+string polecavd;
+string tcoildz;
+string etacut;
+string _index;
+};
+ 
+    struct _mend_types_ {
+  typedef float polermn;
+  typedef float polez;
+  typedef float polermx;
+  typedef float tcoilrmn;
+  typedef float tcoilrmx;
+  typedef float polecavr;
+  typedef float polecavd;
+  typedef float tcoildz;
+  typedef float etacut;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mend_info {
+typedef mend_t Type;
+static const char *name(){ return "mend_t"; }
+struct polermn {
+  static const char *name() { return  "polermn"; }
+  static size_t Offset(){ return offsetof( struct mend_t, polermn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct polez {
+  static const char *name() { return  "polez"; }
+  static size_t Offset(){ return offsetof( struct mend_t, polez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct polermx {
+  static const char *name() { return  "polermx"; }
+  static size_t Offset(){ return offsetof( struct mend_t, polermx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tcoilrmn {
+  static const char *name() { return  "tcoilrmn"; }
+  static size_t Offset(){ return offsetof( struct mend_t, tcoilrmn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tcoilrmx {
+  static const char *name() { return  "tcoilrmx"; }
+  static size_t Offset(){ return offsetof( struct mend_t, tcoilrmx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct polecavr {
+  static const char *name() { return  "polecavr"; }
+  static size_t Offset(){ return offsetof( struct mend_t, polecavr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct polecavd {
+  static const char *name() { return  "polecavd"; }
+  static size_t Offset(){ return offsetof( struct mend_t, polecavd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tcoildz {
+  static const char *name() { return  "tcoildz"; }
+  static size_t Offset(){ return offsetof( struct mend_t, tcoildz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct etacut {
+  static const char *name() { return  "etacut"; }
+  static size_t Offset(){ return offsetof( struct mend_t, etacut ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mend_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mend_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- MAGP -- 
+   ///@defgroup MAGP_doc 
+   ///@class MAGP 
+   ///@brief is the magnet mother [TGeoVolume] 
+   class MAGP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MAGP() : AgBlock("MAGP","is the magnet mother [TGeoVolume]"){ 
+      }; 
+      ~MAGP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- COIL -- 
+   ///@defgroup COIL_doc 
+   ///@class COIL 
+   ///@brief is the main coil mother [TGeoVolume] 
+   class COIL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      COIL() : AgBlock("COIL","is the main coil mother [TGeoVolume]"){ 
+      }; 
+      ~COIL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MCSE -- 
+   ///@defgroup MCSE_doc 
+   ///@class MCSE 
+   ///@brief is a single barrel coil [TGeoVolume] 
+   class MCSE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MCSE() : AgBlock("MCSE","is a single barrel coil [TGeoVolume]"){ 
+      }; 
+      ~MCSE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PANC -- 
+   ///@defgroup PANC_doc 
+   ///@class PANC 
+   ///@brief The coil conductor [TGeoVolume] 
+   class PANC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PANC() : AgBlock("PANC","The coil conductor [TGeoVolume]"){ 
+      }; 
+      ~PANC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PAWT -- 
+   ///@defgroup PAWT_doc 
+   ///@class PAWT 
+   ///@brief Water cooling in the coil [TGeoVolume] 
+   class PAWT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PAWT() : AgBlock("PAWT","Water cooling in the coil [TGeoVolume]"){ 
+      }; 
+      ~PAWT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MRET -- 
+   ///@defgroup MRET_doc 
+   ///@class MRET 
+   ///@brief is Magnet RETurn Yoke [TGeoVolume] 
+   class MRET : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MRET() : AgBlock("MRET","is Magnet RETurn Yoke [TGeoVolume]"){ 
+      }; 
+      ~MRET(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MSEC -- 
+   ///@defgroup MSEC_doc 
+   ///@class MSEC 
+   ///@brief is a sector containing a single retun bar [TGeoVolume] 
+   class MSEC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MSEC() : AgBlock("MSEC","is a sector containing a single retun bar [TGeoVolume]"){ 
+      }; 
+      ~MSEC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MBAR -- 
+   ///@defgroup MBAR_doc 
+   ///@class MBAR 
+   ///@brief is a single return yoke bar [TGeoVolume] 
+   class MBAR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MBAR() : AgBlock("MBAR","is a single return yoke bar [TGeoVolume]"){ 
+      }; 
+      ~MBAR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MRGV -- 
+   ///@defgroup MRGV_doc 
+   ///@class MRGV 
+   ///@brief is the Magnet Return rinG [TGeoVolume] 
+   class MRGV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MRGV() : AgBlock("MRGV","is the Magnet Return rinG [TGeoVolume]"){ 
+      }; 
+      ~MRGV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MPTV -- 
+   ///@defgroup MPTV_doc 
+   ///@class MPTV 
+   ///@brief is the magnet pole-tip volume [TGeoVolume] 
+   class MPTV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MPTV() : AgBlock("MPTV","is the magnet pole-tip volume [TGeoVolume]"){ 
+      }; 
+      ~MPTV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MPCV -- 
+   ///@defgroup MPCV_doc 
+   ///@class MPCV 
+   ///@brief is the coil cavity in the pole-tip (filled with cables ?) [TGeoVolume] 
+   class MPCV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MPCV() : AgBlock("MPCV","is the coil cavity in the pole-tip (filled with cables ?) [TGeoVolume]"){ 
+      }; 
+      ~MPCV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTCL -- 
+   ///@defgroup MTCL_doc 
+   ///@class MTCL 
+   ///@brief is TRIM COIL Volume (filled with aluminum) [TGeoVolume] 
+   class MTCL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTCL() : AgBlock("MTCL","is TRIM COIL Volume (filled with aluminum) [TGeoVolume]"){ 
+      }; 
+      ~MTCL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class MAGPGEO 
+   /// \brief  is the geometry of the STAR magnet  
+   class MAGPGEO : public AgModule 
+   { 
+      public: 
+      MAGPGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~MAGPGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace MAGPGEO 
+#endif // __MAGPGEO__ 

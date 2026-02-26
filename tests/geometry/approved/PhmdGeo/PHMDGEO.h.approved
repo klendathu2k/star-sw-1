@@ -1,0 +1,688 @@
+#ifndef __PHMDGEO__ 
+#define __PHMDGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PHMDGEO // $NMSPC 
+{ 
+   struct pmvr_t {
+float version;
+int config;
+int _index;
+};
+ 
+   struct _pmvr_docum_ {
+string version;
+string config;
+string _index;
+};
+ 
+    struct _pmvr_types_ {
+  typedef float version;
+  typedef int config;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pmvr_info {
+typedef pmvr_t Type;
+static const char *name(){ return "pmvr_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pmvr_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmvr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct pmvr_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmvr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pmvr_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmvr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pmdg_t {
+float version;
+float m_max;
+float m_min;
+float zdist[2];
+float dpmdx;
+float dpmdy;
+float dpmdz;
+float pargcz;
+float parscz;
+float parfez;
+float parpbz;
+float cell_radius;
+float cell_depth;
+float cell_wall;
+float boundary;
+float th_base;
+float th_air;
+float th_pcb;
+float th_lead;
+float th_steel;
+int nx[5];
+int ny[5];
+int mx[7];
+int my[7];
+float hexd2[10];
+float hexd1[10];
+float dpara[6];
+int _index;
+};
+ 
+   struct _pmdg_docum_ {
+string version;
+string m_max;
+string m_min;
+string zdist;
+string dpmdx;
+string dpmdy;
+string dpmdz;
+string pargcz;
+string parscz;
+string parfez;
+string parpbz;
+string cell_radius;
+string cell_depth;
+string cell_wall;
+string boundary;
+string th_base;
+string th_air;
+string th_pcb;
+string th_lead;
+string th_steel;
+string nx;
+string ny;
+string mx;
+string my;
+string hexd2;
+string hexd1;
+string dpara;
+string _index;
+};
+ 
+    struct _pmdg_types_ {
+  typedef float version;
+  typedef float m_max;
+  typedef float m_min;
+  typedef float zdist[2];
+  typedef float dpmdx;
+  typedef float dpmdy;
+  typedef float dpmdz;
+  typedef float pargcz;
+  typedef float parscz;
+  typedef float parfez;
+  typedef float parpbz;
+  typedef float cell_radius;
+  typedef float cell_depth;
+  typedef float cell_wall;
+  typedef float boundary;
+  typedef float th_base;
+  typedef float th_air;
+  typedef float th_pcb;
+  typedef float th_lead;
+  typedef float th_steel;
+  typedef int nx[5];
+  typedef int ny[5];
+  typedef int mx[7];
+  typedef int my[7];
+  typedef float hexd2[10];
+  typedef float hexd1[10];
+  typedef float dpara[6];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pmdg_info {
+typedef pmdg_t Type;
+static const char *name(){ return "pmdg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct m_max {
+  static const char *name() { return  "m_max"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, m_max ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct m_min {
+  static const char *name() { return  "m_min"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, m_min ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zdist {
+  static const char *name() { return  "zdist"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, zdist ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dpmdx {
+  static const char *name() { return  "dpmdx"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, dpmdx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dpmdy {
+  static const char *name() { return  "dpmdy"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, dpmdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dpmdz {
+  static const char *name() { return  "dpmdz"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, dpmdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pargcz {
+  static const char *name() { return  "pargcz"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, pargcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct parscz {
+  static const char *name() { return  "parscz"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, parscz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct parfez {
+  static const char *name() { return  "parfez"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, parfez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct parpbz {
+  static const char *name() { return  "parpbz"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, parpbz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cell_radius {
+  static const char *name() { return  "cell_radius"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, cell_radius ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cell_depth {
+  static const char *name() { return  "cell_depth"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, cell_depth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cell_wall {
+  static const char *name() { return  "cell_wall"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, cell_wall ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct boundary {
+  static const char *name() { return  "boundary"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, boundary ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct th_base {
+  static const char *name() { return  "th_base"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, th_base ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct th_air {
+  static const char *name() { return  "th_air"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, th_air ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct th_pcb {
+  static const char *name() { return  "th_pcb"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, th_pcb ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct th_lead {
+  static const char *name() { return  "th_lead"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, th_lead ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct th_steel {
+  static const char *name() { return  "th_steel"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, th_steel ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nx {
+  static const char *name() { return  "nx"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, nx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[5];
+};
+struct ny {
+  static const char *name() { return  "ny"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, ny ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[5];
+};
+struct mx {
+  static const char *name() { return  "mx"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, mx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[7];
+};
+struct my {
+  static const char *name() { return  "my"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, my ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[7];
+};
+struct hexd2 {
+  static const char *name() { return  "hexd2"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, hexd2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct hexd1 {
+  static const char *name() { return  "hexd1"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, hexd1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct dpara {
+  static const char *name() { return  "dpara"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, dpara ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[6];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pmdg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pmdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PHMD -- 
+   ///@defgroup PHMD_doc 
+   ///@class PHMD 
+   ///@brief the PMD box volume and fill with air [TGeoVolume] 
+   class PHMD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PHMD() : AgBlock("PHMD","the PMD box volume and fill with air [TGeoVolume]"){ 
+      }; 
+      ~PHMD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PHMS -- 
+   ///@defgroup PHMS_doc 
+   ///@class PHMS 
+   ///@brief the PMD sector volume - 1/3rd of PHMD [TGeoVolume] 
+   class PHMS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PHMS() : AgBlock("PHMS","the PMD sector volume - 1/3rd of PHMD [TGeoVolume]"){ 
+      }; 
+      ~PHMS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PHSR -- 
+   ///@defgroup PHSR_doc 
+   ///@class PHSR 
+   ///@brief is a detector box made in air [TGeoVolume] 
+   class PHSR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PHSR() : AgBlock("PHSR","is a detector box made in air [TGeoVolume]"){ 
+      }; 
+      ~PHSR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PMDA -- 
+   ///@defgroup PMDA_doc 
+   ///@class PMDA 
+   ///@brief is a detector box made in aluminium [TGeoVolume] 
+   class PMDA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PMDA() : AgBlock("PMDA","is a detector box made in aluminium [TGeoVolume]"){ 
+      }; 
+      ~PMDA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- AIRA -- 
+   ///@defgroup AIRA_doc 
+   ///@class AIRA 
+   ///@brief is a detector made in air [TGeoVolume] 
+   class AIRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      AIRA() : AgBlock("AIRA","is a detector made in air [TGeoVolume]"){ 
+      }; 
+      ~AIRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PHCA -- 
+   ///@defgroup PHCA_doc 
+   ///@class PHCA 
+   ///@brief is the detector made in air [TGeoVolume] 
+   class PHCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PHCA() : AgBlock("PHCA","is the detector made in air [TGeoVolume]"){ 
+      }; 
+      ~PHCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ASTR -- 
+   ///@defgroup ASTR_doc 
+   ///@class ASTR 
+   ///@brief is the strip [TGeoVolume] 
+   class ASTR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ASTR() : AgBlock("ASTR","is the strip [TGeoVolume]"){ 
+      }; 
+      ~ASTR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PSTR -- 
+   ///@defgroup PSTR_doc 
+   ///@class PSTR 
+   ///@brief is one pseudo-cell [TGeoVolume] 
+   class PSTR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PSTR() : AgBlock("PSTR","is one pseudo-cell [TGeoVolume]"){ 
+      }; 
+      ~PSTR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PPBA -- 
+   ///@defgroup PPBA_doc 
+   ///@class PPBA 
+   ///@brief is The lead plates for different modules [TGeoVolume] 
+   class PPBA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PPBA() : AgBlock("PPBA","is The lead plates for different modules [TGeoVolume]"){ 
+      }; 
+      ~PPBA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PFEA -- 
+   ///@defgroup PFEA_doc 
+   ///@class PFEA 
+   ///@brief is The iron plates for different modules [TGeoVolume] 
+   class PFEA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PFEA() : AgBlock("PFEA","is The iron plates for different modules [TGeoVolume]"){ 
+      }; 
+      ~PFEA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BASA -- 
+   ///@defgroup BASA_doc 
+   ///@class BASA 
+   ///@brief is the G10 base plate [TGeoVolume] 
+   class BASA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BASA() : AgBlock("BASA","is the G10 base plate [TGeoVolume]"){ 
+      }; 
+      ~BASA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PCBA -- 
+   ///@defgroup PCBA_doc 
+   ///@class PCBA 
+   ///@brief is the chamber PCB [TGeoVolume] 
+   class PCBA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PCBA() : AgBlock("PCBA","is the chamber PCB [TGeoVolume]"){ 
+      }; 
+      ~PCBA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PDCU -- 
+   ///@defgroup PDCU_doc 
+   ///@class PDCU 
+   ///@brief is The outer cell in the PMD module [TGeoVolume] 
+   class PDCU : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PDCU() : AgBlock("PDCU","is The outer cell in the PMD module [TGeoVolume]"){ 
+      }; 
+      ~PDCU(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PDGS -- 
+   ///@defgroup PDGS_doc 
+   ///@class PDGS 
+   ///@brief is The inner cell in the PMD module [TGeoVolume] 
+   class PDGS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PDGS() : AgBlock("PDGS","is The inner cell in the PMD module [TGeoVolume]"){ 
+      }; 
+      ~PDGS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PHMDGEO 
+   /// \brief   is the geometry of photon multiplicity detector  
+   class PHMDGEO : public AgModule 
+   { 
+      public: 
+      PHMDGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PHMDGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PHMDGEO 
+#endif // __PHMDGEO__ 

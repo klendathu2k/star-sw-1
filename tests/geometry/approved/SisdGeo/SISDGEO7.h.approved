@@ -1,0 +1,3389 @@
+#ifndef __SISDGEO7__ 
+#define __SISDGEO7__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace SISDGEO7 // $NMSPC 
+{ 
+   struct ssdp_t {
+float version;
+int config;
+int placement;
+int _index;
+};
+ 
+   struct _ssdp_docum_ {
+string version;
+string config;
+string placement;
+string _index;
+};
+ 
+    struct _ssdp_types_ {
+  typedef float version;
+  typedef int config;
+  typedef int placement;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ssdp_info {
+typedef ssdp_t Type;
+static const char *name(){ return "ssdp_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ssdp_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ssdp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct ssdp_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ssdp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct placement {
+  static const char *name() { return  "placement"; }
+  static size_t Offset(){ return offsetof( struct ssdp_t, placement ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ssdp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ssdp_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ssdp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfjp_t {
+int version;
+float alphaz;
+float alphazh;
+float ssst_rmin;
+float ssst_rmax;
+float ssst_width;
+float ssst_pz;
+float ssss_rmin;
+float ssss_width;
+float ssrs_rmin;
+float sslb_dx;
+float sslb_px;
+float sslb_dy;
+float sslb_dz;
+float ssbq_dx;
+float ssbq_dy;
+float ssbq_dz;
+float sscr_tha;
+float sscr_thd;
+float sscr_wd;
+float sscr_hl;
+float sscr_vl;
+float sslt_px;
+float sslt_rmax;
+float sslt_dz;
+float scmp_dx;
+float scmp_dy;
+float scmp_dz;
+float scmp_px;
+float scvm_dz;
+float scvm_dx;
+float scvm_px;
+float scvm_dy;
+float scvm_pz;
+float scvb_dy;
+float scvs_dx;
+float scvs_dy;
+float scvs_px;
+float scvs_py;
+float sfco_dx;
+float sfco_dy;
+float sfco_dz;
+float sfco_px;
+float sfco_py;
+float sfcm_dx;
+float sfcs_dz;
+float sfkf_dy;
+float sfkf_dz;
+float sfkf_dx;
+float sfkf_px;
+float sfkf_py;
+float sfks_dx;
+float sfks_px;
+float sfks_py;
+float sfpr_py;
+float sfpb_py;
+float sfpb_py2;
+float sfcb_dx;
+float ssbs_dy;
+float ssbs_dx;
+float ssbb_dx;
+float ssbb_dz;
+float flex_di;
+float sfpb_dx;
+float sfpb_dy;
+float sfpbdz;
+float sapp_dxe;
+float sapp_dxz;
+float sapp_dy;
+float sapp_dz;
+float sapp_py1;
+float sapp_py2;
+float sapp_py3;
+float sfam_dxe;
+float sfam_dxz;
+float sfam_dy;
+float sfam_dz;
+float sfam_dzs;
+float sfla_dx;
+float sfla_dy;
+float sfla_dz;
+float sflb_dz;
+float sflc_dz;
+float sfeb_dx;
+float sfeb_dz;
+float sfes_dx;
+float sffk_dxe;
+float sffk_dy;
+float sffx_dye;
+float sffk_dz;
+float sffl_dx;
+float sffk_dxz;
+float sffk_px;
+float sffk_py1;
+float sffk_py2;
+float sfkl_px;
+float sfkk_dy;
+float sflu_dz;
+float sflu_h1;
+float sflu_bl1;
+float sfra_dx;
+float sfra_dy;
+float sfra_py;
+float sfra_dz;
+float sfra_pz;
+float sfsw_dy;
+float sfsw_dz;
+float sfrs_dx;
+float sfrs_dy;
+float sfrs_px;
+float sfrs_py;
+float sfsm_ll;
+float sffx_dx;
+float sffx_dyz;
+float sfpi_rmin;
+float sfpi_rmax;
+float sfpi_px;
+float sfpi_py1;
+float sfpi_py2;
+float sfpi_pz;
+float sfpj_dx1;
+float sfpj_dx2;
+float sfpj_dy;
+float sfpj_dz;
+float sfaa_dx;
+float sfaa_dy;
+float sfaa_dz;
+float sfaa_px1;
+float sfaa_px2;
+float sfaa_px3;
+float sfaa_pz1;
+float sfaa_pz2;
+float sfaa_pz3;
+float sfsl_dx;
+float sfsl_dy;
+float sfsl_dz;
+float sfsd_dx;
+float sfsd_dy;
+float sfsd_dz;
+float sfla_px;
+float sfla_py;
+float sflc_px;
+float sflc_py;
+float sfes_px;
+float sfes_py;
+float sfes_pz;
+float sfeb_px;
+float sfeb_py;
+int _index;
+};
+ 
+   struct _sfjp_docum_ {
+string version;
+string alphaz;
+string alphazh;
+string ssst_rmin;
+string ssst_rmax;
+string ssst_width;
+string ssst_pz;
+string ssss_rmin;
+string ssss_width;
+string ssrs_rmin;
+string sslb_dx;
+string sslb_px;
+string sslb_dy;
+string sslb_dz;
+string ssbq_dx;
+string ssbq_dy;
+string ssbq_dz;
+string sscr_tha;
+string sscr_thd;
+string sscr_wd;
+string sscr_hl;
+string sscr_vl;
+string sslt_px;
+string sslt_rmax;
+string sslt_dz;
+string scmp_dx;
+string scmp_dy;
+string scmp_dz;
+string scmp_px;
+string scvm_dz;
+string scvm_dx;
+string scvm_px;
+string scvm_dy;
+string scvm_pz;
+string scvb_dy;
+string scvs_dx;
+string scvs_dy;
+string scvs_px;
+string scvs_py;
+string sfco_dx;
+string sfco_dy;
+string sfco_dz;
+string sfco_px;
+string sfco_py;
+string sfcm_dx;
+string sfcs_dz;
+string sfkf_dy;
+string sfkf_dz;
+string sfkf_dx;
+string sfkf_px;
+string sfkf_py;
+string sfks_dx;
+string sfks_px;
+string sfks_py;
+string sfpr_py;
+string sfpb_py;
+string sfpb_py2;
+string sfcb_dx;
+string ssbs_dy;
+string ssbs_dx;
+string ssbb_dx;
+string ssbb_dz;
+string flex_di;
+string sfpb_dx;
+string sfpb_dy;
+string sfpbdz;
+string sapp_dxe;
+string sapp_dxz;
+string sapp_dy;
+string sapp_dz;
+string sapp_py1;
+string sapp_py2;
+string sapp_py3;
+string sfam_dxe;
+string sfam_dxz;
+string sfam_dy;
+string sfam_dz;
+string sfam_dzs;
+string sfla_dx;
+string sfla_dy;
+string sfla_dz;
+string sflb_dz;
+string sflc_dz;
+string sfeb_dx;
+string sfeb_dz;
+string sfes_dx;
+string sffk_dxe;
+string sffk_dy;
+string sffx_dye;
+string sffk_dz;
+string sffl_dx;
+string sffk_dxz;
+string sffk_px;
+string sffk_py1;
+string sffk_py2;
+string sfkl_px;
+string sfkk_dy;
+string sflu_dz;
+string sflu_h1;
+string sflu_bl1;
+string sfra_dx;
+string sfra_dy;
+string sfra_py;
+string sfra_dz;
+string sfra_pz;
+string sfsw_dy;
+string sfsw_dz;
+string sfrs_dx;
+string sfrs_dy;
+string sfrs_px;
+string sfrs_py;
+string sfsm_ll;
+string sffx_dx;
+string sffx_dyz;
+string sfpi_rmin;
+string sfpi_rmax;
+string sfpi_px;
+string sfpi_py1;
+string sfpi_py2;
+string sfpi_pz;
+string sfpj_dx1;
+string sfpj_dx2;
+string sfpj_dy;
+string sfpj_dz;
+string sfaa_dx;
+string sfaa_dy;
+string sfaa_dz;
+string sfaa_px1;
+string sfaa_px2;
+string sfaa_px3;
+string sfaa_pz1;
+string sfaa_pz2;
+string sfaa_pz3;
+string sfsl_dx;
+string sfsl_dy;
+string sfsl_dz;
+string sfsd_dx;
+string sfsd_dy;
+string sfsd_dz;
+string sfla_px;
+string sfla_py;
+string sflc_px;
+string sflc_py;
+string sfes_px;
+string sfes_py;
+string sfes_pz;
+string sfeb_px;
+string sfeb_py;
+string _index;
+};
+ 
+    struct _sfjp_types_ {
+  typedef int version;
+  typedef float alphaz;
+  typedef float alphazh;
+  typedef float ssst_rmin;
+  typedef float ssst_rmax;
+  typedef float ssst_width;
+  typedef float ssst_pz;
+  typedef float ssss_rmin;
+  typedef float ssss_width;
+  typedef float ssrs_rmin;
+  typedef float sslb_dx;
+  typedef float sslb_px;
+  typedef float sslb_dy;
+  typedef float sslb_dz;
+  typedef float ssbq_dx;
+  typedef float ssbq_dy;
+  typedef float ssbq_dz;
+  typedef float sscr_tha;
+  typedef float sscr_thd;
+  typedef float sscr_wd;
+  typedef float sscr_hl;
+  typedef float sscr_vl;
+  typedef float sslt_px;
+  typedef float sslt_rmax;
+  typedef float sslt_dz;
+  typedef float scmp_dx;
+  typedef float scmp_dy;
+  typedef float scmp_dz;
+  typedef float scmp_px;
+  typedef float scvm_dz;
+  typedef float scvm_dx;
+  typedef float scvm_px;
+  typedef float scvm_dy;
+  typedef float scvm_pz;
+  typedef float scvb_dy;
+  typedef float scvs_dx;
+  typedef float scvs_dy;
+  typedef float scvs_px;
+  typedef float scvs_py;
+  typedef float sfco_dx;
+  typedef float sfco_dy;
+  typedef float sfco_dz;
+  typedef float sfco_px;
+  typedef float sfco_py;
+  typedef float sfcm_dx;
+  typedef float sfcs_dz;
+  typedef float sfkf_dy;
+  typedef float sfkf_dz;
+  typedef float sfkf_dx;
+  typedef float sfkf_px;
+  typedef float sfkf_py;
+  typedef float sfks_dx;
+  typedef float sfks_px;
+  typedef float sfks_py;
+  typedef float sfpr_py;
+  typedef float sfpb_py;
+  typedef float sfpb_py2;
+  typedef float sfcb_dx;
+  typedef float ssbs_dy;
+  typedef float ssbs_dx;
+  typedef float ssbb_dx;
+  typedef float ssbb_dz;
+  typedef float flex_di;
+  typedef float sfpb_dx;
+  typedef float sfpb_dy;
+  typedef float sfpbdz;
+  typedef float sapp_dxe;
+  typedef float sapp_dxz;
+  typedef float sapp_dy;
+  typedef float sapp_dz;
+  typedef float sapp_py1;
+  typedef float sapp_py2;
+  typedef float sapp_py3;
+  typedef float sfam_dxe;
+  typedef float sfam_dxz;
+  typedef float sfam_dy;
+  typedef float sfam_dz;
+  typedef float sfam_dzs;
+  typedef float sfla_dx;
+  typedef float sfla_dy;
+  typedef float sfla_dz;
+  typedef float sflb_dz;
+  typedef float sflc_dz;
+  typedef float sfeb_dx;
+  typedef float sfeb_dz;
+  typedef float sfes_dx;
+  typedef float sffk_dxe;
+  typedef float sffk_dy;
+  typedef float sffx_dye;
+  typedef float sffk_dz;
+  typedef float sffl_dx;
+  typedef float sffk_dxz;
+  typedef float sffk_px;
+  typedef float sffk_py1;
+  typedef float sffk_py2;
+  typedef float sfkl_px;
+  typedef float sfkk_dy;
+  typedef float sflu_dz;
+  typedef float sflu_h1;
+  typedef float sflu_bl1;
+  typedef float sfra_dx;
+  typedef float sfra_dy;
+  typedef float sfra_py;
+  typedef float sfra_dz;
+  typedef float sfra_pz;
+  typedef float sfsw_dy;
+  typedef float sfsw_dz;
+  typedef float sfrs_dx;
+  typedef float sfrs_dy;
+  typedef float sfrs_px;
+  typedef float sfrs_py;
+  typedef float sfsm_ll;
+  typedef float sffx_dx;
+  typedef float sffx_dyz;
+  typedef float sfpi_rmin;
+  typedef float sfpi_rmax;
+  typedef float sfpi_px;
+  typedef float sfpi_py1;
+  typedef float sfpi_py2;
+  typedef float sfpi_pz;
+  typedef float sfpj_dx1;
+  typedef float sfpj_dx2;
+  typedef float sfpj_dy;
+  typedef float sfpj_dz;
+  typedef float sfaa_dx;
+  typedef float sfaa_dy;
+  typedef float sfaa_dz;
+  typedef float sfaa_px1;
+  typedef float sfaa_px2;
+  typedef float sfaa_px3;
+  typedef float sfaa_pz1;
+  typedef float sfaa_pz2;
+  typedef float sfaa_pz3;
+  typedef float sfsl_dx;
+  typedef float sfsl_dy;
+  typedef float sfsl_dz;
+  typedef float sfsd_dx;
+  typedef float sfsd_dy;
+  typedef float sfsd_dz;
+  typedef float sfla_px;
+  typedef float sfla_py;
+  typedef float sflc_px;
+  typedef float sflc_py;
+  typedef float sfes_px;
+  typedef float sfes_py;
+  typedef float sfes_pz;
+  typedef float sfeb_px;
+  typedef float sfeb_py;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfjp_info {
+typedef sfjp_t Type;
+static const char *name(){ return "sfjp_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct alphaz {
+  static const char *name() { return  "alphaz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, alphaz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct alphazh {
+  static const char *name() { return  "alphazh"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, alphazh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssst_rmin {
+  static const char *name() { return  "ssst_rmin"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssst_rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssst_rmax {
+  static const char *name() { return  "ssst_rmax"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssst_rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssst_width {
+  static const char *name() { return  "ssst_width"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssst_width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssst_pz {
+  static const char *name() { return  "ssst_pz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssst_pz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssss_rmin {
+  static const char *name() { return  "ssss_rmin"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssss_rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssss_width {
+  static const char *name() { return  "ssss_width"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssss_width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssrs_rmin {
+  static const char *name() { return  "ssrs_rmin"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssrs_rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslb_dx {
+  static const char *name() { return  "sslb_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslb_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslb_px {
+  static const char *name() { return  "sslb_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslb_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslb_dy {
+  static const char *name() { return  "sslb_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslb_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslb_dz {
+  static const char *name() { return  "sslb_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslb_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbq_dx {
+  static const char *name() { return  "ssbq_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbq_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbq_dy {
+  static const char *name() { return  "ssbq_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbq_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbq_dz {
+  static const char *name() { return  "ssbq_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbq_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sscr_tha {
+  static const char *name() { return  "sscr_tha"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sscr_tha ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sscr_thd {
+  static const char *name() { return  "sscr_thd"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sscr_thd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sscr_wd {
+  static const char *name() { return  "sscr_wd"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sscr_wd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sscr_hl {
+  static const char *name() { return  "sscr_hl"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sscr_hl ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sscr_vl {
+  static const char *name() { return  "sscr_vl"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sscr_vl ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslt_px {
+  static const char *name() { return  "sslt_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslt_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslt_rmax {
+  static const char *name() { return  "sslt_rmax"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslt_rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslt_dz {
+  static const char *name() { return  "sslt_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sslt_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scmp_dx {
+  static const char *name() { return  "scmp_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scmp_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scmp_dy {
+  static const char *name() { return  "scmp_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scmp_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scmp_dz {
+  static const char *name() { return  "scmp_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scmp_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scmp_px {
+  static const char *name() { return  "scmp_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scmp_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvm_dz {
+  static const char *name() { return  "scvm_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvm_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvm_dx {
+  static const char *name() { return  "scvm_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvm_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvm_px {
+  static const char *name() { return  "scvm_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvm_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvm_dy {
+  static const char *name() { return  "scvm_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvm_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvm_pz {
+  static const char *name() { return  "scvm_pz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvm_pz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvb_dy {
+  static const char *name() { return  "scvb_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvb_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvs_dx {
+  static const char *name() { return  "scvs_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvs_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvs_dy {
+  static const char *name() { return  "scvs_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvs_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvs_px {
+  static const char *name() { return  "scvs_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvs_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scvs_py {
+  static const char *name() { return  "scvs_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, scvs_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfco_dx {
+  static const char *name() { return  "sfco_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfco_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfco_dy {
+  static const char *name() { return  "sfco_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfco_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfco_dz {
+  static const char *name() { return  "sfco_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfco_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfco_px {
+  static const char *name() { return  "sfco_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfco_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfco_py {
+  static const char *name() { return  "sfco_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfco_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfcm_dx {
+  static const char *name() { return  "sfcm_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfcm_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfcs_dz {
+  static const char *name() { return  "sfcs_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfcs_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkf_dy {
+  static const char *name() { return  "sfkf_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkf_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkf_dz {
+  static const char *name() { return  "sfkf_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkf_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkf_dx {
+  static const char *name() { return  "sfkf_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkf_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkf_px {
+  static const char *name() { return  "sfkf_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkf_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkf_py {
+  static const char *name() { return  "sfkf_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkf_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfks_dx {
+  static const char *name() { return  "sfks_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfks_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfks_px {
+  static const char *name() { return  "sfks_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfks_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfks_py {
+  static const char *name() { return  "sfks_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfks_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpr_py {
+  static const char *name() { return  "sfpr_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpr_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpb_py {
+  static const char *name() { return  "sfpb_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpb_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpb_py2 {
+  static const char *name() { return  "sfpb_py2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpb_py2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfcb_dx {
+  static const char *name() { return  "sfcb_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfcb_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbs_dy {
+  static const char *name() { return  "ssbs_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbs_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbs_dx {
+  static const char *name() { return  "ssbs_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbs_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbb_dx {
+  static const char *name() { return  "ssbb_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbb_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ssbb_dz {
+  static const char *name() { return  "ssbb_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, ssbb_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct flex_di {
+  static const char *name() { return  "flex_di"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, flex_di ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpb_dx {
+  static const char *name() { return  "sfpb_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpb_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpb_dy {
+  static const char *name() { return  "sfpb_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpb_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpbdz {
+  static const char *name() { return  "sfpbdz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpbdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_dxe {
+  static const char *name() { return  "sapp_dxe"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_dxe ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_dxz {
+  static const char *name() { return  "sapp_dxz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_dxz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_dy {
+  static const char *name() { return  "sapp_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_dz {
+  static const char *name() { return  "sapp_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_py1 {
+  static const char *name() { return  "sapp_py1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_py1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_py2 {
+  static const char *name() { return  "sapp_py2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_py2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sapp_py3 {
+  static const char *name() { return  "sapp_py3"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sapp_py3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfam_dxe {
+  static const char *name() { return  "sfam_dxe"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfam_dxe ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfam_dxz {
+  static const char *name() { return  "sfam_dxz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfam_dxz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfam_dy {
+  static const char *name() { return  "sfam_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfam_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfam_dz {
+  static const char *name() { return  "sfam_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfam_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfam_dzs {
+  static const char *name() { return  "sfam_dzs"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfam_dzs ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfla_dx {
+  static const char *name() { return  "sfla_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfla_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfla_dy {
+  static const char *name() { return  "sfla_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfla_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfla_dz {
+  static const char *name() { return  "sfla_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfla_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflb_dz {
+  static const char *name() { return  "sflb_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflb_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflc_dz {
+  static const char *name() { return  "sflc_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflc_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfeb_dx {
+  static const char *name() { return  "sfeb_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfeb_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfeb_dz {
+  static const char *name() { return  "sfeb_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfeb_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfes_dx {
+  static const char *name() { return  "sfes_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfes_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_dxe {
+  static const char *name() { return  "sffk_dxe"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_dxe ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_dy {
+  static const char *name() { return  "sffk_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffx_dye {
+  static const char *name() { return  "sffx_dye"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffx_dye ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_dz {
+  static const char *name() { return  "sffk_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffl_dx {
+  static const char *name() { return  "sffl_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffl_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_dxz {
+  static const char *name() { return  "sffk_dxz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_dxz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_px {
+  static const char *name() { return  "sffk_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_py1 {
+  static const char *name() { return  "sffk_py1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_py1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffk_py2 {
+  static const char *name() { return  "sffk_py2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffk_py2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkl_px {
+  static const char *name() { return  "sfkl_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkl_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfkk_dy {
+  static const char *name() { return  "sfkk_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfkk_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflu_dz {
+  static const char *name() { return  "sflu_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflu_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflu_h1 {
+  static const char *name() { return  "sflu_h1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflu_h1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflu_bl1 {
+  static const char *name() { return  "sflu_bl1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflu_bl1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfra_dx {
+  static const char *name() { return  "sfra_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfra_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfra_dy {
+  static const char *name() { return  "sfra_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfra_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfra_py {
+  static const char *name() { return  "sfra_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfra_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfra_dz {
+  static const char *name() { return  "sfra_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfra_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfra_pz {
+  static const char *name() { return  "sfra_pz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfra_pz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsw_dy {
+  static const char *name() { return  "sfsw_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsw_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsw_dz {
+  static const char *name() { return  "sfsw_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsw_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfrs_dx {
+  static const char *name() { return  "sfrs_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfrs_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfrs_dy {
+  static const char *name() { return  "sfrs_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfrs_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfrs_px {
+  static const char *name() { return  "sfrs_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfrs_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfrs_py {
+  static const char *name() { return  "sfrs_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfrs_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsm_ll {
+  static const char *name() { return  "sfsm_ll"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsm_ll ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffx_dx {
+  static const char *name() { return  "sffx_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffx_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sffx_dyz {
+  static const char *name() { return  "sffx_dyz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sffx_dyz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_rmin {
+  static const char *name() { return  "sfpi_rmin"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_rmax {
+  static const char *name() { return  "sfpi_rmax"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_px {
+  static const char *name() { return  "sfpi_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_py1 {
+  static const char *name() { return  "sfpi_py1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_py1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_py2 {
+  static const char *name() { return  "sfpi_py2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_py2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpi_pz {
+  static const char *name() { return  "sfpi_pz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpi_pz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpj_dx1 {
+  static const char *name() { return  "sfpj_dx1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpj_dx1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpj_dx2 {
+  static const char *name() { return  "sfpj_dx2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpj_dx2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpj_dy {
+  static const char *name() { return  "sfpj_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpj_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfpj_dz {
+  static const char *name() { return  "sfpj_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfpj_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_dx {
+  static const char *name() { return  "sfaa_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_dy {
+  static const char *name() { return  "sfaa_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_dz {
+  static const char *name() { return  "sfaa_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_px1 {
+  static const char *name() { return  "sfaa_px1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_px1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_px2 {
+  static const char *name() { return  "sfaa_px2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_px2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_px3 {
+  static const char *name() { return  "sfaa_px3"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_px3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_pz1 {
+  static const char *name() { return  "sfaa_pz1"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_pz1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_pz2 {
+  static const char *name() { return  "sfaa_pz2"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_pz2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfaa_pz3 {
+  static const char *name() { return  "sfaa_pz3"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfaa_pz3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsl_dx {
+  static const char *name() { return  "sfsl_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsl_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsl_dy {
+  static const char *name() { return  "sfsl_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsl_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsl_dz {
+  static const char *name() { return  "sfsl_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsl_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsd_dx {
+  static const char *name() { return  "sfsd_dx"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsd_dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsd_dy {
+  static const char *name() { return  "sfsd_dy"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsd_dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfsd_dz {
+  static const char *name() { return  "sfsd_dz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfsd_dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfla_px {
+  static const char *name() { return  "sfla_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfla_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfla_py {
+  static const char *name() { return  "sfla_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfla_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflc_px {
+  static const char *name() { return  "sflc_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflc_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sflc_py {
+  static const char *name() { return  "sflc_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sflc_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfes_px {
+  static const char *name() { return  "sfes_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfes_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfes_py {
+  static const char *name() { return  "sfes_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfes_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfes_pz {
+  static const char *name() { return  "sfes_pz"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfes_pz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfeb_px {
+  static const char *name() { return  "sfeb_px"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfeb_px ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sfeb_py {
+  static const char *name() { return  "sfeb_py"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, sfeb_py ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfjp_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfjp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfpb_t {
+float hhight;
+float khight;
+float hbase;
+float kbase;
+float fsize;
+float zcoor;
+int _index;
+};
+ 
+   struct _sfpb_docum_ {
+string hhight;
+string khight;
+string hbase;
+string kbase;
+string fsize;
+string zcoor;
+string _index;
+};
+ 
+    struct _sfpb_types_ {
+  typedef float hhight;
+  typedef float khight;
+  typedef float hbase;
+  typedef float kbase;
+  typedef float fsize;
+  typedef float zcoor;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfpb_info {
+typedef sfpb_t Type;
+static const char *name(){ return "sfpb_t"; }
+struct hhight {
+  static const char *name() { return  "hhight"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, hhight ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct khight {
+  static const char *name() { return  "khight"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, khight ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hbase {
+  static const char *name() { return  "hbase"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, hbase ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct kbase {
+  static const char *name() { return  "kbase"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, kbase ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct fsize {
+  static const char *name() { return  "fsize"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, fsize ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zcoor {
+  static const char *name() { return  "zcoor"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, zcoor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfpb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfpa_t {
+float version;
+float rmin;
+float rmax;
+float len;
+float soutrinn;
+float soutrout;
+float soutlen;
+float rad;
+float nssd;
+float dmwid;
+float dmthk;
+float dmlen;
+float smwid;
+float smthk;
+float smlen;
+float sslen;
+float wplen;
+float sdlen;
+float tilt;
+float cprad;
+float cpral;
+float cfrad;
+float gpthk;
+int laddermap[20];
+float ladderangle[20];
+float laddertilt[20];
+float ladderradius[20];
+int _index;
+};
+ 
+   struct _sfpa_docum_ {
+string version;
+string rmin;
+string rmax;
+string len;
+string soutrinn;
+string soutrout;
+string soutlen;
+string rad;
+string nssd;
+string dmwid;
+string dmthk;
+string dmlen;
+string smwid;
+string smthk;
+string smlen;
+string sslen;
+string wplen;
+string sdlen;
+string tilt;
+string cprad;
+string cpral;
+string cfrad;
+string gpthk;
+string laddermap;
+string ladderangle;
+string laddertilt;
+string ladderradius;
+string _index;
+};
+ 
+    struct _sfpa_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float len;
+  typedef float soutrinn;
+  typedef float soutrout;
+  typedef float soutlen;
+  typedef float rad;
+  typedef float nssd;
+  typedef float dmwid;
+  typedef float dmthk;
+  typedef float dmlen;
+  typedef float smwid;
+  typedef float smthk;
+  typedef float smlen;
+  typedef float sslen;
+  typedef float wplen;
+  typedef float sdlen;
+  typedef float tilt;
+  typedef float cprad;
+  typedef float cpral;
+  typedef float cfrad;
+  typedef float gpthk;
+  typedef int laddermap[20];
+  typedef float ladderangle[20];
+  typedef float laddertilt[20];
+  typedef float ladderradius[20];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfpa_info {
+typedef sfpa_t Type;
+static const char *name(){ return "sfpa_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct len {
+  static const char *name() { return  "len"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, len ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct soutrinn {
+  static const char *name() { return  "soutrinn"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, soutrinn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct soutrout {
+  static const char *name() { return  "soutrout"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, soutrout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct soutlen {
+  static const char *name() { return  "soutlen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, soutlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rad {
+  static const char *name() { return  "rad"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, rad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nssd {
+  static const char *name() { return  "nssd"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, nssd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dmwid {
+  static const char *name() { return  "dmwid"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, dmwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dmthk {
+  static const char *name() { return  "dmthk"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, dmthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dmlen {
+  static const char *name() { return  "dmlen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, dmlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct smwid {
+  static const char *name() { return  "smwid"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, smwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct smthk {
+  static const char *name() { return  "smthk"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, smthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct smlen {
+  static const char *name() { return  "smlen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, smlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sslen {
+  static const char *name() { return  "sslen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, sslen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wplen {
+  static const char *name() { return  "wplen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, wplen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sdlen {
+  static const char *name() { return  "sdlen"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, sdlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tilt {
+  static const char *name() { return  "tilt"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, tilt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cprad {
+  static const char *name() { return  "cprad"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, cprad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cpral {
+  static const char *name() { return  "cpral"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, cpral ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cfrad {
+  static const char *name() { return  "cfrad"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, cfrad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gpthk {
+  static const char *name() { return  "gpthk"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, gpthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct laddermap {
+  static const char *name() { return  "laddermap"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, laddermap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[20];
+};
+struct ladderangle {
+  static const char *name() { return  "ladderangle"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, ladderangle ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[20];
+};
+struct laddertilt {
+  static const char *name() { return  "laddertilt"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, laddertilt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[20];
+};
+struct ladderradius {
+  static const char *name() { return  "ladderradius"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, ladderradius ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[20];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfpa_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfpa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- SFMO -- 
+   ///@defgroup SFMO_doc 
+   ///@class SFMO 
+   ///@brief is the mother of all Silicon Strip Detector volumes [TGeoVolume] 
+   class SFMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFMO() : AgBlock("SFMO","is the mother of all Silicon Strip Detector volumes [TGeoVolume]"){ 
+      }; 
+      ~SFMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLM -- 
+   ///@defgroup SFLM_doc 
+   ///@class SFLM 
+   ///@brief is the mother of the ladder [TGeoVolume] 
+   class SFLM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLM() : AgBlock("SFLM","is the mother of the ladder [TGeoVolume]"){ 
+      }; 
+      ~SFLM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFSW -- 
+   ///@defgroup SFSW_doc 
+   ///@class SFSW 
+   ///@brief is a single wafer container [TGeoVolume] 
+   class SFSW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFSW() : AgBlock("SFSW","is a single wafer container [TGeoVolume]"){ 
+      }; 
+      ~SFSW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFRA -- 
+   ///@defgroup SFRA_doc 
+   ///@class SFRA 
+   ///@brief is the hybrid stiffneer [TGeoVolume] 
+   class SFRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFRA() : AgBlock("SFRA","is the hybrid stiffneer [TGeoVolume]"){ 
+      }; 
+      ~SFRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFRS -- 
+   ///@defgroup SFRS_doc 
+   ///@class SFRS 
+   ///@brief two supports of the hybrid stiffneer (piece of it) [TGeoVolume] 
+   class SFRS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFRS() : AgBlock("SFRS","two supports of the hybrid stiffneer (piece of it) [TGeoVolume]"){ 
+      }; 
+      ~SFRS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFFX -- 
+   ///@defgroup SFFX_doc 
+   ///@class SFFX 
+   ///@brief is the flex [TGeoVolume] 
+   class SFFX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFFX() : AgBlock("SFFX","is the flex [TGeoVolume]"){ 
+      }; 
+      ~SFFX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFAA -- 
+   ///@defgroup SFAA_doc 
+   ///@class SFAA 
+   ///@brief is the A128C chip [TGeoVolume] 
+   class SFAA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFAA() : AgBlock("SFAA","is the A128C chip [TGeoVolume]"){ 
+      }; 
+      ~SFAA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFPI -- 
+   ///@defgroup SFPI_doc 
+   ///@class SFPI 
+   ///@brief are the pions [TGeoVolume] 
+   class SFPI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFPI() : AgBlock("SFPI","are the pions [TGeoVolume]"){ 
+      }; 
+      ~SFPI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFPK -- 
+   ///@defgroup SFPK_doc 
+   ///@class SFPK 
+   ///@brief is the small radius cylinder of the pions [TGeoVolume] 
+   class SFPK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFPK() : AgBlock("SFPK","is the small radius cylinder of the pions [TGeoVolume]"){ 
+      }; 
+      ~SFPK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFPJ -- 
+   ///@defgroup SFPJ_doc 
+   ///@class SFPJ 
+   ///@brief is the base of the pions [TGeoVolume] 
+   class SFPJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFPJ() : AgBlock("SFPJ","is the base of the pions [TGeoVolume]"){ 
+      }; 
+      ~SFPJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFSL -- 
+   ///@defgroup SFSL_doc 
+   ///@class SFSL 
+   ///@brief is the Silicon of the strip detector [TGeoVolume] 
+   class SFSL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFSL() : AgBlock("SFSL","is the Silicon of the strip detector [TGeoVolume]"){ 
+      }; 
+      ~SFSL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFSD -- 
+   ///@defgroup SFSD_doc 
+   ///@class SFSD 
+   ///@brief is the strip detector [TGeoVolume] 
+   class SFSD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFSD() : AgBlock("SFSD","is the strip detector [TGeoVolume]"){ 
+      }; 
+      ~SFSD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLT -- 
+   ///@defgroup SFLT_doc 
+   ///@class SFLT 
+   ///@brief is (half) the top corner of the triangular ladder skeleton [TGeoVolume] 
+   class SFLT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLT() : AgBlock("SFLT","is (half) the top corner of the triangular ladder skeleton [TGeoVolume]"){ 
+      }; 
+      ~SFLT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLU -- 
+   ///@defgroup SFLU_doc 
+   ///@class SFLU 
+   ///@brief is (half) the side corner of the triangular ladder skeleton [TGeoVolume] 
+   class SFLU : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLU() : AgBlock("SFLU","is (half) the side corner of the triangular ladder skeleton [TGeoVolume]"){ 
+      }; 
+      ~SFLU(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFFK -- 
+   ///@defgroup SFFK_doc 
+   ///@class SFFK 
+   ///@brief horizontal part of the ladder skeleton carbon base [TGeoVolume] 
+   class SFFK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFFK() : AgBlock("SFFK","horizontal part of the ladder skeleton carbon base [TGeoVolume]"){ 
+      }; 
+      ~SFFK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFFL -- 
+   ///@defgroup SFFL_doc 
+   ///@class SFFL 
+   ///@brief titled part of the ladder skeleton carbon base [TGeoVolume] 
+   class SFFL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFFL() : AgBlock("SFFL","titled part of the ladder skeleton carbon base [TGeoVolume]"){ 
+      }; 
+      ~SFFL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFKK -- 
+   ///@defgroup SFKK_doc 
+   ///@class SFKK 
+   ///@brief horizontal part of the kapton film under the ladder base [TGeoVolume] 
+   class SFKK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFKK() : AgBlock("SFKK","horizontal part of the kapton film under the ladder base [TGeoVolume]"){ 
+      }; 
+      ~SFKK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFKL -- 
+   ///@defgroup SFKL_doc 
+   ///@class SFKL 
+   ///@brief titled part of the kpaton film under the ladder base [TGeoVolume] 
+   class SFKL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFKL() : AgBlock("SFKL","titled part of the kpaton film under the ladder base [TGeoVolume]"){ 
+      }; 
+      ~SFKL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLA -- 
+   ///@defgroup SFLA_doc 
+   ///@class SFLA 
+   ///@brief is the long part of the bus cable linking the modules to the connection board [TGeoVolume] 
+   class SFLA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLA() : AgBlock("SFLA","is the long part of the bus cable linking the modules to the connection board [TGeoVolume]"){ 
+      }; 
+      ~SFLA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLB -- 
+   ///@defgroup SFLB_doc 
+   ///@class SFLB 
+   ///@brief is the part of the long bus cable on the connection board [TGeoVolume] 
+   class SFLB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLB() : AgBlock("SFLB","is the part of the long bus cable on the connection board [TGeoVolume]"){ 
+      }; 
+      ~SFLB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFLC -- 
+   ///@defgroup SFLC_doc 
+   ///@class SFLC 
+   ///@brief is the part of the long bus cable on the connection board up to the connector [TGeoVolume] 
+   class SFLC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFLC() : AgBlock("SFLC","is the part of the long bus cable on the connection board up to the connector [TGeoVolume]"){ 
+      }; 
+      ~SFLC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFEB -- 
+   ///@defgroup SFEB_doc 
+   ///@class SFEB 
+   ///@brief is the big bus elbow [TGeoVolume] 
+   class SFEB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFEB() : AgBlock("SFEB","is the big bus elbow [TGeoVolume]"){ 
+      }; 
+      ~SFEB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFES -- 
+   ///@defgroup SFES_doc 
+   ///@class SFES 
+   ///@brief is the small bus elbow [TGeoVolume] 
+   class SFES : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFES() : AgBlock("SFES","is the small bus elbow [TGeoVolume]"){ 
+      }; 
+      ~SFES(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFAM -- 
+   ///@defgroup SFAM_doc 
+   ///@class SFAM 
+   ///@brief is the mother volume of the adc board [TGeoVolume] 
+   class SFAM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFAM() : AgBlock("SFAM","is the mother volume of the adc board [TGeoVolume]"){ 
+      }; 
+      ~SFAM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFAB -- 
+   ///@defgroup SFAB_doc 
+   ///@class SFAB 
+   ///@brief is the big volume of the adc board [TGeoVolume] 
+   class SFAB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFAB() : AgBlock("SFAB","is the big volume of the adc board [TGeoVolume]"){ 
+      }; 
+      ~SFAB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFAS -- 
+   ///@defgroup SFAS_doc 
+   ///@class SFAS 
+   ///@brief is the small volume of the adc board [TGeoVolume] 
+   class SFAS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFAS() : AgBlock("SFAS","is the small volume of the adc board [TGeoVolume]"){ 
+      }; 
+      ~SFAS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SAPP -- 
+   ///@defgroup SAPP_doc 
+   ///@class SAPP 
+   ///@brief is the mother volume of the adc board appendice [TGeoVolume] 
+   class SAPP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SAPP() : AgBlock("SAPP","is the mother volume of the adc board appendice [TGeoVolume]"){ 
+      }; 
+      ~SAPP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SAPC -- 
+   ///@defgroup SAPC_doc 
+   ///@class SAPC 
+   ///@brief is the core (Epoxy) of the adc board appendice [TGeoVolume] 
+   class SAPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SAPC() : AgBlock("SAPC","is the core (Epoxy) of the adc board appendice [TGeoVolume]"){ 
+      }; 
+      ~SAPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SAPS -- 
+   ///@defgroup SAPS_doc 
+   ///@class SAPS 
+   ///@brief is the side shell (Carbon) of the adc board appendice [TGeoVolume] 
+   class SAPS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SAPS() : AgBlock("SAPS","is the side shell (Carbon) of the adc board appendice [TGeoVolume]"){ 
+      }; 
+      ~SAPS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SAPT -- 
+   ///@defgroup SAPT_doc 
+   ///@class SAPT 
+   ///@brief is the top-bottom shell (Carbon) of the adc board appendice [TGeoVolume] 
+   class SAPT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SAPT() : AgBlock("SAPT","is the top-bottom shell (Carbon) of the adc board appendice [TGeoVolume]"){ 
+      }; 
+      ~SAPT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFCO -- 
+   ///@defgroup SFCO_doc 
+   ///@class SFCO 
+   ///@brief is the connection board (rectangular with Hirose connectors) [TGeoVolume] 
+   class SFCO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFCO() : AgBlock("SFCO","is the connection board (rectangular with Hirose connectors) [TGeoVolume]"){ 
+      }; 
+      ~SFCO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFCM -- 
+   ///@defgroup SFCM_doc 
+   ///@class SFCM 
+   ///@brief is the mother volume of the second connection board [TGeoVolume] 
+   class SFCM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFCM() : AgBlock("SFCM","is the mother volume of the second connection board [TGeoVolume]"){ 
+      }; 
+      ~SFCM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFCB -- 
+   ///@defgroup SFCB_doc 
+   ///@class SFCB 
+   ///@brief is the big part of the second connection board [TGeoVolume] 
+   class SFCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFCB() : AgBlock("SFCB","is the big part of the second connection board [TGeoVolume]"){ 
+      }; 
+      ~SFCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFCS -- 
+   ///@defgroup SFCS_doc 
+   ///@class SFCS 
+   ///@brief is the big part of the second connection board [TGeoVolume] 
+   class SFCS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFCS() : AgBlock("SFCS","is the big part of the second connection board [TGeoVolume]"){ 
+      }; 
+      ~SFCS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFKF -- 
+   ///@defgroup SFKF_doc 
+   ///@class SFKF 
+   ///@brief is the first part of the kapton flex circuit [TGeoVolume] 
+   class SFKF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFKF() : AgBlock("SFKF","is the first part of the kapton flex circuit [TGeoVolume]"){ 
+      }; 
+      ~SFKF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFKS -- 
+   ///@defgroup SFKS_doc 
+   ///@class SFKS 
+   ///@brief is the second part of the kapton flex circuit [TGeoVolume] 
+   class SFKS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFKS() : AgBlock("SFKS","is the second part of the kapton flex circuit [TGeoVolume]"){ 
+      }; 
+      ~SFKS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFPR -- 
+   ///@defgroup SFPR_doc 
+   ///@class SFPR 
+   ///@brief is the ladder end inside mechanical part (prism with g10 with half density) [TGeoVolume] 
+   class SFPR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFPR() : AgBlock("SFPR","is the ladder end inside mechanical part (prism with g10 with half density) [TGeoVolume]"){ 
+      }; 
+      ~SFPR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SFPB -- 
+   ///@defgroup SFPB_doc 
+   ///@class SFPB 
+   ///@brief is the ladder end outside mechanical part (rectangle with g10) [TGeoVolume] 
+   class SFPB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SFPB() : AgBlock("SFPB","is the ladder end outside mechanical part (rectangle with g10) [TGeoVolume]"){ 
+      }; 
+      ~SFPB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSBS -- 
+   ///@defgroup SSBS_doc 
+   ///@class SSBS 
+   ///@brief is the small part of the aluminium plate linking the ladder to the sector [TGeoVolume] 
+   class SSBS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSBS() : AgBlock("SSBS","is the small part of the aluminium plate linking the ladder to the sector [TGeoVolume]"){ 
+      }; 
+      ~SSBS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSBB -- 
+   ///@defgroup SSBB_doc 
+   ///@class SSBB 
+   ///@brief is the Big part of the aluminium plate linking the ladder to the sector [TGeoVolume] 
+   class SSBB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSBB() : AgBlock("SSBB","is the Big part of the aluminium plate linking the ladder to the sector [TGeoVolume]"){ 
+      }; 
+      ~SSBB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSST -- 
+   ///@defgroup SSST_doc 
+   ///@class SSST 
+   ///@brief is the top of the small sector [TGeoVolume] 
+   class SSST : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSST() : AgBlock("SSST","is the top of the small sector [TGeoVolume]"){ 
+      }; 
+      ~SSST(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSSS -- 
+   ///@defgroup SSSS_doc 
+   ///@class SSSS 
+   ///@brief is the side of the small sector [TGeoVolume] 
+   class SSSS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSSS() : AgBlock("SSSS","is the side of the small sector [TGeoVolume]"){ 
+      }; 
+      ~SSSS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSRT -- 
+   ///@defgroup SSRT_doc 
+   ///@class SSRT 
+   ///@brief is the top of the side rib [TGeoVolume] 
+   class SSRT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSRT() : AgBlock("SSRT","is the top of the side rib [TGeoVolume]"){ 
+      }; 
+      ~SSRT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSRS -- 
+   ///@defgroup SSRS_doc 
+   ///@class SSRS 
+   ///@brief is the side of the small rib [TGeoVolume] 
+   class SSRS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSRS() : AgBlock("SSRS","is the side of the small rib [TGeoVolume]"){ 
+      }; 
+      ~SSRS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSLB -- 
+   ///@defgroup SSLB_doc 
+   ///@class SSLB 
+   ///@brief is the linking (sector to the cone) box [TGeoVolume] 
+   class SSLB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSLB() : AgBlock("SSLB","is the linking (sector to the cone) box [TGeoVolume]"){ 
+      }; 
+      ~SSLB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SBCH -- 
+   ///@defgroup SBCH_doc 
+   ///@class SBCH 
+   ///@brief is the horizontal branch of the DELRIN cross [TGeoVolume] 
+   class SBCH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SBCH() : AgBlock("SBCH","is the horizontal branch of the DELRIN cross [TGeoVolume]"){ 
+      }; 
+      ~SBCH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SBFH -- 
+   ///@defgroup SBFH_doc 
+   ///@class SBFH 
+   ///@brief is the horizontal branch of the Alumimium cross [TGeoVolume] 
+   class SBFH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SBFH() : AgBlock("SBFH","is the horizontal branch of the Alumimium cross [TGeoVolume]"){ 
+      }; 
+      ~SBFH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SBCV -- 
+   ///@defgroup SBCV_doc 
+   ///@class SBCV 
+   ///@brief is the vertical branch of the DELRIN cross [TGeoVolume] 
+   class SBCV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SBCV() : AgBlock("SBCV","is the vertical branch of the DELRIN cross [TGeoVolume]"){ 
+      }; 
+      ~SBCV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SBFV -- 
+   ///@defgroup SBFV_doc 
+   ///@class SBFV 
+   ///@brief is the vertical branch of the Alumimium cross [TGeoVolume] 
+   class SBFV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SBFV() : AgBlock("SBFV","is the vertical branch of the Alumimium cross [TGeoVolume]"){ 
+      }; 
+      ~SBFV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSLT -- 
+   ///@defgroup SSLT_doc 
+   ///@class SSLT 
+   ///@brief is the linking (sector to the cone) tube [TGeoVolume] 
+   class SSLT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSLT() : AgBlock("SSLT","is the linking (sector to the cone) tube [TGeoVolume]"){ 
+      }; 
+      ~SSLT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SCMP -- 
+   ///@defgroup SCMP_doc 
+   ///@class SCMP 
+   ///@brief is the mounting plate inserted in the cones. [TGeoVolume] 
+   class SCMP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SCMP() : AgBlock("SCMP","is the mounting plate inserted in the cones. [TGeoVolume]"){ 
+      }; 
+      ~SCMP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SCVM -- 
+   ///@defgroup SCVM_doc 
+   ///@class SCVM 
+   ///@brief is the mother volume of the V-shape piece [TGeoVolume] 
+   class SCVM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SCVM() : AgBlock("SCVM","is the mother volume of the V-shape piece [TGeoVolume]"){ 
+      }; 
+      ~SCVM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SCVB -- 
+   ///@defgroup SCVB_doc 
+   ///@class SCVB 
+   ///@brief is the base plate of the V-shape piece [TGeoVolume] 
+   class SCVB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SCVB() : AgBlock("SCVB","is the base plate of the V-shape piece [TGeoVolume]"){ 
+      }; 
+      ~SCVB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SCVS -- 
+   ///@defgroup SCVS_doc 
+   ///@class SCVS 
+   ///@brief is the side plate of the V-shape piece [TGeoVolume] 
+   class SCVS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SCVS() : AgBlock("SCVS","is the side plate of the V-shape piece [TGeoVolume]"){ 
+      }; 
+      ~SCVS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SOSK -- 
+   ///@defgroup SOSK_doc 
+   ///@class SOSK 
+   ///@brief is the separation shield cylinder [TGeoVolume] 
+   class SOSK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SOSK() : AgBlock("SOSK","is the separation shield cylinder [TGeoVolume]"){ 
+      }; 
+      ~SOSK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class SISDGEO7 
+   /// \brief   is the Silicon Strip Detector with TUP modifications  
+   class SISDGEO7 : public AgModule 
+   { 
+      public: 
+      SISDGEO7(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~SISDGEO7(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace SISDGEO7 
+#endif // __SISDGEO7__ 
+namespace SISDGEO7 // $NMSPC 
+{ 
+   /// This method has not been documented 
+   extern void trans_to_sfm (Float_t  x,Float_t  y,Float_t  xc,Float_t  yc,Float_t  tilt,Float_t &xpos,Float_t &ypos); 
+} 

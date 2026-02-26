@@ -1,0 +1,2113 @@
+#ifndef __PixlGeo6__ 
+#define __PixlGeo6__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PIXLGEO6 // $NMSPC 
+{ 
+   struct senp_t {
+float version;
+int sensor;
+float zpos[10];
+int _index;
+};
+ 
+   struct _senp_docum_ {
+string version;
+string sensor;
+string zpos;
+string _index;
+};
+ 
+    struct _senp_types_ {
+  typedef float version;
+  typedef int sensor;
+  typedef float zpos[10];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct senp_info {
+typedef senp_t Type;
+static const char *name(){ return "senp_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct senp_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)senp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sensor {
+  static const char *name() { return  "sensor"; }
+  static size_t Offset(){ return offsetof( struct senp_t, sensor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)senp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct zpos {
+  static const char *name() { return  "zpos"; }
+  static size_t Offset(){ return offsetof( struct senp_t, zpos ); }
+  static void* address(){ 
+         size_t iadd = (size_t)senp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct senp_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)senp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pxlw_t {
+int version;
+float ladrconfig;
+float secversion;
+int _index;
+};
+ 
+   struct _pxlw_docum_ {
+string version;
+string ladrconfig;
+string secversion;
+string _index;
+};
+ 
+    struct _pxlw_types_ {
+  typedef int version;
+  typedef float ladrconfig;
+  typedef float secversion;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pxlw_info {
+typedef pxlw_t Type;
+static const char *name(){ return "pxlw_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pxlw_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct ladrconfig {
+  static const char *name() { return  "ladrconfig"; }
+  static size_t Offset(){ return offsetof( struct pxlw_t, ladrconfig ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct secversion {
+  static const char *name() { return  "secversion"; }
+  static size_t Offset(){ return offsetof( struct pxlw_t, secversion ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pxlw_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pixl_t {
+float version;
+int sector;
+float phinum[10];
+int ison[10];
+int _index;
+};
+ 
+   struct _pixl_docum_ {
+string version;
+string sector;
+string phinum;
+string ison;
+string _index;
+};
+ 
+    struct _pixl_types_ {
+  typedef float version;
+  typedef int sector;
+  typedef float phinum[10];
+  typedef int ison[10];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pixl_info {
+typedef pixl_t Type;
+static const char *name(){ return "pixl_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pixl_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixl_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sector {
+  static const char *name() { return  "sector"; }
+  static size_t Offset(){ return offsetof( struct pixl_t, sector ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixl_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct phinum {
+  static const char *name() { return  "phinum"; }
+  static size_t Offset(){ return offsetof( struct pixl_t, phinum ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixl_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct ison {
+  static const char *name() { return  "ison"; }
+  static size_t Offset(){ return offsetof( struct pixl_t, ison ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixl_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[10];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pixl_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixl_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct lcsd_t {
+int version;
+int numberofcables;
+float xpos[3];
+float ypos[3];
+int _index;
+};
+ 
+   struct _lcsd_docum_ {
+string version;
+string numberofcables;
+string xpos;
+string ypos;
+string _index;
+};
+ 
+    struct _lcsd_types_ {
+  typedef int version;
+  typedef int numberofcables;
+  typedef float xpos[3];
+  typedef float ypos[3];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct lcsd_info {
+typedef lcsd_t Type;
+static const char *name(){ return "lcsd_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct lcsd_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)lcsd_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct numberofcables {
+  static const char *name() { return  "numberofcables"; }
+  static size_t Offset(){ return offsetof( struct lcsd_t, numberofcables ); }
+  static void* address(){ 
+         size_t iadd = (size_t)lcsd_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct xpos {
+  static const char *name() { return  "xpos"; }
+  static size_t Offset(){ return offsetof( struct lcsd_t, xpos ); }
+  static void* address(){ 
+         size_t iadd = (size_t)lcsd_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct ypos {
+  static const char *name() { return  "ypos"; }
+  static size_t Offset(){ return offsetof( struct lcsd_t, ypos ); }
+  static void* address(){ 
+         size_t iadd = (size_t)lcsd_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct lcsd_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)lcsd_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct paro_t {
+int version;
+float dx;
+float dy;
+float dz;
+float mult;
+int sec[10];
+int _index;
+};
+ 
+   struct _paro_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string mult;
+string sec;
+string _index;
+};
+ 
+    struct _paro_types_ {
+  typedef int version;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef float mult;
+  typedef int sec[10];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct paro_info {
+typedef paro_t Type;
+static const char *name(){ return "paro_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct paro_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct paro_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sec {
+  static const char *name() { return  "sec"; }
+  static size_t Offset(){ return offsetof( struct paro_t, sec ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[10];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct paro_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct para_t {
+int version;
+float da;
+float db;
+float dg;
+float mult;
+int sec[10];
+int _index;
+};
+ 
+   struct _para_docum_ {
+string version;
+string da;
+string db;
+string dg;
+string mult;
+string sec;
+string _index;
+};
+ 
+    struct _para_types_ {
+  typedef int version;
+  typedef float da;
+  typedef float db;
+  typedef float dg;
+  typedef float mult;
+  typedef int sec[10];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct para_info {
+typedef para_t Type;
+static const char *name(){ return "para_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct para_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct da {
+  static const char *name() { return  "da"; }
+  static size_t Offset(){ return offsetof( struct para_t, da ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct db {
+  static const char *name() { return  "db"; }
+  static size_t Offset(){ return offsetof( struct para_t, db ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dg {
+  static const char *name() { return  "dg"; }
+  static size_t Offset(){ return offsetof( struct para_t, dg ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct para_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sec {
+  static const char *name() { return  "sec"; }
+  static size_t Offset(){ return offsetof( struct para_t, sec ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[10];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct para_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct ladr_t {
+int version;
+int type;
+float cablethickness;
+int _index;
+};
+ 
+   struct _ladr_docum_ {
+string version;
+string type;
+string cablethickness;
+string _index;
+};
+ 
+    struct _ladr_types_ {
+  typedef int version;
+  typedef int type;
+  typedef float cablethickness;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ladr_info {
+typedef ladr_t Type;
+static const char *name(){ return "ladr_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ladr_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ladr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct type {
+  static const char *name() { return  "type"; }
+  static size_t Offset(){ return offsetof( struct ladr_t, type ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ladr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct cablethickness {
+  static const char *name() { return  "cablethickness"; }
+  static size_t Offset(){ return offsetof( struct ladr_t, cablethickness ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ladr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ladr_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ladr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PXMO -- 
+   ///@defgroup PXMO_doc 
+   ///@class PXMO 
+   ///@brief Main volume for Active sectors [TGeoVolume] 
+   class PXMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXMO() : AgBlock("PXMO","Main volume for Active sectors [TGeoVolume]"){ 
+      }; 
+      ~PXMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXLA -- 
+   ///@defgroup PXLA_doc 
+   ///@class PXLA 
+   ///@brief pixel sector with ladders [TGeoVolume] 
+   class PXLA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXLA() : AgBlock("PXLA","pixel sector with ladders [TGeoVolume]"){ 
+      }; 
+      ~PXLA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCA -- 
+   ///@defgroup PXCA_doc 
+   ///@class PXCA 
+   ///@brief Arc bottom right [TGeoVolume] 
+   class PXCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCA() : AgBlock("PXCA","Arc bottom right [TGeoVolume]"){ 
+      }; 
+      ~PXCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCC -- 
+   ///@defgroup PXCC_doc 
+   ///@class PXCC 
+   ///@brief Arc topright [TGeoVolume] 
+   class PXCC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCC() : AgBlock("PXCC","Arc topright [TGeoVolume]"){ 
+      }; 
+      ~PXCC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCD -- 
+   ///@defgroup PXCD_doc 
+   ///@class PXCD 
+   ///@brief Arc top 23 [TGeoVolume] 
+   class PXCD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCD() : AgBlock("PXCD","Arc top 23 [TGeoVolume]"){ 
+      }; 
+      ~PXCD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCE -- 
+   ///@defgroup PXCE_doc 
+   ///@class PXCE 
+   ///@brief Arc bottom 23 [TGeoVolume] 
+   class PXCE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCE() : AgBlock("PXCE","Arc bottom 23 [TGeoVolume]"){ 
+      }; 
+      ~PXCE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCF -- 
+   ///@defgroup PXCF_doc 
+   ///@class PXCF 
+   ///@brief Arc top 12 [TGeoVolume] 
+   class PXCF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCF() : AgBlock("PXCF","Arc top 12 [TGeoVolume]"){ 
+      }; 
+      ~PXCF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCG -- 
+   ///@defgroup PXCG_doc 
+   ///@class PXCG 
+   ///@brief Arc bottom 12 [TGeoVolume] 
+   class PXCG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCG() : AgBlock("PXCG","Arc bottom 12 [TGeoVolume]"){ 
+      }; 
+      ~PXCG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCH -- 
+   ///@defgroup PXCH_doc 
+   ///@class PXCH 
+   ///@brief arc top left [TGeoVolume] 
+   class PXCH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCH() : AgBlock("PXCH","arc top left [TGeoVolume]"){ 
+      }; 
+      ~PXCH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXCB -- 
+   ///@defgroup PXCB_doc 
+   ///@class PXCB 
+   ///@brief arc bottom left [TGeoVolume] 
+   class PXCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXCB() : AgBlock("PXCB","arc bottom left [TGeoVolume]"){ 
+      }; 
+      ~PXCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXRB -- 
+   ///@defgroup PXRB_doc 
+   ///@class PXRB 
+   ///@brief Sector Right side [TGeoVolume] 
+   class PXRB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXRB() : AgBlock("PXRB","Sector Right side [TGeoVolume]"){ 
+      }; 
+      ~PXRB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXTR -- 
+   ///@defgroup PXTR_doc 
+   ///@class PXTR 
+   ///@brief  [TGeoVolume] 
+   class PXTR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXTR() : AgBlock("PXTR"," [TGeoVolume]"){ 
+      }; 
+      ~PXTR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXTM -- 
+   ///@defgroup PXTM_doc 
+   ///@class PXTM 
+   ///@brief  [TGeoVolume] 
+   class PXTM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXTM() : AgBlock("PXTM"," [TGeoVolume]"){ 
+      }; 
+      ~PXTM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXTL -- 
+   ///@defgroup PXTL_doc 
+   ///@class PXTL 
+   ///@brief  [TGeoVolume] 
+   class PXTL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXTL() : AgBlock("PXTL"," [TGeoVolume]"){ 
+      }; 
+      ~PXTL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXTJ -- 
+   ///@defgroup PXTJ_doc 
+   ///@class PXTJ 
+   ///@brief  [TGeoVolume] 
+   class PXTJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXTJ() : AgBlock("PXTJ"," [TGeoVolume]"){ 
+      }; 
+      ~PXTJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXTI -- 
+   ///@defgroup PXTI_doc 
+   ///@class PXTI 
+   ///@brief  [TGeoVolume] 
+   class PXTI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXTI() : AgBlock("PXTI"," [TGeoVolume]"){ 
+      }; 
+      ~PXTI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXLB -- 
+   ///@defgroup PXLB_doc 
+   ///@class PXLB 
+   ///@brief Sector Left side [TGeoVolume] 
+   class PXLB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXLB() : AgBlock("PXLB","Sector Left side [TGeoVolume]"){ 
+      }; 
+      ~PXLB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXIB -- 
+   ///@defgroup PXIB_doc 
+   ///@class PXIB 
+   ///@brief Sector Inner side [TGeoVolume] 
+   class PXIB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXIB() : AgBlock("PXIB","Sector Inner side [TGeoVolume]"){ 
+      }; 
+      ~PXIB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCA -- 
+   ///@defgroup DTCA_doc 
+   ///@class DTCA 
+   ///@brief  [TGeoVolume] 
+   class DTCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCA() : AgBlock("DTCA"," [TGeoVolume]"){ 
+      }; 
+      ~DTCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCB -- 
+   ///@defgroup DTCB_doc 
+   ///@class DTCB 
+   ///@brief  [TGeoVolume] 
+   class DTCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCB() : AgBlock("DTCB"," [TGeoVolume]"){ 
+      }; 
+      ~DTCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCC -- 
+   ///@defgroup DTCC_doc 
+   ///@class DTCC 
+   ///@brief  [TGeoVolume] 
+   class DTCC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCC() : AgBlock("DTCC"," [TGeoVolume]"){ 
+      }; 
+      ~DTCC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCD -- 
+   ///@defgroup DTCD_doc 
+   ///@class DTCD 
+   ///@brief  [TGeoVolume] 
+   class DTCD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCD() : AgBlock("DTCD"," [TGeoVolume]"){ 
+      }; 
+      ~DTCD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCE -- 
+   ///@defgroup DTCE_doc 
+   ///@class DTCE 
+   ///@brief  [TGeoVolume] 
+   class DTCE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCE() : AgBlock("DTCE"," [TGeoVolume]"){ 
+      }; 
+      ~DTCE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCF -- 
+   ///@defgroup DTCF_doc 
+   ///@class DTCF 
+   ///@brief  [TGeoVolume] 
+   class DTCF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCF() : AgBlock("DTCF"," [TGeoVolume]"){ 
+      }; 
+      ~DTCF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCG -- 
+   ///@defgroup DTCG_doc 
+   ///@class DTCG 
+   ///@brief  [TGeoVolume] 
+   class DTCG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCG() : AgBlock("DTCG"," [TGeoVolume]"){ 
+      }; 
+      ~DTCG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTCH -- 
+   ///@defgroup DTCH_doc 
+   ///@class DTCH 
+   ///@brief  [TGeoVolume] 
+   class DTCH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTCH() : AgBlock("DTCH"," [TGeoVolume]"){ 
+      }; 
+      ~DTCH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSA -- 
+   ///@defgroup DTSA_doc 
+   ///@class DTSA 
+   ///@brief DoveTail Sector Right side [TGeoVolume] 
+   class DTSA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSA() : AgBlock("DTSA","DoveTail Sector Right side [TGeoVolume]"){ 
+      }; 
+      ~DTSA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSB -- 
+   ///@defgroup DTSB_doc 
+   ///@class DTSB 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSB() : AgBlock("DTSB","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSC -- 
+   ///@defgroup DTSC_doc 
+   ///@class DTSC 
+   ///@brief DoveTail Sector Right upper side [TGeoVolume] 
+   class DTSC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSC() : AgBlock("DTSC","DoveTail Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSD -- 
+   ///@defgroup DTSD_doc 
+   ///@class DTSD 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSD() : AgBlock("DTSD","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSE -- 
+   ///@defgroup DTSE_doc 
+   ///@class DTSE 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSE() : AgBlock("DTSE","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSF -- 
+   ///@defgroup DTSF_doc 
+   ///@class DTSF 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSF() : AgBlock("DTSF","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSG -- 
+   ///@defgroup DTSG_doc 
+   ///@class DTSG 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSG() : AgBlock("DTSG","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTSH -- 
+   ///@defgroup DTSH_doc 
+   ///@class DTSH 
+   ///@brief DoveTail  Sector Right upper side [TGeoVolume] 
+   class DTSH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTSH() : AgBlock("DTSH","DoveTail  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DTSH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEA -- 
+   ///@defgroup DTEA_doc 
+   ///@class DTEA 
+   ///@brief  [TGeoVolume] 
+   class DTEA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEA() : AgBlock("DTEA"," [TGeoVolume]"){ 
+      }; 
+      ~DTEA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEB -- 
+   ///@defgroup DTEB_doc 
+   ///@class DTEB 
+   ///@brief  [TGeoVolume] 
+   class DTEB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEB() : AgBlock("DTEB"," [TGeoVolume]"){ 
+      }; 
+      ~DTEB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEC -- 
+   ///@defgroup DTEC_doc 
+   ///@class DTEC 
+   ///@brief  [TGeoVolume] 
+   class DTEC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEC() : AgBlock("DTEC"," [TGeoVolume]"){ 
+      }; 
+      ~DTEC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTED -- 
+   ///@defgroup DTED_doc 
+   ///@class DTED 
+   ///@brief  [TGeoVolume] 
+   class DTED : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTED() : AgBlock("DTED"," [TGeoVolume]"){ 
+      }; 
+      ~DTED(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEE -- 
+   ///@defgroup DTEE_doc 
+   ///@class DTEE 
+   ///@brief  [TGeoVolume] 
+   class DTEE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEE() : AgBlock("DTEE"," [TGeoVolume]"){ 
+      }; 
+      ~DTEE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEF -- 
+   ///@defgroup DTEF_doc 
+   ///@class DTEF 
+   ///@brief  [TGeoVolume] 
+   class DTEF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEF() : AgBlock("DTEF"," [TGeoVolume]"){ 
+      }; 
+      ~DTEF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEG -- 
+   ///@defgroup DTEG_doc 
+   ///@class DTEG 
+   ///@brief  [TGeoVolume] 
+   class DTEG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEG() : AgBlock("DTEG"," [TGeoVolume]"){ 
+      }; 
+      ~DTEG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DTEH -- 
+   ///@defgroup DTEH_doc 
+   ///@class DTEH 
+   ///@brief  [TGeoVolume] 
+   class DTEH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DTEH() : AgBlock("DTEH"," [TGeoVolume]"){ 
+      }; 
+      ~DTEH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESA -- 
+   ///@defgroup DESA_doc 
+   ///@class DESA 
+   ///@brief DoveTail Extrusion Sector Right side [TGeoVolume] 
+   class DESA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESA() : AgBlock("DESA","DoveTail Extrusion Sector Right side [TGeoVolume]"){ 
+      }; 
+      ~DESA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESB -- 
+   ///@defgroup DESB_doc 
+   ///@class DESB 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESB() : AgBlock("DESB","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESC -- 
+   ///@defgroup DESC_doc 
+   ///@class DESC 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESC() : AgBlock("DESC","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESD -- 
+   ///@defgroup DESD_doc 
+   ///@class DESD 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESD() : AgBlock("DESD","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESE -- 
+   ///@defgroup DESE_doc 
+   ///@class DESE 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESE() : AgBlock("DESE","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESF -- 
+   ///@defgroup DESF_doc 
+   ///@class DESF 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESF() : AgBlock("DESF","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESG -- 
+   ///@defgroup DESG_doc 
+   ///@class DESG 
+   ///@brief DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume] 
+   class DESG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESG() : AgBlock("DESG","DoveTailExtrusion Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DESH -- 
+   ///@defgroup DESH_doc 
+   ///@class DESH 
+   ///@brief DoveTail Extrusion Sector Right upper side [TGeoVolume] 
+   class DESH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DESH() : AgBlock("DESH","DoveTail Extrusion Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~DESH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRA -- 
+   ///@defgroup PTRA_doc 
+   ///@class PTRA 
+   ///@brief PTR0 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRA() : AgBlock("PTRA","PTR0 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRB -- 
+   ///@defgroup PTRB_doc 
+   ///@class PTRB 
+   ///@brief PTR1 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTRB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRB() : AgBlock("PTRB","PTR1 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTRB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRC -- 
+   ///@defgroup PTRC_doc 
+   ///@class PTRC 
+   ///@brief PTR2 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTRC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRC() : AgBlock("PTRC","PTR2 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTRC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRE -- 
+   ///@defgroup PTRE_doc 
+   ///@class PTRE 
+   ///@brief PTR4 Right hand side dovetail ext [TGeoVolume] 
+   class PTRE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRE() : AgBlock("PTRE","PTR4 Right hand side dovetail ext [TGeoVolume]"){ 
+      }; 
+      ~PTRE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRF -- 
+   ///@defgroup PTRF_doc 
+   ///@class PTRF 
+   ///@brief PTR5 Left hand (near piece) [TGeoVolume] 
+   class PTRF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRF() : AgBlock("PTRF","PTR5 Left hand (near piece) [TGeoVolume]"){ 
+      }; 
+      ~PTRF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTRG -- 
+   ///@defgroup PTRG_doc 
+   ///@class PTRG 
+   ///@brief PTR6 Piece near BP [TGeoVolume] 
+   class PTRG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTRG() : AgBlock("PTRG","PTR6 Piece near BP [TGeoVolume]"){ 
+      }; 
+      ~PTRG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTMA -- 
+   ///@defgroup PTMA_doc 
+   ///@class PTMA 
+   ///@brief PTM0 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTMA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTMA() : AgBlock("PTMA","PTM0 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTMA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTMB -- 
+   ///@defgroup PTMB_doc 
+   ///@class PTMB 
+   ///@brief PTM1 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTMB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTMB() : AgBlock("PTMB","PTM1 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTMB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTMC -- 
+   ///@defgroup PTMC_doc 
+   ///@class PTMC 
+   ///@brief PTM2 Approximate arc of first piece of dovetail [TGeoVolume] 
+   class PTMC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTMC() : AgBlock("PTMC","PTM2 Approximate arc of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTMC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTME -- 
+   ///@defgroup PTME_doc 
+   ///@class PTME 
+   ///@brief PTM4  of first piece of dovetail [TGeoVolume] 
+   class PTME : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTME() : AgBlock("PTME","PTM4  of first piece of dovetail [TGeoVolume]"){ 
+      }; 
+      ~PTME(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTMF -- 
+   ///@defgroup PTMF_doc 
+   ///@class PTMF 
+   ///@brief PTM5 Left middle part  [TGeoVolume] 
+   class PTMF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTMF() : AgBlock("PTMF","PTM5 Left middle part  [TGeoVolume]"){ 
+      }; 
+      ~PTMF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLA -- 
+   ///@defgroup PTLA_doc 
+   ///@class PTLA 
+   ///@brief PTL0 Dovetail support plate part outer [TGeoVolume] 
+   class PTLA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLA() : AgBlock("PTLA","PTL0 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLB -- 
+   ///@defgroup PTLB_doc 
+   ///@class PTLB 
+   ///@brief PTL1 Dovetail support plate part outer [TGeoVolume] 
+   class PTLB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLB() : AgBlock("PTLB","PTL1 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLC -- 
+   ///@defgroup PTLC_doc 
+   ///@class PTLC 
+   ///@brief PTL2 Dovetail support plate part outer [TGeoVolume] 
+   class PTLC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLC() : AgBlock("PTLC","PTL2 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLD -- 
+   ///@defgroup PTLD_doc 
+   ///@class PTLD 
+   ///@brief PTL3 Dovetail support palte part outer [TGeoVolume] 
+   class PTLD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLD() : AgBlock("PTLD","PTL3 Dovetail support palte part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLE -- 
+   ///@defgroup PTLE_doc 
+   ///@class PTLE 
+   ///@brief PTL4 Dovetail support palte part outer [TGeoVolume] 
+   class PTLE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLE() : AgBlock("PTLE","PTL4 Dovetail support palte part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLF -- 
+   ///@defgroup PTLF_doc 
+   ///@class PTLF 
+   ///@brief PTL5 Dovetail support palte part outer [TGeoVolume] 
+   class PTLF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLF() : AgBlock("PTLF","PTL5 Dovetail support palte part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLG -- 
+   ///@defgroup PTLG_doc 
+   ///@class PTLG 
+   ///@brief PTL6 Dovetail support plate part outer [TGeoVolume] 
+   class PTLG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLG() : AgBlock("PTLG","PTL6 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLH -- 
+   ///@defgroup PTLH_doc 
+   ///@class PTLH 
+   ///@brief PTL7 Dovetail support plate part outer [TGeoVolume] 
+   class PTLH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLH() : AgBlock("PTLH","PTL7 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLI -- 
+   ///@defgroup PTLI_doc 
+   ///@class PTLI 
+   ///@brief PTL8 Dovetail support plate part outer [TGeoVolume] 
+   class PTLI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLI() : AgBlock("PTLI","PTL8 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTLJ -- 
+   ///@defgroup PTLJ_doc 
+   ///@class PTLJ 
+   ///@brief PTL9 Dovetail support plate part outer [TGeoVolume] 
+   class PTLJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTLJ() : AgBlock("PTLJ","PTL9 Dovetail support plate part outer [TGeoVolume]"){ 
+      }; 
+      ~PTLJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCA -- 
+   ///@defgroup BHCA_doc 
+   ///@class BHCA 
+   ///@brief  [TGeoVolume] 
+   class BHCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCA() : AgBlock("BHCA"," [TGeoVolume]"){ 
+      }; 
+      ~BHCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCB -- 
+   ///@defgroup BHCB_doc 
+   ///@class BHCB 
+   ///@brief  [TGeoVolume] 
+   class BHCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCB() : AgBlock("BHCB"," [TGeoVolume]"){ 
+      }; 
+      ~BHCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCC -- 
+   ///@defgroup BHCC_doc 
+   ///@class BHCC 
+   ///@brief  [TGeoVolume] 
+   class BHCC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCC() : AgBlock("BHCC"," [TGeoVolume]"){ 
+      }; 
+      ~BHCC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCD -- 
+   ///@defgroup BHCD_doc 
+   ///@class BHCD 
+   ///@brief  [TGeoVolume] 
+   class BHCD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCD() : AgBlock("BHCD"," [TGeoVolume]"){ 
+      }; 
+      ~BHCD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCE -- 
+   ///@defgroup BHCE_doc 
+   ///@class BHCE 
+   ///@brief  [TGeoVolume] 
+   class BHCE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCE() : AgBlock("BHCE"," [TGeoVolume]"){ 
+      }; 
+      ~BHCE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCF -- 
+   ///@defgroup BHCF_doc 
+   ///@class BHCF 
+   ///@brief  [TGeoVolume] 
+   class BHCF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCF() : AgBlock("BHCF"," [TGeoVolume]"){ 
+      }; 
+      ~BHCF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCG -- 
+   ///@defgroup BHCG_doc 
+   ///@class BHCG 
+   ///@brief  [TGeoVolume] 
+   class BHCG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCG() : AgBlock("BHCG"," [TGeoVolume]"){ 
+      }; 
+      ~BHCG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHCH -- 
+   ///@defgroup BHCH_doc 
+   ///@class BHCH 
+   ///@brief  [TGeoVolume] 
+   class BHCH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHCH() : AgBlock("BHCH"," [TGeoVolume]"){ 
+      }; 
+      ~BHCH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSA -- 
+   ///@defgroup BHSA_doc 
+   ///@class BHSA 
+   ///@brief BullHorn Sector Right side [TGeoVolume] 
+   class BHSA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSA() : AgBlock("BHSA","BullHorn Sector Right side [TGeoVolume]"){ 
+      }; 
+      ~BHSA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSB -- 
+   ///@defgroup BHSB_doc 
+   ///@class BHSB 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSB() : AgBlock("BHSB","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSC -- 
+   ///@defgroup BHSC_doc 
+   ///@class BHSC 
+   ///@brief BullHorn Sector Right upper side [TGeoVolume] 
+   class BHSC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSC() : AgBlock("BHSC","BullHorn Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSD -- 
+   ///@defgroup BHSD_doc 
+   ///@class BHSD 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSD() : AgBlock("BHSD","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSE -- 
+   ///@defgroup BHSE_doc 
+   ///@class BHSE 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSE() : AgBlock("BHSE","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSF -- 
+   ///@defgroup BHSF_doc 
+   ///@class BHSF 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSF() : AgBlock("BHSF","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSG -- 
+   ///@defgroup BHSG_doc 
+   ///@class BHSG 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSG() : AgBlock("BHSG","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BHSH -- 
+   ///@defgroup BHSH_doc 
+   ///@class BHSH 
+   ///@brief BullHorn  Sector Right upper side [TGeoVolume] 
+   class BHSH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BHSH() : AgBlock("BHSH","BullHorn  Sector Right upper side [TGeoVolume]"){ 
+      }; 
+      ~BHSH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PTOB -- 
+   ///@defgroup PTOB_doc 
+   ///@class PTOB 
+   ///@brief  [TGeoVolume] 
+   class PTOB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PTOB() : AgBlock("PTOB"," [TGeoVolume]"){ 
+      }; 
+      ~PTOB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PCAD -- 
+   ///@defgroup PCAD_doc 
+   ///@class PCAD 
+   ///@brief Long CAble section D [TGeoVolume] 
+   class PCAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PCAD() : AgBlock("PCAD","Long CAble section D [TGeoVolume]"){ 
+      }; 
+      ~PCAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- LADR -- 
+   ///@defgroup LADR_doc 
+   ///@class LADR 
+   ///@brief first ladder prototype [TGeoVolume] 
+   class LADR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      LADR() : AgBlock("LADR","first ladder prototype [TGeoVolume]"){ 
+      }; 
+      ~LADR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- GLUA -- 
+   ///@defgroup GLUA_doc 
+   ///@class GLUA 
+   ///@brief Glue for CMOS sensors [TGeoVolume] 
+   class GLUA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      GLUA() : AgBlock("GLUA","Glue for CMOS sensors [TGeoVolume]"){ 
+      }; 
+      ~GLUA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ALCA -- 
+   ///@defgroup ALCA_doc 
+   ///@class ALCA 
+   ///@brief  [TGeoVolume] 
+   class ALCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ALCA() : AgBlock("ALCA"," [TGeoVolume]"){ 
+      }; 
+      ~ALCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- GLUB -- 
+   ///@defgroup GLUB_doc 
+   ///@class GLUB 
+   ///@brief Glue for Al/Cu Cable [TGeoVolume] 
+   class GLUB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      GLUB() : AgBlock("GLUB","Glue for Al/Cu Cable [TGeoVolume]"){ 
+      }; 
+      ~GLUB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CFBK -- 
+   ///@defgroup CFBK_doc 
+   ///@class CFBK 
+   ///@brief Carbon Fiber backing on ladder [TGeoVolume] 
+   class CFBK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CFBK() : AgBlock("CFBK","Carbon Fiber backing on ladder [TGeoVolume]"){ 
+      }; 
+      ~CFBK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- GLUC -- 
+   ///@defgroup GLUC_doc 
+   ///@class GLUC 
+   ///@brief  [TGeoVolume] 
+   class GLUC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      GLUC() : AgBlock("GLUC"," [TGeoVolume]"){ 
+      }; 
+      ~GLUC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- DRIV -- 
+   ///@defgroup DRIV_doc 
+   ///@class DRIV 
+   ///@brief  [TGeoVolume] 
+   class DRIV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      DRIV() : AgBlock("DRIV"," [TGeoVolume]"){ 
+      }; 
+      ~DRIV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXSI -- 
+   ///@defgroup PXSI_doc 
+   ///@class PXSI 
+   ///@brief mother of the sensor assembly [TGeoVolume] 
+   class PXSI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXSI() : AgBlock("PXSI","mother of the sensor assembly [TGeoVolume]"){ 
+      }; 
+      ~PXSI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLAC -- 
+   ///@defgroup PLAC_doc 
+   ///@class PLAC 
+   ///@brief active silicon top sector [TGeoVolume] 
+   class PLAC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLAC() : AgBlock("PLAC","active silicon top sector [TGeoVolume]"){ 
+      }; 
+      ~PLAC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PixlGeo6 
+   /// \brief Pixel Detector Geometry   
+   class PixlGeo6 : public AgModule 
+   { 
+      public: 
+      PixlGeo6(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PixlGeo6(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PixlGeo6 
+#endif // __PixlGeo6__ 

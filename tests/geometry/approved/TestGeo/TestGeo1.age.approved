@@ -1,0 +1,184 @@
+      MODULE TestGeo1   Test of paramterized placement of volumes
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author JCW
+      Created Today
+      +CDE,agecom,gcunit,gconst.
+      CONTENT MAIN,TUBE,TUBP,TUBD
+      CREATE MAIN
+      CALL AgsReset 
+      CALL agml_position_begin('MAIN') 
+      %title = 'MAIN' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- MAIN
+      BLOCK MAIN   A master volume
+      MATERIAL Air
+      SHAPE box dx=100.0 dy=100.0 dz=100.0
+      CREATE TUBD
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- TUBD
+      BLOCK TUBD   A division of the mother volume along Y-axis
+      SHAPE division ndiv=5 iaxis=2
+      CREATE TUBP
+      CALL AgsReset 
+      CALL agml_position_begin('TUBP') 
+      %title = 'TUBP' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- TUBP
+      BLOCK TUBP   A parent volume for the tubes
+      MATERIAL Air
+      SHAPE box dy=6.0 dz=50.0
+      CREATE TUBE
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -100.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 1.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -80.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 2.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -60.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 3.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -40.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 4.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -20.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 5.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 6.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 20.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 5.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 40.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 4.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 60.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 3.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 80.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 2.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('TUBE') 
+      %title = 'TUBE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 100.0 
+      CALL agml_translate_x( %x ) 
+      %rmin = 0.0 
+      %rmax = 1.0 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- TUBE
+      BLOCK TUBE   A sub volume setup for shape defintion when positioned
+      MATERIAL Iron
+      ATTRIBUTE TUBE colo=44
+      SHAPE tube rmin=0.0 rmax=0.0 dz=0.0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module TestGeo1]	 <<==='; (A32,/,/);
+      END! Module TestGeo1

@@ -1,0 +1,424 @@
+#include "CAVEGEO.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace CAVEGEO // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          cvcf_t *__cvcf = new cvcf_t; // dummy
+ AgMLStructure<cvcf_t,cvcf_info> CVCF("cvcf");
+cvcf_t &cvcf = CVCF;
+     
+          // Selectors for cvcf
+isEqual<cvcf_t, float> __cvcf_version__( __cvcf, &__cvcf->version );
+isEqual<cvcf_t, int> __cvcf_config__( __cvcf, &__cvcf->config );
+isEqual<cvcf_t, int> __cvcf_tpcrefsys__( __cvcf, &__cvcf->tpcrefsys );
+isEqual<cvcf_t, int> __cvcf__index__( __cvcf, &__cvcf->_index );
+     
+          
+	void              *cvcf_info::address   = &cvcf;
+	AgMLStructureBase   *cvcf_info::structure = &CVCF;
+     
+          cave_t *__cave = new cave_t; // dummy
+ AgMLStructure<cave_t,cave_info> CAVE("cave");
+cave_t &cave = CAVE;
+     
+          // Selectors for cave
+isEqual<cave_t, float> __cave_version__( __cave, &__cave->version );
+isEqual<cave_t, float> __cave_rmin__( __cave, &__cave->rmin );
+isEqual<cave_t, float> __cave_dconc__( __cave, &__cave->dconc );
+isEqual<cave_t, int> __cave__index__( __cave, &__cave->_index );
+     
+          
+	void              *cave_info::address   = &cave;
+	AgMLStructureBase   *cave_info::structure = &CAVE;
+     
+          ///@addtogroup CAVEGEO_vars     
+          ///@{        
+                Float_t d1,d2,z1;        
+                //        
+                /// Float_t d1,d2,z1        
+          ///@}     
+          /* Export block
+///@addtogroup CAVEGEO_vars
+*/     
+          /* Export block
+///@{
+*/        
+          /* Export block
+///@}
+*/     
+       CAVEGEO::CAVEGEO()     
+         : AgModule("CAVEGEO","  builds CAVE for GSTAR ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HALL::mInstance = 0;     
+          AgBlock *HALL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HALL();        
+                   return mInstance;        
+          }     
+          void HALL::Block( AgCreate create )     
+          {         
+                ///@addtogroup HALL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component Si	a=28.08	z=14	w=1           
+                      /// Component O2	a=16	z=8	w=2           
+                      /// Mixture Concrete dens=2.5           
+                      {  AgMaterial &mix = AgMaterial::Get("Concrete");              
+                            mix.Component("Si",28.08,14,1);              
+                            mix.Component("O2",16,8,2);              
+                            mix.par("dens")=2.5;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("HALL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      d1=cave.rmax[int(1)-1]+cave.dconc;           
+                      d2=cave.rmax[int(2)-1]+cave.dconc;           
+                      z1=cave.dz[int(1)-1]+cave.dconc;           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-cave.dz[int(2)-1];              
+                            shape.Z(1)=-z1;              
+                            shape.Z(2)=-z1;              
+                            shape.Z(3)=z1;              
+                            shape.Z(4)=z1;              
+                            shape.Z(5)=cave.dz[int(2)-1];              
+                            shape.Rmin(0)=cave.rmin;              
+                            shape.Rmin(1)=cave.rmin;              
+                            shape.Rmin(2)=cave.rmin;              
+                            shape.Rmin(3)=cave.rmin;              
+                            shape.Rmin(4)=cave.rmin;              
+                            shape.Rmin(5)=cave.rmin;              
+                            shape.Rmax(0)=d2;              
+                            shape.Rmax(1)=d2;              
+                            shape.Rmax(2)=d1;              
+                            shape.Rmax(3)=d1;              
+                            shape.Rmax(4)=d2;              
+                            shape.Rmax(5)=d2;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HALL;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("CAVE");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create CAVE              
+                            Create("CAVE");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("CAVE");              
+                            place.SetMother("HALL");              
+                            /// Add daughter volume CAVE to mother HALL              
+                            _stacker -> Position( AgBlock::Find("CAVE"), place );              
+                      } // end placement of CAVE           
+                      END_OF_HALL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HALL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *CAVE::mInstance = 0;     
+          AgBlock *CAVE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new CAVE();        
+                   return mInstance;        
+          }     
+          void CAVE::Block( AgCreate create )     
+          {         
+                ///@addtogroup CAVE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      /// Medium something           
+                      ///  stemax = 100            
+                      {  AgMedium &med = AgMedium::Get("Something");              
+                               med.Inherit(this);              
+                            med.par("stemax")=100;              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("CAVE");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.Z(0)=-cave.dz[int(2)-1];              
+                            shape.Z(1)=-cave.dz[int(1)-1];              
+                            shape.Z(2)=-cave.dz[int(1)-1];              
+                            shape.Z(3)=+cave.dz[int(1)-1];              
+                            shape.Z(4)=+cave.dz[int(1)-1];              
+                            shape.Z(5)=+cave.dz[int(2)-1];              
+                            shape.Rmax(0)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(1)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(2)=+cave.rmax[int(1)-1];              
+                            shape.Rmax(3)=+cave.rmax[int(1)-1];              
+                            shape.Rmax(4)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(5)=+cave.rmax[int(2)-1];              
+                            /// Shape Pcon phi1=0 dphi=360               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_CAVE;              
+                            _stacker -> Build(this);              
+                      }           
+                      if ( cvcf.tpcrefsys!=0 )           
+                      {              
+                            { AddGroup("TpcRefSys"); }              
+                      }           
+                      END_OF_CAVE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block CAVE     
+    // ----------------------------------------------------------------------- geoctr
+       void CAVEGEO::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup CAVEGEO_revision        
+             ///@{           
+                   /// Author: Peter Jacobs, LBL           
+             ///@}        
+             ///@addtogroup CAVEGEO_revision        
+             ///@{           
+                   /// Created:   March 10, 1995            
+             ///@}        
+             AddBlock("CAVE", CAVE::Instance());        
+             AddBlock("HALL", HALL::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cvcf
+++cvcf._index;
+cvcf.version = 1;
+// cvcf_docum.version = "version ";
+cvcf.config = 1;
+// cvcf_docum.config = "default config ";
+cvcf.tpcrefsys = 0;
+// cvcf_docum.tpcrefsys = "configures tpcrefsys";
+CVCF.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 1;
+// cave_docum.version = " geometry version ";
+cave.rmin = 0;
+// cave_docum.rmin = " inner radius ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(400),
+cave_info::rmax::BaseType(100)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " outer radius ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(800),
+cave_info::dz::BaseType(2000)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " half length ";
+cave.dconc = 20;
+// cave_docum.dconc = " concrete thickness ";
+CAVE.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 2;
+// cave_docum.version = " geometry version ";
+cave.rmin = 0;
+// cave_docum.rmin = " inner radius ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(400),
+cave_info::rmax::BaseType(213)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " outer radius ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(800),
+cave_info::dz::BaseType(5000)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " half length ";
+cave.dconc = 50;
+// cave_docum.dconc = " concrete thickness ";
+CAVE.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 3;
+// cave_docum.version = " geometry version ";
+cave.rmin = 0;
+// cave_docum.rmin = " inner radius ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(450),
+cave_info::rmax::BaseType(100)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " outer radius ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(800),
+cave_info::dz::BaseType(2000)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " half length ";
+cave.dconc = 50;
+// cave_docum.dconc = " concrete thickness ";
+CAVE.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 4;
+// cave_docum.version = " geometry version ";
+cave.rmin = 0;
+// cave_docum.rmin = " inner radius ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(450),
+cave_info::rmax::BaseType(100)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " outer radius ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(950),
+cave_info::dz::BaseType(2000)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " half length ";
+cave.dconc = 50;
+// cave_docum.dconc = " concrete thickness ";
+CAVE.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 5;
+// cave_docum.version = " version ";
+cave.rmin = 0;
+// cave_docum.rmin = " Inner radius of cave had better be zero ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(1575.02),
+cave_info::rmax::BaseType(329.95)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " furthest distance to a concrete wall ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(807.72),
+cave_info::dz::BaseType(4000.0)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " Dz(1) is distance to east/west wall from center of STAR, Dz(2) depth into tunnels ";
+cave.dconc = 50.0;
+// cave_docum.dconc = " concrete thickness ";
+CAVE.fill();
+        
+             /// USE cvcf _index=1;        
+             CVCF.use( __cvcf__index__ = 1 );
+        
+             /// USE cave version=cvcf.config;        
+             CAVE.use( __cave_version__ = cvcf.config );
+        
+             // - Info -         
+             Info( GetName(), Form("CaveGeoModuleiscalledCONFIG=%3i",cvcf.config)  );        
+             _create = AgCreate("HALL");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HALL           
+                   Create("HALL");            
+             }        
+       }; // CAVEGEO     
+ }; // namespace CAVEGEO  
+ 

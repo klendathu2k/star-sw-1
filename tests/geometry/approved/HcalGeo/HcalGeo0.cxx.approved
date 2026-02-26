@@ -1,0 +1,1278 @@
+#include "HcalGeo0.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace HCALGEO0 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          ///@addtogroup HcalGeo0_vars     
+          ///@{        
+                int i,j,m,n,p,q;        
+                //        
+                /// int i,j,m,n,p,q        
+          ///@}     
+          ///@addtogroup HcalGeo0_vars     
+          ///@{        
+                float xtemp,ytemp;        
+                //        
+                /// float xtemp,ytemp        
+          ///@}     
+          mcdt_t *__mcdt = new mcdt_t; // dummy
+ AgMLStructure<mcdt_t,mcdt_info> MCDT("mcdt");
+mcdt_t &mcdt = MCDT;
+     
+          // Selectors for mcdt
+isEqual<mcdt_t, float> __mcdt_version__( __mcdt, &__mcdt->version );
+isEqual<mcdt_t, float> __mcdt_x__( __mcdt, &__mcdt->x );
+isEqual<mcdt_t, float> __mcdt_y__( __mcdt, &__mcdt->y );
+isEqual<mcdt_t, float> __mcdt_z__( __mcdt, &__mcdt->z );
+isEqual<mcdt_t, float> __mcdt_dx__( __mcdt, &__mcdt->dx );
+isEqual<mcdt_t, float> __mcdt_dy__( __mcdt, &__mcdt->dy );
+isEqual<mcdt_t, float> __mcdt_dz__( __mcdt, &__mcdt->dz );
+isEqual<mcdt_t, int> __mcdt__index__( __mcdt, &__mcdt->_index );
+     
+          
+	void              *mcdt_info::address   = &mcdt;
+	AgMLStructureBase   *mcdt_info::structure = &MCDT;
+     
+          towr_t *__towr = new towr_t; // dummy
+ AgMLStructure<towr_t,towr_info> TOWR("towr");
+towr_t &towr = TOWR;
+     
+          // Selectors for towr
+isEqual<towr_t, float> __towr_version__( __towr, &__towr->version );
+isEqual<towr_t, float> __towr_dx__( __towr, &__towr->dx );
+isEqual<towr_t, float> __towr_dy__( __towr, &__towr->dy );
+isEqual<towr_t, float> __towr_dz__( __towr, &__towr->dz );
+isEqual<towr_t, float> __towr_ntowerx__( __towr, &__towr->ntowerx );
+isEqual<towr_t, float> __towr_ntowery__( __towr, &__towr->ntowery );
+isEqual<towr_t, int> __towr__index__( __towr, &__towr->_index );
+     
+          
+	void              *towr_info::address   = &towr;
+	AgMLStructureBase   *towr_info::structure = &TOWR;
+     
+          cell_t *__cell = new cell_t; // dummy
+ AgMLStructure<cell_t,cell_info> CELL("cell");
+cell_t &cell = CELL;
+     
+          // Selectors for cell
+isEqual<cell_t, float> __cell_version__( __cell, &__cell->version );
+isEqual<cell_t, float> __cell_dx__( __cell, &__cell->dx );
+isEqual<cell_t, float> __cell_dy__( __cell, &__cell->dy );
+isEqual<cell_t, float> __cell_dz__( __cell, &__cell->dz );
+isEqual<cell_t, float> __cell_ncellx__( __cell, &__cell->ncellx );
+isEqual<cell_t, float> __cell_ncelly__( __cell, &__cell->ncelly );
+isEqual<cell_t, float> __cell_nfiberxl__( __cell, &__cell->nfiberxl );
+isEqual<cell_t, float> __cell_nfiberyl__( __cell, &__cell->nfiberyl );
+isEqual<cell_t, float> __cell_nfiberxs__( __cell, &__cell->nfiberxs );
+isEqual<cell_t, float> __cell_nfiberys__( __cell, &__cell->nfiberys );
+isEqual<cell_t, int> __cell__index__( __cell, &__cell->_index );
+     
+          
+	void              *cell_info::address   = &cell;
+	AgMLStructureBase   *cell_info::structure = &CELL;
+     
+          fibr_t *__fibr = new fibr_t; // dummy
+ AgMLStructure<fibr_t,fibr_info> FIBR("fibr");
+fibr_t &fibr = FIBR;
+     
+          // Selectors for fibr
+isEqual<fibr_t, float> __fibr_version__( __fibr, &__fibr->version );
+isEqual<fibr_t, float> __fibr_rmin__( __fibr, &__fibr->rmin );
+isEqual<fibr_t, float> __fibr_rmax__( __fibr, &__fibr->rmax );
+isEqual<fibr_t, float> __fibr_dz__( __fibr, &__fibr->dz );
+isEqual<fibr_t, float> __fibr_startx1__( __fibr, &__fibr->startx1 );
+isEqual<fibr_t, float> __fibr_starty1__( __fibr, &__fibr->starty1 );
+isEqual<fibr_t, float> __fibr_startx2__( __fibr, &__fibr->startx2 );
+isEqual<fibr_t, float> __fibr_starty2__( __fibr, &__fibr->starty2 );
+isEqual<fibr_t, float> __fibr_stepx__( __fibr, &__fibr->stepx );
+isEqual<fibr_t, float> __fibr_stepy__( __fibr, &__fibr->stepy );
+isEqual<fibr_t, int> __fibr__index__( __fibr, &__fibr->_index );
+     
+          
+	void              *fibr_info::address   = &fibr;
+	AgMLStructureBase   *fibr_info::structure = &FIBR;
+     
+          shld_t *__shld = new shld_t; // dummy
+ AgMLStructure<shld_t,shld_info> SHLD("shld");
+shld_t &shld = SHLD;
+     
+          // Selectors for shld
+isEqual<shld_t, float> __shld_version__( __shld, &__shld->version );
+isEqual<shld_t, float> __shld_xd__( __shld, &__shld->xd );
+isEqual<shld_t, float> __shld_yd__( __shld, &__shld->yd );
+isEqual<shld_t, float> __shld_zd__( __shld, &__shld->zd );
+isEqual<shld_t, float> __shld_dxd__( __shld, &__shld->dxd );
+isEqual<shld_t, float> __shld_dyd__( __shld, &__shld->dyd );
+isEqual<shld_t, float> __shld_dzd__( __shld, &__shld->dzd );
+isEqual<shld_t, int> __shld__index__( __shld, &__shld->_index );
+     
+          
+	void              *shld_info::address   = &shld;
+	AgMLStructureBase   *shld_info::structure = &SHLD;
+     
+          pres_t *__pres = new pres_t; // dummy
+ AgMLStructure<pres_t,pres_info> PRES("pres");
+pres_t &pres = PRES;
+     
+          // Selectors for pres
+isEqual<pres_t, float> __pres_version__( __pres, &__pres->version );
+isEqual<pres_t, float> __pres_xp1__( __pres, &__pres->xp1 );
+isEqual<pres_t, float> __pres_yp1__( __pres, &__pres->yp1 );
+isEqual<pres_t, float> __pres_zp1__( __pres, &__pres->zp1 );
+isEqual<pres_t, float> __pres_rp1__( __pres, &__pres->rp1 );
+isEqual<pres_t, float> __pres_xp2__( __pres, &__pres->xp2 );
+isEqual<pres_t, float> __pres_yp2__( __pres, &__pres->yp2 );
+isEqual<pres_t, float> __pres_zp2__( __pres, &__pres->zp2 );
+isEqual<pres_t, float> __pres_rp2__( __pres, &__pres->rp2 );
+isEqual<pres_t, float> __pres_xfe__( __pres, &__pres->xfe );
+isEqual<pres_t, float> __pres_yfe__( __pres, &__pres->yfe );
+isEqual<pres_t, float> __pres_zfe__( __pres, &__pres->zfe );
+isEqual<pres_t, float> __pres_rfe__( __pres, &__pres->rfe );
+isEqual<pres_t, float> __pres_strpxd__( __pres, &__pres->strpxd );
+isEqual<pres_t, float> __pres_strpyd__( __pres, &__pres->strpyd );
+isEqual<pres_t, float> __pres_strpzd__( __pres, &__pres->strpzd );
+isEqual<pres_t, float> __pres_fexd__( __pres, &__pres->fexd );
+isEqual<pres_t, float> __pres_feyd__( __pres, &__pres->feyd );
+isEqual<pres_t, float> __pres_fezd__( __pres, &__pres->fezd );
+isEqual<pres_t, float> __pres_strips__( __pres, &__pres->strips );
+isEqual<pres_t, int> __pres__index__( __pres, &__pres->_index );
+     
+          
+	void              *pres_info::address   = &pres;
+	AgMLStructureBase   *pres_info::structure = &PRES;
+     
+       HcalGeo0::HcalGeo0()     
+         : AgModule("HcalGeo0"," forward hadronic calorimeter, test run, 2014")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCMO::mInstance = 0;     
+          AgBlock *HCMO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCMO();        
+                   return mInstance;        
+          }     
+          void HCMO::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCMO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=mcdt.dx;              
+                            shape.par("dy")=mcdt.dy;              
+                            shape.par("dz")=mcdt.dz;              
+                            /// Shape Bbox dx=mcdt.dx dy=mcdt.dy dz=mcdt.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCMO;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Loop on i from 0 to towr.ntowerx-1 step=1           
+                      for ( i=0; (1>0)? (i<=towr.ntowerx-1):(i>=towr.ntowerx-1); i+=1 )           
+                      {              
+                            /// Loop on j from 0 to towr.ntowery-1 step=1              
+                            for ( j=0; (1>0)? (j<=towr.ntowery-1):(j>=towr.ntowery-1); j+=1 )              
+                            {                 
+                                  _create = AgCreate("HTWR");                 
+                                  {                    
+                                        AgShape myshape; // undefined shape                    
+                                        ///Create HTWR                    
+                                        Create("HTWR");                     
+                                  }                 
+                                  {                    
+                                        AgPosition  place;                    
+                                        place.SetBlock("HTWR");                    
+                                        place.SetMother("HCMO");                    
+                                        /// Add daughter volume HTWR to mother HCMO                    
+                                        place.TranslateX(-((towr.ntowerx-1)*towr.dx)+(i*towr.dx*2));                    
+                                        /// Translate x = -((towr.ntowerx-1)*towr.dx)+(i*towr.dx*2)                    
+                                        place.TranslateY(-((towr.ntowery-1)*towr.dy)+(j*towr.dy*2));                    
+                                        /// Translate y = -((towr.ntowery-1)*towr.dy)+(j*towr.dy*2)                    
+                                        place.TranslateZ(0.0);                    
+                                        /// Translate z = 0.0                    
+                                        _stacker -> Position( AgBlock::Find("HTWR"), place );                    
+                                  } // end placement of HTWR                 
+                            }              
+                      }           
+                      _create = AgCreate("HSLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HSLD              
+                            Create("HSLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("HSLD");              
+                            place.SetMother("HCMO");              
+                            /// Add daughter volume HSLD to mother HCMO              
+                            place.TranslateX(shld.xd);              
+                            /// Translate x = shld.xd              
+                            place.TranslateY(shld.yd);              
+                            /// Translate y = shld.yd              
+                            place.TranslateZ(shld.zd);              
+                            /// Translate z = shld.zd              
+                            _stacker -> Position( AgBlock::Find("HSLD"), place );              
+                      } // end placement of HSLD           
+                      END_OF_HCMO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCMO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HTWR::mInstance = 0;     
+          AgBlock *HTWR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HTWR();        
+                   return mInstance;        
+          }     
+          void HTWR::Block( AgCreate create )     
+          {         
+                ///@addtogroup HTWR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Lead");              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=towr.dx;              
+                            shape.par("dy")=towr.dy;              
+                            shape.par("dz")=towr.dz;              
+                            /// Shape Bbox dx=towr.dx dy=towr.dy dz=towr.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HTWR;              
+                            _stacker -> Build(this);              
+                      }           
+                      xtemp=fibr.startx1;;           
+                      /// Loop on m from 0 to cell.ncellx-1 step=1           
+                      for ( m=0; (1>0)? (m<=cell.ncellx-1):(m>=cell.ncellx-1); m+=1 )           
+                      {              
+                            ytemp=fibr.starty1;;              
+                            /// Loop on n from 0 to cell.ncelly-1 step=1              
+                            for ( n=0; (1>0)? (n<=cell.ncelly-1):(n>=cell.ncelly-1); n+=1 )              
+                            {                 
+                                  if ( m==n )                 
+                                  {                    
+                                        _create = AgCreate("HCES");                    
+                                        {                       
+                                              AgShape myshape; // undefined shape                       
+                                              ///Create HCES                       
+                                              Create("HCES");                        
+                                        }                    
+                                        {                       
+                                              AgPosition  place;                       
+                                              place.SetBlock("HCES");                       
+                                              place.SetMother("HTWR");                       
+                                              /// Add daughter volume HCES to mother HTWR                       
+                                              place.TranslateX(-3.33+(3.33*m));                       
+                                              /// Translate x = -3.33+(3.33*m)                       
+                                              place.TranslateY(-3.33+(n*3.33));                       
+                                              /// Translate y = -3.33+(n*3.33)                       
+                                              place.TranslateZ(0.0);                       
+                                              /// Translate z = 0.0                       
+                                              _stacker -> Position( AgBlock::Find("HCES"), place );                       
+                                        } // end placement of HCES                    
+                                  }                 
+                                  else                 
+                                  {                    
+                                        _create = AgCreate("HCEL");                    
+                                        {                       
+                                              AgShape myshape; // undefined shape                       
+                                              ///Create HCEL                       
+                                              Create("HCEL");                        
+                                        }                    
+                                        {                       
+                                              AgPosition  place;                       
+                                              place.SetBlock("HCEL");                       
+                                              place.SetMother("HTWR");                       
+                                              /// Add daughter volume HCEL to mother HTWR                       
+                                              place.TranslateX(-3.33+(3.33*m));                       
+                                              /// Translate x = -3.33+(3.33*m)                       
+                                              place.TranslateY(-3.33+(n*3.33));                       
+                                              /// Translate y = -3.33+(n*3.33)                       
+                                              place.TranslateZ(0.0);                       
+                                              /// Translate z = 0.0                       
+                                              _stacker -> Position( AgBlock::Find("HCEL"), place );                       
+                                        } // end placement of HCEL                    
+                                  }                 
+                                  ytemp=fibr.starty2;;                 
+                            }              
+                            xtemp=fibr.startx2;;              
+                      }           
+                      END_OF_HTWR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HTWR     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCES::mInstance = 0;     
+          AgBlock *HCES::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCES();        
+                   return mInstance;        
+          }     
+          void HCES::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCES_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Lead");              
+                            _material = mat;              
+                      }           
+                      /// Material Lead isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=cell.dx;              
+                            shape.par("dy")=cell.dy;              
+                            shape.par("dz")=cell.dz;              
+                            /// Shape Bbox dx=cell.dx dy=cell.dy dz=cell.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCES;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HCSX");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HCSX              
+                            Create("HCSX");               
+                      }           
+                      // deferred module()->AddHit( "HCES", "hcal", 0, 0, 100.0, "S");           
+                      // deferred module()->AddHit( "HCES", "elos", 0, 0, 100.0, "S");           
+                      // deferred module()->AddHit( "HCES", "birk", 0, 0, 100.0, "S");           
+                      END_OF_HCES:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCES     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCEL::mInstance = 0;     
+          AgBlock *HCEL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCEL();        
+                   return mInstance;        
+          }     
+          void HCEL::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCEL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Lead");              
+                            _material = mat;              
+                      }           
+                      /// Material Lead isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=cell.dx;              
+                            shape.par("dy")=cell.dy;              
+                            shape.par("dz")=cell.dz;              
+                            /// Shape Bbox dx=cell.dx dy=cell.dy dz=cell.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCEL;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HCLX");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HCLX              
+                            Create("HCLX");               
+                      }           
+                      // deferred module()->AddHit( "HCEL", "hcal", 0, 0, 100.0, "S");           
+                      // deferred module()->AddHit( "HCEL", "elos", 0, 0, 100.0, "S");           
+                      // deferred module()->AddHit( "HCEL", "birk", 0, 0, 100.0, "S");           
+                      END_OF_HCEL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCEL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCSX::mInstance = 0;     
+          AgBlock *HCSX::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCSX();        
+                   return mInstance;        
+          }     
+          void HCSX::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCSX_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=cell.nfiberxs;              
+                            shape.par("iaxis")=1;              
+                            /// Shape Division ndiv=cell.nfiberxs iaxis=1               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCSX;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HCSY");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HCSY              
+                            Create("HCSY");               
+                      }           
+                      END_OF_HCSX:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCSX     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCSY::mInstance = 0;     
+          AgBlock *HCSY::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCSY();        
+                   return mInstance;        
+          }     
+          void HCSY::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCSY_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=cell.nfiberys;              
+                            shape.par("iaxis")=2;              
+                            /// Shape Division ndiv=cell.nfiberys iaxis=2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCSY;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HFIB");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HFIB              
+                            Create("HFIB");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("HFIB");              
+                            place.SetMother("HCSY");              
+                            /// Add daughter volume HFIB to mother HCSY              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            _stacker -> Position( AgBlock::Find("HFIB"), place );              
+                      } // end placement of HFIB           
+                      END_OF_HCSY:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCSY     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCLX::mInstance = 0;     
+          AgBlock *HCLX::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCLX();        
+                   return mInstance;        
+          }     
+          void HCLX::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCLX_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=cell.nfiberxl;              
+                            shape.par("iaxis")=1;              
+                            /// Shape Division ndiv=cell.nfiberxl iaxis=1               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCLX;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HCLY");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HCLY              
+                            Create("HCLY");               
+                      }           
+                      END_OF_HCLX:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCLX     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HCLY::mInstance = 0;     
+          AgBlock *HCLY::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HCLY();        
+                   return mInstance;        
+          }     
+          void HCLY::Block( AgCreate create )     
+          {         
+                ///@addtogroup HCLY_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Lead isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Lead");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=cell.nfiberyl;              
+                            shape.par("iaxis")=2;              
+                            /// Shape Division ndiv=cell.nfiberyl iaxis=2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HCLY;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("HFIC");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HFIC              
+                            Create("HFIC");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("HFIC");              
+                            place.SetMother("HCLY");              
+                            /// Add daughter volume HFIC to mother HCLY              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            _stacker -> Position( AgBlock::Find("HFIC"), place );              
+                      } // end placement of HFIC           
+                      END_OF_HCLY:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HCLY     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HFIB::mInstance = 0;     
+          AgBlock *HFIB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HFIB();        
+                   return mInstance;        
+          }     
+          void HFIB::Block( AgCreate create )     
+          {         
+                ///@addtogroup HFIB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      /// Material SensPoly isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Senspoly");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=fibr.rmin;              
+                            shape.par("rmax")=fibr.rmax;              
+                            shape.par("dz")=fibr.dz;              
+                            /// Shape Tube rmin=fibr.rmin rmax=fibr.rmax dz=fibr.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HFIB;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_HFIB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HFIB     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HFIC::mInstance = 0;     
+          AgBlock *HFIC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HFIC();        
+                   return mInstance;        
+          }     
+          void HFIC::Block( AgCreate create )     
+          {         
+                ///@addtogroup HFIC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      /// Material SensPoly isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Senspoly");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=fibr.rmin;              
+                            shape.par("rmax")=fibr.rmax;              
+                            shape.par("dz")=fibr.dz;              
+                            /// Shape Tube rmin=fibr.rmin rmax=fibr.rmax dz=fibr.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HFIC;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_HFIC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HFIC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HSLD::mInstance = 0;     
+          AgBlock *HSLD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HSLD();        
+                   return mInstance;        
+          }     
+          void HSLD::Block( AgCreate create )     
+          {         
+                ///@addtogroup HSLD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Iron");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shld.dxd;              
+                            shape.par("dy")=shld.dyd;              
+                            shape.par("dz")=shld.dzd;              
+                            /// Shape Bbox dx=shld.dxd dy=shld.dyd dz=shld.dzd               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HSLD;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_HSLD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HSLD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HSWR::mInstance = 0;     
+          AgBlock *HSWR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HSWR();        
+                   return mInstance;        
+          }     
+          void HSWR::Block( AgCreate create )     
+          {         
+                ///@addtogroup HSWR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=25.0;              
+                            shape.par("dy")=50.0;              
+                            shape.par("dz")=8.0;              
+                            /// Shape Bbox dx=25.0 dy=50.0 dz=8.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HSWR;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Loop on i from 0 to pres.strips-1 step=1           
+                      for ( i=0; (1>0)? (i<=pres.strips-1):(i>=pres.strips-1); i+=1 )           
+                      {              
+                            _create = AgCreate("HSTP");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create HSTP                 
+                                  Create("HSTP");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("HSTP");                 
+                                  place.SetMother("HSWR");                 
+                                  /// Add daughter volume HSTP to mother HSWR                 
+                                  place.TranslateX(-23.75+(i*2*pres.strpxd));                 
+                                  /// Translate x = -23.75+(i*2*pres.strpxd)                 
+                                  place.TranslateY(0.0);                 
+                                  /// Translate y = 0.0                 
+                                  place.TranslateZ(0.0);                 
+                                  /// Translate z = 0.0                 
+                                  _stacker -> Position( AgBlock::Find("HSTP"), place );                 
+                            } // end placement of HSTP              
+                      }           
+                      END_OF_HSWR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HSWR     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HSTP::mInstance = 0;     
+          AgBlock *HSTP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HSTP();        
+                   return mInstance;        
+          }     
+          void HSTP::Block( AgCreate create )     
+          {         
+                ///@addtogroup HSTP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      /// Material SensPoly isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Senspoly");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=pres.strpxd;              
+                            shape.par("dy")=pres.strpyd;              
+                            shape.par("dz")=pres.strpzd;              
+                            /// Shape Bbox dx=pres.strpxd dy=pres.strpyd dz=pres.strpzd               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HSTP;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "HSTP", "birk", 0, 0, 250.0, "C");           
+                      END_OF_HSTP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HSTP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HSFE::mInstance = 0;     
+          AgBlock *HSFE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HSFE();        
+                   return mInstance;        
+          }     
+          void HSFE::Block( AgCreate create )     
+          {         
+                ///@addtogroup HSFE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("None");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=pres.fexd;              
+                            shape.par("dy")=pres.feyd;              
+                            shape.par("dz")=pres.fezd;              
+                            /// Shape Bbox dx=pres.fexd dy=pres.feyd dz=pres.fezd               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HSFE;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_HSFE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HSFE     
+    // ----------------------------------------------------------------------- geoctr
+       void HcalGeo0::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup HcalGeo0_revision        
+             ///@{           
+                   /// Author: Prashanth S (KSU)           
+             ///@}        
+             ///@addtogroup HcalGeo0_revision        
+             ///@{           
+                   /// Created: 12/30/2013           
+             ///@}        
+             AddBlock("HCMO", HCMO::Instance());        
+             AddBlock("HTWR", HTWR::Instance());        
+             AddBlock("HCEL", HCEL::Instance());        
+             AddBlock("HCES", HCES::Instance());        
+             AddBlock("HCLX", HCLX::Instance());        
+             AddBlock("HCLY", HCLY::Instance());        
+             AddBlock("HCSX", HCSX::Instance());        
+             AddBlock("HCSY", HCSY::Instance());        
+             AddBlock("HFIB", HFIB::Instance());        
+             AddBlock("HFIC", HFIC::Instance());        
+             AddBlock("HSLD", HSLD::Instance());        
+             AddBlock("HSWR", HSWR::Instance());        
+             AddBlock("HSTP", HSTP::Instance());        
+             AddBlock("HSFE", HSFE::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill mcdt
+++mcdt._index;
+mcdt.version = 1.0;
+// mcdt_docum.version = "face center of calorimeter";
+mcdt.x = -69.8;
+// mcdt_docum.x = "x cdt from center of TPC";
+mcdt.y = 4.9;
+// mcdt_docum.y = "y cdt from center of TPC";
+mcdt.z = 777.4;
+// mcdt_docum.z = "z cdt from center of TPC";
+mcdt.dx = 60/2.;
+// mcdt_docum.dx = "HCMO width";
+mcdt.dy = (60+5)/2.;
+// mcdt_docum.dy = "HCMO height + shild hight";
+mcdt.dz = 117/2.;
+// mcdt_docum.dz = "HCMO length";
+MCDT.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill towr
+++towr._index;
+towr.version = 1.0;
+// towr_docum.version = "towr dimention";
+towr.dx = 10.0/2.;
+// towr_docum.dx = "towr width";
+towr.dy = 10.0/2.;
+// towr_docum.dy = "towr height";
+towr.dz = 117.0/2.;
+// towr_docum.dz = "towr length";
+towr.ntowerx = 6;
+// towr_docum.ntowerx = "no of tower in X dir";
+towr.ntowery = 6;
+// towr_docum.ntowery = "no of tower in Y dir";
+TOWR.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cell
+++cell._index;
+cell.version = 1.0;
+// cell_docum.version = "pixels dimention";
+cell.dx = 3.3/2.;
+// cell_docum.dx = "pixels width";
+cell.dy = 3.3/2.;
+// cell_docum.dy = "pixels height";
+cell.dz = 117.0/2.;
+// cell_docum.dz = "towr length";
+cell.ncellx = 3;
+// cell_docum.ncellx = "no of cells in X dir";
+cell.ncelly = 3;
+// cell_docum.ncelly = "no of cells in Y dir";
+cell.nfiberxl = 16;
+// cell_docum.nfiberxl = "no fibers in cell 16 fibers";
+cell.nfiberyl = 16;
+// cell_docum.nfiberyl = "no fibers in cell 16 fibers";
+cell.nfiberxs = 15;
+// cell_docum.nfiberxs = "no fibers in cell 15 fibers";
+cell.nfiberys = 15;
+// cell_docum.nfiberys = "no fibers in cell 15 fibers";
+CELL.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill fibr
+++fibr._index;
+fibr.version = 1.0;
+// fibr_docum.version = "fiber dimention";
+fibr.rmin = 0.0;
+// fibr_docum.rmin = "inner radius of fiber";
+fibr.rmax = 0.055;
+// fibr_docum.rmax = "outer radius of fiber";
+fibr.dz = 117.0/2.;
+// fibr_docum.dz = "towr length";
+fibr.startx1 = 0.107;
+// fibr_docum.startx1 = "distance from edge or from one cell boundry to other 1: for first cell ";
+fibr.starty1 = 0.107;
+// fibr_docum.starty1 = "distance from edge or from one cell boundry to other ";
+fibr.startx2 = 0.1065;
+// fibr_docum.startx2 = "distance from edge or from one cell boundry to other 2:for 2nd and 3rd cell";
+fibr.starty2 = 0.1065;
+// fibr_docum.starty2 = "distance from edge or from one cell boundry to other ";
+fibr.stepx = 0.213;
+// fibr_docum.stepx = "distance between fibers center to center";
+fibr.stepy = 0.213;
+// fibr_docum.stepy = "distance between fibers center to center";
+FIBR.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill shld
+++shld._index;
+shld.version = 1.0;
+// shld_docum.version = "None";
+shld.xd = 0.0;
+// shld_docum.xd = "None";
+shld.yd = -32.5;
+// shld_docum.yd = "None";
+shld.zd = 0.0;
+// shld_docum.zd = "None";
+shld.dxd = 35.0;
+// shld_docum.dxd = "None";
+shld.dyd = 5.0/2;
+// shld_docum.dyd = "None";
+shld.dzd = 127.0/2;
+// shld_docum.dzd = "None";
+SHLD.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pres
+++pres._index;
+pres.version = 1.0;
+// pres_docum.version = "None";
+pres.xp1 = 0.0;
+// pres_docum.xp1 = "None";
+pres.yp1 = 0.0;
+// pres_docum.yp1 = "None";
+pres.zp1 = 707.2;
+// pres_docum.zp1 = "None";
+pres.rp1 = 45.0;
+// pres_docum.rp1 = "None";
+pres.xp2 = 0.0;
+// pres_docum.xp2 = "None";
+pres.yp2 = 0.0;
+// pres_docum.yp2 = "None";
+pres.zp2 = 711.2;
+// pres_docum.zp2 = "None";
+pres.rp2 = -45.0;
+// pres_docum.rp2 = "None";
+pres.xfe = 0.0;
+// pres_docum.xfe = "None";
+pres.yfe = 0.0;
+// pres_docum.yfe = "None";
+pres.zfe = 709.2;
+// pres_docum.zfe = "None";
+pres.rfe = 45.0;
+// pres_docum.rfe = "None";
+pres.strpxd = 1.25;
+// pres_docum.strpxd = "None";
+pres.strpyd = 45.0;
+// pres_docum.strpyd = "None";
+pres.strpzd = 0.50;
+// pres_docum.strpzd = "None";
+pres.fexd = 24.1;
+// pres_docum.fexd = "None";
+pres.feyd = 24.1;
+// pres_docum.feyd = "None";
+pres.fezd = 0.31;
+// pres_docum.fezd = "None";
+pres.strips = 20;
+// pres_docum.strips = "None";
+PRES.fill();
+        
+             /// USE mcdt version=1.0;        
+             MCDT.use( __mcdt_version__ = 1.0 );
+        
+             /// USE towr version=1.0;        
+             TOWR.use( __towr_version__ = 1.0 );
+        
+             /// USE cell version=1.0;        
+             CELL.use( __cell_version__ = 1.0 );
+        
+             /// USE fibr version=1.0;        
+             FIBR.use( __fibr_version__ = 1.0 );
+        
+             /// USE shld version=1.0;        
+             SHLD.use( __shld_version__ = 1.0 );
+        
+             /// USE pres version=1.0;        
+             PRES.use( __pres_version__ = 1.0 );
+        
+             _create = AgCreate("HCMO");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HCMO           
+                   Create("HCMO");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("HCMO");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume HCMO to mother CAVE           
+                   place.TranslateX(mcdt.x);           
+                   /// Translate x = mcdt.x           
+                   place.TranslateY(mcdt.y);           
+                   /// Translate y = mcdt.y           
+                   place.TranslateZ(mcdt.z);           
+                   /// Translate z = mcdt.z           
+                   _stacker -> Position( AgBlock::Find("HCMO"), place );           
+             } // end placement of HCMO        
+             _create = AgCreate("HSWR");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HSWR           
+                   Create("HSWR");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("HSWR");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume HSWR to mother CAVE           
+                   place.TranslateX(pres.xp2);           
+                   /// Translate x = pres.xp2           
+                   place.TranslateY(pres.yp2);           
+                   /// Translate y = pres.yp2           
+                   place.TranslateZ(pres.zp2);           
+                   /// Translate z = pres.zp2           
+                   place.AlphaZ(pres.rp2);           
+                   /// Rotate: AlphaZ = pres.rp2           
+                   /// G3 Reference: thetax = 90           
+                   /// G3 Reference: phix = 0           
+                   /// G3 Reference: thetay = 90           
+                   /// G3 Reference: phiy = 90           
+                   /// G3 Reference: thetaz = 0           
+                   /// G3 Reference: phiz = 0           
+                   _stacker -> Position( AgBlock::Find("HSWR"), place );           
+             } // end placement of HSWR        
+             _create = AgCreate("HSFE");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HSFE           
+                   Create("HSFE");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("HSFE");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume HSFE to mother CAVE           
+                   place.TranslateX(pres.xfe);           
+                   /// Translate x = pres.xfe           
+                   place.TranslateY(pres.yfe);           
+                   /// Translate y = pres.yfe           
+                   place.TranslateZ(pres.zfe);           
+                   /// Translate z = pres.zfe           
+                   place.AlphaZ(pres.rfe);           
+                   /// Rotate: AlphaZ = pres.rfe           
+                   /// G3 Reference: thetax = 90           
+                   /// G3 Reference: phix = 0           
+                   /// G3 Reference: thetay = 90           
+                   /// G3 Reference: phiy = 90           
+                   /// G3 Reference: thetaz = 0           
+                   /// G3 Reference: phiz = 0           
+                   _stacker -> Position( AgBlock::Find("HSFE"), place );           
+             } // end placement of HSFE        
+             _create = AgCreate("HSWR");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HSWR           
+                   Create("HSWR");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("HSWR");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume HSWR to mother CAVE           
+                   place.TranslateX(pres.xp1);           
+                   /// Translate x = pres.xp1           
+                   place.TranslateY(pres.yp1);           
+                   /// Translate y = pres.yp1           
+                   place.TranslateZ(pres.zp1);           
+                   /// Translate z = pres.zp1           
+                   place.AlphaZ(pres.rp1);           
+                   /// Rotate: AlphaZ = pres.rp1           
+                   /// G3 Reference: thetax = 90           
+                   /// G3 Reference: phix = 0           
+                   /// G3 Reference: thetay = 90           
+                   /// G3 Reference: phiy = 90           
+                   /// G3 Reference: thetaz = 0           
+                   /// G3 Reference: phiz = 0           
+                   _stacker -> Position( AgBlock::Find("HSWR"), place );           
+             } // end placement of HSWR        
+       }; // HcalGeo0     
+ }; // namespace HcalGeo0  
+ 

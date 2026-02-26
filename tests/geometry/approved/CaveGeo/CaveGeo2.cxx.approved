@@ -1,0 +1,1482 @@
+#include "CaveGeo2.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace CAVEGEO2 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          cvcf_t *__cvcf = new cvcf_t; // dummy
+ AgMLStructure<cvcf_t,cvcf_info> CVCF("cvcf");
+cvcf_t &cvcf = CVCF;
+     
+          // Selectors for cvcf
+isEqual<cvcf_t, float> __cvcf_version__( __cvcf, &__cvcf->version );
+isEqual<cvcf_t, int> __cvcf_config__( __cvcf, &__cvcf->config );
+isEqual<cvcf_t, int> __cvcf_tpcrefsys__( __cvcf, &__cvcf->tpcrefsys );
+isEqual<cvcf_t, int> __cvcf__index__( __cvcf, &__cvcf->_index );
+     
+          
+	void              *cvcf_info::address   = &cvcf;
+	AgMLStructureBase   *cvcf_info::structure = &CVCF;
+     
+          cave_t *__cave = new cave_t; // dummy
+ AgMLStructure<cave_t,cave_info> CAVE("cave");
+cave_t &cave = CAVE;
+     
+          // Selectors for cave
+isEqual<cave_t, float> __cave_version__( __cave, &__cave->version );
+isEqual<cave_t, float> __cave_rmin__( __cave, &__cave->rmin );
+isEqual<cave_t, float> __cave_dconc__( __cave, &__cave->dconc );
+isEqual<cave_t, int> __cave__index__( __cave, &__cave->_index );
+     
+          
+	void              *cave_info::address   = &cave;
+	AgMLStructureBase   *cave_info::structure = &CAVE;
+     
+          cdim_t *__cdim = new cdim_t; // dummy
+ AgMLStructure<cdim_t,cdim_info> CDIM("cdim");
+cdim_t &cdim = CDIM;
+     
+          // Selectors for cdim
+isEqual<cdim_t, float> __cdim_version__( __cdim, &__cdim->version );
+isEqual<cdim_t, float> __cdim_dceiling__( __cdim, &__cdim->dceiling );
+isEqual<cdim_t, float> __cdim_dfloor__( __cdim, &__cdim->dfloor );
+isEqual<cdim_t, float> __cdim_dnorth__( __cdim, &__cdim->dnorth );
+isEqual<cdim_t, float> __cdim_dsouth__( __cdim, &__cdim->dsouth );
+isEqual<cdim_t, float> __cdim_thickceil__( __cdim, &__cdim->thickceil );
+isEqual<cdim_t, float> __cdim_rmax__( __cdim, &__cdim->rmax );
+isEqual<cdim_t, float> __cdim_dz__( __cdim, &__cdim->dz );
+isEqual<cdim_t, int> __cdim__index__( __cdim, &__cdim->_index );
+     
+          
+	void              *cdim_info::address   = &cdim;
+	AgMLStructureBase   *cdim_info::structure = &CDIM;
+     
+          tdim_t *__tdim = new tdim_t; // dummy
+ AgMLStructure<tdim_t,tdim_info> TDIM("tdim");
+tdim_t &tdim = TDIM;
+     
+          // Selectors for tdim
+isEqual<tdim_t, float> __tdim_version__( __tdim, &__tdim->version );
+isEqual<tdim_t, float> __tdim_dceiling__( __tdim, &__tdim->dceiling );
+isEqual<tdim_t, float> __tdim_dfloor__( __tdim, &__tdim->dfloor );
+isEqual<tdim_t, float> __tdim_dnorth__( __tdim, &__tdim->dnorth );
+isEqual<tdim_t, float> __tdim_dsouth__( __tdim, &__tdim->dsouth );
+isEqual<tdim_t, float> __tdim_rmax__( __tdim, &__tdim->rmax );
+isEqual<tdim_t, float> __tdim_dz__( __tdim, &__tdim->dz );
+isEqual<tdim_t, int> __tdim__index__( __tdim, &__tdim->_index );
+     
+          
+	void              *tdim_info::address   = &tdim;
+	AgMLStructureBase   *tdim_info::structure = &TDIM;
+     
+          shld_t *__shld = new shld_t; // dummy
+ AgMLStructure<shld_t,shld_info> SHLD("shld");
+shld_t &shld = SHLD;
+     
+          // Selectors for shld
+isEqual<shld_t, float> __shld_version__( __shld, &__shld->version );
+isEqual<shld_t, int> __shld__index__( __shld, &__shld->_index );
+     
+          
+	void              *shld_info::address   = &shld;
+	AgMLStructureBase   *shld_info::structure = &SHLD;
+     
+          ///@addtogroup CaveGeo2_vars     
+          ///@{        
+                float d1,d2,d3,z1,wall_xx,wall_yy,wall_zz,wall_dx,wall_dy,wall_dz;        
+                //        
+                /// float d1,d2,d3,z1,wall_xx,wall_yy,wall_zz,wall_dx,wall_dy,wall_dz        
+          ///@}     
+          ///@addtogroup CaveGeo2_vars     
+          ///@{        
+                int i,j,k;        
+                //        
+                /// int i,j,k        
+          ///@}     
+       CaveGeo2::CaveGeo2()     
+         : AgModule("CaveGeo2","STAR Wide Angle Hall Geometry")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HALL::mInstance = 0;     
+          AgBlock *HALL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HALL();        
+                   return mInstance;        
+          }     
+          void HALL::Block( AgCreate create )     
+          {         
+                ///@addtogroup HALL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component Silicon	a=28.09	z=14	w=0.2           
+                      /// Component Oxygen	a=15.999	z=8	w=0.5           
+                      /// Component Hydrogen	a=1.00794	z=1	w=0.006           
+                      /// Component Carbon	a=12.011	z=6	w=0.03           
+                      /// Component Sodium	a=22.99	z=11	w=0.01           
+                      /// Component Aluminium	a=26.98	z=13	w=0.03           
+                      /// Component Potassium	a=39.098	z=19	w=0.01           
+                      /// Component Calcium	a=40.078	z=20	w=0.2           
+                      /// Component Iron	a=55.85	z=26	w=0.014           
+                      /// Mixture Concrete dens=2.35           
+                      {  AgMaterial &mix = AgMaterial::Get("Concrete");              
+                            mix.Component("Silicon",28.09,14,0.2);              
+                            mix.Component("Oxygen",15.999,8,0.5);              
+                            mix.Component("Hydrogen",1.00794,1,0.006);              
+                            mix.Component("Carbon",12.011,6,0.03);              
+                            mix.Component("Sodium",22.99,11,0.01);              
+                            mix.Component("Aluminium",26.98,13,0.03);              
+                            mix.Component("Potassium",39.098,19,0.01);              
+                            mix.Component("Calcium",40.078,20,0.2);              
+                            mix.Component("Iron",55.85,26,0.014);              
+                            mix.par("dens")=2.35;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Concrete           
+                      {  AgMedium med = AgMedium::CopyMedium("Concrete");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("HALL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      d1=cave.rmax[int(1)-1]+cave.dconc;           
+                      d2=cave.rmax[int(2)-1]+cave.dconc;           
+                      z1=cave.dz[int(1)-1]+cave.dconc;           
+                      {  AgShape shape = AgShape("Pgon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=45;              
+                            shape.par("dphi")=360;              
+                            shape.par("npdiv")=4;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-cave.dz[int(2)-1];              
+                            shape.Z(1)=-z1;              
+                            shape.Z(2)=-z1;              
+                            shape.Z(3)=z1;              
+                            shape.Z(4)=z1;              
+                            shape.Z(5)=cave.dz[int(2)-1];              
+                            shape.Rmin(0)=cave.rmin;              
+                            shape.Rmin(1)=cave.rmin;              
+                            shape.Rmin(2)=cave.rmin;              
+                            shape.Rmin(3)=cave.rmin;              
+                            shape.Rmin(4)=cave.rmin;              
+                            shape.Rmin(5)=cave.rmin;              
+                            shape.Rmax(0)=d2;              
+                            shape.Rmax(1)=d2;              
+                            shape.Rmax(2)=d1;              
+                            shape.Rmax(3)=d1;              
+                            shape.Rmax(4)=d2;              
+                            shape.Rmax(5)=d2;              
+                            /// Shape Pgon phi1=45 dphi=360 npdiv=4 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HALL;              
+                            _stacker -> Build(this);              
+                      }           
+                      wall_dx=d1;           
+                      wall_dy=cave.dconc/2;           
+                      wall_dz=z1;           
+                      wall_yy=d1-wall_dy;           
+                      _create = AgCreate("HOLE");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create HOLE              
+                            Create("HOLE");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("HOLE");              
+                            place.SetMother("HALL");              
+                            /// Add daughter volume HOLE to mother HALL              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            _stacker -> Position( AgBlock::Find("HOLE"), place );              
+                      } // end placement of HOLE           
+                      _create = AgCreate("CAVE");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create CAVE              
+                            Create("CAVE");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("CAVE");              
+                            place.SetMother("HALL");              
+                            /// Add daughter volume CAVE to mother HALL              
+                            _stacker -> Position( AgBlock::Find("CAVE"), place );              
+                      } // end placement of CAVE           
+                      END_OF_HALL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HALL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *CAVE::mInstance = 0;     
+          AgBlock *CAVE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new CAVE();        
+                   return mInstance;        
+          }     
+          void CAVE::Block( AgCreate create )     
+          {         
+                ///@addtogroup CAVE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Material Air isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Air");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium Air           
+                      {  AgMedium med = AgMedium::CopyMedium("Air");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("CAVE");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pgon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=45;              
+                            shape.par("dphi")=360;              
+                            shape.par("npdiv")=4;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-cave.dz[int(2)-1];              
+                            shape.Z(1)=-cave.dz[int(1)-1];              
+                            shape.Z(2)=-cave.dz[int(1)-1];              
+                            shape.Z(3)=+cave.dz[int(1)-1];              
+                            shape.Z(4)=+cave.dz[int(1)-1];              
+                            shape.Z(5)=+cave.dz[int(2)-1];              
+                            shape.Rmin(0)=cave.rmin;              
+                            shape.Rmin(1)=cave.rmin;              
+                            shape.Rmin(2)=cave.rmin;              
+                            shape.Rmin(3)=cave.rmin;              
+                            shape.Rmin(4)=cave.rmin;              
+                            shape.Rmin(5)=cave.rmin;              
+                            shape.Rmax(0)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(1)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(2)=+cave.rmax[int(1)-1];              
+                            shape.Rmax(3)=+cave.rmax[int(1)-1];              
+                            shape.Rmax(4)=+cave.rmax[int(2)-1];              
+                            shape.Rmax(5)=+cave.rmax[int(2)-1];              
+                            /// Shape Pgon phi1=45 dphi=360 npdiv=4 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_CAVE;              
+                            _stacker -> Build(this);              
+                      }           
+                      if ( cvcf.tpcrefsys!=0 )           
+                      {              
+                            { AddGroup("TpcRefSys"); }              
+                      }           
+                      cdim.rmax=cave.rmax[int(1)-1];           
+                      tdim.rmax=cave.rmax[int(2)-1];           
+                      cdim.dz=cave.dz[int(1)-1];           
+                      tdim.dz=cave.dz[int(2)-1]-cave.dz[int(1)-1];           
+                      d1=cave.rmax[int(1)-1];           
+                      d2=cave.rmax[int(2)-1];           
+                      z1=cave.dz[int(1)-1];           
+                      wall_dx=d1;           
+                      wall_dy=cdim.thickceil/2;           
+                      wall_dz=cave.dz[int(1)-1];           
+                      d3=cdim.dceiling-wall_dy;           
+                      wall_yy=d3;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dy=(d1-cdim.dfloor)/2;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(-cave.rmax[int(1)-1]+wall_dy);              
+                            /// Translate y = -cave.rmax[int(1)-1]+wall_dy              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      d3=cdim.dceiling-cdim.thickceil;           
+                      wall_dx=68*2.54/2;           
+                      wall_dy=(d3+cdim.dfloor)/2;           
+                      wall_xx=-cdim.dnorth+wall_dx;           
+                      wall_yy=(d3-cdim.dfloor)/2;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_zz=(cave.dz[int(2)-1]+cave.dz[int(1)-1])/2;           
+                      wall_dz=(cave.dz[int(2)-1]-cave.dz[int(1)-1])/2;           
+                      d1=cave.rmax[int(2)-1];           
+                      wall_dx=d1;           
+                      wall_dy=(d1-tdim.dceiling)/2;           
+                      wall_yy=(d1+tdim.dceiling)/2;           
+                      d2=wall_yy-wall_dy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(-wall_zz);              
+                            /// Translate z = -wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dy=(d1-tdim.dfloor)/2;           
+                      wall_yy=(d1+tdim.dfloor)/2;           
+                      d3=-(wall_yy-wall_dy);           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(-wall_yy);              
+                            /// Translate y = -wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateY(-wall_yy);              
+                            /// Translate y = -wall_yy              
+                            place.TranslateZ(-wall_zz);              
+                            /// Translate z = -wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dy=(d2-d3)/2;           
+                      wall_yy=(d2+d3)/2;           
+                      wall_dx=(tdim.dnorth-tdim.dsouth)/2;           
+                      wall_xx=(tdim.dnorth+tdim.dsouth)/2;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(-wall_zz);              
+                            /// Translate z = -wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dx=0.5*shld.xwidth[int(1)-1];           
+                      wall_dy=0.5*shld.ywidth[int(1)-1];           
+                      wall_dz=0.5*shld.zwidth[int(1)-1];           
+                      wall_zz=-221.0*2.54-wall_dz-cdim.dz;           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      wall_xx=+tdim.dsouth-wall_dx;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dx=0.5*shld.xwidth[int(2)-1];           
+                      wall_dy=0.5*shld.ywidth[int(2)-1];           
+                      wall_dz=0.5*shld.zwidth[int(2)-1];           
+                      wall_zz=-220.0*2.54-wall_dz-cdim.dz;           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      wall_xx=-tdim.dnorth+wall_dx;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dx=0.5*shld.xwidth[int(3)-1];           
+                      wall_dy=0.5*shld.ywidth[int(3)-1];           
+                      wall_dz=0.5*shld.zwidth[int(3)-1];           
+                      wall_zz=+512.3*2.54+wall_dz;           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      wall_xx=+tdim.dsouth-wall_dx;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dx=0.5*shld.xwidth[int(4)-1];           
+                      wall_dy=0.5*shld.ywidth[int(4)-1];           
+                      wall_dz=0.5*shld.zwidth[int(4)-1];           
+                      wall_zz=+512.3*2.54+144.25*2.54-236.0*2.54+wall_dz;           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      wall_xx=-tdim.dnorth+wall_dx;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dx=0.5*(62.0+77.0)*2.54;           
+                      wall_dy=0.5*25.0*2.54;           
+                      wall_dz=0.5*82.0*2.54;           
+                      wall_zz=-(538.0+120.0)*2.54-wall_dz;           
+                      wall_xx=+0.5*(77.0-62.0);           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dz=0.5*45.0*2.54;           
+                      wall_dx=wall_dx;//samedx;           
+                      wall_dy=0.5*(146.0-65.0)*2.54;           
+                      wall_zz=-(538.0+120.0)*2.54-wall_dz;           
+                      wall_xx=wall_xx;//samexx;           
+                      wall_yy=-tdim.dfloor+65.0*2.54+wall_dy;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dx=0.5*(60.5+77.5)*2.54;           
+                      wall_dy=0.5*25.0*2.54;           
+                      wall_dz=0.5*81.0*2.54;           
+                      wall_zz=(512.3+144.5)*2.54+wall_dz;           
+                      wall_xx=+0.5*(77.5-60.5);           
+                      wall_yy=-tdim.dfloor+wall_dy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dz=0.5*45.0*2.54;           
+                      wall_dx=wall_dx;//samedx;           
+                      wall_dy=0.5*(145.5-65.0)*2.54;           
+                      wall_zz=(512.3+144.5)*2.54+wall_dz;           
+                      wall_xx=wall_xx;//samexx;           
+                      wall_yy=-tdim.dfloor+65.0*2.54+wall_dy;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dz=0.5*45.0*2.54;//exact;           
+                      wall_dy=0.5*(65.0-25.0)*2.54;//verygoodapprox;           
+                      wall_dx=0.5*(10.0/28.5)*(62.+77.)*2.54;//wag(wildassguess);           
+                      wall_zz=-(538.0+120.0+82.0)*2.54+wall_dz;//exact;           
+                      wall_xx=+4.0*4.877*2.54+wall_dx;//wag;           
+                      wall_yy=-tdim.dfloor+25.0*2.54+wall_dy;//verygoodapprox;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dz=0.5*(82.0-45.0)*2.54;           
+                      wall_dx=wall_dx;           
+                      wall_dy=wall_dy;           
+                      wall_zz=-(538.0+120.0)*2.54-wall_dz;//exact;           
+                      wall_xx=wall_xx;           
+                      wall_yy=wall_yy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dz=0.5*45.0*2.54;//exact;           
+                      wall_dy=0.5*(65.0-25.0)*2.54;//verygoodapprox;           
+                      wall_dx=0.5*(7.0/28.5)*(62.+77.)*2.54;//wag(wildassguess);           
+                      wall_zz=-(538.0+120.0+82.0)*2.54+wall_dz;//exact;           
+                      wall_xx=-4.0*4.877*2.54-wall_dx;//wag;           
+                      wall_yy=-tdim.dfloor+25.0*2.54+wall_dy;//verygoodapprox;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dz=0.5*(82.0-45.0)*2.54;           
+                      wall_dx=wall_dx;           
+                      wall_dy=wall_dy;           
+                      wall_zz=-(538.0+120.0)*2.54-wall_dz;//exact;           
+                      wall_xx=wall_xx;           
+                      wall_yy=wall_yy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dz=0.5*45.0*2.54;//exact;           
+                      wall_dy=0.5*(65.0-25.0)*2.54;//verygoodapprox;           
+                      wall_dx=0.5*(10.0/28.5)*(62.+77.)*2.54;//wag(wildassguess);           
+                      wall_zz=+(512.3+144.25+81.0)*2.54-wall_dz;//exact;           
+                      wall_xx=+4.0*4.877*2.54+wall_dx;//wag;           
+                      wall_yy=-tdim.dfloor+25.0*2.54+wall_dy;//verygoodapprox;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dz=0.5*(81.0-45.0)*2.54;           
+                      wall_dx=wall_dx;           
+                      wall_dy=wall_dy;           
+                      wall_zz=+(512.3+144.25+(81.0-45.0))*2.54-wall_dz;//exact;           
+                      wall_xx=wall_xx;           
+                      wall_yy=wall_yy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      wall_dz=0.5*45.0*2.54;//exact;           
+                      wall_dy=0.5*(65.0-25.0)*2.54;//verygoodapprox;           
+                      wall_dx=0.5*(7.0/28.5)*(62.+77.)*2.54;//wag(wildassguess);           
+                      wall_zz=+(512.3+144.25+81.0)*2.54-wall_dz;//exact;           
+                      wall_xx=-4.0*4.877*2.54-wall_dx;//wag;           
+                      wall_yy=-tdim.dfloor+25.0*2.54+wall_dy;//verygoodapprox;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dz=0.5*(81.0-45.0)*2.54;           
+                      wall_dx=wall_dx;           
+                      wall_dy=wall_dy;           
+                      wall_zz=+(512.3+144.25+(81.0-45.0))*2.54-wall_dz;//exact;           
+                      wall_xx=wall_xx;           
+                      wall_yy=wall_yy;           
+                      _create = AgCreate("WALL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WALL              
+                            Create("WALL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WALL");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume WALL to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(wall_yy);              
+                            /// Translate y = wall_yy              
+                            place.TranslateZ(wall_zz);              
+                            /// Translate z = wall_zz              
+                            _stacker -> Position( AgBlock::Find("WALL"), place );              
+                      } // end placement of WALL           
+                      d1=415;//extmudtradius;           
+                      d2=1000;//celq_endofplatform;           
+                      d3=5;//celq_thick/2;           
+                      wall_dx=(d2-d1)/2;           
+                      wall_xx=(d2+d1)/2;           
+                      wall_dy=d3/2;           
+                      wall_dz=500;//celq_dz;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(-150-d3/2);              
+                            /// Translate y = -150-d3/2              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(wall_xx);              
+                            /// Translate x = wall_xx              
+                            place.TranslateY(150-d3/2);              
+                            /// Translate y = 150-d3/2              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      d1=415;//extmudtradius;           
+                      d2=600;//celq_endofplatform;           
+                      wall_dx=(d2-d1)/2;           
+                      wall_xx=(d2+d1)/2;           
+                      _create = AgCreate("SHLD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLD              
+                            Create("SHLD");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(-wall_xx);              
+                            /// Translate x = -wall_xx              
+                            place.TranslateY(-150-d3/2);              
+                            /// Translate y = -150-d3/2              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLD");              
+                            place.SetMother("CAVE");              
+                            /// Add daughter volume SHLD to mother CAVE              
+                            place.TranslateX(-wall_xx);              
+                            /// Translate x = -wall_xx              
+                            place.TranslateY(150-d3/2);              
+                            /// Translate y = 150-d3/2              
+                            _stacker -> Position( AgBlock::Find("SHLD"), place );              
+                      } // end placement of SHLD           
+                      wall_dx=40;           
+                      wall_dy=120;           
+                      wall_dz=60;           
+                      _create = AgCreate("CRAT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create CRAT              
+                            Create("CRAT");               
+                      }           
+                      /// Loop on i from 1 to 2 step=1           
+                      for ( i=1; (1>0)? (i<=2):(i>=2); i+=1 )           
+                      {              
+                            wall_yy=-150+300*(i-1)+wall_dy;              
+                            /// Loop on j from 1 to 2 step=1              
+                            for ( j=1; (1>0)? (j<=2):(j>=2); j+=1 )              
+                            {                 
+                                  wall_xx=600+300*(j-1);                 
+                                  /// Loop on k from 1 to 8 step=1                 
+                                  for ( k=1; (1>0)? (k<=8):(k>=8); k+=1 )                 
+                                  {                    
+                                        wall_zz=-260+65*(k-1);                    
+                                        {                       
+                                              AgPosition  place;                       
+                                              place.SetBlock("CRAT");                       
+                                              place.SetMother("CAVE");                       
+                                              /// Add daughter volume CRAT to mother CAVE                       
+                                              place.TranslateX(wall_xx);                       
+                                              /// Translate x = wall_xx                       
+                                              place.TranslateY(wall_yy);                       
+                                              /// Translate y = wall_yy                       
+                                              place.TranslateZ(wall_zz);                       
+                                              /// Translate z = wall_zz                       
+                                              _stacker -> Position( AgBlock::Find("CRAT"), place );                       
+                                        } // end placement of CRAT                    
+                                  }                 
+                            }              
+                      }           
+                      _create = AgCreate("MGWP");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create MGWP              
+                            Create("MGWP");               
+                      }           
+                      /// Loop on i from 1 to 2 step=1           
+                      for ( i=1; (1>0)? (i<=2):(i>=2); i+=1 )           
+                      {              
+                            wall_xx=(2*i-3)*450;              
+                            /// Loop on j from 1 to 2 step=1              
+                            for ( j=1; (1>0)? (j<=2):(j>=2); j+=1 )              
+                            {                 
+                                  wall_yy=(2*j-3)*100;                 
+                                  {                    
+                                        AgPosition  place;                    
+                                        place.SetBlock("MGWP");                    
+                                        place.SetMother("CAVE");                    
+                                        /// Add daughter volume MGWP to mother CAVE                    
+                                        place.TranslateX(wall_xx);                    
+                                        /// Translate x = wall_xx                    
+                                        place.TranslateY(wall_yy);                    
+                                        /// Translate y = wall_yy                    
+                                        _stacker -> Position( AgBlock::Find("MGWP"), place );                    
+                                  } // end placement of MGWP                 
+                            }              
+                      }           
+                      END_OF_CAVE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block CAVE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WALL::mInstance = 0;     
+          AgBlock *WALL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WALL();        
+                   return mInstance;        
+          }     
+          void WALL::Block( AgCreate create )     
+          {         
+                ///@addtogroup WALL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component Si	a=28.08	z=14	w=1           
+                      /// Component O2	a=16	z=8	w=2           
+                      /// Mixture Concrete dens=2.5           
+                      {  AgMaterial &mix = AgMaterial::Get("Concrete");              
+                            mix.Component("Si",28.08,14,1);              
+                            mix.Component("O2",16,8,2);              
+                            mix.par("dens")=2.5;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Concrete           
+                      {  AgMedium med = AgMedium::CopyMedium("Concrete");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WALL");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wall_dx;              
+                            shape.par("dy")=wall_dy;              
+                            shape.par("dz")=wall_dz;              
+                            /// Shape Bbox dx=wall_dx dy=wall_dy dz=wall_dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WALL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WALL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WALL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHLD::mInstance = 0;     
+          AgBlock *SHLD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHLD();        
+                   return mInstance;        
+          }     
+          void SHLD::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHLD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      /// Material Iron isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Iron");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium Iron           
+                      {  AgMedium med = AgMedium::CopyMedium("Iron");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHLD");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wall_dx;              
+                            shape.par("dy")=wall_dy;              
+                            shape.par("dz")=wall_dz;              
+                            /// Shape Bbox dx=wall_dx dy=wall_dy dz=wall_dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHLD;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SHLD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHLD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *HOLE::mInstance = 0;     
+          AgBlock *HOLE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new HOLE();        
+                   return mInstance;        
+          }     
+          void HOLE::Block( AgCreate create )     
+          {         
+                ///@addtogroup HOLE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Material Air isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Air");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium Air           
+                      {  AgMedium med = AgMedium::CopyMedium("Air");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("HOLE");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=5;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wall_dx;              
+                            shape.par("dy")=wall_dy;              
+                            shape.par("dz")=wall_dz;              
+                            /// Shape Bbox dx=wall_dx dy=wall_dy dz=wall_dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_HOLE;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_HOLE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block HOLE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *CRAT::mInstance = 0;     
+          AgBlock *CRAT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new CRAT();        
+                   return mInstance;        
+          }     
+          void CRAT::Block( AgCreate create )     
+          {         
+                ///@addtogroup CRAT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component Si	a=28.08	z=14	w=0.6*1*28./60.           
+                      /// Component O	a=16	z=8	w=0.6*2*16./60.           
+                      /// Component C	a=12	z=6	w=0.4*8*12./174.           
+                      /// Component H	a=1	z=1	w=0.4*14*1./174.           
+                      /// Component O	a=16	z=8	w=0.4*4*16./174.           
+                      /// Mixture Electroncs dens=0.13           
+                      {  AgMaterial &mix = AgMaterial::Get("Electroncs");              
+                            mix.Component("Si",28.08,14,0.6*1*28./60.);              
+                            mix.Component("O",16,8,0.6*2*16./60.);              
+                            mix.Component("C",12,6,0.4*8*12./174.);              
+                            mix.Component("H",1,1,0.4*14*1./174.);              
+                            mix.Component("O",16,8,0.4*4*16./174.);              
+                            mix.par("dens")=0.13;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Electronics           
+                      {  AgMedium med = AgMedium::CopyMedium("Electronics");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("CRAT");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wall_dx;              
+                            shape.par("dy")=wall_dy;              
+                            shape.par("dz")=wall_dz;              
+                            /// Shape Bbox dx=wall_dx dy=wall_dy dz=wall_dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_CRAT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_CRAT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block CRAT     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MGWP::mInstance = 0;     
+          AgBlock *MGWP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MGWP();        
+                   return mInstance;        
+          }     
+          void MGWP::Block( AgCreate create )     
+          {         
+                ///@addtogroup MGWP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      /// Medium Iron           
+                      {  AgMedium med = AgMedium::CopyMedium("Iron");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WGWP");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=12;              
+                            shape.par("dz")=312;              
+                            /// Shape Tube rmin=0 rmax=12 dz=312               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MGWP;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("MGWT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create MGWT              
+                            Create("MGWT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MGWT");              
+                            place.SetMother("MGWP");              
+                            /// Add daughter volume MGWT to mother MGWP              
+                            _stacker -> Position( AgBlock::Find("MGWT"), place );              
+                      } // end placement of MGWT           
+                      END_OF_MGWP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MGWP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MGWT::mInstance = 0;     
+          AgBlock *MGWT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MGWT();        
+                   return mInstance;        
+          }     
+          void MGWT::Block( AgCreate create )     
+          {         
+                ///@addtogroup MGWT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component H2	a=1	z=1	w=2           
+                      /// Component O	a=16	z=8	w=1           
+                      /// Mixture Water dens=1.0           
+                      {  AgMaterial &mix = AgMaterial::Get("Water");              
+                            mix.Component("H2",1,1,2);              
+                            mix.Component("O",16,8,1);              
+                            mix.par("dens")=1.0;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Water           
+                      {  AgMedium med = AgMedium::CopyMedium("Water");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MGWT");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=10;              
+                            shape.par("dz")=310;              
+                            /// Shape Tube rmin=0 rmax=10 dz=310               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MGWT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_MGWT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MGWT     
+    // ----------------------------------------------------------------------- geoctr
+       void CaveGeo2::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup CaveGeo2_revision        
+             ///@{           
+                   /// Author: Jason Webb, Yuri Fisyak           
+             ///@}        
+             ///@addtogroup CaveGeo2_revision        
+             ///@{           
+                   /// Created: May 2013           
+             ///@}        
+             AddBlock("HALL", HALL::Instance());        
+             AddBlock("CAVE", CAVE::Instance());        
+             AddBlock("WALL", WALL::Instance());        
+             AddBlock("HOLE", HOLE::Instance());        
+             AddBlock("SHLD", SHLD::Instance());        
+             AddBlock("CRAT", CRAT::Instance());        
+             AddBlock("MGWP", MGWP::Instance());        
+             AddBlock("MGWT", MGWT::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cvcf
+++cvcf._index;
+cvcf.version = 5;
+// cvcf_docum.version = "  version ";
+cvcf.config = 1;
+// cvcf_docum.config = "  default config ";
+CVCF.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cave
+++cave._index;
+cave.version = 5;
+// cave_docum.version = " version ";
+cave.rmin = 0;
+// cave_docum.rmin = " Inner radius of cave had better be zero ";
+{
+cave_info::rmax::Type temp = {
+cave_info::rmax::BaseType(1575.02),
+cave_info::rmax::BaseType(329.95)
+}
+;
+memcpy(&cave.rmax, &temp, sizeof(temp));;
+}
+// cave_docum.rmax = " furthest distance to a concrete wall ";
+{
+cave_info::dz::Type temp = {
+cave_info::dz::BaseType(807.72),
+cave_info::dz::BaseType(2020.0)
+}
+;
+memcpy(&cave.dz, &temp, sizeof(temp));;
+}
+// cave_docum.dz = " Dz(1) is distance to east/west wall from center of STAR, Dz(2) depth into tunnels ";
+cave.dconc = 91.44;
+// cave_docum.dconc = " concrete thickness 36inches";
+CAVE.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill cdim
+++cdim._index;
+cdim.version = 1.000;
+// cdim_docum.version = " version ";
+cdim.dceiling = 2*170.0*2.54;
+// cdim_docum.dceiling = " dist from beam to ceiling ... FAKE ";
+cdim.dfloor = 169.75*2.54;
+// cdim_docum.dfloor = " dist from beam to floor     ";
+cdim.dnorth = 481.9*2.54;
+// cdim_docum.dnorth = " dist from beam to the north (shield) wall ";
+cdim.dsouth = 620.1*2.54;
+// cdim_docum.dsouth = " dist from beam to south wall ";
+cdim.thickceil = 20;
+// cdim_docum.thickceil = " thickness of ceiling ";
+CDIM.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill tdim
+++tdim._index;
+tdim.version = 1.000;
+// tdim_docum.version = " version ";
+tdim.dceiling = 14.0*12.0*2.54-50.0*2.54;
+// tdim_docum.dceiling = " dist from beam to ceiling  ";
+tdim.dfloor = 50.0*2.54;
+// tdim_docum.dfloor = " dist from beam to floor     ";
+tdim.dnorth = 329.95;
+// tdim_docum.dnorth = " dist from beam to the north wall ";
+tdim.dsouth = 279.65;
+// tdim_docum.dsouth = " dist from beam to south wall ";
+TDIM.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill shld
+++shld._index;
+shld.version = 1.000;
+// shld_docum.version = " version ";
+{
+shld_info::xwidth::Type temp = {
+shld_info::xwidth::BaseType(48.0*2.54),
+shld_info::xwidth::BaseType(54.5*2.54),
+shld_info::xwidth::BaseType(45.5*2.54),
+shld_info::xwidth::BaseType(45.1*2.54)
+}
+;
+memcpy(&shld.xwidth, &temp, sizeof(temp));;
+}
+// shld_docum.xwidth = " x widths ";
+{
+shld_info::ywidth::Type temp = {
+shld_info::ywidth::BaseType(111.*2.54),
+shld_info::ywidth::BaseType(111.*2.54),
+shld_info::ywidth::BaseType(111.*2.54),
+shld_info::ywidth::BaseType(108.*2.54)
+}
+;
+memcpy(&shld.ywidth, &temp, sizeof(temp));;
+}
+// shld_docum.ywidth = " y widths ";
+{
+shld_info::zwidth::Type temp = {
+shld_info::zwidth::BaseType(48.0*2.54),
+shld_info::zwidth::BaseType(48.0*2.54),
+shld_info::zwidth::BaseType(48.0*2.54),
+shld_info::zwidth::BaseType(48.0*2.54)
+}
+;
+memcpy(&shld.zwidth, &temp, sizeof(temp));;
+}
+// shld_docum.zwidth = " z widths ";
+SHLD.fill();
+        
+             /// USE cvcf _index=1;        
+             CVCF.use( __cvcf__index__ = 1 );
+        
+             /// USE cave version=cvcf.config;        
+             CAVE.use( __cave_version__ = cvcf.config );
+        
+             /// USE cdim _index=1;        
+             CDIM.use( __cdim__index__ = 1 );
+        
+             /// USE tdim _index=1;        
+             TDIM.use( __tdim__index__ = 1 );
+        
+             // - Info -         
+             Info( GetName(), Form("CaveGeoModuleiscalledCONFIG=%3i",cvcf.config)  );        
+             _create = AgCreate("HALL");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create HALL           
+                   Create("HALL");            
+             }        
+       }; // CaveGeo2     
+ }; // namespace CaveGeo2  
+ 

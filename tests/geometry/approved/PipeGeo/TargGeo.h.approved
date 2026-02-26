@@ -1,0 +1,678 @@
+#ifndef __TargGeo__ 
+#define __TargGeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace TARGGEO // $NMSPC 
+{ 
+   struct targ_t {
+float version;
+float onoff;
+float xdis;
+float ydis;
+float zdis;
+int _index;
+};
+ 
+   struct _targ_docum_ {
+string version;
+string onoff;
+string xdis;
+string ydis;
+string zdis;
+string _index;
+};
+ 
+    struct _targ_types_ {
+  typedef float version;
+  typedef float onoff;
+  typedef float xdis;
+  typedef float ydis;
+  typedef float zdis;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct targ_info {
+typedef targ_t Type;
+static const char *name(){ return "targ_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct targ_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct onoff {
+  static const char *name() { return  "onoff"; }
+  static size_t Offset(){ return offsetof( struct targ_t, onoff ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xdis {
+  static const char *name() { return  "xdis"; }
+  static size_t Offset(){ return offsetof( struct targ_t, xdis ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ydis {
+  static const char *name() { return  "ydis"; }
+  static size_t Offset(){ return offsetof( struct targ_t, ydis ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zdis {
+  static const char *name() { return  "zdis"; }
+  static size_t Offset(){ return offsetof( struct targ_t, zdis ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct targ_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)targ_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tflg_t {
+float type;
+float thickness;
+float height;
+float baselength;
+float toplength;
+float xoffset;
+float yoffset;
+float zoffset;
+int _index;
+};
+ 
+   struct _tflg_docum_ {
+string type;
+string thickness;
+string height;
+string baselength;
+string toplength;
+string xoffset;
+string yoffset;
+string zoffset;
+string _index;
+};
+ 
+    struct _tflg_types_ {
+  typedef float type;
+  typedef float thickness;
+  typedef float height;
+  typedef float baselength;
+  typedef float toplength;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tflg_info {
+typedef tflg_t Type;
+static const char *name(){ return "tflg_t"; }
+struct type {
+  static const char *name() { return  "type"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, type ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thickness {
+  static const char *name() { return  "thickness"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, thickness ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baselength {
+  static const char *name() { return  "baselength"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, baselength ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct toplength {
+  static const char *name() { return  "toplength"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, toplength ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tflg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tflg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct hldg_t {
+float irad;
+float orad;
+float width;
+float angle;
+float xoffset;
+float yoffset;
+float zoffset;
+int _index;
+};
+ 
+   struct _hldg_docum_ {
+string irad;
+string orad;
+string width;
+string angle;
+string xoffset;
+string yoffset;
+string zoffset;
+string _index;
+};
+ 
+    struct _hldg_types_ {
+  typedef float irad;
+  typedef float orad;
+  typedef float width;
+  typedef float angle;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct hldg_info {
+typedef hldg_t Type;
+static const char *name(){ return "hldg_t"; }
+struct irad {
+  static const char *name() { return  "irad"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, irad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct orad {
+  static const char *name() { return  "orad"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, orad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct angle {
+  static const char *name() { return  "angle"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, angle ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct hldg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hldg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct rngg_t {
+float irad;
+float orad;
+float width;
+float xoffset;
+float yoffset;
+float zoffset;
+int _index;
+};
+ 
+   struct _rngg_docum_ {
+string irad;
+string orad;
+string width;
+string xoffset;
+string yoffset;
+string zoffset;
+string _index;
+};
+ 
+    struct _rngg_types_ {
+  typedef float irad;
+  typedef float orad;
+  typedef float width;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct rngg_info {
+typedef rngg_t Type;
+static const char *name(){ return "rngg_t"; }
+struct irad {
+  static const char *name() { return  "irad"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, irad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct orad {
+  static const char *name() { return  "orad"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, orad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct rngg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rngg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct rodg_t {
+float rad;
+float length;
+float xoffset;
+float yoffset;
+float zoffset;
+int _index;
+};
+ 
+   struct _rodg_docum_ {
+string rad;
+string length;
+string xoffset;
+string yoffset;
+string zoffset;
+string _index;
+};
+ 
+    struct _rodg_types_ {
+  typedef float rad;
+  typedef float length;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct rodg_info {
+typedef rodg_t Type;
+static const char *name(){ return "rodg_t"; }
+struct rad {
+  static const char *name() { return  "rad"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, rad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct rodg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)rodg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- TARM -- 
+   ///@defgroup TARM_doc 
+   ///@class TARM 
+   ///@brief is the target module (foil, holder, ring and rods) [TGeoVolume] 
+   class TARM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TARM() : AgBlock("TARM","is the target module (foil, holder, ring and rods) [TGeoVolume]"){ 
+      }; 
+      ~TARM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HLDR -- 
+   ///@defgroup HLDR_doc 
+   ///@class HLDR 
+   ///@brief Ring mount for foil [TGeoVolume] 
+   class HLDR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HLDR() : AgBlock("HLDR","Ring mount for foil [TGeoVolume]"){ 
+      }; 
+      ~HLDR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- RING -- 
+   ///@defgroup RING_doc 
+   ///@class RING 
+   ///@brief Ring at end of holder [TGeoVolume] 
+   class RING : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      RING() : AgBlock("RING","Ring at end of holder [TGeoVolume]"){ 
+      }; 
+      ~RING(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FOIL -- 
+   ///@defgroup FOIL_doc 
+   ///@class FOIL 
+   ///@brief Thin gold foil [TGeoVolume] 
+   class FOIL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FOIL() : AgBlock("FOIL","Thin gold foil [TGeoVolume]"){ 
+      }; 
+      ~FOIL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- RODM -- 
+   ///@defgroup RODM_doc 
+   ///@class RODM 
+   ///@brief Rod connects Holder and Ring [TGeoVolume] 
+   class RODM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      RODM() : AgBlock("RODM","Rod connects Holder and Ring [TGeoVolume]"){ 
+      }; 
+      ~RODM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class TargGeo 
+   /// \brief  is the Fixed Target Geometry  
+   class TargGeo : public AgModule 
+   { 
+      public: 
+      TargGeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~TargGeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace TargGeo 
+#endif // __TargGeo__ 

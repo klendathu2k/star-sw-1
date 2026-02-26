@@ -1,0 +1,9 @@
+      MODULE dummgeo   Dummy dummy geometry
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      +CDE,agecom,gcunit.
+      <W> '===>> 	[End AgML Module dummgeo]	 <<==='; (A32,/,/);
+      END! Module dummgeo

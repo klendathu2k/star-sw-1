@@ -1,0 +1,233 @@
+#ifndef __KludGeo__ 
+#define __KludGeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace KLUDGEO // $NMSPC 
+{ 
+   struct kcfg_t {
+float version;
+float ntube;
+int _index;
+};
+ 
+   struct _kcfg_docum_ {
+string version;
+string ntube;
+string _index;
+};
+ 
+    struct _kcfg_types_ {
+  typedef float version;
+  typedef float ntube;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct kcfg_info {
+typedef kcfg_t Type;
+static const char *name(){ return "kcfg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct kcfg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)kcfg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ntube {
+  static const char *name() { return  "ntube"; }
+  static size_t Offset(){ return offsetof( struct kcfg_t, ntube ); }
+  static void* address(){ 
+         size_t iadd = (size_t)kcfg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct kcfg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)kcfg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct ktub_t {
+float z[10];
+float dz[10];
+float rmn[10];
+float rmx[10];
+float aa[10];
+float zz[10];
+float dd[10];
+int _index;
+};
+ 
+   struct _ktub_docum_ {
+string z;
+string dz;
+string rmn;
+string rmx;
+string aa;
+string zz;
+string dd;
+string _index;
+};
+ 
+    struct _ktub_types_ {
+  typedef float z[10];
+  typedef float dz[10];
+  typedef float rmn[10];
+  typedef float rmx[10];
+  typedef float aa[10];
+  typedef float zz[10];
+  typedef float dd[10];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ktub_info {
+typedef ktub_t Type;
+static const char *name(){ return "ktub_t"; }
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct rmn {
+  static const char *name() { return  "rmn"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, rmn ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct rmx {
+  static const char *name() { return  "rmx"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, rmx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct aa {
+  static const char *name() { return  "aa"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, aa ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct zz {
+  static const char *name() { return  "zz"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, zz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct dd {
+  static const char *name() { return  "dd"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, dd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ktub_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ktub_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- KTUB -- 
+   ///@defgroup KTUB_doc 
+   ///@class KTUB 
+   ///@brief Kludge disk [TGeoVolume] 
+   class KTUB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      KTUB() : AgBlock("KTUB","Kludge disk [TGeoVolume]"){ 
+      }; 
+      ~KTUB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class KludGeo 
+   /// \brief  is a Kludge Geometry  
+   class KludGeo : public AgModule 
+   { 
+      public: 
+      KludGeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~KludGeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace KludGeo 
+#endif // __KludGeo__ 

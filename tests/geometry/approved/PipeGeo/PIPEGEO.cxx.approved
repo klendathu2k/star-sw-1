@@ -1,0 +1,1604 @@
+#include "PIPEGEO.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace PIPEGEO // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          pipv_t *__pipv = new pipv_t; // dummy
+ AgMLStructure<pipv_t,pipv_info> PIPV("pipv");
+pipv_t &pipv = PIPV;
+     
+          // Selectors for pipv
+isEqual<pipv_t, float> __pipv_version__( __pipv, &__pipv->version );
+isEqual<pipv_t, float> __pipv_pipeconfig__( __pipv, &__pipv->pipeconfig );
+isEqual<pipv_t, int> __pipv_pipeflag__( __pipv, &__pipv->pipeflag );
+isEqual<pipv_t, int> __pipv_targflag__( __pipv, &__pipv->targflag );
+isEqual<pipv_t, int> __pipv__index__( __pipv, &__pipv->_index );
+     
+          
+	void              *pipv_info::address   = &pipv;
+	AgMLStructureBase   *pipv_info::structure = &PIPV;
+     
+          pipg_t *__pipg = new pipg_t; // dummy
+ AgMLStructure<pipg_t,pipg_info> PIPG("pipg");
+pipg_t &pipg = PIPG;
+     
+          // Selectors for pipg
+isEqual<pipg_t, float> __pipg_config__( __pipg, &__pipg->config );
+isEqual<pipg_t, float> __pipg_beinnr__( __pipg, &__pipg->beinnr );
+isEqual<pipg_t, float> __pipg_beoutr__( __pipg, &__pipg->beoutr );
+isEqual<pipg_t, float> __pipg_beleng__( __pipg, &__pipg->beleng );
+isEqual<pipg_t, string> __pipg_material__( __pipg, &__pipg->material );
+isEqual<pipg_t, float> __pipg_s1innr__( __pipg, &__pipg->s1innr );
+isEqual<pipg_t, float> __pipg_s1outr__( __pipg, &__pipg->s1outr );
+isEqual<pipg_t, float> __pipg_s1leng__( __pipg, &__pipg->s1leng );
+isEqual<pipg_t, float> __pipg_s2innr__( __pipg, &__pipg->s2innr );
+isEqual<pipg_t, float> __pipg_s2outr__( __pipg, &__pipg->s2outr );
+isEqual<pipg_t, float> __pipg_s2leng__( __pipg, &__pipg->s2leng );
+isEqual<pipg_t, float> __pipg_s3innr__( __pipg, &__pipg->s3innr );
+isEqual<pipg_t, float> __pipg_s3outr__( __pipg, &__pipg->s3outr );
+isEqual<pipg_t, float> __pipg_s3leng__( __pipg, &__pipg->s3leng );
+isEqual<pipg_t, float> __pipg_s4innr__( __pipg, &__pipg->s4innr );
+isEqual<pipg_t, float> __pipg_s4outr__( __pipg, &__pipg->s4outr );
+isEqual<pipg_t, float> __pipg_s4leng__( __pipg, &__pipg->s4leng );
+isEqual<pipg_t, float> __pipg_flange1t__( __pipg, &__pipg->flange1t );
+isEqual<pipg_t, float> __pipg_flange1r__( __pipg, &__pipg->flange1r );
+isEqual<pipg_t, float> __pipg_conelen__( __pipg, &__pipg->conelen );
+isEqual<pipg_t, float> __pipg_ribnum__( __pipg, &__pipg->ribnum );
+isEqual<pipg_t, float> __pipg_ribspa__( __pipg, &__pipg->ribspa );
+isEqual<pipg_t, float> __pipg_ribthk__( __pipg, &__pipg->ribthk );
+isEqual<pipg_t, float> __pipg_riboutr__( __pipg, &__pipg->riboutr );
+isEqual<pipg_t, float> __pipg_ribcent__( __pipg, &__pipg->ribcent );
+isEqual<pipg_t, float> __pipg_wrpinnr__( __pipg, &__pipg->wrpinnr );
+isEqual<pipg_t, float> __pipg_wrpoutr__( __pipg, &__pipg->wrpoutr );
+isEqual<pipg_t, float> __pipg_wrpleng__( __pipg, &__pipg->wrpleng );
+isEqual<pipg_t, float> __pipg_sldinnr__( __pipg, &__pipg->sldinnr );
+isEqual<pipg_t, float> __pipg_sldoutr__( __pipg, &__pipg->sldoutr );
+isEqual<pipg_t, float> __pipg_sldleng__( __pipg, &__pipg->sldleng );
+isEqual<pipg_t, int> __pipg__index__( __pipg, &__pipg->_index );
+     
+          
+	void              *pipg_info::address   = &pipg;
+	AgMLStructureBase   *pipg_info::structure = &PIPG;
+     
+          ///@addtogroup PIPEGEO_vars     
+          ///@{        
+                Float_t z1,z2,z3,z4,r1,r2,vacuum=1.e-5;        
+                //        
+                /// Float_t z1,z2,z3,z4,r1,r2,vacuum=1.e-5        
+          ///@}     
+          ///@addtogroup PIPEGEO_vars     
+          ///@{        
+                Float_t wrpthk,sldthk;        
+                //        
+                /// Float_t wrpthk,sldthk        
+          ///@}     
+          ///@addtogroup PIPEGEO_vars     
+          ///@{        
+                Int_t serial=1;        
+                //        
+                /// Int_t serial=1        
+          ///@}     
+       PIPEGEO::PIPEGEO()     
+         : AgModule("PIPEGEO"," is the geometry  of the STAR beam pipe. ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPE::mInstance = 0;     
+          AgBlock *PIPE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPE();        
+                   return mInstance;        
+          }     
+          void PIPE::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipe");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.par("serial")=serial;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=4;              
+                            shape.Z(0)=0;              
+                            shape.Z(1)=z1-pipg.flange1t;              
+                            shape.Z(2)=z1-pipg.flange1t;              
+                            shape.Z(3)=z3;              
+                            shape.Rmin(0)=0;              
+                            shape.Rmin(1)=0;              
+                            shape.Rmin(2)=0;              
+                            shape.Rmin(3)=0;              
+                            shape.Rmax(0)=r1;              
+                            shape.Rmax(1)=r1;              
+                            shape.Rmax(2)=r2;              
+                            shape.Rmax(3)=r2;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=4               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPE;              
+                            _stacker -> Build(this);              
+                      }           
+                      if ( pipg.material=="iron" )           
+                      {              
+                            /// Material Iron               
+                            {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");                 
+                                  _material = mat;                 
+                            }              
+                      }           
+                      else           
+                      {              
+                            /// Material Aluminium               
+                            {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");                 
+                                  _material = mat;                 
+                            }              
+                      }           
+                      /// Material pipe dens=(_material.par("dens"))            
+                      { AgMaterial &mat = AgMaterial::Get("Pipe");              
+                            mat.par("dens")=(_material.par("dens"));              
+                            _material = mat;              
+                      }           
+                      _create = AgCreate("PIPC");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPC              
+                            Create("PIPC");               
+                      }           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPC");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPC to mother PIPE              
+                            place.TranslateZ(pipg.beleng/2);              
+                            /// Translate z = pipg.beleng/2              
+                            _stacker -> Position( AgBlock::Find("PIPC"), place );              
+                      } // end placement of PIPC           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPC");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPC to mother PIPE              
+                            place.TranslateZ(pipg.beleng/2);              
+                            /// Translate z = pipg.beleng/2              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PIPC"), place );              
+                      } // end placement of PIPC           
+                      _create = AgCreate("PIPO");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPO              
+                            Create("PIPO");               
+                      }           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPO");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPO to mother PIPE              
+                            place.TranslateZ(pipg.beleng+pipg.s1leng);              
+                            /// Translate z = pipg.beleng+pipg.s1leng              
+                            _stacker -> Position( AgBlock::Find("PIPO"), place );              
+                      } // end placement of PIPO           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPO");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPO to mother PIPE              
+                            place.TranslateZ(pipg.beleng+pipg.s1leng);              
+                            /// Translate z = pipg.beleng+pipg.s1leng              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PIPO"), place );              
+                      } // end placement of PIPO           
+                      _create = AgCreate("PIPI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPI              
+                            Create("PIPI");               
+                      }           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPI");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPI to mother PIPE              
+                            place.TranslateZ((z1+z2)/2);              
+                            /// Translate z = (z1+z2)/2              
+                            _stacker -> Position( AgBlock::Find("PIPI"), place );              
+                      } // end placement of PIPI           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPI");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPI to mother PIPE              
+                            place.TranslateZ((z1+z2)/2);              
+                            /// Translate z = (z1+z2)/2              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PIPI"), place );              
+                      } // end placement of PIPI           
+                      _create = AgCreate("PIPT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPT              
+                            Create("PIPT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPT");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPT to mother PIPE              
+                            place.TranslateZ(z2+pipg.flange1t+pipg.s3leng);              
+                            /// Translate z = z2+pipg.flange1t+pipg.s3leng              
+                            _stacker -> Position( AgBlock::Find("PIPT"), place );              
+                      } // end placement of PIPT           
+                      _create = AgCreate("PIPB");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPB              
+                            Create("PIPB");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPB");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPB to mother PIPE              
+                            place.TranslateZ(z4);              
+                            /// Translate z = z4              
+                            _stacker -> Position( AgBlock::Find("PIPB"), place );              
+                      } // end placement of PIPB           
+                      _create = AgCreate("PFLO");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PFLO              
+                            Create("PFLO");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PFLO");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PFLO to mother PIPE              
+                            place.TranslateZ(z1);              
+                            /// Translate z = z1              
+                            _stacker -> Position( AgBlock::Find("PFLO"), place );              
+                      } // end placement of PFLO           
+                      _create = AgCreate("PFLT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PFLT              
+                            Create("PFLT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PFLT");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PFLT to mother PIPE              
+                            place.TranslateZ(z2);              
+                            /// Translate z = z2              
+                            _stacker -> Position( AgBlock::Find("PFLT"), place );              
+                      } // end placement of PFLT           
+                      _create = AgCreate("PIPS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PIPS              
+                            Create("PIPS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PIPS");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PIPS to mother PIPE              
+                            place.TranslateZ(z3-pipg.s4leng);              
+                            /// Translate z = z3-pipg.s4leng              
+                            _stacker -> Position( AgBlock::Find("PIPS"), place );              
+                      } // end placement of PIPS           
+                      _create = AgCreate("PRIS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PRIS              
+                            Create("PRIS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PRIS");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PRIS to mother PIPE              
+                            place.TranslateZ((z1+z2)/2);              
+                            /// Translate z = (z1+z2)/2              
+                            _stacker -> Position( AgBlock::Find("PRIS"), place );              
+                      } // end placement of PRIS           
+                      if ( iand(pipv.pipeflag,1)!=0 )           
+                      {              
+                            _create = AgCreate("PWRP");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create PWRP                 
+                                  Create("PWRP");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("PWRP");                 
+                                  place.SetMother("PIPE");                 
+                                  /// Add daughter volume PWRP to mother PIPE                 
+                                  place.TranslateZ(pipg.wrpleng/2);                 
+                                  /// Translate z = pipg.wrpleng/2                 
+                                  _stacker -> Position( AgBlock::Find("PWRP"), place );                 
+                            } // end placement of PWRP              
+                      }           
+                      if ( iand(pipv.pipeflag,2)!=0 )           
+                      {              
+                            _create = AgCreate("PSLD");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create PSLD                 
+                                  Create("PSLD");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("PSLD");                 
+                                  place.SetMother("PIPE");                 
+                                  /// Add daughter volume PSLD to mother PIPE                 
+                                  place.TranslateZ(pipg.sldleng/2);                 
+                                  /// Translate z = pipg.sldleng/2                 
+                                  _stacker -> Position( AgBlock::Find("PSLD"), place );                 
+                            } // end placement of PSLD              
+                      }           
+                      END_OF_PIPE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPC::mInstance = 0;     
+          AgBlock *PIPC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPC();        
+                   return mInstance;        
+          }     
+          void PIPC::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Berillium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Berillium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipc");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=pipg.beoutr;              
+                            shape.par("dz")=pipg.beleng/2;              
+                            /// Shape Tube rmin=0 rmax=pipg.beoutr dz=pipg.beleng/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPC;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAC");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAC              
+                            Create("PVAC");               
+                      }           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAC");              
+                            place.SetMother("PIPC");              
+                            /// Add daughter volume PVAC to mother PIPC              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PVAC"), place );              
+                      } // end placement of PVAC           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAC");              
+                            place.SetMother("PIPC");              
+                            /// Add daughter volume PVAC to mother PIPC              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PVAC"), place );              
+                      } // end placement of PVAC           
+                      END_OF_PIPC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAC::mInstance = 0;     
+          AgBlock *PVAC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAC();        
+                   return mInstance;        
+          }     
+          void PVAC::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Material PVacuum dens=(_material.par("dens")) *vacuum absl=(_material.par("absl")) /vacuum radl=(_material.par("radl")) /vacuum            
+                      { AgMaterial &mat = AgMaterial::Get("Pvacuum");              
+                            mat.par("dens")=(_material.par("dens"))*vacuum;              
+                            mat.par("absl")=(_material.par("absl"))/vacuum;              
+                            mat.par("radl")=(_material.par("radl"))/vacuum;              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmax")=pipg.beinnr;              
+                            /// Shape Tube rmax=pipg.beinnr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAC;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPO::mInstance = 0;     
+          AgBlock *PIPO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPO();        
+                   return mInstance;        
+          }     
+          void PIPO::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material pipe            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pipe");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipo");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=pipg.s1outr;              
+                            shape.par("dz")=pipg.s1leng;              
+                            /// Shape Tube rmin=0 rmax=pipg.s1outr dz=pipg.s1leng               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPO;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAO");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAO              
+                            Create("PVAO");               
+                      }           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAO");              
+                            place.SetMother("PIPO");              
+                            /// Add daughter volume PVAO to mother PIPO              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PVAO"), place );              
+                      } // end placement of PVAO           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAO");              
+                            place.SetMother("PIPO");              
+                            /// Add daughter volume PVAO to mother PIPO              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PVAO"), place );              
+                      } // end placement of PVAO           
+                      END_OF_PIPO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAO::mInstance = 0;     
+          AgBlock *PVAO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAO();        
+                   return mInstance;        
+          }     
+          void PVAO::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pvacuum            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pvacuum");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmax")=pipg.s1innr;              
+                            /// Shape Tube rmax=pipg.s1innr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAO;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPI::mInstance = 0;     
+          AgBlock *PIPI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPI();        
+                   return mInstance;        
+          }     
+          void PIPI::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material pipe            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pipe");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipi");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=pipg.s2outr;              
+                            shape.par("dz")=pipg.s2leng;              
+                            /// Shape Tube rmin=0 rmax=pipg.s2outr dz=pipg.s2leng               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPI;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAI              
+                            Create("PVAI");               
+                      }           
+                      if ( pipv.targflag==1 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAI");              
+                            place.SetMother("PIPI");              
+                            /// Add daughter volume PVAI to mother PIPI              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("PVAI"), place );              
+                      } // end placement of PVAI           
+                      if ( pipv.targflag==0 )           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAI");              
+                            place.SetMother("PIPI");              
+                            /// Add daughter volume PVAI to mother PIPI              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PVAI"), place );              
+                      } // end placement of PVAI           
+                      END_OF_PIPI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAI::mInstance = 0;     
+          AgBlock *PVAI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAI();        
+                   return mInstance;        
+          }     
+          void PVAI::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pvacuum            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pvacuum");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmax")=pipg.s2innr;              
+                            /// Shape Tube rmax=pipg.s2innr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAI;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPT::mInstance = 0;     
+          AgBlock *PIPT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPT();        
+                   return mInstance;        
+          }     
+          void PIPT::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pipe            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pipe");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipt");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=pipg.s3outr;              
+                            shape.par("dz")=pipg.s3leng;              
+                            /// Shape Tube rmin=0 rmax=pipg.s3outr dz=pipg.s3leng               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPT;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAT              
+                            Create("PVAT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAT");              
+                            place.SetMother("PIPT");              
+                            /// Add daughter volume PVAT to mother PIPT              
+                            _stacker -> Position( AgBlock::Find("PVAT"), place );              
+                      } // end placement of PVAT           
+                      END_OF_PIPT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPT     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAT::mInstance = 0;     
+          AgBlock *PVAT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAT();        
+                   return mInstance;        
+          }     
+          void PVAT::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pvacuum            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pvacuum");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmax")=pipg.s3innr;              
+                            /// Shape Tube rmax=pipg.s3innr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAT     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPB::mInstance = 0;     
+          AgBlock *PIPB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPB();        
+                   return mInstance;        
+          }     
+          void PIPB::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pipb");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Cone");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dz")=pipg.conelen;              
+                            shape.par("rmn1")=0;              
+                            shape.par("rmx1")=pipg.s2outr;              
+                            shape.par("rmn2")=0;              
+                            shape.par("rmx2")=pipg.s4outr;              
+                            /// Shape Cone dz=pipg.conelen rmn1=0 rmx1=pipg.s2outr rmn2=0 rmx2=pipg.s4outr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPB;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAB");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAB              
+                            Create("PVAB");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAB");              
+                            place.SetMother("PIPB");              
+                            /// Add daughter volume PVAB to mother PIPB              
+                            _stacker -> Position( AgBlock::Find("PVAB"), place );              
+                      } // end placement of PVAB           
+                      END_OF_PIPB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPB     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAB::mInstance = 0;     
+          AgBlock *PVAB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAB();        
+                   return mInstance;        
+          }     
+          void PVAB::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pvacuum            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pvacuum");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Cone");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmx1")=pipg.s3innr;              
+                            shape.par("rmx2")=pipg.s4innr;              
+                            /// Shape Cone rmx1=pipg.s3innr rmx2=pipg.s4innr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAB;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAB     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPS::mInstance = 0;     
+          AgBlock *PIPS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPS();        
+                   return mInstance;        
+          }     
+          void PIPS::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pips");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=pipg.s4outr;              
+                            shape.par("dz")=pipg.s4leng;              
+                            /// Shape Tube rmin=0 rmax=pipg.s4outr dz=pipg.s4leng               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PVAS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PVAS              
+                            Create("PVAS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PVAS");              
+                            place.SetMother("PIPS");              
+                            /// Add daughter volume PVAS to mother PIPS              
+                            _stacker -> Position( AgBlock::Find("PVAS"), place );              
+                      } // end placement of PVAS           
+                      END_OF_PIPS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PVAS::mInstance = 0;     
+          AgBlock *PVAS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PVAS();        
+                   return mInstance;        
+          }     
+          void PVAS::Block( AgCreate create )     
+          {         
+                ///@addtogroup PVAS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Pvacuum            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Pvacuum");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmax")=pipg.s4innr;              
+                            /// Shape Tube rmax=pipg.s4innr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PVAS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PVAS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PVAS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PFLO::mInstance = 0;     
+          AgBlock *PFLO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PFLO();        
+                   return mInstance;        
+          }     
+          void PFLO::Block( AgCreate create )     
+          {         
+                ///@addtogroup PFLO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pflo");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=pipg.s2outr;              
+                            shape.par("rmax")=pipg.flange1r;              
+                            shape.par("dz")=pipg.flange1t;              
+                            /// Shape Tube rmin=pipg.s2outr rmax=pipg.flange1r dz=pipg.flange1t               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PFLO;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PFLO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PFLO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PFLT::mInstance = 0;     
+          AgBlock *PFLT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PFLT();        
+                   return mInstance;        
+          }     
+          void PFLT::Block( AgCreate create )     
+          {         
+                ///@addtogroup PFLT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pflt");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=pipg.s2outr;              
+                            shape.par("rmax")=pipg.flange1r;              
+                            shape.par("dz")=pipg.flange1t;              
+                            /// Shape Tube rmin=pipg.s2outr rmax=pipg.flange1r dz=pipg.flange1t               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PFLT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PFLT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PFLT     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PRIS::mInstance = 0;     
+          AgBlock *PRIS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PRIS();        
+                   return mInstance;        
+          }     
+          void PRIS::Block( AgCreate create )     
+          {         
+                ///@addtogroup PRIS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PRIB");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=pipg.s2outr;              
+                            shape.par("rmax")=pipg.riboutr;              
+                            shape.par("dz")=pipg.ribnum*pipg.ribspa/2.;              
+                            /// Shape Tube rmin=pipg.s2outr rmax=pipg.riboutr dz=pipg.ribnum*pipg.ribspa/2.               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PRIS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PRID");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PRID              
+                            Create("PRID");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PRID");              
+                            place.SetMother("PRIS");              
+                            /// Add daughter volume PRID to mother PRIS              
+                            _stacker -> Position( AgBlock::Find("PRID"), place );              
+                      } // end placement of PRID           
+                      END_OF_PRIS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PRIS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PRID::mInstance = 0;     
+          AgBlock *PRID::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PRID();        
+                   return mInstance;        
+          }     
+          void PRID::Block( AgCreate create )     
+          {         
+                ///@addtogroup PRID_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=pipg.ribnum;              
+                            shape.par("iaxis")=3;              
+                            /// Shape Division ndiv=pipg.ribnum iaxis=3               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PRID;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PRIB");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PRIB              
+                            Create("PRIB");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PRIB");              
+                            place.SetMother("PRID");              
+                            /// Add daughter volume PRIB to mother PRID              
+                            _stacker -> Position( AgBlock::Find("PRIB"), place );              
+                      } // end placement of PRIB           
+                      END_OF_PRID:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PRID     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PRIB::mInstance = 0;     
+          AgBlock *PRIB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PRIB();        
+                   return mInstance;        
+          }     
+          void PRIB::Block( AgCreate create )     
+          {         
+                ///@addtogroup PRIB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PRIB");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dz")=pipg.ribthk;              
+                            /// Shape Tube dz=pipg.ribthk               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PRIB;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PRIB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PRIB     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PWRP::mInstance = 0;     
+          AgBlock *PWRP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PWRP();        
+                   return mInstance;        
+          }     
+          void PWRP::Block( AgCreate create )     
+          {         
+                ///@addtogroup PWRP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component C5	a=12	z=6	w=500000           
+                      /// Component H4	a=1	z=1	w=400000           
+                      /// Component O2	a=16	z=8	w=200000           
+                      /// Component Al	a=27	z=13	w=345327           
+                      /// Mixture MLI dens=1.82667           
+                      {  AgMaterial &mix = AgMaterial::Get("Mli");              
+                            mix.Component("C5",12,6,500000);              
+                            mix.Component("H4",1,1,400000);              
+                            mix.Component("O2",16,8,200000);              
+                            mix.Component("Al",27,13,345327);              
+                            mix.par("dens")=1.82667;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      { AgAttribute attr = AgAttribute("Pwrp");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=pipg.wrpinnr;              
+                            shape.par("rmax")=pipg.wrpoutr;              
+                            shape.par("dz")=pipg.wrpleng/2;              
+                            /// Shape Tube rmin=pipg.wrpinnr rmax=pipg.wrpoutr dz=pipg.wrpleng/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PWRP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PWRP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PWRP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PSLD::mInstance = 0;     
+          AgBlock *PSLD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PSLD();        
+                   return mInstance;        
+          }     
+          void PSLD::Block( AgCreate create )     
+          {         
+                ///@addtogroup PSLD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component C5	a=12	z=6	w=50000           
+                      /// Component H4	a=1	z=1	w=40000           
+                      /// Component O2	a=16	z=8	w=20000           
+                      /// Component Al	a=27	z=13	w=2302           
+                      /// Mixture ALKAP dens=1.432           
+                      {  AgMaterial &mix = AgMaterial::Get("Alkap");              
+                            mix.Component("C5",12,6,50000);              
+                            mix.Component("H4",1,1,40000);              
+                            mix.Component("O2",16,8,20000);              
+                            mix.Component("Al",27,13,2302);              
+                            mix.par("dens")=1.432;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      { AgAttribute attr = AgAttribute("PSLD");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=pipg.sldinnr;              
+                            shape.par("rmax")=pipg.sldoutr;              
+                            shape.par("dz")=pipg.sldleng/2;              
+                            /// Shape Tube rmin=pipg.sldinnr rmax=pipg.sldoutr dz=pipg.sldleng/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PSLD;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PSLD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PSLD     
+    // ----------------------------------------------------------------------- geoctr
+       void PIPEGEO::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup PIPEGEO_revision        
+             ///@{           
+                   /// Created:   30-03-99            
+             ///@}        
+             ///@addtogroup PIPEGEO_revision        
+             ///@{           
+                   /// Author: W.B.Christie           
+             ///@}        
+             AddBlock("PIPE", PIPE::Instance());        
+             AddBlock("PIPC", PIPC::Instance());        
+             AddBlock("PIPO", PIPO::Instance());        
+             AddBlock("PIPS", PIPS::Instance());        
+             AddBlock("PIPB", PIPB::Instance());        
+             AddBlock("PIPT", PIPT::Instance());        
+             AddBlock("PFLO", PFLO::Instance());        
+             AddBlock("PFLT", PFLT::Instance());        
+             AddBlock("PVAC", PVAC::Instance());        
+             AddBlock("PVAO", PVAO::Instance());        
+             AddBlock("PVAS", PVAS::Instance());        
+             AddBlock("PVAB", PVAB::Instance());        
+             AddBlock("PRIS", PRIS::Instance());        
+             AddBlock("PRID", PRID::Instance());        
+             AddBlock("PRIB", PRIB::Instance());        
+             AddBlock("PIPI", PIPI::Instance());        
+             AddBlock("PVAI", PVAI::Instance());        
+             AddBlock("PVAT", PVAT::Instance());        
+             AddBlock("PWRP", PWRP::Instance());        
+             AddBlock("PSLD", PSLD::Instance());        
+             wrpthk=(3.+1.5)*2*mil_p;        
+             sldthk=(3.+0.1)*mil_p;        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipv
+++pipv._index;
+pipv.version = 1;
+// pipv_docum.version = " geometry version ";
+pipv.pipeconfig = 2;
+// pipv_docum.pipeconfig = " pipe version (2 is the default, unfortunately) ";
+pipv.pipeflag = 0;
+// pipv_docum.pipeflag = " 1=PWRP ;//2=PSLD ";
+pipv.targflag = 0;
+// pipv_docum.targflag = " 0=default 1=add fixed target";
+PIPV.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 2;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 3.9;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 4.0;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+pipg.beleng = 76.2;
+// pipg_docum.beleng = " Berillium section half length ";
+pipg.material = "alum";
+// pipg_docum.material = " pipe main section material  ";
+pipg.s1innr = 3.875;
+// pipg_docum.s1innr = " first Aluminum section inner radius ";
+pipg.s1outr = 4.0;
+// pipg_docum.s1outr = " first Aluminum section outer radius ";
+pipg.s1leng = 153.4;
+// pipg_docum.s1leng = " first Aluminum section half length ";
+pipg.s2innr = 3.875;
+// pipg_docum.s2innr = " second Aluminum section inner radius ";
+pipg.s2outr = 4.00;
+// pipg_docum.s2outr = " second Aluminum section outer radius ";
+pipg.s2leng = 18.0;
+// pipg_docum.s2leng = " second Aluminum section half length ";
+pipg.s3innr = 3.875;
+// pipg_docum.s3innr = " Transition Stub Aluminum section inner radius ";
+pipg.s3outr = 4.0;
+// pipg_docum.s3outr = " Transition Stub Aluminum section outer radius ";
+pipg.s3leng = 1.0;
+// pipg_docum.s3leng = " Transition Stub Aluminum section half length ";
+pipg.s4innr = 6.20;
+// pipg_docum.s4innr = " Large OD Aluminum section inner radius ";
+pipg.s4outr = 6.35;
+// pipg_docum.s4outr = " Large OD Aluminum section outer radius ";
+pipg.s4leng = 150.0;
+// pipg_docum.s4leng = " Large OD Aluminum section half length ";
+pipg.conelen = 12.5;
+// pipg_docum.conelen = " half length of the Bell Reducer Cone ";
+pipg.flange1t = 2.0;
+// pipg_docum.flange1t = " flange SET half thickness ";
+pipg.flange1r = 5.85;
+// pipg_docum.flange1r = " flange outer radius ";
+pipg.ribnum = 8;
+// pipg_docum.ribnum = " number of Ribs ";
+pipg.ribspa = 1.75;
+// pipg_docum.ribspa = " spacing between Ribs ";
+pipg.ribthk = 0.05;
+// pipg_docum.ribthk = " Rib half thickness ";
+pipg.riboutr = 4.8;
+// pipg_docum.riboutr = " Rib Outer Radius ";
+pipg.ribcent = 454.5;
+// pipg_docum.ribcent = " Rib Set center  ";
+pipg.wrpinnr = 4.0;
+// pipg_docum.wrpinnr = " inner radius of beampipe multi layer insulation ";
+pipg.wrpoutr = 4.0+wrpthk;
+// pipg_docum.wrpoutr = " outer radius of beampipe multi layer insulation ";
+pipg.wrpleng = 300;
+// pipg_docum.wrpleng = " length of beampipe multi layer insulation ";
+pipg.sldinnr = 4.0+wrpthk;
+// pipg_docum.sldinnr = " inner radius of SVT beam pipe shield ";
+pipg.sldoutr = 4.0+wrpthk+sldthk;
+// pipg_docum.sldoutr = " outer radius of SVT beam pipe shield ";
+pipg.sldleng = 56;
+// pipg_docum.sldleng = " length of SVT beam pipe shield ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 1;
+// pipg_docum.config = " both material and geo params ";
+pipg.material = "iron";
+// pipg_docum.material = " material is steel ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 4;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 1.374;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 1.450;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+pipg.material = "alum";
+// pipg_docum.material = " pipe main section material  ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 5;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 1.374;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 1.424;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 6;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 2.0;
+// pipg_docum.beinnr = " Berillium section inner radius (Jan upgr16) ";
+pipg.beoutr = 2.076;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 2.1;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 3.81;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 3.91;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+pipg.beleng = 76.2;
+// pipg_docum.beleng = " Berillium section half length ";
+pipg.material = "alum";
+// pipg_docum.material = " pipe main section material  ";
+pipg.s1innr = 3.81;
+// pipg_docum.s1innr = " first Aluminum section inner radius ";
+pipg.s1outr = 3.937;
+// pipg_docum.s1outr = " first Aluminum section outer radius ";
+pipg.s1leng = 163.83;
+// pipg_docum.s1leng = " first Aluminum section half length ";
+pipg.s2innr = 3.81;
+// pipg_docum.s2innr = " second Aluminum section inner radius ";
+pipg.s2outr = 3.937;
+// pipg_docum.s2outr = " second Aluminum section outer radius ";
+pipg.s2leng = 18.0;
+// pipg_docum.s2leng = " second Aluminum section half length ";
+pipg.s3innr = 3.81;
+// pipg_docum.s3innr = " Transition Stub Aluminum section inner radius ";
+pipg.s3outr = 3.937;
+// pipg_docum.s3outr = " Transition Stub Aluminum section outer radius ";
+pipg.s3leng = 1.0;
+// pipg_docum.s3leng = " Transition Stub Aluminum section half length ";
+pipg.s4innr = 6.20;
+// pipg_docum.s4innr = " Large OD Aluminum section inner radius ";
+pipg.s4outr = 6.35;
+// pipg_docum.s4outr = " Large OD Aluminum section outer radius ";
+pipg.s4leng = 139.57;
+// pipg_docum.s4leng = " Large OD Aluminum section half length ";
+pipg.conelen = 12.5;
+// pipg_docum.conelen = " half length of the Bell Reducer Cone ";
+pipg.flange1t = 2.0;
+// pipg_docum.flange1t = " flange SET half thickness ";
+pipg.flange1r = 5.85;
+// pipg_docum.flange1r = " flange outer radius ";
+pipg.ribnum = 8;
+// pipg_docum.ribnum = " number of Ribs ";
+pipg.ribspa = 1.75;
+// pipg_docum.ribspa = " spacing between Ribs ";
+pipg.ribthk = 0.05;
+// pipg_docum.ribthk = " Rib half thickness ";
+pipg.riboutr = 4.8;
+// pipg_docum.riboutr = " Rib Outer Radius ";
+pipg.ribcent = 454.5;
+// pipg_docum.ribcent = " Rib Set center  ";
+pipg.wrpinnr = 4.0;
+// pipg_docum.wrpinnr = " inner radius of beampipe multi layer insulation ";
+pipg.wrpoutr = 4.0+wrpthk;
+// pipg_docum.wrpoutr = " outer radius of beampipe multi layer insulation ";
+pipg.wrpleng = 300;
+// pipg_docum.wrpleng = " length of beampipe multi layer insulation ";
+pipg.sldinnr = 4.0+wrpthk;
+// pipg_docum.sldinnr = " inner radius of SVT beam pipe shield ";
+pipg.sldoutr = 4.0+wrpthk+sldthk;
+// pipg_docum.sldoutr = " outer radius of SVT beam pipe shield ";
+pipg.sldleng = 56;
+// pipg_docum.sldleng = " length of SVT beam pipe shield ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 1.1;
+// pipg_docum.config = " both material and geo params ";
+pipg.material = "iron";
+// pipg_docum.material = " material is steel ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 4.1;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 1.374;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 1.450;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+pipg.material = "alum";
+// pipg_docum.material = " pipe main section material  ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 5.1;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 1.374;
+// pipg_docum.beinnr = " Berillium section inner radius ";
+pipg.beoutr = 1.424;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+PIPG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.config = 6.1;
+// pipg_docum.config = " both material and geo params ";
+pipg.beinnr = 2.0;
+// pipg_docum.beinnr = " Berillium section inner radius (Jan upgr16) ";
+pipg.beoutr = 2.076;
+// pipg_docum.beoutr = " Berillium section outer radius ";
+PIPG.fill();
+        
+             /// USE pipv _index=1;        
+             PIPV.use( __pipv__index__ = 1 );
+        
+             /// USE pipg config=pipv.pipeconfig;        
+             PIPG.use( __pipg_config__ = pipv.pipeconfig );
+        
+             z1=pipg.beleng+2*pipg.s1leng+pipg.flange1t;        
+             z2=z1-2*pipg.flange1t+2*pipg.s2leng;        
+             z3=z2+pipg.flange1t+2*pipg.s3leng+2*pipg.conelen+2*pipg.s4leng;        
+             z4=z2+pipg.flange1t+2*pipg.s3leng+pipg.conelen;        
+             r1=pipg.sldoutr;        
+             r2=pipg.s4outr;        
+             _create = AgCreate("PIPE");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create PIPE           
+                   Create("PIPE");            
+             }        
+             if ( pipv.pipeconfig>=4||pipv.targflag==1 )        
+             {           
+                   {              
+                         AgPosition  place;              
+                         place.SetBlock("PIPE");              
+                         place.SetMother("CAVE");              
+                         /// Add daughter volume PIPE to mother CAVE              
+                         place.par("only")=AgPosition::kMany;              
+                         /// Overlap: agposition::kmany              
+                         _stacker -> Position( AgBlock::Find("PIPE"), place );              
+                   } // end placement of PIPE           
+                   {              
+                         AgPosition  place;              
+                         place.SetBlock("PIPE");              
+                         place.SetMother("CAVE");              
+                         /// Add daughter volume PIPE to mother CAVE              
+                         place.par("only")=AgPosition::kMany;              
+                         /// Overlap: agposition::kmany              
+                         /// G3 Reference: thetax = 90              
+                         /// G3 Reference: phix = 0              
+                         /// G3 Reference: thetay = 90              
+                         /// G3 Reference: phiy = 90              
+                         /// G3 Reference: thetaz = 180              
+                         /// G3 Reference: phiz = 0              
+                         Double_t _thetax=90,_phix=0,_thetay=90,_phiy=90,_thetaz=180,_phiz=0;              
+                         place.Reference( _thetax, _phix, _thetay, _phiy, _thetaz, _phiz );              
+                         _stacker -> Position( AgBlock::Find("PIPE"), place );              
+                   } // end placement of PIPE           
+             }        
+             else        
+             {           
+                   {              
+                         AgPosition  place;              
+                         place.SetBlock("PIPE");              
+                         place.SetMother("CAVE");              
+                         /// Add daughter volume PIPE to mother CAVE              
+                         _stacker -> Position( AgBlock::Find("PIPE"), place );              
+                   } // end placement of PIPE           
+                   {              
+                         AgPosition  place;              
+                         place.SetBlock("PIPE");              
+                         place.SetMother("CAVE");              
+                         /// Add daughter volume PIPE to mother CAVE              
+                         /// G3 Reference: thetax = 90              
+                         /// G3 Reference: phix = 0              
+                         /// G3 Reference: thetay = 90              
+                         /// G3 Reference: phiy = 90              
+                         /// G3 Reference: thetaz = 180              
+                         /// G3 Reference: phiz = 0              
+                         Double_t _thetax=90,_phix=0,_thetay=90,_phiy=90,_thetaz=180,_phiz=0;              
+                         place.Reference( _thetax, _phix, _thetay, _phiy, _thetaz, _phiz );              
+                         _stacker -> Position( AgBlock::Find("PIPE"), place );              
+                   } // end placement of PIPE           
+             }        
+       }; // PIPEGEO     
+ }; // namespace PIPEGEO  
+ 

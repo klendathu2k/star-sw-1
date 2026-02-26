@@ -1,0 +1,339 @@
+      MODULE MAGPGEO    is the geometry of the STAR magnet
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      +CDE,agecom,gcunit.
+      Author Pavel Nevski
+      Created 19 March 1996
+      CONTENT MAGP,COIL,MTCL,MPTV,MPCV,MRET,MRGV,MSEC,MBAR,MCSE, PANC,PAWT
+      STRUCTURE MAGG { version,Rmax,Length,test}
+      STRUCTURE MBAR { CoilRmn,CoilRmx,CoilLen,RetYRmn,RetYLen,BarWidin,BarWidou,
+            BarHeigh,RingRmn,Ncoil,zcoil(6),dzcoil(6),dzPancake,dyPancake,Rwater}
+      STRUCTURE MEND { PoleRmn,poleZ,PoleRmx,tcoilRmn,tcoilRmx,PoleCavR,PoleCavD,
+            tcoilDZ,etacut}
+      REAL TanTheta,Rcorner,Zcut,d,dr,r1,r2,dz
+
+      INTEGER I_coil,nZPanCakes,nYPanCakes,i,j
+
+      FILL MAGG		! Magnet basic dimensions
+      version = 1 !  version number
+      Rmax = 364.20 !  outer radius of the magnet system
+      Length = 715.00 !  magnet system full length
+      test = 0 !  geometry type: 0-standard, 1-test
+      ENDFILL
+      FILL MBAR		! Barrel Part
+      CoilRmn = 264.90 !  barrel coil inner radius (barrel minimum)
+      CoilRmx = 299.30 !  barrel coil outer radius
+      CoilLen = 627.40 !  barrel coil full length
+      RetYRmn = 303.29 !  Return Yoke minimum radius
+      RetYLen = 684.40 !  Return Yoke full length
+      BarWidin = 44.34 !  return yoke bare inner width
+      BarWidou = 57.15 !  return yoke bare outer width
+      BarHeigh = 60.00 !  return yoke bare height
+      RingRmn = 263.68 !  Return Ring minimum radius
+      Ncoil = 12 !  total number of barrel coils
+      Zcoil  = {   30.95,   89.05,  147.17,  205.25,   249.0, 
+                  288.35} !   coil position 
+      dZcoil  = {  45.24,  45.24,  45.24,  45.24,  22.71, 
+                   45.24} !   coil width   
+      dzPancake = 5.39 ! aluminium
+      dyPancake = 4.75 ! aluminium
+      Rwater = 0.75 ! central round hole radius for cooling water approximated by square
+      ENDFILL
+      FILL MEND		! EndCap Part
+      PoleZ = 310.007 !  pole tip nominal position
+      PoleRmn = 90.028 !  Pole tip inner radius (encap minimum)
+      PoleRmx = 252.882 !  Pole tip outer radius
+      PoleCavR = 152.4 !  Pole tip cavity outer radius
+      PoleCavD = 18 !  Pole tip cavity depth
+      tcoilRmn = 91.34 !  Pole tip trim coil inner radius
+      tcoilRmx = 141.28 !  Pole tip trim coil outer radius
+      tcoilDZ = 16.5 !  full width of Pole Tip trim Coil
+      etacut = 2 !  eta limits for the Pole
+      ENDFILL
+      use MAGG
+      use MBAR
+      use MEND
+      COMPONENT H2 A=1 Z=1 W=2
+      COMPONENT O A=16 Z=8 W=1
+      MIXTURE water dens=1.0
+      TanTheta = (exp(+mend_etacut)-exp(-mend_etacut))/2
+      CREATE MAGP
+      CALL AgsReset 
+      CALL agml_position_begin('MAGP') 
+      %mother = 'CAVE' 
+      %title = 'MAGP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- MAGP
+      BLOCK MAGP   is the magnet mother
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE MAGP seen=0 colo=1
+      IF ( magg_test==1 ) THEN
+      SHAPE tube rmin=mend_PoleRmn rmax=magg_Rmax,
+            dz=magg_Length/2
+      ELSE
+      SHAPE pcon phi1=0 dphi=360 nz=6 zi={-magg_Length/2,
+            -mend_PoleZ,-mend_PoleZ,mend_PoleZ,
+            mend_PoleZ,magg_Length/2} rmn={mend_PoleRmn,
+            mend_PoleRmn,mbar_CoilRmn,mbar_CoilRmn,mend_PoleRmn,
+            mend_PoleRmn} rmx={magg_Rmax,magg_Rmax,
+            magg_Rmax,magg_Rmax,magg_Rmax,magg_Rmax}
+      ENDIF
+      CREATE COIL
+      CALL AgsReset 
+      CALL agml_position_begin('COIL') 
+      %title = 'COIL' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE MRET
+      CALL AgsReset 
+      CALL agml_position_begin('MRET') 
+      %title = 'MRET' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE MPTV
+      CALL AgsReset 
+      CALL agml_position_begin('MPTV') 
+      %title = 'MPTV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+mend_PoleZ) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MPTV') 
+      %title = 'MPTV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-mend_PoleZ) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE MRGV
+      CALL AgsReset 
+      CALL agml_position_begin('MRGV') 
+      %title = 'MRGV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+mbar_coilLen/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MRGV') 
+      %title = 'MRGV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-mbar_coilLen/2) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- COIL
+      BLOCK COIL   is the main coil mother
+      ATTRIBUTE COIL seen=0 colo=2
+      SHAPE tube rmin=mbar_coilRmn rmax=mbar_coilRmx,
+            dz=mbar_coilLen/2
+      DO I_coil = 1, nint(mbar_Ncoil/2)
+      CREATE MCSE
+      CALL AgsReset 
+      CALL agml_position_begin('MCSE') 
+      %title = 'MCSE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+mbar_Zcoil(I_coil)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MCSE') 
+      %title = 'MCSE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-mbar_Zcoil(I_coil)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MCSE
+      BLOCK MCSE   is a single barrel coil
+      IF ( magg_version==1.0 ) THEN
+      MATERIAL Aluminium
+      ATTRIBUTE MCSE seen=1 colo=3
+      SHAPE tube dz=mbar_DzCoil(I_coil)/2
+      ELSE
+      COMPONENT C A=12 Z=6 W=8.0*12.0/174.0
+      COMPONENT H A=1 Z=1 W=14.0*1.0/174.0
+      COMPONENT O A=16 Z=8 W=4.0*16.0/174.0
+      MIXTURE epoxy dens=1.3
+      SHAPE tube dz=mbar_DzCoil(I_coil)/2
+      nZPanCakes = mbar_DzCoil( I_coil )/mbar_dzPanCake
+      dZ         = mbar_DzCoil( I_coil )/nZPanCakes
+      nYPanCakes = (mbar_CoilRmx - mbar_CoilRmn)/mbar_dyPanCake
+      dR         = (mbar_CoilRmx - mbar_CoilRmn)/nYPanCakes
+      DO i = 1, nZPancakes
+      r1 = mbar_CoilRmn + dR*(i-0.5) - mbar_dyPanCake/2
+      r2 = r1 + mbar_dyPanCake
+      CREATE PANC
+      DO j = 1, nYPancakes
+      CALL AgsReset 
+      CALL agml_position_begin('PANC') 
+      %title = 'PANC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-mbar_DzCoil(I_coil)/2+dZ*(j-0.5)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      END DO
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PANC
+      BLOCK PANC   The coil conductor
+      MATERIAL Aluminium
+      ATTRIBUTE PANC seen=0 colo=0
+      SHAPE tube rmin=r1 rmax=r2 dz=MBAR_dzPancake/2
+      CREATE PAWT
+      CALL AgsReset 
+      CALL agml_position_begin('PAWT') 
+      %title = 'PAWT' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PAWT
+      BLOCK PAWT   Water cooling in the coil
+      MATERIAL water
+      ATTRIBUTE PAWT seen=0 colo=2
+      SHAPE tube rmin=(r1+r2)/2-MBAR_Rwater rmax=(r1+r2)/2+MBAR_Rwater,
+            dz=MBAR_Rwater
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MRET
+      BLOCK MRET   is Magnet RETurn Yoke
+      ATTRIBUTE MRET seen=0 colo=3
+      SHAPE tube rmin=mbar_RetYRmn rmax=magg_Rmax,
+            dz=mbar_RetYLen/2
+      CREATE MSEC
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MSEC
+      BLOCK MSEC   is a sector containing a single retun bar
+      SHAPE division ndiv=30 iaxis=2
+      CREATE MBAR
+      CALL AgsReset 
+      CALL agml_position_begin('MBAR') 
+      %title = 'MBAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(mbar_RetYRmn+60.0/2) 
+      CALL agml_translate_x( %x ) 
+      CALL agml_ortho('YZX'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MBAR
+      BLOCK MBAR   is a single return yoke bar
+      MATERIAL Iron
+      ATTRIBUTE MBAR seen=1 colo=3
+      SHAPE trd1 dx1=mbar_BarWidin/2 dx2=mbar_BarWidou/2,
+            dy=mbar_RetYLen/2 dz=mbar_BarHeigh/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MRGV
+      BLOCK MRGV   is the Magnet Return rinG
+      D =(mbar_RetYLen - mbar_coilLen)/2
+      MATERIAL Iron
+      ATTRIBUTE MRGV seen=1 colo=6
+      SHAPE pcon phi1=0 dphi=360 nz=4 zi={0,D,
+            D,(magg_Length-mbar_coilLen)/2} rmn={mbar_RingRmn,
+            mbar_RingRmn,mbar_RingRmn,mbar_RingRmn},
+            rmx={mbar_RetYRmn,mbar_RetYRmn,magg_Rmax,magg_Rmax}
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MPTV
+      BLOCK MPTV   is the magnet pole-tip volume
+      Zcut     = mend_tcoilRmn*TanTheta - mend_PoleZ
+      Rcorner  = magg_Length/TanTheta/2
+      MATERIAL Iron
+      ATTRIBUTE MPTV seen=1 colo=6
+      SHAPE pcon phi1=0 dphi=360 nz=3 zi={0,Zcut,
+            magg_Length/2-mend_PoleZ} rmn={mend_TcoilRmn,
+            mend_TcoilRmn,Rcorner} rmx={mend_PoleRmx,mend_PoleRmx,
+            mend_PoleRmx}
+      CREATE MPCV
+      CALL AgsReset 
+      CALL agml_position_begin('MPCV') 
+      %title = 'MPCV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+mend_PoleCavD/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MPCV
+      BLOCK MPCV   is the coil cavity in the pole-tip (filled with cables ?)
+      MATERIAL Aluminium
+      ATTRIBUTE MPCV seen=1 colo=7
+      SHAPE tube rmin=mend_tcoilRmn rmax=mend_PoleCavR,
+            dz=mend_PoleCavD/2
+      CREATE MTCL
+      CALL AgsReset 
+      CALL agml_position_begin('MTCL') 
+      %title = 'MTCL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+mend_tcoilDZ/2-mend_PoleCavD/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- MTCL
+      BLOCK MTCL   is TRIM COIL Volume (filled with aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE MTCL seen=0 colo=3
+      SHAPE tube rmin=mend_tcoilRmn rmax=mend_tcoilRmx,
+            dz=mend_tcoilDZ/2
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module MAGPGEO]	 <<==='; (A32,/,/);
+      END! Module MAGPGEO

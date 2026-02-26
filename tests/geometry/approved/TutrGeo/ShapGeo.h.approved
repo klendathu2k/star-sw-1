@@ -1,0 +1,260 @@
+#ifndef __ShapGeo__ 
+#define __ShapGeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace SHAPGEO // $NMSPC 
+{ 
+   // ---------------------------------------------------------------------- BBOX -- 
+   ///@defgroup BBOX_doc 
+   ///@class BBOX 
+   ///@brief A box / TGeoBBox [TGeoVolume] 
+   class BBOX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BBOX() : AgBlock("BBOX","A box / TGeoBBox [TGeoVolume]"){ 
+      }; 
+      ~BBOX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PARA -- 
+   ///@defgroup PARA_doc 
+   ///@class PARA 
+   ///@brief A parallelpiped TGeoPara [TGeoVolume] 
+   class PARA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PARA() : AgBlock("PARA","A parallelpiped TGeoPara [TGeoVolume]"){ 
+      }; 
+      ~PARA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRDA -- 
+   ///@defgroup TRDA_doc 
+   ///@class TRDA 
+   ///@brief A trapezoid TGeoTrd1 [TGeoVolume] 
+   class TRDA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRDA() : AgBlock("TRDA","A trapezoid TGeoTrd1 [TGeoVolume]"){ 
+      }; 
+      ~TRDA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRDB -- 
+   ///@defgroup TRDB_doc 
+   ///@class TRDB 
+   ///@brief A trapezoid TGeoTrd2 [TGeoVolume] 
+   class TRDB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRDB() : AgBlock("TRDB","A trapezoid TGeoTrd2 [TGeoVolume]"){ 
+      }; 
+      ~TRDB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRAP -- 
+   ///@defgroup TRAP_doc 
+   ///@class TRAP 
+   ///@brief A trapezoid TGeoTrap [TGeoVolume] 
+   class TRAP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRAP() : AgBlock("TRAP","A trapezoid TGeoTrap [TGeoVolume]"){ 
+      }; 
+      ~TRAP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- GTRA -- 
+   ///@defgroup GTRA_doc 
+   ///@class GTRA 
+   ///@brief A trapezoid TGeoGtra [TGeoVolume] 
+   class GTRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      GTRA() : AgBlock("GTRA","A trapezoid TGeoGtra [TGeoVolume]"){ 
+      }; 
+      ~GTRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SPHE -- 
+   ///@defgroup SPHE_doc 
+   ///@class SPHE 
+   ///@brief A sphere [TGeoVolume] 
+   class SPHE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SPHE() : AgBlock("SPHE","A sphere [TGeoVolume]"){ 
+      }; 
+      ~SPHE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TUBE -- 
+   ///@defgroup TUBE_doc 
+   ///@class TUBE 
+   ///@brief A box [TGeoVolume] 
+   class TUBE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TUBE() : AgBlock("TUBE","A box [TGeoVolume]"){ 
+      }; 
+      ~TUBE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TUBS -- 
+   ///@defgroup TUBS_doc 
+   ///@class TUBS 
+   ///@brief A box [TGeoVolume] 
+   class TUBS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TUBS() : AgBlock("TUBS","A box [TGeoVolume]"){ 
+      }; 
+      ~TUBS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CTUB -- 
+   ///@defgroup CTUB_doc 
+   ///@class CTUB 
+   ///@brief A box [TGeoVolume] 
+   class CTUB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CTUB() : AgBlock("CTUB","A box [TGeoVolume]"){ 
+      }; 
+      ~CTUB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ELTU -- 
+   ///@defgroup ELTU_doc 
+   ///@class ELTU 
+   ///@brief An elliptical tube TGeoEltu [TGeoVolume] 
+   class ELTU : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ELTU() : AgBlock("ELTU","An elliptical tube TGeoEltu [TGeoVolume]"){ 
+      }; 
+      ~ELTU(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CONE -- 
+   ///@defgroup CONE_doc 
+   ///@class CONE 
+   ///@brief A box [TGeoVolume] 
+   class CONE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CONE() : AgBlock("CONE","A box [TGeoVolume]"){ 
+      }; 
+      ~CONE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CONS -- 
+   ///@defgroup CONS_doc 
+   ///@class CONS 
+   ///@brief A box [TGeoVolume] 
+   class CONS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CONS() : AgBlock("CONS","A box [TGeoVolume]"){ 
+      }; 
+      ~CONS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PCON -- 
+   ///@defgroup PCON_doc 
+   ///@class PCON 
+   ///@brief A polycone [TGeoVolume] 
+   class PCON : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PCON() : AgBlock("PCON","A polycone [TGeoVolume]"){ 
+      }; 
+      ~PCON(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PGON -- 
+   ///@defgroup PGON_doc 
+   ///@class PGON 
+   ///@brief A polygon [TGeoVolume] 
+   class PGON : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PGON() : AgBlock("PGON","A polygon [TGeoVolume]"){ 
+      }; 
+      ~PGON(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class ShapGeo 
+   /// \brief Shapes Geometry : places AgML shapes into the cave 
+   class ShapGeo : public AgModule 
+   { 
+      public: 
+      ShapGeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~ShapGeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace ShapGeo 
+#endif // __ShapGeo__ 

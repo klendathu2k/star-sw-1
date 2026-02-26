@@ -1,0 +1,390 @@
+      REPLACE [GeV] with [*1.0E+0];
+      REPLACE [MeV] with [*1.0E-3];
+      REPLACE [keV] with [*1.0E-6];
+
+      REPLACE [SET EmCuts(#)] with [
+      Call GsTPar( ag_imed, 'CUTGAM', #1_CUTGAM )
+      Call GsTPar( ag_imed, 'CUTELE', #1_CUTELE )
+      Call GsTPar( ag_imed, 'CUTHAD', #1_CUTHAD )
+      Call GsTPar( ag_imed, 'CUTNEU', #1_CUTNEU )
+      Call GsTPar( ag_imed, 'CUTMUO', #1_CUTMUO )
+      Call GsTPar( ag_imed, 'DCUTE', #1_DCUTE );
+      Call GsTPar( ag_imed, 'DCUTM', #1_DCUTM );
+      Call GsTPar( ag_imed, 'BCUTE', #1_BCUTE );
+      Call GsTPar( ag_imed, 'BCUTM', #1_BCUTM );
+      ];
+
+      MODULE WCALGEO1    is the Forward Calorimeter System WALL EM Calorimeter
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created    10 Aug 2018
+      Author Akio Ogawa
+      +CDE,agecom.
+      +CDE,gconst.
+      +CDE,gcunit.
+      CONTENT WMOD,WTOW,WFST,WPAP,WSCI,WPBP,WBPL
+      STRUCTURE WVER { Version,int active}
+      STRUCTURE WGEO { Depth,NX,NY,DX,DY,Clearance,NLayer,DZFrontSpace,DZFrontSteel,
+            DZPaper,DZScinti,DZLead,DZBackPlastic,DZBackSpace}
+      STRUCTURE WOFF { NS,XOffset,YOffset,ZOffset,Angle}
+      STRUCTURE WCUT { CUTGAM,CUTELE,CUTNEU,CUTHAD,CUTMUO,DCUTE,DCUTM,BCUTE,BCUTM}
+      real *4 dtr,xtow,ytow,xtot,ytot,ztot,zsci
+
+      real *4 a,x,y,z,aa,ortx,xx,yy,zz,zzz
+
+      Integer *4 ns,ix,iy,iz,i
+
+      FILL WVER		! FCS ECal basic data
+      Version = 1.0 !  Geometry version
+      active = 1 !  1=on, 0=off
+      ENDFILL
+      use WVER version=1.0
+      FILL WGEO		! FCS Ecal geometry
+      Depth = 71.21 !  Box Depth
+      NX = 22 !  Number of tower in x
+      NY = 34 !  number of tower in y
+      DX = 5.542 !  tower size in x
+      DY = 5.542 !  tower size in y
+      Clearance = 0.03 !  space between towers
+      NLayer = 66 !  number of Scinti layers
+      DZFrontSpace = 13.90 !  thinkness of space at front(FEEBds)
+      DZFrontSteel = 0.100 !  front steel plate thhickness
+      DZPaper = 0.012 !  paper thickness
+      DZScinti = 0.400 !  scinti thickness
+      DZLead = 0.150 !  lead thickness
+      DZBackPlastic = 0.50 !  back plastic thickness
+      DZBackspace = 18.37 !  thinkness of space at back (fiber loop)
+      ENDFILL
+      use WGEO
+      FILL WOFF		! FCS ECAL position Offsets
+      NS = 1 !  North or South
+      XOffset = 17.399 !  tower x offset from beam to nearlest tower @ front face
+      YOffset = -5.26 !  tower y offset from beam to the center of whole stack
+      ZOffset = 710.16 !  tower z offset from IR to tower front face @ near beam
+      Angle = 1.73 !  Angle aroud y axis [degree]
+      ENDFILL
+      FILL WOFF		! FCS ECAL position Offsets
+      NS = 2 !  North or South
+      XOffset = 17.399 !  tower x offset from beam to nearlest tower @ front face
+      YOffset = -5.26 !  tower y offset from beam to the center of whole stack
+      ZOffset = 710.16 !  tower z offset from IR to tower front face @ near beam
+      Angle = 1.73 !  Angle aroud y axis [degree]
+      ENDFILL
+      FILL WCUT		! EM cuts in FCS ECal
+      CutGAM = 10 keV !  gamma transport cut
+      CutELE = 10 keV !  electron transport cut
+      CutHAD = 1 MeV !  hadron transport cut
+      CutNEU = 1 MeV !  neutron transport cut
+      CutMUO = 1 MeV !  muon transport cut
+      DCutE = 10 keV !  electron delta ray cut
+      DCutM = 10 keV !  muon delta ray cut
+      BCutE = 10 keV !  electron brem cut
+      BCutM = 10 keV !  muon brem cut
+      ENDFILL
+      use WCUT
+      dtr=pi/180.0
+      zsci = WGEO_NLayer*(WGEO_DZScinti + 2*WGEO_DZPaper)
+      zsci  = zsci + (WGEO_NLayer-1.0)*WGEO_DZLead
+      ztot = WGEO_DZFrontSpace
+      ztot = ztot + WGEO_DZFrontSteel*2.0
+      ztot = ztot + zsci
+      ztot = ztot + WGEO_DZBackPlastic*2.0
+      ztot = ztot + WGEO_DZBackSpace
+      xtow = WGEO_DX + WGEO_Clearance
+      ytow = WGEO_DY + WGEO_Clearance
+      xtot = xtow * WGEO_NX
+      ytot = ytow * WGEO_NY
+      IF ( WVER_active.eq.1 ) THEN
+      CREATE WMOD
+      DO ns = 1, 2
+      use WOFF NS=ns
+      a= WOFF_Angle*dtr
+      x= WOFF_XOffset + xtot/2.0*cos(a)       + WGEO_Depth/2.0*sin(a)
+      y= WOFF_YOffset
+      z= WOFF_ZOffset + WGEO_Depth/2.0*cos(a) - xtot/2.0*sin(a)
+      IF ( ns.eq.1 ) THEN
+      x=-x
+      ortx=-1.0
+      aa=-WOFF_Angle
+      ELSE
+      ortx=+1.0
+      aa=WOFF_Angle
+      ENDIF
+      <W> x;  ('FCS Ecal Module xpos=', F10.5);
+      <W> y;  ('FCS Ecal Module ypos=', F10.5);
+      <W> z;  ('FCS Ecal Module zpos=', F10.5);
+      CALL AgsReset 
+      CALL agml_position_begin('WMOD') 
+      %mother = 'CAVE' 
+      %title = 'WMOD' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {ortx, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      ag_alphay = real(aa) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ELSE
+      <W> WVER_active;  ('WcalGeo switched off on WVER.active=', I1);
+      ENDIF
+      ! ---------------------------------------------------------------------------------- WMOD
+      BLOCK WMOD   is a stack of FCS EM nodule
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE WMOD seen=1 colo=4 fill=0
+      SHAPE box dx=xtot/2.0 dy=ytot/2.0 dz=WGEO_Depth/2.0
+      CREATE WTOW
+      DO iy = 1, WGEO_NY
+      yy = (WGEO_NY/2.0 - iy + 0.5) * ytow
+      DO ix = 1, WGEO_NX
+      xx = -(WGEO_NX/2.0 - ix + 0.5) * xtow
+      CALL AgsReset 
+      CALL agml_position_begin('WTOW') 
+      %mother = 'WMOD' 
+      %title = 'WTOW' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WTOW
+      BLOCK WTOW   is a FCS ECal tower
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE WTOW seen=1 colo=4 fill=0
+      SHAPE box dx=xtow/2.0 dy=ytow/2.0 dz=WGEO_Depth/2.0
+      CREATE WFST
+      CREATE WSCI
+      CREATE WBPL
+      zz= - WGEO_Depth/2.0 + WGEO_DZFrontSpace
+      zz = zz + WGEO_DZBackPlastic/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WBPL') 
+      %mother = 'WTOW' 
+      %title = 'WBPL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zz = zz + WGEO_DZBackPlastic/2.0
+      zz = zz + WGEO_DZFrontSteel/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WFST') 
+      %mother = 'WTOW' 
+      %title = 'WFST' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zz = zz + WGEO_DZFrontSteel/2.0
+      zz = zz + zsci/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WSCI') 
+      %mother = 'WTOW' 
+      %title = 'WSCI' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zz = zz + zsci/2.0
+      zz = zz + WGEO_DZBackPlastic/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WBPL') 
+      %mother = 'WTOW' 
+      %title = 'WBPL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zz = zz + WGEO_DZBackPlastic/2.0
+      zz = zz + WGEO_DZFrontSteel/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WFST') 
+      %mother = 'WTOW' 
+      %title = 'WFST' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zz = zz + WGEO_DZFrontSteel/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WFST
+      BLOCK WFST   is a FCS ECal tower front steel plate
+      MATERIAL Iron
+      MEDIUM wcal_steel
+      ATTRIBUTE WFST seen=1 colo=4 fill=0
+      Set EmCuts (WCUT)
+      SHAPE box dx=WGEO_DX/2.0 dy=WGEO_DY/2.0,
+            dz=WGEO_DZFrontSteel/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WSCI
+      BLOCK WSCI   is a FCS ECal tower scintilator layer
+      MATERIAL WCal_Scinti a=6.670 z=3.60 dens=1.18 absl=70.8 radl=34.4
+      MEDIUM wcal_scinti isvol=1
+      ATTRIBUTE WSCI seen=1 colo=7 fill=0
+      SHAPE box dx=WGEO_DX/2.0 dy=WGEO_DY/2.0,
+            dz=zsci/2.0
+      Set EmCuts (WCUT)
+      Call GStPar(ag_imed, 'BIRK1', 1.)
+      Call GStPar(ag_imed, 'BIRK2', 0.013)
+      Call GStPar(ag_imed, 'BIRK3', 9.6E-6)
+      HITS WSCI birk:0:(0,100)
+      CREATE WPAP
+      CREATE WPBP
+      zzz= - zsci/2.0
+      DO i = 1, WGEO_NLayer
+      zzz = zzz + WGEO_DZPaper/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAP') 
+      %mother = 'WSCI' 
+      %title = 'WPAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zzz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zzz = zzz + WGEO_DZPaper + WGEO_DZScinti
+      CALL AgsReset 
+      CALL agml_position_begin('WPAP') 
+      %mother = 'WSCI' 
+      %title = 'WPAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zzz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zzz = zzz + WGEO_DZPaper/2.0
+      IF ( i.lt.WGEO_NLayer ) THEN
+      zzz = zzz + WGEO_DZLead/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPBP') 
+      %mother = 'WSCI' 
+      %title = 'WPBP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zzz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zzz = zzz + WGEO_DZLead/2.0
+      ENDIF
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPAP
+      BLOCK WPAP   is a FCS ECal tower paper wrap around Scinti
+      COMPONENT C A=12 Z=6 W=1.0
+      COMPONENT H A= 1 Z=1 W=5.0
+      COMPONENT O A=16 Z=8 W=5.0
+      MIXTURE WCAL_Paper dens=0.6
+      MEDIUM wcal_paper isvol=0
+      ATTRIBUTE WPAP seen=1 colo=1 fill=0
+      SHAPE box dx=WGEO_DX/2.0 dy=WGEO_DY/2.0,
+            dz=WGEO_DZPaper/2.0
+      Set EmCuts (WCUT)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPBP
+      BLOCK WPBP   is a FCS ECal tower lead layer
+      MATERIAL lead
+      MEDIUM wcal_lead isvol=0
+      ATTRIBUTE WPBP seen=1 colo=2 fill=0
+      SHAPE box dx=WGEO_DX/2.0 dy=WGEO_DY/2.0,
+            dz=WGEO_DZLead/2.0
+      Set EmCuts (WCUT)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WBPL
+      BLOCK WBPL   is a FCS ECal tower back plastic plate
+      COMPONENT C A=12 Z=6 W=5.0
+      COMPONENT H A= 1 Z=1 W=8.0
+      COMPONENT O A=16 Z=8 W=2.0
+      MIXTURE WCAL_Plastic dens=1.18
+      MEDIUM wcal_plastic
+      ATTRIBUTE WBPL seen=1 colo=3 fill=0
+      SHAPE box dx=WGEO_DX/2.0 dy=WGEO_DY/2.0,
+            dz=WGEO_DZBackPlastic/2.0
+      Set EmCuts (WCUT)
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module WCALGEO1]	 <<==='; (A32,/,/);
+      END! Module WCALGEO1

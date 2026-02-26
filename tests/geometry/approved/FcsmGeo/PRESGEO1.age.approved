@@ -1,0 +1,318 @@
+      REPLACE [GeV] with [*1.0E+0];
+      REPLACE [MeV] with [*1.0E-3];
+      REPLACE [keV] with [*1.0E-6];
+
+      REPLACE [SET EmCuts(#)] with [
+      Call GsTPar( ag_imed, 'CUTGAM', #1_CUTGAM )
+      Call GsTPar( ag_imed, 'CUTELE', #1_CUTELE )
+      Call GsTPar( ag_imed, 'CUTHAD', #1_CUTHAD )
+      Call GsTPar( ag_imed, 'CUTNEU', #1_CUTNEU )
+      Call GsTPar( ag_imed, 'CUTMUO', #1_CUTMUO )
+      Call GsTPar( ag_imed, 'DCUTE', #1_DCUTE );
+      Call GsTPar( ag_imed, 'DCUTM', #1_DCUTM );
+      Call GsTPar( ag_imed, 'BCUTE', #1_BCUTE );
+      Call GsTPar( ag_imed, 'BCUTM', #1_BCUTM );
+      ];
+
+      MODULE PRESGEO1    is the Forward Calorimeter System PREShower GEOmetry
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created    10 May 2019
+      Author Akio Ogawa
+      +CDE,agecom.
+      +CDE,gconst.
+      +CDE,gcunit.
+      CONTENT PMOD,PLAY,PSCI,PBKB
+      STRUCTURE PVER { Version,int active}
+      STRUCTURE PGEO { DBox(3),DHole,ScThick,ScWidth,ScWrap,ScLth(10),Xoff(6,2),Yoff(6,
+            2),Zoff(6,2),Nslat(6,2),AngSlat(6,2),BPdz}
+      STRUCTURE PCUT { CUTGAM,CUTELE,CUTNEU,CUTHAD,CUTMUO,DCUTE,DCUTM,BCUTE,BCUTM}
+      INTEGER i,j,k,debug,sern,sn,layr,id
+
+      REAL dtr,xtot,ztot,x,y,z,wid,ang,gx,gy,gz,      dx,dy,dz,xx,yy,zz,xxx,yyy,zzz,
+            dyy,dxx,dzz
+
+      REAL sqrt2/1.414213562373095/
+
+      FILL PVER		! FCS Preshower basic data
+      Version = 1.0 !  Geometry version
+      active = 1 !  1=active, 0=gone
+      ENDFILL
+      use PVER version=1.0
+      FILL PGEO		! PreShower geometry
+      DBox  = {  245.0,  250.0,   35.0} !  Mother volume box
+      DHole = 42.00 ! None
+      ScThick = 1.0 ! Scintillator thickness, cm
+      ScWidth = 5.0 ! Scintillator width
+      ScWrap = 0.025 ! Scintillator wrapping thickness
+      ScLth  = {    108.0,     85.0,  113.137,  103.087, 
+                   93.037,   82.987,   72.937,   62.887, 
+                   52.837,   42.787} !  length of type s1,s2,s3,s3-1,s3-2,s3-3,s3-4,s3-5,s3-6,s3-7
+      Xoff  = {     15.0,   49.085,      0.0,   77.925, 
+                  77.925,   78.125;
+                     0.0,      0.0,  -49.085,  -77.925, 
+                 -77.925,  -78.125} !  None
+      Yoff  = {   65.5,   65.5,    0.0,  0.877,    0.0,    0.0, 
+              ;
+                   0.0,    0.0,   65.5,  0.877,    0.0,    0.0} !  None
+      Zoff  = {  615.899,  638.259,    0.000,  648.419, 
+                 657.944,  667.469;
+                   0.000,    0.000,  640.529,  647.784, 
+                 657.309,  666.834} !  None
+      Nslat  = {   9,  14,   0,  25,  43,  34;
+                   0,   0,  14,  25,  43,  34} !  None
+      AngSlat  = {    0.0,  -45.0,  999.0,  -45.0,  -90.0, 
+                      0.0;
+                    999.0,  999.0,  225.0,  225.0,   90.0, 
+                      0.0} !  None
+      BPdz = 2.54/4.0 ! None
+      ENDFILL
+      use PGEO
+      FILL PCUT		! EM cuts in FCS Pres
+      CutGAM = 10 keV !  gamma transport cut
+      CutELE = 10 keV !  electron transport cut
+      CutHAD = 1 MeV !  hadron transport cut
+      CutNEU = 1 MeV !  neutron transport cut
+      CutMUO = 1 MeV !  muon transport cut
+      DCutE = 10 keV !  electron delta ray cut
+      DCutM = 10 keV !  muon delta ray cut
+      BCutE = 10 keV !  electron brem cut
+      BCutM = 10 keV !  muon brem cut
+      ENDFILL
+      use PCUT
+      dtr=pi/180.0
+      xtot=PGEO_DBOX(1)
+      ztot=PGEO_DBOX(3)
+      IF ( PVER_active.eq.1 ) THEN
+      CREATE PMOD
+      CALL AgsReset 
+      CALL agml_position_begin('PMOD') 
+      %mother = 'CAVE' 
+      %title = 'PMOD' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PGEO_Zoff(2,1)-2.0+PGEO_Dbox(3)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      <W> PVER_active;  ('PresGeo switched off on PVER.active=', I1);
+      ENDIF
+      ! ---------------------------------------------------------------------------------- PMOD
+      BLOCK PMOD   is mother volume for FCS Pres
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE PMOD seen=1 colo=2
+      SHAPE pgon phi1=45 dphi=360 npdiv=4 nz=2,
+            zi={-PGEO_DBox(3)/2.0,PGEO_DBox(3)/2.0} rmn={PGEO_DHole/2.0,
+            PGEO_DHole/2.0} rmx={PGEO_DBox(1)/2.0,
+            PGEO_DBox(1)/2.0}
+      debug=1
+      IF ( debug.ge.1 ) THEN
+      open(12,file='presgeom.txt',status='REPLACE')
+      ENDIF
+      wid=PGEO_ScWidth + PGEO_ScWrap
+      id=0
+      serN=0
+      DO sn = 1, 2
+      DO layr = 2, 6
+      IF ( PGEO_Nslat(layr,sn).gt.0 ) THEN
+      IF ( layr.eq.1 ) THEN
+      dx=wid*9+1.0
+      dy=PGEO_ScLth(2)/2.0+1.0
+      ELSEIF ( layr.le.3 ) THEN
+      dx=64.0
+      dy=PGEO_ScLth(2)/2.0
+      ELSE
+      dx=PGEO_ScLth(2)/2.0+1.0
+      dy=PGEO_ScLth(1)+1.0
+      ENDIF
+      xx=PGEO_Xoff(layr,sn)
+      yy=PGEO_Yoff(layr,sn)
+      dz=(PGEO_ScThick+PGEO_BPdz)/2.0
+      zz=PGEO_Zoff(layr,sn)-(PGEO_Zoff(2,1)+PGEO_Dbox(3)/2.0-2.0)+PGEO_BPdz/2.0
+      IF ( layr.eq.3 ) THEN
+      zz=PGEO_Zoff(layr,sn)-(PGEO_Zoff(2,1)+PGEO_Dbox(3)/2.0-2.0)-PGEO_BPdz/2.0
+      ENDIF
+      serN=serN+1
+      CREATE PLAY
+      CALL AgsReset 
+      CALL agml_position_begin('PLAY') 
+      %mother = 'PMOD' 
+      %title = 'PLAY' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      END DO
+      END DO
+      IF ( debug.ge.1 ) THEN
+      close(12)
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PLAY
+      BLOCK PLAY   is a layer of FCS PRES
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE PLAY seen=1 colo=3 serial=serN
+      SHAPE box dx=dx dy=dy dz=dz
+      CREATE PSCI
+      DO i = 1, PGEO_Nslat(layr,sn)
+      IF ( PGEO_Nslat(layr,sn).gt.0 ) THEN
+      IF ( layr.eq.1 ) THEN
+      xxx=wid*(i-5)
+      yyy=0.0
+      dyy=PGEO_ScLth(2)/2.0
+      ELSEIF ( layr.le.3 ) THEN
+      IF ( i.le.7 ) THEN
+      xxx=-1.5*wid*sqrt2+wid*i/sqrt2-39.085
+      yyy=wid*8/sqrt2-wid*i/sqrt2
+      dyy=PGEO_ScLth(11-i)/2.0
+      ELSEIF ( i.gt.7 ) THEN
+      xxx=2.5*wid*sqrt2+wid*(i-8)*sqrt2-39.085
+      yyy=0.0
+      dyy=PGEO_ScLth(3)/2.0
+      ENDIF
+      ELSEIF ( layr.eq.4 ) THEN
+      IF ( i.le.19 ) THEN
+      xxx=0.0
+      yyy=-108.0375+(60+PGEO_scWrap)/sqrt2+wid/2.0+wid*sqrt2*19-PGEO_Yoff(layr,sn)-wid*i*sqrt2
+      dyy=PGEO_ScLth(3)/2.0
+      ELSE
+      xxx=wid*(i-19)/sqrt2
+      yyy=-108.0375+(60+PGEO_scWrap)/sqrt2+wid/2.0-PGEO_Yoff(layr,sn)-wid*(i-19)/sqrt2
+      dyy=PGEO_ScLth(i-16)/2.0
+      ENDIF
+      ELSEIF ( layr.eq.5 ) THEN
+      yyy=wid*(22-i)
+      xxx=0.0
+      dyy=PGEO_ScLth(2)/2.0
+      ELSEIF ( layr.eq.6 ) THEN
+      dyy=PGEO_ScLth(1)/2.0
+      yyy=54.0
+      xxx=wid*(i-9)
+      IF ( i.gt.17 ) THEN
+      xxx=wid*(i-26)
+      yyy=-yyy
+      ENDIF
+      ENDIF
+      IF ( sn.eq.2 ) THEN
+      xxx=-xxx
+      ENDIF
+      ang=PGEO_AngSlat(layr,sn)
+      dzz=PGEO_scThick/2.0
+      dxx=PGEO_scWidth/2.0
+      zzz=-dz+PGEO_ScThick/2.0
+      IF ( layr.eq.3 ) THEN
+      zzz=-zzz
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('PSCI') 
+      %title = 'PSCI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xxx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yyy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zzz) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dxx) 
+      %dy = real(dyy) 
+      %dz = real(dzz) 
+      ag_alphaz = real(ang) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      gx = xxx+PGEO_Xoff(layr,sn)
+      gy = yyy+PGEO_Yoff(layr,sn)
+      gz = zzz+PGEO_Zoff(layr,sn)-PGEO_BPdz/2.0
+      IF ( debug.ge.1 ) THEN
+      write(12,'(4I3,7F8.2)')id,sn,layr,i,dxx*2,dyy*2,dzz*2,gx,gy,gz,ang
+      ENDIF
+      id=id+1
+      ENDIF
+      END DO
+      IF ( PGEO_Nslat(layr,sn).gt.0 ) THEN
+      IF ( layr.eq.1 ) THEN
+      dxx=wid*9+1.0
+      dyy=PGEO_ScLth(2)/2.0+1.0
+      ELSEIF ( layr.le.3 ) THEN
+      dxx=64.0
+      dyy=PGEO_ScLth(2)/2.0
+      ELSE
+      dxx=PGEO_ScLth(2)/2.0+1.0
+      dyy=PGEO_ScLth(1)+1.0
+      ENDIF
+      xxx=0.0
+      yyy=0.0
+      dzz=PGEO_BPdz/2.0
+      zzz=dz-PGEO_BPdz/2.0
+      IF ( layr.eq.3 ) THEN
+      zzz=-zzz
+      ENDIF
+      CREATE PBKB
+      CALL AgsReset 
+      CALL agml_position_begin('PBKB') 
+      %title = 'PBKB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xxx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yyy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zzz) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dxx) 
+      %dy = real(dyy) 
+      %dz = real(dzz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCI
+      BLOCK PSCI   is a piece of scintillator in FMS Preshower
+      MATERIAL Polystyren
+      MATERIAL PRES_scint isvol=1
+      ATTRIBUTE PSCI seen=1 colo=6
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      Set EmCuts (PCUT)
+      Call GStPar(ag_imed, 'BIRK1', 1.)
+      Call GStPar(ag_imed, 'BIRK2', 0.013)
+      Call GStPar(ag_imed, 'BIRK3', 9.6E-6)
+      HITS PSCI birk:0:(0,10)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PBKB
+      BLOCK PBKB   is the G10 back board
+      COMPONENT Si A=28.08 Z=14 W=0.6*1*28./60.
+      COMPONENT O A=16 Z=8 W=0.6*2*16./60.
+      COMPONENT C A=12 Z=6 W=0.4*8*12./174.
+      COMPONENT H A=1 Z=1 W=0.4*14*1./174.
+      COMPONENT O A=16 Z=8 W=0.4*4*16./174.
+      MIXTURE g10 dens=1.7
+      ATTRIBUTE PBKB seen=1 colo=7
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      Set EmCuts (PCUT)
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module PRESGEO1]	 <<==='; (A32,/,/);
+      END! Module PRESGEO1

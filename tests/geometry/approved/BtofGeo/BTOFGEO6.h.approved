@@ -1,0 +1,4245 @@
+#ifndef __BTOFGEO6__ 
+#define __BTOFGEO6__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace BTOFGEO6 // $NMSPC 
+{ 
+   struct btog_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+float x0;
+float z0;
+float choice;
+float posit1[2];
+float posit2;
+float posit3;
+float posit4[5];
+float dphi1[5];
+float posit5[120];
+int _index;
+};
+ 
+   struct _btog_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string x0;
+string z0;
+string choice;
+string posit1;
+string posit2;
+string posit3;
+string posit4;
+string dphi1;
+string posit5;
+string _index;
+};
+ 
+    struct _btog_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef float x0;
+  typedef float z0;
+  typedef float choice;
+  typedef float posit1[2];
+  typedef float posit2;
+  typedef float posit3;
+  typedef float posit4[5];
+  typedef float dphi1[5];
+  typedef float posit5[120];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct btog_info {
+typedef btog_t Type;
+static const char *name(){ return "btog_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct btog_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct btog_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct btog_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct btog_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x0 {
+  static const char *name() { return  "x0"; }
+  static size_t Offset(){ return offsetof( struct btog_t, x0 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z0 {
+  static const char *name() { return  "z0"; }
+  static size_t Offset(){ return offsetof( struct btog_t, z0 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct choice {
+  static const char *name() { return  "choice"; }
+  static size_t Offset(){ return offsetof( struct btog_t, choice ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct posit1 {
+  static const char *name() { return  "posit1"; }
+  static size_t Offset(){ return offsetof( struct btog_t, posit1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct posit2 {
+  static const char *name() { return  "posit2"; }
+  static size_t Offset(){ return offsetof( struct btog_t, posit2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct posit3 {
+  static const char *name() { return  "posit3"; }
+  static size_t Offset(){ return offsetof( struct btog_t, posit3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct posit4 {
+  static const char *name() { return  "posit4"; }
+  static size_t Offset(){ return offsetof( struct btog_t, posit4 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[5];
+};
+struct dphi1 {
+  static const char *name() { return  "dphi1"; }
+  static size_t Offset(){ return offsetof( struct btog_t, dphi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[5];
+};
+struct posit5 {
+  static const char *name() { return  "posit5"; }
+  static size_t Offset(){ return offsetof( struct btog_t, posit5 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[120];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct btog_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)btog_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tray_t {
+float height;
+float width;
+float length;
+float wallthk;
+float supfullh;
+float supfullw;
+float suplen;
+float supbaset;
+float supbasew;
+float suparmt;
+float cooloutr;
+float coolinnr;
+float stript;
+float footinse;
+float footthk;
+float foot1len;
+float foot2thk;
+float foot3len;
+float topthk;
+float toph;
+float coverthk;
+float coverh;
+float coverl;
+float feeh1;
+float feeh2;
+float feew;
+float feel;
+float feethk;
+int _index;
+};
+ 
+   struct _tray_docum_ {
+string height;
+string width;
+string length;
+string wallthk;
+string supfullh;
+string supfullw;
+string suplen;
+string supbaset;
+string supbasew;
+string suparmt;
+string cooloutr;
+string coolinnr;
+string stript;
+string footinse;
+string footthk;
+string foot1len;
+string foot2thk;
+string foot3len;
+string topthk;
+string toph;
+string coverthk;
+string coverh;
+string coverl;
+string feeh1;
+string feeh2;
+string feew;
+string feel;
+string feethk;
+string _index;
+};
+ 
+    struct _tray_types_ {
+  typedef float height;
+  typedef float width;
+  typedef float length;
+  typedef float wallthk;
+  typedef float supfullh;
+  typedef float supfullw;
+  typedef float suplen;
+  typedef float supbaset;
+  typedef float supbasew;
+  typedef float suparmt;
+  typedef float cooloutr;
+  typedef float coolinnr;
+  typedef float stript;
+  typedef float footinse;
+  typedef float footthk;
+  typedef float foot1len;
+  typedef float foot2thk;
+  typedef float foot3len;
+  typedef float topthk;
+  typedef float toph;
+  typedef float coverthk;
+  typedef float coverh;
+  typedef float coverl;
+  typedef float feeh1;
+  typedef float feeh2;
+  typedef float feew;
+  typedef float feel;
+  typedef float feethk;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tray_info {
+typedef tray_t Type;
+static const char *name(){ return "tray_t"; }
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct tray_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct tray_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct tray_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wallthk {
+  static const char *name() { return  "wallthk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, wallthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct supfullh {
+  static const char *name() { return  "supfullh"; }
+  static size_t Offset(){ return offsetof( struct tray_t, supfullh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct supfullw {
+  static const char *name() { return  "supfullw"; }
+  static size_t Offset(){ return offsetof( struct tray_t, supfullw ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct suplen {
+  static const char *name() { return  "suplen"; }
+  static size_t Offset(){ return offsetof( struct tray_t, suplen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct supbaset {
+  static const char *name() { return  "supbaset"; }
+  static size_t Offset(){ return offsetof( struct tray_t, supbaset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct supbasew {
+  static const char *name() { return  "supbasew"; }
+  static size_t Offset(){ return offsetof( struct tray_t, supbasew ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct suparmt {
+  static const char *name() { return  "suparmt"; }
+  static size_t Offset(){ return offsetof( struct tray_t, suparmt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cooloutr {
+  static const char *name() { return  "cooloutr"; }
+  static size_t Offset(){ return offsetof( struct tray_t, cooloutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coolinnr {
+  static const char *name() { return  "coolinnr"; }
+  static size_t Offset(){ return offsetof( struct tray_t, coolinnr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct stript {
+  static const char *name() { return  "stript"; }
+  static size_t Offset(){ return offsetof( struct tray_t, stript ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct footinse {
+  static const char *name() { return  "footinse"; }
+  static size_t Offset(){ return offsetof( struct tray_t, footinse ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct footthk {
+  static const char *name() { return  "footthk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, footthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct foot1len {
+  static const char *name() { return  "foot1len"; }
+  static size_t Offset(){ return offsetof( struct tray_t, foot1len ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct foot2thk {
+  static const char *name() { return  "foot2thk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, foot2thk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct foot3len {
+  static const char *name() { return  "foot3len"; }
+  static size_t Offset(){ return offsetof( struct tray_t, foot3len ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct topthk {
+  static const char *name() { return  "topthk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, topthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct toph {
+  static const char *name() { return  "toph"; }
+  static size_t Offset(){ return offsetof( struct tray_t, toph ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coverthk {
+  static const char *name() { return  "coverthk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, coverthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coverh {
+  static const char *name() { return  "coverh"; }
+  static size_t Offset(){ return offsetof( struct tray_t, coverh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coverl {
+  static const char *name() { return  "coverl"; }
+  static size_t Offset(){ return offsetof( struct tray_t, coverl ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh1 {
+  static const char *name() { return  "feeh1"; }
+  static size_t Offset(){ return offsetof( struct tray_t, feeh1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh2 {
+  static const char *name() { return  "feeh2"; }
+  static size_t Offset(){ return offsetof( struct tray_t, feeh2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feew {
+  static const char *name() { return  "feew"; }
+  static size_t Offset(){ return offsetof( struct tray_t, feew ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feel {
+  static const char *name() { return  "feel"; }
+  static size_t Offset(){ return offsetof( struct tray_t, feel ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feethk {
+  static const char *name() { return  "feethk"; }
+  static size_t Offset(){ return offsetof( struct tray_t, feethk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tray_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tray_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct ctbb_t {
+float slab1len;
+float slab2len;
+float slab1x;
+float slab2x;
+float slabthck;
+float slabwid;
+float convlen;
+float convwidm;
+float convthck;
+float pmtlen;
+float pmtmaxr;
+float pmtminr;
+float baselen;
+float basemaxr;
+float baseminr;
+float electhck;
+float wrap;
+float shim;
+int _index;
+};
+ 
+   struct _ctbb_docum_ {
+string slab1len;
+string slab2len;
+string slab1x;
+string slab2x;
+string slabthck;
+string slabwid;
+string convlen;
+string convwidm;
+string convthck;
+string pmtlen;
+string pmtmaxr;
+string pmtminr;
+string baselen;
+string basemaxr;
+string baseminr;
+string electhck;
+string wrap;
+string shim;
+string _index;
+};
+ 
+    struct _ctbb_types_ {
+  typedef float slab1len;
+  typedef float slab2len;
+  typedef float slab1x;
+  typedef float slab2x;
+  typedef float slabthck;
+  typedef float slabwid;
+  typedef float convlen;
+  typedef float convwidm;
+  typedef float convthck;
+  typedef float pmtlen;
+  typedef float pmtmaxr;
+  typedef float pmtminr;
+  typedef float baselen;
+  typedef float basemaxr;
+  typedef float baseminr;
+  typedef float electhck;
+  typedef float wrap;
+  typedef float shim;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ctbb_info {
+typedef ctbb_t Type;
+static const char *name(){ return "ctbb_t"; }
+struct slab1len {
+  static const char *name() { return  "slab1len"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slab1len ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slab2len {
+  static const char *name() { return  "slab2len"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slab2len ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slab1x {
+  static const char *name() { return  "slab1x"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slab1x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slab2x {
+  static const char *name() { return  "slab2x"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slab2x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabthck {
+  static const char *name() { return  "slabthck"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slabthck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slabwid {
+  static const char *name() { return  "slabwid"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, slabwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct convlen {
+  static const char *name() { return  "convlen"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, convlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct convwidm {
+  static const char *name() { return  "convwidm"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, convwidm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct convthck {
+  static const char *name() { return  "convthck"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, convthck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtlen {
+  static const char *name() { return  "pmtlen"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, pmtlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtmaxr {
+  static const char *name() { return  "pmtmaxr"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, pmtmaxr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtminr {
+  static const char *name() { return  "pmtminr"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, pmtminr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baselen {
+  static const char *name() { return  "baselen"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, baselen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct basemaxr {
+  static const char *name() { return  "basemaxr"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, basemaxr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baseminr {
+  static const char *name() { return  "baseminr"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, baseminr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct electhck {
+  static const char *name() { return  "electhck"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, electhck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wrap {
+  static const char *name() { return  "wrap"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, wrap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct shim {
+  static const char *name() { return  "shim"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, shim ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ctbb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ctbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct toff_t {
+float boxwidth;
+float slatlen;
+float slat5z;
+float slatz[10];
+float slatx[10];
+float slatay[10];
+float slatthck;
+float slatwid;
+float slatang;
+float pmtlen;
+float pmtmaxr;
+float pmtminr;
+float baselen;
+float basemaxr;
+float baseminr;
+float socklen;
+float cellwid;
+float cellhgt;
+float elechgt;
+float electhck;
+float elecwid;
+float eleclen;
+float elecz[10];
+float plaspos;
+float railthck;
+float railwid;
+float coolinnr;
+float cooloutr;
+float bconylen;
+float bconzlen;
+float bconpldx;
+float bconpldz;
+float blemposx;
+float blemposy[15];
+float blemposz1;
+float blemposz2;
+float blemlenx;
+float blemleny;
+float blemlenz;
+float bpipposx;
+float bpipposy;
+float bpipposz;
+float bpiprmin;
+float bpiprmax;
+float bpiplenz;
+int _index;
+};
+ 
+   struct _toff_docum_ {
+string boxwidth;
+string slatlen;
+string slat5z;
+string slatz;
+string slatx;
+string slatay;
+string slatthck;
+string slatwid;
+string slatang;
+string pmtlen;
+string pmtmaxr;
+string pmtminr;
+string baselen;
+string basemaxr;
+string baseminr;
+string socklen;
+string cellwid;
+string cellhgt;
+string elechgt;
+string electhck;
+string elecwid;
+string eleclen;
+string elecz;
+string plaspos;
+string railthck;
+string railwid;
+string coolinnr;
+string cooloutr;
+string bconylen;
+string bconzlen;
+string bconpldx;
+string bconpldz;
+string blemposx;
+string blemposy;
+string blemposz1;
+string blemposz2;
+string blemlenx;
+string blemleny;
+string blemlenz;
+string bpipposx;
+string bpipposy;
+string bpipposz;
+string bpiprmin;
+string bpiprmax;
+string bpiplenz;
+string _index;
+};
+ 
+    struct _toff_types_ {
+  typedef float boxwidth;
+  typedef float slatlen;
+  typedef float slat5z;
+  typedef float slatz[10];
+  typedef float slatx[10];
+  typedef float slatay[10];
+  typedef float slatthck;
+  typedef float slatwid;
+  typedef float slatang;
+  typedef float pmtlen;
+  typedef float pmtmaxr;
+  typedef float pmtminr;
+  typedef float baselen;
+  typedef float basemaxr;
+  typedef float baseminr;
+  typedef float socklen;
+  typedef float cellwid;
+  typedef float cellhgt;
+  typedef float elechgt;
+  typedef float electhck;
+  typedef float elecwid;
+  typedef float eleclen;
+  typedef float elecz[10];
+  typedef float plaspos;
+  typedef float railthck;
+  typedef float railwid;
+  typedef float coolinnr;
+  typedef float cooloutr;
+  typedef float bconylen;
+  typedef float bconzlen;
+  typedef float bconpldx;
+  typedef float bconpldz;
+  typedef float blemposx;
+  typedef float blemposy[15];
+  typedef float blemposz1;
+  typedef float blemposz2;
+  typedef float blemlenx;
+  typedef float blemleny;
+  typedef float blemlenz;
+  typedef float bpipposx;
+  typedef float bpipposy;
+  typedef float bpipposz;
+  typedef float bpiprmin;
+  typedef float bpiprmax;
+  typedef float bpiplenz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct toff_info {
+typedef toff_t Type;
+static const char *name(){ return "toff_t"; }
+struct boxwidth {
+  static const char *name() { return  "boxwidth"; }
+  static size_t Offset(){ return offsetof( struct toff_t, boxwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slatlen {
+  static const char *name() { return  "slatlen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slat5z {
+  static const char *name() { return  "slat5z"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slat5z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slatz {
+  static const char *name() { return  "slatz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct slatx {
+  static const char *name() { return  "slatx"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct slatay {
+  static const char *name() { return  "slatay"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatay ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct slatthck {
+  static const char *name() { return  "slatthck"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatthck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slatwid {
+  static const char *name() { return  "slatwid"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct slatang {
+  static const char *name() { return  "slatang"; }
+  static size_t Offset(){ return offsetof( struct toff_t, slatang ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtlen {
+  static const char *name() { return  "pmtlen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, pmtlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtmaxr {
+  static const char *name() { return  "pmtmaxr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, pmtmaxr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pmtminr {
+  static const char *name() { return  "pmtminr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, pmtminr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baselen {
+  static const char *name() { return  "baselen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, baselen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct basemaxr {
+  static const char *name() { return  "basemaxr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, basemaxr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct baseminr {
+  static const char *name() { return  "baseminr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, baseminr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct socklen {
+  static const char *name() { return  "socklen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, socklen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cellwid {
+  static const char *name() { return  "cellwid"; }
+  static size_t Offset(){ return offsetof( struct toff_t, cellwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cellhgt {
+  static const char *name() { return  "cellhgt"; }
+  static size_t Offset(){ return offsetof( struct toff_t, cellhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct elechgt {
+  static const char *name() { return  "elechgt"; }
+  static size_t Offset(){ return offsetof( struct toff_t, elechgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct electhck {
+  static const char *name() { return  "electhck"; }
+  static size_t Offset(){ return offsetof( struct toff_t, electhck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct elecwid {
+  static const char *name() { return  "elecwid"; }
+  static size_t Offset(){ return offsetof( struct toff_t, elecwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eleclen {
+  static const char *name() { return  "eleclen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, eleclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct elecz {
+  static const char *name() { return  "elecz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, elecz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct plaspos {
+  static const char *name() { return  "plaspos"; }
+  static size_t Offset(){ return offsetof( struct toff_t, plaspos ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct railthck {
+  static const char *name() { return  "railthck"; }
+  static size_t Offset(){ return offsetof( struct toff_t, railthck ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct railwid {
+  static const char *name() { return  "railwid"; }
+  static size_t Offset(){ return offsetof( struct toff_t, railwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct coolinnr {
+  static const char *name() { return  "coolinnr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, coolinnr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cooloutr {
+  static const char *name() { return  "cooloutr"; }
+  static size_t Offset(){ return offsetof( struct toff_t, cooloutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bconylen {
+  static const char *name() { return  "bconylen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bconylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bconzlen {
+  static const char *name() { return  "bconzlen"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bconzlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bconpldx {
+  static const char *name() { return  "bconpldx"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bconpldx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bconpldz {
+  static const char *name() { return  "bconpldz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bconpldz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemposx {
+  static const char *name() { return  "blemposx"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemposx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemposy {
+  static const char *name() { return  "blemposy"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemposy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[15];
+};
+struct blemposz1 {
+  static const char *name() { return  "blemposz1"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemposz1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemposz2 {
+  static const char *name() { return  "blemposz2"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemposz2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemlenx {
+  static const char *name() { return  "blemlenx"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemlenx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemleny {
+  static const char *name() { return  "blemleny"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemleny ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct blemlenz {
+  static const char *name() { return  "blemlenz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, blemlenz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpipposx {
+  static const char *name() { return  "bpipposx"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpipposx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpipposy {
+  static const char *name() { return  "bpipposy"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpipposy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpipposz {
+  static const char *name() { return  "bpipposz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpipposz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpiprmin {
+  static const char *name() { return  "bpiprmin"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpiprmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpiprmax {
+  static const char *name() { return  "bpiprmax"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpiprmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bpiplenz {
+  static const char *name() { return  "bpiplenz"; }
+  static size_t Offset(){ return offsetof( struct toff_t, bpiplenz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct toff_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)toff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct modr_t {
+float height;
+float width;
+float length;
+float center;
+float mrpcx[33];
+float mrpcz[33];
+float mrpca[33];
+float x0offset;
+float hchgt;
+float hcwid;
+float hclen;
+float pcbhgt;
+float pcbwid;
+float pcblen;
+float myhgt;
+float mywid;
+float mylen;
+float grhgt;
+float grwid;
+float grlen;
+float oghgt;
+float ogwid;
+float oglen;
+float ighgt;
+float igwid;
+float iglen;
+float sprmin;
+float sprmax;
+float splen;
+float wgrmin;
+float wgrmax;
+float wglen;
+float feeh;
+float hbwid;
+float ngap;
+int _index;
+};
+ 
+   struct _modr_docum_ {
+string height;
+string width;
+string length;
+string center;
+string mrpcx;
+string mrpcz;
+string mrpca;
+string x0offset;
+string hchgt;
+string hcwid;
+string hclen;
+string pcbhgt;
+string pcbwid;
+string pcblen;
+string myhgt;
+string mywid;
+string mylen;
+string grhgt;
+string grwid;
+string grlen;
+string oghgt;
+string ogwid;
+string oglen;
+string ighgt;
+string igwid;
+string iglen;
+string sprmin;
+string sprmax;
+string splen;
+string wgrmin;
+string wgrmax;
+string wglen;
+string feeh;
+string hbwid;
+string ngap;
+string _index;
+};
+ 
+    struct _modr_types_ {
+  typedef float height;
+  typedef float width;
+  typedef float length;
+  typedef float center;
+  typedef float mrpcx[33];
+  typedef float mrpcz[33];
+  typedef float mrpca[33];
+  typedef float x0offset;
+  typedef float hchgt;
+  typedef float hcwid;
+  typedef float hclen;
+  typedef float pcbhgt;
+  typedef float pcbwid;
+  typedef float pcblen;
+  typedef float myhgt;
+  typedef float mywid;
+  typedef float mylen;
+  typedef float grhgt;
+  typedef float grwid;
+  typedef float grlen;
+  typedef float oghgt;
+  typedef float ogwid;
+  typedef float oglen;
+  typedef float ighgt;
+  typedef float igwid;
+  typedef float iglen;
+  typedef float sprmin;
+  typedef float sprmax;
+  typedef float splen;
+  typedef float wgrmin;
+  typedef float wgrmax;
+  typedef float wglen;
+  typedef float feeh;
+  typedef float hbwid;
+  typedef float ngap;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct modr_info {
+typedef modr_t Type;
+static const char *name(){ return "modr_t"; }
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct modr_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct modr_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct modr_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct center {
+  static const char *name() { return  "center"; }
+  static size_t Offset(){ return offsetof( struct modr_t, center ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mrpcx {
+  static const char *name() { return  "mrpcx"; }
+  static size_t Offset(){ return offsetof( struct modr_t, mrpcx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[33];
+};
+struct mrpcz {
+  static const char *name() { return  "mrpcz"; }
+  static size_t Offset(){ return offsetof( struct modr_t, mrpcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[33];
+};
+struct mrpca {
+  static const char *name() { return  "mrpca"; }
+  static size_t Offset(){ return offsetof( struct modr_t, mrpca ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[33];
+};
+struct x0offset {
+  static const char *name() { return  "x0offset"; }
+  static size_t Offset(){ return offsetof( struct modr_t, x0offset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hchgt {
+  static const char *name() { return  "hchgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, hchgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hcwid {
+  static const char *name() { return  "hcwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, hcwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hclen {
+  static const char *name() { return  "hclen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, hclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbhgt {
+  static const char *name() { return  "pcbhgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, pcbhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbwid {
+  static const char *name() { return  "pcbwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, pcbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcblen {
+  static const char *name() { return  "pcblen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, pcblen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct myhgt {
+  static const char *name() { return  "myhgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, myhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mywid {
+  static const char *name() { return  "mywid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, mywid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mylen {
+  static const char *name() { return  "mylen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, mylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grhgt {
+  static const char *name() { return  "grhgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, grhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grwid {
+  static const char *name() { return  "grwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, grwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grlen {
+  static const char *name() { return  "grlen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, grlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oghgt {
+  static const char *name() { return  "oghgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, oghgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ogwid {
+  static const char *name() { return  "ogwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, ogwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oglen {
+  static const char *name() { return  "oglen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, oglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ighgt {
+  static const char *name() { return  "ighgt"; }
+  static size_t Offset(){ return offsetof( struct modr_t, ighgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct igwid {
+  static const char *name() { return  "igwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, igwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct iglen {
+  static const char *name() { return  "iglen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, iglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmin {
+  static const char *name() { return  "sprmin"; }
+  static size_t Offset(){ return offsetof( struct modr_t, sprmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmax {
+  static const char *name() { return  "sprmax"; }
+  static size_t Offset(){ return offsetof( struct modr_t, sprmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct splen {
+  static const char *name() { return  "splen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, splen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmin {
+  static const char *name() { return  "wgrmin"; }
+  static size_t Offset(){ return offsetof( struct modr_t, wgrmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmax {
+  static const char *name() { return  "wgrmax"; }
+  static size_t Offset(){ return offsetof( struct modr_t, wgrmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wglen {
+  static const char *name() { return  "wglen"; }
+  static size_t Offset(){ return offsetof( struct modr_t, wglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh {
+  static const char *name() { return  "feeh"; }
+  static size_t Offset(){ return offsetof( struct modr_t, feeh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hbwid {
+  static const char *name() { return  "hbwid"; }
+  static size_t Offset(){ return offsetof( struct modr_t, hbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ngap {
+  static const char *name() { return  "ngap"; }
+  static size_t Offset(){ return offsetof( struct modr_t, ngap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct modr_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)modr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mod4_t {
+float height;
+float width;
+float length;
+float center;
+float mrpcx[32];
+float mrpcz[32];
+float mrpca[32];
+float x0offset;
+float hchgt;
+float hcwid;
+float hclen;
+float pcbhgt;
+float pcbwid;
+float pcblen;
+float myhgt;
+float mywid;
+float mylen;
+float grhgt;
+float grwid;
+float grlen;
+float oghgt;
+float ogwid;
+float oglen;
+float ighgt;
+float igwid;
+float iglen;
+float sprmin;
+float sprmax;
+float splen;
+float wgrmin;
+float wgrmax;
+float wglen;
+float feeh;
+float hbwid;
+float ngap;
+float trayedgez;
+int _index;
+};
+ 
+   struct _mod4_docum_ {
+string height;
+string width;
+string length;
+string center;
+string mrpcx;
+string mrpcz;
+string mrpca;
+string x0offset;
+string hchgt;
+string hcwid;
+string hclen;
+string pcbhgt;
+string pcbwid;
+string pcblen;
+string myhgt;
+string mywid;
+string mylen;
+string grhgt;
+string grwid;
+string grlen;
+string oghgt;
+string ogwid;
+string oglen;
+string ighgt;
+string igwid;
+string iglen;
+string sprmin;
+string sprmax;
+string splen;
+string wgrmin;
+string wgrmax;
+string wglen;
+string feeh;
+string hbwid;
+string ngap;
+string trayedgez;
+string _index;
+};
+ 
+    struct _mod4_types_ {
+  typedef float height;
+  typedef float width;
+  typedef float length;
+  typedef float center;
+  typedef float mrpcx[32];
+  typedef float mrpcz[32];
+  typedef float mrpca[32];
+  typedef float x0offset;
+  typedef float hchgt;
+  typedef float hcwid;
+  typedef float hclen;
+  typedef float pcbhgt;
+  typedef float pcbwid;
+  typedef float pcblen;
+  typedef float myhgt;
+  typedef float mywid;
+  typedef float mylen;
+  typedef float grhgt;
+  typedef float grwid;
+  typedef float grlen;
+  typedef float oghgt;
+  typedef float ogwid;
+  typedef float oglen;
+  typedef float ighgt;
+  typedef float igwid;
+  typedef float iglen;
+  typedef float sprmin;
+  typedef float sprmax;
+  typedef float splen;
+  typedef float wgrmin;
+  typedef float wgrmax;
+  typedef float wglen;
+  typedef float feeh;
+  typedef float hbwid;
+  typedef float ngap;
+  typedef float trayedgez;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mod4_info {
+typedef mod4_t Type;
+static const char *name(){ return "mod4_t"; }
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct center {
+  static const char *name() { return  "center"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, center ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mrpcx {
+  static const char *name() { return  "mrpcx"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, mrpcx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpcz {
+  static const char *name() { return  "mrpcz"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, mrpcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpca {
+  static const char *name() { return  "mrpca"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, mrpca ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct x0offset {
+  static const char *name() { return  "x0offset"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, x0offset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hchgt {
+  static const char *name() { return  "hchgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, hchgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hcwid {
+  static const char *name() { return  "hcwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, hcwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hclen {
+  static const char *name() { return  "hclen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, hclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbhgt {
+  static const char *name() { return  "pcbhgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, pcbhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbwid {
+  static const char *name() { return  "pcbwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, pcbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcblen {
+  static const char *name() { return  "pcblen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, pcblen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct myhgt {
+  static const char *name() { return  "myhgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, myhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mywid {
+  static const char *name() { return  "mywid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, mywid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mylen {
+  static const char *name() { return  "mylen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, mylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grhgt {
+  static const char *name() { return  "grhgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, grhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grwid {
+  static const char *name() { return  "grwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, grwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grlen {
+  static const char *name() { return  "grlen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, grlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oghgt {
+  static const char *name() { return  "oghgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, oghgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ogwid {
+  static const char *name() { return  "ogwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, ogwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oglen {
+  static const char *name() { return  "oglen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, oglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ighgt {
+  static const char *name() { return  "ighgt"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, ighgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct igwid {
+  static const char *name() { return  "igwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, igwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct iglen {
+  static const char *name() { return  "iglen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, iglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmin {
+  static const char *name() { return  "sprmin"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, sprmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmax {
+  static const char *name() { return  "sprmax"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, sprmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct splen {
+  static const char *name() { return  "splen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, splen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmin {
+  static const char *name() { return  "wgrmin"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, wgrmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmax {
+  static const char *name() { return  "wgrmax"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, wgrmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wglen {
+  static const char *name() { return  "wglen"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, wglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh {
+  static const char *name() { return  "feeh"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, feeh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hbwid {
+  static const char *name() { return  "hbwid"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, hbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ngap {
+  static const char *name() { return  "ngap"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, ngap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trayedgez {
+  static const char *name() { return  "trayedgez"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, trayedgez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mod4_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod4_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mod5_t {
+float height;
+float width;
+float length;
+float center;
+float mrpcx[32];
+float mrpcz[32];
+float mrpca[32];
+float x0offset;
+float hchgt;
+float hcwid;
+float hclen;
+float pcbhgt;
+float pcbwid;
+float pcblen;
+float myhgt;
+float mywid;
+float mylen;
+float grhgt;
+float grwid;
+float grlen;
+float oghgt;
+float ogwid;
+float oglen;
+float ighgt;
+float igwid;
+float iglen;
+float sprmin;
+float sprmax;
+float splen;
+float wgrmin;
+float wgrmax;
+float wglen;
+float feeh;
+float hbwid;
+float ngap;
+float trayedgez;
+int _index;
+};
+ 
+   struct _mod5_docum_ {
+string height;
+string width;
+string length;
+string center;
+string mrpcx;
+string mrpcz;
+string mrpca;
+string x0offset;
+string hchgt;
+string hcwid;
+string hclen;
+string pcbhgt;
+string pcbwid;
+string pcblen;
+string myhgt;
+string mywid;
+string mylen;
+string grhgt;
+string grwid;
+string grlen;
+string oghgt;
+string ogwid;
+string oglen;
+string ighgt;
+string igwid;
+string iglen;
+string sprmin;
+string sprmax;
+string splen;
+string wgrmin;
+string wgrmax;
+string wglen;
+string feeh;
+string hbwid;
+string ngap;
+string trayedgez;
+string _index;
+};
+ 
+    struct _mod5_types_ {
+  typedef float height;
+  typedef float width;
+  typedef float length;
+  typedef float center;
+  typedef float mrpcx[32];
+  typedef float mrpcz[32];
+  typedef float mrpca[32];
+  typedef float x0offset;
+  typedef float hchgt;
+  typedef float hcwid;
+  typedef float hclen;
+  typedef float pcbhgt;
+  typedef float pcbwid;
+  typedef float pcblen;
+  typedef float myhgt;
+  typedef float mywid;
+  typedef float mylen;
+  typedef float grhgt;
+  typedef float grwid;
+  typedef float grlen;
+  typedef float oghgt;
+  typedef float ogwid;
+  typedef float oglen;
+  typedef float ighgt;
+  typedef float igwid;
+  typedef float iglen;
+  typedef float sprmin;
+  typedef float sprmax;
+  typedef float splen;
+  typedef float wgrmin;
+  typedef float wgrmax;
+  typedef float wglen;
+  typedef float feeh;
+  typedef float hbwid;
+  typedef float ngap;
+  typedef float trayedgez;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mod5_info {
+typedef mod5_t Type;
+static const char *name(){ return "mod5_t"; }
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct center {
+  static const char *name() { return  "center"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, center ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mrpcx {
+  static const char *name() { return  "mrpcx"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, mrpcx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpcz {
+  static const char *name() { return  "mrpcz"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, mrpcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpca {
+  static const char *name() { return  "mrpca"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, mrpca ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct x0offset {
+  static const char *name() { return  "x0offset"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, x0offset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hchgt {
+  static const char *name() { return  "hchgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, hchgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hcwid {
+  static const char *name() { return  "hcwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, hcwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hclen {
+  static const char *name() { return  "hclen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, hclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbhgt {
+  static const char *name() { return  "pcbhgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, pcbhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbwid {
+  static const char *name() { return  "pcbwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, pcbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcblen {
+  static const char *name() { return  "pcblen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, pcblen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct myhgt {
+  static const char *name() { return  "myhgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, myhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mywid {
+  static const char *name() { return  "mywid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, mywid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mylen {
+  static const char *name() { return  "mylen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, mylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grhgt {
+  static const char *name() { return  "grhgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, grhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grwid {
+  static const char *name() { return  "grwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, grwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grlen {
+  static const char *name() { return  "grlen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, grlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oghgt {
+  static const char *name() { return  "oghgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, oghgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ogwid {
+  static const char *name() { return  "ogwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, ogwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oglen {
+  static const char *name() { return  "oglen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, oglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ighgt {
+  static const char *name() { return  "ighgt"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, ighgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct igwid {
+  static const char *name() { return  "igwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, igwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct iglen {
+  static const char *name() { return  "iglen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, iglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmin {
+  static const char *name() { return  "sprmin"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, sprmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmax {
+  static const char *name() { return  "sprmax"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, sprmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct splen {
+  static const char *name() { return  "splen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, splen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmin {
+  static const char *name() { return  "wgrmin"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, wgrmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmax {
+  static const char *name() { return  "wgrmax"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, wgrmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wglen {
+  static const char *name() { return  "wglen"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, wglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh {
+  static const char *name() { return  "feeh"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, feeh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hbwid {
+  static const char *name() { return  "hbwid"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, hbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ngap {
+  static const char *name() { return  "ngap"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, ngap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trayedgez {
+  static const char *name() { return  "trayedgez"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, trayedgez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mod5_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod5_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mod7_t {
+float height;
+float width;
+float length;
+float center;
+float mrpcx[32];
+float mrpcz[32];
+float mrpca[32];
+float x0offset;
+float hchgt;
+float hcwid;
+float hclen;
+float pcbhgt;
+float pcbwid;
+float pcblen;
+float myhgt;
+float mywid;
+float mylen;
+float grhgt;
+float grwid;
+float grlen;
+float oghgt;
+float ogwid;
+float oglen;
+float ighgt;
+float igwid;
+float iglen;
+float sprmin;
+float sprmax;
+float splen;
+float wgrmin;
+float wgrmax;
+float wglen;
+float feeh;
+float hbwid;
+float ngap;
+float trayedgez;
+int _index;
+};
+ 
+   struct _mod7_docum_ {
+string height;
+string width;
+string length;
+string center;
+string mrpcx;
+string mrpcz;
+string mrpca;
+string x0offset;
+string hchgt;
+string hcwid;
+string hclen;
+string pcbhgt;
+string pcbwid;
+string pcblen;
+string myhgt;
+string mywid;
+string mylen;
+string grhgt;
+string grwid;
+string grlen;
+string oghgt;
+string ogwid;
+string oglen;
+string ighgt;
+string igwid;
+string iglen;
+string sprmin;
+string sprmax;
+string splen;
+string wgrmin;
+string wgrmax;
+string wglen;
+string feeh;
+string hbwid;
+string ngap;
+string trayedgez;
+string _index;
+};
+ 
+    struct _mod7_types_ {
+  typedef float height;
+  typedef float width;
+  typedef float length;
+  typedef float center;
+  typedef float mrpcx[32];
+  typedef float mrpcz[32];
+  typedef float mrpca[32];
+  typedef float x0offset;
+  typedef float hchgt;
+  typedef float hcwid;
+  typedef float hclen;
+  typedef float pcbhgt;
+  typedef float pcbwid;
+  typedef float pcblen;
+  typedef float myhgt;
+  typedef float mywid;
+  typedef float mylen;
+  typedef float grhgt;
+  typedef float grwid;
+  typedef float grlen;
+  typedef float oghgt;
+  typedef float ogwid;
+  typedef float oglen;
+  typedef float ighgt;
+  typedef float igwid;
+  typedef float iglen;
+  typedef float sprmin;
+  typedef float sprmax;
+  typedef float splen;
+  typedef float wgrmin;
+  typedef float wgrmax;
+  typedef float wglen;
+  typedef float feeh;
+  typedef float hbwid;
+  typedef float ngap;
+  typedef float trayedgez;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mod7_info {
+typedef mod7_t Type;
+static const char *name(){ return "mod7_t"; }
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct center {
+  static const char *name() { return  "center"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, center ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mrpcx {
+  static const char *name() { return  "mrpcx"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, mrpcx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpcz {
+  static const char *name() { return  "mrpcz"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, mrpcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct mrpca {
+  static const char *name() { return  "mrpca"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, mrpca ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[32];
+};
+struct x0offset {
+  static const char *name() { return  "x0offset"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, x0offset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hchgt {
+  static const char *name() { return  "hchgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, hchgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hcwid {
+  static const char *name() { return  "hcwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, hcwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hclen {
+  static const char *name() { return  "hclen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, hclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbhgt {
+  static const char *name() { return  "pcbhgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, pcbhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcbwid {
+  static const char *name() { return  "pcbwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, pcbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pcblen {
+  static const char *name() { return  "pcblen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, pcblen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct myhgt {
+  static const char *name() { return  "myhgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, myhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mywid {
+  static const char *name() { return  "mywid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, mywid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mylen {
+  static const char *name() { return  "mylen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, mylen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grhgt {
+  static const char *name() { return  "grhgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, grhgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grwid {
+  static const char *name() { return  "grwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, grwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct grlen {
+  static const char *name() { return  "grlen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, grlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oghgt {
+  static const char *name() { return  "oghgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, oghgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ogwid {
+  static const char *name() { return  "ogwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, ogwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct oglen {
+  static const char *name() { return  "oglen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, oglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ighgt {
+  static const char *name() { return  "ighgt"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, ighgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct igwid {
+  static const char *name() { return  "igwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, igwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct iglen {
+  static const char *name() { return  "iglen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, iglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmin {
+  static const char *name() { return  "sprmin"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, sprmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sprmax {
+  static const char *name() { return  "sprmax"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, sprmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct splen {
+  static const char *name() { return  "splen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, splen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmin {
+  static const char *name() { return  "wgrmin"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, wgrmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wgrmax {
+  static const char *name() { return  "wgrmax"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, wgrmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wglen {
+  static const char *name() { return  "wglen"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, wglen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct feeh {
+  static const char *name() { return  "feeh"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, feeh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct hbwid {
+  static const char *name() { return  "hbwid"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, hbwid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ngap {
+  static const char *name() { return  "ngap"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, ngap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trayedgez {
+  static const char *name() { return  "trayedgez"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, trayedgez ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mod7_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mod7_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- BTOF -- 
+   ///@defgroup BTOF_doc 
+   ///@class BTOF 
+   ///@brief is the whole CTF system envelope [TGeoVolume] 
+   class BTOF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTOF() : AgBlock("BTOF","is the whole CTF system envelope [TGeoVolume]"){ 
+      }; 
+      ~BTOF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTOH -- 
+   ///@defgroup BTOH_doc 
+   ///@class BTOH 
+   ///@brief is a half of trigger system (west-east) [TGeoVolume] 
+   class BTOH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTOH() : AgBlock("BTOH","is a half of trigger system (west-east) [TGeoVolume]"){ 
+      }; 
+      ~BTOH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BSEC -- 
+   ///@defgroup BSEC_doc 
+   ///@class BSEC 
+   ///@brief is a sector of CTB/TOF Trigger Barrel Scintillators [TGeoVolume] 
+   class BSEC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BSEC() : AgBlock("BSEC","is a sector of CTB/TOF Trigger Barrel Scintillators [TGeoVolume]"){ 
+      }; 
+      ~BSEC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTRA -- 
+   ///@defgroup BTRA_doc 
+   ///@class BTRA 
+   ///@brief is one full tray plus supporting structure for CTB/TOF [TGeoVolume] 
+   class BTRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTRA() : AgBlock("BTRA","is one full tray plus supporting structure for CTB/TOF [TGeoVolume]"){ 
+      }; 
+      ~BTRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRFE -- 
+   ///@defgroup BRFE_doc 
+   ///@class BRFE 
+   ///@brief is the FEE of tofr (run-3) [TGeoVolume] 
+   class BRFE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRFE() : AgBlock("BRFE","is the FEE of tofr (run-3) [TGeoVolume]"){ 
+      }; 
+      ~BRFE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BXTR -- 
+   ///@defgroup BXTR_doc 
+   ///@class BXTR 
+   ///@brief is a Main TRay covering box for CTB or TOF [TGeoVolume] 
+   class BXTR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BXTR() : AgBlock("BXTR","is a Main TRay covering box for CTB or TOF [TGeoVolume]"){ 
+      }; 
+      ~BXTR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BMTC -- 
+   ///@defgroup BMTC_doc 
+   ///@class BMTC 
+   ///@brief is the Main Tray Cavity filled with the details for CTB [TGeoVolume] 
+   class BMTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BMTC() : AgBlock("BMTC","is the Main Tray Cavity filled with the details for CTB [TGeoVolume]"){ 
+      }; 
+      ~BMTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTTC -- 
+   ///@defgroup BTTC_doc 
+   ///@class BTTC 
+   ///@brief is the Main Tray Cavity filled with the details for TOFp [TGeoVolume] 
+   class BTTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTTC() : AgBlock("BTTC","is the Main Tray Cavity filled with the details for TOFp [TGeoVolume]"){ 
+      }; 
+      ~BTTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BUPC -- 
+   ///@defgroup BUPC_doc 
+   ///@class BUPC 
+   ///@brief is the upper cover of tofr [TGeoVolume] 
+   class BUPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BUPC() : AgBlock("BUPC","is the upper cover of tofr [TGeoVolume]"){ 
+      }; 
+      ~BUPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTFE -- 
+   ///@defgroup BTFE_doc 
+   ///@class BTFE 
+   ///@brief is the TINO/TDIG boards [TGeoVolume] 
+   class BTFE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTFE() : AgBlock("BTFE","is the TINO/TDIG boards [TGeoVolume]"){ 
+      }; 
+      ~BTFE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRTC -- 
+   ///@defgroup BRTC_doc 
+   ///@class BRTC 
+   ///@brief is the Main Tray Cavity filled with the details for TOFr (run3 or run4) [TGeoVolume] 
+   class BRTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRTC() : AgBlock("BRTC","is the Main Tray Cavity filled with the details for TOFr (run3 or run4) [TGeoVolume]"){ 
+      }; 
+      ~BRTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BGMT -- 
+   ///@defgroup BGMT_doc 
+   ///@class BGMT 
+   ///@brief is the mixture gas box in tray that change the hc box into slim [TGeoVolume] 
+   class BGMT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BGMT() : AgBlock("BGMT","is the mixture gas box in tray that change the hc box into slim [TGeoVolume]"){ 
+      }; 
+      ~BGMT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BMAA -- 
+   ///@defgroup BMAA_doc 
+   ///@class BMAA 
+   ///@brief is a b1ox for a 4wide AND 5wide phi column of TOF Scintillators [TGeoVolume] 
+   class BMAA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BMAA() : AgBlock("BMAA","is a b1ox for a 4wide AND 5wide phi column of TOF Scintillators [TGeoVolume]"){ 
+      }; 
+      ~BMAA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BMTD -- 
+   ///@defgroup BMTD_doc 
+   ///@class BMTD 
+   ///@brief is a 5wide phi column of TOF Scintillators [TGeoVolume] 
+   class BMTD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BMTD() : AgBlock("BMTD","is a 5wide phi column of TOF Scintillators [TGeoVolume]"){ 
+      }; 
+      ~BMTD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BASS -- 
+   ///@defgroup BASS_doc 
+   ///@class BASS 
+   ///@brief is a single TOF Slat Assembly (slat+PMT+base) [TGeoVolume] 
+   class BASS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BASS() : AgBlock("BASS","is a single TOF Slat Assembly (slat+PMT+base) [TGeoVolume]"){ 
+      }; 
+      ~BASS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BXSA -- 
+   ///@defgroup BXSA_doc 
+   ///@class BXSA 
+   ///@brief is the active trigger scintillator SLAB for ctb [TGeoVolume] 
+   class BXSA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BXSA() : AgBlock("BXSA","is the active trigger scintillator SLAB for ctb [TGeoVolume]"){ 
+      }; 
+      ~BXSA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCSB -- 
+   ///@defgroup BCSB_doc 
+   ///@class BCSB 
+   ///@brief is the active trigger scintillator SLAB for tof [TGeoVolume] 
+   class BCSB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCSB() : AgBlock("BCSB","is the active trigger scintillator SLAB for tof [TGeoVolume]"){ 
+      }; 
+      ~BCSB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCCV -- 
+   ///@defgroup BCCV_doc 
+   ///@class BCCV 
+   ///@brief is a Ctb optical ConVerter [TGeoVolume] 
+   class BCCV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCCV() : AgBlock("BCCV","is a Ctb optical ConVerter [TGeoVolume]"){ 
+      }; 
+      ~BCCV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCSK -- 
+   ///@defgroup BCSK_doc 
+   ///@class BCSK 
+   ///@brief is a CTB Linear Base tube [TGeoVolume] 
+   class BCSK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCSK() : AgBlock("BCSK","is a CTB Linear Base tube [TGeoVolume]"){ 
+      }; 
+      ~BCSK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BZEL -- 
+   ///@defgroup BZEL_doc 
+   ///@class BZEL 
+   ///@brief is a Ctb PM electronics [TGeoVolume] 
+   class BZEL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BZEL() : AgBlock("BZEL","is a Ctb PM electronics [TGeoVolume]"){ 
+      }; 
+      ~BZEL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCPM -- 
+   ///@defgroup BCPM_doc 
+   ///@class BCPM 
+   ///@brief is a PhotoMultiplier Tube (same for CTB and TOF) [TGeoVolume] 
+   class BCPM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCPM() : AgBlock("BCPM","is a PhotoMultiplier Tube (same for CTB and TOF) [TGeoVolume]"){ 
+      }; 
+      ~BCPM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTSK -- 
+   ///@defgroup BTSK_doc 
+   ///@class BTSK 
+   ///@brief is the outer shell of a TOF CW Base [TGeoVolume] 
+   class BTSK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTSK() : AgBlock("BTSK","is the outer shell of a TOF CW Base [TGeoVolume]"){ 
+      }; 
+      ~BTSK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCEL -- 
+   ///@defgroup BCEL_doc 
+   ///@class BCEL 
+   ///@brief is a circular G10 board in the CW Base for TOF [TGeoVolume] 
+   class BCEL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCEL() : AgBlock("BCEL","is a circular G10 board in the CW Base for TOF [TGeoVolume]"){ 
+      }; 
+      ~BCEL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCEB -- 
+   ///@defgroup BCEB_doc 
+   ///@class BCEB 
+   ///@brief is a square G10 board in the CW Base for TOF [TGeoVolume] 
+   class BCEB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCEB() : AgBlock("BCEB","is a square G10 board in the CW Base for TOF [TGeoVolume]"){ 
+      }; 
+      ~BCEB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPLA -- 
+   ///@defgroup BPLA_doc 
+   ///@class BPLA 
+   ///@brief is the plastic angle pieces that hold the upper foam supports... [TGeoVolume] 
+   class BPLA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPLA() : AgBlock("BPLA","is the plastic angle pieces that hold the upper foam supports... [TGeoVolume]"){ 
+      }; 
+      ~BPLA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCON -- 
+   ///@defgroup BCON_doc 
+   ///@class BCON 
+   ///@brief is a generic plastic block for various connectors, foam-support-angles, etc...... [TGeoVolume] 
+   class BCON : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCON() : AgBlock("BCON","is a generic plastic block for various connectors, foam-support-angles, etc...... [TGeoVolume]"){ 
+      }; 
+      ~BCON(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BFEE -- 
+   ///@defgroup BFEE_doc 
+   ///@class BFEE 
+   ///@brief is a G10 FrontEndElectronics board for TOF [TGeoVolume] 
+   class BFEE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BFEE() : AgBlock("BFEE","is a G10 FrontEndElectronics board for TOF [TGeoVolume]"){ 
+      }; 
+      ~BFEE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BLEM -- 
+   ///@defgroup BLEM_doc 
+   ///@class BLEM 
+   ///@brief is a Lemo connector on the FEE boards [TGeoVolume] 
+   class BLEM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BLEM() : AgBlock("BLEM","is a Lemo connector on the FEE boards [TGeoVolume]"){ 
+      }; 
+      ~BLEM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCOO -- 
+   ///@defgroup BCOO_doc 
+   ///@class BCOO 
+   ///@brief are the cooling rails/loops [TGeoVolume] 
+   class BCOO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCOO() : AgBlock("BCOO","are the cooling rails/loops [TGeoVolume]"){ 
+      }; 
+      ~BCOO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRAI -- 
+   ///@defgroup BRAI_doc 
+   ///@class BRAI 
+   ///@brief is the Rail for the cooling loop [TGeoVolume] 
+   class BRAI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRAI() : AgBlock("BRAI","is the Rail for the cooling loop [TGeoVolume]"){ 
+      }; 
+      ~BRAI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPIP -- 
+   ///@defgroup BPIP_doc 
+   ///@class BPIP 
+   ///@brief is the Long Pipe for the cooling loop [TGeoVolume] 
+   class BPIP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPIP() : AgBlock("BPIP","is the Long Pipe for the cooling loop [TGeoVolume]"){ 
+      }; 
+      ~BPIP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPIQ -- 
+   ///@defgroup BPIQ_doc 
+   ///@class BPIQ 
+   ///@brief is the Short Pipe for the cooling loop [TGeoVolume] 
+   class BPIQ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPIQ() : AgBlock("BPIQ","is the Short Pipe for the cooling loop [TGeoVolume]"){ 
+      }; 
+      ~BPIQ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BUND -- 
+   ///@defgroup BUND_doc 
+   ///@class BUND 
+   ///@brief is Undercarriage support tray - same both for CTB and TOF [TGeoVolume] 
+   class BUND : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BUND() : AgBlock("BUND","is Undercarriage support tray - same both for CTB and TOF [TGeoVolume]"){ 
+      }; 
+      ~BUND(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BTFT -- 
+   ///@defgroup BTFT_doc 
+   ///@class BTFT 
+   ///@brief is the Foot structure ( Material Aluminium ) [TGeoVolume] 
+   class BTFT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BTFT() : AgBlock("BTFT","is the Foot structure ( Material Aluminium ) [TGeoVolume]"){ 
+      }; 
+      ~BTFT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BARM -- 
+   ///@defgroup BARM_doc 
+   ///@class BARM 
+   ///@brief is a TPC cooling structure arm ( Material Aluminium ) [TGeoVolume] 
+   class BARM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BARM() : AgBlock("BARM","is a TPC cooling structure arm ( Material Aluminium ) [TGeoVolume]"){ 
+      }; 
+      ~BARM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BANG -- 
+   ///@defgroup BANG_doc 
+   ///@class BANG 
+   ///@brief is an angled part of TPC cooling structure ( Aile ) [TGeoVolume] 
+   class BANG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BANG() : AgBlock("BANG","is an angled part of TPC cooling structure ( Aile ) [TGeoVolume]"){ 
+      }; 
+      ~BANG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BASE -- 
+   ///@defgroup BASE_doc 
+   ///@class BASE 
+   ///@brief is a bottom of TPC coolant structure [TGeoVolume] 
+   class BASE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BASE() : AgBlock("BASE","is a bottom of TPC coolant structure [TGeoVolume]"){ 
+      }; 
+      ~BASE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BCOV -- 
+   ///@defgroup BCOV_doc 
+   ///@class BCOV 
+   ///@brief is a whole TPC cooling channel [TGeoVolume] 
+   class BCOV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BCOV() : AgBlock("BCOV","is a whole TPC cooling channel [TGeoVolume]"){ 
+      }; 
+      ~BCOV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BWAT -- 
+   ///@defgroup BWAT_doc 
+   ///@class BWAT 
+   ///@brief is TPC cooling water [TGeoVolume] 
+   class BWAT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BWAT() : AgBlock("BWAT","is TPC cooling water [TGeoVolume]"){ 
+      }; 
+      ~BWAT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRMD -- 
+   ///@defgroup BRMD_doc 
+   ///@class BRMD 
+   ///@brief is a six channel module for TOFr [TGeoVolume] 
+   class BRMD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRMD() : AgBlock("BRMD","is a six channel module for TOFr [TGeoVolume]"){ 
+      }; 
+      ~BRMD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRHC -- 
+   ///@defgroup BRHC_doc 
+   ///@class BRHC 
+   ///@brief is the HoneyComb in the TOFr module [TGeoVolume] 
+   class BRHC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRHC() : AgBlock("BRHC","is the HoneyComb in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRHC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRCB -- 
+   ///@defgroup BRCB_doc 
+   ///@class BRCB 
+   ///@brief is the PCB in the TOFr module [TGeoVolume] 
+   class BRCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRCB() : AgBlock("BRCB","is the PCB in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRMY -- 
+   ///@defgroup BRMY_doc 
+   ///@class BRMY 
+   ///@brief is the MYlar in the TOFr module [TGeoVolume] 
+   class BRMY : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRMY() : AgBlock("BRMY","is the MYlar in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRMY(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRGR -- 
+   ///@defgroup BRGR_doc 
+   ///@class BRGR 
+   ///@brief is the GRaphite in the TOFr module [TGeoVolume] 
+   class BRGR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRGR() : AgBlock("BRGR","is the GRaphite in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRGR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BROG -- 
+   ///@defgroup BROG_doc 
+   ///@class BROG 
+   ///@brief is the Outer Glass in the TOFr module [TGeoVolume] 
+   class BROG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BROG() : AgBlock("BROG","is the Outer Glass in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BROG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRDT -- 
+   ///@defgroup BRDT_doc 
+   ///@class BRDT 
+   ///@brief is the middle part (including innner glass and gas)in the MRPC [TGeoVolume] 
+   class BRDT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRDT() : AgBlock("BRDT","is the middle part (including innner glass and gas)in the MRPC [TGeoVolume]"){ 
+      }; 
+      ~BRDT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRIG -- 
+   ///@defgroup BRIG_doc 
+   ///@class BRIG 
+   ///@brief is the Inner Glass in the TOFr module [TGeoVolume] 
+   class BRIG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRIG() : AgBlock("BRIG","is the Inner Glass in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRIG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRSG -- 
+   ///@defgroup BRSG_doc 
+   ///@class BRSG 
+   ///@brief is the sensitive gas layer in the TOFr module [TGeoVolume] 
+   class BRSG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRSG() : AgBlock("BRSG","is the sensitive gas layer in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRSG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BRWG -- 
+   ///@defgroup BRWG_doc 
+   ///@class BRWG 
+   ///@brief is the WedGe(support) in the TOFr module [TGeoVolume] 
+   class BRWG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BRWG() : AgBlock("BRWG","is the WedGe(support) in the TOFr module [TGeoVolume]"){ 
+      }; 
+      ~BRWG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class BTOFGEO6 
+   /// \brief  is the Geometry of Barrel Trigger / Time Of Flight system   
+   class BTOFGEO6 : public AgModule 
+   { 
+      public: 
+      BTOFGEO6(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~BTOFGEO6(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace BTOFGEO6 
+#endif // __BTOFGEO6__ 

@@ -1,0 +1,1991 @@
+      MODULE EtofGeo0   Imported from tof_v14s.root
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author root2agml
+      Created now
+      +CDE,agecom,gconst,gcunit.
+      CONTENT ETOF,EGAS,ECOU,EGLA,EGAP,ECEL,EPCB
+      STRUCTURE ETOC { version}
+      STRUCTURE ETOG { version,zplane(3),int active(12),int sector(12)}
+      FILL ETOC		! ETOF master configuration
+      version = 14.0 ! 2019 and later
+      ENDFILL
+      FILL ETOG		! ETOF config from etof_v14s.root
+      version = 14.0 ! default version, not ready for prime time
+      zplane  = {  -277.65,  -290.52,  -303.37} !  z position of the three planes
+      active  = {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 
+                   1} !  all sectors
+      sector  = {  21,  22,  23,  24,  13,  14,  15,  16,  17, 
+                   18,  19,  20} !  sector numbering
+      ENDFILL
+      FILL ETOG		! ETOF config from etof_v14s.root, placed on east poletip of STAR (exact position TBD)
+      version = 14.1 ! default version, not ready for prime time
+      zplane  = {  209-489.01,  209-501.01,  209-513.01} !  z position of the three planes
+      active  = {  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0, 
+                   0} !  sectors 21,22,23, 24,13,14, 15,16,17, 18,19,20
+      sector  = {  21,  22,  23,  24,  13,  14,  15,  16,  17, 
+                   18,  19,  20} !  sector numbering
+      ENDFILL
+      use ETOC
+      use ETOG version=ETOC_version
+      CREATE ETOF
+      IF ETOG_active(1).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 121.0 
+      ag_x = 157.06 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.14 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(1).eq.1 
+      IF ETOG_active(2).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 122.0 
+      ag_x = 135.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = 78.65 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, -0.50000, 0.00000, 0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(2).eq.1 
+      IF ETOG_active(3).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 123.0 
+      ag_x = 78.41 
+      CALL agml_translate_x( %x ) 
+      ag_y = 136.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, -0.86603, 0.00000, 0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(3).eq.1 
+      IF ETOG_active(4).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 124.0 
+      ag_x = -0.14 
+      CALL agml_translate_x( %x ) 
+      ag_y = 157.06 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(4).eq.1 
+      IF ETOG_active(5).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 113.0 
+      ag_x = -78.65 
+      CALL agml_translate_x( %x ) 
+      ag_y = 135.95 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, -0.86603, 0.00000, 0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(5).eq.1 
+      IF ETOG_active(6).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 114.0 
+      ag_x = -136.09 
+      CALL agml_translate_x( %x ) 
+      ag_y = 78.41 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, -0.50000, 0.00000, 0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(6).eq.1 
+      IF ETOG_active(7).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 115.0 
+      ag_x = -157.06 
+      CALL agml_translate_x( %x ) 
+      ag_y = -0.14 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(7).eq.1 
+      IF ETOG_active(8).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 116.0 
+      ag_x = -135.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = -78.65 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, 0.50000, 0.00000, -0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(8).eq.1 
+      IF ETOG_active(9).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 117.0 
+      ag_x = -78.41 
+      CALL agml_translate_x( %x ) 
+      ag_y = -136.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, 0.86603, 0.00000, -0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(9).eq.1 
+      IF ETOG_active(10).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 118.0 
+      ag_x = 0.14 
+      CALL agml_translate_x( %x ) 
+      ag_y = -157.06 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(10).eq.1 
+      IF ETOG_active(11).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 119.0 
+      ag_x = 78.65 
+      CALL agml_translate_x( %x ) 
+      ag_y = -135.95 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, 0.86603, 0.00000, -0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(11).eq.1 
+      IF ETOG_active(12).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 120.0 
+      ag_x = 136.09 
+      CALL agml_translate_x( %x ) 
+      ag_y = -78.41 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(1)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, 0.50000, 0.00000, -0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(12).eq.1 
+      IF ETOG_active(1).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 221.0 
+      ag_x = 163.56 
+      CALL agml_translate_x( %x ) 
+      ag_y = -27.36 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(1).eq.1 
+      IF ETOG_active(2).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 222.0 
+      ag_x = 155.33 
+      CALL agml_translate_x( %x ) 
+      ag_y = 58.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, -0.50000, 0.00000, 0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(2).eq.1 
+      IF ETOG_active(3).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 223.0 
+      ag_x = 105.47 
+      CALL agml_translate_x( %x ) 
+      ag_y = 127.97 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, -0.86603, 0.00000, 0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(3).eq.1 
+      IF ETOG_active(4).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 224.0 
+      ag_x = 27.36 
+      CALL agml_translate_x( %x ) 
+      ag_y = 163.56 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(4).eq.1 
+      IF ETOG_active(5).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 213.0 
+      ag_x = -58.09 
+      CALL agml_translate_x( %x ) 
+      ag_y = 155.33 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, -0.86603, 0.00000, 0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(5).eq.1 
+      IF ETOG_active(6).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 214.0 
+      ag_x = -127.97 
+      CALL agml_translate_x( %x ) 
+      ag_y = 105.47 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, -0.50000, 0.00000, 0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(6).eq.1 
+      IF ETOG_active(7).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 215.0 
+      ag_x = -163.56 
+      CALL agml_translate_x( %x ) 
+      ag_y = 27.36 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(7).eq.1 
+      IF ETOG_active(8).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 216.0 
+      ag_x = -155.33 
+      CALL agml_translate_x( %x ) 
+      ag_y = -58.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, 0.50000, 0.00000, -0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(8).eq.1 
+      IF ETOG_active(9).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 217.0 
+      ag_x = -105.47 
+      CALL agml_translate_x( %x ) 
+      ag_y = -127.97 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, 0.86603, 0.00000, -0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(9).eq.1 
+      IF ETOG_active(10).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 218.0 
+      ag_x = -27.36 
+      CALL agml_translate_x( %x ) 
+      ag_y = -163.56 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(10).eq.1 
+      IF ETOG_active(11).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 219.0 
+      ag_x = 58.08 
+      CALL agml_translate_x( %x ) 
+      ag_y = -155.33 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, 0.86603, 0.00000, -0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(11).eq.1 
+      IF ETOG_active(12).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 220.0 
+      ag_x = 127.97 
+      CALL agml_translate_x( %x ) 
+      ag_y = -105.48 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(2)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, 0.50000, 0.00000, -0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(12).eq.1 
+      IF ETOG_active(1).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 321.0 
+      ag_x = 173.75 
+      CALL agml_translate_x( %x ) 
+      ag_y = 28.24 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(1).eq.1 
+      IF ETOG_active(2).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 322.0 
+      ag_x = 136.35 
+      CALL agml_translate_x( %x ) 
+      ag_y = 111.33 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, -0.50000, 0.00000, 0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(2).eq.1 
+      IF ETOG_active(3).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 323.0 
+      ag_x = 62.42 
+      CALL agml_translate_x( %x ) 
+      ag_y = 164.59 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, -0.86603, 0.00000, 0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(3).eq.1 
+      IF ETOG_active(4).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 324.0 
+      ag_x = -28.24 
+      CALL agml_translate_x( %x ) 
+      ag_y = 173.75 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(4).eq.1 
+      IF ETOG_active(5).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 313.0 
+      ag_x = -111.33 
+      CALL agml_translate_x( %x ) 
+      ag_y = 136.35 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, -0.86603, 0.00000, 0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(5).eq.1 
+      IF ETOG_active(6).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 314.0 
+      ag_x = -164.59 
+      CALL agml_translate_x( %x ) 
+      ag_y = 62.42 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, -0.50000, 0.00000, 0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(6).eq.1 
+      IF ETOG_active(7).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 315.0 
+      ag_x = -173.75 
+      CALL agml_translate_x( %x ) 
+      ag_y = -28.24 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(7).eq.1 
+      IF ETOG_active(8).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 316.0 
+      ag_x = -136.35 
+      CALL agml_translate_x( %x ) 
+      ag_y = -111.33 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)+0.21) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.86603, 0.50000, 0.00000, -0.50000, -0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(8).eq.1 
+      IF ETOG_active(9).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 317.0 
+      ag_x = -62.42 
+      CALL agml_translate_x( %x ) 
+      ag_y = -164.59 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {-0.50000, 0.86603, 0.00000, -0.86603, -0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(9).eq.1 
+      IF ETOG_active(10).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 318.0 
+      ag_x = 28.24 
+      CALL agml_translate_x( %x ) 
+      ag_y = -173.75 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(10).eq.1 
+      IF ETOG_active(11).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 319.0 
+      ag_x = 111.33 
+      CALL agml_translate_x( %x ) 
+      ag_y = -136.35 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.50000, 0.86603, 0.00000, -0.86603, 0.50000, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(11).eq.1 
+      IF ETOG_active(12).eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('ETOF') 
+      %mother = 'CAVE' 
+      %title = 'ETOF' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = 320.0 
+      ag_x = 164.59 
+      CALL agml_translate_x( %x ) 
+      ag_y = -62.42 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(ETOG_zplane(3)) 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = { 0.86603, 0.50000, 0.00000, -0.50000, 0.86603, 0.00000, 0.00000,  ,
+	0.00000, 1.00000} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF ETOG_active(12).eq.1 
+      ! ---------------------------------------------------------------------------------- ETOF
+      BLOCK ETOF
+      MATERIAL aluminium a=26.98 z=13.0 dens=2.7
+      MEDIUM aluminium ifield=1.0 fieldm=20.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0,
+            deemax=-1.0 stmin=-1.0
+      ATTRIBUTE ETOF seen=1 colo=416 lwid=1
+      SHAPE box dx=51.4 dy=24.3 dz=5.6
+      CREATE EGAS
+      CALL AgsReset 
+      CALL agml_position_begin('EGAS') 
+      %mother = 'ETOF' 
+      %title = 'EGAS' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.45 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EGAS
+      BLOCK EGAS
+      MATERIAL RPCgas_noact a=17.4875239923 z=8.3896353167 dens=0.00427
+      MEDIUM RPCgas_noact ifield=1.0 fieldm=15.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0,
+            deemax=-1.0 stmin=-1.0
+      ATTRIBUTE EGAS seen=1 colo=600 lwid=1
+      SHAPE box dx=50.85 dy=24.2 dz=5.5
+      CREATE ECOU
+      CALL AgsReset 
+      CALL agml_position_begin('ECOU') 
+      %mother = 'EGAS' 
+      %title = 'ECOU' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -27.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.7 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {0.9848, 0.0, -0.1736, 0.0, 1.0, 0.0, 0.1736, 0.0, 0.9848} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECOU') 
+      %mother = 'EGAS' 
+      %title = 'ECOU' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 1.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.7 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {0.9848, 0.0, -0.1736, 0.0, 1.0, 0.0, 0.1736, 0.0, 0.9848} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECOU') 
+      %mother = 'EGAS' 
+      %title = 'ECOU' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 32.3 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.7 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {0.9848, 0.0, -0.1736, 0.0, 1.0, 0.0, 0.1736, 0.0, 0.9848} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- ECOU
+      BLOCK ECOU
+      MATERIAL RPCgas_noact a=17.4875239923 z=8.3896353167 dens=0.00427
+      MEDIUM RPCgas_noact ifield=1.0 fieldm=15.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0,
+            deemax=-1.0 stmin=-1.0
+      ATTRIBUTE ECOU seen=1 colo=432 lwid=1
+      SHAPE box dx=17.1 dy=23.6 dz=0.366
+      CREATE EGLA
+      CREATE EPCB
+      CREATE EGAP
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.252 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.231 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.21 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.189 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.168 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.147 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.126 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.105 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.084 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.063 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.042 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.021 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.021 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.042 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.063 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.084 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.105 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.126 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.147 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.168 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.189 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.21 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGAP') 
+      %mother = 'ECOU' 
+      %title = 'EGAP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.231 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EGLA') 
+      %mother = 'ECOU' 
+      %title = 'EGLA' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.252 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EPCB') 
+      %mother = 'ECOU' 
+      %title = 'EPCB' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = -18.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EPCB') 
+      %mother = 'ECOU' 
+      %title = 'EPCB' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 18.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EGLA
+      BLOCK EGLA
+      MATERIAL RPCglass a=22.3680270836 z=11.1529065514 dens=2.5
+      MEDIUM RPCglass ifield=1.0 fieldm=15.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0,
+            deemax=-1.0 stmin=-1.0
+      ATTRIBUTE EGLA seen=1 colo=616 lwid=1
+      SHAPE box dx=16.0 dy=13.5 dz=0.014
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EGAP
+      BLOCK EGAP
+      MATERIAL RPCgas a=17.4875239923 z=8.3896353167 dens=0.00427
+      MEDIUM RPCgas ifield=1.0 fieldm=15.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0 deemax=-1.0,
+            stmin=-1.0 isvol=0
+      ATTRIBUTE EGAP seen=1 colo=632 lwid=1
+      SHAPE box dx=16.0 dy=13.5 dz=0.007
+      CREATE ECEL
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -15.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -14.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -13.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -12.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -11.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -10.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -9.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -8.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -7.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -6.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -5.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -4.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -3.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -2.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -1.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = -0.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 0.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 1.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 2.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 3.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 4.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 5.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 6.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 7.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 8.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 9.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 10.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 11.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 12.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 13.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 14.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ECEL') 
+      %mother = 'EGAP' 
+      %title = 'ECEL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = 15.5 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      agml_rotm = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0} 
+      CALL agml_rotation(agml_rotm) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- ECEL
+      BLOCK ECEL
+      MATERIAL RPCgas a=17.4875239923 z=8.3896353167 dens=0.00427
+      MEDIUM RPCgas_sens ifield=1.0 fieldm=15.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0,
+            deemax=-1.0 stmin=-1.0 isvol=1.0
+      ATTRIBUTE ECEL seen=1 colo=1 lwid=1
+      SHAPE box dx=0.5 dy=13.5 dz=0.007
+      HITS ECEL X:0.01:HS Y:0.01: Z:0.01: ptot:18:(0.0,100.0) cx:10: cy:10: cz:10:,
+            px:16:(-250.0,+250.0) py:16:(-250.0,+250.0) pz:16:(-250.0,+250.0) sleng:0.1:(0,500),
+            tof:16:(0.0,1.0E-7) step:0.01: eloss:16:(0.0,1.0E-6)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EPCB
+      BLOCK EPCB
+      MATERIAL carbon a=12.011 z=6.0 dens=2.265
+      MEDIUM carbon ifield=1.0 fieldm=20.0 tmaxfd=-1.0 epsil=0.001 stemax=-1.0 deemax=-1.0,
+            stmin=-1.0
+      ATTRIBUTE EPCB seen=1 colo=416 lwid=1
+      SHAPE box dx=17.0 dy=5.0 dz=0.15
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module EtofGeo0]	 <<==='; (A32,/,/);
+      END! Module EtofGeo0

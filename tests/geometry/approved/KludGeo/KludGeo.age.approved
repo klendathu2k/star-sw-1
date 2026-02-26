@@ -1,0 +1,73 @@
+      MODULE KludGeo    is a Kludge Geometry
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created 04/01/2018
+      Author Jason Webb
+      +CDE,agecom,gconst,gcunit.
+      CONTENT KTUB
+      Integer *4 i
+
+      STRUCTURE KCFG { version,ntube}
+      STRUCTURE KTUB { z(10),dz(10),rmn(10),rmx(10),AA(10),ZZ(10),DD(10)}
+      FILL KCFG		! Main configuration
+      version = 1.0 ! default versioning
+      ntube = 0 ! default none
+      ENDFILL
+      FILL KTUB		! Default tubes
+      z  = {  -1000,   -900,   -800,   -700,   -600,   +600, 
+               +700,   +800,   +900,  +1000} !  z positions
+      dz  = {  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5, 
+               0.5,  0.5} !  z positions
+      rmn  = {  5.,  5.,  5.,  5.,  5.,  5.,  5.,  5.,  5.,  5.} !  min radius
+      rmx  = {  255.,  255.,  255.,  255.,  255.,  255.,  255., 
+                255.,  255.,  255.} !  max radius
+      AA  = {  27,  27,  27,  27,  27,  27,  27,  27,  27,  27} !  Default is aluminum
+      ZZ  = {  13,  13,  13,  13,  13,  13,  13,  13,  13,  13} !  Default is aluminum
+      DD  = {  2.7,  2.7,  2.7,  2.7,  2.7,  2.7,  2.7,  2.7, 
+               2.7,  2.7} !  Default is aluminum
+      ENDFILL
+      use KCFG
+      use KTUB
+      DO i = 1, KCFG_ntube
+      CREATE KTUB
+      CALL AgsReset 
+      CALL agml_position_begin('KTUB') 
+      %mother = 'CAVE' 
+      %title = 'KTUB' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(KTUB_z(i)) 
+      CALL agml_translate_z( %z ) 
+      %rmin = real(KTUB_rmn(i)) 
+      %rmax = real(KTUB_rmx(i)) 
+      %dz = real(KTUB_dz(i)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      <W> i;  ('KludGeo: Place effective tube ', I2);
+      <W> KTUB_z(i);  ('KludGeo: z =           ', F7.2);
+      <W> KTUB_dz(i);  ('KludGeo: dz =          ', F7.3);
+      <W> KTUB_rmn(i);  ('KludGeo: rmin =        ', F7.3);
+      <W> KTUB_rmx(i);  ('KludGeo: rmax =        ', F7.3);
+      <W> KTUB_aa(i);  ('KludGeo: A =           ', F7.2);
+      <W> KTUB_zz(i);  ('KludGeo: Z =           ', F7.2);
+      <W> KTUB_dd(i);  ('KludGeo: dens =        ', F7.2);
+      END DO
+      ! ---------------------------------------------------------------------------------- KTUB
+      BLOCK KTUB   Kludge disk
+      MATERIAL ALUMINIUM
+      MATERIAL KLUDGE_MATERIAL a=KTUB_AA(i) z=KTUB_ZZ(i) dens=KTUB_DD(i) isvol=0
+      MEDIUM standard
+      ATTRIBUTE KTUB seen=1 colo=2
+      SHAPE tube rmin=0 rmax=0 dz=0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module KludGeo]	 <<==='; (A32,/,/);
+      END! Module KludGeo

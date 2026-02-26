@@ -1,0 +1,698 @@
+#ifndef __IstdGeo0__ 
+#define __IstdGeo0__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace ISTDGEO0 // $NMSPC 
+{ 
+   struct ismg_t {
+int version;
+int subversion;
+float rin;
+float rout;
+int _index;
+};
+ 
+   struct _ismg_docum_ {
+string version;
+string subversion;
+string rin;
+string rout;
+string _index;
+};
+ 
+    struct _ismg_types_ {
+  typedef int version;
+  typedef int subversion;
+  typedef float rin;
+  typedef float rout;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ismg_info {
+typedef ismg_t Type;
+static const char *name(){ return "ismg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ismg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ismg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct subversion {
+  static const char *name() { return  "subversion"; }
+  static size_t Offset(){ return offsetof( struct ismg_t, subversion ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ismg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct rin {
+  static const char *name() { return  "rin"; }
+  static size_t Offset(){ return offsetof( struct ismg_t, rin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ismg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rout {
+  static const char *name() { return  "rout"; }
+  static size_t Offset(){ return offsetof( struct ismg_t, rout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ismg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ismg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ismg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct isbg_t {
+int layer;
+int nladder;
+int nunit;
+float radius;
+float tilt;
+float gap;
+int _index;
+};
+ 
+   struct _isbg_docum_ {
+string layer;
+string nladder;
+string nunit;
+string radius;
+string tilt;
+string gap;
+string _index;
+};
+ 
+    struct _isbg_types_ {
+  typedef int layer;
+  typedef int nladder;
+  typedef int nunit;
+  typedef float radius;
+  typedef float tilt;
+  typedef float gap;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct isbg_info {
+typedef isbg_t Type;
+static const char *name(){ return "isbg_t"; }
+struct layer {
+  static const char *name() { return  "layer"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, layer ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct nladder {
+  static const char *name() { return  "nladder"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, nladder ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct nunit {
+  static const char *name() { return  "nunit"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, nunit ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct radius {
+  static const char *name() { return  "radius"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, radius ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tilt {
+  static const char *name() { return  "tilt"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, tilt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gap {
+  static const char *name() { return  "gap"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, gap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct isbg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct isan_t {
+int version;
+float rmin;
+float thk;
+int _index;
+};
+ 
+   struct _isan_docum_ {
+string version;
+string rmin;
+string thk;
+string _index;
+};
+ 
+    struct _isan_types_ {
+  typedef int version;
+  typedef float rmin;
+  typedef float thk;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct isan_info {
+typedef isan_t Type;
+static const char *name(){ return "isan_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct isan_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isan_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct isan_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isan_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thk {
+  static const char *name() { return  "thk"; }
+  static size_t Offset(){ return offsetof( struct isan_t, thk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isan_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct isan_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isan_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct isss_t {
+int version;
+float activew;
+float activeh;
+float activethk;
+float passivethk;
+int _index;
+};
+ 
+   struct _isss_docum_ {
+string version;
+string activew;
+string activeh;
+string activethk;
+string passivethk;
+string _index;
+};
+ 
+    struct _isss_types_ {
+  typedef int version;
+  typedef float activew;
+  typedef float activeh;
+  typedef float activethk;
+  typedef float passivethk;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct isss_info {
+typedef isss_t Type;
+static const char *name(){ return "isss_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct isss_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct activew {
+  static const char *name() { return  "activew"; }
+  static size_t Offset(){ return offsetof( struct isss_t, activew ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct activeh {
+  static const char *name() { return  "activeh"; }
+  static size_t Offset(){ return offsetof( struct isss_t, activeh ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct activethk {
+  static const char *name() { return  "activethk"; }
+  static size_t Offset(){ return offsetof( struct isss_t, activethk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct passivethk {
+  static const char *name() { return  "passivethk"; }
+  static size_t Offset(){ return offsetof( struct isss_t, passivethk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct isss_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)isss_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct paro_t {
+int version;
+float dx;
+float dy;
+float dz;
+float mult;
+int lad[24];
+int _index;
+};
+ 
+   struct _paro_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string mult;
+string lad;
+string _index;
+};
+ 
+    struct _paro_types_ {
+  typedef int version;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef float mult;
+  typedef int lad[24];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct paro_info {
+typedef paro_t Type;
+static const char *name(){ return "paro_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct paro_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct paro_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lad {
+  static const char *name() { return  "lad"; }
+  static size_t Offset(){ return offsetof( struct paro_t, lad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[24];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct paro_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct para_t {
+int version;
+float da;
+float db;
+float dg;
+float mult;
+int lad[24];
+int _index;
+};
+ 
+   struct _para_docum_ {
+string version;
+string da;
+string db;
+string dg;
+string mult;
+string lad;
+string _index;
+};
+ 
+    struct _para_types_ {
+  typedef int version;
+  typedef float da;
+  typedef float db;
+  typedef float dg;
+  typedef float mult;
+  typedef int lad[24];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct para_info {
+typedef para_t Type;
+static const char *name(){ return "para_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct para_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct da {
+  static const char *name() { return  "da"; }
+  static size_t Offset(){ return offsetof( struct para_t, da ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct db {
+  static const char *name() { return  "db"; }
+  static size_t Offset(){ return offsetof( struct para_t, db ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dg {
+  static const char *name() { return  "dg"; }
+  static size_t Offset(){ return offsetof( struct para_t, dg ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct para_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lad {
+  static const char *name() { return  "lad"; }
+  static size_t Offset(){ return offsetof( struct para_t, lad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[24];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct para_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- IBMO -- 
+   ///@defgroup IBMO_doc 
+   ///@class IBMO 
+   ///@brief Main volume in the AgML geometry [TGeoVolume] 
+   class IBMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBMO() : AgBlock("IBMO","Main volume in the AgML geometry [TGeoVolume]"){ 
+      }; 
+      ~IBMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBAM -- 
+   ///@defgroup IBAM_doc 
+   ///@class IBAM 
+   ///@brief is the mother of the whole lomg ladder [TGeoVolume] 
+   class IBAM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBAM() : AgBlock("IBAM","is the mother of the whole lomg ladder [TGeoVolume]"){ 
+      }; 
+      ~IBAM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBLM -- 
+   ///@defgroup IBLM_doc 
+   ///@class IBLM 
+   ///@brief mother of the sensor assembly [TGeoVolume] 
+   class IBLM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBLM() : AgBlock("IBLM","mother of the sensor assembly [TGeoVolume]"){ 
+      }; 
+      ~IBLM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBSP -- 
+   ///@defgroup IBSP_doc 
+   ///@class IBSP 
+   ///@brief is the Silicon Sensor Passive Area [TGeoVolume] 
+   class IBSP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBSP() : AgBlock("IBSP","is the Silicon Sensor Passive Area [TGeoVolume]"){ 
+      }; 
+      ~IBSP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBSS -- 
+   ///@defgroup IBSS_doc 
+   ///@class IBSS 
+   ///@brief is the Silicon Sensor Active Area [TGeoVolume] 
+   class IBSS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBSS() : AgBlock("IBSS","is the Silicon Sensor Active Area [TGeoVolume]"){ 
+      }; 
+      ~IBSS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class IstdGeo0 
+   /// \brief  is the the STAR IST detector test 
+   class IstdGeo0 : public AgModule 
+   { 
+      public: 
+      IstdGeo0(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~IstdGeo0(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace IstdGeo0 
+#endif // __IstdGeo0__ 

@@ -1,0 +1,343 @@
+#ifndef __FtsdGeo__ 
+#define __FtsdGeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace FTSDGEO // $NMSPC 
+{ 
+   struct main_t {
+float version;
+float useids;
+float active[20];
+int _index;
+};
+ 
+   struct _main_docum_ {
+string version;
+string useids;
+string active;
+string _index;
+};
+ 
+    struct _main_types_ {
+  typedef float version;
+  typedef float useids;
+  typedef float active[20];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct main_info {
+typedef main_t Type;
+static const char *name(){ return "main_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct main_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)main_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct useids {
+  static const char *name() { return  "useids"; }
+  static size_t Offset(){ return offsetof( struct main_t, useids ); }
+  static void* address(){ 
+         size_t iadd = (size_t)main_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct active {
+  static const char *name() { return  "active"; }
+  static size_t Offset(){ return offsetof( struct main_t, active ); }
+  static void* address(){ 
+         size_t iadd = (size_t)main_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[20];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct main_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)main_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct fdsk_t {
+float version;
+int diskid;
+float x;
+float y;
+float z;
+float rmax;
+float rmin;
+float rmaxsens;
+float rminsens;
+float thksens;
+float thksupp;
+int _index;
+};
+ 
+   struct _fdsk_docum_ {
+string version;
+string diskid;
+string x;
+string y;
+string z;
+string rmax;
+string rmin;
+string rmaxsens;
+string rminsens;
+string thksens;
+string thksupp;
+string _index;
+};
+ 
+    struct _fdsk_types_ {
+  typedef float version;
+  typedef int diskid;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef float rmax;
+  typedef float rmin;
+  typedef float rmaxsens;
+  typedef float rminsens;
+  typedef float thksens;
+  typedef float thksupp;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct fdsk_info {
+typedef fdsk_t Type;
+static const char *name(){ return "fdsk_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct diskid {
+  static const char *name() { return  "diskid"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, diskid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmaxsens {
+  static const char *name() { return  "rmaxsens"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, rmaxsens ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rminsens {
+  static const char *name() { return  "rminsens"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, rminsens ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thksens {
+  static const char *name() { return  "thksens"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, thksens ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thksupp {
+  static const char *name() { return  "thksupp"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, thksupp ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct fdsk_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fdsk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- FTSM -- 
+   ///@defgroup FTSM_doc 
+   ///@class FTSM 
+   ///@brief Mother volume for the FTS [TGeoVolume] 
+   class FTSM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTSM() : AgBlock("FTSM","Mother volume for the FTS [TGeoVolume]"){ 
+      }; 
+      ~FTSM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTSD -- 
+   ///@defgroup FTSD_doc 
+   ///@class FTSD 
+   ///@brief FTS disk [TGeoVolume] 
+   class FTSD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTSD() : AgBlock("FTSD","FTS disk [TGeoVolume]"){ 
+      }; 
+      ~FTSD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTSA -- 
+   ///@defgroup FTSA_doc 
+   ///@class FTSA 
+   ///@brief Active volume of the FTS [TGeoVolume] 
+   class FTSA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTSA() : AgBlock("FTSA","Active volume of the FTS [TGeoVolume]"){ 
+      }; 
+      ~FTSA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTSS -- 
+   ///@defgroup FTSS_doc 
+   ///@class FTSS 
+   ///@brief Support structure for each disk [TGeoVolume] 
+   class FTSS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTSS() : AgBlock("FTSS","Support structure for each disk [TGeoVolume]"){ 
+      }; 
+      ~FTSS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class FtsdGeo 
+   /// \brief  is the Beam Beam Counter Modules GEOmetry  
+   class FtsdGeo : public AgModule 
+   { 
+      public: 
+      FtsdGeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~FtsdGeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace FtsdGeo 
+#endif // __FtsdGeo__ 

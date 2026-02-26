@@ -1,0 +1,321 @@
+#ifndef __BbcmGeo__ 
+#define __BbcmGeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace BBCMGEO // $NMSPC 
+{ 
+   struct bbcg_t {
+float version;
+float onoff[3];
+float zdis[2];
+int _index;
+};
+ 
+   struct _bbcg_docum_ {
+string version;
+string onoff;
+string zdis;
+string _index;
+};
+ 
+    struct _bbcg_types_ {
+  typedef float version;
+  typedef float onoff[3];
+  typedef float zdis[2];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct bbcg_info {
+typedef bbcg_t Type;
+static const char *name(){ return "bbcg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct bbcg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bbcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct onoff {
+  static const char *name() { return  "onoff"; }
+  static size_t Offset(){ return offsetof( struct bbcg_t, onoff ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bbcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct zdis {
+  static const char *name() { return  "zdis"; }
+  static size_t Offset(){ return offsetof( struct bbcg_t, zdis ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bbcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct bbcg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bbcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct hexg_t {
+float type;
+float irad;
+float clad;
+float thick;
+float zoffset;
+float xoffset;
+float yoffset;
+int _index;
+};
+ 
+   struct _hexg_docum_ {
+string type;
+string irad;
+string clad;
+string thick;
+string zoffset;
+string xoffset;
+string yoffset;
+string _index;
+};
+ 
+    struct _hexg_types_ {
+  typedef float type;
+  typedef float irad;
+  typedef float clad;
+  typedef float thick;
+  typedef float zoffset;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct hexg_info {
+typedef hexg_t Type;
+static const char *name(){ return "hexg_t"; }
+struct type {
+  static const char *name() { return  "type"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, type ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct irad {
+  static const char *name() { return  "irad"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, irad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct clad {
+  static const char *name() { return  "clad"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, clad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thick {
+  static const char *name() { return  "thick"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, thick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct hexg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hexg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- BBCM -- 
+   ///@defgroup BBCM_doc 
+   ///@class BBCM 
+   ///@brief is one BBC East or West module [TGeoVolume] 
+   class BBCM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BBCM() : AgBlock("BBCM","is one BBC East or West module [TGeoVolume]"){ 
+      }; 
+      ~BBCM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BBCA -- 
+   ///@defgroup BBCA_doc 
+   ///@class BBCA 
+   ///@brief is one BBC Annulus module [TGeoVolume] 
+   class BBCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BBCA() : AgBlock("BBCA","is one BBC Annulus module [TGeoVolume]"){ 
+      }; 
+      ~BBCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- THXM -- 
+   ///@defgroup THXM_doc 
+   ///@class THXM 
+   ///@brief is on Triple HeXagonal Module [TGeoVolume] 
+   class THXM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      THXM() : AgBlock("THXM","is on Triple HeXagonal Module [TGeoVolume]"){ 
+      }; 
+      ~THXM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHXT -- 
+   ///@defgroup SHXT_doc 
+   ///@class SHXT 
+   ///@brief is one Single HeXagonal Tile [TGeoVolume] 
+   class SHXT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHXT() : AgBlock("SHXT","is one Single HeXagonal Tile [TGeoVolume]"){ 
+      }; 
+      ~SHXT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CLAD -- 
+   ///@defgroup CLAD_doc 
+   ///@class CLAD 
+   ///@brief is one CLADding of BPOL active region [TGeoVolume] 
+   class CLAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CLAD() : AgBlock("CLAD","is one CLADding of BPOL active region [TGeoVolume]"){ 
+      }; 
+      ~CLAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPOL -- 
+   ///@defgroup BPOL_doc 
+   ///@class BPOL 
+   ///@brief is one Bbc POLystyren active scintillator layer [TGeoVolume] 
+   class BPOL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPOL() : AgBlock("BPOL","is one Bbc POLystyren active scintillator layer [TGeoVolume]"){ 
+      }; 
+      ~BPOL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class BbcmGeo 
+   /// \brief  is the Beam Beam Counter Modules GEOmetry  
+   class BbcmGeo : public AgModule 
+   { 
+      public: 
+      BbcmGeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~BbcmGeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace BbcmGeo 
+#endif // __BbcmGeo__ 

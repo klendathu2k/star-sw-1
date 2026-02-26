@@ -1,0 +1,1548 @@
+#include "MUTDGEO5.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace MUTDGEO5 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          mtdg_t *__mtdg = new mtdg_t; // dummy
+ AgMLStructure<mtdg_t,mtdg_info> MTDG("mtdg");
+mtdg_t &mtdg = MTDG;
+     
+          // Selectors for mtdg
+isEqual<mtdg_t, float> __mtdg_version__( __mtdg, &__mtdg->version );
+isEqual<mtdg_t, float> __mtdg_config__( __mtdg, &__mtdg->config );
+isEqual<mtdg_t, int> __mtdg__index__( __mtdg, &__mtdg->_index );
+     
+          
+	void              *mtdg_info::address   = &mtdg;
+	AgMLStructureBase   *mtdg_info::structure = &MTDG;
+     
+          mtdd_t *__mtdd = new mtdd_t; // dummy
+ AgMLStructure<mtdd_t,mtdd_info> MTDD("mtdd");
+mtdd_t &mtdd = MTDD;
+     
+          // Selectors for mtdd
+isEqual<mtdd_t, float> __mtdd_rmin__( __mtdd, &__mtdd->rmin );
+isEqual<mtdd_t, float> __mtdd_rmax__( __mtdd, &__mtdd->rmax );
+isEqual<mtdd_t, float> __mtdd_yshift08__( __mtdd, &__mtdd->yshift08 );
+isEqual<mtdd_t, float> __mtdd_yshift24__( __mtdd, &__mtdd->yshift24 );
+isEqual<mtdd_t, float> __mtdd_dzmother__( __mtdd, &__mtdd->dzmother );
+isEqual<mtdd_t, float> __mtdd_backlegr__( __mtdd, &__mtdd->backlegr );
+isEqual<mtdd_t, float> __mtdd_bemcelectboxdx__( __mtdd, &__mtdd->bemcelectboxdx );
+isEqual<mtdd_t, float> __mtdd_bemcelectboxdy__( __mtdd, &__mtdd->bemcelectboxdy );
+isEqual<mtdd_t, float> __mtdd_bemcelectboxdz3__( __mtdd, &__mtdd->bemcelectboxdz3 );
+isEqual<mtdd_t, float> __mtdd_bemcelectboxdz5__( __mtdd, &__mtdd->bemcelectboxdz5 );
+isEqual<mtdd_t, float> __mtdd_rgap__( __mtdd, &__mtdd->rgap );
+isEqual<mtdd_t, float> __mtdd_mtdmotherdx__( __mtdd, &__mtdd->mtdmotherdx );
+isEqual<mtdd_t, float> __mtdd_mtdmotherdy__( __mtdd, &__mtdd->mtdmotherdy );
+isEqual<mtdd_t, float> __mtdd_mtdmotherdz3__( __mtdd, &__mtdd->mtdmotherdz3 );
+isEqual<mtdd_t, float> __mtdd_mtdmotherdz5__( __mtdd, &__mtdd->mtdmotherdz5 );
+isEqual<mtdd_t, float> __mtdd_mtdtraydx__( __mtdd, &__mtdd->mtdtraydx );
+isEqual<mtdd_t, float> __mtdd_mtdtraydy__( __mtdd, &__mtdd->mtdtraydy );
+isEqual<mtdd_t, float> __mtdd_mtdtraydz__( __mtdd, &__mtdd->mtdtraydz );
+isEqual<mtdd_t, float> __mtdd_mtdbplate__( __mtdd, &__mtdd->mtdbplate );
+isEqual<mtdd_t, float> __mtdd_mtdtplate__( __mtdd, &__mtdd->mtdtplate );
+isEqual<mtdd_t, float> __mtdd_mtdigstackdy__( __mtdd, &__mtdd->mtdigstackdy );
+isEqual<mtdd_t, float> __mtdd_mtdigstackdz__( __mtdd, &__mtdd->mtdigstackdz );
+isEqual<mtdd_t, float> __mtdd_mtdigstackngaps__( __mtdd, &__mtdd->mtdigstackngaps );
+isEqual<mtdd_t, float> __mtdd_mtdigstackgapthick__( __mtdd, &__mtdd->mtdigstackgapthick );
+isEqual<mtdd_t, float> __mtdd_mtdigstackthinglassthick__( __mtdd, &__mtdd->mtdigstackthinglassthick );
+isEqual<mtdd_t, int> __mtdd__index__( __mtdd, &__mtdd->_index );
+     
+          
+	void              *mtdd_info::address   = &mtdd;
+	AgMLStructureBase   *mtdd_info::structure = &MTDD;
+     
+          ///@addtogroup MUTDGEO5_vars     
+          ///@{        
+                Int_t ktrayconfig,iphi,ibl,ntrayplaced,igap,ngaps,ntraygroup;        
+                //        
+                /// Int_t ktrayconfig,iphi,ibl,ntrayplaced,igap,ngaps,ntraygroup        
+          ///@}     
+          ///@addtogroup MUTDGEO5_vars     
+          ///@{        
+                Float_t thisphi,thisx,thisy,chandim,thish,thisr,degrad,thisphib,thisxb,thisyb,thisrb;        
+                //        
+                /// Float_t thisphi,thisx,thisy,chandim,thish,thisr,degrad,thisphib,thisxb,thisyb,thisrb        
+          ///@}     
+       MUTDGEO5::MUTDGEO5()     
+         : AgModule("MUTDGEO5"," is the geometry of the STAR MTD ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MUTD::mInstance = 0;     
+          AgBlock *MUTD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MUTD();        
+                   return mInstance;        
+          }     
+          void MUTD::Block( AgCreate create )     
+          {         
+                ///@addtogroup MUTD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MUTD");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=mtdd.rmin;              
+                            shape.par("rmax")=mtdd.rmax;              
+                            shape.par("dz")=mtdd.dzmother;              
+                            /// Shape Tube rmin=mtdd.rmin rmax=mtdd.rmax dz=mtdd.dzmother               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MUTD;              
+                            _stacker -> Build(this);              
+                      }           
+                      ntrayplaced=0;           
+                      if ( ktrayconfig==4 )           
+                      {              
+                            thisphi=156;              
+                            ntraygroup=3;              
+                            _create = AgCreate("MTTG");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create MTTG                 
+                                  Create("MTTG");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTTG");                 
+                                  place.SetMother("MUTD");                 
+                                  /// Add daughter volume MTTG to mother MUTD                 
+                                  place.TranslateZ(0);                 
+                                  /// Translate z = 0                 
+                                  place.AlphaZ(156);                 
+                                  /// Rotate: AlphaZ = 156                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  _stacker -> Position( AgBlock::Find("MTTG"), place );                 
+                            } // end placement of MTTG              
+                            ntrayplaced=ntrayplaced+3;              
+                      }           
+                      else if ( ktrayconfig==5 )           
+                      {              
+                            // - Info -               
+                            Info( GetName(), Form("MTDconfigurationisOBSOLETEkTrayConfig=%3i",ktrayconfig)  );              
+                      }           
+                      else if ( ktrayconfig==12 )           
+                      {              
+                            // - Info -               
+                            Info( GetName(), Form("CreatingRun-12MTDgeometrywithkTrayConfig=%3i",ktrayconfig)  );              
+                            /// Loop on ibl from 26 to 28 step=1              
+                            for ( ibl=26; (1>0)? (ibl<=28):(ibl>=28); ibl+=1 )              
+                            {                 
+                                  thisphi=90.0+(ibl-1)*(-12.0);                 
+                                  thisr=mtdd.ri[int(ibl)-1]*2.54+0.965*2.54;                 
+                                  thisx=thisr*cos(thisphi/degrad);                 
+                                  thisy=thisr*sin(thisphi/degrad);                 
+                                  if ( ibl==26 )                 
+                                  {                    
+                                        ntraygroup=3;                    
+                                        _create = AgCreate("MTTG");                    
+                                        {                       
+                                              AgShape myshape; // undefined shape                       
+                                              ///Create MTTG                       
+                                              Create("MTTG");                        
+                                        }                    
+                                        {                       
+                                              AgPosition  place;                       
+                                              place.SetBlock("MTTG");                       
+                                              place.SetMother("MUTD");                       
+                                              /// Add daughter volume MTTG to mother MUTD                       
+                                              place.TranslateX(thisx);                       
+                                              /// Translate x = thisx                       
+                                              place.TranslateY(thisy);                       
+                                              /// Translate y = thisy                       
+                                              place.TranslateZ(0);                       
+                                              /// Translate z = 0                       
+                                              place.AlphaZ(thisphi);                       
+                                              /// Rotate: AlphaZ = thisphi                       
+                                              /// G3 Reference: thetax = 90                       
+                                              /// G3 Reference: phix = 0                       
+                                              /// G3 Reference: thetay = 90                       
+                                              /// G3 Reference: phiy = 90                       
+                                              /// G3 Reference: thetaz = 0                       
+                                              /// G3 Reference: phiz = 0                       
+                                              _stacker -> Position( AgBlock::Find("MTTG"), place );                       
+                                        } // end placement of MTTG                    
+                                        ntrayplaced=ntrayplaced+3;                    
+                                  }                 
+                                  else                 
+                                  {                    
+                                        ntraygroup=5;;                    
+                                        _create = AgCreate("MTTG");                    
+                                        {                       
+                                              AgShape myshape; // undefined shape                       
+                                              ///Create MTTG                       
+                                              Create("MTTG");                        
+                                        }                    
+                                        {                       
+                                              AgPosition  place;                       
+                                              place.SetBlock("MTTG");                       
+                                              place.SetMother("MUTD");                       
+                                              /// Add daughter volume MTTG to mother MUTD                       
+                                              place.TranslateX(thisx);                       
+                                              /// Translate x = thisx                       
+                                              place.TranslateY(thisy);                       
+                                              /// Translate y = thisy                       
+                                              place.TranslateZ(0);                       
+                                              /// Translate z = 0                       
+                                              place.AlphaZ(thisphi);                       
+                                              /// Rotate: AlphaZ = thisphi                       
+                                              /// G3 Reference: thetax = 90                       
+                                              /// G3 Reference: phix = 0                       
+                                              /// G3 Reference: thetay = 90                       
+                                              /// G3 Reference: phiy = 90                       
+                                              /// G3 Reference: thetaz = 0                       
+                                              /// G3 Reference: phiz = 0                       
+                                              _stacker -> Position( AgBlock::Find("MTTG"), place );                       
+                                        } // end placement of MTTG                    
+                                        ntrayplaced=ntrayplaced+5;                    
+                                  }                 
+                            }              
+                      }           
+                      else if ( ktrayconfig==13 )           
+                      {              
+                            // - Info -               
+                            Info( GetName(), Form("CreatingRun-13MTDgeometrywithkTrayConfig=%3i",ktrayconfig)  );              
+                            /// Loop on ibl from 1 to 30 step=1              
+                            for ( ibl=1; (1>0)? (ibl<=30):(ibl>=30); ibl+=1 )              
+                            {                 
+                                  thisphi=90.0+(ibl-1)*(-12.0);                 
+                                  thisr=mtdd.ri[int(ibl)-1]*2.54+0.965*2.54;                 
+                                  thisx=thisr*cos(thisphi/degrad);                 
+                                  thisy=thisr*sin(thisphi/degrad);                 
+                                  if ( (ibl!=8&&ibl!=9&&ibl!=23&&ibl!=24) )                 
+                                  {                    
+                                        if ( ibl<=10||ibl>=22 )                    
+                                        {                       
+                                              ntraygroup=5;                       
+                                              _create = AgCreate("MTTG");                       
+                                              {                          
+                                                    AgShape myshape; // undefined shape                          
+                                                    ///Create MTTG                          
+                                                    Create("MTTG");                           
+                                              }                       
+                                              {                          
+                                                    AgPosition  place;                          
+                                                    place.SetBlock("MTTG");                          
+                                                    place.SetMother("MUTD");                          
+                                                    /// Add daughter volume MTTG to mother MUTD                          
+                                                    place.TranslateX(thisx);                          
+                                                    /// Translate x = thisx                          
+                                                    place.TranslateY(thisy);                          
+                                                    /// Translate y = thisy                          
+                                                    place.TranslateZ(0);                          
+                                                    /// Translate z = 0                          
+                                                    place.AlphaZ(thisphi);                          
+                                                    /// Rotate: AlphaZ = thisphi                          
+                                                    /// G3 Reference: thetax = 90                          
+                                                    /// G3 Reference: phix = 0                          
+                                                    /// G3 Reference: thetay = 90                          
+                                                    /// G3 Reference: phiy = 90                          
+                                                    /// G3 Reference: thetaz = 0                          
+                                                    /// G3 Reference: phiz = 0                          
+                                                    _stacker -> Position( AgBlock::Find("MTTG"), place );                          
+                                              } // end placement of MTTG                       
+                                              ntrayplaced=ntrayplaced+5;                       
+                                        }                    
+                                  }                 
+                            }              
+                      }           
+                      else if ( ktrayconfig==14 )           
+                      {              
+                            /// Loop on ibl from 1 to 30 step=1              
+                            for ( ibl=1; (1>0)? (ibl<=30):(ibl>=30); ibl+=1 )              
+                            {                 
+                                  thisphi=90.0+(ibl-1)*(-12.0);                 
+                                  thisr=mtdd.ri[int(ibl)-1]*2.54+0.965*2.54;                 
+                                  thisx=thisr*cos(thisphi/degrad);                 
+                                  thisy=thisr*sin(thisphi/degrad);                 
+                                  if ( thisr>0 )                 
+                                  {                    
+                                        if ( ibl>=12&&ibl<=20 )                    
+                                        {                       
+                                              ntraygroup=3;                       
+                                              _create = AgCreate("MTTG");                       
+                                              {                          
+                                                    AgShape myshape; // undefined shape                          
+                                                    ///Create MTTG                          
+                                                    Create("MTTG");                           
+                                              }                       
+                                              {                          
+                                                    AgPosition  place;                          
+                                                    place.SetBlock("MTTG");                          
+                                                    place.SetMother("MUTD");                          
+                                                    /// Add daughter volume MTTG to mother MUTD                          
+                                                    place.TranslateX(thisx);                          
+                                                    /// Translate x = thisx                          
+                                                    place.TranslateY(thisy);                          
+                                                    /// Translate y = thisy                          
+                                                    place.TranslateZ(0);                          
+                                                    /// Translate z = 0                          
+                                                    place.AlphaZ(thisphi);                          
+                                                    /// Rotate: AlphaZ = thisphi                          
+                                                    /// G3 Reference: thetax = 90                          
+                                                    /// G3 Reference: phix = 0                          
+                                                    /// G3 Reference: thetay = 90                          
+                                                    /// G3 Reference: phiy = 90                          
+                                                    /// G3 Reference: thetaz = 0                          
+                                                    /// G3 Reference: phiz = 0                          
+                                                    _stacker -> Position( AgBlock::Find("MTTG"), place );                          
+                                              } // end placement of MTTG                       
+                                              ntrayplaced=ntrayplaced+3;                       
+                                        }                    
+                                        if ( ibl<12||ibl>20 )                    
+                                        {                       
+                                              if ( ibl!=8&&ibl!=24 )                       
+                                              {                          
+                                                    ntraygroup=5;                          
+                                                    _create = AgCreate("MTTG");                          
+                                                    {                             
+                                                          AgShape myshape; // undefined shape                             
+                                                          ///Create MTTG                             
+                                                          Create("MTTG");                              
+                                                    }                          
+                                                    {                             
+                                                          AgPosition  place;                             
+                                                          place.SetBlock("MTTG");                             
+                                                          place.SetMother("MUTD");                             
+                                                          /// Add daughter volume MTTG to mother MUTD                             
+                                                          place.TranslateX(thisx);                             
+                                                          /// Translate x = thisx                             
+                                                          place.TranslateY(thisy);                             
+                                                          /// Translate y = thisy                             
+                                                          place.TranslateZ(0);                             
+                                                          /// Translate z = 0                             
+                                                          place.AlphaZ(thisphi);                             
+                                                          /// Rotate: AlphaZ = thisphi                             
+                                                          /// G3 Reference: thetax = 90                             
+                                                          /// G3 Reference: phix = 0                             
+                                                          /// G3 Reference: thetay = 90                             
+                                                          /// G3 Reference: phiy = 90                             
+                                                          /// G3 Reference: thetaz = 0                             
+                                                          /// G3 Reference: phiz = 0                             
+                                                          _stacker -> Position( AgBlock::Find("MTTG"), place );                             
+                                                    } // end placement of MTTG                          
+                                                    ntrayplaced=ntrayplaced+5;                          
+                                              }                       
+                                              if ( ibl==8 )                       
+                                              {                          
+                                                    thisrb=sqrt(thisr*thisr+2.54*mtdd.yshift08*2.54*mtdd.yshift08);                          
+                                                    thisphib=degrad*atan(2.54*mtdd.yshift08/thisr)+thisphi;                          
+                                                    thisxb=thisrb*cos(thisphib/degrad);                          
+                                                    thisyb=thisrb*sin(thisphib/degrad);                          
+                                                    ntraygroup=5;                          
+                                                    _create = AgCreate("MTTG");                          
+                                                    {                             
+                                                          AgShape myshape; // undefined shape                             
+                                                          ///Create MTTG                             
+                                                          Create("MTTG");                              
+                                                    }                          
+                                                    {                             
+                                                          AgPosition  place;                             
+                                                          place.SetBlock("MTTG");                             
+                                                          place.SetMother("MUTD");                             
+                                                          /// Add daughter volume MTTG to mother MUTD                             
+                                                          place.TranslateX(thisxb);                             
+                                                          /// Translate x = thisxb                             
+                                                          place.TranslateY(thisyb);                             
+                                                          /// Translate y = thisyb                             
+                                                          place.TranslateZ(0);                             
+                                                          /// Translate z = 0                             
+                                                          place.AlphaZ(thisphi);                             
+                                                          /// Rotate: AlphaZ = thisphi                             
+                                                          /// G3 Reference: thetax = 90                             
+                                                          /// G3 Reference: phix = 0                             
+                                                          /// G3 Reference: thetay = 90                             
+                                                          /// G3 Reference: phiy = 90                             
+                                                          /// G3 Reference: thetaz = 0                             
+                                                          /// G3 Reference: phiz = 0                             
+                                                          _stacker -> Position( AgBlock::Find("MTTG"), place );                             
+                                                    } // end placement of MTTG                          
+                                                    ntrayplaced=ntrayplaced+5;                          
+                                              }                       
+                                              if ( ibl==24 )                       
+                                              {                          
+                                                    thisrb=sqrt(thisr*thisr+2.54*mtdd.yshift24*2.54*mtdd.yshift24);                          
+                                                    thisphib=degrad*atan(2.54*mtdd.yshift24/thisr)+thisphi;                          
+                                                    thisxb=thisrb*cos(thisphib/degrad);                          
+                                                    thisyb=thisrb*sin(thisphib/degrad);                          
+                                                    ntraygroup=5;                          
+                                                    _create = AgCreate("MTTG");                          
+                                                    {                             
+                                                          AgShape myshape; // undefined shape                             
+                                                          ///Create MTTG                             
+                                                          Create("MTTG");                              
+                                                    }                          
+                                                    {                             
+                                                          AgPosition  place;                             
+                                                          place.SetBlock("MTTG");                             
+                                                          place.SetMother("MUTD");                             
+                                                          /// Add daughter volume MTTG to mother MUTD                             
+                                                          place.TranslateX(thisxb);                             
+                                                          /// Translate x = thisxb                             
+                                                          place.TranslateY(thisyb);                             
+                                                          /// Translate y = thisyb                             
+                                                          place.TranslateZ(0);                             
+                                                          /// Translate z = 0                             
+                                                          place.AlphaZ(thisphi);                             
+                                                          /// Rotate: AlphaZ = thisphi                             
+                                                          /// G3 Reference: thetax = 90                             
+                                                          /// G3 Reference: phix = 0                             
+                                                          /// G3 Reference: thetay = 90                             
+                                                          /// G3 Reference: phiy = 90                             
+                                                          /// G3 Reference: thetaz = 0                             
+                                                          /// G3 Reference: phiz = 0                             
+                                                          _stacker -> Position( AgBlock::Find("MTTG"), place );                             
+                                                    } // end placement of MTTG                          
+                                                    ntrayplaced=ntrayplaced+5;                          
+                                              }                       
+                                        }                    
+                                  }                 
+                            }              
+                      }           
+                      // - Info -            
+                      Info( GetName(), Form("NumberofMTDtraysplaced=%3i",ntrayplaced)  );           
+                      END_OF_MUTD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MUTD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MTTG::mInstance = 0;     
+          AgBlock *MTTG::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MTTG();        
+                   return mInstance;        
+          }     
+          void MTTG::Block( AgCreate create )     
+          {         
+                ///@addtogroup MTTG_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MTTT");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      if ( ntraygroup==3 )           
+                      {              
+                            {  AgShape shape = AgShape("Bbox");                 
+                                  shape     .Inherit( AgBlock::previous() );                 
+                                  create     .SetParameters(shape);                 
+                                  shape.par("dx")=mtdd.mtdmotherdx;                 
+                                  shape.par("dy")=mtdd.mtdmotherdy;                 
+                                  shape.par("dz")=mtdd.mtdmotherdz3;                 
+                                  /// Shape Bbox dx=mtdd.mtdmotherdx dy=mtdd.mtdmotherdy dz=mtdd.mtdmotherdz3                  
+                                  _same_shape &= _stacker->SearchVolume( shape, _attribute );                 
+                                  _shape = shape;                 
+                                  if (_same_shape) goto END_OF_MTTG;                 
+                                  _stacker -> Build(this);                 
+                            }              
+                            _create = AgCreate("MTRA");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create MTRA                 
+                                  Create("MTRA");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(-mtdd.mtdtraydx);                 
+                                  /// Translate x = -mtdd.mtdtraydx                 
+                                  place.TranslateZ(-87);                 
+                                  /// Translate z = -87                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(mtdd.mtdtraydx);                 
+                                  /// Translate x = mtdd.mtdtraydx                 
+                                  place.TranslateZ(0);                 
+                                  /// Translate z = 0                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(-mtdd.mtdtraydx);                 
+                                  /// Translate x = -mtdd.mtdtraydx                 
+                                  place.TranslateZ(87);                 
+                                  /// Translate z = 87                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                      }           
+                      if ( ntraygroup==5 )           
+                      {              
+                            {  AgShape shape = AgShape("Bbox");                 
+                                  shape     .Inherit( AgBlock::previous() );                 
+                                  create     .SetParameters(shape);                 
+                                  shape.par("dx")=mtdd.mtdmotherdx;                 
+                                  shape.par("dy")=mtdd.mtdmotherdy;                 
+                                  shape.par("dz")=mtdd.mtdmotherdz5;                 
+                                  /// Shape Bbox dx=mtdd.mtdmotherdx dy=mtdd.mtdmotherdy dz=mtdd.mtdmotherdz5                  
+                                  _same_shape &= _stacker->SearchVolume( shape, _attribute );                 
+                                  _shape = shape;                 
+                                  if (_same_shape) goto END_OF_MTTG;                 
+                                  _stacker -> Build(this);                 
+                            }              
+                            _create = AgCreate("MTRA");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create MTRA                 
+                                  Create("MTRA");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(mtdd.mtdtraydx);                 
+                                  /// Translate x = mtdd.mtdtraydx                 
+                                  place.TranslateZ(-174);                 
+                                  /// Translate z = -174                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(-mtdd.mtdtraydx);                 
+                                  /// Translate x = -mtdd.mtdtraydx                 
+                                  place.TranslateZ(-87);                 
+                                  /// Translate z = -87                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(mtdd.mtdtraydx);                 
+                                  /// Translate x = mtdd.mtdtraydx                 
+                                  place.TranslateZ(0);                 
+                                  /// Translate z = 0                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(-mtdd.mtdtraydx);                 
+                                  /// Translate x = -mtdd.mtdtraydx                 
+                                  place.TranslateZ(87);                 
+                                  /// Translate z = 87                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MTRA");                 
+                                  place.SetMother("MTTG");                 
+                                  /// Add daughter volume MTRA to mother MTTG                 
+                                  place.TranslateX(mtdd.mtdtraydx);                 
+                                  /// Translate x = mtdd.mtdtraydx                 
+                                  place.TranslateZ(174);                 
+                                  /// Translate z = 174                 
+                                  _stacker -> Position( AgBlock::Find("MTRA"), place );                 
+                            } // end placement of MTRA              
+                      }           
+                      END_OF_MTTG:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MTTG     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MTRA::mInstance = 0;     
+          AgBlock *MTRA::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MTRA();        
+                   return mInstance;        
+          }     
+          void MTRA::Block( AgCreate create )     
+          {         
+                ///@addtogroup MTRA_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material RPCgas            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Rpcgas");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MTRA");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=mtdd.mtdtraydx;              
+                            shape.par("dy")=mtdd.mtdtraydy;              
+                            shape.par("dz")=mtdd.mtdtraydz;              
+                            /// Shape Bbox dx=mtdd.mtdtraydx dy=mtdd.mtdtraydy dz=mtdd.mtdtraydz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MTRA;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("MTBP");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MTBP");              
+                            createin.par("dx")=mtdd.mtdbplate/2.;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = mtdd.mtdbplate/2.              
+                            myshape.par("dx")=mtdd.mtdbplate/2.;              
+                            ///Create MTBP              
+                            Create("MTBP");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MTBP");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MTBP to mother MTRA              
+                            place.TranslateX(-mtdd.mtdtraydx+(mtdd.mtdbplate/2.));              
+                            /// Translate x = -mtdd.mtdtraydx+(mtdd.mtdbplate/2.)              
+                            _stacker -> Position( AgBlock::Find("MTBP"), place );              
+                      } // end placement of MTBP           
+                      _create = AgCreate("MTTP");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MTTP");              
+                            createin.par("dx")=mtdd.mtdtplate/2.;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = mtdd.mtdtplate/2.              
+                            myshape.par("dx")=mtdd.mtdtplate/2.;              
+                            ///Create MTTP              
+                            Create("MTTP");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MTTP");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MTTP to mother MTRA              
+                            place.TranslateX(mtdd.mtdtraydx-(mtdd.mtdtplate/2.));              
+                            /// Translate x = mtdd.mtdtraydx-(mtdd.mtdtplate/2.)              
+                            _stacker -> Position( AgBlock::Find("MTTP"), place );              
+                      } // end placement of MTTP           
+                      chandim=mtdd.mtdtraydx-mtdd.mtdbplate/2.-mtdd.mtdbplate/2.;           
+                      _create = AgCreate("MCHL");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MCHL");              
+                            createin.par("dx")=chandim;              
+                            createin.par("dy")=chandim;              
+                            createin.par("dz")=mtdd.mtdtraydz-2.*chandim;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = chandim              
+                            myshape.par("dx")=chandim;              
+                            /// Set shape par: dy = chandim              
+                            myshape.par("dy")=chandim;              
+                            /// Set shape par: dz = mtdd.mtdtraydz-2.*chandim              
+                            myshape.par("dz")=mtdd.mtdtraydz-2.*chandim;              
+                            ///Create MCHL              
+                            Create("MCHL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCHL");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MCHL to mother MTRA              
+                            place.TranslateX(-mtdd.mtdtraydx+mtdd.mtdbplate+chandim);              
+                            /// Translate x = -mtdd.mtdtraydx+mtdd.mtdbplate+chandim              
+                            place.TranslateY(mtdd.mtdtraydy-chandim);              
+                            /// Translate y = mtdd.mtdtraydy-chandim              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            _stacker -> Position( AgBlock::Find("MCHL"), place );              
+                      } // end placement of MCHL           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCHL");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MCHL to mother MTRA              
+                            place.TranslateX(-mtdd.mtdtraydx+mtdd.mtdbplate+chandim);              
+                            /// Translate x = -mtdd.mtdtraydx+mtdd.mtdbplate+chandim              
+                            place.TranslateY(-mtdd.mtdtraydy+chandim);              
+                            /// Translate y = -mtdd.mtdtraydy+chandim              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            place.AlphaZ(180);              
+                            /// Rotate: AlphaZ = 180              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("MCHL"), place );              
+                      } // end placement of MCHL           
+                      _create = AgCreate("MCHS");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MCHS");              
+                            createin.par("dx")=chandim;              
+                            createin.par("dy")=mtdd.mtdtraydy;              
+                            createin.par("dz")=chandim;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = chandim              
+                            myshape.par("dx")=chandim;              
+                            /// Set shape par: dy = mtdd.mtdtraydy              
+                            myshape.par("dy")=mtdd.mtdtraydy;              
+                            /// Set shape par: dz = chandim              
+                            myshape.par("dz")=chandim;              
+                            ///Create MCHS              
+                            Create("MCHS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCHS");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MCHS to mother MTRA              
+                            place.TranslateX(-mtdd.mtdtraydx+mtdd.mtdbplate+chandim);              
+                            /// Translate x = -mtdd.mtdtraydx+mtdd.mtdbplate+chandim              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(mtdd.mtdtraydz-chandim);              
+                            /// Translate z = mtdd.mtdtraydz-chandim              
+                            _stacker -> Position( AgBlock::Find("MCHS"), place );              
+                      } // end placement of MCHS           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCHS");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MCHS to mother MTRA              
+                            place.TranslateX(-mtdd.mtdtraydx+mtdd.mtdbplate+chandim);              
+                            /// Translate x = -mtdd.mtdtraydx+mtdd.mtdbplate+chandim              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(-mtdd.mtdtraydz+chandim);              
+                            /// Translate z = -mtdd.mtdtraydz+chandim              
+                            place.AlphaY(180);              
+                            /// Rotate: AlphaY = 180              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("MCHS"), place );              
+                      } // end placement of MCHS           
+                      thish=mtdd.mtdigstackngaps*mtdd.mtdigstackgapthick+(mtdd.mtdigstackngaps-1.0)*mtdd.mtdigstackthinglassthick;           
+                      _create = AgCreate("MIGS");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MIGS");              
+                            createin.par("dx")=thish/2.0;              
+                            createin.par("dy")=mtdd.mtdigstackdy;              
+                            createin.par("dz")=mtdd.mtdigstackdz;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = thish/2.0              
+                            myshape.par("dx")=thish/2.0;              
+                            /// Set shape par: dy = mtdd.mtdigstackdy              
+                            myshape.par("dy")=mtdd.mtdigstackdy;              
+                            /// Set shape par: dz = mtdd.mtdigstackdz              
+                            myshape.par("dz")=mtdd.mtdigstackdz;              
+                            ///Create MIGS              
+                            Create("MIGS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MIGS");              
+                            place.SetMother("MTRA");              
+                            /// Add daughter volume MIGS to mother MTRA              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            _stacker -> Position( AgBlock::Find("MIGS"), place );              
+                      } // end placement of MIGS           
+                      END_OF_MTRA:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MTRA     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MIGS::mInstance = 0;     
+          AgBlock *MIGS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MIGS();        
+                   return mInstance;        
+          }     
+          void MIGS::Block( AgCreate create )     
+          {         
+                ///@addtogroup MIGS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("MIGS");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Glass            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Glass");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MIGS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("MIGG");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MIGG");              
+                            createin.par("dx")=mtdd.mtdigstackgapthick/2.0;              
+                            createin.par("dy")=mtdd.mtdigstackdy;              
+                            createin.par("dz")=mtdd.mtdigstackdz;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = mtdd.mtdigstackgapthick/2.0              
+                            myshape.par("dx")=mtdd.mtdigstackgapthick/2.0;              
+                            /// Set shape par: dy = mtdd.mtdigstackdy              
+                            myshape.par("dy")=mtdd.mtdigstackdy;              
+                            /// Set shape par: dz = mtdd.mtdigstackdz              
+                            myshape.par("dz")=mtdd.mtdigstackdz;              
+                            ///Create MIGG              
+                            Create("MIGG");               
+                      }           
+                      if ( ngaps==6 )           
+                      {              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(-2.5*mtdd.mtdigstackthinglassthick-2.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = -2.5*mtdd.mtdigstackthinglassthick-2.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(-1.5*mtdd.mtdigstackthinglassthick-1.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = -1.5*mtdd.mtdigstackthinglassthick-1.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(-0.5*mtdd.mtdigstackthinglassthick-0.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = -0.5*mtdd.mtdigstackthinglassthick-0.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(0.5*mtdd.mtdigstackthinglassthick+0.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 0.5*mtdd.mtdigstackthinglassthick+0.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(1.5*mtdd.mtdigstackthinglassthick+1.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 1.5*mtdd.mtdigstackthinglassthick+1.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(2.5*mtdd.mtdigstackthinglassthick+2.5*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 2.5*mtdd.mtdigstackthinglassthick+2.5*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                      }           
+                      else if ( ngaps==5 )           
+                      {              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(-2.0*mtdd.mtdigstackthinglassthick-2.0*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = -2.0*mtdd.mtdigstackthinglassthick-2.0*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(-1.0*mtdd.mtdigstackthinglassthick-1.0*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = -1.0*mtdd.mtdigstackthinglassthick-1.0*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(0.0*mtdd.mtdigstackthinglassthick+0.0*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 0.0*mtdd.mtdigstackthinglassthick+0.0*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(1.0*mtdd.mtdigstackthinglassthick+1.0*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 1.0*mtdd.mtdigstackthinglassthick+1.0*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("MIGG");                 
+                                  place.SetMother("MIGS");                 
+                                  /// Add daughter volume MIGG to mother MIGS                 
+                                  place.TranslateX(2.0*mtdd.mtdigstackthinglassthick+2.0*mtdd.mtdigstackgapthick);                 
+                                  /// Translate x = 2.0*mtdd.mtdigstackthinglassthick+2.0*mtdd.mtdigstackgapthick                 
+                                  _stacker -> Position( AgBlock::Find("MIGG"), place );                 
+                            } // end placement of MIGG              
+                      }           
+                      END_OF_MIGS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MIGS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MIGG::mInstance = 0;     
+          AgBlock *MIGG::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MIGG();        
+                   return mInstance;        
+          }     
+          void MIGG::Block( AgCreate create )     
+          {         
+                ///@addtogroup MIGG_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("MIGG");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material RPCgas            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Rpcgas");              
+                            _material = mat;              
+                      }           
+                      /// Medium RPCgas_sensitive           
+                      ///  isvol = 1           
+                      {  AgMedium &med = AgMedium::Get("Rpcgas_sensitive");              
+                               med.Inherit(this);              
+                            med.par("isvol")=1;              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MIGG;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "MIGG", "x", .01, 0, 0, "S");           
+                      // deferred module()->AddHit( "MIGG", "y", .01, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "z", .01, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "ptot", 18, 0, 100, "");           
+                      // deferred module()->AddHit( "MIGG", "cx", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "cy", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "cz", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "sleng", .1, 0, 500, "");           
+                      // deferred module()->AddHit( "MIGG", "tof", 16, 0, 1.0e-7, "");           
+                      // deferred module()->AddHit( "MIGG", "step", .01, 0, 0, "");           
+                      // deferred module()->AddHit( "MIGG", "eloss", 16, 0, 1.0e-6, "");           
+                      END_OF_MIGG:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MIGG     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MTBP::mInstance = 0;     
+          AgBlock *MTBP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MTBP();        
+                   return mInstance;        
+          }     
+          void MTBP::Block( AgCreate create )     
+          {         
+                ///@addtogroup MTBP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MTBP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MTBP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_MTBP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MTBP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MTTP::mInstance = 0;     
+          AgBlock *MTTP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MTTP();        
+                   return mInstance;        
+          }     
+          void MTTP::Block( AgCreate create )     
+          {         
+                ///@addtogroup MTTP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MTTP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MTTP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_MTTP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MTTP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MCHL::mInstance = 0;     
+          AgBlock *MCHL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MCHL();        
+                   return mInstance;        
+          }     
+          void MCHL::Block( AgCreate create )     
+          {         
+                ///@addtogroup MCHL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MCHL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MCHL;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("MCAL");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MCAL");              
+                            createin.par("dx")=chandim-0.3175;              
+                            createin.par("dy")=chandim-0.3175/2.;              
+                            createin.par("dz")=mtdd.mtdtraydz-2.*chandim;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = chandim-0.3175              
+                            myshape.par("dx")=chandim-0.3175;              
+                            /// Set shape par: dy = chandim-0.3175/2.              
+                            myshape.par("dy")=chandim-0.3175/2.;              
+                            /// Set shape par: dz = mtdd.mtdtraydz-2.*chandim              
+                            myshape.par("dz")=mtdd.mtdtraydz-2.*chandim;              
+                            ///Create MCAL              
+                            Create("MCAL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCAL");              
+                            place.SetMother("MCHL");              
+                            /// Add daughter volume MCAL to mother MCHL              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0.3175/2.);              
+                            /// Translate y = 0.3175/2.              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            _stacker -> Position( AgBlock::Find("MCAL"), place );              
+                      } // end placement of MCAL           
+                      END_OF_MCHL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MCHL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MCAL::mInstance = 0;     
+          AgBlock *MCAL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MCAL();        
+                   return mInstance;        
+          }     
+          void MCAL::Block( AgCreate create )     
+          {         
+                ///@addtogroup MCAL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MCAL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MCAL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_MCAL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MCAL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MCHS::mInstance = 0;     
+          AgBlock *MCHS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MCHS();        
+                   return mInstance;        
+          }     
+          void MCHS::Block( AgCreate create )     
+          {         
+                ///@addtogroup MCHS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MCHS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MCHS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("MCAS");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("MCAS");              
+                            createin.par("dx")=chandim-0.3175;              
+                            createin.par("dy")=mtdd.mtdtraydy;              
+                            createin.par("dz")=chandim-0.3175/2.;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = chandim-0.3175              
+                            myshape.par("dx")=chandim-0.3175;              
+                            /// Set shape par: dy = mtdd.mtdtraydy              
+                            myshape.par("dy")=mtdd.mtdtraydy;              
+                            /// Set shape par: dz = chandim-0.3175/2.              
+                            myshape.par("dz")=chandim-0.3175/2.;              
+                            ///Create MCAS              
+                            Create("MCAS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("MCAS");              
+                            place.SetMother("MCHS");              
+                            /// Add daughter volume MCAS to mother MCHS              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(+0.3175/2.);              
+                            /// Translate z = +0.3175/2.              
+                            _stacker -> Position( AgBlock::Find("MCAS"), place );              
+                      } // end placement of MCAS           
+                      END_OF_MCHS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MCHS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *MCAS::mInstance = 0;     
+          AgBlock *MCAS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new MCAS();        
+                   return mInstance;        
+          }     
+          void MCAS::Block( AgCreate create )     
+          {         
+                ///@addtogroup MCAS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("MCAS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            /// Shape Bbox               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_MCAS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_MCAS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block MCAS     
+    // ----------------------------------------------------------------------- geoctr
+       void MUTDGEO5::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup MUTDGEO5_revision        
+             ///@{           
+                   /// Author: W.J. Llope           
+             ///@}        
+             ///@addtogroup MUTDGEO5_revision        
+             ///@{           
+                   /// Created:    13 Dec 2013            
+             ///@}        
+             AddBlock("MUTD", MUTD::Instance());        
+             AddBlock("MTTG", MTTG::Instance());        
+             AddBlock("MTRA", MTRA::Instance());        
+             AddBlock("MTBP", MTBP::Instance());        
+             AddBlock("MTTP", MTTP::Instance());        
+             AddBlock("MCHL", MCHL::Instance());        
+             AddBlock("MCAL", MCAL::Instance());        
+             AddBlock("MCHS", MCHS::Instance());        
+             AddBlock("MCAS", MCAS::Instance());        
+             AddBlock("MIGS", MIGS::Instance());        
+             AddBlock("MIGG", MIGG::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill mtdg
+++mtdg._index;
+mtdg.version = 1;
+// mtdg_docum.version = " version number ";
+mtdg.config = 1;
+// mtdg_docum.config = " =1 single backleg (Run11), =2 full system (Run13) ";
+MTDG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill mtdd
+++mtdd._index;
+mtdd.rmin = 364.25;
+// mtdd_docum.rmin = " integration radius lower ";
+mtdd.rmax = 430.0;
+// mtdd_docum.rmax = " integration radius upper ";
+{
+mtdd_info::ri::Type temp = {
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(160.809),
+mtdd_info::ri::BaseType(-1.0000),
+mtdd_info::ri::BaseType(154.730),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(162.960),
+mtdd_info::ri::BaseType(160.664),
+mtdd_info::ri::BaseType(154.730),
+mtdd_info::ri::BaseType(-1.0000),
+mtdd_info::ri::BaseType(155.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664),
+mtdd_info::ri::BaseType(154.664)
+}
+;
+memcpy(&mtdd.ri, &temp, sizeof(temp));;
+}
+// mtdd_docum.ri = " radius to tray centroid in inches by Backleg ID ";
+mtdd.yshift08 = 5.222;
+// mtdd_docum.yshift08 = " Backleg 8 shift for bus cover clearance ";
+mtdd.yshift24 = -3.394;
+// mtdd_docum.yshift24 = " Backleg 24 shift for bus cover clearance ";
+mtdd.dzmother = 300.0;
+// mtdd_docum.dzmother = " integration half length in Z ";
+mtdd.backlegr = 364.2;
+// mtdd_docum.backlegr = " radius of a backleg at phi-center ";
+mtdd.bemcelectboxdx = 11.035;
+// mtdd_docum.bemcelectboxdx = " BEMC electronics box half-length X (height) ";
+mtdd.bemcelectboxdy = 30.65;
+// mtdd_docum.bemcelectboxdy = " BEMC electronics box half-length Y (width) ";
+mtdd.bemcelectboxdz5 = 290.0;
+// mtdd_docum.bemcelectboxdz5 = " BEMC electronics box half-length Z (length 5-pack) ";
+mtdd.bemcelectboxdz3 = 200.0;
+// mtdd_docum.bemcelectboxdz3 = " BEMC electronics box half-length Z (length 3-pack) ";
+mtdd.rgap = 3.81;
+// mtdd_docum.rgap = " Distance top of Bemc box to underside of lowest tray ";
+mtdd.mtdmotherdx = 4.9911;
+// mtdd_docum.mtdmotherdx = " Tray Mother half-length X (height) (2*1.965in)*2.54/2 ";
+mtdd.mtdmotherdy = 33.8;
+// mtdd_docum.mtdmotherdy = " Tray Mother half-length Y (width) ***was 32*** ";
+mtdd.mtdmotherdz5 = 285.0;
+// mtdd_docum.mtdmotherdz5 = " Tray Mother half-length Z (length long) ";
+mtdd.mtdmotherdz3 = 195.0;
+// mtdd_docum.mtdmotherdz3 = " Tray Mother half-length Z (length short) ";
+mtdd.mtdtraydx = 2.49555;
+// mtdd_docum.mtdtraydx = " Tray half-height (1.965in)*2.54/2 ";
+mtdd.mtdtraydy = 33.765;
+// mtdd_docum.mtdtraydy = " Tray half-width ";
+mtdd.mtdtraydz = 54.005;
+// mtdd_docum.mtdtraydz = " Tray half-length ";
+mtdd.mtdbplate = 0.3175;
+// mtdd_docum.mtdbplate = " Tray bottom plate full thickness (0.125in)";
+mtdd.mtdtplate = 0.2286;
+// mtdd_docum.mtdtplate = " Tray top plate full thickness (0.090in)";
+mtdd.mtdigstackdy = 26.1;
+// mtdd_docum.mtdigstackdy = " WMRPC inner glass stack volume half-length Y ";
+mtdd.mtdigstackdz = 43.5;
+// mtdd_docum.mtdigstackdz = " WMRPC inner glass stack volume half-length Y ";
+mtdd.mtdigstackngaps = 5.0;
+// mtdd_docum.mtdigstackngaps = " WMPRC number of gas gaps ";
+mtdd.mtdigstackgapthick = 0.025;
+// mtdd_docum.mtdigstackgapthick = " WMRPC gas thickness (0.25mm)  ";
+mtdd.mtdigstackthinglassthick = 0.07;
+// mtdd_docum.mtdigstackthinglassthick = " WMRPC thin glass thickness (0.7mm)  ";
+MTDD.fill();
+        
+             /// USE mtdg _index=1;        
+             MTDG.use( __mtdg__index__ = 1 );
+        
+             /// USE mtdd _index=1;        
+             MTDD.use( __mtdd__index__ = 1 );
+        
+             // Print<level=%i> fmt=%s fortran format statements not supported        
+             // Print<level=%i> fmt=%s fortran format statements not supported        
+             ktrayconfig=nint(mtdg.config);        
+             ngaps=mtdd.mtdigstackngaps;        
+             degrad=57.2957795;;        
+             /// Component H	a=1	z=1	w=0.90*2*1./102.+0.+0.05*10*1./58.        
+             /// Component C	a=12	z=6	w=0.90*2*12./102.+0.+0.05*4*12./58.        
+             /// Component F	a=19	z=9	w=0.90*4*19./102.+0.05*6*19./146.+0.        
+             /// Component S	a=32	z=16	w=0.+0.05*1*32./146.+0.        
+             /// Mixture RPCgas dens=4.55e-3        
+             {  AgMaterial &mix = AgMaterial::Get("Rpcgas");           
+                   mix.Component("H",1,1,0.90*2*1./102.+0.+0.05*10*1./58.);           
+                   mix.Component("C",12,6,0.90*2*12./102.+0.+0.05*4*12./58.);           
+                   mix.Component("F",19,9,0.90*4*19./102.+0.05*6*19./146.+0.);           
+                   mix.Component("S",32,16,0.+0.05*1*32./146.+0.);           
+                   mix.par("dens")=4.55e-3;           
+                   mix.lock();           
+                   _material = mix;           
+                   _material.lock();           
+             }        
+             /// Component Si	a=28	z=14	w=1.        
+             /// Component O	a=16	z=8	w=2.        
+             /// Mixture Glass dens=2.5        
+             {  AgMaterial &mix = AgMaterial::Get("Glass");           
+                   mix.Component("Si",28,14,1.);           
+                   mix.Component("O",16,8,2.);           
+                   mix.par("dens")=2.5;           
+                   mix.lock();           
+                   _material = mix;           
+                   _material.lock();           
+             }        
+             _create = AgCreate("MUTD");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create MUTD           
+                   Create("MUTD");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("MUTD");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("MagRefSys");           
+                   /// Add daughter volume MUTD to mother CAVE           
+                   _stacker -> Position( AgBlock::Find("MUTD"), place );           
+             } // end placement of MUTD        
+       }; // MUTDGEO5     
+ }; // namespace MUTDGEO5  
+ 

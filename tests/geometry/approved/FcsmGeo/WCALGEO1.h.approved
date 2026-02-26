@@ -1,0 +1,662 @@
+#ifndef __WCALGEO1__ 
+#define __WCALGEO1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace WCALGEO1 // $NMSPC 
+{ 
+   struct wver_t {
+float version;
+int active;
+int _index;
+};
+ 
+   struct _wver_docum_ {
+string version;
+string active;
+string _index;
+};
+ 
+    struct _wver_types_ {
+  typedef float version;
+  typedef int active;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct wver_info {
+typedef wver_t Type;
+static const char *name(){ return "wver_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct wver_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct active {
+  static const char *name() { return  "active"; }
+  static size_t Offset(){ return offsetof( struct wver_t, active ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct wver_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct wgeo_t {
+float depth;
+float nx;
+float ny;
+float dx;
+float dy;
+float clearance;
+float nlayer;
+float dzfrontspace;
+float dzfrontsteel;
+float dzpaper;
+float dzscinti;
+float dzlead;
+float dzbackplastic;
+float dzbackspace;
+int _index;
+};
+ 
+   struct _wgeo_docum_ {
+string depth;
+string nx;
+string ny;
+string dx;
+string dy;
+string clearance;
+string nlayer;
+string dzfrontspace;
+string dzfrontsteel;
+string dzpaper;
+string dzscinti;
+string dzlead;
+string dzbackplastic;
+string dzbackspace;
+string _index;
+};
+ 
+    struct _wgeo_types_ {
+  typedef float depth;
+  typedef float nx;
+  typedef float ny;
+  typedef float dx;
+  typedef float dy;
+  typedef float clearance;
+  typedef float nlayer;
+  typedef float dzfrontspace;
+  typedef float dzfrontsteel;
+  typedef float dzpaper;
+  typedef float dzscinti;
+  typedef float dzlead;
+  typedef float dzbackplastic;
+  typedef float dzbackspace;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct wgeo_info {
+typedef wgeo_t Type;
+static const char *name(){ return "wgeo_t"; }
+struct depth {
+  static const char *name() { return  "depth"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, depth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nx {
+  static const char *name() { return  "nx"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, nx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ny {
+  static const char *name() { return  "ny"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, ny ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct clearance {
+  static const char *name() { return  "clearance"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, clearance ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nlayer {
+  static const char *name() { return  "nlayer"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, nlayer ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzfrontspace {
+  static const char *name() { return  "dzfrontspace"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzfrontspace ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzfrontsteel {
+  static const char *name() { return  "dzfrontsteel"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzfrontsteel ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzpaper {
+  static const char *name() { return  "dzpaper"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzpaper ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzscinti {
+  static const char *name() { return  "dzscinti"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzscinti ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzlead {
+  static const char *name() { return  "dzlead"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzlead ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzbackplastic {
+  static const char *name() { return  "dzbackplastic"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzbackplastic ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzbackspace {
+  static const char *name() { return  "dzbackspace"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, dzbackspace ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct wgeo_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct woff_t {
+float ns;
+float xoffset;
+float yoffset;
+float zoffset;
+float angle;
+int _index;
+};
+ 
+   struct _woff_docum_ {
+string ns;
+string xoffset;
+string yoffset;
+string zoffset;
+string angle;
+string _index;
+};
+ 
+    struct _woff_types_ {
+  typedef float ns;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef float angle;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct woff_info {
+typedef woff_t Type;
+static const char *name(){ return "woff_t"; }
+struct ns {
+  static const char *name() { return  "ns"; }
+  static size_t Offset(){ return offsetof( struct woff_t, ns ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct woff_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct woff_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct woff_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct angle {
+  static const char *name() { return  "angle"; }
+  static size_t Offset(){ return offsetof( struct woff_t, angle ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct woff_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)woff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct wcut_t {
+float cutgam;
+float cutele;
+float cutneu;
+float cuthad;
+float cutmuo;
+float dcute;
+float dcutm;
+float bcute;
+float bcutm;
+int _index;
+};
+ 
+   struct _wcut_docum_ {
+string cutgam;
+string cutele;
+string cutneu;
+string cuthad;
+string cutmuo;
+string dcute;
+string dcutm;
+string bcute;
+string bcutm;
+string _index;
+};
+ 
+    struct _wcut_types_ {
+  typedef float cutgam;
+  typedef float cutele;
+  typedef float cutneu;
+  typedef float cuthad;
+  typedef float cutmuo;
+  typedef float dcute;
+  typedef float dcutm;
+  typedef float bcute;
+  typedef float bcutm;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct wcut_info {
+typedef wcut_t Type;
+static const char *name(){ return "wcut_t"; }
+struct cutgam {
+  static const char *name() { return  "cutgam"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, cutgam ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutele {
+  static const char *name() { return  "cutele"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, cutele ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutneu {
+  static const char *name() { return  "cutneu"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, cutneu ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cuthad {
+  static const char *name() { return  "cuthad"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, cuthad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutmuo {
+  static const char *name() { return  "cutmuo"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, cutmuo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcute {
+  static const char *name() { return  "dcute"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, dcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcutm {
+  static const char *name() { return  "dcutm"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, dcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcute {
+  static const char *name() { return  "bcute"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, bcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcutm {
+  static const char *name() { return  "bcutm"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, bcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct wcut_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- WMOD -- 
+   ///@defgroup WMOD_doc 
+   ///@class WMOD 
+   ///@brief is a stack of FCS EM nodule [TGeoVolume] 
+   class WMOD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WMOD() : AgBlock("WMOD","is a stack of FCS EM nodule [TGeoVolume]"){ 
+      }; 
+      ~WMOD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WTOW -- 
+   ///@defgroup WTOW_doc 
+   ///@class WTOW 
+   ///@brief is a FCS ECal tower [TGeoVolume] 
+   class WTOW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WTOW() : AgBlock("WTOW","is a FCS ECal tower [TGeoVolume]"){ 
+      }; 
+      ~WTOW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WFST -- 
+   ///@defgroup WFST_doc 
+   ///@class WFST 
+   ///@brief is a FCS ECal tower front steel plate [TGeoVolume] 
+   class WFST : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WFST() : AgBlock("WFST","is a FCS ECal tower front steel plate [TGeoVolume]"){ 
+      }; 
+      ~WFST(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WSCI -- 
+   ///@defgroup WSCI_doc 
+   ///@class WSCI 
+   ///@brief is a FCS ECal tower scintilator layer [TGeoVolume] 
+   class WSCI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WSCI() : AgBlock("WSCI","is a FCS ECal tower scintilator layer [TGeoVolume]"){ 
+      }; 
+      ~WSCI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPAP -- 
+   ///@defgroup WPAP_doc 
+   ///@class WPAP 
+   ///@brief is a FCS ECal tower paper wrap around Scinti [TGeoVolume] 
+   class WPAP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPAP() : AgBlock("WPAP","is a FCS ECal tower paper wrap around Scinti [TGeoVolume]"){ 
+      }; 
+      ~WPAP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPBP -- 
+   ///@defgroup WPBP_doc 
+   ///@class WPBP 
+   ///@brief is a FCS ECal tower lead layer [TGeoVolume] 
+   class WPBP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPBP() : AgBlock("WPBP","is a FCS ECal tower lead layer [TGeoVolume]"){ 
+      }; 
+      ~WPBP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WBPL -- 
+   ///@defgroup WBPL_doc 
+   ///@class WBPL 
+   ///@brief is a FCS ECal tower back plastic plate [TGeoVolume] 
+   class WBPL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WBPL() : AgBlock("WBPL","is a FCS ECal tower back plastic plate [TGeoVolume]"){ 
+      }; 
+      ~WBPL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class WCALGEO1 
+   /// \brief  is the Forward Calorimeter System WALL EM Calorimeter  
+   class WCALGEO1 : public AgModule 
+   { 
+      public: 
+      WCALGEO1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~WCALGEO1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace WCALGEO1 
+#endif // __WCALGEO1__ 

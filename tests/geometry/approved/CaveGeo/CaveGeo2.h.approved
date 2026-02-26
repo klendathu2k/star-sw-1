@@ -1,0 +1,671 @@
+#ifndef __CaveGeo2__ 
+#define __CaveGeo2__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace CAVEGEO2 // $NMSPC 
+{ 
+   struct cvcf_t {
+float version;
+int config;
+int tpcrefsys;
+int _index;
+};
+ 
+   struct _cvcf_docum_ {
+string version;
+string config;
+string tpcrefsys;
+string _index;
+};
+ 
+    struct _cvcf_types_ {
+  typedef float version;
+  typedef int config;
+  typedef int tpcrefsys;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cvcf_info {
+typedef cvcf_t Type;
+static const char *name(){ return "cvcf_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct tpcrefsys {
+  static const char *name() { return  "tpcrefsys"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, tpcrefsys ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct cave_t {
+float version;
+float rmin;
+float rmax[2];
+float dz[2];
+float dconc;
+int _index;
+};
+ 
+   struct _cave_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string dconc;
+string _index;
+};
+ 
+    struct _cave_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax[2];
+  typedef float dz[2];
+  typedef float dconc;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cave_info {
+typedef cave_t Type;
+static const char *name(){ return "cave_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct cave_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct cave_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct cave_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct cave_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dconc {
+  static const char *name() { return  "dconc"; }
+  static size_t Offset(){ return offsetof( struct cave_t, dconc ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cave_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct cdim_t {
+float version;
+float dceiling;
+float dfloor;
+float dnorth;
+float dsouth;
+float thickceil;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _cdim_docum_ {
+string version;
+string dceiling;
+string dfloor;
+string dnorth;
+string dsouth;
+string thickceil;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _cdim_types_ {
+  typedef float version;
+  typedef float dceiling;
+  typedef float dfloor;
+  typedef float dnorth;
+  typedef float dsouth;
+  typedef float thickceil;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cdim_info {
+typedef cdim_t Type;
+static const char *name(){ return "cdim_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dceiling {
+  static const char *name() { return  "dceiling"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, dceiling ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dfloor {
+  static const char *name() { return  "dfloor"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, dfloor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dnorth {
+  static const char *name() { return  "dnorth"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, dnorth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dsouth {
+  static const char *name() { return  "dsouth"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, dsouth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thickceil {
+  static const char *name() { return  "thickceil"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, thickceil ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cdim_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tdim_t {
+float version;
+float dceiling;
+float dfloor;
+float dnorth;
+float dsouth;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _tdim_docum_ {
+string version;
+string dceiling;
+string dfloor;
+string dnorth;
+string dsouth;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _tdim_types_ {
+  typedef float version;
+  typedef float dceiling;
+  typedef float dfloor;
+  typedef float dnorth;
+  typedef float dsouth;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tdim_info {
+typedef tdim_t Type;
+static const char *name(){ return "tdim_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dceiling {
+  static const char *name() { return  "dceiling"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, dceiling ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dfloor {
+  static const char *name() { return  "dfloor"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, dfloor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dnorth {
+  static const char *name() { return  "dnorth"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, dnorth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dsouth {
+  static const char *name() { return  "dsouth"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, dsouth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tdim_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tdim_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct shld_t {
+float version;
+float xwidth[4];
+float ywidth[4];
+float zwidth[4];
+int _index;
+};
+ 
+   struct _shld_docum_ {
+string version;
+string xwidth;
+string ywidth;
+string zwidth;
+string _index;
+};
+ 
+    struct _shld_types_ {
+  typedef float version;
+  typedef float xwidth[4];
+  typedef float ywidth[4];
+  typedef float zwidth[4];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct shld_info {
+typedef shld_t Type;
+static const char *name(){ return "shld_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct shld_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xwidth {
+  static const char *name() { return  "xwidth"; }
+  static size_t Offset(){ return offsetof( struct shld_t, xwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct ywidth {
+  static const char *name() { return  "ywidth"; }
+  static size_t Offset(){ return offsetof( struct shld_t, ywidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct zwidth {
+  static const char *name() { return  "zwidth"; }
+  static size_t Offset(){ return offsetof( struct shld_t, zwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct shld_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)shld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- HALL -- 
+   ///@defgroup HALL_doc 
+   ///@class HALL 
+   ///@brief The STAR Wide Angle Hall [TGeoVolume] 
+   class HALL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HALL() : AgBlock("HALL","The STAR Wide Angle Hall [TGeoVolume]"){ 
+      }; 
+      ~HALL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CAVE -- 
+   ///@defgroup CAVE_doc 
+   ///@class CAVE 
+   ///@brief is GSTAR cave with subsystem envelopes [TGeoVolume] 
+   class CAVE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CAVE() : AgBlock("CAVE","is GSTAR cave with subsystem envelopes [TGeoVolume]"){ 
+      }; 
+      ~CAVE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WALL -- 
+   ///@defgroup WALL_doc 
+   ///@class WALL 
+   ///@brief is the floor (or bottom) of the cave [TGeoVolume] 
+   class WALL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WALL() : AgBlock("WALL","is the floor (or bottom) of the cave [TGeoVolume]"){ 
+      }; 
+      ~WALL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SHLD -- 
+   ///@defgroup SHLD_doc 
+   ///@class SHLD 
+   ///@brief is the shielding [TGeoVolume] 
+   class SHLD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SHLD() : AgBlock("SHLD","is the shielding [TGeoVolume]"){ 
+      }; 
+      ~SHLD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HOLE -- 
+   ///@defgroup HOLE_doc 
+   ///@class HOLE 
+   ///@brief is the floor (or bottom) of the cave [TGeoVolume] 
+   class HOLE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HOLE() : AgBlock("HOLE","is the floor (or bottom) of the cave [TGeoVolume]"){ 
+      }; 
+      ~HOLE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CRAT -- 
+   ///@defgroup CRAT_doc 
+   ///@class CRAT 
+   ///@brief is the electronics crate [TGeoVolume] 
+   class CRAT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CRAT() : AgBlock("CRAT","is the electronics crate [TGeoVolume]"){ 
+      }; 
+      ~CRAT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MGWP -- 
+   ///@defgroup MGWP_doc 
+   ///@class MGWP 
+   ///@brief is the magnet water pipe [TGeoVolume] 
+   class MGWP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MGWP() : AgBlock("MGWP","is the magnet water pipe [TGeoVolume]"){ 
+      }; 
+      ~MGWP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MGWT -- 
+   ///@defgroup MGWT_doc 
+   ///@class MGWT 
+   ///@brief is the water in magnet water pipe [TGeoVolume] 
+   class MGWT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MGWT() : AgBlock("MGWT","is the water in magnet water pipe [TGeoVolume]"){ 
+      }; 
+      ~MGWT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class CaveGeo2 
+   /// \brief STAR Wide Angle Hall Geometry 
+   class CaveGeo2 : public AgModule 
+   { 
+      public: 
+      CaveGeo2(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~CaveGeo2(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace CaveGeo2 
+#endif // __CaveGeo2__ 

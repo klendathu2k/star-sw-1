@@ -1,0 +1,682 @@
+#include "PlatGeo1.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace PLATGEO1 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          wpfm_t *__wpfm = new wpfm_t; // dummy
+ AgMLStructure<wpfm_t,wpfm_info> WPFM("wpfm");
+wpfm_t &wpfm = WPFM;
+     
+          // Selectors for wpfm
+isEqual<wpfm_t, float> __wpfm_version__( __wpfm, &__wpfm->version );
+isEqual<wpfm_t, int> __wpfm__index__( __wpfm, &__wpfm->_index );
+     
+          
+	void              *wpfm_info::address   = &wpfm;
+	AgMLStructureBase   *wpfm_info::structure = &WPFM;
+     
+       PlatGeo1::PlatGeo1()     
+         : AgModule("PlatGeo1"," is the Forward Calorimeter System Platform GEOmetry ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPPL::mInstance = 0;     
+          AgBlock *WPPL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPPL();        
+                   return mInstance;        
+          }     
+          void WPPL::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPPL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPPL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wpfm.poled[int(1)-1]/2.0;              
+                            shape.par("dy")=wpfm.poled[int(2)-1]/2.0;              
+                            shape.par("dz")=wpfm.poled[int(3)-1]/2.0;              
+                            /// Shape Bbox dx=wpfm.poled[int(1)-1]/2.0 dy=wpfm.poled[int(2)-1]/2.0 dz=wpfm.poled[int(3)-1]/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPPL;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WPAR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPAR              
+                            Create("WPAR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPPL");              
+                            /// Add daughter volume WPAR to mother WPPL              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            place.par("dx")=wpfm.poled[int(1)-1]/2.0-wpfm.poled[int(4)-1];              
+                            place.par("dy")=wpfm.poled[int(2)-1]/2.0;              
+                            place.par("dz")=wpfm.poled[int(3)-1]/2.0-wpfm.poled[int(4)-1];              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      END_OF_WPPL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPPL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPIS::mInstance = 0;     
+          AgBlock *WPIS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPIS();        
+                   return mInstance;        
+          }     
+          void WPIS::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPIS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPIS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wpfm.istrd[int(1)-1]/2.0;              
+                            shape.par("dy")=wpfm.istrd[int(2)-1]/2.0;              
+                            shape.par("dz")=wpfm.istrd[int(3)-1]/2.0;              
+                            /// Shape Bbox dx=wpfm.istrd[int(1)-1]/2.0 dy=wpfm.istrd[int(2)-1]/2.0 dz=wpfm.istrd[int(3)-1]/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPIS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WPAR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPAR              
+                            Create("WPAR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPIS");              
+                            /// Add daughter volume WPAR to mother WPIS              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(+(wpfm.istrd[int(3)-1]/4.0-wpfm.istrd[int(4)-1]/2.0));              
+                            /// Translate z = +(wpfm.istrd[int(3)-1]/4.0-wpfm.istrd[int(4)-1]/2.0)              
+                            place.par("dx")=wpfm.istrd[int(1)-1]/2.0;              
+                            place.par("dy")=wpfm.istrd[int(2)-1]/2.0-wpfm.istrd[int(4)-1];              
+                            place.par("dz")=(wpfm.istrd[int(3)-1]/2.0-wpfm.istrd[int(4)-1]/2.0)/2.0;              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPIS");              
+                            /// Add daughter volume WPAR to mother WPIS              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(-(wpfm.istrd[int(3)-1]/4.0-wpfm.istrd[int(4)-1]/2.0));              
+                            /// Translate z = -(wpfm.istrd[int(3)-1]/4.0-wpfm.istrd[int(4)-1]/2.0)              
+                            place.par("dx")=wpfm.istrd[int(1)-1]/2.0;              
+                            place.par("dy")=wpfm.istrd[int(2)-1]/2.0-wpfm.istrd[int(4)-1];              
+                            place.par("dz")=(wpfm.istrd[int(3)-1]/2.0-wpfm.istrd[int(4)-1]/2.0)/2.0;              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      END_OF_WPIS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPIS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPUF::mInstance = 0;     
+          AgBlock *WPUF::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPUF();        
+                   return mInstance;        
+          }     
+          void WPUF::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPUF_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPUF");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wpfm.ustfd[int(1)-1]/2.0;              
+                            shape.par("dy")=wpfm.ustfd[int(2)-1]/2.0;              
+                            shape.par("dz")=wpfm.ustfd[int(3)-1]/2.0;              
+                            /// Shape Bbox dx=wpfm.ustfd[int(1)-1]/2.0 dy=wpfm.ustfd[int(2)-1]/2.0 dz=wpfm.ustfd[int(3)-1]/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPUF;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WPAR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPAR              
+                            Create("WPAR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPUF");              
+                            /// Add daughter volume WPAR to mother WPUF              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(wpfm.ustfd[int(4)-1]/2.0);              
+                            /// Translate z = wpfm.ustfd[int(4)-1]/2.0              
+                            place.par("dx")=wpfm.ustfd[int(1)-1]/2.0;              
+                            place.par("dy")=wpfm.ustfd[int(2)-1]/2.0-wpfm.ustfd[int(4)-1];              
+                            place.par("dz")=wpfm.ustfd[int(3)-1]/2.0-wpfm.ustfd[int(4)-1]/2.0;              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      END_OF_WPUF:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPUF     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPUN::mInstance = 0;     
+          AgBlock *WPUN::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPUN();        
+                   return mInstance;        
+          }     
+          void WPUN::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPUN_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPUN");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wpfm.ustnd[int(1)-1]/2.0;              
+                            shape.par("dy")=wpfm.ustnd[int(2)-1]/2.0;              
+                            shape.par("dz")=wpfm.ustnd[int(3)-1]/2.0;              
+                            /// Shape Bbox dx=wpfm.ustnd[int(1)-1]/2.0 dy=wpfm.ustnd[int(2)-1]/2.0 dz=wpfm.ustnd[int(3)-1]/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPUN;              
+                            _stacker -> Build(this);              
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPUN");              
+                            /// Add daughter volume WPAR to mother WPUN              
+                            place.TranslateX(+wpfm.ustnd[int(4)-1]/2.0);              
+                            /// Translate x = +wpfm.ustnd[int(4)-1]/2.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            place.par("dx")=wpfm.ustnd[int(1)-1]/2.0-wpfm.ustnd[int(4)-1]/2.0;              
+                            place.par("dy")=wpfm.ustnd[int(2)-1]/2.0-wpfm.ustnd[int(4)-1];              
+                            place.par("dz")=wpfm.ustnd[int(3)-1]/2.0;              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      END_OF_WPUN:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPUN     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPUS::mInstance = 0;     
+          AgBlock *WPUS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPUS();        
+                   return mInstance;        
+          }     
+          void WPUS::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPUS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPUS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wpfm.ustsd[int(1)-1]/2.0;              
+                            shape.par("dy")=wpfm.ustsd[int(2)-1]/2.0;              
+                            shape.par("dz")=wpfm.ustsd[int(3)-1]/2.0;              
+                            /// Shape Bbox dx=wpfm.ustsd[int(1)-1]/2.0 dy=wpfm.ustsd[int(2)-1]/2.0 dz=wpfm.ustsd[int(3)-1]/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPUS;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WPAR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPAR              
+                            Create("WPAR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WPAR");              
+                            place.SetMother("WPUS");              
+                            /// Add daughter volume WPAR to mother WPUS              
+                            place.TranslateX(-wpfm.ustsd[int(4)-1]/2.0);              
+                            /// Translate x = -wpfm.ustsd[int(4)-1]/2.0              
+                            place.TranslateY(0.0);              
+                            /// Translate y = 0.0              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            place.par("dx")=wpfm.ustsd[int(1)-1]/2.0-wpfm.ustsd[int(4)-1]/2.0;              
+                            place.par("dy")=wpfm.ustsd[int(2)-1]/2.0-wpfm.ustsd[int(4)-1];              
+                            place.par("dz")=wpfm.ustsd[int(3)-1]/2.0;              
+                            _stacker -> Position( AgBlock::Find("WPAR"), place );              
+                      } // end placement of WPAR           
+                      END_OF_WPUS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPUS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPAR::mInstance = 0;     
+          AgBlock *WPAR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPAR();        
+                   return mInstance;        
+          }     
+          void WPAR::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPAR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPAR");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0.0;              
+                            shape.par("dy")=0.0;              
+                            shape.par("dz")=0.0;              
+                            /// Shape Bbox dx=0.0 dy=0.0 dz=0.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPAR;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WPAR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPAR     
+    // ----------------------------------------------------------------------- geoctr
+       void PlatGeo1::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup PlatGeo1_revision        
+             ///@{           
+                   /// Created:    10 Aug 2018            
+             ///@}        
+             ///@addtogroup PlatGeo1_revision        
+             ///@{           
+                   /// Author: Akio Ogawa           
+             ///@}        
+             AddBlock("WPPL", WPPL::Instance());        
+             AddBlock("WPIS", WPIS::Instance());        
+             AddBlock("WPUF", WPUF::Instance());        
+             AddBlock("WPUN", WPUN::Instance());        
+             AddBlock("WPUS", WPUS::Instance());        
+             AddBlock("WPAR", WPAR::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill wpfm
+++wpfm._index;
+wpfm.version = 1;
+// wpfm_docum.version = "None";
+{
+wpfm_info::poled::Type temp = {
+wpfm_info::poled::BaseType(12.0*2.54),
+wpfm_info::poled::BaseType(155.5*2.54),
+wpfm_info::poled::BaseType(12.0*2.54),
+wpfm_info::poled::BaseType(1.0)
+}
+;
+memcpy(&wpfm.poled, &temp, sizeof(temp));;
+}
+// wpfm_docum.poled = "None";
+{
+wpfm_info::polep::Type temp = {
+wpfm_info::polep::BaseType(72.0*2.54),
+wpfm_info::polep::BaseType((-44.36-10-155.5/2)*2.54),
+wpfm_info::polep::BaseType(807.72-27*2.54)
+}
+;
+memcpy(&wpfm.polep, &temp, sizeof(temp));;
+}
+// wpfm_docum.polep = "None";
+{
+wpfm_info::istrd::Type temp = {
+wpfm_info::istrd::BaseType(231.0*2.54),
+wpfm_info::istrd::BaseType(8.0*2.54),
+wpfm_info::istrd::BaseType(8.0*2.54),
+wpfm_info::istrd::BaseType(1.0)
+}
+;
+memcpy(&wpfm.istrd, &temp, sizeof(temp));;
+}
+// wpfm_docum.istrd = "None";
+{
+wpfm_info::ist1p::Type temp = {
+wpfm_info::ist1p::BaseType(-8.0*2.54),
+wpfm_info::ist1p::BaseType((-44.36-5.0)*2.54),
+wpfm_info::ist1p::BaseType(807.72-37*2.54)
+}
+;
+memcpy(&wpfm.ist1p, &temp, sizeof(temp));;
+}
+// wpfm_docum.ist1p = "None";
+{
+wpfm_info::ist2p::Type temp = {
+wpfm_info::ist2p::BaseType(-8.0*2.54),
+wpfm_info::ist2p::BaseType((-44.36-5.0)*2.54),
+wpfm_info::ist2p::BaseType(807.72-17*2.54)
+}
+;
+memcpy(&wpfm.ist2p, &temp, sizeof(temp));;
+}
+// wpfm_docum.ist2p = "None";
+{
+wpfm_info::ustfd::Type temp = {
+wpfm_info::ustfd::BaseType(236.0*2.54),
+wpfm_info::ustfd::BaseType(12*2.54),
+wpfm_info::ustfd::BaseType(4*2.54),
+wpfm_info::ustfd::BaseType(1.0)
+}
+;
+memcpy(&wpfm.ustfd, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustfd = "None";
+{
+wpfm_info::ustfp::Type temp = {
+wpfm_info::ustfp::BaseType(-8.0*2.54),
+wpfm_info::ustfp::BaseType(-44.36*2.54),
+wpfm_info::ustfp::BaseType(807.72-(46-2)*2.54)
+}
+;
+memcpy(&wpfm.ustfp, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustfp = "None";
+{
+wpfm_info::ustnd::Type temp = {
+wpfm_info::ustnd::BaseType(4*2.54),
+wpfm_info::ustnd::BaseType(12.0*2.54),
+wpfm_info::ustnd::BaseType((46-4)*2.54),
+wpfm_info::ustnd::BaseType(1.0)
+}
+;
+memcpy(&wpfm.ustnd, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustnd = "None";
+{
+wpfm_info::ustnp::Type temp = {
+wpfm_info::ustnp::BaseType(-(118-2+8)*2.54),
+wpfm_info::ustnp::BaseType(-44.36*2.54),
+wpfm_info::ustnp::BaseType(807.72-(46-4)*2.54/2)
+}
+;
+memcpy(&wpfm.ustnp, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustnp = "None";
+{
+wpfm_info::ustsd::Type temp = {
+wpfm_info::ustsd::BaseType(4*2.54),
+wpfm_info::ustsd::BaseType(12.0*2.54),
+wpfm_info::ustsd::BaseType((46-4)*2.54),
+wpfm_info::ustsd::BaseType(1.0)
+}
+;
+memcpy(&wpfm.ustsd, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustsd = "None";
+{
+wpfm_info::ustsp::Type temp = {
+wpfm_info::ustsp::BaseType(+(118-2-8)*2.54),
+wpfm_info::ustsp::BaseType(-44.36*2.54),
+wpfm_info::ustsp::BaseType(807.72-(46-4)*2.54/2)
+}
+;
+memcpy(&wpfm.ustsp, &temp, sizeof(temp));;
+}
+// wpfm_docum.ustsp = "None";
+WPFM.fill();
+        
+             _create = AgCreate("WPPL");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create WPPL           
+                   Create("WPPL");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPPL");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPPL to mother CAVE           
+                   place.TranslateX(+wpfm.polep[int(1)-1]);           
+                   /// Translate x = +wpfm.polep[int(1)-1]           
+                   place.TranslateY(wpfm.polep[int(2)-1]);           
+                   /// Translate y = wpfm.polep[int(2)-1]           
+                   place.TranslateZ(wpfm.polep[int(3)-1]);           
+                   /// Translate z = wpfm.polep[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPPL"), place );           
+             } // end placement of WPPL        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPPL");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPPL to mother CAVE           
+                   place.TranslateX(-wpfm.polep[int(1)-1]);           
+                   /// Translate x = -wpfm.polep[int(1)-1]           
+                   place.TranslateY(wpfm.polep[int(2)-1]);           
+                   /// Translate y = wpfm.polep[int(2)-1]           
+                   place.TranslateZ(wpfm.polep[int(3)-1]);           
+                   /// Translate z = wpfm.polep[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPPL"), place );           
+             } // end placement of WPPL        
+             _create = AgCreate("WPIS");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create WPIS           
+                   Create("WPIS");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPIS");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPIS to mother CAVE           
+                   place.TranslateX(wpfm.ist1p[int(1)-1]);           
+                   /// Translate x = wpfm.ist1p[int(1)-1]           
+                   place.TranslateY(wpfm.ist1p[int(2)-1]);           
+                   /// Translate y = wpfm.ist1p[int(2)-1]           
+                   place.TranslateZ(wpfm.ist1p[int(3)-1]);           
+                   /// Translate z = wpfm.ist1p[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPIS"), place );           
+             } // end placement of WPIS        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPIS");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPIS to mother CAVE           
+                   place.TranslateX(wpfm.ist2p[int(1)-1]);           
+                   /// Translate x = wpfm.ist2p[int(1)-1]           
+                   place.TranslateY(wpfm.ist2p[int(2)-1]);           
+                   /// Translate y = wpfm.ist2p[int(2)-1]           
+                   place.TranslateZ(wpfm.ist2p[int(3)-1]);           
+                   /// Translate z = wpfm.ist2p[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPIS"), place );           
+             } // end placement of WPIS        
+             _create = AgCreate("WPUF");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create WPUF           
+                   Create("WPUF");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPUF");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPUF to mother CAVE           
+                   place.TranslateX(+wpfm.ustfp[int(1)-1]);           
+                   /// Translate x = +wpfm.ustfp[int(1)-1]           
+                   place.TranslateY(wpfm.ustfp[int(2)-1]);           
+                   /// Translate y = wpfm.ustfp[int(2)-1]           
+                   place.TranslateZ(wpfm.ustfp[int(3)-1]);           
+                   /// Translate z = wpfm.ustfp[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPUF"), place );           
+             } // end placement of WPUF        
+             _create = AgCreate("WPUN");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create WPUN           
+                   Create("WPUN");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPUN");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPUN to mother CAVE           
+                   place.TranslateX(+wpfm.ustnp[int(1)-1]);           
+                   /// Translate x = +wpfm.ustnp[int(1)-1]           
+                   place.TranslateY(wpfm.ustnp[int(2)-1]);           
+                   /// Translate y = wpfm.ustnp[int(2)-1]           
+                   place.TranslateZ(wpfm.ustnp[int(3)-1]);           
+                   /// Translate z = wpfm.ustnp[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPUN"), place );           
+             } // end placement of WPUN        
+             _create = AgCreate("WPUS");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create WPUS           
+                   Create("WPUS");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("WPUS");           
+                   place.SetMother("CAVE");           
+                   place.SetGroup("WestRefSys");           
+                   /// Add daughter volume WPUS to mother CAVE           
+                   place.TranslateX(+wpfm.ustsp[int(1)-1]);           
+                   /// Translate x = +wpfm.ustsp[int(1)-1]           
+                   place.TranslateY(wpfm.ustsp[int(2)-1]);           
+                   /// Translate y = wpfm.ustsp[int(2)-1]           
+                   place.TranslateZ(wpfm.ustsp[int(3)-1]);           
+                   /// Translate z = wpfm.ustsp[int(3)-1]           
+                   _stacker -> Position( AgBlock::Find("WPUS"), place );           
+             } // end placement of WPUS        
+       }; // PlatGeo1     
+ }; // namespace PlatGeo1  
+ 

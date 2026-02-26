@@ -1,0 +1,2772 @@
+      MODULE PsupGeo   Geometry for Pixel Support and insertion mechanism
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author F Videbaek
+      Created Nov 23th, 2013
+      +CDE,agecom,gcunit,gconst..
+      CONTENT PSUP,
+      PSBA,
+      PHBB,
+      PSHA,
+      PSHC,
+      PSHE,
+      PSHG,
+      PSHS,  PSHT,
+      PSHL,
+      PHHA,
+      PHHB,
+      PHHC,
+      PSHU,
+      PSHM,
+      PSHN,
+      PSHO,
+      PSHP,
+      PSHQ,
+      PSTO,
+      PSOC,
+      PSIC,
+      PSUC,
+      PSBC,
+      PSAL,
+      PSAK,
+      PSCC,
+      PSCI,
+      PSHI,
+      PSCL,
+      PSCK,
+      PSAR,
+      PSAT,
+      PSAH,
+      PSAS,
+      PSAA,
+      PSAB,
+      PSAC,
+      PSAD,
+      PSAE,
+      PSAF,
+      PSMB,
+      PSPA,
+      PSPB,
+      PSMD,
+      PSMI,
+      PSMJ,
+      PSMK,
+      PSML,
+      PSMM,
+      PSMN,
+      PSMO,
+      PSMP,
+      PSMQ,
+      PSMR,
+      PSMT,
+      PSCJ,
+      PSCM,
+      PSCN,
+      PSCO, PSCP, PSCQ, PSCR,
+      PSCS, PSCT, PSCU, PSCV, PSCW,
+      PSDA, PSDB, PSDC, PSDE, PSDD
+      STRUCTURE MTBP { dy(5)}
+      Integer *4 DEBUG /0/
+
+      real *4 zfirst/-283./
+
+      real *4 zlast/-57.4/
+
+      real *4 DextThk/0.1/
+
+      real *4 DextSupLen/0.4/
+
+      real *4 DextLen/1.4/
+
+      real *4 DextOutRad/7.5/
+
+      real *4 DextInRad/3.1/
+
+      real *4 MTBdx/2.1/
+
+      real *4 MTBdz/6.8/
+
+      real *4 i,xpos, ypos, zpos
+
+      FILL MTBP		! Mass TerminationBoard Paramaters
+      dy  = {    0.0,    0.8,    1.3,  1.585,  1.585} !  Offsets per MTB in y
+      ENDFILL
+      CREATE PSUP
+      CALL AgsReset 
+      CALL agml_position_begin('PSUP') 
+      %mother = 'IDSM' 
+      %title = 'PSUP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSUP') 
+      %mother = 'IDSM' 
+      %title = 'PSUP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- PSUP
+      BLOCK PSUP   Pixel Support mother volume
+      MATERIAL air
+      ATTRIBUTE PSUP seen=0
+      SHAPE pcon phi1=84 dphi=192 nz=3 zi={zfirst,
+            zlast-5,zlast} rmn={2.5,2.5,2.5} rmx={21.5,
+            21.5,8.5}
+      CREATE PSBA
+      CALL AgsReset 
+      CALL agml_position_begin('PSBA') 
+      %title = 'PSBA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -98.9675 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PHBB
+      CALL AgsReset 
+      CALL agml_position_begin('PHBB') 
+      %title = 'PHBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -15.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.4 
+      CALL agml_translate_y( %y ) 
+      ag_z = -80.735 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PHBB') 
+      %title = 'PHBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -15.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = -9.4 
+      CALL agml_translate_y( %y ) 
+      ag_z = -80.735 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PHBB') 
+      %title = 'PHBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -15.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = -9.4 
+      CALL agml_translate_y( %y ) 
+      ag_z = -117.195 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PHBB') 
+      %title = 'PHBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -15.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.4 
+      CALL agml_translate_y( %y ) 
+      ag_z = -117.195 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHA
+      CALL AgsReset 
+      CALL agml_position_begin('PSHA') 
+      %title = 'PSHA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = -4.05 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.345 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSHA') 
+      %title = 'PSHA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = -4.05 
+      CALL agml_translate_y( %y ) 
+      ag_z = -77.245 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHC
+      CALL AgsReset 
+      CALL agml_position_begin('PSHC') 
+      %title = 'PSHC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = 4.05 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.345 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 76.1303 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSHC') 
+      %title = 'PSHC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = 4.05 
+      CALL agml_translate_y( %y ) 
+      ag_z = -77.245 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 76.1303 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHE
+      CALL AgsReset 
+      CALL agml_position_begin('PSHE') 
+      %title = 'PSHE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.1121 
+      CALL agml_translate_x( %x ) 
+      ag_y = -7.87944 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.345 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = -12.5397 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHE
+      CALL AgsReset 
+      CALL agml_position_begin('PSHE') 
+      %title = 'PSHE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.1121 
+      CALL agml_translate_x( %x ) 
+      ag_y = -7.87944 
+      CALL agml_translate_y( %y ) 
+      ag_z = -77.245 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = -12.5397 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHG
+      CALL AgsReset 
+      CALL agml_position_begin('PSHG') 
+      %title = 'PSHG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.1121 
+      CALL agml_translate_x( %x ) 
+      ag_y = 7.87944 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.345 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 12.5397 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHG
+      CALL AgsReset 
+      CALL agml_position_begin('PSHG') 
+      %title = 'PSHG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.1121 
+      CALL agml_translate_x( %x ) 
+      ag_y = 7.87944 
+      CALL agml_translate_y( %y ) 
+      ag_z = -77.245 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 12.5397 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHS
+      CALL AgsReset 
+      CALL agml_position_begin('PSHS') 
+      %title = 'PSHS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.27 
+      CALL agml_translate_x( %x ) 
+      ag_y = 7.9 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.727 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSHS') 
+      %title = 'PSHS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.27 
+      CALL agml_translate_x( %x ) 
+      ag_y = -7.9 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.727 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHL
+      CALL AgsReset 
+      CALL agml_position_begin('PSHL') 
+      %mother = 'PSUP' 
+      %title = 'PSHL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -4.62 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -69.57 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = real(25.8+90.0) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHU
+      CALL AgsReset 
+      CALL agml_position_begin('PSHU') 
+      %mother = 'PSUP' 
+      %title = 'PSHU' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 2.69 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -78.38 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 25.8 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHM
+      CALL AgsReset 
+      CALL agml_position_begin('PSHM') 
+      %mother = 'PSUP' 
+      %title = 'PSHM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -57.96 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHN
+      CALL AgsReset 
+      CALL agml_position_begin('PSHN') 
+      %mother = 'PSUP' 
+      %title = 'PSHN' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -58.8 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHO
+      CALL AgsReset 
+      CALL agml_position_begin('PSHO') 
+      %mother = 'PSUP' 
+      %title = 'PSHO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 5.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -61.6 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHP
+      CALL AgsReset 
+      CALL agml_position_begin('PSHP') 
+      %mother = 'PSUP' 
+      %title = 'PSHP' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHQ
+      CALL AgsReset 
+      CALL agml_position_begin('PSHQ') 
+      %mother = 'PSUP' 
+      %title = 'PSHQ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSTO
+      CALL AgsReset 
+      CALL agml_position_begin('PSTO') 
+      %title = 'PSTO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-0.8-DextThk/2.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 5.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSTO') 
+      %title = 'PSTO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-0.8-DextThk/2.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -5.09 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSOC
+      CALL AgsReset 
+      CALL agml_position_begin('PSOC') 
+      %title = 'PSOC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSIC
+      CALL AgsReset 
+      CALL agml_position_begin('PSIC') 
+      %title = 'PSIC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSUC
+      CALL AgsReset 
+      CALL agml_position_begin('PSUC') 
+      %title = 'PSUC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 6.61 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSUC') 
+      %title = 'PSUC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = -6.61 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSBC
+      CALL AgsReset 
+      CALL agml_position_begin('PSBC') 
+      %title = 'PSBC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 3.57 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSBC') 
+      %title = 'PSBC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = -3.57 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zLast-DextLen/2.0-DextSupLen) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCC
+      CALL AgsReset 
+      CALL agml_position_begin('PSCC') 
+      %title = 'PSCC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-120-4.0/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSHI
+      CALL AgsReset 
+      CALL agml_position_begin('PSHI') 
+      %title = 'PSHI' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -17.94 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-(6.8-1.0/2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -122.6 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSHI') 
+      %title = 'PSHI' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -17.94 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(+(6.8-1.0/2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -122.6 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAL
+      CALL AgsReset 
+      CALL agml_position_begin('PSAL') 
+      %title = 'PSAL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -7.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -173.8 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAK
+      CALL AgsReset 
+      CALL agml_position_begin('PSAK') 
+      %title = 'PSAK' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -7.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-79.5-2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCL
+      CALL AgsReset 
+      CALL agml_position_begin('PSCL') 
+      %title = 'PSCL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.2+0.1) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(146+280.8)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCK
+      CALL AgsReset 
+      CALL agml_position_begin('PSCK') 
+      %title = 'PSCK' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+2.7/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -6.44 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(146+280.8)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCK') 
+      %title = 'PSCK' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+2.7/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 6.44 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(146+280.8)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAR
+      CALL AgsReset 
+      CALL agml_position_begin('PSAR') 
+      %title = 'PSAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+0.7/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(129.53+146.03)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAT
+      CALL AgsReset 
+      CALL agml_position_begin('PSAT') 
+      %title = 'PSAT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+0.7+4.5/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-6.8+0.55/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(129.53+146.03)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSAT') 
+      %title = 'PSAT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+0.7+4.5/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(+6.8-0.55/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(129.53+146.03)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAS
+      CALL AgsReset 
+      CALL agml_position_begin('PSAS') 
+      %title = 'PSAS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+0.35) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -4.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -148.53 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSAS') 
+      %title = 'PSAS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-18.+0.35) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 4.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -148.53 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAA
+      CALL AgsReset 
+      CALL agml_position_begin('PSAA') 
+      %title = 'PSAA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-13.9275-0.15) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -135.38 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAB
+      CALL AgsReset 
+      CALL agml_position_begin('PSAB') 
+      %title = 'PSAB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-13.9275-0.3-1.92/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 4.2 
+      CALL agml_translate_y( %y ) 
+      ag_z = -135.38 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSAB') 
+      %title = 'PSAB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-13.9275-0.3-1.92/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -4.2 
+      CALL agml_translate_y( %y ) 
+      ag_z = -135.38 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAD
+      CALL AgsReset 
+      CALL agml_position_begin('PSAD') 
+      %title = 'PSAD' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -15.9517 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -126.47 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAE
+      CALL AgsReset 
+      CALL agml_position_begin('PSAE') 
+      %title = 'PSAE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.12 
+      CALL agml_translate_x( %x ) 
+      ag_y = 3.6 
+      CALL agml_translate_y( %y ) 
+      ag_z = -125.67 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSAE') 
+      %title = 'PSAE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -18.12 
+      CALL agml_translate_x( %x ) 
+      ag_y = -3.6 
+      CALL agml_translate_y( %y ) 
+      ag_z = -125.67 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSAF
+      CALL AgsReset 
+      CALL agml_position_begin('PSAF') 
+      %title = 'PSAF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -16.81 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -126.12 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      DO i = 0, 4
+      xpos = -7.27+i*2.1
+      ypos = 13.575+MTBP_dy(i+1)
+      zPos=- 108.85-6.8*i
+      CREATE PSMB
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSMB') 
+      %title = 'PSMB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSMB') 
+      %title = 'PSMB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      xpos = -7.5467-0.06+i*2.1
+      ypos = 13.575+MTBP_dy(i+1)
+      zPos=- 94.29-6.8*i
+      CREATE PSPA
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSPA') 
+      %title = 'PSPA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSPA') 
+      %title = 'PSPA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      xpos = -7.52+0.25+i*2.1
+      ypos = 13.575+MTBP_dy(i+1)
+      zPos=- 87.60-6.8*i
+      CREATE PSPB
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSPB') 
+      %title = 'PSPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSPB') 
+      %title = 'PSPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      xpos = -8.2+i*2.1
+      ypos = 8.214+MTBP_dy(i+1)
+      zPos=- 119.68-6.8*i
+      CREATE PSMT
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSMT') 
+      %title = 'PSMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSMT') 
+      %title = 'PSMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      xpos = -8.0+i*2.1
+      ypos =  15.8+MTBP_dy(i+1)
+      zPos = -126.6+1.5-6.8*i
+      CREATE PSCJ
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSCJ') 
+      %title = 'PSCJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSCJ') 
+      %title = 'PSCJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ypos = 11.2+MTBP_dy(i+1)
+      CREATE PSCJ
+      IF ( i.eq.4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('PSCJ') 
+      %title = 'PSCJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CALL AgsReset 
+      CALL agml_position_begin('PSCJ') 
+      %title = 'PSCJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xpos) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ypos) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      END DO
+      CREATE PSCM
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -8.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 15.8 
+      CALL agml_translate_y( %y ) 
+      ag_z = -136.6 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.9 
+      CALL agml_translate_x( %x ) 
+      ag_y = 16.6 
+      CALL agml_translate_y( %y ) 
+      ag_z = -143.4 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -3.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 17.1 
+      CALL agml_translate_y( %y ) 
+      ag_z = -150.2 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 17.385 
+      CALL agml_translate_y( %y ) 
+      ag_z = -157.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.4 
+      CALL agml_translate_x( %x ) 
+      ag_y = 17.385 
+      CALL agml_translate_y( %y ) 
+      ag_z = -163.8 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -8.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 11.2 
+      CALL agml_translate_y( %y ) 
+      ag_z = -136.6 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.9 
+      CALL agml_translate_x( %x ) 
+      ag_y = 12.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -143.4 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -3.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 12.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = -150.2 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 12.785 
+      CALL agml_translate_y( %y ) 
+      ag_z = -157.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCM') 
+      %title = 'PSCM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.4 
+      CALL agml_translate_x( %x ) 
+      ag_y = 12.785 
+      CALL agml_translate_y( %y ) 
+      ag_z = -163.8 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCN
+      CALL AgsReset 
+      CALL agml_position_begin('PSCN') 
+      %title = 'PSCN' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 10.15 
+      CALL agml_translate_y( %y ) 
+      ag_z = -156.6 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 36.552 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 49.6502 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCN
+      CALL AgsReset 
+      CALL agml_position_begin('PSCN') 
+      %title = 'PSCN' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(10.15-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -156.6 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 36.552 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 49.6502 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCS
+      CALL AgsReset 
+      CALL agml_position_begin('PSCS') 
+      %title = 'PSCS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 4.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = -213.3 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCS') 
+      %title = 'PSCS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(4.5-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -213.3 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCO
+      CALL AgsReset 
+      CALL agml_position_begin('PSCO') 
+      %title = 'PSCO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -11.75 
+      CALL agml_translate_x( %x ) 
+      ag_y = 10.1 
+      CALL agml_translate_y( %y ) 
+      ag_z = -163.4 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 41.1692 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 48.0128 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCO') 
+      %title = 'PSCO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -11.75 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(10.1-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -163.4 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 41.1692 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 48.0128 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCT
+      CALL AgsReset 
+      CALL agml_position_begin('PSCT') 
+      %title = 'PSCT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 3.6 
+      CALL agml_translate_y( %y ) 
+      ag_z = -216.7 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCT') 
+      %title = 'PSCT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(3.6-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -216.7 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCP
+      CALL AgsReset 
+      CALL agml_position_begin('PSCP') 
+      %title = 'PSCP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -10.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.9 
+      CALL agml_translate_y( %y ) 
+      ag_z = -170.2 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 44.921 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 46.2189 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCP
+      CALL AgsReset 
+      CALL agml_position_begin('PSCP') 
+      %title = 'PSCP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -10.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(9.9-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -170.2 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 44.921 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 46.2189 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCU
+      CALL AgsReset 
+      CALL agml_position_begin('PSCU') 
+      %title = 'PSCU' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 2.7 
+      CALL agml_translate_y( %y ) 
+      ag_z = -220.1 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCU') 
+      %title = 'PSCU' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(2.7-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -220.1 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCQ
+      CALL AgsReset 
+      CALL agml_position_begin('PSCQ') 
+      %title = 'PSCQ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -9.65 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.5925 
+      CALL agml_translate_y( %y ) 
+      ag_z = -177.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 48.0668 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 44.4268 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCQ') 
+      %title = 'PSCQ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -9.65 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(9.5925-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -177.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 48.0668 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 44.4268 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCV
+      CALL AgsReset 
+      CALL agml_position_begin('PSCV') 
+      %title = 'PSCV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 1.8 
+      CALL agml_translate_y( %y ) 
+      ag_z = -223.5 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCV') 
+      %title = 'PSCV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(1.8-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -223.5 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCR
+      CALL AgsReset 
+      CALL agml_position_begin('PSCR') 
+      %title = 'PSCR' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -8.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.1425 
+      CALL agml_translate_y( %y ) 
+      ag_z = -183.8 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 50.6688 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 42.4845 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCR') 
+      %title = 'PSCR' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -8.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(9.1425-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -183.8 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 50.6688 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 42.4845 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSCW
+      CALL AgsReset 
+      CALL agml_position_begin('PSCW') 
+      %title = 'PSCW' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.9 
+      CALL agml_translate_y( %y ) 
+      ag_z = -226.9 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSCW') 
+      %title = 'PSCW' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -17.6 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(0.9-4.6) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -226.9 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSDA
+      CALL AgsReset 
+      CALL agml_position_begin('PSDA') 
+      %title = 'PSDA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = 14.4375 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.55 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 10.7752 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -21.7242 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDA') 
+      %title = 'PSDA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.4375-1.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.55 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 10.7752 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -21.7242 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDA') 
+      %title = 'PSDA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.4375-2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.55 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 10.7752 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -21.7242 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDA') 
+      %title = 'PSDA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -5.7 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.4375-3.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -72.55 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 10.7752 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -21.7242 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSDB
+      CALL AgsReset 
+      CALL agml_position_begin('PSDB') 
+      %title = 'PSDB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -4.275 
+      CALL agml_translate_x( %x ) 
+      ag_y = 14.8375 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.95 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 6.37038 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -48.2809 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDB') 
+      %title = 'PSDB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -4.275 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.8375-1.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.95 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 6.37038 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -48.2809 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDB') 
+      %title = 'PSDB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -4.275 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.8375-2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.95 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 6.37038 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -48.2809 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDB') 
+      %title = 'PSDB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -4.275 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(14.8375-3) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -75.95 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 6.37038 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -48.2809 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSDC
+      CALL AgsReset 
+      CALL agml_position_begin('PSDC') 
+      %title = 'PSDC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -2.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = 15.0875 
+      CALL agml_translate_y( %y ) 
+      ag_z = -79.35 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.7303 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -79.0113 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDC') 
+      %title = 'PSDC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -2.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.0875-1.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -79.35 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.7303 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -79.0113 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDC') 
+      %title = 'PSDC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -2.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.0875-2.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -79.35 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.7303 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -79.0113 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDC') 
+      %title = 'PSDC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -2.85 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.0875-3.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -79.35 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.7303 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -79.0113 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSDD
+      CALL AgsReset 
+      CALL agml_position_begin('PSDD') 
+      %title = 'PSDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.425 
+      CALL agml_translate_x( %x ) 
+      ag_y = 15.23 
+      CALL agml_translate_y( %y ) 
+      ag_z = -82.75 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.4314 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -106.552 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDD') 
+      %title = 'PSDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.425 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-1.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -82.75 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.4314 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -106.552 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDD') 
+      %title = 'PSDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.425 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-2.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -82.75 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.4314 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -106.552 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDD') 
+      %title = 'PSDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.425 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-3.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -82.75 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.4314 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -106.552 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSDE
+      CALL AgsReset 
+      CALL agml_position_begin('PSDE') 
+      %title = 'PSDE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 4.44089e-16 
+      CALL agml_translate_x( %x ) 
+      ag_y = 15.23 
+      CALL agml_translate_y( %y ) 
+      ag_z = -86.15 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.55415 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -127.569 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDE') 
+      %title = 'PSDE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 4.44089e-16 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-1) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -86.15 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.55415 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -127.569 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDE') 
+      %title = 'PSDE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 4.44089e-16 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -86.15 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.55415 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -127.569 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSDE') 
+      %title = 'PSDE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 4.44089e-16 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(15.23-3) 
+      CALL agml_translate_y( %y ) 
+      ag_z = -86.15 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 4.55415 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = -127.569 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMD
+      CALL AgsReset 
+      CALL agml_position_begin('PSMD') 
+      %title = 'PSMD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -13.335 
+      CALL agml_translate_x( %x ) 
+      ag_y = 6.55625 
+      CALL agml_translate_y( %y ) 
+      ag_z = -121.97 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMJ
+      CALL AgsReset 
+      CALL agml_position_begin('PSMJ') 
+      %title = 'PSMJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -9.15 
+      CALL agml_translate_x( %x ) 
+      ag_y = 7.74 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(123.97+101.87)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMK
+      CALL AgsReset 
+      CALL agml_position_begin('PSMK') 
+      %title = 'PSMK' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -8.075 
+      CALL agml_translate_x( %x ) 
+      ag_y = 7.71 
+      CALL agml_translate_y( %y ) 
+      ag_z = -113.829 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSML
+      CALL AgsReset 
+      CALL agml_position_begin('PSML') 
+      %title = 'PSML' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -6.05 
+      CALL agml_translate_x( %x ) 
+      ag_y = 8.51 
+      CALL agml_translate_y( %y ) 
+      ag_z = -118.765 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMM
+      CALL AgsReset 
+      CALL agml_position_begin('PSMM') 
+      %title = 'PSMM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -3.95 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.01 
+      CALL agml_translate_y( %y ) 
+      ag_z = -125.522 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMN
+      CALL AgsReset 
+      CALL agml_position_begin('PSMN') 
+      %title = 'PSMN' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.45 
+      CALL agml_translate_x( %x ) 
+      ag_y = 9.3 
+      CALL agml_translate_y( %y ) 
+      ag_z = -133.617 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMO
+      CALL AgsReset 
+      CALL agml_position_begin('PSMO') 
+      %title = 'PSMO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -0.65 
+      CALL agml_translate_x( %x ) 
+      ag_y = -9.3 
+      CALL agml_translate_y( %y ) 
+      ag_z = -139.367 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMQ
+      CALL AgsReset 
+      CALL agml_position_begin('PSMQ') 
+      %title = 'PSMQ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -7.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 8.01 
+      CALL agml_translate_y( %y ) 
+      ag_z = -115.407 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMR
+      CALL AgsReset 
+      CALL agml_position_begin('PSMR') 
+      %title = 'PSMR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -4.9 
+      CALL agml_translate_x( %x ) 
+      ag_y = 8.66 
+      CALL agml_translate_y( %y ) 
+      ag_z = -122.122 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PSMP
+      CALL AgsReset 
+      CALL agml_position_begin('PSMP') 
+      %title = 'PSMP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -1.4 
+      CALL agml_translate_x( %x ) 
+      ag_y = -9.9505 
+      CALL agml_translate_y( %y ) 
+      ag_z = -138.312 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSBA
+      BLOCK PSBA   Carriage Base
+      ATTRIBUTE PSBA seen=1 colo=4
+      MATERIAL Al20 a=26.8 z=13 dens=2.7*0.2 absl=37.2/0.2 radl=8.9/0.2
+      SHAPE tubs rmin=18.5 rmax=21.2 phi1=158,
+            phi2=202 dz=21.00
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PHBB
+      BLOCK PHBB   Carriage support ring
+      ATTRIBUTE PHBB seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE tube rmin=1.65 rmax=1.95 dz=2.75
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHA
+      BLOCK PSHA   PSHA Hinge release partA (1)
+      ATTRIBUTE PSHA seen=1 colo=3
+      MATERIAL Al40 a=26.8 z=13 dens=2.7*0.4 absl=37.2/0.4 radl=8.9/0.4
+      SHAPE trap dz=0.725 thet=0 phi=0 h1=4.05,
+            bl1=1.25 tl1=1.25 alp1=-13.8697 h2=4.05 bl2=1.25,
+            tl2=1.25 alp2=-13.8697
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHC
+      BLOCK PSHC   PSHC Hinge release partA (1)
+      ATTRIBUTE PSHC seen=1 colo=3
+      MATERIAL Al40
+      SHAPE trap dz=0.725 thet=0 phi=0 h1=1.21355,
+            bl1=4.17163 tl1=4.17163 alp1=-13.8697 h2=1.21355,
+            bl2=4.17163 tl2=4.17163 alp2=-13.8697
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHE
+      BLOCK PSHE   PSHE Hinge release partA (1)
+      ATTRIBUTE PSHE seen=1 colo=3
+      MATERIAL Al40
+      SHAPE trap dz=0.725 thet=0 phi=0 h1=1.2114,
+            bl1=4.86608 tl1=5.19822 alp1=-19.7742 h2=1.2114,
+            bl2=4.86608 tl2=5.19822 alp2=-19.7742
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHG
+      BLOCK PSHG   PSHG Hinge release partA (1)
+      ATTRIBUTE PSHG seen=1 colo=3
+      MATERIAL Al40
+      SHAPE trap dz=0.725 thet=0 phi=0 h1=1.2114,
+            bl1=5.19822 tl1=4.86608 alp1=19.7742 h2=1.2114,
+            bl2=5.19822 tl2=4.86608 alp2=19.7742
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHS
+      BLOCK PSHS   PSHG Hinge release air cylinder
+      ATTRIBUTE PSHS seen=1 colo=3
+      MATERIAL Aluminium
+      SHAPE tube rmin=0 rmax=3.3/2 dz=3.786/2
+      CREATE PSHT
+      CALL AgsReset 
+      CALL agml_position_begin('PSHT') 
+      %mother = 'PSHS' 
+      %title = 'PSHT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.1 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHT
+      BLOCK PSHT   PSHG Hinge release air cylinder- inner part
+      ATTRIBUTE PSHT seen=1 colo=4
+      MATERIAL Air
+      SHAPE tube rmin=0 rmax=2.9/2 dz=(3.786-0.2)/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHL
+      BLOCK PSHL   Hinge leaf inner Mother volume
+      ATTRIBUTE PSHL seen=1 colo=7
+      MATERIAL Air
+      SHAPE box dx=9.0/2.0 dy=19.75/2.0 dz=1.3/2.0
+      CREATE PHHA
+      CALL AgsReset 
+      CALL agml_position_begin('PHHA') 
+      %mother = 'PSHL' 
+      %title = 'PHHA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((19.75-4.86)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PHHA') 
+      %mother = 'PSHL' 
+      %title = 'PHHA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-(19.75-4.86)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PHHB
+      CALL AgsReset 
+      CALL agml_position_begin('PHHB') 
+      %mother = 'PSHL' 
+      %title = 'PHHB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(1.8-4.5)/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PHHC
+      CALL AgsReset 
+      CALL agml_position_begin('PHHC') 
+      %mother = 'PSHL' 
+      %title = 'PHHC' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = -7.8 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PHHA
+      BLOCK PHHA   Part of hinge leave
+      ATTRIBUTE PHHA seen=1 colo=5
+      MATERIAL AL20
+      SHAPE box dx=4.5 dy=4.86/2 dz=1.3/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PHHB
+      BLOCK PHHB   Part of hinge leave
+      ATTRIBUTE PHHB seen=1 colo=5
+      MATERIAL Al20
+      SHAPE box dx=6.3/2.0 dy=(19.75-2*4.86)/2,
+            dz=1.3/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PHHC
+      BLOCK PHHC   Outer hinge leaf
+      ATTRIBUTE PHHC seen=1 colo=5
+      MATERIAL Al20
+      SHAPE tubs rmin=6.0 rmax=6.0+1.6 phi1=-55.67,
+            phi2=+55.67 dz=1.3/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHU
+      BLOCK PSHU   Outer hinge leaf
+      ATTRIBUTE PSHU seen=1 colo=5
+      MATERIAL Al20
+      SHAPE tubs rmin=19.53 rmax=21.03 phi1=158,
+            phi2=202 dz=10.12/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHM
+      BLOCK PSHM   Extension tube attach ring
+      ATTRIBUTE PSHM seen=1 colo=4
+      MATERIAL Al40
+      SHAPE tubs rmin=15.2/2 rmax=17.8/2.0 phi1=106,
+            phi2=254 dz=DextSupLen/2+0.3
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSTO
+      BLOCK PSTO   Dtube ext plane top
+      ATTRIBUTE PSTO seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=DextThk/2.0 dy=3.04/2.0 dz=DextLen/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSOC
+      BLOCK PSOC   a Outside CYLinder
+      MATERIAL Aluminium
+      ATTRIBUTE PSOC seen=1 colo=4
+      SHAPE tubs rmin=DextOutRad rmax=DExtOutRad+DextThk,
+            phi1=180-76.4 phi2=180+76.4 dz=DextLen/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSIC
+      BLOCK PSIC   a Outside CYLinder
+      MATERIAL Aluminium
+      ATTRIBUTE PSIC seen=1 colo=4
+      SHAPE tubs rmin=DextInRad rmax=DExtInRad+DextThk,
+            phi1=180-65.5 phi2=180+65.5 dz=DextLen/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSUC
+      BLOCK PSUC   a Upper corner
+      MATERIAL Aluminium
+      ATTRIBUTE PSUC seen=1 colo=4
+      SHAPE tubs rmin=0.7 rmax=0.7+DextThk phi1=0,
+            phi2=103.6 dz=DextLen/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSBC
+      BLOCK PSBC   a Upper corner
+      MATERIAL Aluminium
+      ATTRIBUTE PSBC seen=1 colo=4
+      SHAPE tubs rmin=0.7 rmax=0.7+DextThk phi1=360-65.8,
+            phi2=360 dz=DextLen/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHN
+      BLOCK PSHN   Carriage Base ext
+      ATTRIBUTE PSHN seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE tubs rmin=8.7 rmax=8.9 phi1=106 phi2=254,
+            dz=0.35
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHO
+      BLOCK PSHO   Carriage Base ext center part
+      ATTRIBUTE PSHO seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE cons dz=5.90/2 rmn1=20.4 rmx1=20.8,
+            rmn2=8.7+5.0 rmx2=8.9+5.0 phi1=160 phi2=200
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHP
+      BLOCK PSHP   Carriage Base ext
+      ATTRIBUTE PSHP seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE pcon phi1=106 dphi=150-106 nz=2 zi={-61.6-2.95,
+            -61.6+2.95} rmn={12.7,8.7} rmx={12.9,
+            8.9}
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHQ
+      BLOCK PSHQ   Carriage Base ext
+      ATTRIBUTE PSHQ seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE pcon phi1=200 dphi=160-106 nz=2 zi={-61.6-2.95,
+            -61.6+2.95} rmn={12.7,8.7} rmx={12.9,
+            8.9}
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAL
+      BLOCK PSAL   Air Al hose
+      MATERIAL Aluminium
+      ATTRIBUTE PSAL seen=1 colo=1
+      SHAPE tube rmin=3.7 rmax=3.8 dz=172.2/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAK
+      BLOCK PSAK   Air duct 1/2
+      COMPONENT O A=16 Z=8 W=2*16./100.
+      COMPONENT C A=12 Z=6 W=5*12./100.
+      COMPONENT H A=1 Z=1 W=8*1.0/100.
+      MIXTURE DELRIN dens=1.2
+      ATTRIBUTE PSAK seen=1 colo=1
+      SHAPE tube rmin=3.6 rmax=3.8 dz=11.0/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCC
+      BLOCK PSCC   Carriage tray bracket (solid part)
+      ATTRIBUTE PSCC seen=1 colo=5
+      MATERIAL Aluminium
+      SHAPE tubs rmin=18.7 rmax=21.2 phi1=180-19,
+            phi2=180+19 dz=4.0/2.0
+      CREATE PSCI
+      CALL AgsReset 
+      CALL agml_position_begin('PSCI') 
+      %mother = 'PSCC' 
+      %title = 'PSCI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -0.1 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCI
+      BLOCK PSCI   Carriage tray bracket (hollow part)
+      ATTRIBUTE PSCI seen=1 colo=2
+      MATERIAL Air
+      SHAPE tubs rmin=18.9 rmax=21.0 phi1=180-18,
+            phi2=180+18 dz=(4.0-0.2)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSHI
+      BLOCK PSHI   Carriage hinge part
+      ATTRIBUTE PSHI seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=1.4/2. dy=1.0/2. dz=5.4/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCL
+      BLOCK PSCL   Cable support ladder
+      ATTRIBUTE PSCL seen=1 colo=1
+      MATERIAL Al30 a=26.8 z=13 dens=2.7*0.3 absl=37.2/0.3 radl=8.9/0.3
+      SHAPE box dx=0.1 dy=12.9/2.0 dz=134.7/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCK
+      BLOCK PSCK   Cable support ladder top and bottom
+      ATTRIBUTE PSCK seen=1 colo=1
+      MATERIAL Aluminium
+      SHAPE box dx=2.7/2 dy=0.1 dz=134.7/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAR
+      BLOCK PSAR   base slide  center, vertical part
+      ATTRIBUTE PSAR seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.7/2 dy=13.6/2. dz=16.5/2
+      CREATE PSAH
+      CALL AgsReset 
+      CALL agml_position_begin('PSAH') 
+      %mother = 'PSAR' 
+      %title = 'PSAH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(8.25/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PSAH') 
+      %mother = 'PSAR' 
+      %title = 'PSAH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-8.25/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAH
+      BLOCK PSAH   base slide  cutout in vertical part
+      ATTRIBUTE PSAH seen=1 colo=1
+      MATERIAL Air
+      SHAPE box dx=0.7/2 dy=4.4/2. dz=5.5/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAT
+      BLOCK PSAT   base slide  center, top and bottom part
+      ATTRIBUTE PSAT seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=4.5/2 dy=0.55/2. dz=16.5/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAS
+      BLOCK PSAS   base slide - cable holder support
+      ATTRIBUTE PSAS seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.7/2. dy=1.5/2. dz=5.0/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAA
+      BLOCK PSAA   base slide-1  center, vertical part
+      ATTRIBUTE PSAA seen=1 colo=3
+      MATERIAL Aluminium
+      SHAPE box dx=0.3/2 dy=8.6/2. dz=20.04/2
+      CREATE PSAC
+      CALL AgsReset 
+      CALL agml_position_begin('PSAC') 
+      %mother = 'PSAA' 
+      %title = 'PSAC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = -2.8 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAC
+      BLOCK PSAC   base slide-1  hole in vertical part
+      ATTRIBUTE PSAC seen=1 colo=3
+      MATERIAL Air
+      SHAPE box dx=0.3/2 dy=5.8/2. dz=13.5/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAB
+      BLOCK PSAB   base slide-1  center, top and bottom
+      ATTRIBUTE PSAB seen=1 colo=3
+      MATERIAL Aluminium
+      SHAPE box dx=1.92/2. dy=0.2/2 dz=20.04/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAD
+      BLOCK PSAD   base slide-1 hingepin, includes part from BH termination
+      ATTRIBUTE PSAD seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE tube rmin=0.19 rmax=1.1125 dz=3.3884/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAE
+      BLOCK PSAE   base slide-1  arm hinge female
+      ATTRIBUTE PSAE seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=1.6/2. dy=4.0/2 dz=3.0/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSAF
+      BLOCK PSAF   base slide-1  arm hinge termination plate
+      ATTRIBUTE PSAF seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.51/2. dy=11.2/2 dz=3.1/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMB
+      BLOCK PSMB   MTB g10 board
+      ATTRIBUTE PSMB seen=1 colo=3
+      COMPONENT Si A=28.08 Z=14 W=0.6*1*28./60.
+      COMPONENT O A=16 Z=8 W=0.6*2*16./60.
+      COMPONENT C A=12 Z=6 W=0.4*8*12./174.
+      COMPONENT H A=1 Z=1 W=0.4*14*1./174.
+      COMPONENT O A=16 Z=8 W=0.4*4*16./174.
+      MIXTURE g10 dens=1.7
+      SHAPE box dx=0.15*2.2/2 dy=11.4/2 dz=26.1/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMT
+      BLOCK PSMT   MTB Al support block
+      ATTRIBUTE PSMT seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=1.5*0.5 dy=0.8/2 dz=1.5/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSPA
+      BLOCK PSPA   MTB Cable Park Front
+      ATTRIBUTE PSPA seen=1 colo=5
+      MATERIAL DELRIN
+      SHAPE box dx=0.35/2 dy=11.4/2 dz=4.9/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSPB
+      BLOCK PSPB   MTB Cable Park Front (2)
+      ATTRIBUTE PSPB seen=1 colo=5
+      MATERIAL Delrin
+      SHAPE box dx=0.30/2 dy=11.4/2 dz=11.85/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMD
+      BLOCK PSMD   PSMD MTB support Arm
+      ATTRIBUTE PSMD seen=1 colo=600
+      MATERIAL Aluminium
+      SHAPE trap dz=2 thet=0 phi=0 h1=4.085 bl1=1.0975,
+            tl1=1.5 alp1=-17.0941 h2=4.085 bl2=1.0975,
+            tl2=1.5 alp2=-17.0941
+      CREATE PSMI
+      CALL AgsReset 
+      CALL agml_position_begin('PSMI') 
+      %title = 'PSMI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -0.07333 
+      CALL agml_translate_x( %x ) 
+      ag_y = -0.1 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMI
+      BLOCK PSMI   PSMI MTB support Arm hollow
+      ATTRIBUTE PSMI seen=1 colo=632
+      MATERIAL Air
+      SHAPE trap dz=1.8 thet=0 phi=0 h1=3.985,
+            bl1=0.994219 tl1=1.38687 alp1=-17.0941 h2=3.985,
+            bl2=0.994219 tl2=1.38687 alp2=-17.0941
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMJ
+      BLOCK PSMJ   MTB Al support Arm piece 1
+      ATTRIBUTE PSMJ seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.1 dy=2.4/2 dz=(123.97-101.87)/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMK
+      BLOCK PSMK   PSMK MTB support Plate A
+      ATTRIBUTE PSMK seen=1 colo=632
+      MATERIAL Aluminium
+      SHAPE trap dz=0.1 thet=0 phi=0 h1=0.975,
+            bl1=13.5373 tl1=10.3804 alp1=-121.703 h2=0.975,
+            bl2=13.5373 tl2=10.3804 alp2=-121.703
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSML
+      BLOCK PSML   PSML MTB support Plate B
+      ATTRIBUTE PSML seen=1 colo=632
+      MATERIAL Aluminium
+      SHAPE trap dz=0.1 thet=0 phi=0 h1=1.05 bl1=13.622,
+            tl1=13.5373 alp1=-107.367 h2=1.05 bl2=13.622,
+            tl2=13.5373 alp2=-107.367
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMM
+      BLOCK PSMM   PSMM MTB support Plate C
+      ATTRIBUTE PSMM seen=1 colo=632
+      MATERIAL Aluminium
+      SHAPE trap dz=0.1 thet=0 phi=0 h1=1.05 bl1=13.622,
+            tl1=13.6218 alp1=72.8375 h2=1.05 bl2=13.622,
+            tl2=13.6218 alp2=72.8375
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMN
+      BLOCK PSMN   PSMN MTB support Plate D
+      ATTRIBUTE PSMN seen=1 colo=632
+      MATERIAL Aluminium
+      SHAPE trap dz=0.1 thet=0 phi=0 h1=1.45 bl1=13.6218,
+            tl1=13.6214 alp1=72.8375 h2=1.45 bl2=13.6218,
+            tl2=13.6214 alp2=72.8375
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMO
+      BLOCK PSMO   PSME MTB support Plate E part b
+      ATTRIBUTE PSMO seen=1 colo=632
+      MATERIAL Aluminium
+      SHAPE trap dz=0.1 thet=0 phi=0 h1=0.65 bl1=13.6214,
+            tl1=11.5116 alp1=58.3593 h2=0.65 bl2=13.6214,
+            tl2=11.5116 alp2=58.3593
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMQ
+      BLOCK PSMQ   MTB Al support Arm vertical piece 2
+      ATTRIBUTE PSMQ seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.1 dy=0.40 dz=13.5373
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMR
+      BLOCK PSMR   MTB Al support Arm vertical piece 3
+      ATTRIBUTE PSMR seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.1 dy=0.25 dz=13.622
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSMP
+      BLOCK PSMP   MTB Al support Arm vertical piece 5
+      ATTRIBUTE PSMP seen=1 colo=4
+      MATERIAL Aluminium
+      SHAPE box dx=0.1 dy=0.75 dz=13.622
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCJ
+      BLOCK PSCJ   MTB Connector
+      ATTRIBUTE PSMJ seen=1 colo=2
+      MATERIAL Zinc a=65.38 z=30 dens=7.14
+      SHAPE box dx=0.4 dy=4.2/2 dz=3.0/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCM
+      BLOCK PSCM   Signal cable
+      ATTRIBUTE PSCM seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=10
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCN
+      BLOCK PSCN   MTB cable
+      ATTRIBUTE PSCN seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=12.4484
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCS
+      BLOCK PSCS   MTB cable in tray
+      ATTRIBUTE PSCS seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=46.7
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCO
+      BLOCK PSCO   MTB cable
+      ATTRIBUTE PSCO seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=13.2843
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCT
+      BLOCK PSCT   MTB cable in tray
+      ATTRIBUTE PSCT seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=43.3
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCP
+      BLOCK PSCP   MTB cable
+      ATTRIBUTE PSCP seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=14.1227
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCU
+      BLOCK PSCU   MTB cable in tray
+      ATTRIBUTE PSCU seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=39.9
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCQ
+      BLOCK PSCQ   MTB cable
+      ATTRIBUTE PSCQ seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=14.9641
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCV
+      BLOCK PSCV   MTB cable in tray
+      ATTRIBUTE PSCV seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=36.5
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCR
+      BLOCK PSCR   MTB cable
+      ATTRIBUTE PSCR seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=15.7778
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSCW
+      BLOCK PSCW   MTB cable in tray
+      ATTRIBUTE PSCW seen=1 colo=2
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.3 dz=33.1
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSDA
+      BLOCK PSDA   MTB cable
+      ATTRIBUTE PSDA seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.2 dz=9.21243
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSDB
+      BLOCK PSDB   MTB cable
+      ATTRIBUTE PSDB seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.2 dz=12.5274
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSDC
+      BLOCK PSDC   MTB cable
+      ATTRIBUTE PSDC seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.2 dz=15.9042
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSDD
+      BLOCK PSDD   MTB cable
+      ATTRIBUTE PSDD seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.2 dz=19.3077
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PSDE
+      BLOCK PSDE   MTB cable
+      ATTRIBUTE PSDE seen=1 colo=632
+      MATERIAL Copper
+      SHAPE tube rmin=0 rmax=0.2 dz=22.7217
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module PsupGeo]	 <<==='; (A32,/,/);
+      END! Module PsupGeo

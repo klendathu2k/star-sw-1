@@ -1,0 +1,2496 @@
+#ifndef __tpceGeo5__ 
+#define __tpceGeo5__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace TPCEGEO5 // $NMSPC 
+{ 
+   struct tpcc_t {
+float version;
+int misalign;
+int _index;
+};
+ 
+   struct _tpcc_docum_ {
+string version;
+string misalign;
+string _index;
+};
+ 
+    struct _tpcc_types_ {
+  typedef float version;
+  typedef int misalign;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tpcc_info {
+typedef tpcc_t Type;
+static const char *name(){ return "tpcc_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct tpcc_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct misalign {
+  static const char *name() { return  "misalign"; }
+  static size_t Offset(){ return offsetof( struct tpcc_t, misalign ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tpcc_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tpcg_t {
+float version;
+int tpadconfig;
+float rmin;
+float rmax;
+float rminifc;
+float lengtht;
+float length;
+float lengthw;
+float lengthv;
+float dzenvelop;
+float wheelir;
+float wheelr0;
+float wheelr1;
+float wheelr2;
+float wheeltotalribwidth;
+float wheelribwidth;
+float wheelribheight;
+float wheelboxdx;
+float wheelboxdy;
+float wheelor1;
+float wheelor;
+float wheelthk1;
+float wheelthk;
+float sengasor;
+float membthk;
+float tocsdr;
+float tokadr;
+float tonxdr;
+float toaddr;
+float toigdr;
+float toaldr;
+float tohadr;
+float tiaddr;
+float tinxdr;
+float tikadr;
+float tialdr;
+float tifcrf;
+float tifcdrt;
+float dzyf1;
+float dzyf2;
+float dzyf3;
+float padplanethickness;
+float dgateground;
+float wiremountwidth;
+float wiremountheight;
+float dxrdo;
+float dyrdo;
+float dzrdo;
+float zrdo;
+float heigtube;
+float widtube;
+float rdocoolingdx;
+float rdocoolingdy;
+float rdocoolingdz;
+float zgatinggrid;
+float zgroundgrid;
+float deadzone;
+float danode[2];
+float tofmax;
+int ntpssdiv;
+int _index;
+};
+ 
+   struct _tpcg_docum_ {
+string version;
+string tpadconfig;
+string rmin;
+string rmax;
+string rminifc;
+string lengtht;
+string length;
+string lengthw;
+string lengthv;
+string dzenvelop;
+string wheelir;
+string wheelr0;
+string wheelr1;
+string wheelr2;
+string wheeltotalribwidth;
+string wheelribwidth;
+string wheelribheight;
+string wheelboxdx;
+string wheelboxdy;
+string wheelor1;
+string wheelor;
+string wheelthk1;
+string wheelthk;
+string sengasor;
+string membthk;
+string tocsdr;
+string tokadr;
+string tonxdr;
+string toaddr;
+string toigdr;
+string toaldr;
+string tohadr;
+string tiaddr;
+string tinxdr;
+string tikadr;
+string tialdr;
+string tifcrf;
+string tifcdrt;
+string dzyf1;
+string dzyf2;
+string dzyf3;
+string padplanethickness;
+string dgateground;
+string wiremountwidth;
+string wiremountheight;
+string dxrdo;
+string dyrdo;
+string dzrdo;
+string zrdo;
+string heigtube;
+string widtube;
+string rdocoolingdx;
+string rdocoolingdy;
+string rdocoolingdz;
+string zgatinggrid;
+string zgroundgrid;
+string deadzone;
+string danode;
+string tofmax;
+string ntpssdiv;
+string _index;
+};
+ 
+    struct _tpcg_types_ {
+  typedef float version;
+  typedef int tpadconfig;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float rminifc;
+  typedef float lengtht;
+  typedef float length;
+  typedef float lengthw;
+  typedef float lengthv;
+  typedef float dzenvelop;
+  typedef float wheelir;
+  typedef float wheelr0;
+  typedef float wheelr1;
+  typedef float wheelr2;
+  typedef float wheeltotalribwidth;
+  typedef float wheelribwidth;
+  typedef float wheelribheight;
+  typedef float wheelboxdx;
+  typedef float wheelboxdy;
+  typedef float wheelor1;
+  typedef float wheelor;
+  typedef float wheelthk1;
+  typedef float wheelthk;
+  typedef float sengasor;
+  typedef float membthk;
+  typedef float tocsdr;
+  typedef float tokadr;
+  typedef float tonxdr;
+  typedef float toaddr;
+  typedef float toigdr;
+  typedef float toaldr;
+  typedef float tohadr;
+  typedef float tiaddr;
+  typedef float tinxdr;
+  typedef float tikadr;
+  typedef float tialdr;
+  typedef float tifcrf;
+  typedef float tifcdrt;
+  typedef float dzyf1;
+  typedef float dzyf2;
+  typedef float dzyf3;
+  typedef float padplanethickness;
+  typedef float dgateground;
+  typedef float wiremountwidth;
+  typedef float wiremountheight;
+  typedef float dxrdo;
+  typedef float dyrdo;
+  typedef float dzrdo;
+  typedef float zrdo;
+  typedef float heigtube;
+  typedef float widtube;
+  typedef float rdocoolingdx;
+  typedef float rdocoolingdy;
+  typedef float rdocoolingdz;
+  typedef float zgatinggrid;
+  typedef float zgroundgrid;
+  typedef float deadzone;
+  typedef float danode[2];
+  typedef float tofmax;
+  typedef int ntpssdiv;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tpcg_info {
+typedef tpcg_t Type;
+static const char *name(){ return "tpcg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tpadconfig {
+  static const char *name() { return  "tpadconfig"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tpadconfig ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rminifc {
+  static const char *name() { return  "rminifc"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rminifc ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lengtht {
+  static const char *name() { return  "lengtht"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, lengtht ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lengthw {
+  static const char *name() { return  "lengthw"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, lengthw ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lengthv {
+  static const char *name() { return  "lengthv"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, lengthv ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzenvelop {
+  static const char *name() { return  "dzenvelop"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dzenvelop ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelir {
+  static const char *name() { return  "wheelir"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelir ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelr0 {
+  static const char *name() { return  "wheelr0"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelr0 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelr1 {
+  static const char *name() { return  "wheelr1"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelr1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelr2 {
+  static const char *name() { return  "wheelr2"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelr2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheeltotalribwidth {
+  static const char *name() { return  "wheeltotalribwidth"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheeltotalribwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelribwidth {
+  static const char *name() { return  "wheelribwidth"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelribwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelribheight {
+  static const char *name() { return  "wheelribheight"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelribheight ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelboxdx {
+  static const char *name() { return  "wheelboxdx"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelboxdx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelboxdy {
+  static const char *name() { return  "wheelboxdy"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelboxdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelor1 {
+  static const char *name() { return  "wheelor1"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelor1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelor {
+  static const char *name() { return  "wheelor"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelthk1 {
+  static const char *name() { return  "wheelthk1"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelthk1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wheelthk {
+  static const char *name() { return  "wheelthk"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wheelthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sengasor {
+  static const char *name() { return  "sengasor"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, sengasor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct membthk {
+  static const char *name() { return  "membthk"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, membthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tocsdr {
+  static const char *name() { return  "tocsdr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tocsdr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tokadr {
+  static const char *name() { return  "tokadr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tokadr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tonxdr {
+  static const char *name() { return  "tonxdr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tonxdr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct toaddr {
+  static const char *name() { return  "toaddr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, toaddr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct toigdr {
+  static const char *name() { return  "toigdr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, toigdr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct toaldr {
+  static const char *name() { return  "toaldr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, toaldr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tohadr {
+  static const char *name() { return  "tohadr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tohadr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tiaddr {
+  static const char *name() { return  "tiaddr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tiaddr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tinxdr {
+  static const char *name() { return  "tinxdr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tinxdr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tikadr {
+  static const char *name() { return  "tikadr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tikadr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tialdr {
+  static const char *name() { return  "tialdr"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tialdr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tifcrf {
+  static const char *name() { return  "tifcrf"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tifcrf ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tifcdrt {
+  static const char *name() { return  "tifcdrt"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tifcdrt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzyf1 {
+  static const char *name() { return  "dzyf1"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dzyf1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzyf2 {
+  static const char *name() { return  "dzyf2"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dzyf2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzyf3 {
+  static const char *name() { return  "dzyf3"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dzyf3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct padplanethickness {
+  static const char *name() { return  "padplanethickness"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, padplanethickness ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dgateground {
+  static const char *name() { return  "dgateground"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dgateground ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wiremountwidth {
+  static const char *name() { return  "wiremountwidth"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wiremountwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct wiremountheight {
+  static const char *name() { return  "wiremountheight"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, wiremountheight ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dxrdo {
+  static const char *name() { return  "dxrdo"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dxrdo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dyrdo {
+  static const char *name() { return  "dyrdo"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dyrdo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzrdo {
+  static const char *name() { return  "dzrdo"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, dzrdo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zrdo {
+  static const char *name() { return  "zrdo"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, zrdo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct heigtube {
+  static const char *name() { return  "heigtube"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, heigtube ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct widtube {
+  static const char *name() { return  "widtube"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, widtube ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdocoolingdx {
+  static const char *name() { return  "rdocoolingdx"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rdocoolingdx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdocoolingdy {
+  static const char *name() { return  "rdocoolingdy"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rdocoolingdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdocoolingdz {
+  static const char *name() { return  "rdocoolingdz"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, rdocoolingdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zgatinggrid {
+  static const char *name() { return  "zgatinggrid"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, zgatinggrid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zgroundgrid {
+  static const char *name() { return  "zgroundgrid"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, zgroundgrid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct deadzone {
+  static const char *name() { return  "deadzone"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, deadzone ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct danode {
+  static const char *name() { return  "danode"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, danode ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct tofmax {
+  static const char *name() { return  "tofmax"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, tofmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ntpssdiv {
+  static const char *name() { return  "ntpssdiv"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, ntpssdiv ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tpcg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tprs_t {
+float sec;
+float nrow;
+float pitch;
+float width;
+float super;
+float danode;
+float rpads[40];
+float npads[40];
+int _index;
+};
+ 
+   struct _tprs_docum_ {
+string sec;
+string nrow;
+string pitch;
+string width;
+string super;
+string danode;
+string rpads;
+string npads;
+string _index;
+};
+ 
+    struct _tprs_types_ {
+  typedef float sec;
+  typedef float nrow;
+  typedef float pitch;
+  typedef float width;
+  typedef float super;
+  typedef float danode;
+  typedef float rpads[40];
+  typedef float npads[40];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tprs_info {
+typedef tprs_t Type;
+static const char *name(){ return "tprs_t"; }
+struct sec {
+  static const char *name() { return  "sec"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, sec ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nrow {
+  static const char *name() { return  "nrow"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, nrow ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pitch {
+  static const char *name() { return  "pitch"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, pitch ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct width {
+  static const char *name() { return  "width"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, width ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct super {
+  static const char *name() { return  "super"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, super ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct danode {
+  static const char *name() { return  "danode"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, danode ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rpads {
+  static const char *name() { return  "rpads"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, rpads ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[40];
+};
+struct npads {
+  static const char *name() { return  "npads"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, npads ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[40];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tprs_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tprs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tecw_t {
+float sec;
+float gapwidi;
+float gapwido;
+float gapheit;
+float gaprad;
+float inwidth;
+float ouwidth;
+float widthlip;
+float noribs;
+float zsteprib;
+float widthrib;
+float height;
+float thick;
+float thickal;
+float rmin;
+float rcenter;
+float holedx;
+float holedy;
+int _index;
+};
+ 
+   struct _tecw_docum_ {
+string sec;
+string gapwidi;
+string gapwido;
+string gapheit;
+string gaprad;
+string inwidth;
+string ouwidth;
+string widthlip;
+string noribs;
+string zsteprib;
+string widthrib;
+string height;
+string thick;
+string thickal;
+string rmin;
+string rcenter;
+string holedx;
+string holedy;
+string _index;
+};
+ 
+    struct _tecw_types_ {
+  typedef float sec;
+  typedef float gapwidi;
+  typedef float gapwido;
+  typedef float gapheit;
+  typedef float gaprad;
+  typedef float inwidth;
+  typedef float ouwidth;
+  typedef float widthlip;
+  typedef float noribs;
+  typedef float zsteprib;
+  typedef float widthrib;
+  typedef float height;
+  typedef float thick;
+  typedef float thickal;
+  typedef float rmin;
+  typedef float rcenter;
+  typedef float holedx;
+  typedef float holedy;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tecw_info {
+typedef tecw_t Type;
+static const char *name(){ return "tecw_t"; }
+struct sec {
+  static const char *name() { return  "sec"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, sec ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gapwidi {
+  static const char *name() { return  "gapwidi"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, gapwidi ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gapwido {
+  static const char *name() { return  "gapwido"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, gapwido ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gapheit {
+  static const char *name() { return  "gapheit"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, gapheit ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct gaprad {
+  static const char *name() { return  "gaprad"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, gaprad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct inwidth {
+  static const char *name() { return  "inwidth"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, inwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ouwidth {
+  static const char *name() { return  "ouwidth"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, ouwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct widthlip {
+  static const char *name() { return  "widthlip"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, widthlip ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct noribs {
+  static const char *name() { return  "noribs"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, noribs ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zsteprib {
+  static const char *name() { return  "zsteprib"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, zsteprib ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct widthrib {
+  static const char *name() { return  "widthrib"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, widthrib ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct height {
+  static const char *name() { return  "height"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, height ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thick {
+  static const char *name() { return  "thick"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, thick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thickal {
+  static const char *name() { return  "thickal"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, thickal ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rcenter {
+  static const char *name() { return  "rcenter"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, rcenter ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct holedx {
+  static const char *name() { return  "holedx"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, holedx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct holedy {
+  static const char *name() { return  "holedy"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, holedy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tecw_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tecw_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tpcr_t {
+float rdovthk;
+float rdothk;
+float rdolen;
+float nrdobrd;
+float rdoht[9];
+int _index;
+};
+ 
+   struct _tpcr_docum_ {
+string rdovthk;
+string rdothk;
+string rdolen;
+string nrdobrd;
+string rdoht;
+string _index;
+};
+ 
+    struct _tpcr_types_ {
+  typedef float rdovthk;
+  typedef float rdothk;
+  typedef float rdolen;
+  typedef float nrdobrd;
+  typedef float rdoht[9];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tpcr_info {
+typedef tpcr_t Type;
+static const char *name(){ return "tpcr_t"; }
+struct rdovthk {
+  static const char *name() { return  "rdovthk"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, rdovthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdothk {
+  static const char *name() { return  "rdothk"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, rdothk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdolen {
+  static const char *name() { return  "rdolen"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, rdolen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nrdobrd {
+  static const char *name() { return  "nrdobrd"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, nrdobrd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rdoht {
+  static const char *name() { return  "rdoht"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, rdoht ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[9];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tpcr_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tpcr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tfee_t {
+float vers;
+float carddx;
+float carddy;
+float carddz;
+float platedx;
+float platedy;
+float platedz;
+float assemblythickness;
+float ribdx;
+float ribdy;
+float ribdz;
+float ass[3];
+int _index;
+};
+ 
+   struct _tfee_docum_ {
+string vers;
+string carddx;
+string carddy;
+string carddz;
+string platedx;
+string platedy;
+string platedz;
+string assemblythickness;
+string ribdx;
+string ribdy;
+string ribdz;
+string ass;
+string _index;
+};
+ 
+    struct _tfee_types_ {
+  typedef float vers;
+  typedef float carddx;
+  typedef float carddy;
+  typedef float carddz;
+  typedef float platedx;
+  typedef float platedy;
+  typedef float platedz;
+  typedef float assemblythickness;
+  typedef float ribdx;
+  typedef float ribdy;
+  typedef float ribdz;
+  typedef float ass[3];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tfee_info {
+typedef tfee_t Type;
+static const char *name(){ return "tfee_t"; }
+struct vers {
+  static const char *name() { return  "vers"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, vers ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct carddx {
+  static const char *name() { return  "carddx"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, carddx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct carddy {
+  static const char *name() { return  "carddy"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, carddy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct carddz {
+  static const char *name() { return  "carddz"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, carddz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct platedx {
+  static const char *name() { return  "platedx"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, platedx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct platedy {
+  static const char *name() { return  "platedy"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, platedy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct platedz {
+  static const char *name() { return  "platedz"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, platedz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct assemblythickness {
+  static const char *name() { return  "assemblythickness"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, assemblythickness ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribdx {
+  static const char *name() { return  "ribdx"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, ribdx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribdy {
+  static const char *name() { return  "ribdy"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, ribdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribdz {
+  static const char *name() { return  "ribdz"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, ribdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ass {
+  static const char *name() { return  "ass"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, ass ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tfee_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tfee_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct ribs_t {
+float version;
+float inout;
+float num;
+float x[16];
+float dx[16];
+float y[16];
+float dy[16];
+int _index;
+};
+ 
+   struct _ribs_docum_ {
+string version;
+string inout;
+string num;
+string x;
+string dx;
+string y;
+string dy;
+string _index;
+};
+ 
+    struct _ribs_types_ {
+  typedef float version;
+  typedef float inout;
+  typedef float num;
+  typedef float x[16];
+  typedef float dx[16];
+  typedef float y[16];
+  typedef float dy[16];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ribs_info {
+typedef ribs_t Type;
+static const char *name(){ return "ribs_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct inout {
+  static const char *name() { return  "inout"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, inout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct num {
+  static const char *name() { return  "num"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, num ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[16];
+};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[16];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[16];
+};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[16];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ribs_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ribs_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct holz_t {
+int inout;
+int numberofrows;
+int numberperrow[16];
+float yholes[160];
+int _index;
+};
+ 
+   struct _holz_docum_ {
+string inout;
+string numberofrows;
+string numberperrow;
+string yholes;
+string _index;
+};
+ 
+    struct _holz_types_ {
+  typedef int inout;
+  typedef int numberofrows;
+  typedef int numberperrow[16];
+  typedef float yholes[160];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct holz_info {
+typedef holz_t Type;
+static const char *name(){ return "holz_t"; }
+struct inout {
+  static const char *name() { return  "inout"; }
+  static size_t Offset(){ return offsetof( struct holz_t, inout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)holz_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct numberofrows {
+  static const char *name() { return  "numberofrows"; }
+  static size_t Offset(){ return offsetof( struct holz_t, numberofrows ); }
+  static void* address(){ 
+         size_t iadd = (size_t)holz_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct numberperrow {
+  static const char *name() { return  "numberperrow"; }
+  static size_t Offset(){ return offsetof( struct holz_t, numberperrow ); }
+  static void* address(){ 
+         size_t iadd = (size_t)holz_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[16];
+};
+struct yholes {
+  static const char *name() { return  "yholes"; }
+  static size_t Offset(){ return offsetof( struct holz_t, yholes ); }
+  static void* address(){ 
+         size_t iadd = (size_t)holz_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[160];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct holz_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)holz_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct cool_t {
+int inout;
+float tubelength[16];
+int _index;
+};
+ 
+   struct _cool_docum_ {
+string inout;
+string tubelength;
+string _index;
+};
+ 
+    struct _cool_types_ {
+  typedef int inout;
+  typedef float tubelength[16];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cool_info {
+typedef cool_t Type;
+static const char *name(){ return "cool_t"; }
+struct inout {
+  static const char *name() { return  "inout"; }
+  static size_t Offset(){ return offsetof( struct cool_t, inout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cool_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct tubelength {
+  static const char *name() { return  "tubelength"; }
+  static size_t Offset(){ return offsetof( struct cool_t, tubelength ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cool_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[16];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cool_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cool_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- TPCE -- 
+   ///@defgroup TPCE_doc 
+   ///@class TPCE 
+   ///@brief is the TPC envelope [TGeoVolume] 
+   class TPCE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPCE() : AgBlock("TPCE","is the TPC envelope [TGeoVolume]"){ 
+      }; 
+      ~TPCE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TPCM -- 
+   ///@defgroup TPCM_doc 
+   ///@class TPCM 
+   ///@brief is the Central Membrane placed in TPC [TGeoVolume] 
+   class TPCM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPCM() : AgBlock("TPCM","is the Central Membrane placed in TPC [TGeoVolume]"){ 
+      }; 
+      ~TPCM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TIFC -- 
+   ///@defgroup TIFC_doc 
+   ///@class TIFC 
+   ///@brief defines the Inner Field Cage placed in TPC [TGeoVolume] 
+   class TIFC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TIFC() : AgBlock("TIFC","defines the Inner Field Cage placed in TPC [TGeoVolume]"){ 
+      }; 
+      ~TIFC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TIKA -- 
+   ///@defgroup TIKA_doc 
+   ///@class TIKA 
+   ///@brief is the kapton film of the inner field cage [TGeoVolume] 
+   class TIKA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TIKA() : AgBlock("TIKA","is the kapton film of the inner field cage [TGeoVolume]"){ 
+      }; 
+      ~TIKA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TINX -- 
+   ///@defgroup TINX_doc 
+   ///@class TINX 
+   ///@brief is the inner nomex structureure [TGeoVolume] 
+   class TINX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TINX() : AgBlock("TINX","is the inner nomex structureure [TGeoVolume]"){ 
+      }; 
+      ~TINX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TIAD -- 
+   ///@defgroup TIAD_doc 
+   ///@class TIAD 
+   ///@brief the inner adhesive structureure [TGeoVolume] 
+   class TIAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TIAD() : AgBlock("TIAD","the inner adhesive structureure [TGeoVolume]"){ 
+      }; 
+      ~TIAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOFC -- 
+   ///@defgroup TOFC_doc 
+   ///@class TOFC 
+   ///@brief defines outer field cage - fill it WITH insulating gas already [TGeoVolume] 
+   class TOFC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOFC() : AgBlock("TOFC","defines outer field cage - fill it WITH insulating gas already [TGeoVolume]"){ 
+      }; 
+      ~TOFC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOFS -- 
+   ///@defgroup TOFS_doc 
+   ///@class TOFS 
+   ///@brief is the Outer Field Cage structureure [TGeoVolume] 
+   class TOFS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOFS() : AgBlock("TOFS","is the Outer Field Cage structureure [TGeoVolume]"){ 
+      }; 
+      ~TOFS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOKA -- 
+   ///@defgroup TOKA_doc 
+   ///@class TOKA 
+   ///@brief is MYLAR layer [TGeoVolume] 
+   class TOKA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOKA() : AgBlock("TOKA","is MYLAR layer [TGeoVolume]"){ 
+      }; 
+      ~TOKA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TONX -- 
+   ///@defgroup TONX_doc 
+   ///@class TONX 
+   ///@brief is Nomex support [TGeoVolume] 
+   class TONX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TONX() : AgBlock("TONX","is Nomex support [TGeoVolume]"){ 
+      }; 
+      ~TONX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOAD -- 
+   ///@defgroup TOAD_doc 
+   ///@class TOAD 
+   ///@brief is Adhesive layer [TGeoVolume] 
+   class TOAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOAD() : AgBlock("TOAD","is Adhesive layer [TGeoVolume]"){ 
+      }; 
+      ~TOAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOIG -- 
+   ///@defgroup TOIG_doc 
+   ///@class TOIG 
+   ///@brief is Insulating Gas (Nitrogen) [TGeoVolume] 
+   class TOIG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOIG() : AgBlock("TOIG","is Insulating Gas (Nitrogen) [TGeoVolume]"){ 
+      }; 
+      ~TOIG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TOHA -- 
+   ///@defgroup TOHA_doc 
+   ///@class TOHA 
+   ///@brief Gas Containment Vessel (Al) + HA [TGeoVolume] 
+   class TOHA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TOHA() : AgBlock("TOHA","Gas Containment Vessel (Al) + HA [TGeoVolume]"){ 
+      }; 
+      ~TOHA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TSWH -- 
+   ///@defgroup TSWH_doc 
+   ///@class TSWH 
+   ///@brief TpcSectorWhole is Sector as Whole [TGeoVolume] 
+   class TSWH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TSWH() : AgBlock("TSWH","TpcSectorWhole is Sector as Whole [TGeoVolume]"){ 
+      }; 
+      ~TSWH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TSAW -- 
+   ///@defgroup TSAW_doc 
+   ///@class TSAW 
+   ///@brief TpcSectorAndWheel [TGeoVolume] 
+   class TSAW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TSAW() : AgBlock("TSAW","TpcSectorAndWheel [TGeoVolume]"){ 
+      }; 
+      ~TSAW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TSAS -- 
+   ///@defgroup TSAS_doc 
+   ///@class TSAS 
+   ///@brief TpcInnerSectorAssembly & TpcOuterSectorAssembly TSAS and TSA1 [TGeoVolume] 
+   class TSAS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TSAS() : AgBlock("TSAS","TpcInnerSectorAssembly & TpcOuterSectorAssembly TSAS and TSA1 [TGeoVolume]"){ 
+      }; 
+      ~TSAS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWAS -- 
+   ///@defgroup TWAS_doc 
+   ///@class TWAS 
+   ///@brief TpcWheelInnerAssembly & TpcWheelOuterAssembly TWAS and TWA1 [TGeoVolume] 
+   class TWAS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWAS() : AgBlock("TWAS","TpcWheelInnerAssembly & TpcWheelOuterAssembly TWAS and TWA1 [TGeoVolume]"){ 
+      }; 
+      ~TWAS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FEEA -- 
+   ///@defgroup FEEA_doc 
+   ///@class FEEA 
+   ///@brief TGeoVolumeAssembly(FEE) [TGeoVolume] 
+   class FEEA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FEEA() : AgBlock("FEEA","TGeoVolumeAssembly(FEE) [TGeoVolume]"){ 
+      }; 
+      ~FEEA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FEEP -- 
+   ///@defgroup FEEP_doc 
+   ///@class FEEP 
+   ///@brief FEEplate [TGeoVolume] 
+   class FEEP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FEEP() : AgBlock("FEEP","FEEplate [TGeoVolume]"){ 
+      }; 
+      ~FEEP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FEER -- 
+   ///@defgroup FEER_doc 
+   ///@class FEER 
+   ///@brief FEERib [TGeoVolume] 
+   class FEER : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FEER() : AgBlock("FEER","FEERib [TGeoVolume]"){ 
+      }; 
+      ~FEER(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FEEI -- 
+   ///@defgroup FEEI_doc 
+   ///@class FEEI 
+   ///@brief FEEitself [TGeoVolume] 
+   class FEEI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FEEI() : AgBlock("FEEI","FEEitself [TGeoVolume]"){ 
+      }; 
+      ~FEEI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TALS -- 
+   ///@defgroup TALS_doc 
+   ///@class TALS 
+   ///@brief TpcSectorAlSupport the Sector G10 alliminium support [TGeoVolume] 
+   class TALS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TALS() : AgBlock("TALS","TpcSectorAlSupport the Sector G10 alliminium support [TGeoVolume]"){ 
+      }; 
+      ~TALS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TSGT -- 
+   ///@defgroup TSGT_doc 
+   ///@class TSGT 
+   ///@brief TpcSectorG10 the Sector G10 [TGeoVolume] 
+   class TSGT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TSGT() : AgBlock("TSGT","TpcSectorG10 the Sector G10 [TGeoVolume]"){ 
+      }; 
+      ~TSGT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWBT -- 
+   ///@defgroup TWBT_doc 
+   ///@class TWBT 
+   ///@brief //WheelBottom [TGeoVolume] 
+   class TWBT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWBT() : AgBlock("TWBT","//WheelBottom [TGeoVolume]"){ 
+      }; 
+      ~TWBT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWRI -- 
+   ///@defgroup TWRI_doc 
+   ///@class TWRI 
+   ///@brief WheelOuterRing [TGeoVolume] 
+   class TWRI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWRI() : AgBlock("TWRI","WheelOuterRing [TGeoVolume]"){ 
+      }; 
+      ~TWRI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWRG -- 
+   ///@defgroup TWRG_doc 
+   ///@class TWRG 
+   ///@brief WheelOuterRing PGON part [TGeoVolume] 
+   class TWRG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWRG() : AgBlock("TWRG","WheelOuterRing PGON part [TGeoVolume]"){ 
+      }; 
+      ~TWRG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWRC -- 
+   ///@defgroup TWRC_doc 
+   ///@class TWRC 
+   ///@brief WheelOuterRing PCON part [TGeoVolume] 
+   class TWRC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWRC() : AgBlock("TWRC","WheelOuterRing PCON part [TGeoVolume]"){ 
+      }; 
+      ~TWRC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWTR -- 
+   ///@defgroup TWTR_doc 
+   ///@class TWTR 
+   ///@brief TpcWheelTopRib [TGeoVolume] 
+   class TWTR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWTR() : AgBlock("TWTR","TpcWheelTopRib [TGeoVolume]"){ 
+      }; 
+      ~TWTR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWMR -- 
+   ///@defgroup TWMR_doc 
+   ///@class TWMR 
+   ///@brief TpcWheelMiddleRib [TGeoVolume] 
+   class TWMR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWMR() : AgBlock("TWMR","TpcWheelMiddleRib [TGeoVolume]"){ 
+      }; 
+      ~TWMR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRDO -- 
+   ///@defgroup TRDO_doc 
+   ///@class TRDO 
+   ///@brief TpcRDOAssembly [TGeoVolume] 
+   class TRDO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRDO() : AgBlock("TRDO","TpcRDOAssembly [TGeoVolume]"){ 
+      }; 
+      ~TRDO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TBRW -- 
+   ///@defgroup TBRW_doc 
+   ///@class TBRW 
+   ///@brief WheelRibBox [TGeoVolume] 
+   class TBRW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TBRW() : AgBlock("TBRW","WheelRibBox [TGeoVolume]"){ 
+      }; 
+      ~TBRW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWRB -- 
+   ///@defgroup TWRB_doc 
+   ///@class TWRB 
+   ///@brief TpcWheelRib [TGeoVolume] 
+   class TWRB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWRB() : AgBlock("TWRB","TpcWheelRib [TGeoVolume]"){ 
+      }; 
+      ~TWRB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TCOO -- 
+   ///@defgroup TCOO_doc 
+   ///@class TCOO 
+   ///@brief CoolingTube [TGeoVolume] 
+   class TCOO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TCOO() : AgBlock("TCOO","CoolingTube [TGeoVolume]"){ 
+      }; 
+      ~TCOO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TCAB -- 
+   ///@defgroup TCAB_doc 
+   ///@class TCAB 
+   ///@brief Cables [TGeoVolume] 
+   class TCAB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TCAB() : AgBlock("TCAB","Cables [TGeoVolume]"){ 
+      }; 
+      ~TCAB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRDC -- 
+   ///@defgroup TRDC_doc 
+   ///@class TRDC 
+   ///@brief RDOCard [TGeoVolume] 
+   class TRDC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRDC() : AgBlock("TRDC","RDOCard [TGeoVolume]"){ 
+      }; 
+      ~TRDC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRIB -- 
+   ///@defgroup TRIB_doc 
+   ///@class TRIB 
+   ///@brief Tpc Ribs [TGeoVolume] 
+   class TRIB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRIB() : AgBlock("TRIB","Tpc Ribs [TGeoVolume]"){ 
+      }; 
+      ~TRIB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TWIR -- 
+   ///@defgroup TWIR_doc 
+   ///@class TWIR 
+   ///@brief WireMount [TGeoVolume] 
+   class TWIR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TWIR() : AgBlock("TWIR","WireMount [TGeoVolume]"){ 
+      }; 
+      ~TWIR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- THOL -- 
+   ///@defgroup THOL_doc 
+   ///@class THOL 
+   ///@brief the Sector holes for FEE [TGeoVolume] 
+   class THOL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      THOL() : AgBlock("THOL","the Sector holes for FEE [TGeoVolume]"){ 
+      }; 
+      ~THOL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FEES -- 
+   ///@defgroup FEES_doc 
+   ///@class FEES 
+   ///@brief TFEESocket [TGeoVolume] 
+   class FEES : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FEES() : AgBlock("FEES","TFEESocket [TGeoVolume]"){ 
+      }; 
+      ~FEES(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TPGV -- 
+   ///@defgroup TPGV_doc 
+   ///@class TPGV 
+   ///@brief is the Gas Volume placed in TPC [TGeoVolume] 
+   class TPGV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPGV() : AgBlock("TPGV","is the Gas Volume placed in TPC [TGeoVolume]"){ 
+      }; 
+      ~TPGV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TPSS -- 
+   ///@defgroup TPSS_doc 
+   ///@class TPSS 
+   ///@brief is a division of gas volume corresponding to a supersectors [TGeoVolume] 
+   class TPSS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPSS() : AgBlock("TPSS","is a division of gas volume corresponding to a supersectors [TGeoVolume]"){ 
+      }; 
+      ~TPSS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TPAD -- 
+   ///@defgroup TPAD_doc 
+   ///@class TPAD 
+   ///@brief Cylindrical division of TPC gas volume... breaks projective padrows [TGeoVolume] 
+   class TPAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPAD() : AgBlock("TPAD","Cylindrical division of TPC gas volume... breaks projective padrows [TGeoVolume]"){ 
+      }; 
+      ~TPAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class tpceGeo5 
+   /// \brief Experimental TPC geometry 
+   class tpceGeo5 : public AgModule 
+   { 
+      public: 
+      tpceGeo5(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~tpceGeo5(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace tpceGeo5 
+#endif // __tpceGeo5__ 

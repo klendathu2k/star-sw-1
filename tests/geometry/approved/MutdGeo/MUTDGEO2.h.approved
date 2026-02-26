@@ -1,0 +1,258 @@
+#ifndef __MUTDGEO2__ 
+#define __MUTDGEO2__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace MUTDGEO2 // $NMSPC 
+{ 
+   struct mtdg_t {
+float version;
+float rpmtin;
+float rpmtout;
+float rmrpcin;
+float rmrpcout;
+float rmin;
+float rmax;
+float dz;
+float length;
+float radii[2];
+int _index;
+};
+ 
+   struct _mtdg_docum_ {
+string version;
+string rpmtin;
+string rpmtout;
+string rmrpcin;
+string rmrpcout;
+string rmin;
+string rmax;
+string dz;
+string length;
+string radii;
+string _index;
+};
+ 
+    struct _mtdg_types_ {
+  typedef float version;
+  typedef float rpmtin;
+  typedef float rpmtout;
+  typedef float rmrpcin;
+  typedef float rmrpcout;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef float length;
+  typedef float radii[2];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mtdg_info {
+typedef mtdg_t Type;
+static const char *name(){ return "mtdg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rpmtin {
+  static const char *name() { return  "rpmtin"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rpmtin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rpmtout {
+  static const char *name() { return  "rpmtout"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rpmtout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmrpcin {
+  static const char *name() { return  "rmrpcin"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rmrpcin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmrpcout {
+  static const char *name() { return  "rmrpcout"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rmrpcout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct radii {
+  static const char *name() { return  "radii"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, radii ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mtdg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mtdg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- MUTD -- 
+   ///@defgroup MUTD_doc 
+   ///@class MUTD 
+   ///@brief is the muon detector mother [TGeoVolume] 
+   class MUTD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MUTD() : AgBlock("MUTD","is the muon detector mother [TGeoVolume]"){ 
+      }; 
+      ~MUTD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MUSC -- 
+   ///@defgroup MUSC_doc 
+   ///@class MUSC 
+   ///@brief is a sector of MUON Trigger Barrel Scintillators [TGeoVolume] 
+   class MUSC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MUSC() : AgBlock("MUSC","is a sector of MUON Trigger Barrel Scintillators [TGeoVolume]"){ 
+      }; 
+      ~MUSC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MPMT -- 
+   ///@defgroup MPMT_doc 
+   ///@class MPMT 
+   ///@brief is a Main TRay covering box for PMT [TGeoVolume] 
+   class MPMT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MPMT() : AgBlock("MPMT","is a Main TRay covering box for PMT [TGeoVolume]"){ 
+      }; 
+      ~MPMT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MMRP -- 
+   ///@defgroup MMRP_doc 
+   ///@class MMRP 
+   ///@brief is a Main TRay covering box for MRPC [TGeoVolume] 
+   class MMRP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MMRP() : AgBlock("MMRP","is a Main TRay covering box for MRPC [TGeoVolume]"){ 
+      }; 
+      ~MMRP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class MUTDGEO2 
+   /// \brief  is the geometry of the STAR muon trigger system  
+   class MUTDGEO2 : public AgModule 
+   { 
+      public: 
+      MUTDGEO2(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~MUTDGEO2(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace MUTDGEO2 
+#endif // __MUTDGEO2__ 

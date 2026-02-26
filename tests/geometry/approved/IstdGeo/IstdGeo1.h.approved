@@ -1,0 +1,1672 @@
+#ifndef __IstdGeo1__ 
+#define __IstdGeo1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace ISTDGEO1 // $NMSPC 
+{ 
+   struct paro_t {
+int version;
+float dx;
+float dy;
+float dz;
+float mult;
+int lad[24];
+int _index;
+};
+ 
+   struct _paro_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string mult;
+string lad;
+string _index;
+};
+ 
+    struct _paro_types_ {
+  typedef int version;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef float mult;
+  typedef int lad[24];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct paro_info {
+typedef paro_t Type;
+static const char *name(){ return "paro_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct paro_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct paro_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct paro_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lad {
+  static const char *name() { return  "lad"; }
+  static size_t Offset(){ return offsetof( struct paro_t, lad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[24];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct paro_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)paro_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct para_t {
+int version;
+float da;
+float db;
+float dg;
+float mult;
+int lad[24];
+int _index;
+};
+ 
+   struct _para_docum_ {
+string version;
+string da;
+string db;
+string dg;
+string mult;
+string lad;
+string _index;
+};
+ 
+    struct _para_types_ {
+  typedef int version;
+  typedef float da;
+  typedef float db;
+  typedef float dg;
+  typedef float mult;
+  typedef int lad[24];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct para_info {
+typedef para_t Type;
+static const char *name(){ return "para_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct para_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct da {
+  static const char *name() { return  "da"; }
+  static size_t Offset(){ return offsetof( struct para_t, da ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct db {
+  static const char *name() { return  "db"; }
+  static size_t Offset(){ return offsetof( struct para_t, db ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dg {
+  static const char *name() { return  "dg"; }
+  static size_t Offset(){ return offsetof( struct para_t, dg ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct mult {
+  static const char *name() { return  "mult"; }
+  static size_t Offset(){ return offsetof( struct para_t, mult ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct lad {
+  static const char *name() { return  "lad"; }
+  static size_t Offset(){ return offsetof( struct para_t, lad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[24];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct para_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)para_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- IBMO -- 
+   ///@defgroup IBMO_doc 
+   ///@class IBMO 
+   ///@brief Main volume of IST detector [TGeoVolume] 
+   class IBMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBMO() : AgBlock("IBMO","Main volume of IST detector [TGeoVolume]"){ 
+      }; 
+      ~IBMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBCJ -- 
+   ///@defgroup IBCJ_doc 
+   ///@class IBCJ 
+   ///@brief IST cooling loops and joints  [TGeoVolume] 
+   class IBCJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBCJ() : AgBlock("IBCJ","IST cooling loops and joints  [TGeoVolume]"){ 
+      }; 
+      ~IBCJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICJR -- 
+   ///@defgroup ICJR_doc 
+   ///@class ICJR 
+   ///@brief cooling loop arc part [TGeoVolume] 
+   class ICJR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICJR() : AgBlock("ICJR","cooling loop arc part [TGeoVolume]"){ 
+      }; 
+      ~ICJR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICJS -- 
+   ///@defgroup ICJS_doc 
+   ///@class ICJS 
+   ///@brief cooling loop tube part right [TGeoVolume] 
+   class ICJS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICJS() : AgBlock("ICJS","cooling loop tube part right [TGeoVolume]"){ 
+      }; 
+      ~ICJS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICJA -- 
+   ///@defgroup ICJA_doc 
+   ///@class ICJA 
+   ///@brief cooling loop cone part left [TGeoVolume] 
+   class ICJA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICJA() : AgBlock("ICJA","cooling loop cone part left [TGeoVolume]"){ 
+      }; 
+      ~ICJA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICJU -- 
+   ///@defgroup ICJU_doc 
+   ///@class ICJU 
+   ///@brief cooling loop connector left [TGeoVolume] 
+   class ICJU : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICJU() : AgBlock("ICJU","cooling loop connector left [TGeoVolume]"){ 
+      }; 
+      ~ICJU(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICLN -- 
+   ///@defgroup ICLN_doc 
+   ///@class ICLN 
+   ///@brief cooling liquid through ICJN, ICJA and ICJU volumes [TGeoVolume] 
+   class ICLN : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICLN() : AgBlock("ICLN","cooling liquid through ICJN, ICJA and ICJU volumes [TGeoVolume]"){ 
+      }; 
+      ~ICLN(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCA -- 
+   ///@defgroup ISCA_doc 
+   ///@class ISCA 
+   ///@brief IST short purple cable A in transition cone [TGeoVolume] 
+   class ISCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCA() : AgBlock("ISCA","IST short purple cable A in transition cone [TGeoVolume]"){ 
+      }; 
+      ~ISCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCB -- 
+   ///@defgroup ISCB_doc 
+   ///@class ISCB 
+   ///@brief IST short purple cable B in transition cone [TGeoVolume] 
+   class ISCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCB() : AgBlock("ISCB","IST short purple cable B in transition cone [TGeoVolume]"){ 
+      }; 
+      ~ISCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCC -- 
+   ///@defgroup ISCC_doc 
+   ///@class ISCC 
+   ///@brief IST short purple cable C in transition cone [TGeoVolume] 
+   class ISCC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCC() : AgBlock("ISCC","IST short purple cable C in transition cone [TGeoVolume]"){ 
+      }; 
+      ~ISCC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCT -- 
+   ///@defgroup ISCT_doc 
+   ///@class ISCT 
+   ///@brief IST short cooling tube in transition cone  [TGeoVolume] 
+   class ISCT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCT() : AgBlock("ISCT","IST short cooling tube in transition cone  [TGeoVolume]"){ 
+      }; 
+      ~ISCT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICLE -- 
+   ///@defgroup ICLE_doc 
+   ///@class ICLE 
+   ///@brief cooling liquid in ISCT volume [TGeoVolume] 
+   class ICLE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICLE() : AgBlock("ICLE","cooling liquid in ISCT volume [TGeoVolume]"){ 
+      }; 
+      ~ICLE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTA -- 
+   ///@defgroup ICTA_doc 
+   ///@class ICTA 
+   ///@brief cooling tube cone part [TGeoVolume] 
+   class ICTA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTA() : AgBlock("ICTA","cooling tube cone part [TGeoVolume]"){ 
+      }; 
+      ~ICTA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTJ -- 
+   ///@defgroup ICTJ_doc 
+   ///@class ICTJ 
+   ///@brief cooling tube connector left [TGeoVolume] 
+   class ICTJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTJ() : AgBlock("ICTJ","cooling tube connector left [TGeoVolume]"){ 
+      }; 
+      ~ICTJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTB -- 
+   ///@defgroup ICTB_doc 
+   ///@class ICTB 
+   ///@brief cooling tube part [TGeoVolume] 
+   class ICTB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTB() : AgBlock("ICTB","cooling tube part [TGeoVolume]"){ 
+      }; 
+      ~ICTB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBAM -- 
+   ///@defgroup IBAM_doc 
+   ///@class IBAM 
+   ///@brief IST ladder [TGeoVolume] 
+   class IBAM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBAM() : AgBlock("IBAM","IST ladder [TGeoVolume]"){ 
+      }; 
+      ~IBAM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ILCC -- 
+   ///@defgroup ILCC_doc 
+   ///@class ILCC 
+   ///@brief Choneycomb mother volume [TGeoVolume] 
+   class ILCC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ILCC() : AgBlock("ILCC","Choneycomb mother volume [TGeoVolume]"){ 
+      }; 
+      ~ILCC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICCU -- 
+   ///@defgroup ICCU_doc 
+   ///@class ICCU 
+   ///@brief is the IST carbon honeycomb BOX volume on east side [TGeoVolume] 
+   class ICCU : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICCU() : AgBlock("ICCU","is the IST carbon honeycomb BOX volume on east side [TGeoVolume]"){ 
+      }; 
+      ~ICCU(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICCD -- 
+   ///@defgroup ICCD_doc 
+   ///@class ICCD 
+   ///@brief is the IST carbon honeycomb BOX volume on west side [TGeoVolume] 
+   class ICCD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICCD() : AgBlock("ICCD","is the IST carbon honeycomb BOX volume on west side [TGeoVolume]"){ 
+      }; 
+      ~ICCD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBCF -- 
+   ///@defgroup IBCF_doc 
+   ///@class IBCF 
+   ///@brief mother of the CFoam assembly [TGeoVolume] 
+   class IBCF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBCF() : AgBlock("IBCF","mother of the CFoam assembly [TGeoVolume]"){ 
+      }; 
+      ~IBCF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICFC -- 
+   ///@defgroup ICFC_doc 
+   ///@class ICFC 
+   ///@brief is the IST carbon foam BOX volume on east side [TGeoVolume] 
+   class ICFC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICFC() : AgBlock("ICFC","is the IST carbon foam BOX volume on east side [TGeoVolume]"){ 
+      }; 
+      ~ICFC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICFD -- 
+   ///@defgroup ICFD_doc 
+   ///@class ICFD 
+   ///@brief is the IST carbon foam BOX volume on west side [TGeoVolume] 
+   class ICFD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICFD() : AgBlock("ICFD","is the IST carbon foam BOX volume on west side [TGeoVolume]"){ 
+      }; 
+      ~ICFD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICFB -- 
+   ///@defgroup ICFB_doc 
+   ///@class ICFB 
+   ///@brief is the CFoam air groove box Area [TGeoVolume] 
+   class ICFB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICFB() : AgBlock("ICFB","is the CFoam air groove box Area [TGeoVolume]"){ 
+      }; 
+      ~ICFB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICFA -- 
+   ///@defgroup ICFA_doc 
+   ///@class ICFA 
+   ///@brief is the CFoam air groove arc Area [TGeoVolume] 
+   class ICFA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICFA() : AgBlock("ICFA","is the CFoam air groove arc Area [TGeoVolume]"){ 
+      }; 
+      ~ICFA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBAT -- 
+   ///@defgroup IBAT_doc 
+   ///@class IBAT 
+   ///@brief Aluminium cooling tube mother volume [TGeoVolume] 
+   class IBAT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBAT() : AgBlock("IBAT","Aluminium cooling tube mother volume [TGeoVolume]"){ 
+      }; 
+      ~IBAT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTC -- 
+   ///@defgroup ICTC_doc 
+   ///@class ICTC 
+   ///@brief Aluminium cooling tube cylinder [TGeoVolume] 
+   class ICTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTC() : AgBlock("ICTC","Aluminium cooling tube cylinder [TGeoVolume]"){ 
+      }; 
+      ~ICTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTE -- 
+   ///@defgroup ICTE_doc 
+   ///@class ICTE 
+   ///@brief Aluminium cooling tube cone connector east side [TGeoVolume] 
+   class ICTE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTE() : AgBlock("ICTE","Aluminium cooling tube cone connector east side [TGeoVolume]"){ 
+      }; 
+      ~ICTE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICTW -- 
+   ///@defgroup ICTW_doc 
+   ///@class ICTW 
+   ///@brief Aluminium cooling tube cone connector west side [TGeoVolume] 
+   class ICTW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICTW() : AgBlock("ICTW","Aluminium cooling tube cone connector west side [TGeoVolume]"){ 
+      }; 
+      ~ICTW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBCW -- 
+   ///@defgroup IBCW_doc 
+   ///@class IBCW 
+   ///@brief cooling liquid in Alumnium tube [TGeoVolume] 
+   class IBCW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBCW() : AgBlock("IBCW","cooling liquid in Alumnium tube [TGeoVolume]"){ 
+      }; 
+      ~IBCW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ILST -- 
+   ///@defgroup ILST_doc 
+   ///@class ILST 
+   ///@brief CF Skin top layer mother volume [TGeoVolume] 
+   class ILST : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ILST() : AgBlock("ILST","CF Skin top layer mother volume [TGeoVolume]"){ 
+      }; 
+      ~ILST(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISTC -- 
+   ///@defgroup ISTC_doc 
+   ///@class ISTC 
+   ///@brief is the CF skin BOX volume on connecter side in TOP CF skin mother volume [TGeoVolume] 
+   class ISTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISTC() : AgBlock("ISTC","is the CF skin BOX volume on connecter side in TOP CF skin mother volume [TGeoVolume]"){ 
+      }; 
+      ~ISTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISTH -- 
+   ///@defgroup ISTH_doc 
+   ///@class ISTH 
+   ///@brief is the CF skin BOX volume on west side in TOP CF skin mother volume [TGeoVolume] 
+   class ISTH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISTH() : AgBlock("ISTH","is the CF skin BOX volume on west side in TOP CF skin mother volume [TGeoVolume]"){ 
+      }; 
+      ~ISTH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ILSB -- 
+   ///@defgroup ILSB_doc 
+   ///@class ILSB 
+   ///@brief CF Skin bottom layer mother volume [TGeoVolume] 
+   class ILSB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ILSB() : AgBlock("ILSB","CF Skin bottom layer mother volume [TGeoVolume]"){ 
+      }; 
+      ~ILSB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISBC -- 
+   ///@defgroup ISBC_doc 
+   ///@class ISBC 
+   ///@brief is the CF skin BOX volume on connecter side in BOTTOM CF skin mother volume [TGeoVolume] 
+   class ISBC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISBC() : AgBlock("ISBC","is the CF skin BOX volume on connecter side in BOTTOM CF skin mother volume [TGeoVolume]"){ 
+      }; 
+      ~ISBC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISBH -- 
+   ///@defgroup ISBH_doc 
+   ///@class ISBH 
+   ///@brief is the CF skin BOX volume on west side in BOTTOM CF skin mother volume [TGeoVolume] 
+   class ISBH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISBH() : AgBlock("ISBH","is the CF skin BOX volume on west side in BOTTOM CF skin mother volume [TGeoVolume]"){ 
+      }; 
+      ~ISBH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBHT -- 
+   ///@defgroup IBHT_doc 
+   ///@class IBHT 
+   ///@brief Kapton hybrid TOP layer mother volume [TGeoVolume] 
+   class IBHT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBHT() : AgBlock("IBHT","Kapton hybrid TOP layer mother volume [TGeoVolume]"){ 
+      }; 
+      ~IBHT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IHTC -- 
+   ///@defgroup IHTC_doc 
+   ///@class IHTC 
+   ///@brief is the hybrid on connecter side in TOP hybrid mother volume [TGeoVolume] 
+   class IHTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IHTC() : AgBlock("IHTC","is the hybrid on connecter side in TOP hybrid mother volume [TGeoVolume]"){ 
+      }; 
+      ~IHTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IHTH -- 
+   ///@defgroup IHTH_doc 
+   ///@class IHTH 
+   ///@brief is the hybird on west side in TOP hybrid mother volume [TGeoVolume] 
+   class IHTH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IHTH() : AgBlock("IHTH","is the hybird on west side in TOP hybrid mother volume [TGeoVolume]"){ 
+      }; 
+      ~IHTH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBHB -- 
+   ///@defgroup IBHB_doc 
+   ///@class IBHB 
+   ///@brief Kapton hybrid BOTTOM layer mother volume [TGeoVolume] 
+   class IBHB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBHB() : AgBlock("IBHB","Kapton hybrid BOTTOM layer mother volume [TGeoVolume]"){ 
+      }; 
+      ~IBHB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IHBC -- 
+   ///@defgroup IHBC_doc 
+   ///@class IHBC 
+   ///@brief is the hybrid on connecter side in BOTTOM hybrid mother volume [TGeoVolume] 
+   class IHBC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IHBC() : AgBlock("IHBC","is the hybrid on connecter side in BOTTOM hybrid mother volume [TGeoVolume]"){ 
+      }; 
+      ~IHBC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IHBH -- 
+   ///@defgroup IHBH_doc 
+   ///@class IHBH 
+   ///@brief is the hybrid on west side in BOTTOM hybrid mother volume [TGeoVolume] 
+   class IHBH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IHBH() : AgBlock("IHBH","is the hybrid on west side in BOTTOM hybrid mother volume [TGeoVolume]"){ 
+      }; 
+      ~IHBH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBHC -- 
+   ///@defgroup IBHC_doc 
+   ///@class IBHC 
+   ///@brief Kapton Hybrid north Arc layer mother volume [TGeoVolume] 
+   class IBHC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBHC() : AgBlock("IBHC","Kapton Hybrid north Arc layer mother volume [TGeoVolume]"){ 
+      }; 
+      ~IBHC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IHCA -- 
+   ///@defgroup IHCA_doc 
+   ///@class IHCA 
+   ///@brief is the Inner air layer in north ARC hybrid mother volume [TGeoVolume] 
+   class IHCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IHCA() : AgBlock("IHCA","is the Inner air layer in north ARC hybrid mother volume [TGeoVolume]"){ 
+      }; 
+      ~IHCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBRB -- 
+   ///@defgroup IBRB_doc 
+   ///@class IBRB 
+   ///@brief Transit board [TGeoVolume] 
+   class IBRB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBRB() : AgBlock("IBRB","Transit board [TGeoVolume]"){ 
+      }; 
+      ~IBRB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IRSA -- 
+   ///@defgroup IRSA_doc 
+   ///@class IRSA 
+   ///@brief Transit board slot A [TGeoVolume] 
+   class IRSA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IRSA() : AgBlock("IRSA","Transit board slot A [TGeoVolume]"){ 
+      }; 
+      ~IRSA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IRSB -- 
+   ///@defgroup IRSB_doc 
+   ///@class IRSB 
+   ///@brief Transit board slot B [TGeoVolume] 
+   class IRSB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IRSB() : AgBlock("IRSB","Transit board slot B [TGeoVolume]"){ 
+      }; 
+      ~IRSB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IRSC -- 
+   ///@defgroup IRSC_doc 
+   ///@class IRSC 
+   ///@brief Transit board slot C [TGeoVolume] 
+   class IRSC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IRSC() : AgBlock("IRSC","Transit board slot C [TGeoVolume]"){ 
+      }; 
+      ~IRSC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBTS -- 
+   ///@defgroup IBTS_doc 
+   ///@class IBTS 
+   ///@brief is the thermal Sensor [TGeoVolume] 
+   class IBTS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBTS() : AgBlock("IBTS","is the thermal Sensor [TGeoVolume]"){ 
+      }; 
+      ~IBTS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IECW -- 
+   ///@defgroup IECW_doc 
+   ///@class IECW 
+   ///@brief mother of the west-side endcap assembly [TGeoVolume] 
+   class IECW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IECW() : AgBlock("IECW","mother of the west-side endcap assembly [TGeoVolume]"){ 
+      }; 
+      ~IECW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICWT -- 
+   ///@defgroup ICWT_doc 
+   ///@class ICWT 
+   ///@brief is the cfoam endcap overlap body top BOX volume [TGeoVolume] 
+   class ICWT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICWT() : AgBlock("ICWT","is the cfoam endcap overlap body top BOX volume [TGeoVolume]"){ 
+      }; 
+      ~ICWT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICWB -- 
+   ///@defgroup ICWB_doc 
+   ///@class ICWB 
+   ///@brief is the cfoam endcap overlap body bottom BOX volume [TGeoVolume] 
+   class ICWB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICWB() : AgBlock("ICWB","is the cfoam endcap overlap body bottom BOX volume [TGeoVolume]"){ 
+      }; 
+      ~ICWB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IABW -- 
+   ///@defgroup IABW_doc 
+   ///@class IABW 
+   ///@brief is the endcap air groove box Area for tube placement [TGeoVolume] 
+   class IABW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IABW() : AgBlock("IABW","is the endcap air groove box Area for tube placement [TGeoVolume]"){ 
+      }; 
+      ~IABW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IAAW -- 
+   ///@defgroup IAAW_doc 
+   ///@class IAAW 
+   ///@brief is the endcap air groove arc Area for tube placement [TGeoVolume] 
+   class IAAW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IAAW() : AgBlock("IAAW","is the endcap air groove arc Area for tube placement [TGeoVolume]"){ 
+      }; 
+      ~IAAW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IESB -- 
+   ///@defgroup IESB_doc 
+   ///@class IESB 
+   ///@brief is the endcap air groove box Area for screw thread hole [TGeoVolume] 
+   class IESB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IESB() : AgBlock("IESB","is the endcap air groove box Area for screw thread hole [TGeoVolume]"){ 
+      }; 
+      ~IESB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IESA -- 
+   ///@defgroup IESA_doc 
+   ///@class IESA 
+   ///@brief is the endcap air groove arc Area for screw thread hole [TGeoVolume] 
+   class IESA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IESA() : AgBlock("IESA","is the endcap air groove arc Area for screw thread hole [TGeoVolume]"){ 
+      }; 
+      ~IESA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IESC -- 
+   ///@defgroup IESC_doc 
+   ///@class IESC 
+   ///@brief is the endcap air groove arc Area for screw thread hole [TGeoVolume] 
+   class IESC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IESC() : AgBlock("IESC","is the endcap air groove arc Area for screw thread hole [TGeoVolume]"){ 
+      }; 
+      ~IESC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ITNW -- 
+   ///@defgroup ITNW_doc 
+   ///@class ITNW 
+   ///@brief is the endcap air groove for transport protection screw thread (northwest) [TGeoVolume] 
+   class ITNW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ITNW() : AgBlock("ITNW","is the endcap air groove for transport protection screw thread (northwest) [TGeoVolume]"){ 
+      }; 
+      ~ITNW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ITSW -- 
+   ///@defgroup ITSW_doc 
+   ///@class ITSW 
+   ///@brief is the endcap air groove for transport protection screw thread (southwest) [TGeoVolume] 
+   class ITSW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ITSW() : AgBlock("ITSW","is the endcap air groove for transport protection screw thread (southwest) [TGeoVolume]"){ 
+      }; 
+      ~ITSW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IECE -- 
+   ///@defgroup IECE_doc 
+   ///@class IECE 
+   ///@brief mother of the east-side endcap assembly [TGeoVolume] 
+   class IECE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IECE() : AgBlock("IECE","mother of the east-side endcap assembly [TGeoVolume]"){ 
+      }; 
+      ~IECE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICET -- 
+   ///@defgroup ICET_doc 
+   ///@class ICET 
+   ///@brief is the Aluminium endcap overlap body top BOX volume [TGeoVolume] 
+   class ICET : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICET() : AgBlock("ICET","is the Aluminium endcap overlap body top BOX volume [TGeoVolume]"){ 
+      }; 
+      ~ICET(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICEB -- 
+   ///@defgroup ICEB_doc 
+   ///@class ICEB 
+   ///@brief is the Aluminium endcap overlap body bottom BOX volume [TGeoVolume] 
+   class ICEB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICEB() : AgBlock("ICEB","is the Aluminium endcap overlap body bottom BOX volume [TGeoVolume]"){ 
+      }; 
+      ~ICEB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IABE -- 
+   ///@defgroup IABE_doc 
+   ///@class IABE 
+   ///@brief is the endcap air groove box Area for tube placement [TGeoVolume] 
+   class IABE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IABE() : AgBlock("IABE","is the endcap air groove box Area for tube placement [TGeoVolume]"){ 
+      }; 
+      ~IABE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IAAE -- 
+   ///@defgroup IAAE_doc 
+   ///@class IAAE 
+   ///@brief is the endcap air groove arc Area for tube placement [TGeoVolume] 
+   class IAAE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IAAE() : AgBlock("IAAE","is the endcap air groove arc Area for tube placement [TGeoVolume]"){ 
+      }; 
+      ~IAAE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IESE -- 
+   ///@defgroup IESE_doc 
+   ///@class IESE 
+   ///@brief is the screw thread air hole TUBE volume in east-side endcap [TGeoVolume] 
+   class IESE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IESE() : AgBlock("IESE","is the screw thread air hole TUBE volume in east-side endcap [TGeoVolume]"){ 
+      }; 
+      ~IESE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IESS -- 
+   ///@defgroup IESS_doc 
+   ///@class IESS 
+   ///@brief is the small thread air hole TUBE volume in east-side endcap [TGeoVolume] 
+   class IESS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IESS() : AgBlock("IESS","is the small thread air hole TUBE volume in east-side endcap [TGeoVolume]"){ 
+      }; 
+      ~IESS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ITNE -- 
+   ///@defgroup ITNE_doc 
+   ///@class ITNE 
+   ///@brief is the endcap air groove for transport protection screw thread (northeast) [TGeoVolume] 
+   class ITNE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ITNE() : AgBlock("ITNE","is the endcap air groove for transport protection screw thread (northeast) [TGeoVolume]"){ 
+      }; 
+      ~ITNE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ITSE -- 
+   ///@defgroup ITSE_doc 
+   ///@class ITSE 
+   ///@brief is the endcap air groove for transport protection screw thread (southeast) [TGeoVolume] 
+   class ITSE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ITSE() : AgBlock("ITSE","is the endcap air groove for transport protection screw thread (southeast) [TGeoVolume]"){ 
+      }; 
+      ~ITSE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCM -- 
+   ///@defgroup ISCM_doc 
+   ///@class ISCM 
+   ///@brief mother of the screw assembly [TGeoVolume] 
+   class ISCM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCM() : AgBlock("ISCM","mother of the screw assembly [TGeoVolume]"){ 
+      }; 
+      ~ISCM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCH -- 
+   ///@defgroup ISCH_doc 
+   ///@class ISCH 
+   ///@brief is the screw hat [TGeoVolume] 
+   class ISCH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCH() : AgBlock("ISCH","is the screw hat [TGeoVolume]"){ 
+      }; 
+      ~ISCH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCS -- 
+   ///@defgroup ISCS_doc 
+   ///@class ISCS 
+   ///@brief is the screw middle cylinder stude [TGeoVolume] 
+   class ISCS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCS() : AgBlock("ISCS","is the screw middle cylinder stude [TGeoVolume]"){ 
+      }; 
+      ~ISCS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISCR -- 
+   ///@defgroup ISCR_doc 
+   ///@class ISCR 
+   ///@brief is the screw stud [TGeoVolume] 
+   class ISCR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISCR() : AgBlock("ISCR","is the screw stud [TGeoVolume]"){ 
+      }; 
+      ~ISCR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISWS -- 
+   ///@defgroup ISWS_doc 
+   ///@class ISWS 
+   ///@brief is the screw washer [TGeoVolume] 
+   class ISWS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISWS() : AgBlock("ISWS","is the screw washer [TGeoVolume]"){ 
+      }; 
+      ~ISWS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBSR -- 
+   ///@defgroup IBSR_doc 
+   ///@class IBSR 
+   ///@brief is the support structure mother volume [TGeoVolume] 
+   class IBSR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBSR() : AgBlock("IBSR","is the support structure mother volume [TGeoVolume]"){ 
+      }; 
+      ~IBSR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRR -- 
+   ///@defgroup ISRR_doc 
+   ///@class ISRR 
+   ///@brief is the support ring structure box sub-volume south side [TGeoVolume] 
+   class ISRR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRR() : AgBlock("ISRR","is the support ring structure box sub-volume south side [TGeoVolume]"){ 
+      }; 
+      ~ISRR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRB -- 
+   ///@defgroup ISRB_doc 
+   ///@class ISRB 
+   ///@brief is the support ring structure box sub-volume top side [TGeoVolume] 
+   class ISRB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRB() : AgBlock("ISRB","is the support ring structure box sub-volume top side [TGeoVolume]"){ 
+      }; 
+      ~ISRB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IRBA -- 
+   ///@defgroup IRBA_doc 
+   ///@class IRBA 
+   ///@brief is the support ring structure air groove [TGeoVolume] 
+   class IRBA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IRBA() : AgBlock("IRBA","is the support ring structure air groove [TGeoVolume]"){ 
+      }; 
+      ~IRBA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRL -- 
+   ///@defgroup ISRL_doc 
+   ///@class ISRL 
+   ///@brief is the support ring structure trapezoid sub-volume north side [TGeoVolume] 
+   class ISRL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRL() : AgBlock("ISRL","is the support ring structure trapezoid sub-volume north side [TGeoVolume]"){ 
+      }; 
+      ~ISRL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRC -- 
+   ///@defgroup ISRC_doc 
+   ///@class ISRC 
+   ///@brief is the support ring structure connect Area [TGeoVolume] 
+   class ISRC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRC() : AgBlock("ISRC","is the support ring structure connect Area [TGeoVolume]"){ 
+      }; 
+      ~ISRC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRA -- 
+   ///@defgroup ISRA_doc 
+   ///@class ISRA 
+   ///@brief is the support ring structure arc Area [TGeoVolume] 
+   class ISRA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRA() : AgBlock("ISRA","is the support ring structure arc Area [TGeoVolume]"){ 
+      }; 
+      ~ISRA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRO -- 
+   ///@defgroup ISRO_doc 
+   ///@class ISRO 
+   ///@brief is the support ring structure top edge [TGeoVolume] 
+   class ISRO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRO() : AgBlock("ISRO","is the support ring structure top edge [TGeoVolume]"){ 
+      }; 
+      ~ISRO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IROA -- 
+   ///@defgroup IROA_doc 
+   ///@class IROA 
+   ///@brief is the support ring structure air groove in ISRO [TGeoVolume] 
+   class IROA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IROA() : AgBlock("IROA","is the support ring structure air groove in ISRO [TGeoVolume]"){ 
+      }; 
+      ~IROA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRS -- 
+   ///@defgroup ISRS_doc 
+   ///@class ISRS 
+   ///@brief is the support small box sub-volume top side [TGeoVolume] 
+   class ISRS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRS() : AgBlock("ISRS","is the support small box sub-volume top side [TGeoVolume]"){ 
+      }; 
+      ~ISRS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ISRH -- 
+   ///@defgroup ISRH_doc 
+   ///@class ISRH 
+   ///@brief is the air hole for screwing stave  [TGeoVolume] 
+   class ISRH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ISRH() : AgBlock("ISRH","is the air hole for screwing stave  [TGeoVolume]"){ 
+      }; 
+      ~ISRH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBLM -- 
+   ///@defgroup IBLM_doc 
+   ///@class IBLM 
+   ///@brief mother of the sensor assembly [TGeoVolume] 
+   class IBLM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBLM() : AgBlock("IBLM","mother of the sensor assembly [TGeoVolume]"){ 
+      }; 
+      ~IBLM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBTE -- 
+   ///@defgroup IBTE_doc 
+   ///@class IBTE 
+   ///@brief is the Silicon Sensor top dead Area [TGeoVolume] 
+   class IBTE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBTE() : AgBlock("IBTE","is the Silicon Sensor top dead Area [TGeoVolume]"){ 
+      }; 
+      ~IBTE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBBE -- 
+   ///@defgroup IBBE_doc 
+   ///@class IBBE 
+   ///@brief is the Silicon Sensor bottom dead Area [TGeoVolume] 
+   class IBBE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBBE() : AgBlock("IBBE","is the Silicon Sensor bottom dead Area [TGeoVolume]"){ 
+      }; 
+      ~IBBE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBLE -- 
+   ///@defgroup IBLE_doc 
+   ///@class IBLE 
+   ///@brief is the Silicon Sensor left dead Area [TGeoVolume] 
+   class IBLE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBLE() : AgBlock("IBLE","is the Silicon Sensor left dead Area [TGeoVolume]"){ 
+      }; 
+      ~IBLE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBRE -- 
+   ///@defgroup IBRE_doc 
+   ///@class IBRE 
+   ///@brief is the Silicon Sensor right dead Area [TGeoVolume] 
+   class IBRE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBRE() : AgBlock("IBRE","is the Silicon Sensor right dead Area [TGeoVolume]"){ 
+      }; 
+      ~IBRE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBAP -- 
+   ///@defgroup IBAP_doc 
+   ///@class IBAP 
+   ///@brief is the APV chip [TGeoVolume] 
+   class IBAP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBAP() : AgBlock("IBAP","is the APV chip [TGeoVolume]"){ 
+      }; 
+      ~IBAP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- IBSS -- 
+   ///@defgroup IBSS_doc 
+   ///@class IBSS 
+   ///@brief is the Silicon Sensor Active Area [TGeoVolume] 
+   class IBSS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      IBSS() : AgBlock("IBSS","is the Silicon Sensor Active Area [TGeoVolume]"){ 
+      }; 
+      ~IBSS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICCT -- 
+   ///@defgroup ICCT_doc 
+   ///@class ICCT 
+   ///@brief average volume of average cables/cooling line in transition area [TGeoVolume] 
+   class ICCT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICCT() : AgBlock("ICCT","average volume of average cables/cooling line in transition area [TGeoVolume]"){ 
+      }; 
+      ~ICCT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICCA -- 
+   ///@defgroup ICCA_doc 
+   ///@class ICCA 
+   ///@brief IST purple cable A on PIT [TGeoVolume] 
+   class ICCA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICCA() : AgBlock("ICCA","IST purple cable A on PIT [TGeoVolume]"){ 
+      }; 
+      ~ICCA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICCL -- 
+   ///@defgroup ICCL_doc 
+   ///@class ICCL 
+   ///@brief IST cooling line on PIT [TGeoVolume] 
+   class ICCL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICCL() : AgBlock("ICCL","IST cooling line on PIT [TGeoVolume]"){ 
+      }; 
+      ~ICCL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ICLP -- 
+   ///@defgroup ICLP_doc 
+   ///@class ICLP 
+   ///@brief cooling liquid in ICCL volume on PIT area [TGeoVolume] 
+   class ICLP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ICLP() : AgBlock("ICLP","cooling liquid in ICCL volume on PIT area [TGeoVolume]"){ 
+      }; 
+      ~ICLP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class IstdGeo1 
+   /// \brief  is the the STAR IST geometry modeling in AgML 
+   class IstdGeo1 : public AgModule 
+   { 
+      public: 
+      IstdGeo1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~IstdGeo1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace IstdGeo1 
+#endif // __IstdGeo1__ 
+namespace ISTDGEO1 // $NMSPC 
+{ 
+   /// This method has not been documented 
+   extern void trans_to_ibam (Float_t  x,Float_t  y,Float_t  tilt,Float_t &xpos,Float_t &ypos); 
+} 

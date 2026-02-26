@@ -1,0 +1,517 @@
+#ifndef __PIXLGEO3__ 
+#define __PIXLGEO3__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PIXLGEO3 // $NMSPC 
+{ 
+   struct pxlv_t {
+int version;
+float ladver;
+float location;
+int _index;
+};
+ 
+   struct _pxlv_docum_ {
+string version;
+string ladver;
+string location;
+string _index;
+};
+ 
+    struct _pxlv_types_ {
+  typedef int version;
+  typedef float ladver;
+  typedef float location;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pxlv_info {
+typedef pxlv_t Type;
+static const char *name(){ return "pxlv_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pxlv_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct ladver {
+  static const char *name() { return  "ladver"; }
+  static size_t Offset(){ return offsetof( struct pxlv_t, ladver ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct location {
+  static const char *name() { return  "location"; }
+  static size_t Offset(){ return offsetof( struct pxlv_t, location ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pxlv_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxlv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pxld_t {
+float version;
+float totallength;
+float ladderwidth;
+float ladderthk;
+float passivethk;
+float activethk;
+float rin;
+float rout;
+int _index;
+};
+ 
+   struct _pxld_docum_ {
+string version;
+string totallength;
+string ladderwidth;
+string ladderthk;
+string passivethk;
+string activethk;
+string rin;
+string rout;
+string _index;
+};
+ 
+    struct _pxld_types_ {
+  typedef float version;
+  typedef float totallength;
+  typedef float ladderwidth;
+  typedef float ladderthk;
+  typedef float passivethk;
+  typedef float activethk;
+  typedef float rin;
+  typedef float rout;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pxld_info {
+typedef pxld_t Type;
+static const char *name(){ return "pxld_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct totallength {
+  static const char *name() { return  "totallength"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, totallength ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ladderwidth {
+  static const char *name() { return  "ladderwidth"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, ladderwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ladderthk {
+  static const char *name() { return  "ladderthk"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, ladderthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct passivethk {
+  static const char *name() { return  "passivethk"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, passivethk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct activethk {
+  static const char *name() { return  "activethk"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, activethk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rin {
+  static const char *name() { return  "rin"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, rin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rout {
+  static const char *name() { return  "rout"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, rout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pxld_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxld_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pixg_t {
+float ladder;
+float r;
+float a;
+float poffset;
+float aoffset;
+int _index;
+};
+ 
+   struct _pixg_docum_ {
+string ladder;
+string r;
+string a;
+string poffset;
+string aoffset;
+string _index;
+};
+ 
+    struct _pixg_types_ {
+  typedef float ladder;
+  typedef float r;
+  typedef float a;
+  typedef float poffset;
+  typedef float aoffset;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pixg_info {
+typedef pixg_t Type;
+static const char *name(){ return "pixg_t"; }
+struct ladder {
+  static const char *name() { return  "ladder"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, ladder ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct r {
+  static const char *name() { return  "r"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, r ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct a {
+  static const char *name() { return  "a"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, a ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct poffset {
+  static const char *name() { return  "poffset"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, poffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct aoffset {
+  static const char *name() { return  "aoffset"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, aoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pixg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pixg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pxbg_t {
+float version;
+float length;
+float rin;
+float thk;
+int _index;
+};
+ 
+   struct _pxbg_docum_ {
+string version;
+string length;
+string rin;
+string thk;
+string _index;
+};
+ 
+    struct _pxbg_types_ {
+  typedef float version;
+  typedef float length;
+  typedef float rin;
+  typedef float thk;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pxbg_info {
+typedef pxbg_t Type;
+static const char *name(){ return "pxbg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pxbg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct pxbg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rin {
+  static const char *name() { return  "rin"; }
+  static size_t Offset(){ return offsetof( struct pxbg_t, rin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct thk {
+  static const char *name() { return  "thk"; }
+  static size_t Offset(){ return offsetof( struct pxbg_t, thk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pxbg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pxbg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PXMO -- 
+   ///@defgroup PXMO_doc 
+   ///@class PXMO 
+   ///@brief is the mother of the pixel detector volumes [TGeoVolume] 
+   class PXMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXMO() : AgBlock("PXMO","is the mother of the pixel detector volumes [TGeoVolume]"){ 
+      }; 
+      ~PXMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PXBX -- 
+   ///@defgroup PXBX_doc 
+   ///@class PXBX 
+   ///@brief is the exoskeleton of the beampipe [TGeoVolume] 
+   class PXBX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PXBX() : AgBlock("PXBX","is the exoskeleton of the beampipe [TGeoVolume]"){ 
+      }; 
+      ~PXBX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PSEC -- 
+   ///@defgroup PSEC_doc 
+   ///@class PSEC 
+   ///@brief is a group of ladders [TGeoVolume] 
+   class PSEC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PSEC() : AgBlock("PSEC","is a group of ladders [TGeoVolume]"){ 
+      }; 
+      ~PSEC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLMO -- 
+   ///@defgroup PLMO_doc 
+   ///@class PLMO 
+   ///@brief is the mother of the silicon ladder [TGeoVolume] 
+   class PLMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLMO() : AgBlock("PLMO","is the mother of the silicon ladder [TGeoVolume]"){ 
+      }; 
+      ~PLMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLAC -- 
+   ///@defgroup PLAC_doc 
+   ///@class PLAC 
+   ///@brief is the active layer of the ladder [TGeoVolume] 
+   class PLAC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLAC() : AgBlock("PLAC","is the active layer of the ladder [TGeoVolume]"){ 
+      }; 
+      ~PLAC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLPS -- 
+   ///@defgroup PLPS_doc 
+   ///@class PLPS 
+   ///@brief is the passive layer of the ladder [TGeoVolume] 
+   class PLPS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLPS() : AgBlock("PLPS","is the passive layer of the ladder [TGeoVolume]"){ 
+      }; 
+      ~PLPS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PIXLGEO3 
+   /// \brief  is the the STAR pixel detector and beam pipe support  
+   class PIXLGEO3 : public AgModule 
+   { 
+      public: 
+      PIXLGEO3(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PIXLGEO3(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PIXLGEO3 
+#endif // __PIXLGEO3__ 

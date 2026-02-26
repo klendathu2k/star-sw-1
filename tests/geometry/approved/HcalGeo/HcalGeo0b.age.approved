@@ -1,0 +1,376 @@
+      MODULE HcalGeo0b   HCAL at FermiTBF
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author Prashanth S (KSU)
+      Created 12/30/2013
+      +CDE,agecom,gcunit,gconst..
+      EXTERNAL hcalhit
+      CONTENT HCMO,
+      HTWR,
+      HCEL,
+      HCES,
+      HCLX,
+      HCLY,
+      HCSX,
+      HCSY,
+      HFIB,
+      HFIC,
+      BBCF,
+      BBCB,
+      LEDG
+      Integer *4 i,j ,      m,n ,      p,q
+
+      real *4 xtemp,      ytemp
+
+      STRUCTURE mcdt { version,x,y,z,dx,dy,dz}
+      STRUCTURE towr { version,dx,dy,dz,nTowerX,nTowerY}
+      STRUCTURE cell { version,dx,dy,dz,nCellX,nCellY,nFiberXL,nFiberYL,nFiberXS,
+            nFiberYS}
+      STRUCTURE fibr { version,rmin,rmax,dz,startX1,startY1,startX2,startY2,stepX,
+            stepY}
+      STRUCTURE lgla { version,x,y,z,dx,dy,dz,Density,RadLen,PbCont,CritEne,MoliereR}
+      STRUCTURE trap { version,xF,yF,zF,xB,yB,zB,dx1,dx2,dy,dz}
+      FILL mcdt		!  Mother Calorimeter
+      version = 1.0 ! face center of calorimeter
+      x = 0.0 ! x cdt from center of TPC
+      y = 0.0 ! y cdt from center of TPC
+      z = 750.0 ! z cdt from center of TPC
+      dx = 30/2. ! HCMO width
+      dy = (30)/2. ! HCMO height + shild hight
+      dz = 117/2. ! HCMO length
+      ENDFILL
+      FILL towr		! Structure containing Calorimeter towr dimention
+      version = 1.0 ! towr dimention
+      dx = 10.0/2. ! towr width
+      dy = 10.0/2. ! towr height
+      dz = 117.0/2. ! towr length
+      nTowerX = 3 ! no of tower in X dir
+      nTowerY = 3 ! no of tower in Y dir
+      ENDFILL
+      FILL cell		! Structure containing Calorimeter pixels dimention
+      version = 1.0 ! pixels dimention
+      dx = 3.3/2. ! pixels width
+      dy = 3.3/2. ! pixels height
+      dz = 117.0/2. ! towr length
+      nCellX = 3 ! no of cells in X dir
+      nCellY = 3 ! no of cells in Y dir
+      nFiberXL = 16 ! no fibers in cell 16 fibers
+      nFiberYL = 16 ! no fibers in cell 16 fibers
+      nFiberXS = 15 ! no fibers in cell 15 fibers
+      nFiberYS = 15 ! no fibers in cell 15 fibers
+      ENDFILL
+      FILL fibr		! Scintilating fibes in towers/cells
+      version = 1.0 ! fiber dimention
+      rmin = 0.0 ! inner radius of fiber
+      rmax = 0.055 ! outer radius of fiber
+      dz = 117.0/2. ! towr length
+      startX1 = 0.107 ! distance from edge or from one cell boundry to other 1: for first cell
+      startY1 = 0.107 ! distance from edge or from one cell boundry to other
+      startX2 = 0.1065 ! distance from edge or from one cell boundry to other 2:for 2nd and 3rd cell
+      startY2 = 0.1065 ! distance from edge or from one cell boundry to other
+      stepX = 0.213 ! distance between fibers center to center
+      stepY = 0.213 ! distance between fibers center to center
+      ENDFILL
+      FILL lgla		!  lead glass
+      version = 1.0 ! face center of calorimeter
+      x = 0.0 ! x cdt from center of TPC
+      y = 0.0 ! y cdt from center of TPC
+      z = -600.0 ! z cdt from center of TPC
+      dx = 14.5/2.0 ! HCMO width
+      dy = 14.5/2.0 ! HCMO height + shild hight
+      dz = 35.0/2.0 ! HCMO length
+      Density = 3.86 !  gdensity [/cm^3]
+      RadLen = 2.5 !  radiation length [cm]
+      PbCont = 65.4 !  PbO content [%]
+      CritEne = 0.0158 !  critical energy [GeV]
+      MoliereR = 3.32 !  Moliere radius [cm]
+      ENDFILL
+      FILL trap		!  Beam Content
+      version = 1.0 ! pixels dimention
+      xF = -8.35 ! x cdt from center of TPC
+      yF = 0.0 ! y cdt from center of TPC
+      zF = -86.5 ! z cdt from center of TPC
+      xB = 0.0 ! x cdt from center of TPC
+      yB = -8.35 ! y cdt from center of TPC
+      zB = -83.5 ! z cdt from center of TPC
+      dx1 = 9.8/2.0 ! pixels width
+      dx2 = 1.8/2.0 ! pixels width
+      dy = 1.0/2.0 ! pixels height
+      dz = 20.0/2.0 ! towr length
+      ENDFILL
+      use mcdt version=1.0
+      use towr version=1.0
+      use cell version=1.0
+      use fibr version=1.0
+      use lgla version=1.0
+      use trap version=1.0
+      CREATE HCMO
+      CALL AgsReset 
+      CALL agml_position_begin('HCMO') 
+      %mother = 'CAVE' 
+      %title = 'HCMO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(mcdt_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(mcdt_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(mcdt_z) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- HCMO
+      BLOCK HCMO   Mother Calorimeter
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE HCMO seen=0 colo=2
+      SHAPE box dx=mcdt_dx dy=mcdt_dy dz=mcdt_dz
+      DO i = 0, towr_nTowerX-1
+      DO j = 0, towr_nTowerY-1
+      CREATE HTWR
+      CALL AgsReset 
+      CALL agml_position_begin('HTWR') 
+      %title = 'HTWR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-((towr_nTowerX-1)*towr_dx)+(i*towr_dx*2)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-((towr_nTowerY-1)*towr_dy)+(j*towr_dy*2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      END DO
+      CREATE LEDG
+      CALL AgsReset 
+      CALL agml_position_begin('LEDG') 
+      %title = 'LEDG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(lgla_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(lgla_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(lgla_z) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE BBCF
+      CALL AgsReset 
+      CALL agml_position_begin('BBCF') 
+      %title = 'BBCF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(trap_xF) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(trap_yF) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(trap_zF) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = -90.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE BBCB
+      CALL AgsReset 
+      CALL agml_position_begin('BBCB') 
+      %title = 'BBCB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(trap_xB) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(trap_yB) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(trap_zB) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HTWR
+      BLOCK HTWR   Towrs  of Calorimeter
+      MATERIAL Lead
+      MEDIUM standard
+      ATTRIBUTE HTWR seen=0 colo=4
+      SHAPE box dx=towr_dx dy=towr_dy dz=towr_dz
+      xtemp=fibr_startX1;
+      DO m = 0, cell_nCellX-1
+      ytemp=fibr_startY1;
+      DO n = 0, cell_nCellY-1
+      IF ( m.eq.n ) THEN
+      CREATE HCES
+      CALL AgsReset 
+      CALL agml_position_begin('HCES') 
+      %title = 'HCES' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-3.33+(3.33*m)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-3.33+(n*3.33)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CREATE HCEL
+      CALL AgsReset 
+      CALL agml_position_begin('HCEL') 
+      %title = 'HCEL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-3.33+(3.33*m)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-3.33+(n*3.33)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ytemp=fibr_startY2;
+      END DO
+      xtemp=fibr_startX2;
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCES
+      BLOCK HCES   3*3 cell in tower, HCES has 15*15 fibers
+      MATERIAL Lead
+      MATERIAL Lead isvol=1
+      ATTRIBUTE HCES seen=1 colo=4
+      SHAPE box dx=cell_dx dy=cell_dy dz=cell_dz
+      CREATE HCSX
+      HITS HCES hcal:0:S(0,100.0) elos:0:S(0,100.0) birk:0:S(0,100.0)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCEL
+      BLOCK HCEL   3*3 cell in tower, HCES has 16*16 fibers
+      MATERIAL Lead
+      MATERIAL Lead isvol=1
+      ATTRIBUTE HCEL seen=1 colo=4
+      SHAPE box dx=cell_dx dy=cell_dy dz=cell_dz
+      CREATE HCLX
+      HITS HCEL hcal:0:S(0,100.0) elos:0:S(0,100.0) birk:0:S(0,100.0)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCSX
+      BLOCK HCSX   3*3 cell in tower x divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE HCSX seen=0 colo=4
+      SHAPE division ndiv=cell_nFiberXS iaxis=1
+      CREATE HCSY
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCSY
+      BLOCK HCSY   3*3 cell in tower y divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE HCSY seen=0 colo=4
+      SHAPE division ndiv=cell_nFiberYS iaxis=2
+      CREATE HFIB
+      CALL AgsReset 
+      CALL agml_position_begin('HFIB') 
+      %title = 'HFIB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCLX
+      BLOCK HCLX   3*3 cell in tower x divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE HCLX seen=0 colo=4
+      SHAPE division ndiv=cell_nFiberXL iaxis=1
+      CREATE HCLY
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCLY
+      BLOCK HCLY   3*3 cell in tower y divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE HCLY seen=1 colo=4
+      SHAPE division ndiv=cell_nFiberYL iaxis=2
+      CREATE HFIC
+      CALL AgsReset 
+      CALL agml_position_begin('HFIC') 
+      %title = 'HFIC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HFIB
+      BLOCK HFIB   fiber in cells
+      MATERIAL Polystyren
+      MATERIAL SensPoly isvol=1
+      MEDIUM standard
+      ATTRIBUTE HFIB seen=0 colo=7
+      SHAPE tube rmin=fibr_rmin rmax=fibr_rmax,
+            dz=fibr_dz
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HFIC
+      BLOCK HFIC   fiber in cells
+      MATERIAL Polystyren
+      MATERIAL SensPoly isvol=1
+      MEDIUM standard
+      ATTRIBUTE HFIC seen=0 colo=7
+      SHAPE tube rmin=fibr_rmin rmax=fibr_rmax,
+            dz=fibr_dz
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- LEDG
+      BLOCK LEDG   Lead glass
+      COMPONENT Pb A=207.19 Z=82 W=.41774
+      COMPONENT K A=39.102 Z=19 W=.04151
+      COMPONENT Si A=28.088 Z=14 W=.21047
+      COMPONENT O A=15.999 Z=8 W=.29330
+      COMPONENT Na A=22.990 Z=11 W=.03710
+      MIXTURE F2 dens=lgla_Density
+      MATERIAL F2 isvol=1
+      MEDIUM leadglass isvol=1
+      ATTRIBUTE LEDG seen=1 colo=4
+      SHAPE box dx=lgla_dx dy=lgla_dy dz=lgla_dz
+      HITS LEDG elos:0:C(0,250)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- BBCF
+      BLOCK BBCF   Beam Counter front
+      MATERIAL Polystyren
+      MATERIAL Polystyren isvol=1
+      ATTRIBUTE BBCF seen=1 colo=4
+      SHAPE trd1 dx1=trap_dx1 dx2=trap_dx2 dy=trap_dy,
+            dz=trap_dz
+      HITS BBCF birk:0:C(0,250) tof:16:C(0,1.0E-6)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- BBCB
+      BLOCK BBCB   Beam Counter front
+      MATERIAL Polystyren
+      MATERIAL Polystyren isvol=1
+      ATTRIBUTE BBCB seen=1 colo=4
+      SHAPE trd1 dx1=trap_dx1 dx2=trap_dx2 dy=trap_dy,
+            dz=trap_dz
+      HITS BBCB birk:0:C(0,250) tof:16:C(0,1.0E-6)
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module HcalGeo0b]	 <<==='; (A32,/,/);
+      END! Module HcalGeo0b

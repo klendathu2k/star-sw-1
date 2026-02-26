@@ -1,0 +1,191 @@
+      MODULE QUADGEO    is the description of all the magnets upstream inclusive,
+            of D0
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created   02-Sep-2005
+      Author Maxim Potekhin
+      +CDE,agecom.
+      +CDE,gcunit.
+      CONTENT MGMT,DZER,QONE,QTWO,QTHR
+      STRUCTURE SHLQ { Version,Q0,MotherR,MotherL,Xoffset,Angle,DzeroL,DzeroRi,DzeroRo,
+            Q1,ri1,ro1,dz1,Q2,ri2,ro2,dz2,Q3,ri3,ro3,dz3}
+      REAL zQuad
+
+      FILL SHLQ		! Quadrupole Geometry Data
+      Version = 1 !  geometry version
+      Q0 = 2485.26 !  offset point that corresponds to 1505.92 in CAD notation, end of D0
+      MotherR = 19 !  radius of the mother containing D0,Q1,Q2,Q3
+      MotherL = 1610 !  length of the mother containing D0,Q1,Q2,Q3
+      Xoffset = 26 !  Offset ot the mother
+      Angle = 0.3 !  Angle to the symmetry axis
+      DzeroL = 385.26 !  D0 length
+      DzeroRi = 4.775 !  D0 inner radius
+      DzeroRo = 15.995 !  D0 outer radius
+      Q1 = 88.59 !  offset 1
+      ri1 = 6.355 !  inner 1
+      ro1 = 18.28 !  outer 1
+      dz1 = 170.92 !  full length 1
+      Q2 = 324.90 !  offset 2
+      ri2 = 6.355 !  inner 2
+      ro2 = 18.28 !  outer 2
+      dz2 = 444.02 !  full length 2
+      Q3 = 823.94 !  offset 3
+      ri3 = 6.355 !  inner 3
+      ro3 = 18.28 !  outer 3
+      dz3 = 399.55 !  full length 3
+      ENDFILL
+      use SHLQ
+      zQuad = shlq_q0-shlq_DzeroL+shlq_MotherL/2.0
+      CREATE MGMT
+      CALL AgsReset 
+      CALL agml_position_begin('MGMT') 
+      %mother = 'CAVE' 
+      %title = 'MGMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(shlq_Xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zQuad) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = real(shlq_Angle) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MGMT') 
+      %mother = 'CAVE' 
+      %title = 'MGMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-shlq_Xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zQUad) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = real(-shlq_Angle) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MGMT') 
+      %mother = 'CAVE' 
+      %title = 'MGMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(shlq_Xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zQuad) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = real(180-shlq_Angle) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('MGMT') 
+      %mother = 'CAVE' 
+      %title = 'MGMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-shlq_Xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zQuad) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = real(180+shlq_Angle) 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- MGMT
+      BLOCK MGMT   is the magnet mother
+      MATERIAL Air
+      ATTRIBUTE MGMT seen=1 colo=3
+      SHAPE tube rmin=0.0 rmax=shlq_MotherR dz=shlq_MotherL/2.0
+      CREATE DZER
+      CALL AgsReset 
+      CALL agml_position_begin('DZER') 
+      %mother = 'MGMT' 
+      %title = 'DZER' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-shlq_MotherL/2.0+shlq_DzeroL/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE QONE
+      CALL AgsReset 
+      CALL agml_position_begin('QONE') 
+      %mother = 'MGMT' 
+      %title = 'QONE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-shlq_MotherL/2.0+(shlq_q1+shlq_DzeroL)+shlq_dz1/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE QTWO
+      CALL AgsReset 
+      CALL agml_position_begin('QTWO') 
+      %mother = 'MGMT' 
+      %title = 'QTWO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-shlq_MotherL/2.0+(shlq_q2+shlq_DzeroL)+shlq_dz2/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE QTHR
+      CALL AgsReset 
+      CALL agml_position_begin('QTHR') 
+      %mother = 'MGMT' 
+      %title = 'QTHR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-shlq_MotherL/2.0+(shlq_q3+shlq_DzeroL)+shlq_dz3/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- DZER
+      BLOCK DZER   is the D0 yoke
+      MATERIAL Iron
+      ATTRIBUTE DZER seen=1 colo=1
+      SHAPE tube rmin=shlq_DzeroRi rmax=shlq_DzeroRo,
+            dz=shlq_DzeroL/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QONE
+      BLOCK QONE   is the Q1 yoke
+      MATERIAL Iron
+      ATTRIBUTE QONE seen=1 colo=1
+      SHAPE tube rmin=shlq_ri1 rmax=shlq_ro1 dz=shlq_dz1/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QTWO
+      BLOCK QTWO   is the Q2 yoke
+      MATERIAL Iron
+      ATTRIBUTE QTWO seen=1 colo=1
+      SHAPE tube rmin=shlq_ri2 rmax=shlq_ro2 dz=shlq_dz2/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QTHR
+      BLOCK QTHR   is the Q3 yoke
+      MATERIAL Iron
+      ATTRIBUTE QTHR seen=1 colo=1
+      SHAPE tube rmin=shlq_ri3 rmax=shlq_ro3 dz=shlq_dz3/2.0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module QUADGEO]	 <<==='; (A32,/,/);
+      END! Module QUADGEO

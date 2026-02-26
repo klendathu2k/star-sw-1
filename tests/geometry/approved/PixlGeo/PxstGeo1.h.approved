@@ -1,0 +1,1335 @@
+#ifndef __PxstGeo1__ 
+#define __PxstGeo1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PXSTGEO1 // $NMSPC 
+{ 
+   struct psts_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _psts_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _psts_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct psts_info {
+typedef psts_t Type;
+static const char *name(){ return "psts_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct psts_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)psts_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct psts_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)psts_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct psts_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)psts_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct psts_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)psts_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct psts_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)psts_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfba_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _sfba_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _sfba_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfba_info {
+typedef sfba_t Type;
+static const char *name(){ return "sfba_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct sfba_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfba_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct sfba_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfba_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct sfba_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfba_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct sfba_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfba_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfba_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfba_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfbb_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _sfbb_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _sfbb_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfbb_info {
+typedef sfbb_t Type;
+static const char *name(){ return "sfbb_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct sfbb_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct sfbb_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct sfbb_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct sfbb_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfbb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct sfbk_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _sfbk_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _sfbk_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct sfbk_info {
+typedef sfbk_t Type;
+static const char *name(){ return "sfbk_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct sfbk_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct sfbk_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct sfbk_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct sfbk_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct sfbk_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)sfbk_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct bppc_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _bppc_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _bppc_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct bppc_info {
+typedef bppc_t Type;
+static const char *name(){ return "bppc_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct bppc_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bppc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct bppc_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bppc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct bppc_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bppc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct bppc_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bppc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct bppc_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)bppc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mosc_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _mosc_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _mosc_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mosc_info {
+typedef mosc_t Type;
+static const char *name(){ return "mosc_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct mosc_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mosc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct mosc_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mosc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct mosc_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mosc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct mosc_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mosc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mosc_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mosc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pita_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _pita_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _pita_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pita_info {
+typedef pita_t Type;
+static const char *name(){ return "pita_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pita_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pita_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct pita_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pita_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct pita_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pita_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct pita_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pita_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pita_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pita_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pitb_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _pitb_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _pitb_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pitb_info {
+typedef pitb_t Type;
+static const char *name(){ return "pitb_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pitb_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct pitb_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct pitb_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct pitb_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pitb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pitc_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _pitc_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _pitc_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pitc_info {
+typedef pitc_t Type;
+static const char *name(){ return "pitc_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pitc_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct pitc_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct pitc_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct pitc_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pitc_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitc_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pitr_t {
+float version;
+float dmin;
+float dmax;
+float dz;
+int _index;
+};
+ 
+   struct _pitr_docum_ {
+string version;
+string dmin;
+string dmax;
+string dz;
+string _index;
+};
+ 
+    struct _pitr_types_ {
+  typedef float version;
+  typedef float dmin;
+  typedef float dmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pitr_info {
+typedef pitr_t Type;
+static const char *name(){ return "pitr_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pitr_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dmin {
+  static const char *name() { return  "dmin"; }
+  static size_t Offset(){ return offsetof( struct pitr_t, dmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dmax {
+  static const char *name() { return  "dmax"; }
+  static size_t Offset(){ return offsetof( struct pitr_t, dmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct pitr_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pitr_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pitr_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PSTM -- 
+   ///@defgroup PSTM_doc 
+   ///@class PSTM 
+   ///@brief Main volume in the AGML tutorial geometry [TGeoVolume] 
+   class PSTM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PSTM() : AgBlock("PSTM","Main volume in the AGML tutorial geometry [TGeoVolume]"){ 
+      }; 
+      ~PSTM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APTS -- 
+   ///@defgroup APTS_doc 
+   ///@class APTS 
+   ///@brief A Pixel Tube Shell [TGeoVolume] 
+   class APTS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APTS() : AgBlock("APTS","A Pixel Tube Shell [TGeoVolume]"){ 
+      }; 
+      ~APTS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- LFBA -- 
+   ///@defgroup LFBA_doc 
+   ///@class LFBA 
+   ///@brief A Flange BAse [TGeoVolume] 
+   class LFBA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      LFBA() : AgBlock("LFBA","A Flange BAse [TGeoVolume]"){ 
+      }; 
+      ~LFBA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- LFBB -- 
+   ///@defgroup LFBB_doc 
+   ///@class LFBB 
+   ///@brief A Flange Base B [TGeoVolume] 
+   class LFBB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      LFBB() : AgBlock("LFBB","A Flange Base B [TGeoVolume]"){ 
+      }; 
+      ~LFBB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- LFBK -- 
+   ///@defgroup LFBK_doc 
+   ///@class LFBK 
+   ///@brief A Flange BacKer [TGeoVolume] 
+   class LFBK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      LFBK() : AgBlock("LFBK","A Flange BacKer [TGeoVolume]"){ 
+      }; 
+      ~LFBK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- RFBA -- 
+   ///@defgroup RFBA_doc 
+   ///@class RFBA 
+   ///@brief A Flange BAse [TGeoVolume] 
+   class RFBA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      RFBA() : AgBlock("RFBA","A Flange BAse [TGeoVolume]"){ 
+      }; 
+      ~RFBA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- RFBB -- 
+   ///@defgroup RFBB_doc 
+   ///@class RFBB 
+   ///@brief A Flange Base B [TGeoVolume] 
+   class RFBB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      RFBB() : AgBlock("RFBB","A Flange Base B [TGeoVolume]"){ 
+      }; 
+      ~RFBB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- RFKK -- 
+   ///@defgroup RFKK_doc 
+   ///@class RFKK 
+   ///@brief A Flange BacKer [TGeoVolume] 
+   class RFKK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      RFKK() : AgBlock("RFKK","A Flange BacKer [TGeoVolume]"){ 
+      }; 
+      ~RFKK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MOSC -- 
+   ///@defgroup MOSC_doc 
+   ///@class MOSC 
+   ///@brief A Beam Pipe Ring [TGeoVolume] 
+   class MOSC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MOSC() : AgBlock("MOSC","A Beam Pipe Ring [TGeoVolume]"){ 
+      }; 
+      ~MOSC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPPC -- 
+   ///@defgroup BPPC_doc 
+   ///@class BPPC 
+   ///@brief Beam Pipe Support [TGeoVolume] 
+   class BPPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPPC() : AgBlock("BPPC","Beam Pipe Support [TGeoVolume]"){ 
+      }; 
+      ~BPPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPA -- 
+   ///@defgroup MTPA_doc 
+   ///@class MTPA 
+   ///@brief Msc Transition Plate part A [TGeoVolume] 
+   class MTPA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPA() : AgBlock("MTPA","Msc Transition Plate part A [TGeoVolume]"){ 
+      }; 
+      ~MTPA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPB -- 
+   ///@defgroup MTPB_doc 
+   ///@class MTPB 
+   ///@brief Msc Transition Plate part B [TGeoVolume] 
+   class MTPB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPB() : AgBlock("MTPB","Msc Transition Plate part B [TGeoVolume]"){ 
+      }; 
+      ~MTPB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPC -- 
+   ///@defgroup MTPC_doc 
+   ///@class MTPC 
+   ///@brief  Msc Transition Plate part C [TGeoVolume] 
+   class MTPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPC() : AgBlock("MTPC"," Msc Transition Plate part C [TGeoVolume]"){ 
+      }; 
+      ~MTPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPD -- 
+   ///@defgroup MTPD_doc 
+   ///@class MTPD 
+   ///@brief Msc Transition Plate part D [TGeoVolume] 
+   class MTPD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPD() : AgBlock("MTPD","Msc Transition Plate part D [TGeoVolume]"){ 
+      }; 
+      ~MTPD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPE -- 
+   ///@defgroup MTPE_doc 
+   ///@class MTPE 
+   ///@brief  Msc Transition Plate part E [TGeoVolume] 
+   class MTPE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPE() : AgBlock("MTPE"," Msc Transition Plate part E [TGeoVolume]"){ 
+      }; 
+      ~MTPE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- BPRS -- 
+   ///@defgroup BPRS_doc 
+   ///@class BPRS 
+   ///@brief the ring  [TGeoVolume] 
+   class BPRS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      BPRS() : AgBlock("BPRS","the ring  [TGeoVolume]"){ 
+      }; 
+      ~BPRS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPF -- 
+   ///@defgroup MTPF_doc 
+   ///@class MTPF 
+   ///@brief  vertical support of the inner rings  [TGeoVolume] 
+   class MTPF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPF() : AgBlock("MTPF"," vertical support of the inner rings  [TGeoVolume]"){ 
+      }; 
+      ~MTPF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPG -- 
+   ///@defgroup MTPG_doc 
+   ///@class MTPG 
+   ///@brief  vertical support of the inner rings  [TGeoVolume] 
+   class MTPG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPG() : AgBlock("MTPG"," vertical support of the inner rings  [TGeoVolume]"){ 
+      }; 
+      ~MTPG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- MTPH -- 
+   ///@defgroup MTPH_doc 
+   ///@class MTPH 
+   ///@brief  OSC - MSC support ring  [TGeoVolume] 
+   class MTPH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MTPH() : AgBlock("MTPH"," OSC - MSC support ring  [TGeoVolume]"){ 
+      }; 
+      ~MTPH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PITN -- 
+   ///@defgroup PITN_doc 
+   ///@class PITN 
+   ///@brief Pixel Insertion Tube  [TGeoVolume] 
+   class PITN : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PITN() : AgBlock("PITN","Pixel Insertion Tube  [TGeoVolume]"){ 
+      }; 
+      ~PITN(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFA -- 
+   ///@defgroup APFA_doc 
+   ///@class APFA 
+   ///@brief A Pit Flange BAse A [TGeoVolume] 
+   class APFA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFA() : AgBlock("APFA","A Pit Flange BAse A [TGeoVolume]"){ 
+      }; 
+      ~APFA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFB -- 
+   ///@defgroup APFB_doc 
+   ///@class APFB 
+   ///@brief A Pit Flange Base B [TGeoVolume] 
+   class APFB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFB() : AgBlock("APFB","A Pit Flange Base B [TGeoVolume]"){ 
+      }; 
+      ~APFB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFC -- 
+   ///@defgroup APFC_doc 
+   ///@class APFC 
+   ///@brief A Pit Flange BacKer C [TGeoVolume] 
+   class APFC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFC() : AgBlock("APFC","A Pit Flange BacKer C [TGeoVolume]"){ 
+      }; 
+      ~APFC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFD -- 
+   ///@defgroup APFD_doc 
+   ///@class APFD 
+   ///@brief A Pit Flange BAse D [TGeoVolume] 
+   class APFD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFD() : AgBlock("APFD","A Pit Flange BAse D [TGeoVolume]"){ 
+      }; 
+      ~APFD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFE -- 
+   ///@defgroup APFE_doc 
+   ///@class APFE 
+   ///@brief A Pit Flange Base E [TGeoVolume] 
+   class APFE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFE() : AgBlock("APFE","A Pit Flange Base E [TGeoVolume]"){ 
+      }; 
+      ~APFE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFF -- 
+   ///@defgroup APFF_doc 
+   ///@class APFF 
+   ///@brief A Pit Flange BacKer F [TGeoVolume] 
+   class APFF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFF() : AgBlock("APFF","A Pit Flange BacKer F [TGeoVolume]"){ 
+      }; 
+      ~APFF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFG -- 
+   ///@defgroup APFG_doc 
+   ///@class APFG 
+   ///@brief A Pit Flange BAse G [TGeoVolume] 
+   class APFG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFG() : AgBlock("APFG","A Pit Flange BAse G [TGeoVolume]"){ 
+      }; 
+      ~APFG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFH -- 
+   ///@defgroup APFH_doc 
+   ///@class APFH 
+   ///@brief A Pit Flange Base H [TGeoVolume] 
+   class APFH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFH() : AgBlock("APFH","A Pit Flange Base H [TGeoVolume]"){ 
+      }; 
+      ~APFH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- APFI -- 
+   ///@defgroup APFI_doc 
+   ///@class APFI 
+   ///@brief A Pit Flange BacKer I [TGeoVolume] 
+   class APFI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      APFI() : AgBlock("APFI","A Pit Flange BacKer I [TGeoVolume]"){ 
+      }; 
+      ~APFI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PITR -- 
+   ///@defgroup PITR_doc 
+   ///@class PITR 
+   ///@brief A PIt Rail [TGeoVolume] 
+   class PITR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PITR() : AgBlock("PITR","A PIt Rail [TGeoVolume]"){ 
+      }; 
+      ~PITR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PxstGeo1 
+   /// \brief Geometry for Pixel Support Tube actually all of MSC  
+   class PxstGeo1 : public AgModule 
+   { 
+      public: 
+      PxstGeo1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PxstGeo1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PxstGeo1 
+#endif // __PxstGeo1__ 

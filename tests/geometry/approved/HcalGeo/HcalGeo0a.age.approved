@@ -1,0 +1,2025 @@
+      MODULE HcalGeo0a    forward hadronic calorimeter, Proposed Full Geometry, 2016
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author Prashanth S (KSU), FPS by Akio
+      Created 01/12/2014
+      +CDE,agecom,gcunit,gconst..
+      EXTERNAL hcalhit
+      CONTENT HCMO,
+      HTWR,
+      HCEL,
+      HCES,
+      HCLX,
+      HCLY,
+      HCSX,
+      HCSY,
+      HFIB,
+      HFIC,
+      HACL,
+      FPRS,FPLY,FPPB,FPSC,FPBB,
+      FLIG,FLBA,FLCO,FPMT,FFEE,
+      FLLG,FBLL,FCLL,
+      WPPL,WPIS,WPUF,WPUN,WPUS,WPAR
+      Integer *4 mmi,mmj,      nni,nnj,      ooi,ooj,      ppi,ppj,      q1i,q1j,
+                  q2i,q2j,      q3i,q3j,      q4i,q4j,      flag,flag1,flag2,      flag3
+
+      Integer *4 i,j ,      m,l
+
+      real *4 xtemp,      ytemp
+
+      INTEGER k,kk,serN,lr,tb,col,kmod,rot,id,layr,quad,slat(4,3),      debug,npstype,
+            pstype(20),cpstype(20)
+
+      REAL xx,yy,zz,x1,y1,z1,ztot,rtot,wid,widx,widy,bwid,x0,widL,dx,dy,dz,dxx,dyy,
+            dzz,xxx,yyy,dxxx,dyyy,xpmt,ypmt,      dx1,dy1,dz1,dx2,dy2,dz2,x2,y2,z2,dz3,dx1a,
+            dx1b,dzsb,psdim(20,2)
+
+      REAL ztotsmd,wtotsmd,zsmd,zsmd2,wsmd
+
+      REAL xsmdh,ysmdh,zsmdh,xsmdv,ysmdv,zsmdv
+
+      REAL xlcOffSet,BZOffSet
+
+      REAL basewidth,distancer,xoffFECC,xoffFEDC,xshift
+
+      REAL xoffFENC,yoffFENC,zoffFENC,zoffFECC
+
+      REAL tmp(7)
+
+      INTEGER N
+
+      PARAMETER (N = 12)
+      REAL E(N)
+
+      REAL rindex_PbG(N)
+
+      REAL rindex_SiRub(N)
+
+      REAL rindex_PhCath(N)
+
+      REAL rindex_Alm(N)
+
+      REAL rindex_MuMet(N)
+
+      REAL absco_PbG(N)
+
+      REAL absco_SiRub(N)
+
+      REAL absco_PhCath(N)
+
+      REAL absco_Alm(N)
+
+      REAL absco_MuMet(N)
+
+      REAL effic_PhCath(N)
+
+      REAL effic_all(N)
+
+      REAL lprs1,lprs2,lprs3,lprs4,pwid,x,y,z,dlg
+
+      EXTERNAL FFPDSTEP
+      EXTERNAL FPCTSTEP
+      STRUCTURE mcdt { version,x,y,z,dx,dy,dz}
+      STRUCTURE towr { version,dx,dy,dz,nTowerX,nTowerY}
+      STRUCTURE cell { version,dx,dy,dz,nCellX,nCellY,nFiberXL,nFiberYL,nFiberXS,
+            nFiberYS}
+      STRUCTURE fibr { version,rmin,rmax,dz,startX1,startY1,startX2,startY2,stepX,
+            stepY}
+      STRUCTURE PRSW { DBox(3),Xoff(4),Yoff(4),Zoff(4),Dz(4),DHole,NType,NPrs(2),
+            DPrs(3),NSkipV,NSkipH,DyCut,DLG(3),DSIPM(4),DzBbd(4),DxBbd(2)}
+      STRUCTURE WPFM { PoleD(4),PoleP(3),IstrD(4),Ist1P(3),Ist2P(3),UstFD(4),UstFP(3),
+            UstND(4),UstNP(3),UstSD(4),UstSP(3)}
+      FILL mcdt		!  Mother Calorimeter
+      version = 1.0 ! face center of calorimeter
+      x = 0.0 ! x cdt from center of TPC
+      y = 0.0 ! y cdt from center of TPC
+      z = 777.4 ! z cdt from center of TPC
+      dx = 20*10/2. ! HCMO width
+      dy = 18*10/2. ! HCMO height
+      dz = 117/2. ! HCMO length
+      ENDFILL
+      FILL towr		! Structure containing Calorimeter towr dimention
+      version = 1.0 ! towr dimention
+      dx = 10.0/2. ! towr width
+      dy = 10.0/2. ! towr height
+      dz = 117.0/2. ! towr length
+      nTowerX = 20 ! no of tower in X dir
+      nTowerY = 18 ! no of tower in Y dir
+      ENDFILL
+      FILL cell		! Structure containing Calorimeter pixels dimention
+      version = 1.0 ! pixels dimention
+      dx = 3.3/2. ! pixels width
+      dy = 3.3/2. ! pixels height
+      dz = 117.0/2. ! towr length
+      nCellX = 3 ! no of cells in X dir
+      nCellY = 3 ! no of cells in Y dir
+      nFiberXL = 16 ! no fibers in cell 16 fibers
+      nFiberYL = 16 ! no fibers in cell 16 fibers
+      nFiberXS = 15 ! no fibers in cell 15 fibers
+      nFiberYS = 15 ! no fibers in cell 15 fibers
+      ENDFILL
+      FILL fibr		! Scintilating fibes in towers/cells
+      version = 1.0 ! fiber dimention
+      rmin = 0.0 ! inner radius of fiber
+      rmax = 0.055 ! outer radius of fiber
+      dz = 117.0/2. ! towr length
+      startX1 = 0.107 ! distance from edge or from one cell boundry to other 1: for first cell
+      startY1 = 0.107 ! distance from edge or from one cell boundry to other
+      startX2 = 0.1065 ! distance from edge or from one cell boundry to other 2:for 2nd and 3rd cell
+      startY2 = 0.1065 ! distance from edge or from one cell boundry to other
+      stepX = 0.213 ! distance between fibers center to center
+      stepY = 0.213 ! distance between fibers center to center
+      ENDFILL
+      FILL PRSW		! Pre Shower geometry
+      DBox  = {  225.0,    250,   22.0} !  None
+      Xoff  = {  1.0,  1.0,  1.0,  1.0} !  None
+      Yoff  = {  0.0,  0.0,  0.0,  0.0} !  None
+      Zoff  = {  675.64,  678.52,  690.29,  692.22} !  None
+      Dz  = {    1.0,    1.0,  0.635,    1.0} !  None
+      DHole = 20.25 ! None
+      NType = 2 ! None
+      NPrs  = {  12,   9} !  None
+      DPrs  = {   4.0,   5.8,  0.05} !  None
+      NSkipV = 2 ! None
+      NSkipH = 2 ! None
+      DyCut = 3.0+5.8 ! None
+      DLG  = {  0.3,  6.0,  1.0} !  None
+      DSIPM  = {  0.5,  3.5,  1.0,  7.0} !  None
+      DzBbd  = {    2.54/8.0,    2.54/4.0,  2*2.54/4.0, 
+                    2.54/4.0} !  None
+      DxBbd  = {      2.54,  2.54+7.0} !  None
+      ENDFILL
+      FILL WPFM		! West Platform geometry
+      PoleD  = {     12.0*2.54,  155.5 * 2.54,     12.0*2.54, 
+                           1.0} !  None
+      PoleP  = {                 72.0*2.54, 
+                  (-44.36-10-155.5/2)*2.54, 
+                            807.72-27*2.54} !  None
+      IstrD  = {  231.0*2.54,    8.0*2.54,    8.0*2.54, 
+                         1.0} !  None
+      Ist1P  = {          -8.0*2.54,  (-44.36-5.0)*2.54, 
+                     807.72-37*2.54} !  None
+      Ist2P  = {          -8.0*2.54,  (-44.36-5.0)*2.54, 
+                     807.72-17*2.54} !  None
+      UstFD  = {  236.0*2.54,     12*2.54,      4*2.54, 
+                         1.0} !  None
+      UstFP  = {           -8.0*2.54,         -44.36*2.54, 
+                  807.72-(46-2)*2.54} !  None
+      UstND  = {       4*2.54,    12.0*2.54,  (46-4)*2.54, 
+                          1.0} !  None
+      UstNP  = {       -(118-2+8)*2.54,           -44.36*2.54, 
+                  807.72-(46-4)*2.54/2} !  None
+      UstSD  = {       4*2.54,    12.0*2.54,  (46-4)*2.54, 
+                          1.0} !  None
+      UstSP  = {       +(118-2-8)*2.54,           -44.36*2.54, 
+                  807.72-(46-4)*2.54/2} !  None
+      ENDFILL
+      use mcdt version=1.0
+      use towr version=1.0
+      use cell version=1.0
+      use fibr version=1.0
+      CREATE HCMO
+      CALL AgsReset 
+      CALL agml_position_begin('HCMO') 
+      %mother = 'CAVE' 
+      %title = 'HCMO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(mcdt_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(mcdt_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(mcdt_z) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE FPRS
+      CALL AgsReset 
+      CALL agml_position_begin('FPRS') 
+      %mother = 'CAVE' 
+      %title = 'FPRS' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_Zoff(1)-PRSW_DSIPM(1)+PRSW_Dbox(3)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE WPPL
+      CALL AgsReset 
+      CALL agml_position_begin('WPPL') 
+      %mother = 'CAVE' 
+      %title = 'WPPL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+WPFM_PoleP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_PoleP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_PoleP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('WPPL') 
+      %mother = 'CAVE' 
+      %title = 'WPPL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-WPFM_PoleP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_PoleP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_PoleP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE WPIS
+      CALL AgsReset 
+      CALL agml_position_begin('WPIS') 
+      %mother = 'CAVE' 
+      %title = 'WPIS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(WPFM_Ist1P(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_Ist1P(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_Ist1P(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('WPIS') 
+      %mother = 'CAVE' 
+      %title = 'WPIS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(WPFM_Ist2P(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_Ist2P(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_Ist2P(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE WPUF
+      CALL AgsReset 
+      CALL agml_position_begin('WPUF') 
+      %mother = 'CAVE' 
+      %title = 'WPUF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+WPFM_UstFP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_UstFP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_UstFP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE WPUN
+      CALL AgsReset 
+      CALL agml_position_begin('WPUN') 
+      %mother = 'CAVE' 
+      %title = 'WPUN' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+WPFM_UstNP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_UstNP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_UstNP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE WPUS
+      CALL AgsReset 
+      CALL agml_position_begin('WPUS') 
+      %mother = 'CAVE' 
+      %title = 'WPUS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+WPFM_UstSP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(WPFM_UstSP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_UstSP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- HCMO
+      BLOCK HCMO   Mother Calorimeter
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE box dx=mcdt_dx dy=mcdt_dy dz=mcdt_dz
+      mmi=0;
+      mmj=4;
+      nni=0;
+      nnj=13;
+      ooi=16;
+      ooj=1;
+      ppi=16;
+      ppj=16;
+      q1i=9;q1j=8;
+      q2i=9;q2j=9;
+      q3i=10;q3j=8;
+      q4i=10;q4j=9;
+      DO i = 0, towr_nTowerX-1
+      DO j = 0, towr_nTowerY-1
+      flag1 = ( (i.eq.mmi) .and. (j.lt.mmj) ) .or. ( (i.eq.nni) .and. (j.gt.nnj) _
+            ) .or. ( (i.eq.ooi) .and. (j.lt.ooj) ) .or. ( (i.eq.ppi) .and. (j.gt.ppj) ) ;
+      flag2 = ( (i.eq.q1i  ) .and. ( j.eq.q1j) ) .or. ( (i.eq.q2i  ) .and. ( j.eq.q2j) _
+            )  .or. ( (i.eq.q3i  ) .and. ( j.eq.q3j) )  .or. ( (i.eq.q4i  ) .and. ( j.eq.q4j) _
+            );
+      flag = flag1 + flag2;
+      flag3 = ( (i.eq.mmi) .and. (j.lt.mmj) ) .or. ( (i.eq.ooi) .and. (j.lt.ooj) _
+            ) ;
+      IF ( (flag.eq.0)  ) THEN
+      CREATE HTWR
+      CALL AgsReset 
+      CALL agml_position_begin('HTWR') 
+      %title = 'HTWR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(((towr_nTowerX/2)*towr_dx*2)-towr_dx)+(i*towr_dx*2)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-(((towr_nTowerY/2)*towr_dy*2)-towr_dy)+(j*towr_dy*2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      IF ( (flag3.eq.1)  ) THEN
+      CREATE HACL
+      CALL AgsReset 
+      CALL agml_position_begin('HACL') 
+      %title = 'HACL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(((towr_nTowerX/2)*towr_dx*2)-towr_dx)+(i*towr_dx*2)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-(((towr_nTowerY/2)*towr_dy*2)-towr_dy)+(j*towr_dy*2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      END DO
+      IF ( i.eq.mmi ) THEN
+      mmi=mmi+1;
+      mmj=mmj-1;
+      ENDIF
+      IF ( i.eq.nni ) THEN
+      nni=nni+1;
+      nnj=nnj+1;
+      ENDIF
+      IF ( i.eq.ooi ) THEN
+      ooi=ooi+1;
+      ooj=ooj+1;
+      ENDIF
+      IF ( i.eq.ppi ) THEN
+      ppi=ppi+1;
+      ppj=ppj-1;
+      ENDIF
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HTWR
+      BLOCK HTWR   Towrs  of Calorimeter
+      MATERIAL Lead
+      MEDIUM standard
+      ATTRIBUTE None seen=1 colo=3
+      SHAPE box dx=towr_dx dy=towr_dy dz=towr_dz
+      xtemp=fibr_startX1;
+      DO m = 0, cell_nCellX-1
+      ytemp=fibr_startY1;
+      DO l = 0, cell_nCellY-1
+      IF ( m.eq.l ) THEN
+      CREATE HCES
+      CALL AgsReset 
+      CALL agml_position_begin('HCES') 
+      %title = 'HCES' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-3.33+(3.33*m)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-3.33+(l*3.33)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CREATE HCEL
+      CALL AgsReset 
+      CALL agml_position_begin('HCEL') 
+      %title = 'HCEL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-3.33+(3.33*m)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-3.33+(l*3.33)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ytemp=fibr_startY2;
+      END DO
+      xtemp=fibr_startX2;
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCES
+      BLOCK HCES   3*3 cell in tower, HCES has 15*15 fibers
+      MATERIAL Lead
+      MATERIAL Lead isvol=5
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE box dx=cell_dx dy=cell_dy dz=cell_dz
+      CREATE HCSX
+      HITS HCES hcal:0:S(0,100.0) elos:0:S(0,100.0) birk:0:S(0,100.0)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCEL
+      BLOCK HCEL   3*3 cell in tower, HCES has 16*16 fibers
+      MATERIAL Lead
+      MATERIAL Lead isvol=5
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE box dx=cell_dx dy=cell_dy dz=cell_dz
+      CREATE HCLX
+      HITS HCEL hcal:0:S(0,100.0) elos:0:S(0,100.0) birk:0:S(0,100.0)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCSX
+      BLOCK HCSX   3*3 cell in tower x divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE division ndiv=cell_nFiberXS iaxis=1
+      CREATE HCSY
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCSY
+      BLOCK HCSY   3*3 cell in tower y divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE division ndiv=cell_nFiberYS iaxis=2
+      CREATE HFIB
+      CALL AgsReset 
+      CALL agml_position_begin('HFIB') 
+      %title = 'HFIB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCLX
+      BLOCK HCLX   3*3 cell in tower x divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE division ndiv=cell_nFiberXL iaxis=1
+      CREATE HCLY
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HCLY
+      BLOCK HCLY   3*3 cell in tower y divisions
+      MATERIAL Lead isvol=0
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE division ndiv=cell_nFiberYL iaxis=2
+      CREATE HFIC
+      CALL AgsReset 
+      CALL agml_position_begin('HFIC') 
+      %title = 'HFIC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HFIB
+      BLOCK HFIB   fiber in cells
+      MATERIAL Polystyren
+      MATERIAL SensPoly isvol=1
+      MEDIUM standard
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE tube rmin=fibr_rmin rmax=fibr_rmax,
+            dz=fibr_dz
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HFIC
+      BLOCK HFIC   fiber in cells
+      MATERIAL Polystyren
+      MATERIAL SensPoly isvol=1
+      MEDIUM standard
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE tube rmin=fibr_rmin rmax=fibr_rmax,
+            dz=fibr_dz
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HACL
+      BLOCK HACL    Aluminum suporting cells
+      MATERIAL Aluminium isvol=0
+      MEDIUM standard
+      ATTRIBUTE None seen=1 colo=2
+      SHAPE box dx=towr_dx dy=towr_dy dz=towr_dz
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPRS
+      BLOCK FPRS   is box for plastic schinti FMS pre-shower detectors
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE FPRS seen=0 colo=2
+      SHAPE pgon phi1=45 dphi=360 npdiv=4 nz=2,
+            zi={-PRSW_DBox(3)/2.0,PRSW_DBox(3)/2.0} rmn={PRSW_DHole-PRSW_DxBbd(1),
+            PRSW_DHole-PRSW_DxBbd(1)},
+            rmx={PRSW_DBox(1)/2.0,PRSW_DBox(1)/2.0}
+      debug=0
+      IF ( debug.ge.1 ) THEN
+      npstype=0
+      cpstype(1)=1
+      cpstype(2)=2
+      cpstype(3)=6
+      cpstype(4)=3
+      cpstype(5)=4
+      cpstype(6)=7
+      cpstype(7)=5
+      cpstype(8)=8
+      open(11,file='fpsgeom.txt',status='REPLACE')
+      ENDIF
+      serN=1
+      dx=PRSW_DBox(1)/2.0
+      dy=PRSW_DBox(2)/2.0
+      dz=PRSW_Dz(1)/2.0 + PRSW_DzBbd(1)/2.0 + PRSW_DSIPM(1)/2.0
+      zz= - PRSW_Dbox(3)/2.0 + dz
+      CREATE FPLY
+      CALL AgsReset 
+      CALL agml_position_begin('FPLY') 
+      %mother = 'FPRS' 
+      %title = 'FPLY' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      serN=2
+      dx=PRSW_DBox(1)/2.0
+      dy=PRSW_DBox(2)/2.0
+      dz=PRSW_Dz(2)/2.0 + PRSW_DzBbd(2)/2.0 + PRSW_DSIPM(1)/2.0
+      zz= - PRSW_Dbox(3)/2.0 + dz + PRSW_Zoff(2) - PRSW_Zoff(1)
+      CREATE FPLY
+      CALL AgsReset 
+      CALL agml_position_begin('FPLY') 
+      %mother = 'FPRS' 
+      %title = 'FPLY' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      serN=3
+      dx=PRSW_DBox(1)/2.0
+      dy=PRSW_DBox(2)/2.0
+      dz=PRSW_Dz(3)/2.0 + PRSW_DzBbd(3)/2.0
+      zz= - PRSW_Dbox(3)/2.0 + PRSW_DSIPM(1) + dz - PRSW_DzBbd(3)/2.0 + PRSW_Zoff(3) _
+            - PRSW_Zoff(1)
+      dzsb = PRSW_Dz(3)/2.0 + PRSW_DzBbd(3)/4.0
+      CREATE FPLY
+      CALL AgsReset 
+      CALL agml_position_begin('FPLY') 
+      %mother = 'FPRS' 
+      %title = 'FPLY' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      serN=4
+      dx=PRSW_DBox(1)/2.0
+      dy=PRSW_DBox(2)/2.0
+      dz=PRSW_Dz(4)/2.0 + PRSW_DzBbd(4)/2.0 + PRSW_DSIPM(1)/2.0
+      zz= - PRSW_Dbox(3)/2.0 + dz + PRSW_DSIPM(1) + PRSW_Zoff(4) - PRSW_Zoff(1) - _
+            PRSW_DzBbd(4)
+      CREATE FPLY
+      CALL AgsReset 
+      CALL agml_position_begin('FPLY') 
+      %mother = 'FPRS' 
+      %title = 'FPLY' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_z = real(zz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPLY
+      BLOCK FPLY   is a layer of FMS Preshower
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE FPLY seen=0 colo=3 serial=serN
+      SHAPE pgon phi1=45 dphi=360 npdiv=4 nz=2,
+            zi={-dz,dz} rmn={PRSW_DHole-PRSW_DxBbd(1),PRSW_DHole-PRSW_DxBbd(1)},
+            rmx={PRSW_DBox(1)/2.0,
+            PRSW_DBox(1)/2.0}
+      lprs1=PRSW_NPrs(1)*(PRSW_DPrs(1) + PRSW_DPrs(3))
+      lprs2=PRSW_NPrs(2)*(PRSW_DPrs(2) + PRSW_DPrs(3)) + lprs1
+      lprs3=(PRSW_NPrs(2) - PRSW_NSkipH)*(PRSW_DPrs(2) + PRSW_DPrs(3)) + lprs1
+      lprs4=(PRSW_NPrs(1) - PRSW_NSkipV)*(PRSW_DPrs(1) + PRSW_DPrs(3)) + PRSW_NPrs(2)*(PRSW_DPrs(2) _
+            + PRSW_DPrs(3))
+      dlg=(PRSW_DLG(2) + PRSW_DLG(3) + PRSW_DSIPM(1))/2.0
+      k   = 0
+      dzz = PRSW_DZ(serN)/2.0
+      IF ( serN.eq.3 ) THEN
+      ! Pb in middle, back plate in front and back
+      z1=0
+      z2=0
+      ELSEIF ( serN.eq.4 ) THEN
+      ! back board first for layer3
+      z1=-dz+PRSW_DzBbd(serN)+dzz       ! z for schinti
+      z2=-dz+PRSW_DzBbd(serN)/2.0       ! z for back board
+      ELSE
+      ! back board 2nd for layer1,2
+      z1=-dz+PRSW_DSIPM(1)+dzz          ! z for schinti
+      z2=-dz+PRSW_DSIPM(1)+dzz*2+PRSW_DzBbd(serN)/2.0 ! z for back board
+      ENDIF
+      z = PRSW_Zoff(serN)
+      CREATE FPSC
+      CREATE FLIG
+      CREATE FLLG
+      CREATE WPAR
+      CREATE FPBB
+      CREATE FPPB
+      IF ( debug.ge.1 .and. serN.eq.1 ) THEN
+      open(1,file='prs1map.txt',status='REPLACE')
+      ENDIF
+      IF ( debug.ge.1 .and. serN.eq.2 ) THEN
+      open(2,file='prs2map.txt',status='REPLACE')
+      ENDIF
+      IF ( debug.ge.1 .and. serN.eq.3 ) THEN
+      open(3,file='prsCmap.txt',status='REPLACE')
+      ENDIF
+      IF ( debug.ge.1 .and. serN.eq.4 ) THEN
+      open(4,file='prs3map.txt',status='REPLACE')
+      ENDIF
+      IF ( serN.le.2 ) THEN
+      layr=serN
+      ELSE
+      layr=serN-1
+      ENDIF
+      IF ( serN.eq.1 ) THEN
+      DO lr = 1, 2
+      DO tb = 1, 2
+      x=0.0
+      quad=(lr-1)*2+tb
+      slat(quad,layr)=0
+      DO j = 1, 2
+      DO i = 1, PRSW_NPrs(j)
+      dxx = PRSW_DPrs(j)/2.0
+      x = x + dxx + PRSW_DPrs(3)/2.0
+      IF ( tb.eq.1 ) THEN
+      pwid=lprs2
+      ELSE
+      pwid=lprs3-PRSW_DyCut
+      ENDIF
+      IF ( x.le.PRSW_DHole ) THEN
+      dyy = (pwid-PRSW_DHole)/2.0
+      y   = dyy+PRSW_DHole
+      ELSE
+      dyy = pwid/2.0
+      y   = dyy
+      ENDIF
+      yy=y+dyy+dlg
+      IF ( tb.eq.1 ) THEN
+      rot=0
+      ENDIF
+      IF ( tb.eq.2 ) THEN
+      y=-y; yy=-yy; rot=180
+      ENDIF
+      IF ( lr.eq.1 ) THEN
+      xx=+x+PRSW_Xoff(serN)
+      ENDIF
+      IF ( lr.eq.2 ) THEN
+      xx=-x-PRSW_Xoff(serN)
+      ENDIF
+      y=y+PRSW_Yoff(serN); yy=yy+PRSW_Yoff(serN);
+      IF ( tb.eq.1 .or. j.eq.2 .or. i.gt.PRSW_NSkipV ) THEN
+      IF ( debug.ge.1 ) THEN
+      k   = k+1
+      slat(quad,layr)=slat(quad,layr)+1
+      id=(quad-1)*3*21+(layr-1)*21+(slat(quad,layr)-1)
+      flag=0
+      DO kk = 1, npstype
+      IF ( (psdim(kk,1).eq.dxx.and.psdim(kk,2).eq.dyy).or.(psdim(kk,1).eq.dyy.and.psdim(kk,
+            2).eq.dxx) ) THEN
+      flag=kk
+      pstype(kk)=pstype(kk)+1
+      ENDIF
+      END DO
+      IF ( flag.eq.0 ) THEN
+      npstype=npstype+1
+      flag=npstype
+      pstype(flag)=1
+      IF ( dxx.gt.dyy ) THEN
+      psdim(npstype,1)=dyy
+      psdim(npstype,2)=dxx
+      ELSE
+      psdim(npstype,1)=dxx
+      psdim(npstype,2)=dyy
+      ENDIF
+      ENDIF
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('FPSC') 
+      %title = 'FPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dxx) 
+      %dy = real(dyy) 
+      %dz = real(dzz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF j.eq.1 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLIG') 
+      %title = 'FLIG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.1 
+      IF j.eq.2 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLLG') 
+      %title = 'FLLG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.2 
+      ENDIF
+      x = x + dxx
+      END DO
+      END DO
+      END DO
+      END DO
+      ELSEIF ( serN.eq.2 .or. serN.eq.4 ) THEN
+      DO lr = 1, 2
+      DO tb = 1, 2
+      y=0.0
+      quad=(lr-1)*2+tb
+      slat(quad,layr)=0
+      DO j = 1, 2
+      DO i = 1, PRSW_NPrs(j)
+      dyy = PRSW_DPrs(j)/2.0
+      y = y + dyy + PRSW_DPrs(3)/2.0
+      pwid=lprs2
+      IF ( y.le.PRSW_DHole ) THEN
+      dxx = (pwid-PRSW_DHole)/2.0
+      x   = dxx+PRSW_DHole
+      ELSE
+      IF ( tb.eq.1 ) THEN
+      dxx = pwid/2.0
+      x   = dxx
+      ELSE
+      dxx = lprs4/2.0
+      x   = dxx+2*PRSW_DPrs(1)
+      ENDIF
+      ENDIF
+      xx=x+dxx+dlg
+      IF ( tb.eq.1 ) THEN
+      yy=+y;
+      ENDIF
+      IF ( tb.eq.2 ) THEN
+      yy=-y;
+      ENDIF
+      IF ( lr.eq.1 ) THEN
+      x=+x+PRSW_Xoff(serN); xx=+xx+PRSW_Xoff(serN); rot=-90
+      ENDIF
+      IF ( lr.eq.2 ) THEN
+      x=-x-PRSW_Xoff(serN); xx=-xx-PRSW_Xoff(serN); rot=90
+      ENDIF
+      yy=yy+PRSW_Yoff(serN);
+      IF ( tb.eq.1 .or. j.eq.1 .or. i.le.PRSW_NPrs(j)-PRSW_NSkipH ) THEN
+      IF ( debug.ge.1 ) THEN
+      k   = k+1
+      slat(quad,layr)=slat(quad,layr)+1
+      id=(quad-1)*3*21+(layr-1)*21+(slat(quad,layr)-1)
+      flag=0
+      DO kk = 1, npstype
+      IF ( (psdim(kk,1).eq.dxx.and.psdim(kk,2).eq.dyy).or.(psdim(kk,1).eq.dyy.and.psdim(kk,
+            2).eq.dxx) ) THEN
+      flag=kk
+      pstype(kk)=pstype(kk)+1
+      ENDIF
+      END DO
+      IF ( flag.eq.0 ) THEN
+      npstype=npstype+1
+      flag=npstype
+      pstype(flag)=1
+      IF ( dxx.gt.dyy ) THEN
+      psdim(npstype,1)=dyy
+      psdim(npstype,2)=dxx
+      ELSE
+      psdim(npstype,1)=dxx
+      psdim(npstype,2)=dyy
+      ENDIF
+      ENDIF
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('FPSC') 
+      %title = 'FPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dxx) 
+      %dy = real(dyy) 
+      %dz = real(dzz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF j.eq.1.and.serN.eq.2 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLIG') 
+      %title = 'FLIG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.1.and.serN.eq.2 
+      IF j.eq.2.and.serN.eq.2 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLLG') 
+      %title = 'FLLG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.2.and.serN.eq.2 
+      IF j.eq.1.and.serN.eq.4 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLIG') 
+      %title = 'FLIG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1+PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(-rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.1.and.serN.eq.4 
+      IF j.eq.2.and.serN.eq.4 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FLLG') 
+      %title = 'FLLG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xx) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yy) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z1+PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = real(-rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF j.eq.2.and.serN.eq.4 
+      ENDIF
+      y = y + dyy
+      END DO
+      END DO
+      END DO
+      END DO
+      ENDIF
+      IF ( debug.ge.1 ) THEN
+      close(serN)
+      ENDIF
+      dz1=PRSW_DzBbd(serN)/2.0
+      dz3=PRSW_Dz(3) + PRSW_DzBbd(3)
+      dx1=(PRSW_DHole - PRSW_DxBbd(1))/2.0
+      dy1=(lprs2 - PRSW_DHole + PRSW_DxBbd(1) + PRSW_DxBbd(2))/2.0
+      x2=PRSW_xoff(serN) + dx1
+      y2=PRSW_DHole - PRSW_DxBbd(1) + dy1
+      dxx=dx1; dyy=dy1;
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      dx2=(lprs2 - PRSW_DHole + PRSW_DxBbd(1) + PRSW_DxBbd(2))/2.0
+      dy2=(lprs2 + PRSW_DxBbd(2))/2.0
+      x2=PRSW_xoff(serN) + dx1*2 + dx2
+      y2=dy2
+      dxx=dx2; dyy=dy2;
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      dx1a=(PRSW_DHole - PRSW_DxBbd(1) - PRSW_NSkipV*PRSW_Dprs(1))/2.0
+      dx1b=(PRSW_DHole - PRSW_DxBbd(1))/2.0
+      IF ( serN.le.4 ) THEN
+      dx1=dx1a
+      x2=PRSW_xoff(serN)+PRSW_NSkipV*PRSW_Dprs(1)+dx1
+      ELSE
+      dx1=dx1b
+      x2=PRSW_xoff(serN)+dx1
+      ENDIF
+      dy1=(lprs3 - PRSW_DHole - PRSW_DyCut + PRSW_DxBbd(1) + PRSW_DxBbd(2))/2.0
+      y2=PRSW_DHole - PRSW_DxBbd(1) + dy1
+      dxx=dx1; dyy=dy1;
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx1) 
+      %dy = real(dy1) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF ( serN.le.2 ) THEN
+      dx2=(lprs2-PRSW_DHole+PRSW_DxBbd(1)+PRSW_DxBbd(2))/2.0
+      ELSE
+      dx2=(lprs2-PRSW_DHole+PRSW_DxBbd(1)+PRSW_DxBbd(2))/2.0
+      ENDIF
+      dy2=(lprs3 - PRSW_DyCut + PRSW_DxBbd(2))/2.0
+      x2=PRSW_xoff(serN) + dx1b*2 + dx2
+      y2=dy2
+      dxx=dx2; dyy=dy2;
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.ne.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(dz1) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.ne.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2-dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPPB') 
+      %title = 'FPPB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_Dz(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      IF serN.eq.3 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FPBB') 
+      %title = 'FPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-x2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-y2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(z2+dzsb) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(dx2) 
+      %dy = real(dy2) 
+      %dz = real(PRSW_DzBbd(3)/4.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF serN.eq.3 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPBB
+      BLOCK FPBB   is the G10 back board
+      COMPONENT Si A=28.08 Z=14 W=0.6*1*28./60.
+      COMPONENT O A=16 Z=8 W=0.6*2*16./60.
+      COMPONENT C A=12 Z=6 W=0.4*8*12./174.
+      COMPONENT H A=1 Z=1 W=0.4*14*1./174.
+      COMPONENT O A=16 Z=8 W=0.4*4*16./174.
+      MIXTURE g10 dens=1.7
+      ATTRIBUTE FPBB seen=1 colo=7
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPPB
+      BLOCK FPPB   is FMS PS Pb converter
+      MATERIAL LEAD
+      ATTRIBUTE FPPB seen=1 colo=6
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPSC
+      BLOCK FPSC   is a piece of scintillator in FMS Preshower
+      MATERIAL Polystyren
+      MATERIAL FMSPS_scint isvol=1
+      ATTRIBUTE FPSC seen=1 colo=4
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      Call GStPar(ag_imed, 'CUTGAM', 0.00008)
+      Call GStPar(ag_imed, 'CUTELE', 0.001)
+      Call GStPar(ag_imed, 'BCUTE', 0.0001)
+      Call GStPar(ag_imed, 'BIRK1', 1.)
+      Call GStPar(ag_imed, 'BIRK2', 0.013)
+      Call GStPar(ag_imed, 'BIRK3', 9.6E-6)
+      HITS FPSC birk:0:(0,10)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FLIG
+      BLOCK FLIG   is a light guide + SiPM board for Preshower
+      MATERIAL Air
+      ATTRIBUTE FLIG seen=1 colo=6 serial=1
+      SHAPE box dx=PRSW_DPRS(1)/2.0 dy=PRSW_Dz(1)/2.0+PRSW_DSIPM(1)/2.0,
+            dz=dlg
+      CREATE FLBA
+      CREATE FLCO
+      CREATE FPMT
+      CREATE FFEE
+      CALL AgsReset 
+      CALL agml_position_begin('FLBA') 
+      %title = 'FLBA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)/2.0-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FLCO') 
+      %title = 'FLCO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-PRSW_DPRS(1)/4.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)+PRSW_DLG(2)/2.0-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FLCO') 
+      %title = 'FLCO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+PRSW_DPRS(1)/4.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)+PRSW_DLG(2)/2.0-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FPMT') 
+      %title = 'FPMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(dlg-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FFEE') 
+      %title = 'FFEE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(PRSW_Dz(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(dlg-PRSW_DSIPM(4)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FLLG
+      BLOCK FLLG   is a light guide + SiPM board for Preshower for large
+      MATERIAL Air
+      ATTRIBUTE FLLG seen=1 colo=6 serial=1
+      SHAPE box dx=PRSW_DPRS(2)/2.0 dy=PRSW_Dz(1)/2.0+PRSW_DSIPM(1)/2.0,
+            dz=dlg
+      CREATE FBLL
+      CREATE FCLL
+      CREATE FPMT
+      CREATE FFEE
+      CALL AgsReset 
+      CALL agml_position_begin('FBLL') 
+      %title = 'FBLL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)/2.0-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FCLL') 
+      %title = 'FCLL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-PRSW_DPRS(2)/4.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)+PRSW_DLG(2)/2-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FCLL') 
+      %title = 'FCLL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real( PRSW_DPRS(2)/4.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(PRSW_DLG(3)+PRSW_DLG(2)/2-dlg) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FPMT') 
+      %title = 'FPMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(dlg-PRSW_DSIPM(1)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FFEE') 
+      %title = 'FFEE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(PRSW_Dz(1)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(dlg-PRSW_DSIPM(4)/2.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FLBA
+      BLOCK FLBA   is a light guide base for Preshower
+      MATERIAL Polystyren
+      ATTRIBUTE FLBA seen=1 colo=4 serial=1
+      SHAPE box dx=PRSW_DPRS(1)/2.0 dy=PRSW_DZ(serN)/2.0,
+            dz=PRSW_DLG(3)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FBLL
+      BLOCK FBLL   is a light guide base for Preshower large
+      MATERIAL Polystyren
+      ATTRIBUTE FBLL seen=1 colo=4 serial=1
+      SHAPE box dx=PRSW_DPRS(2)/2.0 dy=PRSW_DZ(serN)/2.0,
+            dz=PRSW_DLG(3)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FLCO
+      BLOCK FLCO   is a light guide cone for Preshower
+      MATERIAL Polystyren
+      ATTRIBUTE FLCO seen=1 colo=4 serial=1
+      SHAPE trd2 dx1=PRSW_DPRS(1)/4.0 dx2=PRSW_DLG(1)/2.0,
+            dy1=PRSW_DZ(serN)/2.0 dy2=PRSW_DLG(1)/2.0,
+            dz=PRSW_DLG(2)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FCLL
+      BLOCK FCLL   is a light guide cone for Preshower large
+      MATERIAL Polystyren
+      ATTRIBUTE FCLL seen=1 colo=4 serial=1
+      SHAPE trd2 dx1=PRSW_DPRS(2)/4.0 dx2=PRSW_DLG(1)/2.0,
+            dy1=PRSW_DZ(serN)/2.0 dy2=PRSW_DLG(1)/2.0,
+            dz=PRSW_DLG(2)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FPMT
+      BLOCK FPMT   is a SiPM board for Preshower
+      MATERIAL Polystyren
+      ATTRIBUTE FPMT seen=1 colo=3 serial=1
+      SHAPE box dx=PRSW_DSIPM(2)/2.0 dy=PRSW_DSIPM(3)/2.0,
+            dz=PRSW_DSIPM(1)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FFEE
+      BLOCK FFEE   is a FEE board for Preshower
+      MATERIAL Polystyren
+      ATTRIBUTE FEEE seen=1 colo=3 serial=1
+      SHAPE box dx=PRSW_DSIPM(2)/2.0 dy=PRSW_DSIPM(1)/2.0,
+            dz=PRSW_DSIPM(4)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPPL
+      BLOCK WPPL   is a pole for west platform
+      MATERIAL Iron
+      ATTRIBUTE WPPL seen=1 colo=4
+      SHAPE box dx=WPFM_PoleD(1)/2.0 dy=WPFM_PoleD(2)/2.0,
+            dz=WPFM_PoleD(3)/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_PoleD(1)/2.0-WPFM_PoleD(4)) 
+      %dy = real(WPFM_PoleD(2)/2.0) 
+      %dz = real(WPFM_PoleD(3)/2.0-WPFM_PoleD(4)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPIS
+      BLOCK WPIS   is a I-struct for west platform
+      MATERIAL Iron
+      ATTRIBUTE WPIS seen=1 colo=4
+      SHAPE box dx=WPFM_IstrD(1)/2.0 dy=WPFM_IstrD(2)/2.0,
+            dz=WPFM_IstrD(3)/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(+(WPFM_IstrD(3)/4.0-WPFM_IstrD(4)/2.0)) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_IstrD(1)/2.0) 
+      %dy = real(WPFM_IstrD(2)/2.0-WPFM_IstrD(4)) 
+      %dz = real((WPFM_IstrD(3)/2.0-WPFM_IstrD(4)/2.0)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(WPFM_IstrD(3)/4.0-WPFM_IstrD(4)/2.0)) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_IstrD(1)/2.0) 
+      %dy = real(WPFM_IstrD(2)/2.0-WPFM_IstrD(4)) 
+      %dz = real((WPFM_IstrD(3)/2.0-WPFM_IstrD(4)/2.0)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPUF
+      BLOCK WPUF   is a front U-struct for west platform
+      MATERIAL Iron
+      ATTRIBUTE WPUF seen=1 colo=4
+      SHAPE box dx=WPFM_UstFD(1)/2.0 dy=WPFM_UstFD(2)/2.0,
+            dz=WPFM_UstFD(3)/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(WPFM_UstFD(4)/2.0) 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_UstFD(1)/2.0) 
+      %dy = real(WPFM_UstFD(2)/2.0-WPFM_UstFD(4)) 
+      %dz = real(WPFM_UstFD(3)/2.0-WPFM_UstFD(4)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPUN
+      BLOCK WPUN   is a north U-struct for west platform
+      MATERIAL Iron
+      ATTRIBUTE WPUN seen=1 colo=4
+      SHAPE box dx=WPFM_UstND(1)/2.0 dy=WPFM_UstND(2)/2.0,
+            dz=WPFM_UstND(3)/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+WPFM_UstND(4)/2.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_UstND(1)/2.0-WPFM_UstND(4)/2.0) 
+      %dy = real(WPFM_UstND(2)/2.0-WPFM_UstND(4)) 
+      %dz = real(WPFM_UstND(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPUS
+      BLOCK WPUS   is a south U-struct for west platform
+      MATERIAL Iron
+      ATTRIBUTE WPUS seen=1 colo=4
+      SHAPE box dx=WPFM_UstSD(1)/2.0 dy=WPFM_UstSD(2)/2.0,
+            dz=WPFM_UstSD(3)/2.0
+      CALL AgsReset 
+      CALL agml_position_begin('WPAR') 
+      %title = 'WPAR' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-WPFM_UstSD(4)/2.0) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      %dx = real(WPFM_UstSD(1)/2.0-WPFM_UstSD(4)/2.0) 
+      %dy = real(WPFM_UstSD(2)/2.0-WPFM_UstSD(4)) 
+      %dz = real(WPFM_UstSD(3)/2.0) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- WPAR
+      BLOCK WPAR   is a platform structs air
+      MATERIAL Air
+      ATTRIBUTE WPAR seen=1 colo=0
+      SHAPE box dx=0.0 dy=0.0 dz=0.0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module HcalGeo0a]	 <<==='; (A32,/,/);
+      END! Module HcalGeo0a

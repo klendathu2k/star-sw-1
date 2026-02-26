@@ -1,0 +1,900 @@
+#include "WCALGEO1.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace WCALGEO1 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          wver_t *__wver = new wver_t; // dummy
+ AgMLStructure<wver_t,wver_info> WVER("wver");
+wver_t &wver = WVER;
+     
+          // Selectors for wver
+isEqual<wver_t, float> __wver_version__( __wver, &__wver->version );
+isEqual<wver_t, int> __wver_active__( __wver, &__wver->active );
+isEqual<wver_t, int> __wver__index__( __wver, &__wver->_index );
+     
+          
+	void              *wver_info::address   = &wver;
+	AgMLStructureBase   *wver_info::structure = &WVER;
+     
+          wgeo_t *__wgeo = new wgeo_t; // dummy
+ AgMLStructure<wgeo_t,wgeo_info> WGEO("wgeo");
+wgeo_t &wgeo = WGEO;
+     
+          // Selectors for wgeo
+isEqual<wgeo_t, float> __wgeo_depth__( __wgeo, &__wgeo->depth );
+isEqual<wgeo_t, float> __wgeo_nx__( __wgeo, &__wgeo->nx );
+isEqual<wgeo_t, float> __wgeo_ny__( __wgeo, &__wgeo->ny );
+isEqual<wgeo_t, float> __wgeo_dx__( __wgeo, &__wgeo->dx );
+isEqual<wgeo_t, float> __wgeo_dy__( __wgeo, &__wgeo->dy );
+isEqual<wgeo_t, float> __wgeo_clearance__( __wgeo, &__wgeo->clearance );
+isEqual<wgeo_t, float> __wgeo_nlayer__( __wgeo, &__wgeo->nlayer );
+isEqual<wgeo_t, float> __wgeo_dzfrontspace__( __wgeo, &__wgeo->dzfrontspace );
+isEqual<wgeo_t, float> __wgeo_dzfrontsteel__( __wgeo, &__wgeo->dzfrontsteel );
+isEqual<wgeo_t, float> __wgeo_dzpaper__( __wgeo, &__wgeo->dzpaper );
+isEqual<wgeo_t, float> __wgeo_dzscinti__( __wgeo, &__wgeo->dzscinti );
+isEqual<wgeo_t, float> __wgeo_dzlead__( __wgeo, &__wgeo->dzlead );
+isEqual<wgeo_t, float> __wgeo_dzbackplastic__( __wgeo, &__wgeo->dzbackplastic );
+isEqual<wgeo_t, float> __wgeo_dzbackspace__( __wgeo, &__wgeo->dzbackspace );
+isEqual<wgeo_t, int> __wgeo__index__( __wgeo, &__wgeo->_index );
+     
+          
+	void              *wgeo_info::address   = &wgeo;
+	AgMLStructureBase   *wgeo_info::structure = &WGEO;
+     
+          woff_t *__woff = new woff_t; // dummy
+ AgMLStructure<woff_t,woff_info> WOFF("woff");
+woff_t &woff = WOFF;
+     
+          // Selectors for woff
+isEqual<woff_t, float> __woff_ns__( __woff, &__woff->ns );
+isEqual<woff_t, float> __woff_xoffset__( __woff, &__woff->xoffset );
+isEqual<woff_t, float> __woff_yoffset__( __woff, &__woff->yoffset );
+isEqual<woff_t, float> __woff_zoffset__( __woff, &__woff->zoffset );
+isEqual<woff_t, float> __woff_angle__( __woff, &__woff->angle );
+isEqual<woff_t, int> __woff__index__( __woff, &__woff->_index );
+     
+          
+	void              *woff_info::address   = &woff;
+	AgMLStructureBase   *woff_info::structure = &WOFF;
+     
+          wcut_t *__wcut = new wcut_t; // dummy
+ AgMLStructure<wcut_t,wcut_info> WCUT("wcut");
+wcut_t &wcut = WCUT;
+     
+          // Selectors for wcut
+isEqual<wcut_t, float> __wcut_cutgam__( __wcut, &__wcut->cutgam );
+isEqual<wcut_t, float> __wcut_cutele__( __wcut, &__wcut->cutele );
+isEqual<wcut_t, float> __wcut_cutneu__( __wcut, &__wcut->cutneu );
+isEqual<wcut_t, float> __wcut_cuthad__( __wcut, &__wcut->cuthad );
+isEqual<wcut_t, float> __wcut_cutmuo__( __wcut, &__wcut->cutmuo );
+isEqual<wcut_t, float> __wcut_dcute__( __wcut, &__wcut->dcute );
+isEqual<wcut_t, float> __wcut_dcutm__( __wcut, &__wcut->dcutm );
+isEqual<wcut_t, float> __wcut_bcute__( __wcut, &__wcut->bcute );
+isEqual<wcut_t, float> __wcut_bcutm__( __wcut, &__wcut->bcutm );
+isEqual<wcut_t, int> __wcut__index__( __wcut, &__wcut->_index );
+     
+          
+	void              *wcut_info::address   = &wcut;
+	AgMLStructureBase   *wcut_info::structure = &WCUT;
+     
+          ///@addtogroup WCALGEO1_vars     
+          ///@{        
+                float dtr,xtow,ytow,xtot,ytot,ztot,zsci;        
+                //        
+                /// float dtr,xtow,ytow,xtot,ytot,ztot,zsci        
+          ///@}     
+          ///@addtogroup WCALGEO1_vars     
+          ///@{        
+                float a,x,y,z,aa,ortx,xx,yy,zz,zzz;        
+                //        
+                /// float a,x,y,z,aa,ortx,xx,yy,zz,zzz        
+          ///@}     
+          ///@addtogroup WCALGEO1_vars     
+          ///@{        
+                int ns,ix,iy,iz,i;        
+                //        
+                /// int ns,ix,iy,iz,i        
+          ///@}     
+       WCALGEO1::WCALGEO1()     
+         : AgModule("WCALGEO1"," is the Forward Calorimeter System WALL EM Calorimeter ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WMOD::mInstance = 0;     
+          AgBlock *WMOD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WMOD();        
+                   return mInstance;        
+          }     
+          void WMOD::Block( AgCreate create )     
+          {         
+                ///@addtogroup WMOD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WMOD");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=xtot/2.0;              
+                            shape.par("dy")=ytot/2.0;              
+                            shape.par("dz")=wgeo.depth/2.0;              
+                            /// Shape Bbox dx=xtot/2.0 dy=ytot/2.0 dz=wgeo.depth/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WMOD;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WTOW");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WTOW              
+                            Create("WTOW");               
+                      }           
+                      /// Loop on iy from 1 to wgeo.ny step=1           
+                      for ( iy=1; (1>0)? (iy<=wgeo.ny):(iy>=wgeo.ny); iy+=1 )           
+                      {              
+                            yy=(wgeo.ny/2.0-iy+0.5)*ytow;              
+                            /// Loop on ix from 1 to wgeo.nx step=1              
+                            for ( ix=1; (1>0)? (ix<=wgeo.nx):(ix>=wgeo.nx); ix+=1 )              
+                            {                 
+                                  xx=-(wgeo.nx/2.0-ix+0.5)*xtow;                 
+                                  {                    
+                                        AgPosition  place;                    
+                                        place.SetBlock("WTOW");                    
+                                        place.SetMother("WMOD");                    
+                                        /// Add daughter volume WTOW to mother WMOD                    
+                                        place.TranslateX(xx);                    
+                                        /// Translate x = xx                    
+                                        place.TranslateY(yy);                    
+                                        /// Translate y = yy                    
+                                        place.TranslateZ(0.0);                    
+                                        /// Translate z = 0.0                    
+                                        place.par("only")=AgPosition::kOnly;                    
+                                        /// Overlap: agposition::konly                    
+                                        _stacker -> Position( AgBlock::Find("WTOW"), place );                    
+                                  } // end placement of WTOW                 
+                            }              
+                      }           
+                      END_OF_WMOD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WMOD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WTOW::mInstance = 0;     
+          AgBlock *WTOW::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WTOW();        
+                   return mInstance;        
+          }     
+          void WTOW::Block( AgCreate create )     
+          {         
+                ///@addtogroup WTOW_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WTOW");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=xtow/2.0;              
+                            shape.par("dy")=ytow/2.0;              
+                            shape.par("dz")=wgeo.depth/2.0;              
+                            /// Shape Bbox dx=xtow/2.0 dy=ytow/2.0 dz=wgeo.depth/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WTOW;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("WFST");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WFST              
+                            Create("WFST");               
+                      }           
+                      _create = AgCreate("WSCI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WSCI              
+                            Create("WSCI");               
+                      }           
+                      _create = AgCreate("WBPL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WBPL              
+                            Create("WBPL");               
+                      }           
+                      zz=-wgeo.depth/2.0+wgeo.dzfrontspace;           
+                      zz=zz+wgeo.dzbackplastic/2.0;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WBPL");              
+                            place.SetMother("WTOW");              
+                            /// Add daughter volume WBPL to mother WTOW              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(zz);              
+                            /// Translate z = zz              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("WBPL"), place );              
+                      } // end placement of WBPL           
+                      zz=zz+wgeo.dzbackplastic/2.0;           
+                      zz=zz+wgeo.dzfrontsteel/2.0;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WFST");              
+                            place.SetMother("WTOW");              
+                            /// Add daughter volume WFST to mother WTOW              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(zz);              
+                            /// Translate z = zz              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("WFST"), place );              
+                      } // end placement of WFST           
+                      zz=zz+wgeo.dzfrontsteel/2.0;           
+                      zz=zz+zsci/2.0;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WSCI");              
+                            place.SetMother("WTOW");              
+                            /// Add daughter volume WSCI to mother WTOW              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(zz);              
+                            /// Translate z = zz              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("WSCI"), place );              
+                      } // end placement of WSCI           
+                      zz=zz+zsci/2.0;           
+                      zz=zz+wgeo.dzbackplastic/2.0;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WBPL");              
+                            place.SetMother("WTOW");              
+                            /// Add daughter volume WBPL to mother WTOW              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(zz);              
+                            /// Translate z = zz              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("WBPL"), place );              
+                      } // end placement of WBPL           
+                      zz=zz+wgeo.dzbackplastic/2.0;           
+                      zz=zz+wgeo.dzfrontsteel/2.0;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("WFST");              
+                            place.SetMother("WTOW");              
+                            /// Add daughter volume WFST to mother WTOW              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.TranslateZ(zz);              
+                            /// Translate z = zz              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("WFST"), place );              
+                      } // end placement of WFST           
+                      zz=zz+wgeo.dzfrontsteel/2.0;           
+                      END_OF_WTOW:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WTOW     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WFST::mInstance = 0;     
+          AgBlock *WFST::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WFST();        
+                   return mInstance;        
+          }     
+          void WFST::Block( AgCreate create )     
+          {         
+                ///@addtogroup WFST_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      /// Medium wcal_steel           
+                      {  AgMedium med = AgMedium::CopyMedium("Wcal_steel");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WFST");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wgeo.dx/2.0;              
+                            shape.par("dy")=wgeo.dy/2.0;              
+                            shape.par("dz")=wgeo.dzfrontsteel/2.0;              
+                            /// Shape Bbox dx=wgeo.dx/2.0 dy=wgeo.dy/2.0 dz=wgeo.dzfrontsteel/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WFST;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WFST:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WFST     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WSCI::mInstance = 0;     
+          AgBlock *WSCI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WSCI();        
+                   return mInstance;        
+          }     
+          void WSCI::Block( AgCreate create )     
+          {         
+                ///@addtogroup WSCI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material WCal_Scinti a=6.670 z=3.60 dens=1.18 absl=70.8 radl=34.4            
+                      { AgMaterial &mat = AgMaterial::Get("Wcal_scinti");              
+                            mat.par("a")=6.670;              
+                            mat.par("z")=3.60;              
+                            mat.par("dens")=1.18;              
+                            mat.par("absl")=70.8;              
+                            mat.par("radl")=34.4;              
+                            _material = mat;              
+                      }           
+                      /// Medium wcal_scinti           
+                      ///  isvol = 1           
+                      {  AgMedium &med = AgMedium::Get("Wcal_scinti");              
+                               med.Inherit(this);              
+                            med.par("isvol")=1;              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WSCI");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=7;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wgeo.dx/2.0;              
+                            shape.par("dy")=wgeo.dy/2.0;              
+                            shape.par("dz")=zsci/2.0;              
+                            /// Shape Bbox dx=wgeo.dx/2.0 dy=wgeo.dy/2.0 dz=zsci/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WSCI;              
+                            _stacker -> Build(this);              
+                      }           
+                      // parameter birk1 = 1. (deferred)           
+                      // parameter birk2 = 0.013 (deferred)           
+                      // parameter birk3 = 9.6e-6 (deferred)           
+                      // deferred module()->AddHit( "WSCI", "birk", 0, 0, 100, "");           
+                      _create = AgCreate("WPAP");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPAP              
+                            Create("WPAP");               
+                      }           
+                      _create = AgCreate("WPBP");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create WPBP              
+                            Create("WPBP");               
+                      }           
+                      zzz=-zsci/2.0;           
+                      /// Loop on i from 1 to wgeo.nlayer step=1           
+                      for ( i=1; (1>0)? (i<=wgeo.nlayer):(i>=wgeo.nlayer); i+=1 )           
+                      {              
+                            zzz=zzz+wgeo.dzpaper/2.0;              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("WPAP");                 
+                                  place.SetMother("WSCI");                 
+                                  /// Add daughter volume WPAP to mother WSCI                 
+                                  place.TranslateX(0);                 
+                                  /// Translate x = 0                 
+                                  place.TranslateY(0);                 
+                                  /// Translate y = 0                 
+                                  place.TranslateZ(zzz);                 
+                                  /// Translate z = zzz                 
+                                  place.par("only")=AgPosition::kOnly;                 
+                                  /// Overlap: agposition::konly                 
+                                  _stacker -> Position( AgBlock::Find("WPAP"), place );                 
+                            } // end placement of WPAP              
+                            zzz=zzz+wgeo.dzpaper+wgeo.dzscinti;              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("WPAP");                 
+                                  place.SetMother("WSCI");                 
+                                  /// Add daughter volume WPAP to mother WSCI                 
+                                  place.TranslateX(0);                 
+                                  /// Translate x = 0                 
+                                  place.TranslateY(0);                 
+                                  /// Translate y = 0                 
+                                  place.TranslateZ(zzz);                 
+                                  /// Translate z = zzz                 
+                                  place.par("only")=AgPosition::kOnly;                 
+                                  /// Overlap: agposition::konly                 
+                                  _stacker -> Position( AgBlock::Find("WPAP"), place );                 
+                            } // end placement of WPAP              
+                            zzz=zzz+wgeo.dzpaper/2.0;              
+                            if ( i<wgeo.nlayer )              
+                            {                 
+                                  zzz=zzz+wgeo.dzlead/2.0;                 
+                                  {                    
+                                        AgPosition  place;                    
+                                        place.SetBlock("WPBP");                    
+                                        place.SetMother("WSCI");                    
+                                        /// Add daughter volume WPBP to mother WSCI                    
+                                        place.TranslateX(0);                    
+                                        /// Translate x = 0                    
+                                        place.TranslateY(0);                    
+                                        /// Translate y = 0                    
+                                        place.TranslateZ(zzz);                    
+                                        /// Translate z = zzz                    
+                                        place.par("only")=AgPosition::kOnly;                    
+                                        /// Overlap: agposition::konly                    
+                                        _stacker -> Position( AgBlock::Find("WPBP"), place );                    
+                                  } // end placement of WPBP                 
+                                  zzz=zzz+wgeo.dzlead/2.0;                 
+                            }              
+                      }           
+                      END_OF_WSCI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WSCI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPAP::mInstance = 0;     
+          AgBlock *WPAP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPAP();        
+                   return mInstance;        
+          }     
+          void WPAP::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPAP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component C	a=12	z=6	w=1.0           
+                      /// Component H	a= 1	z=1	w=5.0           
+                      /// Component O	a=16	z=8	w=5.0           
+                      /// Mixture WCAL_Paper dens=0.6           
+                      {  AgMaterial &mix = AgMaterial::Get("Wcal_paper");              
+                            mix.Component("C",12,6,1.0);              
+                            mix.Component("H",1,1,5.0);              
+                            mix.Component("O",16,8,5.0);              
+                            mix.par("dens")=0.6;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium wcal_paper           
+                      ///  isvol = 0           
+                      {  AgMedium &med = AgMedium::Get("Wcal_paper");              
+                               med.Inherit(this);              
+                            med.par("isvol")=0;              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPAP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wgeo.dx/2.0;              
+                            shape.par("dy")=wgeo.dy/2.0;              
+                            shape.par("dz")=wgeo.dzpaper/2.0;              
+                            /// Shape Bbox dx=wgeo.dx/2.0 dy=wgeo.dy/2.0 dz=wgeo.dzpaper/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPAP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WPAP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPAP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WPBP::mInstance = 0;     
+          AgBlock *WPBP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WPBP();        
+                   return mInstance;        
+          }     
+          void WPBP::Block( AgCreate create )     
+          {         
+                ///@addtogroup WPBP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material lead            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Lead");              
+                            _material = mat;              
+                      }           
+                      /// Medium wcal_lead           
+                      ///  isvol = 0           
+                      {  AgMedium &med = AgMedium::Get("Wcal_lead");              
+                               med.Inherit(this);              
+                            med.par("isvol")=0;              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WPBP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wgeo.dx/2.0;              
+                            shape.par("dy")=wgeo.dy/2.0;              
+                            shape.par("dz")=wgeo.dzlead/2.0;              
+                            /// Shape Bbox dx=wgeo.dx/2.0 dy=wgeo.dy/2.0 dz=wgeo.dzlead/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WPBP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WPBP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WPBP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *WBPL::mInstance = 0;     
+          AgBlock *WBPL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new WBPL();        
+                   return mInstance;        
+          }     
+          void WBPL::Block( AgCreate create )     
+          {         
+                ///@addtogroup WBPL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Component C	a=12	z=6	w=5.0           
+                      /// Component H	a= 1	z=1	w=8.0           
+                      /// Component O	a=16	z=8	w=2.0           
+                      /// Mixture WCAL_Plastic dens=1.18           
+                      {  AgMaterial &mix = AgMaterial::Get("Wcal_plastic");              
+                            mix.Component("C",12,6,5.0);              
+                            mix.Component("H",1,1,8.0);              
+                            mix.Component("O",16,8,2.0);              
+                            mix.par("dens")=1.18;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium wcal_plastic           
+                      {  AgMedium med = AgMedium::CopyMedium("Wcal_plastic");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("WBPL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.par("fill")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=wgeo.dx/2.0;              
+                            shape.par("dy")=wgeo.dy/2.0;              
+                            shape.par("dz")=wgeo.dzbackplastic/2.0;              
+                            /// Shape Bbox dx=wgeo.dx/2.0 dy=wgeo.dy/2.0 dz=wgeo.dzbackplastic/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_WBPL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_WBPL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block WBPL     
+    // ----------------------------------------------------------------------- geoctr
+       void WCALGEO1::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup WCALGEO1_revision        
+             ///@{           
+                   /// Created:    10 Aug 2018            
+             ///@}        
+             ///@addtogroup WCALGEO1_revision        
+             ///@{           
+                   /// Author: Akio Ogawa           
+             ///@}        
+             AddBlock("WMOD", WMOD::Instance());        
+             AddBlock("WTOW", WTOW::Instance());        
+             AddBlock("WFST", WFST::Instance());        
+             AddBlock("WPAP", WPAP::Instance());        
+             AddBlock("WSCI", WSCI::Instance());        
+             AddBlock("WPBP", WPBP::Instance());        
+             AddBlock("WBPL", WBPL::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill wver
+++wver._index;
+wver.version = 1.0;
+// wver_docum.version = " Geometry version  ";
+wver.active = 1;
+// wver_docum.active = " 1=on, 0=off";
+WVER.fill();
+        
+             /// USE wver version=1.0;        
+             WVER.use( __wver_version__ = 1.0 );
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill wgeo
+++wgeo._index;
+wgeo.depth = 71.21;
+// wgeo_docum.depth = " Box Depth ";
+wgeo.nx = 22;
+// wgeo_docum.nx = " Number of tower in x ";
+wgeo.ny = 34;
+// wgeo_docum.ny = " number of tower in y ";
+wgeo.dx = 5.542;
+// wgeo_docum.dx = " tower size in x ";
+wgeo.dy = 5.542;
+// wgeo_docum.dy = " tower size in y ";
+wgeo.clearance = 0.03;
+// wgeo_docum.clearance = " space between towers ";
+wgeo.nlayer = 66;
+// wgeo_docum.nlayer = " number of Scinti layers ";
+wgeo.dzfrontspace = 13.90;
+// wgeo_docum.dzfrontspace = " thinkness of space at front(FEEBds) ";
+wgeo.dzfrontsteel = 0.100;
+// wgeo_docum.dzfrontsteel = " front steel plate thhickness ";
+wgeo.dzpaper = 0.012;
+// wgeo_docum.dzpaper = " paper thickness ";
+wgeo.dzscinti = 0.400;
+// wgeo_docum.dzscinti = " scinti thickness ";
+wgeo.dzlead = 0.150;
+// wgeo_docum.dzlead = " lead thickness ";
+wgeo.dzbackplastic = 0.50;
+// wgeo_docum.dzbackplastic = " back plastic thickness ";
+wgeo.dzbackspace = 18.37;
+// wgeo_docum.dzbackspace = " thinkness of space at back (fiber loop) ";
+WGEO.fill();
+        
+             /// USE wgeo _index=1;        
+             WGEO.use( __wgeo__index__ = 1 );
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill woff
+++woff._index;
+woff.ns = 1;
+// woff_docum.ns = " North or South ";
+woff.xoffset = 17.399;
+// woff_docum.xoffset = " tower x offset from beam to nearlest tower @ front face";
+woff.yoffset = -5.26;
+// woff_docum.yoffset = " tower y offset from beam to the center of whole stack";
+woff.zoffset = 710.16;
+// woff_docum.zoffset = " tower z offset from IR to tower front face @ near beam ";
+woff.angle = 1.73;
+// woff_docum.angle = " Angle aroud y axis [degree] ";
+WOFF.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill woff
+++woff._index;
+woff.ns = 2;
+// woff_docum.ns = " North or South ";
+woff.xoffset = 17.399;
+// woff_docum.xoffset = " tower x offset from beam to nearlest tower @ front face";
+woff.yoffset = -5.26;
+// woff_docum.yoffset = " tower y offset from beam to the center of whole stack";
+woff.zoffset = 710.16;
+// woff_docum.zoffset = " tower z offset from IR to tower front face @ near beam ";
+woff.angle = 1.73;
+// woff_docum.angle = " Angle aroud y axis [degree] ";
+WOFF.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill wcut
+++wcut._index;
+wcut.cutgam = 10*1.0e-6;
+// wcut_docum.cutgam = " gamma transport cut ";
+wcut.cutele = 10*1.0e-6;
+// wcut_docum.cutele = " electron transport cut ";
+wcut.cuthad = 1*0.001;
+// wcut_docum.cuthad = " hadron transport cut ";
+wcut.cutneu = 1*0.001;
+// wcut_docum.cutneu = " neutron transport cut ";
+wcut.cutmuo = 1*0.001;
+// wcut_docum.cutmuo = " muon transport cut ";
+wcut.dcute = 10*1.0e-6;
+// wcut_docum.dcute = " electron delta ray cut ";
+wcut.dcutm = 10*1.0e-6;
+// wcut_docum.dcutm = " muon delta ray cut ";
+wcut.bcute = 10*1.0e-6;
+// wcut_docum.bcute = " electron brem cut ";
+wcut.bcutm = 10*1.0e-6;
+// wcut_docum.bcutm = " muon brem cut ";
+WCUT.fill();
+        
+             /// USE wcut _index=1;        
+             WCUT.use( __wcut__index__ = 1 );
+        
+             dtr=pi/180.0;        
+             zsci=wgeo.nlayer*(wgeo.dzscinti+2*wgeo.dzpaper);        
+             zsci=zsci+(wgeo.nlayer-1.0)*wgeo.dzlead;        
+             ztot=wgeo.dzfrontspace;        
+             ztot=ztot+wgeo.dzfrontsteel*2.0;        
+             ztot=ztot+zsci;        
+             ztot=ztot+wgeo.dzbackplastic*2.0;        
+             ztot=ztot+wgeo.dzbackspace;        
+             xtow=wgeo.dx+wgeo.clearance;        
+             ytow=wgeo.dy+wgeo.clearance;        
+             xtot=xtow*wgeo.nx;        
+             ytot=ytow*wgeo.ny;        
+             if ( wver.active==1 )        
+             {           
+                   _create = AgCreate("WMOD");           
+                   {              
+                         AgShape myshape; // undefined shape              
+                         ///Create WMOD              
+                         Create("WMOD");               
+                   }           
+                   /// Loop on ns from 1 to 2 step=1           
+                   for ( ns=1; (1>0)? (ns<=2):(ns>=2); ns+=1 )           
+                   {              
+                         /// USE woff ns=ns;              
+                         WOFF.use( __woff_ns__ = ns );
+              
+                         a=woff.angle*dtr;              
+                         x=woff.xoffset+xtot/2.0*cos(a)+wgeo.depth/2.0*sin(a);              
+                         y=woff.yoffset;              
+                         z=woff.zoffset+wgeo.depth/2.0*cos(a)-xtot/2.0*sin(a);              
+                         if ( ns==1 )              
+                         {                 
+                               x=-x;                 
+                               ortx=-1.0;                 
+                               aa=-woff.angle;                 
+                         }              
+                         else              
+                         {                 
+                               ortx=+1.0;                 
+                               aa=woff.angle;                 
+                         }              
+                         // - Info -               
+                         Info( GetName(), Form("FCSEcalModulexpos=%10.5f",x)  );              
+                         // - Info -               
+                         Info( GetName(), Form("FCSEcalModuleypos=%10.5f",y)  );              
+                         // - Info -               
+                         Info( GetName(), Form("FCSEcalModulezpos=%10.5f",z)  );              
+                         {                 
+                               AgPosition  place;                 
+                               place.SetBlock("WMOD");                 
+                               place.SetMother("CAVE");                 
+                               place.SetGroup("WestRefSys");                 
+                               /// Add daughter volume WMOD to mother CAVE                 
+                               place.TranslateX(x);                 
+                               /// Translate x = x                 
+                               place.TranslateY(y);                 
+                               /// Translate y = y                 
+                               place.TranslateZ(z);                 
+                               /// Translate z = z                 
+                               place.par("only")=AgPosition::kOnly;                 
+                               /// Overlap: agposition::konly                 
+                               /// G3 Reference: thetax = 90                 
+                               /// G3 Reference: phix = 0                 
+                               /// G3 Reference: thetay = 90                 
+                               /// G3 Reference: phiy = 90                 
+                               /// G3 Reference: thetaz = 0                 
+                               /// G3 Reference: phiz = 0                 
+                               { // rotation matrix (overwrites any prior rotation)                    
+                                       double _rotm[] = {ortx, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};                    
+                                       place.RotationMatrix( _rotm );                    
+                               }                 
+                               place.AlphaY(aa);                 
+                               /// Rotate: AlphaY = aa                 
+                               /// G3 Reference: thetax = 90                 
+                               /// G3 Reference: phix = 0                 
+                               /// G3 Reference: thetay = 90                 
+                               /// G3 Reference: phiy = 90                 
+                               /// G3 Reference: thetaz = 0                 
+                               /// G3 Reference: phiz = 0                 
+                               _stacker -> Position( AgBlock::Find("WMOD"), place );                 
+                         } // end placement of WMOD              
+                   }           
+             }        
+             else        
+             {           
+                   // - Info -            
+                   Info( GetName(), Form("WcalGeoswitchedoffonWVER.active=%1i",wver.active)  );           
+             }        
+       }; // WCALGEO1     
+ }; // namespace WCALGEO1  
+ 

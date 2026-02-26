@@ -1,0 +1,2906 @@
+#ifndef __FstmGeoSM__ 
+#define __FstmGeoSM__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace FSTMGEOSM // $NMSPC 
+{ 
+   struct fstg_t {
+float version;
+int _index;
+};
+ 
+   struct _fstg_docum_ {
+string version;
+string _index;
+};
+ 
+    struct _fstg_types_ {
+  typedef float version;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct fstg_info {
+typedef fstg_t Type;
+static const char *name(){ return "fstg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct fstg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fstg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct fstg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fstg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct mothervol_t {
+float version;
+float x;
+float y;
+float z;
+float rmin;
+float rmax;
+float dz;
+float zdisk[3];
+int _index;
+};
+ 
+   struct _mothervol_docum_ {
+string version;
+string x;
+string y;
+string z;
+string rmin;
+string rmax;
+string dz;
+string zdisk;
+string _index;
+};
+ 
+    struct _mothervol_types_ {
+  typedef float version;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef float zdisk[3];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct mothervol_info {
+typedef mothervol_t Type;
+static const char *name(){ return "mothervol_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zdisk {
+  static const char *name() { return  "zdisk"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, zdisk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct mothervol_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)mothervol_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct wholewedge_t {
+float version;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int modulus2[12];
+int _index;
+};
+ 
+   struct _wholewedge_docum_ {
+string version;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string modulus2;
+string _index;
+};
+ 
+    struct _wholewedge_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int modulus2[12];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct wholewedge_info {
+typedef wholewedge_t Type;
+static const char *name(){ return "wholewedge_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct modulus2 {
+  static const char *name() { return  "modulus2"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, modulus2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[12];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct wholewedge_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wholewedge_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct ring_t {
+float version;
+float rmin;
+float rmid;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int _index;
+};
+ 
+   struct _ring_docum_ {
+string version;
+string rmin;
+string rmid;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _ring_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmid;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ring_info {
+typedef ring_t Type;
+static const char *name(){ return "ring_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ring_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct ring_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmid {
+  static const char *name() { return  "rmid"; }
+  static size_t Offset(){ return offsetof( struct ring_t, rmid ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct ring_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct ring_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct ring_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct ring_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ring_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct iring_t {
+float version;
+float rmin;
+float rmax;
+float dz;
+int _index;
+};
+ 
+   struct _iring_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _iring_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct iring_info {
+typedef iring_t Type;
+static const char *name(){ return "iring_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct iring_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)iring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct iring_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)iring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct iring_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)iring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct iring_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)iring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct iring_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)iring_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct outerbase_t {
+float version;
+float x;
+float y;
+float z;
+float dx1;
+float dx2;
+float dy;
+float dz;
+int _index;
+};
+ 
+   struct _outerbase_docum_ {
+string version;
+string x;
+string y;
+string z;
+string dx1;
+string dx2;
+string dy;
+string dz;
+string _index;
+};
+ 
+    struct _outerbase_types_ {
+  typedef float version;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef float dx1;
+  typedef float dx2;
+  typedef float dy;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct outerbase_info {
+typedef outerbase_t Type;
+static const char *name(){ return "outerbase_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx1 {
+  static const char *name() { return  "dx1"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, dx1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx2 {
+  static const char *name() { return  "dx2"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, dx2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct outerbase_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerbase_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct outertube_t {
+float version;
+float x[7];
+float y[7];
+float z;
+float rmin;
+float rmax[7];
+float dz;
+int _index;
+};
+ 
+   struct _outertube_docum_ {
+string version;
+string x;
+string y;
+string z;
+string rmin;
+string rmax;
+string dz;
+string _index;
+};
+ 
+    struct _outertube_types_ {
+  typedef float version;
+  typedef float x[7];
+  typedef float y[7];
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax[7];
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct outertube_info {
+typedef outertube_t Type;
+static const char *name(){ return "outertube_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct outertube_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outertube_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct innerbasea_t {
+float version;
+float x[2];
+float y;
+float z;
+float dx1[2];
+float dx2[2];
+float dy;
+float dz[2];
+int _index;
+};
+ 
+   struct _innerbasea_docum_ {
+string version;
+string x;
+string y;
+string z;
+string dx1;
+string dx2;
+string dy;
+string dz;
+string _index;
+};
+ 
+    struct _innerbasea_types_ {
+  typedef float version;
+  typedef float x[2];
+  typedef float y;
+  typedef float z;
+  typedef float dx1[2];
+  typedef float dx2[2];
+  typedef float dy;
+  typedef float dz[2];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct innerbasea_info {
+typedef innerbasea_t Type;
+static const char *name(){ return "innerbasea_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx1 {
+  static const char *name() { return  "dx1"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, dx1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dx2 {
+  static const char *name() { return  "dx2"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, dx2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct innerbasea_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbasea_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct innerbaseb_t {
+float version;
+float z;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int _index;
+};
+ 
+   struct _innerbaseb_docum_ {
+string version;
+string z;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _innerbaseb_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct innerbaseb_info {
+typedef innerbaseb_t Type;
+static const char *name(){ return "innerbaseb_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct innerbaseb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerbaseb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct coolingtubes_t {
+float version;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz[7];
+float x[7];
+float y[7];
+float z[7];
+float rotz[7];
+float rotx[7];
+int _index;
+};
+ 
+   struct _coolingtubes_docum_ {
+string version;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string x;
+string y;
+string z;
+string rotz;
+string rotx;
+string _index;
+};
+ 
+    struct _coolingtubes_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz[7];
+  typedef float x[7];
+  typedef float y[7];
+  typedef float z[7];
+  typedef float rotz[7];
+  typedef float rotx[7];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct coolingtubes_info {
+typedef coolingtubes_t Type;
+static const char *name(){ return "coolingtubes_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct rotz {
+  static const char *name() { return  "rotz"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, rotz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct rotx {
+  static const char *name() { return  "rotx"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, rotx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[7];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct coolingtubes_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)coolingtubes_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct heatsink_t {
+float version;
+float dx[8];
+float dy[8];
+float dz[8];
+float x[8];
+float y[8];
+float z[8];
+float rotz[8];
+int _index;
+};
+ 
+   struct _heatsink_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string x;
+string y;
+string z;
+string rotz;
+string _index;
+};
+ 
+    struct _heatsink_types_ {
+  typedef float version;
+  typedef float dx[8];
+  typedef float dy[8];
+  typedef float dz[8];
+  typedef float x[8];
+  typedef float y[8];
+  typedef float z[8];
+  typedef float rotz[8];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct heatsink_info {
+typedef heatsink_t Type;
+static const char *name(){ return "heatsink_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct rotz {
+  static const char *name() { return  "rotz"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, rotz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct heatsink_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)heatsink_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct apvchip_t {
+float version;
+float dx[8];
+float dy[8];
+float dz;
+float x[8];
+float y[8];
+float z[8];
+float rotz[8];
+int _index;
+};
+ 
+   struct _apvchip_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string x;
+string y;
+string z;
+string rotz;
+string _index;
+};
+ 
+    struct _apvchip_types_ {
+  typedef float version;
+  typedef float dx[8];
+  typedef float dy[8];
+  typedef float dz;
+  typedef float x[8];
+  typedef float y[8];
+  typedef float z[8];
+  typedef float rotz[8];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct apvchip_info {
+typedef apvchip_t Type;
+static const char *name(){ return "apvchip_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct rotz {
+  static const char *name() { return  "rotz"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, rotz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[8];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct apvchip_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)apvchip_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct tboard_t {
+float version;
+float dx;
+float dy;
+float dz;
+float x;
+float y;
+float z;
+int _index;
+};
+ 
+   struct _tboard_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string x;
+string y;
+string z;
+string _index;
+};
+ 
+    struct _tboard_types_ {
+  typedef float version;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct tboard_info {
+typedef tboard_t Type;
+static const char *name(){ return "tboard_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct tboard_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)tboard_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct connectors_t {
+float version;
+float dx;
+float dy;
+float dz[2];
+float x[2];
+float y[2];
+float z[2];
+int _index;
+};
+ 
+   struct _connectors_docum_ {
+string version;
+string dx;
+string dy;
+string dz;
+string x;
+string y;
+string z;
+string _index;
+};
+ 
+    struct _connectors_types_ {
+  typedef float version;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz[2];
+  typedef float x[2];
+  typedef float y[2];
+  typedef float z[2];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct connectors_info {
+typedef connectors_t Type;
+static const char *name(){ return "connectors_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct connectors_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)connectors_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct outerhybrida_t {
+float version;
+float z;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int _index;
+};
+ 
+   struct _outerhybrida_docum_ {
+string version;
+string z;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _outerhybrida_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct outerhybrida_info {
+typedef outerhybrida_t Type;
+static const char *name(){ return "outerhybrida_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct outerhybrida_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct outerhybridb_t {
+float version;
+float x;
+float y;
+float z;
+float dx;
+float dy;
+float dz;
+int _index;
+};
+ 
+   struct _outerhybridb_docum_ {
+string version;
+string x;
+string y;
+string z;
+string dx;
+string dy;
+string dz;
+string _index;
+};
+ 
+    struct _outerhybridb_types_ {
+  typedef float version;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct outerhybridb_info {
+typedef outerhybridb_t Type;
+static const char *name(){ return "outerhybridb_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct outerhybridb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct innerhybrida_t {
+float version;
+float z;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int _index;
+};
+ 
+   struct _innerhybrida_docum_ {
+string version;
+string z;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _innerhybrida_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct innerhybrida_info {
+typedef innerhybrida_t Type;
+static const char *name(){ return "innerhybrida_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct innerhybrida_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybrida_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct innerhybridb_t {
+float version;
+float x;
+float y;
+float z;
+float dx;
+float dy;
+float dz;
+int _index;
+};
+ 
+   struct _innerhybridb_docum_ {
+string version;
+string x;
+string y;
+string z;
+string dx;
+string dy;
+string dz;
+string _index;
+};
+ 
+    struct _innerhybridb_types_ {
+  typedef float version;
+  typedef float x;
+  typedef float y;
+  typedef float z;
+  typedef float dx;
+  typedef float dy;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct innerhybridb_info {
+typedef innerhybridb_t Type;
+static const char *name(){ return "innerhybridb_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct x {
+  static const char *name() { return  "x"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, x ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct y {
+  static const char *name() { return  "y"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, y ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct innerhybridb_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innerhybridb_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct outersilicon_t {
+float version;
+float z;
+float rmin;
+float rmax;
+float phi1[2];
+float phi2[2];
+float dz;
+int _index;
+};
+ 
+   struct _outersilicon_docum_ {
+string version;
+string z;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _outersilicon_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1[2];
+  typedef float phi2[2];
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct outersilicon_info {
+typedef outersilicon_t Type;
+static const char *name(){ return "outersilicon_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct outersilicon_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)outersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct innersilicon_t {
+float version;
+float z;
+float rmin;
+float rmax;
+float phi1;
+float phi2;
+float dz;
+int _index;
+};
+ 
+   struct _innersilicon_docum_ {
+string version;
+string z;
+string rmin;
+string rmax;
+string phi1;
+string phi2;
+string dz;
+string _index;
+};
+ 
+    struct _innersilicon_types_ {
+  typedef float version;
+  typedef float z;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float phi1;
+  typedef float phi2;
+  typedef float dz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct innersilicon_info {
+typedef innersilicon_t Type;
+static const char *name(){ return "innersilicon_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct z {
+  static const char *name() { return  "z"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, z ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi1 {
+  static const char *name() { return  "phi1"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, phi1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phi2 {
+  static const char *name() { return  "phi2"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, phi2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct innersilicon_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)innersilicon_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- FSTM -- 
+   ///@defgroup FSTM_doc 
+   ///@class FSTM 
+   ///@brief FST mother [TGeoVolume] 
+   class FSTM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSTM() : AgBlock("FSTM","FST mother [TGeoVolume]"){ 
+      }; 
+      ~FSTM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSTW -- 
+   ///@defgroup FSTW_doc 
+   ///@class FSTW 
+   ///@brief Whole wedge container [transformed into assembly in TGeo] 
+   class FSTW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSTW() : AgBlock("FSTW","Whole wedge container [transformed into assembly in TGeo]"){ 
+           mMakeAssembly=true; 
+      }; 
+      ~FSTW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTUO -- 
+   ///@defgroup FTUO_doc 
+   ///@class FTUO 
+   ///@brief Tube segment for FST half ring outside wedge container [TGeoVolume] 
+   class FTUO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTUO() : AgBlock("FTUO","Tube segment for FST half ring outside wedge container [TGeoVolume]"){ 
+      }; 
+      ~FTUO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTUR -- 
+   ///@defgroup FTUR_doc 
+   ///@class FTUR 
+   ///@brief Tube segment for FST half ring inside wedge container [TGeoVolume] 
+   class FTUR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTUR() : AgBlock("FTUR","Tube segment for FST half ring inside wedge container [TGeoVolume]"){ 
+      }; 
+      ~FTUR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTRO -- 
+   ///@defgroup FTRO_doc 
+   ///@class FTRO 
+   ///@brief Trapizoid for FST outer wedge [TGeoVolume] 
+   class FTRO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTRO() : AgBlock("FTRO","Trapizoid for FST outer wedge [TGeoVolume]"){ 
+      }; 
+      ~FTRO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSWT -- 
+   ///@defgroup FSWT_doc 
+   ///@class FSWT 
+   ///@brief Tube for FST outer wedges [TGeoVolume] 
+   class FSWT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSWT() : AgBlock("FSWT","Tube for FST outer wedges [TGeoVolume]"){ 
+      }; 
+      ~FSWT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTUW -- 
+   ///@defgroup FTUW_doc 
+   ///@class FTUW 
+   ///@brief Tube segment for FST inner wedge [TGeoVolume] 
+   class FTUW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTUW() : AgBlock("FTUW","Tube segment for FST inner wedge [TGeoVolume]"){ 
+      }; 
+      ~FTUW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTIA -- 
+   ///@defgroup FTIA_doc 
+   ///@class FTIA 
+   ///@brief Trapizoid for FST inner wedge [TGeoVolume] 
+   class FTIA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTIA() : AgBlock("FTIA","Trapizoid for FST inner wedge [TGeoVolume]"){ 
+      }; 
+      ~FTIA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTIB -- 
+   ///@defgroup FTIB_doc 
+   ///@class FTIB 
+   ///@brief Trapizoid for FST inner wedge [TGeoVolume] 
+   class FTIB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTIB() : AgBlock("FTIB","Trapizoid for FST inner wedge [TGeoVolume]"){ 
+      }; 
+      ~FTIB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHOA -- 
+   ///@defgroup FHOA_doc 
+   ///@class FHOA 
+   ///@brief Box for the FST heat sink A [TGeoVolume] 
+   class FHOA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHOA() : AgBlock("FHOA","Box for the FST heat sink A [TGeoVolume]"){ 
+      }; 
+      ~FHOA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHOB -- 
+   ///@defgroup FHOB_doc 
+   ///@class FHOB 
+   ///@brief Box for the FST heat sink B [TGeoVolume] 
+   class FHOB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHOB() : AgBlock("FHOB","Box for the FST heat sink B [TGeoVolume]"){ 
+      }; 
+      ~FHOB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHOC -- 
+   ///@defgroup FHOC_doc 
+   ///@class FHOC 
+   ///@brief Box for the FST heat sink C [TGeoVolume] 
+   class FHOC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHOC() : AgBlock("FHOC","Box for the FST heat sink C [TGeoVolume]"){ 
+      }; 
+      ~FHOC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHOD -- 
+   ///@defgroup FHOD_doc 
+   ///@class FHOD 
+   ///@brief Box for the FST heat sink D [TGeoVolume] 
+   class FHOD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHOD() : AgBlock("FHOD","Box for the FST heat sink D [TGeoVolume]"){ 
+      }; 
+      ~FHOD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHBE -- 
+   ///@defgroup FHBE_doc 
+   ///@class FHBE 
+   ///@brief Box for the FST heat sink E [TGeoVolume] 
+   class FHBE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHBE() : AgBlock("FHBE","Box for the FST heat sink E [TGeoVolume]"){ 
+      }; 
+      ~FHBE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHBF -- 
+   ///@defgroup FHBF_doc 
+   ///@class FHBF 
+   ///@brief Box for the FST heat sink F [TGeoVolume] 
+   class FHBF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHBF() : AgBlock("FHBF","Box for the FST heat sink F [TGeoVolume]"){ 
+      }; 
+      ~FHBF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHBG -- 
+   ///@defgroup FHBG_doc 
+   ///@class FHBG 
+   ///@brief Box for the FST heat sink G [TGeoVolume] 
+   class FHBG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHBG() : AgBlock("FHBG","Box for the FST heat sink G [TGeoVolume]"){ 
+      }; 
+      ~FHBG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FHBH -- 
+   ///@defgroup FHBH_doc 
+   ///@class FHBH 
+   ///@brief Box for the FST heat sink H [TGeoVolume] 
+   class FHBH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FHBH() : AgBlock("FHBH","Box for the FST heat sink H [TGeoVolume]"){ 
+      }; 
+      ~FHBH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSCT -- 
+   ///@defgroup FSCT_doc 
+   ///@class FSCT 
+   ///@brief Tube for FST cooling tube [TGeoVolume] 
+   class FSCT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSCT() : AgBlock("FSCT","Tube for FST cooling tube [TGeoVolume]"){ 
+      }; 
+      ~FSCT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSCL -- 
+   ///@defgroup FSCL_doc 
+   ///@class FSCL 
+   ///@brief Tube for FST coolant [TGeoVolume] 
+   class FSCL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSCL() : AgBlock("FSCL","Tube for FST coolant [TGeoVolume]"){ 
+      }; 
+      ~FSCL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSAC -- 
+   ///@defgroup FSAC_doc 
+   ///@class FSAC 
+   ///@brief Box for the FST APV chips [TGeoVolume] 
+   class FSAC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSAC() : AgBlock("FSAC","Box for the FST APV chips [TGeoVolume]"){ 
+      }; 
+      ~FSAC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSTB -- 
+   ///@defgroup FSTB_doc 
+   ///@class FSTB 
+   ///@brief Box for the FST T-board [TGeoVolume] 
+   class FSTB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSTB() : AgBlock("FSTB","Box for the FST T-board [TGeoVolume]"){ 
+      }; 
+      ~FSTB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTHC -- 
+   ///@defgroup FTHC_doc 
+   ///@class FTHC 
+   ///@brief Box for the FST T-board connectors [TGeoVolume] 
+   class FTHC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTHC() : AgBlock("FTHC","Box for the FST T-board connectors [TGeoVolume]"){ 
+      }; 
+      ~FTHC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTOH -- 
+   ///@defgroup FTOH_doc 
+   ///@class FTOH 
+   ///@brief Tube segment for FST outer hybrid [TGeoVolume] 
+   class FTOH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTOH() : AgBlock("FTOH","Tube segment for FST outer hybrid [TGeoVolume]"){ 
+      }; 
+      ~FTOH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTIH -- 
+   ///@defgroup FTIH_doc 
+   ///@class FTIH 
+   ///@brief Tube segment for FST inner hybrid [TGeoVolume] 
+   class FTIH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTIH() : AgBlock("FTIH","Tube segment for FST inner hybrid [TGeoVolume]"){ 
+      }; 
+      ~FTIH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSBH -- 
+   ///@defgroup FSBH_doc 
+   ///@class FSBH 
+   ///@brief Box for FST hybrid [TGeoVolume] 
+   class FSBH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSBH() : AgBlock("FSBH","Box for FST hybrid [TGeoVolume]"){ 
+      }; 
+      ~FSBH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTUS -- 
+   ///@defgroup FTUS_doc 
+   ///@class FTUS 
+   ///@brief Tube segment for FST silicon (active area) [TGeoVolume] 
+   class FTUS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTUS() : AgBlock("FTUS","Tube segment for FST silicon (active area) [TGeoVolume]"){ 
+      }; 
+      ~FTUS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class FstmGeoSM 
+   /// \brief Forward Silicon Tracker (Simplified Misaligned geometry) 
+   class FstmGeoSM : public AgModule 
+   { 
+      public: 
+      FstmGeoSM(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~FstmGeoSM(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace FstmGeoSM 
+#endif // __FstmGeoSM__ 

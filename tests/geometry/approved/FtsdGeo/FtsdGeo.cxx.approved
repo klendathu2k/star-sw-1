@@ -1,0 +1,1317 @@
+#include "FtsdGeo.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace FTSDGEO // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          main_t *__main = new main_t; // dummy
+ AgMLStructure<main_t,main_info> MAIN("main");
+main_t &main = MAIN;
+     
+          // Selectors for main
+isEqual<main_t, float> __main_version__( __main, &__main->version );
+isEqual<main_t, float> __main_useids__( __main, &__main->useids );
+isEqual<main_t, int> __main__index__( __main, &__main->_index );
+     
+          
+	void              *main_info::address   = &main;
+	AgMLStructureBase   *main_info::structure = &MAIN;
+     
+          fdsk_t *__fdsk = new fdsk_t; // dummy
+ AgMLStructure<fdsk_t,fdsk_info> FDSK("fdsk");
+fdsk_t &fdsk = FDSK;
+     
+          // Selectors for fdsk
+isEqual<fdsk_t, float> __fdsk_version__( __fdsk, &__fdsk->version );
+isEqual<fdsk_t, int> __fdsk_diskid__( __fdsk, &__fdsk->diskid );
+isEqual<fdsk_t, float> __fdsk_x__( __fdsk, &__fdsk->x );
+isEqual<fdsk_t, float> __fdsk_y__( __fdsk, &__fdsk->y );
+isEqual<fdsk_t, float> __fdsk_z__( __fdsk, &__fdsk->z );
+isEqual<fdsk_t, float> __fdsk_rmax__( __fdsk, &__fdsk->rmax );
+isEqual<fdsk_t, float> __fdsk_rmin__( __fdsk, &__fdsk->rmin );
+isEqual<fdsk_t, float> __fdsk_rmaxsens__( __fdsk, &__fdsk->rmaxsens );
+isEqual<fdsk_t, float> __fdsk_rminsens__( __fdsk, &__fdsk->rminsens );
+isEqual<fdsk_t, float> __fdsk_thksens__( __fdsk, &__fdsk->thksens );
+isEqual<fdsk_t, float> __fdsk_thksupp__( __fdsk, &__fdsk->thksupp );
+isEqual<fdsk_t, int> __fdsk__index__( __fdsk, &__fdsk->_index );
+     
+          
+	void              *fdsk_info::address   = &fdsk;
+	AgMLStructureBase   *fdsk_info::structure = &FDSK;
+     
+          ///@addtogroup FtsdGeo_vars     
+          ///@{        
+                int ndisk=0,idisk=0;        
+                //        
+                /// int ndisk=0,idisk=0        
+          ///@}     
+          ///@addtogroup FtsdGeo_vars     
+          ///@{        
+                float zmin,zmax,rmin,rmax,xcenter,ycenter,zcenter,zdisk,dzdisk,rin=0,rout=0;        
+                //        
+                /// float zmin,zmax,rmin,rmax,xcenter,ycenter,zcenter,zdisk,dzdisk,rin=0,rout=0        
+          ///@}     
+       FtsdGeo::FtsdGeo()     
+         : AgModule("FtsdGeo"," is the Beam Beam Counter Modules GEOmetry ")     
+       {        
+       }     
+          Float_t eta2tan(Float_t etax) { return tan(2*atan(exp(-etax))); }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *FTSM::mInstance = 0;     
+          AgBlock *FTSM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new FTSM();        
+                   return mInstance;        
+          }     
+          void FTSM::Block( AgCreate create )     
+          {         
+                ///@addtogroup FTSM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Material air isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Air");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      /// Medium standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("FSTM");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=rmin;              
+                            shape.par("rmax")=rmax;              
+                            shape.par("dz")=(zmax-zmin)/2.0;              
+                            /// Shape Tube rmin=rmin rmax=rmax dz=(zmax-zmin)/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_FTSM;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Loop on idisk from 1 to ndisk step=1           
+                      for ( idisk=1; (1>0)? (idisk<=ndisk):(idisk>=ndisk); idisk+=1 )           
+                      {              
+                            /// USE fdsk diskid=idisk;              
+                            FDSK.use( __fdsk_diskid__ = idisk );
+              
+                            if ( main.active[int(idisk)-1]==1 )              
+                            {                 
+                                  _create = AgCreate("FTSD");                 
+                                  {                    
+                                        AgShape myshape; // undefined shape                    
+                                        ///Create FTSD                    
+                                        Create("FTSD");                     
+                                  }                 
+                                  {                    
+                                        AgPosition  place;                    
+                                        place.SetBlock("FTSD");                    
+                                        place.SetMother("FTSM");                    
+                                        /// Add daughter volume FTSD to mother FTSM                    
+                                        place.TranslateX(fdsk.x);                    
+                                        /// Translate x = fdsk.x                    
+                                        place.TranslateY(fdsk.y);                    
+                                        /// Translate y = fdsk.y                    
+                                        place.TranslateZ(fdsk.z-zcenter);                    
+                                        /// Translate z = fdsk.z-zcenter                    
+                                        place.par("ncopy")=idisk;                    
+                                        /// Ncopy: idisk                    
+                                        _stacker -> Position( AgBlock::Find("FTSD"), place );                    
+                                  } // end placement of FTSD                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("PositioningFTSD%2i",idisk)  );                 
+                            }              
+                      }           
+                      END_OF_FTSM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block FTSM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *FTSD::mInstance = 0;     
+          AgBlock *FTSD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new FTSD();        
+                   return mInstance;        
+          }     
+          void FTSD::Block( AgCreate create )     
+          {         
+                ///@addtogroup FTSD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("FTSD");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=fdsk.rmin;              
+                            shape.par("rmax")=fdsk.rmax;              
+                            shape.par("dz")=fdsk.thksupp;              
+                            /// Shape Tube rmin=fdsk.rmin rmax=fdsk.rmax dz=fdsk.thksupp               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_FTSD;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("FTSA");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create FTSA              
+                            Create("FTSA");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("FTSA");              
+                            place.SetMother("FTSD");              
+                            /// Add daughter volume FTSA to mother FTSD              
+                            place.par("dz")=fdsk.thksens;              
+                            place.par("rmin")=fdsk.rminsens;              
+                            place.par("rmax")=fdsk.rmaxsens;              
+                            _stacker -> Position( AgBlock::Find("FTSA"), place );              
+                      } // end placement of FTSA           
+                      _create = AgCreate("FTSS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create FTSS              
+                            Create("FTSS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("FTSS");              
+                            place.SetMother("FTSD");              
+                            /// Add daughter volume FTSS to mother FTSD              
+                            place.par("dz")=fdsk.thksupp;              
+                            place.par("rmin")=fdsk.rmin;              
+                            place.par("rmax")=fdsk.rminsens;              
+                            _stacker -> Position( AgBlock::Find("FTSS"), place );              
+                      } // end placement of FTSS           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("FTSS");              
+                            place.SetMother("FTSD");              
+                            /// Add daughter volume FTSS to mother FTSD              
+                            place.par("dz")=fdsk.thksupp;              
+                            place.par("rmin")=fdsk.rmaxsens;              
+                            place.par("rmax")=fdsk.rmax;              
+                            _stacker -> Position( AgBlock::Find("FTSS"), place );              
+                      } // end placement of FTSS           
+                      END_OF_FTSD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block FTSD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *FTSA::mInstance = 0;     
+          AgBlock *FTSA::Instance(){        
+                   if ( mInstance==0 ) mInstance = new FTSA();        
+                   return mInstance;        
+          }     
+          void FTSA::Block( AgCreate create )     
+          {         
+                ///@addtogroup FTSA_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("FTSA");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material silicon            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Silicon");              
+                            _material = mat;              
+                      }           
+                      /// Material silicon isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Silicon");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_FTSA;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "FTSA", "z", .00001, 0, 0, "S");           
+                      // deferred module()->AddHit( "FTSA", "y", .00001, 0, 0, "S");           
+                      // deferred module()->AddHit( "FTSA", "x", .00001, 0, 0, "S");           
+                      // deferred module()->AddHit( "FTSA", "ptot", 16, 0, 100, "");           
+                      // deferred module()->AddHit( "FTSA", "cx", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "FTSA", "cy", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "FTSA", "cz", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "FTSA", "sleng", 16, 0, 500, "");           
+                      // deferred module()->AddHit( "FTSA", "tof", 16, 0, 0, "");           
+                      // deferred module()->AddHit( "FTSA", "step", .0001, 0, 0, "");           
+                      // deferred module()->AddHit( "FTSA", "eloss", 16, 0, 0, "");           
+                      END_OF_FTSA:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block FTSA     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *FTSS::mInstance = 0;     
+          AgBlock *FTSS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new FTSS();        
+                   return mInstance;        
+          }     
+          void FTSS::Block( AgCreate create )     
+          {         
+                ///@addtogroup FTSS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("FTSS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      /// Material aluminium isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Aluminium");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_FTSS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_FTSS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block FTSS     
+    // ----------------------------------------------------------------------- geoctr
+       void FtsdGeo::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup FtsdGeo_revision        
+             ///@{           
+                   /// Created: 10/7/2015           
+             ///@}        
+             ///@addtogroup FtsdGeo_revision        
+             ///@{           
+                   /// Author: Jason Webb           
+             ///@}        
+             AddBlock("FTSM", FTSM::Instance());        
+             AddBlock("FTSD", FTSD::Instance());        
+             AddBlock("FTSA", FTSA::Instance());        
+             AddBlock("FTSS", FTSS::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill main
+++main._index;
+main.version = 3.0;
+// main_docum.version = "selector";
+main.useids = 1.0;
+// main_docum.useids = "defines placement 0=in cave, 1=in idsm";
+{
+main_info::active::Type temp = {
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1),
+main_info::active::BaseType(1)
+}
+;
+memcpy(&main.active, &temp, sizeof(temp));;
+}
+// main_docum.active = "switch on/off up to 20 disks";
+MAIN.fill();
+        
+             /// USE main _index=1;        
+             MAIN.use( __main__index__ = 1 );
+        
+             if ( main.version==1.0 )        
+             {           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = 70.0;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = 70*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = 70*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = 70*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = 70*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.1;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = 93.33;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = 93.33*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = 93.33*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = 93.33*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = 93.33*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.2;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = 116.66;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = 116.66*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = 116.66*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = 116.66*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = 116.66*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.2;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.2;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = 140.0;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = 140.0*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = 140.0*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = 140.0*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = 140.0*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+             }        
+             if ( main.version==2.0 )        
+             {           
+                   zdisk=70.0;           
+                   dzdisk=30.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.1;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.2;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.3;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.4;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.5;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+FDSK.fill();
+           
+             }        
+             if ( main.version==3.0 )        
+             {           
+                   zdisk=70.0;           
+                   dzdisk=23.3333333;           
+                   rin=2.25;           
+                   rout=32.25;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = rin-0.5;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = rout+0.5;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = rin;
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = rout;
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.1;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.2;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.3;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.4;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.5;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+             }        
+             if ( main.version==4.0 )        
+             {           
+                   zdisk=240.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=244.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=400.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=404.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=700.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=704.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-1.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+1.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+             }        
+             if ( main.version==5.0 )        
+             {           
+                   zdisk=70.0;           
+                   dzdisk=23.3333333;           
+                   rin=2.25;           
+                   rout=32.25;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = rin-0.5;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = rout+0.5;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = rin;
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = rout;
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.1;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.2;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.3;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.4;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=zdisk+dzdisk;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.5;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+FDSK.fill();
+           
+                   zdisk=240.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=244.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=470.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=474.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=700.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+                   zdisk=704.0;           
+                   ndisk=ndisk+1;           
+                   // ---------------------------------------------------------------------------------------------------           
+                   // Fill fdsk
+++fdsk._index;
+fdsk.version = 1.0;
+// fdsk_docum.version = "disk version";
+fdsk.diskid = ndisk;
+// fdsk_docum.diskid = "disk number";
+fdsk.x = 0.0;
+// fdsk_docum.x = "x center of disk [cm]";
+fdsk.y = 0.0;
+// fdsk_docum.y = "y center of disk [cm]";
+fdsk.z = zdisk;
+// fdsk_docum.z = "z center of disk [cm]";
+fdsk.rmin = zdisk*eta2tan(4.0)-3.0;
+// fdsk_docum.rmin = "minimum radius of disk [cm]";
+fdsk.rmax = zdisk*eta2tan(2.5)+3.0;
+// fdsk_docum.rmax = "maximum radius of disk [cm]";
+fdsk.rminsens = zdisk*eta2tan(4.0);
+// fdsk_docum.rminsens = "minimum radius of sensitive layer [cm]";
+fdsk.rmaxsens = zdisk*eta2tan(2.5);
+// fdsk_docum.rmaxsens = "maximum radius of sensitive layer [cm]";
+fdsk.thksens = 0.03744;
+// fdsk_docum.thksens = "thickness of sensitive layer [cm]";
+fdsk.thksupp = 0.8;
+// fdsk_docum.thksupp = "thickness of support material [cm]";
+FDSK.fill();
+           
+             }        
+             /// USE fdsk _index=1;        
+             FDSK.use( __fdsk__index__ = 1 );
+        
+             /// USE fdsk diskid=1;        
+             FDSK.use( __fdsk_diskid__ = 1 );
+        
+             zmin=fdsk.z-fdsk.thksupp;        
+             rmin=fdsk.rmin;        
+             /// USE fdsk diskid=ndisk;        
+             FDSK.use( __fdsk_diskid__ = ndisk );
+        
+             zmax=fdsk.z+fdsk.thksupp;        
+             rmax=fdsk.rmax;        
+             xcenter=0;        
+             ycenter=0;        
+             zcenter=zmin+(zmax-zmin)/2.0;        
+             _create = AgCreate("FTSM");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create FTSM           
+                   Create("FTSM");            
+             }        
+             if ( main.useids==1.0 )        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("FTSM");           
+                   place.SetMother("IDSM");           
+                   /// Add daughter volume FTSM to mother IDSM           
+                   place.TranslateX(xcenter);           
+                   /// Translate x = xcenter           
+                   place.TranslateY(ycenter);           
+                   /// Translate y = ycenter           
+                   place.TranslateZ(zcenter);           
+                   /// Translate z = zcenter           
+                   place.par("only")=AgPosition::kOnly;           
+                   /// Overlap: agposition::konly           
+                   _stacker -> Position( AgBlock::Find("FTSM"), place );           
+             } // end placement of FTSM        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("FTSM");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume FTSM to mother CAVE           
+                   place.TranslateX(xcenter);           
+                   /// Translate x = xcenter           
+                   place.TranslateY(ycenter);           
+                   /// Translate y = ycenter           
+                   place.TranslateZ(zcenter);           
+                   /// Translate z = zcenter           
+                   place.par("only")=AgPosition::kOnly;           
+                   /// Overlap: agposition::konly           
+                   _stacker -> Position( AgBlock::Find("FTSM"), place );           
+             } // end placement of FTSM        
+       }; // FtsdGeo     
+ }; // namespace FtsdGeo  
+ 

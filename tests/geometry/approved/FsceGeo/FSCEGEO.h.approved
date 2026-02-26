@@ -1,0 +1,189 @@
+#ifndef __FSCEGEO__ 
+#define __FSCEGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace FSCEGEO // $NMSPC 
+{ 
+   struct fscp_t {
+float version;
+float towerwidth;
+float towerlength;
+float ntowersx;
+float ntowersy;
+float nempty;
+float distfromvtx;
+int _index;
+};
+ 
+   struct _fscp_docum_ {
+string version;
+string towerwidth;
+string towerlength;
+string ntowersx;
+string ntowersy;
+string nempty;
+string distfromvtx;
+string _index;
+};
+ 
+    struct _fscp_types_ {
+  typedef float version;
+  typedef float towerwidth;
+  typedef float towerlength;
+  typedef float ntowersx;
+  typedef float ntowersy;
+  typedef float nempty;
+  typedef float distfromvtx;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct fscp_info {
+typedef fscp_t Type;
+static const char *name(){ return "fscp_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct towerwidth {
+  static const char *name() { return  "towerwidth"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, towerwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct towerlength {
+  static const char *name() { return  "towerlength"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, towerlength ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ntowersx {
+  static const char *name() { return  "ntowersx"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, ntowersx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ntowersy {
+  static const char *name() { return  "ntowersy"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, ntowersy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nempty {
+  static const char *name() { return  "nempty"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, nempty ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct distfromvtx {
+  static const char *name() { return  "distfromvtx"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, distfromvtx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct fscp_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)fscp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- FSCE -- 
+   ///@defgroup FSCE_doc 
+   ///@class FSCE 
+   ///@brief is the container volume for all towers [TGeoVolume] 
+   class FSCE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSCE() : AgBlock("FSCE","is the container volume for all towers [TGeoVolume]"){ 
+      }; 
+      ~FSCE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSCT -- 
+   ///@defgroup FSCT_doc 
+   ///@class FSCT 
+   ///@brief is a sensitive Tungsten+Sci+Epoxy tower [TGeoVolume] 
+   class FSCT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSCT() : AgBlock("FSCT","is a sensitive Tungsten+Sci+Epoxy tower [TGeoVolume]"){ 
+      }; 
+      ~FSCT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class FSCEGEO 
+   /// \brief  is the geometry of the Fiber Sampling Calorimeter  
+   class FSCEGEO : public AgModule 
+   { 
+      public: 
+      FSCEGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~FSCEGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace FSCEGEO 
+#endif // __FSCEGEO__ 

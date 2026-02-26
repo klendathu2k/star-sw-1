@@ -1,0 +1,641 @@
+#include "SHLDGEO.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace SHLDGEO // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          shlg_t *__shlg = new shlg_t; // dummy
+ AgMLStructure<shlg_t,shlg_info> SHLG("shlg");
+shlg_t &shlg = SHLG;
+     
+          // Selectors for shlg
+isEqual<shlg_t, float> __shlg_version__( __shlg, &__shlg->version );
+isEqual<shlg_t, float> __shlg_z__( __shlg, &__shlg->z );
+isEqual<shlg_t, float> __shlg_dx__( __shlg, &__shlg->dx );
+isEqual<shlg_t, float> __shlg_dy__( __shlg, &__shlg->dy );
+isEqual<shlg_t, float> __shlg_dz__( __shlg, &__shlg->dz );
+isEqual<shlg_t, float> __shlg_baselevel__( __shlg, &__shlg->baselevel );
+isEqual<shlg_t, float> __shlg_basez__( __shlg, &__shlg->basez );
+isEqual<shlg_t, float> __shlg_basedx__( __shlg, &__shlg->basedx );
+isEqual<shlg_t, float> __shlg_basedy__( __shlg, &__shlg->basedy );
+isEqual<shlg_t, float> __shlg_slabx__( __shlg, &__shlg->slabx );
+isEqual<shlg_t, float> __shlg_slabz__( __shlg, &__shlg->slabz );
+isEqual<shlg_t, float> __shlg_slabdy__( __shlg, &__shlg->slabdy );
+isEqual<shlg_t, float> __shlg_slabdz__( __shlg, &__shlg->slabdz );
+isEqual<shlg_t, float> __shlg_fidz__( __shlg, &__shlg->fidz );
+isEqual<shlg_t, float> __shlg_fidy__( __shlg, &__shlg->fidy );
+isEqual<shlg_t, float> __shlg_holex__( __shlg, &__shlg->holex );
+isEqual<shlg_t, float> __shlg_holey__( __shlg, &__shlg->holey );
+isEqual<shlg_t, float> __shlg_floorthk__( __shlg, &__shlg->floorthk );
+isEqual<shlg_t, float> __shlg_floorlen__( __shlg, &__shlg->floorlen );
+isEqual<shlg_t, float> __shlg_floorwidth__( __shlg, &__shlg->floorwidth );
+isEqual<shlg_t, float> __shlg_floorpos__( __shlg, &__shlg->floorpos );
+isEqual<shlg_t, int> __shlg__index__( __shlg, &__shlg->_index );
+     
+          
+	void              *shlg_info::address   = &shlg;
+	AgMLStructureBase   *shlg_info::structure = &SHLG;
+     
+          ///@addtogroup SHLDGEO_vars     
+          ///@{        
+                Float_t yslab,shieldhalfheight,yfi;        
+                //        
+                /// Float_t yslab,shieldhalfheight,yfi        
+          ///@}     
+       SHLDGEO::SHLDGEO()     
+         : AgModule("SHLDGEO"," is the shielding ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHLX::mInstance = 0;     
+          AgBlock *SHLX::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHLX();        
+                   return mInstance;        
+          }     
+          void SHLX::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHLX_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHLX");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.dx;              
+                            shape.par("dy")=shieldhalfheight;              
+                            shape.par("dz")=shlg.dz;              
+                            /// Shape Bbox dx=shlg.dx dy=shieldhalfheight dz=shlg.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHLX;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("SHBS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHBS              
+                            Create("SHBS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHBS");              
+                            place.SetMother("SHLX");              
+                            /// Add daughter volume SHBS to mother SHLX              
+                            place.TranslateX(+shlg.dx-shlg.basedx);              
+                            /// Translate x = +shlg.dx-shlg.basedx              
+                            place.TranslateY(-shieldhalfheight+shlg.basedy);              
+                            /// Translate y = -shieldhalfheight+shlg.basedy              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            _stacker -> Position( AgBlock::Find("SHBS"), place );              
+                      } // end placement of SHBS           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHBS");              
+                            place.SetMother("SHLX");              
+                            /// Add daughter volume SHBS to mother SHLX              
+                            place.TranslateX(-shlg.dx+shlg.basedx);              
+                            /// Translate x = -shlg.dx+shlg.basedx              
+                            place.TranslateY(-shieldhalfheight+shlg.basedy);              
+                            /// Translate y = -shieldhalfheight+shlg.basedy              
+                            place.TranslateZ(0);              
+                            /// Translate z = 0              
+                            _stacker -> Position( AgBlock::Find("SHBS"), place );              
+                      } // end placement of SHBS           
+                      yslab=-shieldhalfheight+2.0*shlg.basedy+shlg.slabdy;           
+                      _create = AgCreate("SHLS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHLS              
+                            Create("SHLS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHLS");              
+                            place.SetMother("SHLX");              
+                            /// Add daughter volume SHLS to mother SHLX              
+                            place.TranslateX(shlg.slabx);              
+                            /// Translate x = shlg.slabx              
+                            place.TranslateY(yslab);              
+                            /// Translate y = yslab              
+                            place.TranslateZ(-shlg.dz+shlg.slabdz);              
+                            /// Translate z = -shlg.dz+shlg.slabdz              
+                            _stacker -> Position( AgBlock::Find("SHLS"), place );              
+                      } // end placement of SHLS           
+                      _create = AgCreate("SHBI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHBI              
+                            Create("SHBI");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHBI");              
+                            place.SetMother("SHLX");              
+                            /// Add daughter volume SHBI to mother SHLX              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(yslab);              
+                            /// Translate y = yslab              
+                            place.TranslateZ(shlg.slabdz);              
+                            /// Translate z = shlg.slabdz              
+                            _stacker -> Position( AgBlock::Find("SHBI"), place );              
+                      } // end placement of SHBI           
+                      yfi=-shieldhalfheight+2.0*(shlg.basedy+shlg.slabdy)+shlg.fidy;           
+                      _create = AgCreate("SHFI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHFI              
+                            Create("SHFI");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHFI");              
+                            place.SetMother("SHLX");              
+                            /// Add daughter volume SHFI to mother SHLX              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY(yfi);              
+                            /// Translate y = yfi              
+                            place.TranslateZ(-shlg.dz+shlg.fidz);              
+                            /// Translate z = -shlg.dz+shlg.fidz              
+                            _stacker -> Position( AgBlock::Find("SHFI"), place );              
+                      } // end placement of SHFI           
+                      END_OF_SHLX:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHLX     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SFLR::mInstance = 0;     
+          AgBlock *SFLR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SFLR();        
+                   return mInstance;        
+          }     
+          void SFLR::Block( AgCreate create )     
+          {         
+                ///@addtogroup SFLR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("SFLR");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component Si	a=28.08	z=14	w=1           
+                      /// Component O2	a=16	z=8	w=2           
+                      /// Mixture ShieldConc dens=2.5           
+                      {  AgMaterial &mix = AgMaterial::Get("Shieldconc");              
+                            mix.Component("Si",28.08,14,1);              
+                            mix.Component("O2",16,8,2);              
+                            mix.par("dens")=2.5;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.floorwidth/2.0;              
+                            shape.par("dy")=shlg.floorthk/2.0;              
+                            shape.par("dz")=shlg.floorlen/2.0;              
+                            /// Shape Bbox dx=shlg.floorwidth/2.0 dy=shlg.floorthk/2.0 dz=shlg.floorlen/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SFLR;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SFLR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SFLR     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHBS::mInstance = 0;     
+          AgBlock *SHBS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHBS();        
+                   return mInstance;        
+          }     
+          void SHBS::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHBS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("SHBS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component Si	a=28.08	z=14	w=1           
+                      /// Component O2	a=16	z=8	w=2           
+                      /// Mixture BaseConc dens=2.5           
+                      {  AgMaterial &mix = AgMaterial::Get("Baseconc");              
+                            mix.Component("Si",28.08,14,1);              
+                            mix.Component("O2",16,8,2);              
+                            mix.par("dens")=2.5;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.basedx;              
+                            shape.par("dy")=shlg.basedy;              
+                            shape.par("dz")=shlg.dz;              
+                            /// Shape Bbox dx=shlg.basedx dy=shlg.basedy dz=shlg.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHBS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SHBS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHBS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHLS::mInstance = 0;     
+          AgBlock *SHLS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHLS();        
+                   return mInstance;        
+          }     
+          void SHLS::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHLS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material BaseConc            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Baseconc");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHBS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.dx;              
+                            shape.par("dy")=shlg.slabdy;              
+                            shape.par("dz")=shlg.slabdz;              
+                            /// Shape Bbox dx=shlg.dx dy=shlg.slabdy dz=shlg.slabdz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHLS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SHLS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHLS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHBI::mInstance = 0;     
+          AgBlock *SHBI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHBI();        
+                   return mInstance;        
+          }     
+          void SHBI::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHBI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHBI");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.dx;              
+                            shape.par("dy")=shlg.slabdy;              
+                            shape.par("dz")=shlg.dz-shlg.slabdz;              
+                            /// Shape Bbox dx=shlg.dx dy=shlg.slabdy dz=shlg.dz-shlg.slabdz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHBI;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SHBI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHBI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHFI::mInstance = 0;     
+          AgBlock *SHFI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHFI();        
+                   return mInstance;        
+          }     
+          void SHFI::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHFI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Iron            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Iron");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHFI");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.dx;              
+                            shape.par("dy")=shlg.fidy;              
+                            shape.par("dz")=shlg.fidz;              
+                            /// Shape Bbox dx=shlg.dx dy=shlg.fidy dz=shlg.fidz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHFI;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("SHOL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create SHOL              
+                            Create("SHOL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("SHOL");              
+                            place.SetMother("SHFI");              
+                            /// Add daughter volume SHOL to mother SHFI              
+                            place.TranslateY(-shlg.fidy+shlg.holey);              
+                            /// Translate y = -shlg.fidy+shlg.holey              
+                            _stacker -> Position( AgBlock::Find("SHOL"), place );              
+                      } // end placement of SHOL           
+                      END_OF_SHFI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHFI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *SHOL::mInstance = 0;     
+          AgBlock *SHOL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new SHOL();        
+                   return mInstance;        
+          }     
+          void SHOL::Block( AgCreate create )     
+          {         
+                ///@addtogroup SHOL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("SHOL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=shlg.holex;              
+                            shape.par("dy")=shlg.holey;              
+                            shape.par("dz")=shlg.fidz;              
+                            /// Shape Bbox dx=shlg.holex dy=shlg.holey dz=shlg.fidz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_SHOL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_SHOL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block SHOL     
+    // ----------------------------------------------------------------------- geoctr
+       void SHLDGEO::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup SHLDGEO_revision        
+             ///@{           
+                   /// Created:   15-Aug-2005             
+             ///@}        
+             ///@addtogroup SHLDGEO_revision        
+             ///@{           
+                   /// Author: Maxim Potekhin           
+             ///@}        
+             AddBlock("SHLX", SHLX::Instance());        
+             AddBlock("SHBS", SHBS::Instance());        
+             AddBlock("SHLS", SHLS::Instance());        
+             AddBlock("SHBI", SHBI::Instance());        
+             AddBlock("SHFI", SHFI::Instance());        
+             AddBlock("SHOL", SHOL::Instance());        
+             AddBlock("SFLR", SFLR::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill shlg
+++shlg._index;
+shlg.version = 1;
+// shlg_docum.version = " geometry version   ";
+shlg.z = 1750;
+// shlg_docum.z = " position of the shielding ";
+shlg.dx = 170;
+// shlg_docum.dx = " half-x dimension ";
+shlg.dy = 150;
+// shlg_docum.dy = " half-y dimension ";
+shlg.dz = 100;
+// shlg_docum.dz = " half-z dimension ";
+shlg.baselevel = -125;
+// shlg_docum.baselevel = " base position on the floor ";
+shlg.basez = 0;
+// shlg_docum.basez = " base position ";
+shlg.basedx = 60;
+// shlg_docum.basedx = " base half-x dimension ";
+shlg.basedy = 30;
+// shlg_docum.basedy = " base half-y dimension ";
+shlg.slabx = 0;
+// shlg_docum.slabx = " slab position ";
+shlg.slabz = -30;
+// shlg_docum.slabz = " slab position ";
+shlg.slabdy = 30;
+// shlg_docum.slabdy = " slab half-y dimension ";
+shlg.slabdz = 30;
+// shlg_docum.slabdz = " slab half-z dimension ";
+shlg.fidz = 47;
+// shlg_docum.fidz = " forward iron slab half-thickness ";
+shlg.fidy = 55;
+// shlg_docum.fidy = " half-height ";
+shlg.holex = 20;
+// shlg_docum.holex = " beam hole half-size in X ";
+shlg.holey = 10;
+// shlg_docum.holey = " beam hole half-size in Y ";
+shlg.floorthk = 70;
+// shlg_docum.floorthk = " Concrete floor thickness ";
+shlg.floorlen = 3900;
+// shlg_docum.floorlen = " Concrete floor length ";
+shlg.floorwidth = 340;
+// shlg_docum.floorwidth = " Concrete floor width ";
+shlg.floorpos = 2800;
+// shlg_docum.floorpos = " Concrete floor z-position ";
+SHLG.fill();
+        
+             /// USE shlg _index=1;        
+             SHLG.use( __shlg__index__ = 1 );
+        
+             shieldhalfheight=(shlg.basedy+shlg.slabdy+shlg.fidy);        
+             _create = AgCreate("SHLX");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create SHLX           
+                   Create("SHLX");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("SHLX");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume SHLX to mother CAVE           
+                   place.TranslateX(0.0);           
+                   /// Translate x = 0.0           
+                   place.TranslateY(shlg.baselevel+shieldhalfheight);           
+                   /// Translate y = shlg.baselevel+shieldhalfheight           
+                   place.TranslateZ(+shlg.z);           
+                   /// Translate z = +shlg.z           
+                   _stacker -> Position( AgBlock::Find("SHLX"), place );           
+             } // end placement of SHLX        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("SHLX");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume SHLX to mother CAVE           
+                   place.TranslateX(0.0);           
+                   /// Translate x = 0.0           
+                   place.TranslateY(shlg.baselevel+shieldhalfheight);           
+                   /// Translate y = shlg.baselevel+shieldhalfheight           
+                   place.TranslateZ(-shlg.z);           
+                   /// Translate z = -shlg.z           
+                   /// G3 Reference: thetax = 90           
+                   /// G3 Reference: phix = 0           
+                   /// G3 Reference: thetay = 90           
+                   /// G3 Reference: phiy = 90           
+                   /// G3 Reference: thetaz = 180           
+                   /// G3 Reference: phiz = 0           
+                   Double_t _thetax=90,_phix=0,_thetay=90,_phiy=90,_thetaz=180,_phiz=0;           
+                   place.Reference( _thetax, _phix, _thetay, _phiy, _thetaz, _phiz );           
+                   _stacker -> Position( AgBlock::Find("SHLX"), place );           
+             } // end placement of SHLX        
+             _create = AgCreate("SFLR");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create SFLR           
+                   Create("SFLR");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("SFLR");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume SFLR to mother CAVE           
+                   place.TranslateX(0);           
+                   /// Translate x = 0           
+                   place.TranslateY(shlg.baselevel-0.5*shlg.floorthk);           
+                   /// Translate y = shlg.baselevel-0.5*shlg.floorthk           
+                   place.TranslateZ(+shlg.floorpos);           
+                   /// Translate z = +shlg.floorpos           
+                   _stacker -> Position( AgBlock::Find("SFLR"), place );           
+             } // end placement of SFLR        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("SFLR");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume SFLR to mother CAVE           
+                   place.TranslateX(0);           
+                   /// Translate x = 0           
+                   place.TranslateY(shlg.baselevel-0.5*shlg.floorthk);           
+                   /// Translate y = shlg.baselevel-0.5*shlg.floorthk           
+                   place.TranslateZ(-shlg.floorpos);           
+                   /// Translate z = -shlg.floorpos           
+                   /// G3 Reference: thetax = 90           
+                   /// G3 Reference: phix = 0           
+                   /// G3 Reference: thetay = 90           
+                   /// G3 Reference: phiy = 90           
+                   /// G3 Reference: thetaz = 180           
+                   /// G3 Reference: phiz = 0           
+                   Double_t _thetax=90,_phix=0,_thetay=90,_phiy=90,_thetaz=180,_phiz=0;           
+                   place.Reference( _thetax, _phix, _thetay, _phiy, _thetaz, _phiz );           
+                   _stacker -> Position( AgBlock::Find("SFLR"), place );           
+             } // end placement of SFLR        
+       }; // SHLDGEO     
+ }; // namespace SHLDGEO  
+ 

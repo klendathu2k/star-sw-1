@@ -1,0 +1,1247 @@
+#ifndef __PipeGeo3__ 
+#define __PipeGeo3__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PIPEGEO3 // $NMSPC 
+{ 
+   struct pipv_t {
+float version;
+int pipeconfig;
+int pipeflag;
+int _index;
+};
+ 
+   struct _pipv_docum_ {
+string version;
+string pipeconfig;
+string pipeflag;
+string _index;
+};
+ 
+    struct _pipv_types_ {
+  typedef float version;
+  typedef int pipeconfig;
+  typedef int pipeflag;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pipv_info {
+typedef pipv_t Type;
+static const char *name(){ return "pipv_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pipv_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pipeconfig {
+  static const char *name() { return  "pipeconfig"; }
+  static size_t Offset(){ return offsetof( struct pipv_t, pipeconfig ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct pipeflag {
+  static const char *name() { return  "pipeflag"; }
+  static size_t Offset(){ return offsetof( struct pipv_t, pipeflag ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pipv_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pipg_t {
+float version;
+float zoffset;
+float yoffset;
+float xoffset;
+float zoffber;
+float vacdens;
+int _index;
+};
+ 
+   struct _pipg_docum_ {
+string version;
+string zoffset;
+string yoffset;
+string xoffset;
+string zoffber;
+string vacdens;
+string _index;
+};
+ 
+    struct _pipg_types_ {
+  typedef float version;
+  typedef float zoffset;
+  typedef float yoffset;
+  typedef float xoffset;
+  typedef float zoffber;
+  typedef float vacdens;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pipg_info {
+typedef pipg_t Type;
+static const char *name(){ return "pipg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffber {
+  static const char *name() { return  "zoffber"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, zoffber ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct vacdens {
+  static const char *name() { return  "vacdens"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, vacdens ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pipg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pipa_t {
+float config;
+float s2innr;
+float s2outr;
+float s2leng;
+float s3innr;
+float s3outr;
+float s3leng;
+float s4innr;
+float s4outr;
+float s4leng;
+float flange1t;
+float flange1r;
+float conelen;
+float ribnum;
+float ribspa;
+float ribthk;
+float riboutr;
+float ribcent;
+int _index;
+};
+ 
+   struct _pipa_docum_ {
+string config;
+string s2innr;
+string s2outr;
+string s2leng;
+string s3innr;
+string s3outr;
+string s3leng;
+string s4innr;
+string s4outr;
+string s4leng;
+string flange1t;
+string flange1r;
+string conelen;
+string ribnum;
+string ribspa;
+string ribthk;
+string riboutr;
+string ribcent;
+string _index;
+};
+ 
+    struct _pipa_types_ {
+  typedef float config;
+  typedef float s2innr;
+  typedef float s2outr;
+  typedef float s2leng;
+  typedef float s3innr;
+  typedef float s3outr;
+  typedef float s3leng;
+  typedef float s4innr;
+  typedef float s4outr;
+  typedef float s4leng;
+  typedef float flange1t;
+  typedef float flange1r;
+  typedef float conelen;
+  typedef float ribnum;
+  typedef float ribspa;
+  typedef float ribthk;
+  typedef float riboutr;
+  typedef float ribcent;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pipa_info {
+typedef pipa_t Type;
+static const char *name(){ return "pipa_t"; }
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2innr {
+  static const char *name() { return  "s2innr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s2innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2outr {
+  static const char *name() { return  "s2outr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s2outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2leng {
+  static const char *name() { return  "s2leng"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s2leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3innr {
+  static const char *name() { return  "s3innr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s3innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3outr {
+  static const char *name() { return  "s3outr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s3outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3leng {
+  static const char *name() { return  "s3leng"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s3leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4innr {
+  static const char *name() { return  "s4innr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s4innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4outr {
+  static const char *name() { return  "s4outr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s4outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4leng {
+  static const char *name() { return  "s4leng"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, s4leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct flange1t {
+  static const char *name() { return  "flange1t"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, flange1t ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct flange1r {
+  static const char *name() { return  "flange1r"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, flange1r ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct conelen {
+  static const char *name() { return  "conelen"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, conelen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribnum {
+  static const char *name() { return  "ribnum"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, ribnum ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribspa {
+  static const char *name() { return  "ribspa"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, ribspa ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribthk {
+  static const char *name() { return  "ribthk"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, ribthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct riboutr {
+  static const char *name() { return  "riboutr"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, riboutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribcent {
+  static const char *name() { return  "ribcent"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, ribcent ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pipa_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pipa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct piwa_t {
+float config;
+float s2innr;
+float s2outr;
+float s2leng;
+float s3innr;
+float s3outr;
+float s3leng;
+float s4innr;
+float s4outr;
+float s4leng;
+float flange1t;
+float flange1r;
+float conelen;
+float ribnum;
+float ribspa;
+float ribthk;
+float riboutr;
+float ribcent;
+int _index;
+};
+ 
+   struct _piwa_docum_ {
+string config;
+string s2innr;
+string s2outr;
+string s2leng;
+string s3innr;
+string s3outr;
+string s3leng;
+string s4innr;
+string s4outr;
+string s4leng;
+string flange1t;
+string flange1r;
+string conelen;
+string ribnum;
+string ribspa;
+string ribthk;
+string riboutr;
+string ribcent;
+string _index;
+};
+ 
+    struct _piwa_types_ {
+  typedef float config;
+  typedef float s2innr;
+  typedef float s2outr;
+  typedef float s2leng;
+  typedef float s3innr;
+  typedef float s3outr;
+  typedef float s3leng;
+  typedef float s4innr;
+  typedef float s4outr;
+  typedef float s4leng;
+  typedef float flange1t;
+  typedef float flange1r;
+  typedef float conelen;
+  typedef float ribnum;
+  typedef float ribspa;
+  typedef float ribthk;
+  typedef float riboutr;
+  typedef float ribcent;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct piwa_info {
+typedef piwa_t Type;
+static const char *name(){ return "piwa_t"; }
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2innr {
+  static const char *name() { return  "s2innr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s2innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2outr {
+  static const char *name() { return  "s2outr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s2outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s2leng {
+  static const char *name() { return  "s2leng"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s2leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3innr {
+  static const char *name() { return  "s3innr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s3innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3outr {
+  static const char *name() { return  "s3outr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s3outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s3leng {
+  static const char *name() { return  "s3leng"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s3leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4innr {
+  static const char *name() { return  "s4innr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s4innr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4outr {
+  static const char *name() { return  "s4outr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s4outr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct s4leng {
+  static const char *name() { return  "s4leng"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, s4leng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct flange1t {
+  static const char *name() { return  "flange1t"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, flange1t ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct flange1r {
+  static const char *name() { return  "flange1r"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, flange1r ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct conelen {
+  static const char *name() { return  "conelen"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, conelen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribnum {
+  static const char *name() { return  "ribnum"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, ribnum ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribspa {
+  static const char *name() { return  "ribspa"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, ribspa ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribthk {
+  static const char *name() { return  "ribthk"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, ribthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct riboutr {
+  static const char *name() { return  "riboutr"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, riboutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ribcent {
+  static const char *name() { return  "ribcent"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, ribcent ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct piwa_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)piwa_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PIPE -- 
+   ///@defgroup PIPE_doc 
+   ///@class PIPE 
+   ///@brief Pipe mother volume of the east section [TGeoVolume] 
+   class PIPE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPE() : AgBlock("PIPE","Pipe mother volume of the east section [TGeoVolume]"){ 
+      }; 
+      ~PIPE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIHE -- 
+   ///@defgroup PIHE_doc 
+   ///@class PIHE 
+   ///@brief The hole inside the east section of beam pipe [TGeoVolume] 
+   class PIHE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIHE() : AgBlock("PIHE","The hole inside the east section of beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PIHE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALQ -- 
+   ///@defgroup PALQ_doc 
+   ///@class PALQ 
+   ///@brief The east end aluminium tube of the beam pipe [TGeoVolume] 
+   class PALQ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALQ() : AgBlock("PALQ","The east end aluminium tube of the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PALQ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALR -- 
+   ///@defgroup PALR_doc 
+   ///@class PALR 
+   ///@brief The east aluminium transition tube of the full beam pipe [TGeoVolume] 
+   class PALR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALR() : AgBlock("PALR","The east aluminium transition tube of the full beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PALR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPI -- 
+   ///@defgroup PIPI_doc 
+   ///@class PIPI 
+   ///@brief Pipe middle mother volume [TGeoVolume] 
+   class PIPI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPI() : AgBlock("PIPI","Pipe middle mother volume [TGeoVolume]"){ 
+      }; 
+      ~PIPI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIHI -- 
+   ///@defgroup PIHI_doc 
+   ///@class PIHI 
+   ///@brief The hole inside the beam pipe [TGeoVolume] 
+   class PIHI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIHI() : AgBlock("PIHI","The hole inside the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PIHI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALS -- 
+   ///@defgroup PALS_doc 
+   ///@class PALS 
+   ///@brief The east aluminium section of the beam pipe [TGeoVolume] 
+   class PALS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALS() : AgBlock("PALS","The east aluminium section of the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PALS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PBES -- 
+   ///@defgroup PBES_doc 
+   ///@class PBES 
+   ///@brief The berillium section of the beam pipe [TGeoVolume] 
+   class PBES : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PBES() : AgBlock("PBES","The berillium section of the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PBES(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALI -- 
+   ///@defgroup PALI_doc 
+   ///@class PALI 
+   ///@brief The west aluminium section of the middle beam pipe [TGeoVolume] 
+   class PALI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALI() : AgBlock("PALI","The west aluminium section of the middle beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PALI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPW -- 
+   ///@defgroup PIPW_doc 
+   ///@class PIPW 
+   ///@brief Pipe mother volume [TGeoVolume] 
+   class PIPW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPW() : AgBlock("PIPW","Pipe mother volume [TGeoVolume]"){ 
+      }; 
+      ~PIPW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIHW -- 
+   ///@defgroup PIHW_doc 
+   ///@class PIHW 
+   ///@brief The hole inside west section of the beam pipe [TGeoVolume] 
+   class PIHW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIHW() : AgBlock("PIHW","The hole inside west section of the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PIHW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALJ -- 
+   ///@defgroup PALJ_doc 
+   ///@class PALJ 
+   ///@brief The west aluminium section of the beam pipe (west transition tube) [TGeoVolume] 
+   class PALJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALJ() : AgBlock("PALJ","The west aluminium section of the beam pipe (west transition tube) [TGeoVolume]"){ 
+      }; 
+      ~PALJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PALK -- 
+   ///@defgroup PALK_doc 
+   ///@class PALK 
+   ///@brief The west end aluminium tube of the beam pipe [TGeoVolume] 
+   class PALK : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PALK() : AgBlock("PALK","The west end aluminium tube of the beam pipe [TGeoVolume]"){ 
+      }; 
+      ~PALK(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSCF -- 
+   ///@defgroup SSCF_doc 
+   ///@class SSCF 
+   ///@brief SS part of Conflat flange [TGeoVolume] 
+   class SSCF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSCF() : AgBlock("SSCF","SS part of Conflat flange [TGeoVolume]"){ 
+      }; 
+      ~SSCF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SSCG -- 
+   ///@defgroup SSCG_doc 
+   ///@class SSCG 
+   ///@brief SS part of Conflat flanges 3 inch sections [TGeoVolume] 
+   class SSCG : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SSCG() : AgBlock("SSCG","SS part of Conflat flanges 3 inch sections [TGeoVolume]"){ 
+      }; 
+      ~SSCG(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPA -- 
+   ///@defgroup PIPA_doc 
+   ///@class PIPA 
+   ///@brief is the STAR East pipe mother volume [TGeoVolume] 
+   class PIPA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPA() : AgBlock("PIPA","is the STAR East pipe mother volume [TGeoVolume]"){ 
+      }; 
+      ~PIPA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPB -- 
+   ///@defgroup PIPB_doc 
+   ///@class PIPB 
+   ///@brief is Steel pipe of the Bellow section [TGeoVolume] 
+   class PIPB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPB() : AgBlock("PIPB","is Steel pipe of the Bellow section [TGeoVolume]"){ 
+      }; 
+      ~PIPB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVPB -- 
+   ///@defgroup PVPB_doc 
+   ///@class PVPB 
+   ///@brief is its cavity [TGeoVolume] 
+   class PVPB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVPB() : AgBlock("PVPB","is its cavity [TGeoVolume]"){ 
+      }; 
+      ~PVPB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPC -- 
+   ///@defgroup PIPC_doc 
+   ///@class PIPC 
+   ///@brief Cone and large diameter beampipe [TGeoVolume] 
+   class PIPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPC() : AgBlock("PIPC","Cone and large diameter beampipe [TGeoVolume]"){ 
+      }; 
+      ~PIPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVPC -- 
+   ///@defgroup PVPC_doc 
+   ///@class PVPC 
+   ///@brief Cone and large diameter beampipe [TGeoVolume] 
+   class PVPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVPC() : AgBlock("PVPC","Cone and large diameter beampipe [TGeoVolume]"){ 
+      }; 
+      ~PVPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRIS -- 
+   ///@defgroup PRIS_doc 
+   ///@class PRIS 
+   ///@brief is the Bellow Steel Rib Set [TGeoVolume] 
+   class PRIS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRIS() : AgBlock("PRIS","is the Bellow Steel Rib Set [TGeoVolume]"){ 
+      }; 
+      ~PRIS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRID -- 
+   ///@defgroup PRID_doc 
+   ///@class PRID 
+   ///@brief is a Rib section [TGeoVolume] 
+   class PRID : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRID() : AgBlock("PRID","is a Rib section [TGeoVolume]"){ 
+      }; 
+      ~PRID(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRIB -- 
+   ///@defgroup PRIB_doc 
+   ///@class PRIB 
+   ///@brief is a Rib of Steel Bellows [TGeoVolume] 
+   class PRIB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRIB() : AgBlock("PRIB","is a Rib of Steel Bellows [TGeoVolume]"){ 
+      }; 
+      ~PRIB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIWA -- 
+   ///@defgroup PIWA_doc 
+   ///@class PIWA 
+   ///@brief is the STAR East pipe mother volume [TGeoVolume] 
+   class PIWA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIWA() : AgBlock("PIWA","is the STAR East pipe mother volume [TGeoVolume]"){ 
+      }; 
+      ~PIWA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIWB -- 
+   ///@defgroup PIWB_doc 
+   ///@class PIWB 
+   ///@brief is Steel pipe of the Bellow section [TGeoVolume] 
+   class PIWB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIWB() : AgBlock("PIWB","is Steel pipe of the Bellow section [TGeoVolume]"){ 
+      }; 
+      ~PIWB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVWB -- 
+   ///@defgroup PVWB_doc 
+   ///@class PVWB 
+   ///@brief is its cavity [TGeoVolume] 
+   class PVWB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVWB() : AgBlock("PVWB","is its cavity [TGeoVolume]"){ 
+      }; 
+      ~PVWB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIWC -- 
+   ///@defgroup PIWC_doc 
+   ///@class PIWC 
+   ///@brief Cone and large diameter beampipe [TGeoVolume] 
+   class PIWC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIWC() : AgBlock("PIWC","Cone and large diameter beampipe [TGeoVolume]"){ 
+      }; 
+      ~PIWC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVWC -- 
+   ///@defgroup PVWC_doc 
+   ///@class PVWC 
+   ///@brief Cone and large diameter beampipe [TGeoVolume] 
+   class PVWC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVWC() : AgBlock("PVWC","Cone and large diameter beampipe [TGeoVolume]"){ 
+      }; 
+      ~PVWC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRWS -- 
+   ///@defgroup PRWS_doc 
+   ///@class PRWS 
+   ///@brief is the Bellow Steel Rib Set [TGeoVolume] 
+   class PRWS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRWS() : AgBlock("PRWS","is the Bellow Steel Rib Set [TGeoVolume]"){ 
+      }; 
+      ~PRWS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRWD -- 
+   ///@defgroup PRWD_doc 
+   ///@class PRWD 
+   ///@brief is a Rib section [TGeoVolume] 
+   class PRWD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRWD() : AgBlock("PRWD","is a Rib section [TGeoVolume]"){ 
+      }; 
+      ~PRWD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PRWB -- 
+   ///@defgroup PRWB_doc 
+   ///@class PRWB 
+   ///@brief is a Rib of Steel Bellows [TGeoVolume] 
+   class PRWB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PRWB() : AgBlock("PRWB","is a Rib of Steel Bellows [TGeoVolume]"){ 
+      }; 
+      ~PRWB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PFLT -- 
+   ///@defgroup PFLT_doc 
+   ///@class PFLT 
+   ///@brief is the 2nd set of flanges at ~4.2 m from IR [TGeoVolume] 
+   class PFLT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PFLT() : AgBlock("PFLT","is the 2nd set of flanges at ~4.2 m from IR [TGeoVolume]"){ 
+      }; 
+      ~PFLT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PFLO -- 
+   ///@defgroup PFLO_doc 
+   ///@class PFLO 
+   ///@brief is the 1nd set of flanges at ~4.2 m from IR [TGeoVolume] 
+   class PFLO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PFLO() : AgBlock("PFLO","is the 1nd set of flanges at ~4.2 m from IR [TGeoVolume]"){ 
+      }; 
+      ~PFLO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PipeGeo3 
+   /// \brief Complete Beam pipe in y2013 and beyond. Using three separated sections. Middle section Al-Be-Al 
+   class PipeGeo3 : public AgModule 
+   { 
+      public: 
+      PipeGeo3(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PipeGeo3(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PipeGeo3 
+#endif // __PipeGeo3__ 

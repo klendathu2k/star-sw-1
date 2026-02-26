@@ -1,0 +1,439 @@
+#ifndef __ZCALGEO__ 
+#define __ZCALGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace ZCALGEO // $NMSPC 
+{ 
+   struct calp_t {
+float version;
+float droutr;
+float drdz;
+float phleng;
+float phinnr;
+float phoutr;
+float pltdz;
+float pltoutr;
+float houtr;
+float pjinnr;
+float pjoutr;
+float pjleng;
+float qcdx;
+float qcdy;
+float qcdz;
+float scdz;
+float sdiv;
+int _index;
+};
+ 
+   struct _calp_docum_ {
+string version;
+string droutr;
+string drdz;
+string phleng;
+string phinnr;
+string phoutr;
+string pltdz;
+string pltoutr;
+string houtr;
+string pjinnr;
+string pjoutr;
+string pjleng;
+string qcdx;
+string qcdy;
+string qcdz;
+string scdz;
+string sdiv;
+string _index;
+};
+ 
+    struct _calp_types_ {
+  typedef float version;
+  typedef float droutr;
+  typedef float drdz;
+  typedef float phleng;
+  typedef float phinnr;
+  typedef float phoutr;
+  typedef float pltdz;
+  typedef float pltoutr;
+  typedef float houtr;
+  typedef float pjinnr;
+  typedef float pjoutr;
+  typedef float pjleng;
+  typedef float qcdx;
+  typedef float qcdy;
+  typedef float qcdz;
+  typedef float scdz;
+  typedef float sdiv;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct calp_info {
+typedef calp_t Type;
+static const char *name(){ return "calp_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct calp_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct droutr {
+  static const char *name() { return  "droutr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, droutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct drdz {
+  static const char *name() { return  "drdz"; }
+  static size_t Offset(){ return offsetof( struct calp_t, drdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phleng {
+  static const char *name() { return  "phleng"; }
+  static size_t Offset(){ return offsetof( struct calp_t, phleng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phinnr {
+  static const char *name() { return  "phinnr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, phinnr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct phoutr {
+  static const char *name() { return  "phoutr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, phoutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pltdz {
+  static const char *name() { return  "pltdz"; }
+  static size_t Offset(){ return offsetof( struct calp_t, pltdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pltoutr {
+  static const char *name() { return  "pltoutr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, pltoutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct houtr {
+  static const char *name() { return  "houtr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, houtr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pjinnr {
+  static const char *name() { return  "pjinnr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, pjinnr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pjoutr {
+  static const char *name() { return  "pjoutr"; }
+  static size_t Offset(){ return offsetof( struct calp_t, pjoutr ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct pjleng {
+  static const char *name() { return  "pjleng"; }
+  static size_t Offset(){ return offsetof( struct calp_t, pjleng ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct qcdx {
+  static const char *name() { return  "qcdx"; }
+  static size_t Offset(){ return offsetof( struct calp_t, qcdx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct qcdy {
+  static const char *name() { return  "qcdy"; }
+  static size_t Offset(){ return offsetof( struct calp_t, qcdy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct qcdz {
+  static const char *name() { return  "qcdz"; }
+  static size_t Offset(){ return offsetof( struct calp_t, qcdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scdz {
+  static const char *name() { return  "scdz"; }
+  static size_t Offset(){ return offsetof( struct calp_t, scdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sdiv {
+  static const char *name() { return  "sdiv"; }
+  static size_t Offset(){ return offsetof( struct calp_t, sdiv ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct calp_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)calp_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- ZCAL -- 
+   ///@defgroup ZCAL_doc 
+   ///@class ZCAL 
+   ///@brief is the region between the DX and the D0 magnets [TGeoVolume] 
+   class ZCAL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ZCAL() : AgBlock("ZCAL","is the region between the DX and the D0 magnets [TGeoVolume]"){ 
+      }; 
+      ~ZCAL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPH -- 
+   ///@defgroup PIPH_doc 
+   ///@class PIPH 
+   ///@brief is the Large diameter Pipe before the beam pipes split [TGeoVolume] 
+   class PIPH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPH() : AgBlock("PIPH","is the Large diameter Pipe before the beam pipes split [TGeoVolume]"){ 
+      }; 
+      ~PIPH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVAH -- 
+   ///@defgroup PVAH_doc 
+   ///@class PVAH 
+   ///@brief is the Vacuum Volume of the large diameter pipe [TGeoVolume] 
+   class PVAH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVAH() : AgBlock("PVAH","is the Vacuum Volume of the large diameter pipe [TGeoVolume]"){ 
+      }; 
+      ~PVAH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLAT -- 
+   ///@defgroup PLAT_doc 
+   ///@class PLAT 
+   ///@brief is the End Plate of the large dia. Pipe [TGeoVolume] 
+   class PLAT : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLAT() : AgBlock("PLAT","is the End Plate of the large dia. Pipe [TGeoVolume]"){ 
+      }; 
+      ~PLAT(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLVA -- 
+   ///@defgroup PLVA_doc 
+   ///@class PLVA 
+   ///@brief is the Vacuum Volume of the beam pipe holes in the end plate [TGeoVolume] 
+   class PLVA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLVA() : AgBlock("PLVA","is the Vacuum Volume of the beam pipe holes in the end plate [TGeoVolume]"){ 
+      }; 
+      ~PLVA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PIPJ -- 
+   ///@defgroup PIPJ_doc 
+   ///@class PIPJ 
+   ///@brief are the final beam Pipes [TGeoVolume] 
+   class PIPJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PIPJ() : AgBlock("PIPJ","are the final beam Pipes [TGeoVolume]"){ 
+      }; 
+      ~PIPJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PVAJ -- 
+   ///@defgroup PVAJ_doc 
+   ///@class PVAJ 
+   ///@brief is the Vacuum Volume of the final beam pipes [TGeoVolume] 
+   class PVAJ : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PVAJ() : AgBlock("PVAJ","is the Vacuum Volume of the final beam pipes [TGeoVolume]"){ 
+      }; 
+      ~PVAJ(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- QCAL -- 
+   ///@defgroup QCAL_doc 
+   ///@class QCAL 
+   ///@brief is the Zero degree calorimeter [TGeoVolume] 
+   class QCAL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      QCAL() : AgBlock("QCAL","is the Zero degree calorimeter [TGeoVolume]"){ 
+      }; 
+      ~QCAL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- QDIV -- 
+   ///@defgroup QDIV_doc 
+   ///@class QDIV 
+   ///@brief is one section/layer of the Quartz Calorimeter [TGeoVolume] 
+   class QDIV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      QDIV() : AgBlock("QDIV","is one section/layer of the Quartz Calorimeter [TGeoVolume]"){ 
+      }; 
+      ~QDIV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- QSCI -- 
+   ///@defgroup QSCI_doc 
+   ///@class QSCI 
+   ///@brief is a sensitive Fiber layer [TGeoVolume] 
+   class QSCI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      QSCI() : AgBlock("QSCI","is a sensitive Fiber layer [TGeoVolume]"){ 
+      }; 
+      ~QSCI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class ZCALGEO 
+   /// \brief  is the geometry of the Zero deg. Quartz Calorimeter  
+   class ZCALGEO : public AgModule 
+   { 
+      public: 
+      ZCALGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~ZCALGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace ZCALGEO 
+#endif // __ZCALGEO__ 

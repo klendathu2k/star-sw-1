@@ -1,0 +1,3547 @@
+      MODULE VPDDGEO3     is the StartDet and pipe support hardware
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author W.J. Llope, A. Ogawa
+      Created  21 June 2000
+      +CDE,agecom.
+      +CDE,gcunit.
+      +CDE,gconst.
+      CONTENT VPDD,VPBP,VPBO,VPBA,VPBB,VPBX,VFEE,VLEM,VPIP,VPFP,VPFA,VPFB,VPFC,VPBI,
+            VPST,VPSC,VPSA,VPSB,VPSV,VPSW,
+      VRNG,VSEC,VDET,VXST,VCNV,VPMT,VRAD,VPCL,VPCF,VPCV,VPCH,VDTI,
+      IBEM,IBEH,IBEV,IBEW,IBSA,IBSB,IBSC,IBSD,IBSE,IBSF,IBSG,IBSH,IBAA,IBAB,IBAC,
+            IBST,IBBC,IBCC,
+      IBWA,IBWB,IBWC,IBWD,IBWE,IBWF,IBWG,IBWH
+      STRUCTURE VPDV { version,vpdConfig}
+      STRUCTURE VPDG { version,zposEast,zposWest,rmin,rmax,BPwidth,BPlength,BPthick,
+            BXheight,BXlength,BXwidth,BXthick,BXzposC,FPwidth,FPheight,FPthick,FPAwidth,FPAhght,
+            FPChght,FPHhght,FPHwidth,FPHthick,STthick,STheight,STangle,STdiagsz,SCwidth,
+            SCheight,SClength,SCthick,CLheight,CLwidth,CLlength,CLthick,DETlen,DETrad,DETfront,
+            ConvThk,RadiThk,EleLeng,DrLayer,NumPMT,PMTwall,PMTrad,PMTlen,IBchoice,IBPosYc,
+            IBPosZc,IBLeng,IBthickH,IBthickV,IBheight,IBwidth,IBwlen,IBwhghtF,IBwhghtB,EWShift,
+            UDShift,BoltShift}
+      STRUCTURE VPDH { version,zposEast,zposWest,rmin,rmax,length,detrad,detlen,pmtrad,
+            pmtlen,detwall,detfront,leadthick,scintthick,ring1_ndet,ring1_rad,ring1_phi0,
+            ring1_dphi,ring1_kproj,ring2_ndet,ring2_rad,ring2_phi0,ring2_dphi,ring2_kproj,
+            ring3_ndet,ring3_rad,ring3_phi0,ring3_dphi,ring3_kproj,EWShift,UDShift,BoltShift}
+      STRUCTURE VPDS { version,IBSAZc,IBSAYc,IBSAXc,IBSBZc,IBSBYc,IBSBXc,IBSCZc,IBSCYc,
+            IBSCXc,IBSDZc1,IBSDZc2,IBSDYc1,IBSDYc2,IBSDXc,IBSEZc1,IBSEZc2,IBSEYc,IBSEXc,
+            IBSFZc,IBSFYc,IBSFXc,IBSGZc1,IBSGZc2,IBSGZc3,IBSGYc,IBSGXc,IBSHZc1,IBSHZc2,IBSHYc,
+            IBSHXc1,IBSHXc2,BSALenX,BSALenY,BSALenZ,BAALenZ,BSBLenY,BSCLenX,BSCLenY,BSCLenZ,
+            BACLenZ,BSDLenX,BSELenY,BSELenZ,BSFRmax,BSFLenZ,BSSLenZ,BSGRmax,BSGLenZ1,BSGLenZ2,
+            BSGLenZ3,BSHLenZ,ElecWid,ElecThck,ElecLen,VFEEPosX,VFEEPosY,VFEEPosZ,VLEMPosX(15),
+            VLEMPosY,VLEMPosZ(15),VLEMLenX,VLEMLenY,VLEMLenZ,VPIPPosX,VPIPPosY,VPIPPosZ,
+            VPIPRmin,VPIPRmax,VPIPLenZ}
+      STRUCTURE WBSP { IbeamD(4),IbeamP(3),PostD(4),PostP(3),AnglD(4),AnglP(3),TriP(3),
+            TriD(3)}
+      REAL ybase,ytop,convlength,detangle,strutheight,ydispl
+
+      REAL xloc,yloc,zloc,zpos,tempos
+
+      REAL zpose,zposw,EWshift,UDshift,BoltShift,locang,phiang,detzint
+
+      INTEGER isec
+
+      INTEGER kDetStyle,kIBeamStyle
+
+      FILL VPDV		! VPD configuration control
+      version = 2 !  default version (set in geometry.g)
+      vpdConfig = 1 !  default config  (set in geometry.g)
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 1 !  geometry version
+      zposEast = 550.0000 !  Z position East
+      zposWest = 550.0000 !  Z position West
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.635 !  FEE box plate thickness         (0.25inch)
+      BXzposC = 0.635 !  FEE central z pos (+/-??)       (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ylocation         (6.5inch)
+      IBPosZc = 530.477 !  IBeam central Zposition
+      IBLeng = 294.894 !  IBeam length                    (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness    (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness     (0.17inch)
+      IBheight = 10.16 !  IBeam height                    (4inch)
+      IBwidth = 7.62 !  IBeam width                     (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 0.0 !  east west z shift
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 2 !  geometry version
+      zposEast = 561.2638 !  Z position East
+      zposWest = 563.1688 !  Z position West
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.635 !  FEE box plate thickness         (0.25inch)
+      BXzposC = 0.635 !  FEE central z pos       (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ylocation         (6.5inch)
+      IBPosZc = 530.477 !  IBeam central Zposition
+      IBLeng = 294.894 !  IBeam length                    (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness    (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness     (0.17inch)
+      IBheight = 10.16 !  IBeam height                    (4inch)
+      IBwidth = 7.62 !  IBeam width                     (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 0.0 !  east west z shift
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 3 !  geometry version
+      zposEast = 564.4388 !  Z position East
+      zposWest = 563.4069 !  Z position West
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.635 !  FEE box plate thickness         (0.25inch)
+      BXzposC = 0.635 !  FEE central z pos       (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ylocation         (6.5inch)
+      IBPosZc = 530.477 !  IBeam central Zposition
+      IBLeng = 294.894 !  IBeam length                    (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness    (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness     (0.17inch)
+      IBheight = 10.16 !  IBeam height                    (4inch)
+      IBwidth = 7.62 !  IBeam width                     (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 0.0 !  east west z shift
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 4 !  geometry version
+      zposEast = 574.5688 !  Z position East
+      zposWest = 573.5669 !  Z position West
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.635 !  FEE box plate thickness         (0.25inch)
+      BXzposC = 0.635 !  FEE central z pos       (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ylocation           (6.5inch)
+      IBPosZc = 530.477 !  IBeam central Zposition
+      IBLeng = 294.894 !  IBeam length                (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness      (0.17inch)
+      IBheight = 10.16 !  IBeam height                        (4inch)
+      IBwidth = 7.62 !  IBeam width                                 (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 0.0 !  east west z shift
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 5 !  geometry version    WJL ...used by Y2004Y
+      zposEast = 570.0 !  Z position East         WJL see next, plus add 3/4in to take care of E/W offset (was 574.5688)
+      zposWest = 568.1 !  Z position West         WJL via CADD: 362.2+(194.3-11.6)+2.54*(18.25/2)=568.08  (was 573.5669)
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.127 !  FEE box plate thickness         WJL should be 50mils!! MODIFIED (was 0.635)
+      BXzposC = 0.635 !  FEE central z pos               (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ypos      (6.5inch)
+      IBPosZc = 540.45 !  IBeam central Zpos      WJL should be 362.2+(12.125*2.54)+(IBLeng/2)=540.45 MODIFIED, NOTE EAST is 3/4in farther, add that offset in the code!!!!
+      IBLeng = 294.894 !  IBeam length                (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness      (0.17inch)
+      IBheight = 10.16 !  IBeam height                        (4inch)
+      IBwidth = 7.62 !  IBeam width                                 (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDG		! pVPD basic dimensions
+      version = 6 !  geometry version    WJL ...used by Y2005, Y2006A, Y2006B
+      zposEast = 583.806 !  Z position East         WJL from newer CADD: 220.720in+(18.25in/2)=229.845in
+      zposWest = 583.488 !  Z position West         WJL from newer CADD: 220.595in+(18.25in/2)=229.720in
+      rmin = 6.35 !  mothervolume rmin               (2.5inch)
+      rmax = 31.27375 !  mothervolume rmin               (12.3125inch)
+      BPwidth = 30.48 !  baseplate width                 (12inch)
+      BPlength = 46.355 !  baseplate length                (18.5inch)
+      BPthick = 0.635 !  baseplate thickness             (0.25inch)
+      BXheight = 5.08 !  FEE box height                  (2inch)
+      BXlength = 15.24 !  FEE box length                  (6inch)
+      BXwidth = 25.4 !  FEE box width                   (10inch)
+      BXthick = 0.127 !  FEE box plate thickness         WJL should be 50mils!! MODIFIED (was 0.635)
+      BXzposC = 0.635 !  FEE central z pos               (0.25inch)
+      FPwidth = 7.62 !  frontplate width                (3inch)
+      FPheight = 25.45842 !  frontplate height               (10.023inch)
+      FPthick = 2.54 !  frontplate thickness            (1inch)
+      FPAwidth = 6.63956 !  frontpl.part A width            (2.614inch)
+      FPAhght = 8.35405 !  frontpl.part A height           (3.289inch)
+      FPChght = 12.573 !  frontpl.part C height           (4.95inch)
+      FPHhght = 3.81 !  frontpl. hook height            (1.5inch)
+      FPHwidth = 5.08 !  frontpl. hook width             (2inch)
+      FPHthick = 0.635 !  frontpl. hook thickness         (0.25inch)
+      STthick = 0.635 !  strut thickness                 (0.25inch)
+      STheight = 23.1775 !  strut height                    (9.125 inch)
+      STangle = 25. !  strut angle (degr)
+      STdiagsz = 5.08 !  diagnoal strut size             (2inch)
+      SCwidth = 7.62 !  strut clamp width               (3inch)
+      SCheight = 3.81 !  strut clamp height              (1.5inch)
+      SClength = 3.81 !  strut clamp length              (1.5inch)
+      SCthick = 0.635 !  strut clamp thickness           (0.25inch)
+      CLheight = 3.4925 !  clamp height                    (1.375inch)
+      CLwidth = 3.81 !  clamp width                     (1.5inch)
+      CLlength = 41.275 !  clamp length                    (16.25inch)
+      CLthick = 0.3175 !  clamp plate thickness           (0.125inch)
+      DETlen = 33.02 !  PMT assembly length             (13inch)
+      DETrad = 3.81 !  PMT assembly radius             (1.5inch)
+      DETfront = 1.016 !  PMT ass. frontplate thickness   (0.4inch)
+      ConvThk = 1. !  Converter layer thickness
+      RadiThk = 1. !  Radiator layer thickness
+      EleLeng = 15.0 !  electronics mount length
+      DrLayer = 6. !  layer radial width
+      NumPMT = 3 !  number of PMT in layer
+      PMTwall = 0.1 !  PMT wall thickness
+      PMTrad = 2.54 !  PMT and detector radius
+      PMTlen = 8.0 !  PMT tube length
+      IBchoice = 1 !  active/de-activate (0) ibeam
+      IBPosYc = -16.51 !  IBeam central Ypos      (6.5inch)
+      IBPosZc = 540.45 !  IBeam central Zpos      WJL should be 362.2+(12.125*2.54)+(IBLeng/2)=540.45 MODIFIED, NOTE EAST is 3/4in farther, add that offset in the code!!!!
+      IBLeng = 294.894 !  IBeam length                (116.1inch)
+      IBthickH = 0.7366 !  IBeam horiz. plate thickness (0.29inch)
+      IBthickV = 0.4318 !  IBeam vert. plate thickness      (0.17inch)
+      IBheight = 10.16 !  IBeam height                        (4inch)
+      IBwidth = 7.62 !  IBeam width                                 (3inch)
+      IBwlen = 22.86 !  IBeam vert. front piece         (9inch)
+      IBwhghtF = 4.4489 !  IBeam vert. front piece height
+      IBwhghtB = 8.3097 !  IBeam vert. front piece height
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDH		! upVPD basic dimensions
+      version = 7 !  geometry version       WJL ...used by Y2006A --- and future 2007 run
+      zposEast = 571.45 !  Z position East        (more or less arbitrary)
+      zposWest = 571.45 !  Z position West        (more or less arbitrary)
+      rmin = 6.6675 !  mothervolume rmin      (2 5/8in)
+      rmax = 16.51+0.3 !  mothervolume rmax      (6 1/2in)
+      length = 32. !  mothervolume length
+      detrad = 2.54 !  det assy cylnder radius (2in diameter)
+      detlen = 20.32 !  det assy cylinder radius (8in)
+      pmtrad = 1.905 !  pmt cylinder radius (1.5in diameter)
+      pmtlen = 1.905 !  pmt cylinder length (1.5in)
+      detwall = 0.127 !  det assy cylinder wall thickness (50mils)
+      detfront = 0.3175 !  det assy front and back plate thicknesses (1/8in)
+      leadthick = 1.0 !  lead converter layer thickness (1cm)
+      scintthick = 1.0 !    scintillator layer thickness (1cm)
+      ring1_ndet = 10 !  upVPD number of tubes in ring 1
+      ring1_rad = 10.16 !  upVPD geo parameter (4in)
+      ring1_phi0 = -49. !  upVPD geo parameter
+      ring1_dphi = 31. !  upVPD geo parameter
+      ring1_kproj = 0 !  upVPD geo parameter
+      ring2_ndet = 9 !  upVPD number of tubes in ring 2
+      ring2_rad = 14.2875 !  upVPD geo parameter (5 5/8in)
+      ring2_phi0 = -33.5 !  upVPD geo parameter
+      ring2_dphi = 31. !  upVPD geo parameter
+      ring2_kproj = 0 !  upVPD geo parameter
+      ring3_ndet = 0 !  upVPD number of tubes in ring 3
+      ring3_rad = 99. !  upVPD geo parameter (5 5/8in)
+      ring3_phi0 = 99. !  upVPD geo parameter
+      ring3_dphi = 99. !  upVPD geo parameter
+      ring3_kproj = 0 !  upVPD geo parameter
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = 0.0 !  up down y shift
+      BoltShift = 0.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDH		! upVPD basic dimensions
+      version = 8 !  geometry version       WJL ...used by Y2006B
+      zposEast = 571.45 !  Z position East        (more or less arbitrary)
+      zposWest = 571.45 !  Z position West        (more or less arbitrary)
+      rmin = 6.6675 !  mothervolume rmin      (2 5/8in)
+      rmax = 16.51+0.3 !  mothervolume rmax      (6 1/2in)
+      length = 32. !  mothervolume length
+      detrad = 2.54 !  det assy cylnder radius (2in diameter)
+      detlen = 20.32 !  det assy cylinder radius (8in)
+      pmtrad = 1.905 !  pmt cylinder radius (1.5in diameter)
+      pmtlen = 1.905 !  pmt cylinder length (1.5in)
+      detwall = 0.127 !  det assy cylinder wall thickness (50mils)
+      detfront = 0.3175 !  det assy front and back plate thicknesses (1/8in)
+      leadthick = 1.0 !  lead converter layer thickness (1cm)
+      scintthick = 1.0 !    scintillator layer thickness (1cm)
+      ring1_ndet = 11 !  upVPD number of tubes in ring 1
+      ring1_rad = 9.5 !  upVPD geo parameter      (3.74in)
+      ring1_phi0 = -73.6364 !  upVPD geo parameter      (360/11)
+      ring1_dphi = 32.7272 !  upVPD geo parameter (-90+(360/11/2))
+      ring1_kproj = 0 !  upVPD geo parameter
+      ring2_ndet = 11 !  upVPD number of tubes in ring 2
+      ring2_rad = 13.7 !  upVPD geo parameter      (5.394in)
+      ring2_phi0 = -90 !  upVPD geo parameter
+      ring2_dphi = 32.7272 !  upVPD geo parameter      (360/11)
+      ring2_kproj = 0 !  upVPD geo parameter
+      ring3_ndet = 0 !  upVPD number of tubes in ring 3
+      ring3_rad = 99. !  upVPD geo parameter (5 5/8in)
+      ring3_phi0 = 99. !  upVPD geo parameter
+      ring3_dphi = 99. !  upVPD geo parameter
+      ring3_kproj = 0 !  upVPD geo parameter
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = -5.715 !  up down y shift
+      BoltShift = 1.0 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDH		! upVPD basic dimensions
+      version = 9 !  geometry version       WJL ...used by Y2006C
+      zposEast = 571.45 !  Z position East        (more or less arbitrary)
+      zposWest = 571.45 !  Z position West        (more or less arbitrary)
+      rmin = 6.6675 !  mothervolume rmin      (2 5/8in)
+      rmax = 19.685 !  mothervolume rmax  (7 3/4in)
+      length = 32. !  mothervolume length
+      detrad = 2.54 !  det assy cylnder radius (2in diameter)
+      detlen = 20.32 !  det assy cylinder radius (8in)
+      pmtrad = 1.905 !  pmt cylinder radius (1.5in diameter)
+      pmtlen = 1.905 !  pmt cylinder length (1.5in)
+      detwall = 0.127 !  det assy cylinder wall thickness (50mils)
+      detfront = 0.3175 !  det assy front and back plate thicknesses (1/8in)
+      leadthick = 1.0 !  lead converter layer thickness (1cm)
+      scintthick = 1.0 !    scintillator layer thickness (1cm)
+      ring1_ndet = 11 !  upVPD number of tubes in ring 1
+      ring1_rad = 9.5 !  upVPD geo parameter      (3.74in)
+      ring1_phi0 = -73.6364 !  upVPD geo parameter      (360/11)
+      ring1_dphi = 32.7272 !  upVPD geo parameter (-90+(360/11/2))
+      ring1_kproj = 0 !  upVPD geo parameter
+      ring2_ndet = 11 !  upVPD number of tubes in ring 2
+      ring2_rad = 13.7 !  upVPD geo parameter      (5.394in)
+      ring2_phi0 = -90 !  upVPD geo parameter
+      ring2_dphi = 32.7272 !  upVPD geo parameter      (360/11)
+      ring2_kproj = 0 !  upVPD geo parameter
+      ring3_ndet = 11 !  upVPD number of tubes in ring 3
+      ring3_rad = 16.8 !  upVPD geo parameter
+      ring3_phi0 = -73.6364 !  upVPD geo parameter
+      ring3_dphi = 32.7272 !  upVPD geo parameter
+      ring3_kproj = 0 !  upVPD geo parameter
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = -8.255 !  up down y shift
+      BoltShift = 1.5 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDH		! upVPD basic dimensions
+      version = 10 !  geometry version       WJL ...used by Y2006D
+      zposEast = 571.45 !  Z position East        (more or less arbitrary)
+      zposWest = 571.45 !  Z position West        (more or less arbitrary)
+      rmin = 6.6675 !  mothervolume rmin      (2 5/8in)
+      rmax = 19.685 !  mothervolume rmax  (7 3/4in)
+      length = 32. !  mothervolume length
+      detrad = 2.54 !  det assy cylnder radius (2in diameter)
+      detlen = 20.32 !  det assy cylinder radius (8in)
+      pmtrad = 1.905 !  pmt cylinder radius (1.5in diameter)
+      pmtlen = 1.905 !  pmt cylinder length (1.5in)
+      detwall = 0.127 !  det assy cylinder wall thickness (50mils)
+      detfront = 0.3175 !  det assy front and back plate thicknesses (1/8in)
+      leadthick = 1.0 !  lead converter layer thickness (1cm)
+      scintthick = 1.0 !    scintillator layer thickness (1cm)
+      ring1_ndet = 11 !  upVPD number of tubes in ring 1
+      ring1_rad = 9.5 !  upVPD geo parameter      (3.74in)
+      ring1_phi0 = -73.6364 !  upVPD geo parameter      (360/11)
+      ring1_dphi = 32.7272 !  upVPD geo parameter (-90+(360/11/2))
+      ring1_kproj = 1 !  upVPD geo parameter
+      ring2_ndet = 11 !  upVPD number of tubes in ring 2
+      ring2_rad = 13.7 !  upVPD geo parameter      (5.394in)
+      ring2_phi0 = -90 !  upVPD geo parameter
+      ring2_dphi = 32.7272 !  upVPD geo parameter      (360/11)
+      ring2_kproj = 1 !  upVPD geo parameter
+      ring3_ndet = 11 !  upVPD number of tubes in ring 3
+      ring3_rad = 16.8 !  upVPD geo parameter
+      ring3_phi0 = -73.6364 !  upVPD geo parameter
+      ring3_dphi = 32.7272 !  upVPD geo parameter
+      ring3_kproj = 1 !  upVPD geo parameter
+      EWShift = 1.905 !  east west z shift (0.75*2.54)
+      UDShift = -8.255 !  up down y shift
+      BoltShift = 1.5 !  Bolt additional y shift
+      ENDFILL
+      FILL VPDS		! pipe-support material
+      version = 1 !  first version in Year 2007
+      IBSAZc = 692.91 !  IBSA position Z center
+      IBSAYc = -60.10 !  IBSA position Y center
+      IBSAXc = 24.11 !  IBSA position X center
+      IBSBZc = 631.20 !  IBSB position Z center
+      IBSBYc = -69.50 !  IBSB position Y center = (Yc + UDshift)
+      IBSBXc = 24.11 !  IBSB position X center
+      IBSCZc = 581.10 !  IBSC position Z center
+      IBSCYc = -23.60 !  IBSC position Y center = (Yc + UDshift)
+      IBSCXc = 0.00 !  IBSC position X center
+      IBSDZc1 = 397.70 !  IBSD position Z center 1
+      IBSDZc2 = 442.80 !  IBSD position Z center 2
+      IBSDYc1 = -11.01 !  IBSD position Y center 1 = (Yc+UDshift)
+      IBSDYc2 = -7.20 !  IBSD position Y center 2
+      IBSDXc = 0.00 !  IBSD position X center
+      IBSEZc1 = 397.70 !  IBSE position Z center 1
+      IBSEZc2 = 442.80 !  IBSE position Z center 2
+      IBSEYc = -13.44 !  IBSE position Y center
+      IBSEXc = 6.99 !  IBSE position X center
+      IBSFZc = 411.70 !  IBSF position Z center
+      IBSFYc = -16.51 !  IBSF position Y center = (Yc + UDshift)
+      IBSFXc = 0.00 !  IBSF position X center
+      IBSGZc1 = 397.70 !  IBSE position Z center 1
+      IBSGZc2 = 442.80 !  IBSE position Z center 2
+      IBSGZc3 = 2.54 !  IBSG position Z center offset
+      IBSGYc = -17.57 !  IBSG position Y center = (Yc+UDshift+BoltShift)
+      IBSGXc = 0.00 !  IBSG position X center
+      IBSHZc1 = 397.70 !  IBSH position Z center 1
+      IBSHZc2 = 442.80 !  IBSH position Z center 2
+      IBSHYc = 0.00 !  IBSH position Y center
+      IBSHXc1 = 6.35 !  IBSH position X center 1
+      IBSHXc2 = 7.62 !  IBSH position X center 2
+      BSALenX = 7.62 !  IBSA X length
+      BSALenY = 84.00 !  IBSA Y length
+      BSALenZ = 7.62 !  IBSA Z length
+      BAALenZ = 0.95 !  IBAA Z length
+      BSBLenY = 142.4 !  IBSB Y length
+      BSCLenX = 40.64 !  IBSC X length
+      BSCLenY = 4.01 !  IBSC Y length
+      BSCLenZ = 10.16 !  IBSC Z length
+      BACLenZ = 0.64 !  IBAC Z length
+      BSDLenX = 20.32 !  IBSD X length
+      BSELenY = 8.26 !  IBSE Y length
+      BSELenZ = 6.35 !  IBSE Z length
+      BSFRmax = 0.95 !  IBSF Rmax
+      BSFLenZ = 182.88 !  IBSF Z length
+      BSSLenZ = 7.62 !  IBST Z length
+      BSGRmax = 0.64 !  IBSG Rmax
+      BSGLenZ1 = 10.16 !  IBSG Z length 1 for vpdConfig<8
+      BSGLenZ2 = 12.70 !  IBSG Z length 2 for vpdConfig=8
+      BSGLenZ3 = 15.24 !  IBSG Z length 3 for vpdConfig else
+      BSHLenZ = 5.08 !  IBSH Z length
+      ElecWid = 20.3 !  Electronic box width
+      ElecThck = 0.17 !  Electronic box thickness
+      ElecLen = 5.10 !  Electronic box length
+      VFEEPosX = 0.31 !  VFEE position X center
+      VFEEPosY = 0.45 !  VFEE position Y center
+      VFEEPosZ = -4.75 !  VFEE position Z center
+      VLEMPosX  = {  -7.0,  -3.5,   0.0,   3.5,   7.0,  -7.0, 
+                     -3.5,   0.0,   3.5,   7.0,  -6.0,  -2.5, 
+                      1.0,   4.5,   8.0} !   VLEM position X center 
+      VLEMPosY = 0.52 !  VLEM position Y center
+      VLEMPosZ  = {   2.0,   2.0,   2.0,   2.0,   2.0,  -2.0, 
+                     -2.0,  -2.0,  -2.0,  -2.0,  -2.0,  -2.0, 
+                     -2.0,  -2.0,  -2.0} !   VLEM position Z center 
+      VLEMLenX = 0.86 !  VLEM X length
+      VLEMLenY = 0.68 !  VLEM Y length
+      VLEMLenZ = 3.8 !  VLEM Z length
+      VPIPPosX = 0.09 !  VPIP position X center
+      VPIPPosY = 0.0 !  VPIP position Y center
+      VPIPPosZ = 0.9 !  VPIP position Z center
+      VPIPRmin = 0.31 !  VPIP Rmin
+      VPIPRmax = 0.34 !  VPIP Rmax
+      VPIPLenZ = 2.0 !  VPIP Z length
+      ENDFILL
+      FILL WBSP		! new West Beampipe SuPport
+      IbeamD  = {   6.0*2.54,   6.0*2.54,   123*2.54, 
+                   0.24*2.54} !   new west beampipe support Ibeam dim (dx,dy,dz,thickness)
+      IbeamP  = {     0.0,  -23.16,  547.05} !   new west beampipe support Ibeam pos (x,y,z)
+      PostD  = {    6.0*2.54,  37.05*2.54,    4.0*2.54, 
+                    0.5*2.54} !   new west beampipe support Post dim (dx,dy,dz,thickness)
+      PostP  = {             0.0,          -79.10, 
+                  676.91+2.0*2.5} !   new west beampipe support Post pos (x,y,z)
+      AnglD  = {  34.535*1.41421356*2.54, 
+                                4.0*2.54, 
+                                4.0*2.54, 
+                                0.5*2.54} !   new west beampipe support Angle dim (dx,dy,dz,thickness)
+      AnglP  = {     0.0,  -71.68,   634.7} !   new west beampipe support Angle pos (x,y,z)
+      TriD  = {  0.5*2.54,  8.0*2.54,  8.0*2.54} !   new west beampipe support Trinagle dim (dx,dy,dz)
+      TriP  = {     0.0,  -70.00,     600} !   new west beampipe support Triangle pos (x,y,z)
+      ENDFILL
+      use VPDV
+      use VPDS
+      IF ( VPDV_vpdConfig<=4 ) THEN
+      kDetStyle = 0
+      use VPDG version=VPDV_vpdConfig
+      zposE     = vpdg_zposEast
+      zposW     = vpdg_zposWest
+      EWshift   = vpdg_EWShift
+      UDshift   = vpdg_UDShift
+      BoltShift = vpdg_BoltShift
+      ELSEIF ( VPDV_vpdConfig==5.or.VPDV_vpdConfig==6 ) THEN
+      kDetStyle = 1
+      use VPDG version=VPDV_vpdConfig
+      zposE     = vpdg_zposEast
+      zposW     = vpdg_zposWest
+      EWshift   = vpdg_EWShift
+      UDshift   = vpdg_UDShift
+      BoltShift = vpdg_BoltShift
+      ELSEIF ( VPDV_vpdConfig>=7 ) THEN
+      kDetStyle = 2
+      use VPDG version=6
+      use VPDH version=VPDV_vpdConfig
+      zposE     = vpdh_zposEast
+      zposW     = vpdh_zposWest
+      EWshift   = vpdh_EWShift
+      UDshift   = vpdh_UDShift
+      BoltShift = vpdh_BoltShift
+      ENDIF
+      CREATE VPDD
+      zpos = zposW
+      CALL AgsReset 
+      CALL agml_position_begin('VPDD') 
+      %mother = 'CAVE' 
+      %title = 'VPDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+zpos) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      zpos = zposE
+      CALL AgsReset 
+      CALL agml_position_begin('VPDD') 
+      %mother = 'CAVE' 
+      %title = 'VPDD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-zpos) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      kIBeamStyle=0
+      IF ( VPDG_IBchoice!=0 ) THEN
+      kIBeamStyle=1
+      IF ( VPDV_vpdConfig>4 ) THEN
+      kIBeamStyle=2
+      IF ( VPDV_vpdConfig>=8 ) THEN
+      kIBeamStyle=3
+      ENDIF
+      ENDIF
+      ENDIF
+      kIBeamStyle=4
+      IF ( kIBeamStyle>0 ) THEN
+      CREATE IBEM
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBEM') 
+      %mother = 'CAVE' 
+      %title = 'IBEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpdg_IBposYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(+(vpdg_IBPosZc)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBEM') 
+      %mother = 'CAVE' 
+      %title = 'IBEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpdg_IBposYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpdg_IBPosZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF ( kIBeamStyle>1 ) THEN
+      CREATE IBSA
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSA') 
+      %mother = 'CAVE' 
+      %title = 'IBSA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_IBSAXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSAYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSAZc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSA') 
+      %mother = 'CAVE' 
+      %title = 'IBSA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSAXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSAYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSAZc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('-X-YZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSA') 
+      %mother = 'CAVE' 
+      %title = 'IBSA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_IBSAXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSAYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSAZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('-X-YZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSA') 
+      %mother = 'CAVE' 
+      %title = 'IBSA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSAXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSAYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSAZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('-X-Y-Z'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSB
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSB') 
+      %mother = 'CAVE' 
+      %title = 'IBSB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_IBSBXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSBYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSBZc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = -45.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSB') 
+      %mother = 'CAVE' 
+      %title = 'IBSB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSBXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSBYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSBZc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphax = -45.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSB') 
+      %mother = 'CAVE' 
+      %title = 'IBSB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_IBSBXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSBYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSBZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = -90.0 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphax = 45.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSB') 
+      %mother = 'CAVE' 
+      %title = 'IBSB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSBXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSBYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSBZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 180.0 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphax = 45.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSC
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSC') 
+      %mother = 'CAVE' 
+      %title = 'IBSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpds_IBSCYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSCZc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSC') 
+      %mother = 'CAVE' 
+      %title = 'IBSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpds_IBSCYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSCZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSD
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc1+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSDZc1) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc1+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSDZc2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc1+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSDZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc1+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSDZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSDZc1) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSDZc2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSDZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSD') 
+      %mother = 'CAVE' 
+      %title = 'IBSD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSDYc2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSDZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      tempos = (vpdg_IBposYc+vpdg_IBthickH+(vpdg_IBheight/2.))
+      CREATE IBSE
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(+vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSEZc1) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(-vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSEZc1) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(+vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSEZc2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(-vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSEZc2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(+vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSEZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(-vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSEZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(+vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSEZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSE') 
+      %mother = 'CAVE' 
+      %title = 'IBSE' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(-vpds_IBSEXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_IBSEYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSEZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSF
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSF') 
+      %mother = 'CAVE' 
+      %title = 'IBSF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpdg_IBposYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSFZc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSF') 
+      %mother = 'CAVE' 
+      %title = 'IBSF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(vpdg_IBposYc+UDshift) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSFZc+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBST
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBST') 
+      %mother = 'IBEM' 
+      %title = 'IBST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(+(vpds_IBSFZc)-(vpdg_IBPosZc)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBST') 
+      %mother = 'IBEM' 
+      %title = 'IBST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSFZc+EWshift)+(vpdg_IBPosZc)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSG
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc1-vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc1-vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc1+vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc1+vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc2-vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc2-vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc2+vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_IBSGZc2+vpds_IBSGZc3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc1-vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc1-vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc1+vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc1+vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc2-vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc2-vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc2+vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSG') 
+      %mother = 'CAVE' 
+      %title = 'IBSG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSGXc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(UDshift+BoltShift+vpds_IBSGYc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_IBSGZc2+vpds_IBSGZc3+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 90.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBSH
+      IF ( kIBeamStyle<4 ) THEN
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSHXc1) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(+vpds_IBSHZc1) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSHXc1) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(+vpds_IBSHZc1) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSHXc2) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(+vpds_IBSHZc2) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSHXc2) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(+vpds_IBSHZc2) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSHXc1) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpds_IBSHZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSHXc1) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpds_IBSHZc1+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+vpds_IBSHXc2) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpds_IBSHZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBSH') 
+      %mother = 'CAVE' 
+      %title = 'IBSH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpds_IBSHXc2) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpds_IBSHZc2+EWshift)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      IF ( kIBeamStyle>3 ) THEN
+      CREATE IBWA
+      CREATE IBWD
+      CREATE IBWF
+      CREATE IBWH
+      CALL AgsReset 
+      CALL agml_position_begin('IBWA') 
+      %mother = 'CAVE' 
+      %title = 'IBWA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(wbsp_IbeamP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(wbsp_IbeamP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(wbsp_IbeamP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBWD') 
+      %mother = 'CAVE' 
+      %title = 'IBWD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(wbsp_PostP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(wbsp_PostP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(wbsp_PostP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBWF') 
+      %mother = 'CAVE' 
+      %title = 'IBWF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(wbsp_AnglP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(wbsp_AnglP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(wbsp_AnglP(3)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      ag_alphax = -45.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBWH') 
+      %mother = 'CAVE' 
+      %title = 'IBWH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(wbsp_TriP(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(wbsp_TriP(2)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(wbsp_TriP(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDIF
+      ! ---------------------------------------------------------------------------------- VPDD
+      BLOCK VPDD   is the whole VPPD assembly
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE VPDD seen=1 colo=7 serial=zpos
+      IF ( kDetStyle<2 ) THEN
+      SHAPE tubs rmin=vpdg_rmin rmax=vpdg_rmax,
+            phi1=-65.0 phi2=245.0 dz=vpdg_BPlength/2
+      ELSE
+      SHAPE tubs rmin=vpdh_rmin rmax=vpdh_rmax,
+            phi1=-65.0 phi2=245.0 dz=vpdh_length/2
+      ENDIF
+      IF ( kDetStyle<2 ) THEN
+      ybase= vpdg_IBposYc - (vpdg_IBheight + vpdg_BPthick)/2
+      ytop = ybase + vpdg_BPthick/2+ vpdg_FPheight + vpdg_FPChght
+      CREATE VPBP
+      CALL AgsReset 
+      CALL agml_position_begin('VPBP') 
+      %title = 'VPBP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(ybase) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPBO
+      xloc=(vpdg_BPwidth-vpdg_FPwidth)/2
+      yloc=ybase+(vpdg_BPthick+vpdg_FPHhght)/2
+      zloc=(vpdg_BPlength-2*vpdg_FPthick-vpdg_FPHhght)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPBO') 
+      %title = 'VPBO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPBO') 
+      %title = 'VPBO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPBO') 
+      %title = 'VPBO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPBO') 
+      %title = 'VPBO' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPFA
+      yloc=ytop-vpdg_FPAhght/2
+      zloc=(vpdg_BPlength - vpdg_FPthick)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPFA') 
+      %title = 'VPFA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFA') 
+      %title = 'VPFA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPFB
+      xloc=(vpdg_FPAwidth+(vpdg_BPwidth-vpdg_FPAwidth-2*vpdg_FPwidth)/2)/2
+      yloc=(ytop - (vpdg_FPChght+vpdg_FPAhght)/4)
+      zloc=(vpdg_BPlength - vpdg_FPthick)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPFB') 
+      %title = 'VPFB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('Y-XZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFB') 
+      %title = 'VPFB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('Y-XZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFB') 
+      %title = 'VPFB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('YXZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFB') 
+      %title = 'VPFB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('YXZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPFC
+      xloc=(vpdg_BPwidth-vpdg_FPwidth)/2
+      yloc=(ytop-(vpdg_FPChght+vpdg_FPwidth/2)/2)
+      zloc=(vpdg_BPlength - vpdg_FPthick)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPFC') 
+      %title = 'VPFC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('Y-XZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFC') 
+      %title = 'VPFC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('Y-XZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFC') 
+      %title = 'VPFC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('YXZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFC') 
+      %title = 'VPFC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('YXZ'//char(0)) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPFP
+      xloc=(vpdg_BPwidth-vpdg_FPwidth)/2
+      yloc=(ybase+vpdg_BPthick/2+ vpdg_FPheight/2)
+      zloc=(vpdg_BPlength-vpdg_FPthick)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPFP') 
+      %title = 'VPFP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFP') 
+      %title = 'VPFP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFP') 
+      %title = 'VPFP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPFP') 
+      %title = 'VPFP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      strutheight = vpdg_STdiagsz/cos(vpdg_STangle*degrad)                    + vpdg_BPlength*tan(vpdg_STangle*degrad)
+      CREATE VPST
+      xloc=(vpdg_BPwidth+vpdg_STthick)/2
+      yloc=ytop-vpdg_FPwidth-strutheight/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPST') 
+      %title = 'VPST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPST') 
+      %title = 'VPST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPSC
+      xloc=(vpdg_BPwidth-vpdg_SCwidth)/2
+      yloc=ytop-vpdg_FPwidth-strutheight+vpdg_SCheight/2
+      zloc=(vpdg_BPlength+vpdg_SClength)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPSC') 
+      %title = 'VPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPSC') 
+      %title = 'VPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zloc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      yloc=ytop-vpdg_FPwidth-vpdg_SCheight/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPSC') 
+      %title = 'VPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPSC') 
+      %title = 'VPSC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-zloc) 
+      CALL agml_translate_z( %z ) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF ( VPDV_vpdConfig<4 ) THEN
+      CREATE VPBX
+      CALL AgsReset 
+      CALL agml_position_begin('VPBX') 
+      %title = 'VPBX' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpdg_BPwidth-vpdg_BXwidth)/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((ybase-vpdg_BPthick/2-vpdg_BXheight/2)) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CREATE VPBX
+      CALL AgsReset 
+      CALL agml_position_begin('VPBX') 
+      %title = 'VPBX' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpdg_BPwidth+2.*vpdg_STthick+vpdg_BXheight)/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -4.0 
+      CALL agml_translate_y( %y ) 
+      %thetax = 150.0 
+      %thetay = 90.0 
+      %thetaz = 0.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      ag_alphaz = 90.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDIF
+      CREATE VRNG
+      CALL AgsReset 
+      CALL agml_position_begin('VRNG') 
+      %title = 'VRNG' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBP
+      BLOCK VPBP   is the Base Plate
+      MATERIAL Aluminium
+      ATTRIBUTE VPBP seen=1 colo=5 fill=6
+      SHAPE box dx=vpdg_BPwidth/2 dy=vpdg_BPthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBO
+      BLOCK VPBO   is container for the hook
+      ATTRIBUTE VPBO seen=0
+      SHAPE box dx=vpdg_FPHwidth/2 dy=vpdg_FPHhght/2,
+            dz=vpdg_FPHhght/2
+      CREATE VPBA
+      CALL AgsReset 
+      CALL agml_position_begin('VPBA') 
+      %title = 'VPBA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-(vpdg_FPHhght-vpdg_FPHthick)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPBB
+      CALL AgsReset 
+      CALL agml_position_begin('VPBB') 
+      %title = 'VPBB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(-(vpdg_FPHhght-vpdg_FPHthick)/2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpdg_FPHthick/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBA
+      BLOCK VPBA   is the part of the hook that mounts to the front/back plate
+      MATERIAL Aluminium
+      ATTRIBUTE VPBA seen=1 colo=5 fill=6
+      SHAPE box dx=vpdg_FPHwidth/2 dy=vpdg_FPHhght/2,
+            dz=vpdg_FPHthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBB
+      BLOCK VPBB   is the part of the hook that mounts to the base plate
+      MATERIAL Aluminium
+      ATTRIBUTE VPBB seen=1 colo=5 fill=6
+      SHAPE box dx=vpdg_FPHwidth/2 dy=vpdg_FPHthick/2,
+            dz=(vpdg_FPHhght-vpdg_FPHthick)/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPFP
+      BLOCK VPFP   is a single rectangular piece of the frontpanel
+      MATERIAL polystyren
+      ATTRIBUTE VPFP seen=1 colo=3 fill=6
+      SHAPE box dx=vpdg_FPwidth/2 dy=vpdg_FPheight/2,
+            dz=vpdg_FPthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPFA
+      BLOCK VPFA   is the central upper part of the frontplate
+      MATERIAL polystyren
+      ATTRIBUTE VPFA seen=1 colo=3 fill=6
+      SHAPE box dx=vpdg_FPAwidth/2 dy=vpdg_FPAhght/2,
+            dz=vpdg_FPthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPFB
+      BLOCK VPFB   is the middle upper part of the frontplate
+      MATERIAL polystyren
+      ATTRIBUTE VPFB seen=1 colo=3 fill=6
+      SHAPE trap dz=vpdg_FPthick/2 thet=0. phi=0.,
+            h1=(vpdg_BPwidth-vpdg_FPAwidth-2*vpdg_FPwidth)/4,
+            bl1=vpdg_FPChght/2 tl1=vpdg_FPAhght/2,
+            alp1=atan(vpdg_FPAhght/(vpdg_BPwidth-vpdg_FPAwidth-2*vpdg_FPwidth)/2)*raddeg,
+            h2=(vpdg_BPwidth-vpdg_FPAwidth-2*vpdg_FPwidth)/4,
+            bl2=vpdg_FPChght/2,
+            tl2=vpdg_FPAhght/2 alp2=atan(vpdg_FPAhght/(vpdg_BPwidth-vpdg_FPAwidth-2*vpdg_FPwidth)/2)*raddeg
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPFC
+      BLOCK VPFC   is the outer upper part of the frontplate
+      MATERIAL polystyren
+      ATTRIBUTE VPFC seen=1 colo=3 fill=6
+      SHAPE trap dz=vpdg_FPthick/2 thet=0. phi=0.,
+            h1=vpdg_FPwidth/2 bl1=(vpdg_FPChght-vpdg_FPwidth)/2,
+            tl1=vpdg_FPChght/2 alp1=atan(.5)*raddeg,
+            h2=vpdg_FPwidth/2 bl2=(vpdg_FPChght-vpdg_FPwidth)/2,
+            tl2=vpdg_FPChght/2 alp2=atan(.5)*raddeg
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPST
+      BLOCK VPST   is the strut volume
+      ATTRIBUTE VPST seen=0
+      SHAPE box dx=vpdg_STthick/2 dy=strutheight/2,
+            dz=(vpdg_BPlength+2*vpdg_SClength)/2
+      CREATE VPSV
+      CALL AgsReset 
+      CALL agml_position_begin('VPSV') 
+      %title = 'VPSV' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPSW
+      ydispl=(vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad)) + vpdg_SCheight/2)/2
+      CALL AgsReset 
+      CALL agml_position_begin('VPSW') 
+      %title = 'VPSW' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(strutheight/2-ydispl) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpdg_BPlength+vpdg_SClength)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('yzx'//char(0)) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPSW') 
+      %title = 'VPSW' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(-(strutheight/2-ydispl)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real((vpdg_BPlength+vpdg_SClength)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('yzx'//char(0)) 
+      ag_alphay = 180.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPSV
+      BLOCK VPSV   is the actual strut between front and backplates
+      MATERIAL Aluminium
+      ATTRIBUTE VPSV seen=1 colo=3 fill=6
+      SHAPE trap dz=vpdg_BPlength/2 thet=vpdg_STangle,
+            phi=270. h1=vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad)),
+            bl1=vpdg_STthick/2 tl1=vpdg_STthick/2,
+            alp1=0. h2=vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad)),
+            bl2=vpdg_STthick/2 tl2=vpdg_STthick/2,
+            alp2=0.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPSW
+      BLOCK VPSW   is a tiny piece of aluminium that belongs to the strut
+      MATERIAL Aluminium
+      ATTRIBUTE VPSW seen=1 colo=3 fill=6
+      SHAPE trap dz=vpdg_STthick/2 thet=0. phi=0.,
+            h1=vpdg_SClength/2 bl1=vpdg_SCheight/2 tl1=vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad)),
+            alp1=atan((vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad))-vpdg_SCheight/2)/vpdg_SClength)*raddeg,
+            h2=vpdg_SClength/2 bl2=vpdg_SCheight/2 tl2=vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad)),
+            alp2=atan((vpdg_STdiagsz/(2*cos(vpdg_STangle*degrad))-vpdg_SCheight/2)/vpdg_SClength)*raddeg
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPSC
+      BLOCK VPSC   is a clamp that holds the strut
+      SHAPE box dx=vpdg_SCwidth/2 dy=vpdg_SCheight/2,
+            dz=vpdg_SClength/2
+      CREATE VPSA
+      CALL AgsReset 
+      CALL agml_position_begin('VPSA') 
+      %title = 'VPSA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-vpdg_SCthick/2) 
+      CALL agml_translate_x( %x ) 
+      ag_z = real((vpdg_SClength-vpdg_SCthick)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPSB
+      CALL AgsReset 
+      CALL agml_position_begin('VPSB') 
+      %title = 'VPSB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real((vpdg_SCwidth-vpdg_SCthick)/2) 
+      CALL agml_translate_x( %x ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPSA
+      BLOCK VPSA   is part of a strut clamp that holds to the frontplate
+      MATERIAL Aluminium
+      ATTRIBUTE VPSA seen=1 colo=3 fill=6
+      SHAPE box dx=(vpdg_SCwidth-vpdg_SCthick)/2,
+            dy=vpdg_SCheight/2 dz=vpdg_SCthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPSB
+      BLOCK VPSB   is part of a strut clamp that holds to the strut
+      MATERIAL Aluminium
+      ATTRIBUTE VPSB seen=1 colo=3 fill=6
+      SHAPE box dx=vpdg_SCthick/2 dy=vpdg_SCheight/2,
+            dz=vpdg_SClength/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBX
+      BLOCK VPBX   is the FEE box
+      MATERIAL Aluminium
+      ATTRIBUTE VPBX seen=1 colo=2
+      SHAPE box dx=vpdg_BXwidth/2 dy=vpdg_BXheight/2,
+            dz=vpdg_BXlength/2
+      CREATE VPBI
+      CALL AgsReset 
+      CALL agml_position_begin('VPBI') 
+      %title = 'VPBI' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPBI
+      BLOCK VPBI   is the empty space inside of the FEE box
+      MATERIAL Air
+      ATTRIBUTE VPBI seen=0
+      SHAPE box dx=(vpdg_BXwidth-vpdg_BXthick)/2,
+            dy=(vpdg_BXheight-vpdg_BXthick)/2 dz=(vpdg_BXlength-vpdg_BXthick)/2
+      CREATE VFEE
+      CALL AgsReset 
+      CALL agml_position_begin('VFEE') 
+      %title = 'VFEE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VFEEPosX) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VFEEPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VFEEPosZ) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VFEE
+      BLOCK VFEE   is the FEE inside the box
+      ATTRIBUTE VFEE seen=1 colo=3
+      COMPONENT Si A=28.08 Z=14 W=0.6*1*28./60.
+      COMPONENT O A=16 Z=8 W=0.6*2*16./60. + 0.4*4*16./174.
+      COMPONENT C A=12 Z=6 W=0.4*8*12./174.
+      COMPONENT H A=1 Z=1 W=0.4*14*1./174.
+      MIXTURE G10 dens=1.7
+      SHAPE box dx=vpds_ElecWid/2 dy=vpds_ElecThck/2,
+            dz=vpds_ElecLen/2
+      CREATE VLEM
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(1)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(1)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(2)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(2)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(3)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(3)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(4)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(4)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(6)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(6)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(7)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(7)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(8)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(8)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(9)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(9)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(11)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(11)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(12)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(12)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(13)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(13)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VLEM') 
+      %title = 'VLEM' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VLEMPosX(14)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(vpds_VLEMPosY) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VLEMPosZ(14)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphax = 180.0 
+      CALL agml_rotate_x(%alphax) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VLEM
+      BLOCK VLEM   is a Lemo connector on the FEE boards
+      ATTRIBUTE VLEM seen=1 colo=3
+      SHAPE box dx=vpds_VLEMLenX/2. dy=vpds_VLEMLenY/2.,
+            dz=vpds_VLEMLenZ/2.
+      CREATE VPIP
+      CALL AgsReset 
+      CALL agml_position_begin('VPIP') 
+      %title = 'VPIP' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpds_VPIPPosX) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpds_VPIPPosZ) 
+      CALL agml_translate_z( %z ) 
+      %rmin = real(vpds_VPIPRmin) 
+      %rmax = real(vpds_VPIPRmax) 
+      %dz = real(vpds_VPIPLenZ/2) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPIP
+      BLOCK VPIP   is the Long Pipe
+      ATTRIBUTE VPIP seen=1 colo=7
+      MATERIAL Aluminium
+      SHAPE tube rmin=0 rmax=0 dz=0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VRNG
+      BLOCK VRNG   is a single pVPD Ring or the entire upVPD
+      IF ( kDetStyle<2 ) THEN
+      SHAPE tubs rmin=vpdg_Rmin rmax=vpdg_Rmin+2*vpdg_DETrad+vpdg_CLheight,
+            phi1=-65.0 phi2=245.0,
+            dz=vpdg_CLlength/2
+      DO isec = 1, vpdg_NumPMT
+      detangle=-30+isec*(360/vpdg_NumPMT)
+      CREATE VSEC
+      CALL AgsReset 
+      CALL agml_position_begin('VSEC') 
+      %title = 'VSEC' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_alphaz = real(detangle) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ELSEIF ( kDetStyle==2 ) THEN
+      SHAPE tubs rmin=vpdh_rmin rmax=vpdh_rmax,
+            phi1=-65.0 phi2=245.0 dz=vpdh_length/2
+      CREATE VDET
+      detzint = -(VPDH_detlen/2.0)+VPDH_detfront+(VPDH_leadthick+vpdh_scintthick)
+      locang=0.
+      IF ( VPDH_ring1_kproj>0 ) THEN
+      locang=degrad*0.
+      locang=ATAN((VPDH_ring1_rad)/(0.5*VPDH_zposWest+0.5*VPDH_zposEast+detzint))
+      ENDIF
+      DO isec = 0, VPDH_ring1_ndet-1
+      phiang = degrad*(VPDH_ring1_phi0 + isec*VPDH_ring1_dphi)
+      xloc   = (VPDH_ring1_rad+0.5*VPDH_detlen*SIN(locang))*COS(phiang)
+      yloc   = (VPDH_ring1_rad+0.5*VPDH_detlen*SIN(locang))*SIN(phiang)
+      CALL AgsReset 
+      CALL agml_position_begin('VDET') 
+      %title = 'VDET' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      %thetax = real(90.+(COS(phiang)*locang)) 
+      %thetay = real(90.+(SIN(phiang)*locang)) 
+      %thetaz = 0.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      locang=0.
+      IF ( VPDH_ring2_kproj>0 ) THEN
+      locang=degrad*4.
+      locang=ATAN((VPDH_ring2_rad)/(0.5*VPDH_zposWest+0.5*VPDH_zposEast+detzint))
+      ENDIF
+      DO isec = 0, VPDH_ring2_ndet-1
+      phiang = degrad*(VPDH_ring2_phi0 + isec*VPDH_ring2_dphi)
+      xloc   = (VPDH_ring2_rad+0.5*VPDH_detlen*SIN(locang))*COS(phiang)
+      yloc   = (VPDH_ring2_rad+0.5*VPDH_detlen*SIN(locang))*SIN(phiang)
+      CALL AgsReset 
+      CALL agml_position_begin('VDET') 
+      %title = 'VDET' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      %thetax = real(90.+(COS(phiang)*locang)) 
+      %thetay = real(90.+(SIN(phiang)*locang)) 
+      %thetaz = 0.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      locang=0.
+      IF ( VPDH_ring3_kproj>0 ) THEN
+      locang=degrad*8.
+      locang=ATAN((VPDH_ring3_rad)/(0.5*VPDH_zposWest+0.5*VPDH_zposEast+detzint))
+      ENDIF
+      DO isec = 0, VPDH_ring3_ndet-1
+      phiang = degrad*(VPDH_ring3_phi0 + isec*VPDH_ring3_dphi)
+      xloc   = (VPDH_ring3_rad+0.5*VPDH_detlen*SIN(locang))*COS(phiang)
+      yloc   = (VPDH_ring3_rad+0.5*VPDH_detlen*SIN(locang))*SIN(phiang)
+      CALL AgsReset 
+      CALL agml_position_begin('VDET') 
+      %title = 'VDET' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(xloc) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(yloc) 
+      CALL agml_translate_y( %y ) 
+      %thetax = real(90.+(COS(phiang)*locang)) 
+      %thetay = real(90.+(SIN(phiang)*locang)) 
+      %thetaz = 0.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'KONLY_X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VSEC
+      BLOCK VSEC   is one pVPD sector with all stuff inside
+      ATTRIBUTE VSEC seen=1 colo=5 serial=isec
+      SHAPE tubs phi1=-360/(2*vpdg_NumPMT) phi2=+360/(2*vpdg_NumPMT)
+      ydispl=vpdg_DETrad - sqrt(vpdg_DETrad*vpdg_DETrad - (vpdg_CLwidth/2 - vpdg_CLthick)*(vpdg_CLwidth/2 _
+            - vpdg_CLthick))
+      CREATE VDET
+      CALL AgsReset 
+      CALL agml_position_begin('VDET') 
+      %title = 'VDET' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpdg_Rmin+vpdg_DETrad) 
+      CALL agml_translate_x( %x ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      IF ( isec==3 ) THEN
+      CREATE VPCL
+      CALL AgsReset 
+      CALL agml_position_begin('VPCL') 
+      %title = 'VPCL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpdg_Rmin+vpdg_DETrad) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((vpdg_DETrad+vpdg_CLheight/2-ydispl)) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSE
+      CREATE VPCL
+      CALL AgsReset 
+      CALL agml_position_begin('VPCL') 
+      %title = 'VPCL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpdg_Rmin+vpdg_DETrad) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-(vpdg_DETrad+vpdg_CLheight/2-ydispl)) 
+      CALL agml_translate_y( %y ) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      CREATE VXST
+      CALL AgsReset 
+      CALL agml_position_begin('VXST') 
+      %title = 'VXST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpdg_Rmin+vpdg_DETrad+0.4) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 1.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpdg_DETlen/2+1.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VXST') 
+      %title = 'VXST' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(vpdg_Rmin+vpdg_DETrad-0.4) 
+      CALL agml_translate_x( %x ) 
+      ag_y = -1.5 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(vpdg_DETlen/2+1.0) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VDET
+      BLOCK VDET   is a single detector (Radiator+converter and PMT+electroncs)
+      IF ( kDetStyle<2 ) THEN
+      MATERIAL IRON
+      ATTRIBUTE VDET seen=1 colo=1 serial=0
+      SHAPE tube rmin=0 rmax=vpdg_DETrad dz=vpdg_DETlen/2
+      CREATE VDTI
+      CALL AgsReset 
+      CALL agml_position_begin('VDTI') 
+      %title = 'VDTI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+vpdg_DETfront) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSEIF ( kDetStyle==2 ) THEN
+      MATERIAL Aluminium
+      ATTRIBUTE VDET seen=1 colo=1 serial=0
+      SHAPE tube rmin=0 rmax=vpdh_detrad dz=vpdh_detlen/2
+      CREATE VDTI
+      CALL AgsReset 
+      CALL agml_position_begin('VDTI') 
+      %title = 'VDTI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VDTI
+      BLOCK VDTI   is inner part of the single detector
+      MATERIAL Air
+      ATTRIBUTE VDTI seen=1 colo=1
+      IF ( kDetStyle<2 ) THEN
+      SHAPE tube rmin=0 rmax=vpdg_PMTrad dz=vpdg_DETlen/2-vpdg_DETfront
+      convlength=vpdg_ConvThk+vpdg_RadiThk
+      CREATE VCNV
+      CALL AgsReset 
+      CALL agml_position_begin('VCNV') 
+      %title = 'VCNV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-(vpdg_DETlen-convlength)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPMT
+      CALL AgsReset 
+      CALL agml_position_begin('VPMT') 
+      %title = 'VPMT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-(vpdg_DETlen/2-convlength-vpdg_PMTlen/2)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSEIF ( kDetStyle==2 ) THEN
+      SHAPE tube rmin=0 rmax=vpdh_detrad-vpdh_detwall,
+            dz=(vpdh_detlen/2.)-(2.0*vpdh_detfront)
+      CREATE VCNV
+      CALL AgsReset 
+      CALL agml_position_begin('VCNV') 
+      %title = 'VCNV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpdh_detlen/2.0)+vpdh_detfront+(vpdh_leadthick+vpdh_scintthick)) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VCNV
+      BLOCK VCNV   is converter layer (radiator included)
+      MATERIAL Lead
+      ATTRIBUTE VCNV seen=1 colo=2
+      IF ( kDetStyle<2 ) THEN
+      SHAPE tube dz=vpdg_ConvThk/2+vpdg_RadiThk/2
+      CREATE VRAD
+      CALL AgsReset 
+      CALL agml_position_begin('VRAD') 
+      %title = 'VRAD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(vpdg_ConvThk/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ELSEIF ( kDetStyle==2 ) THEN
+      SHAPE tube rmin=0 rmax=vpdh_pmtrad dz=(vpdh_leadthick+vpdh_scintthick)/2.
+      CREATE VRAD
+      CALL AgsReset 
+      CALL agml_position_begin('VRAD') 
+      %title = 'VRAD' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(vpdh_leadthick/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VRAD
+      BLOCK VRAD   is light-producing layer (scintillator or quartz)
+      MATERIAL Polystyren
+      MEDIUM sensitive isvol=1
+      ATTRIBUTE VRAD seen=1 colo=3
+      IF ( kDetStyle<2 ) THEN
+      SHAPE tube dz=vpdg_RadiThk/2
+      HITS VRAD x:0.1:S y:0.1: z:0.1: cx:10: cy:10: cz:10: step:0.1: slen:0.1:(0,600),
+            ptot:16:(0,100) tof:18:(0,1.0E-6) eloss:16:(0,0.01)
+      ELSEIF ( kDetStyle==2 ) THEN
+      SHAPE tube dz=vpdh_scintthick/2.
+      HITS VRAD x:0.1:S y:0.1: z:0.1: cx:10: cy:10: cz:10: step:0.1: slen:0.1:(0,600),
+            ptot:16:(0,100) tof:18:(0,1.0E-6) eloss:16:(0,0.01)
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPMT
+      BLOCK VPMT   is the PMT inner volume
+      MATERIAL Vacuum
+      ATTRIBUTE VPMT seen=1 colo=7
+      SHAPE tube rmax=vpdg_PMTrad-vpdg_PMTwall,
+            dz=vpdg_PMTlen/2-vpdg_PMTwall
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VXST
+      BLOCK VXST   are PMT output cables (just to look nicer)
+      ATTRIBUTE VXST seen=1 colo=7 serial=0
+      SHAPE tube rmin=0 rmax=0.3 dz=1.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPCL
+      BLOCK VPCL   is the boat clamp
+      ATTRIBUTE VPCL seen=1 colo=6 serial=0
+      SHAPE box dx=vpdg_CLwidth/2 dy=vpdg_CLheight/2,
+            dz=vpdg_CLlength/2
+      CREATE VPCF
+      CALL AgsReset 
+      CALL agml_position_begin('VPCF') 
+      %title = 'VPCF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+(vpdg_CLlength-vpdg_CLthick)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPCF') 
+      %title = 'VPCF' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-(vpdg_CLlength-vpdg_CLthick)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPCH
+      CALL AgsReset 
+      CALL agml_position_begin('VPCH') 
+      %title = 'VPCH' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE VPCV
+      CALL AgsReset 
+      CALL agml_position_begin('VPCV') 
+      %title = 'VPCV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real((vpdg_CLwidth-vpdg_CLthick)/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-vpdg_CLthick/2-(vpdg_CLheight/2-vpdg_CLthick/2)/2) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('VPCV') 
+      %title = 'VPCV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpdg_CLwidth-vpdg_CLthick)/2) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-vpdg_CLthick/2-(vpdg_CLheight/2-vpdg_CLthick/2)/2) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPCF
+      BLOCK VPCF   is the front plate of the boat clamp
+      MATERIAL Aluminium
+      ATTRIBUTE VPCF seen=1 colo=6 fill=6
+      SHAPE box dx=vpdg_CLwidth/2 dy=vpdg_CLheight/2,
+            dz=vpdg_CLthick/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPCH
+      BLOCK VPCH   is the horizontal plate of the boat clamp
+      MATERIAL Aluminium
+      ATTRIBUTE VPCH seen=1 colo=6 fill=6
+      SHAPE box dx=vpdg_CLwidth/2 dy=vpdg_CLthick/2,
+            dz=(vpdg_CLlength-2*vpdg_CLthick)/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- VPCV
+      BLOCK VPCV   is the vertical plate of the boat clamp
+      MATERIAL Aluminium
+      ATTRIBUTE VPCV seen=1 colo=6 fill=6
+      SHAPE box dx=vpdg_CLthick/2 dy=(vpdg_CLheight/2-vpdg_CLthick/2)/2,
+            dz=(vpdg_CLlength-2*vpdg_CLthick)/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBEM
+      BLOCK IBEM   is the IBeam structure beneath the Bell reducer cone
+      MATERIAL Air
+      ATTRIBUTE IBEM seen=0 colo=2
+      SHAPE box dx=vpdg_IBwidth/2 dy=vpdg_IBheight/2,
+            dz=vpdg_IBleng/2
+      CREATE IBEH dy=vpdg_IBthickH/2
+      CALL AgsReset 
+      CALL agml_position_begin('IBEH') 
+      %title = 'IBEH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(+(vpdg_IBheight-vpdg_IBthickH)/2) 
+      CALL agml_translate_y( %y ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBEH dz=(vpdg_IBleng-vpdg_IBwlen)/2 dy=vpdg_IBthickH/2
+      CALL AgsReset 
+      CALL agml_position_begin('IBEH') 
+      %title = 'IBEH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real(-(vpdg_IBheight-vpdg_IBthickH)/2) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(+vpdg_IBwlen/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBEV
+      CALL AgsReset 
+      CALL agml_position_begin('IBEV') 
+      %title = 'IBEV' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(+vpdg_IBwlen/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBEW
+      CALL AgsReset 
+      CALL agml_position_begin('IBEW') 
+      %title = 'IBEW' 
+      %exname = 'POSITION' ! agml placement 
+      ag_y = real((vpdg_IBheight/2-vpdg_IBthickH-(vpdg_IBwhghtF+vpdg_IBwhghtB)/4)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpdg_IBleng-vpdg_IBwlen)/2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_ortho('yzx'//char(0)) 
+      ag_alphaz = 180.0 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBEH
+      BLOCK IBEH   is a horizontal IBeam plate
+      MATERIAL Aluminium
+      ATTRIBUTE IBEH seen=1 colo=2 fill=7
+      SHAPE box
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBEV
+      BLOCK IBEV   is a vertical IBeam plate
+      MATERIAL Aluminium
+      ATTRIBUTE IBEV seen=1 colo=2 fill=7
+      SHAPE box dx=vpdg_IBthickV/2 dy=(vpdg_IBheight-2*vpdg_IBthickH)/2,
+            dz=(vpdg_IBleng-vpdg_IBwlen)/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBEW
+      BLOCK IBEW   is the first part of the IBeam plate
+      MATERIAL Aluminium
+      ATTRIBUTE IBEW seen=1 colo=2 fill=7
+      SHAPE trap dz=vpdg_IBthickV/2 thet=0. phi=0.,
+            h1=vpdg_IBwlen/2 bl1=vpdg_IBwhghtF/2 tl1=vpdg_IBwhghtB/2,
+            alp1=atan((vpdg_IBwhghtB-vpdg_IBwhghtF)/vpdg_IBwlen/2)*raddeg,
+            h2=vpdg_IBwlen/2,
+            bl2=vpdg_IBwhghtF/2 tl2=vpdg_IBwhghtB/2,
+            alp2=atan((vpdg_IBwhghtB-vpdg_IBwhghtF)/vpdg_IBwlen/2)*raddeg
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSA
+      BLOCK IBSA   is the vertical post on the balcony (Envelope)
+      MATERIAL Air
+      ATTRIBUTE IBSA seen=0 colo=5
+      SHAPE box dx=vpds_BSALenX/2. dy=vpds_BSALenY/2.,
+            dz=vpds_BSALenZ/2.
+      CREATE IBAA
+      CALL AgsReset 
+      CALL agml_position_begin('IBAA') 
+      %title = 'IBAA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(-(vpds_BSALenX-vpds_BAALenZ)/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBAA') 
+      %title = 'IBAA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpds_BSALenX-vpds_BAALenZ)/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBAA
+      BLOCK IBAA   is the vertical post on the balcony (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBAA seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BSALenX/2. dy=vpds_BSALenY/2.,
+            dz=vpds_BAALenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSB
+      BLOCK IBSB   is the diagonal post from the balcony (Envelope)
+      MATERIAL Air
+      ATTRIBUTE IBSB seen=0 colo=5
+      SHAPE box dx=vpds_BSALenX/2. dy=vpds_BSBLenY/2.,
+            dz=vpds_BSALenZ/2.
+      CREATE IBAB
+      CALL AgsReset 
+      CALL agml_position_begin('IBAB') 
+      %title = 'IBAB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_z = real((vpds_BSALenX-vpds_BAALenZ)/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBAB') 
+      %title = 'IBAB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpds_BSALenX-vpds_BAALenZ)/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 90.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBAB
+      BLOCK IBAB   is the diagonal post from the balcony (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBAB seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BSALenX/2. dy=vpds_BSBLenY/2.,
+            dz=vpds_BAALenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSC
+      BLOCK IBSC   is the cross post below the I-Beam (Envelope)
+      MATERIAL Air
+      ATTRIBUTE IBSC seen=0 colo=7
+      SHAPE box dx=vpds_BSCLenX/2. dy=vpds_BSCLenY/2.,
+            dz=vpds_BSCLenZ/2.
+      CREATE IBAC
+      CALL AgsReset 
+      CALL agml_position_begin('IBAC') 
+      %title = 'IBAC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(+(vpds_BSCLenZ-vpds_BACLenZ)/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBAC') 
+      %title = 'IBAC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(-(vpds_BSCLenZ-vpds_BACLenZ)/2.) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBBC
+      CALL AgsReset 
+      CALL agml_position_begin('IBBC') 
+      %title = 'IBBC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real((vpds_BSCLenY-vpds_BACLenZ)/2.) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBCC
+      CALL AgsReset 
+      CALL agml_position_begin('IBCC') 
+      %title = 'IBCC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(+(vpds_BSCLenX-vpds_BACLenZ)/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE IBCC
+      CALL AgsReset 
+      CALL agml_position_begin('IBCC') 
+      %title = 'IBCC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(-(vpds_BSCLenX-vpds_BACLenZ)/2.) 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBAC
+      BLOCK IBAC   is vertical parts of the cross post below the I-Beam (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBAC seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BSCLenX/2.-vpds_BACLenZ,
+            dy=vpds_BSCLenY/2 dz=vpds_BACLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBBC
+      BLOCK IBBC   is the horizontal part of the cross post below the I-Beam (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBBC seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BSCLenX/2.-vpds_BACLenZ,
+            dy=vpds_BACLenZ/2. dz=vpds_BSCLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBCC
+      BLOCK IBCC   is the end caps on the cross post below the I-Beam (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBCC seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BACLenZ/2. dy=vpds_BSCLenY/2.,
+            dz=vpds_BSCLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSD
+      BLOCK IBSD   are the horizontal plates that hold the pipe-support brackets,
+            (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBSD seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BSDLenX/2. dy=vpds_BACLenZ/2,
+            dz=vpds_BSALenX/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSE
+      BLOCK IBSE   are the vertical parts of the pipe-support brackets (Aluminum)
+      MATERIAL Aluminium
+      ATTRIBUTE IBSE seen=1 colo=1 fill=0
+      SHAPE box dx=vpds_BAALenZ/2. dy=vpds_BSELenY/2,
+            dz=vpds_BSELenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSF
+      BLOCK IBSF   are the long threaded rods for X-support of the I-beam
+      MATERIAL Iron
+      ATTRIBUTE IBSF seen=1 colo=4
+      SHAPE tube rmin=0 rmax=vpds_BSFRmax dz=vpds_BSFLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBST
+      BLOCK IBST   are the long threaded rods for X-support of the I-beam, short,
+            stubs inside IBEM!
+      MATERIAL Iron
+      ATTRIBUTE IBST seen=0 colo=4
+      SHAPE tube rmin=0 rmax=vpds_BSFRmax dz=vpds_BSSLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSG
+      BLOCK IBSG   are the vertical bolts to the pipe-support brackets
+      MATERIAL Iron
+      ATTRIBUTE IBSG seen=1 colo=4
+      IF ( vpdv_vpdConfig<8 ) THEN
+      SHAPE tube rmin=0 rmax=vpds_BSGRmax dz=vpds_BSGLenZ1/2.
+      ELSEIF ( vpdv_vpdConfig==8 ) THEN
+      SHAPE tube rmin=0 rmax=vpds_BSGRmax dz=vpds_BSGLenZ2/2.
+      ELSE
+      SHAPE tube rmin=0 rmax=vpds_BSGRmax dz=vpds_BSGLenZ3/2.
+      ENDIF
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBSH
+      BLOCK IBSH   are the cross-bolts from the pipe-support brackets to the pipe
+      MATERIAL Iron
+      ATTRIBUTE IBSH seen=1 colo=4
+      SHAPE tube rmin=0 rmax=vpds_BSGRmax dz=vpds_BSHLenZ/2.
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWA
+      BLOCK IBWA   is the new west IBeam for beampipe support
+      MATERIAL Air
+      ATTRIBUTE IBWA seen=1 colo=2
+      SHAPE box dx=wbsp_IbeamD(1)/2.0 dy=wbsp_IbeamD(2)/2.0,
+            dz=wbsp_IbeamD(3)/2.0
+      CREATE IBWB
+      CREATE IBWC
+      CREATE IBWD
+      CALL AgsReset 
+      CALL agml_position_begin('IBWB') 
+      %title = 'IBWB' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBWC') 
+      %title = 'IBWC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-wbsp_IbeamD(1)/2.0+wbsp_IbeamD(4)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('IBWC') 
+      %title = 'IBWC' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(+wbsp_IbeamD(1)/2.0-wbsp_IbeamD(4)/2.0) 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWB
+      BLOCK IBWB   is the center piece for new west IBeam for beampipe support
+      MATERIAL ALUMINIUM
+      ATTRIBUTE IBWB seen=1 colo=4
+      SHAPE box dx=wbsp_IbeamD(4)/2.0 dy=wbsp_IbeamD(2)/2.0-wbsp_IbeamD(4),
+            dz=wbsp_IbeamD(3)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWC
+      BLOCK IBWC   is the top piece for new west IBeam for beampipe support
+      MATERIAL ALUMINIUM
+      ATTRIBUTE IBWC seen=1 colo=4
+      SHAPE box dx=wbsp_IbeamD(1)/2.0 dy=wbsp_IbeamD(4)/2.0,
+            dz=wbsp_IbeamD(3)/2.0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWD
+      BLOCK IBWD   is the Post for new west beampipe support
+      MATERIAL ALUMINIUM
+      ATTRIBUTE IBWD seen=1 colo=4
+      SHAPE box dx=wbsp_PostD(1)/2.0 dy=wbsp_PostD(2)/2.0,
+            dz=wbsp_PostD(3)/2.0
+      CREATE IBWE
+      CALL AgsReset 
+      CALL agml_position_begin('IBWE') 
+      %title = 'IBWE' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWE
+      BLOCK IBWE   is the air in post for new west beampipe support
+      MATERIAL Air
+      ATTRIBUTE IBWE seen=1 colo=4
+      SHAPE box dx=wbsp_PostD(1)/2.0-wbsp_PostD(4),
+            dy=wbsp_PostD(2)/2.0 dz=wbsp_PostD(3)/2.0-wbsp_PostD(4)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWF
+      BLOCK IBWF   is the Angled-post for new west beampipe support
+      MATERIAL ALUMINIUM
+      ATTRIBUTE IBWF seen=1 colo=4
+      SHAPE trd1 dx1=wbsp_AnglD(1)/2.0 dx2=wbsp_AnglD(1)/2.0-wbsp_AnglD(3),
+            dy=wbsp_AnglD(2)/2.0,
+            dz=wbsp_AnglD(3)/2.0
+      CREATE IBWG
+      CALL AgsReset 
+      CALL agml_position_begin('IBWG') 
+      %title = 'IBWG' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWG
+      BLOCK IBWG   is the air in Angled-post for new west beampipe support
+      MATERIAL Air
+      ATTRIBUTE IBWG seen=1 colo=4
+      SHAPE trd1 dx1=wbsp_AnglD(1)/2.0-wbsp_AnglD(4),
+            dx2=wbsp_AnglD(1)/2.0-wbsp_AnglD(3)+wbsp_AnglD(4),
+            dy=wbsp_AnglD(2)/2.0-wbsp_AnglD(4),
+            dz=wbsp_AnglD(3)/2.0-wbsp_AnglD(4)
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- IBWH
+      BLOCK IBWH   is the Triangl piece for new west beampipe support
+      MATERIAL ALUMINIUM
+      ATTRIBUTE IBWH seen=1 colo=4
+      SHAPE trap dz=wbsp_TriD(3)/2.0 thet=45.0/2.0,
+            phi=0 h1=0.0 bl1=wbsp_TriD(1)/2.0 tl1=wbsp_TriD(1)/2.0,
+            alp1=0 h2=wbsp_TriD(2)/2.0 bl2=wbsp_TriD(1)/2.0,
+            tl2=wbsp_TriD(1)/2.0 alp2=0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module VPDDGEO3]	 <<==='; (A32,/,/);
+      END! Module VPDDGEO3

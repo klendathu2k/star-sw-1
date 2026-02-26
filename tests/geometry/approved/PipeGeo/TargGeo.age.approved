@@ -1,0 +1,213 @@
+      MODULE TargGeo    is the Fixed Target Geometry
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created 5 Sept 2018
+      Author Samuel Heppelmann
+      +CDE,agecom,gconst,gcunit.
+      CONTENT TARM,HLDR,RING,FOIL,RODM
+      STRUCTURE TARG { version,onoff,xdis,ydis,zdis}
+      STRUCTURE TFLG { type,thickness,height,baselength,toplength,xoffset,yoffset,
+            zoffset}
+      STRUCTURE HLDG { irad,orad,width,angle,xoffset,yoffset,zoffset}
+      STRUCTURE RNGG { irad,orad,width,xoffset,yoffset,zoffset}
+      STRUCTURE RODG { rad,length,xoffset,yoffset,zoffset}
+      real *4 ztot,rtot,vacuum/1.e-5/
+
+      FILL TARG		! Fixed Target Geometry
+      version = 1.0 !  Geometry Version for 2018
+      onoff = 1 !  0 for Off, 1 for On
+      xdis = 0 !  x cord from center in star
+      ydis = 0 !  y cord from center in star
+      zdis = 201 !  z cord from center in star
+      ENDFILL
+      use TARG
+      IF ( TARG_version==1.0 ) THEN
+      FILL TFLG		! Gold Foil Geometry
+      thickness = 0.025 ! 0.25 mm thickness
+      height = 0.635 ! height of rectangular target
+      baselength = 5.050 ! trap bottom length of target
+      toplength = 6.106 ! trap top length of target
+      xoffset = 0 !  xoffset from center of TARG
+      yoffset = -2.319 !  yoffset from center of TARG
+      zoffset = 0 !  zoffset from center of TARG
+      ENDFILL
+      ENDIF
+      FILL HLDG		! Aluminum half ring mount for gold foil
+      irad = 3.136 ! inner radius of ring
+      orad = 3.651 ! outer radius of ring
+      width = 0.645 ! width of ring
+      angle = 3.14 ! angle that the ring covers of full circle (half circle)
+      xoffset = 0 !  xoffset from center of TARG
+      yoffset = 0 !  yoffset from center of TARG
+      zoffset = -0.318 !  zoffset from center of TARG
+      ENDFILL
+      FILL RNGG		! Aluminum full ring
+      irad = 3.136 ! inner radius of ring
+      orad = 3.651 ! outer radius of ring
+      width = 0.635 ! width of ring
+      xoffset = 0 !  xoffset from center of TARG
+      yoffset = 0 !  yoffset from center of TARG
+      zoffset = 180.318 !  zoffset from center of TARG
+      ENDFILL
+      FILL RODG		! Rod from base of holder
+      rad = 0.238 ! radius of rod
+      length = 180 ! length of rod (estimate)
+      xoffset = 0.953 !  xoffset from center of TARG
+      yoffset = -3.256 !  yoffset from center of TARG
+      zoffset = 90 !  zoffset from center of TARG
+      ENDFILL
+      use HLDG
+      rtot = hldg_orad;
+      use RODG
+      ztot = rodg_length+hldg_width+rngg_width;
+      COMPONENT Au A=196.97 Z=79 W=1
+      MIXTURE Gold dens=19.30
+      CREATE TARM
+      CALL AgsReset 
+      CALL agml_position_begin('TARM') 
+      %mother = 'CAVE' 
+      %title = 'TARM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(targ_xdis) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(targ_ydis) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(targ_zdis) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- TARM
+      BLOCK TARM   is the target module (foil, holder, ring and rods)
+      MATERIAL Air
+      MATERIAL TVacuum dens=%dens*Vacuum absl=%absl/Vacuum radl=%radl/Vacuum
+      MEDIUM standard
+      ATTRIBUTE TARM seen=0 colo=7
+      SHAPE tube rmin=0 rmax=rtot dz=ztot
+      CREATE HLDR
+      CALL AgsReset 
+      CALL agml_position_begin('HLDR') 
+      %mother = 'TARM' 
+      %title = 'HLDR' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(hldg_xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(hldg_yoffset) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(hldg_zoffset) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE RING
+      CALL AgsReset 
+      CALL agml_position_begin('RING') 
+      %mother = 'TARM' 
+      %title = 'RING' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(rngg_xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(rngg_yoffset) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(rngg_zoffset) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE FOIL
+      CALL AgsReset 
+      CALL agml_position_begin('FOIL') 
+      %mother = 'TARM' 
+      %title = 'FOIL' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(tflg_xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(tflg_yoffset) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(tflg_zoffset) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE RODM
+      CALL AgsReset 
+      CALL agml_position_begin('RODM') 
+      %mother = 'TARM' 
+      %title = 'RODM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(rodg_xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(rodg_yoffset) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(rodg_zoffset) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE RODM
+      CALL AgsReset 
+      CALL agml_position_begin('RODM') 
+      %mother = 'TARM' 
+      %title = 'RODM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(-rodg_xoffset) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(rodg_yoffset) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(rodg_zoffset) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- HLDR
+      BLOCK HLDR   Ring mount for foil
+      MATERIAL Aluminium
+      MEDIUM standard
+      ATTRIBUTE HLDR seen=1 colo=6
+      SHAPE tubs rmin=hldg_irad rmax=hldg_orad,
+            phi1=180 phi2=0 dz=hldg_width/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- RING
+      BLOCK RING   Ring at end of holder
+      MATERIAL Aluminium
+      MEDIUM standard
+      ATTRIBUTE RING seen=1 colo=6
+      SHAPE tube rmin=rngg_irad rmax=rngg_orad,
+            dz=rngg_width/2
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FOIL
+      BLOCK FOIL   Thin gold foil
+      MATERIAL Gold
+      MEDIUM standard
+      ATTRIBUTE FOIL seen=1 colo=8
+      SHAPE trap dz=tflg_thickness/2 thet=0.0,
+            phi=0.0 h1=tflg_height/2 bl1=tflg_baselength/2,
+            tl1=tflg_toplength/2 alp1=0 h2=tflg_height/2,
+            bl2=tflg_baselength/2 tl2=tflg_toplength/2,
+            alp2=0
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- RODM
+      BLOCK RODM   Rod connects Holder and Ring
+      MATERIAL Aluminium
+      MEDIUM standard
+      ATTRIBUTE RODM seen=1 colo=6
+      SHAPE tube rmin=0 rmax=rodg_rad dz=rodg_length/2
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module TargGeo]	 <<==='; (A32,/,/);
+      END! Module TargGeo

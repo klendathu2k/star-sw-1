@@ -1,0 +1,792 @@
+#include "PipeGeo2.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace PIPEGEO2 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          pipv_t *__pipv = new pipv_t; // dummy
+ AgMLStructure<pipv_t,pipv_info> PIPV("pipv");
+pipv_t &pipv = PIPV;
+     
+          // Selectors for pipv
+isEqual<pipv_t, float> __pipv_version__( __pipv, &__pipv->version );
+isEqual<pipv_t, int> __pipv_config__( __pipv, &__pipv->config );
+isEqual<pipv_t, int> __pipv__index__( __pipv, &__pipv->_index );
+     
+          
+	void              *pipv_info::address   = &pipv;
+	AgMLStructureBase   *pipv_info::structure = &PIPV;
+     
+          pipg_t *__pipg = new pipg_t; // dummy
+ AgMLStructure<pipg_t,pipg_info> PIPG("pipg");
+pipg_t &pipg = PIPG;
+     
+          // Selectors for pipg
+isEqual<pipg_t, float> __pipg_version__( __pipg, &__pipg->version );
+isEqual<pipg_t, float> __pipg_zoffset__( __pipg, &__pipg->zoffset );
+isEqual<pipg_t, float> __pipg_yoffset__( __pipg, &__pipg->yoffset );
+isEqual<pipg_t, float> __pipg_xoffset__( __pipg, &__pipg->xoffset );
+isEqual<pipg_t, float> __pipg_zoffber__( __pipg, &__pipg->zoffber );
+isEqual<pipg_t, float> __pipg_vacdens__( __pipg, &__pipg->vacdens );
+isEqual<pipg_t, int> __pipg__index__( __pipg, &__pipg->_index );
+     
+          
+	void              *pipg_info::address   = &pipg;
+	AgMLStructureBase   *pipg_info::structure = &PIPG;
+     
+       PipeGeo2::PipeGeo2()     
+         : AgModule("PipeGeo2","Complete Beam pipe in y2013 and beyond. Using five separated sections. Middle section Al-Be-Al")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PIPE::mInstance = 0;     
+          AgBlock *PIPE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PIPE();        
+                   return mInstance;        
+          }     
+          void PIPE::Block( AgCreate create )     
+          {         
+                ///@addtogroup PIPE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PIPE");              
+                            attr.par("seen")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=10;              
+                            shape.Z(0)=-174.75*inch;              
+                            shape.Z(1)=-79.71*inch;              
+                            shape.Z(2)=-64.71*inch;              
+                            shape.Z(3)=-55.71*inch;              
+                            shape.Z(4)=-55.71*inch;              
+                            shape.Z(5)=55.71*inch;              
+                            shape.Z(6)=55.71*inch;              
+                            shape.Z(7)=64.71*inch;              
+                            shape.Z(8)=79.71*inch;              
+                            shape.Z(9)=159.000*inch;              
+                            shape.Rmin(0)=0;              
+                            shape.Rmin(1)=0;              
+                            shape.Rmin(2)=0;              
+                            shape.Rmin(3)=0;              
+                            shape.Rmin(4)=0;              
+                            shape.Rmin(5)=0;              
+                            shape.Rmin(6)=0;              
+                            shape.Rmin(7)=0;              
+                            shape.Rmin(8)=0;              
+                            shape.Rmin(9)=0;              
+                            shape.Rmax(0)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(1)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(2)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(3)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(4)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(5)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(6)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(7)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(8)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(9)=1.5*inch+0.8125*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=10               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PIPE;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("PALH");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALH              
+                            Create("PALH");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALH");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALH to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALH"), place );              
+                      } // end placement of PALH           
+                      _create = AgCreate("PALQ");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALQ              
+                            Create("PALQ");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALQ");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALQ to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALQ"), place );              
+                      } // end placement of PALQ           
+                      _create = AgCreate("PALR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALR              
+                            Create("PALR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALR");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALR to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALR"), place );              
+                      } // end placement of PALR           
+                      _create = AgCreate("PALS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALS              
+                            Create("PALS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALS");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALS to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALS"), place );              
+                      } // end placement of PALS           
+                      _create = AgCreate("PBES");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PBES              
+                            Create("PBES");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PBES");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PBES to mother PIPE              
+                            place.TranslateZ(pipg.zoffber);              
+                            /// Translate z = pipg.zoffber              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PBES"), place );              
+                      } // end placement of PBES           
+                      _create = AgCreate("PALI");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALI              
+                            Create("PALI");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALI");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALI to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALI"), place );              
+                      } // end placement of PALI           
+                      _create = AgCreate("PALJ");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALJ              
+                            Create("PALJ");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALJ");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALJ to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALJ"), place );              
+                      } // end placement of PALJ           
+                      _create = AgCreate("PALK");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create PALK              
+                            Create("PALK");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("PALK");              
+                            place.SetMother("PIPE");              
+                            /// Add daughter volume PALK to mother PIPE              
+                            place.par("only")=AgPosition::kOnly;              
+                            /// Overlap: agposition::konly              
+                            _stacker -> Position( AgBlock::Find("PALK"), place );              
+                      } // end placement of PALK           
+                      END_OF_PIPE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PIPE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALH::mInstance = 0;     
+          AgBlock *PALH::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALH();        
+                   return mInstance;        
+          }     
+          void PALH::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALH_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Material vacuum dens=(_material.par("dens")) *pipg_vacdens absl=(_material.par("absl")) /pipg_vacdens radl=(_material.par("radl")) /pipg_vacdens            
+                      { AgMaterial &mat = AgMaterial::Get("Vacuum");              
+                            mat.par("dens")=(_material.par("dens"))*pipg.vacdens;              
+                            mat.par("absl")=(_material.par("absl"))/pipg.vacdens;              
+                            mat.par("radl")=(_material.par("radl"))/pipg.vacdens;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALH");              
+                            attr.par("seen")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-174.75*inch;              
+                            shape.Z(1)=-79.71*inch;              
+                            shape.Z(2)=-64.71*inch;              
+                            shape.Z(3)=64.71*inch;              
+                            shape.Z(4)=79.71*inch;              
+                            shape.Z(5)=159.000*inch;              
+                            shape.Rmin(0)=0;              
+                            shape.Rmin(1)=0;              
+                            shape.Rmin(2)=0;              
+                            shape.Rmin(3)=0;              
+                            shape.Rmin(4)=0;              
+                            shape.Rmin(5)=0;              
+                            shape.Rmax(0)=1.5*inch;              
+                            shape.Rmax(1)=1.5*inch;              
+                            shape.Rmax(2)=0.7875*inch;              
+                            shape.Rmax(3)=0.7875*inch;              
+                            shape.Rmax(4)=1.5*inch;              
+                            shape.Rmax(5)=1.5*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALH;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALH:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALH     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALQ::mInstance = 0;     
+          AgBlock *PALQ::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALQ();        
+                   return mInstance;        
+          }     
+          void PALQ::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALQ_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALQ");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-174.75*inch;              
+                            shape.Z(1)=-173.99*inch;              
+                            shape.Z(2)=-173.99*inch;              
+                            shape.Z(3)=-159.76*inch;              
+                            shape.Z(4)=-159.76*inch;              
+                            shape.Z(5)=-159.00*inch;              
+                            shape.Rmin(0)=1.5*inch;              
+                            shape.Rmin(1)=1.5*inch;              
+                            shape.Rmin(2)=1.5*inch;              
+                            shape.Rmin(3)=1.5*inch;              
+                            shape.Rmin(4)=1.5*inch;              
+                            shape.Rmin(5)=1.5*inch;              
+                            shape.Rmax(0)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(1)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(2)=1.5*inch+0.049*inch;              
+                            shape.Rmax(3)=1.5*inch+0.049*inch;              
+                            shape.Rmax(4)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(5)=1.5*inch+0.8125*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALQ;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALQ:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALQ     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALR::mInstance = 0;     
+          AgBlock *PALR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALR();        
+                   return mInstance;        
+          }     
+          void PALR::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALR");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=8;              
+                            shape.Z(0)=-159.000*inch;              
+                            shape.Z(1)=-158.241*inch;              
+                            shape.Z(2)=-158.241*inch;              
+                            shape.Z(3)=-79.71*inch;              
+                            shape.Z(4)=-64.71*inch;              
+                            shape.Z(5)=-56.21*inch;              
+                            shape.Z(6)=-56.21*inch;              
+                            shape.Z(7)=-55.71*inch;              
+                            shape.Rmin(0)=1.5*inch;              
+                            shape.Rmin(1)=1.5*inch;              
+                            shape.Rmin(2)=1.5*inch;              
+                            shape.Rmin(3)=1.5*inch;              
+                            shape.Rmin(4)=0.7875*inch;              
+                            shape.Rmin(5)=0.7875*inch;              
+                            shape.Rmin(6)=0.7875*inch;              
+                            shape.Rmin(7)=0.7875*inch;              
+                            shape.Rmax(0)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(1)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(2)=1.5*inch+0.049*inch;              
+                            shape.Rmax(3)=1.5*inch+0.049*inch;              
+                            shape.Rmax(4)=0.7875*inch+0.049*inch;              
+                            shape.Rmax(5)=0.7875*inch+0.049*inch;              
+                            shape.Rmax(6)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(7)=0.7875*inch+0.5775*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=8               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALR;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALR     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALS::mInstance = 0;     
+          AgBlock *PALS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALS();        
+                   return mInstance;        
+          }     
+          void PALS::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=-55.71*inch;              
+                            shape.Z(1)=-55.21*inch;              
+                            shape.Z(2)=-55.21*inch;              
+                            shape.Z(3)=-43.71*inch;              
+                            shape.Z(4)=-43.71*inch;              
+                            shape.Z(5)=-15.75*inch;              
+                            shape.Rmin(0)=0.7875*inch;              
+                            shape.Rmin(1)=0.7875*inch;              
+                            shape.Rmin(2)=0.7875*inch;              
+                            shape.Rmin(3)=0.7875*inch;              
+                            shape.Rmin(4)=0.7875*inch;              
+                            shape.Rmin(5)=0.7875*inch;              
+                            shape.Rmax(0)=0.7875*inch+0.5875*inch;              
+                            shape.Rmax(1)=0.7875*inch+0.5875*inch;              
+                            shape.Rmax(2)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(3)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(4)=0.7875*inch+0.055*inch;              
+                            shape.Rmax(5)=0.7875*inch+0.055*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALS;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PBES::mInstance = 0;     
+          AgBlock *PBES::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PBES();        
+                   return mInstance;        
+          }     
+          void PBES::Block( AgCreate create )     
+          {         
+                ///@addtogroup PBES_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Berillium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Berillium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PBES");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0.7875*inch;              
+                            shape.par("rmax")=0.7875*inch+0.030*inch;              
+                            shape.par("dz")=47.25*inch/2;              
+                            /// Shape Tube rmin=0.7875*inch rmax=0.7875*inch+0.030*inch dz=47.25*inch/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PBES;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PBES:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PBES     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALI::mInstance = 0;     
+          AgBlock *PALI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALI();        
+                   return mInstance;        
+          }     
+          void PALI::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALI");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=31.5*inch;              
+                            shape.Z(1)=43.72*inch;              
+                            shape.Z(2)=43.72*inch;              
+                            shape.Z(3)=55.21*inch;              
+                            shape.Z(4)=55.21*inch;              
+                            shape.Z(5)=55.71*inch;              
+                            shape.Rmin(0)=0.7875*inch;              
+                            shape.Rmin(1)=0.7875*inch;              
+                            shape.Rmin(2)=0.7875*inch;              
+                            shape.Rmin(3)=0.7875*inch;              
+                            shape.Rmin(4)=0.7875*inch;              
+                            shape.Rmin(5)=0.7875*inch;              
+                            shape.Rmax(0)=0.7875*inch+0.055*inch;              
+                            shape.Rmax(1)=0.7875*inch+0.055*inch;              
+                            shape.Rmax(2)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(3)=0.7875*inch+0.065*inch;              
+                            shape.Rmax(4)=0.7875*inch+0.5875*inch;              
+                            shape.Rmax(5)=0.7875*inch+0.5875*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALI;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALJ::mInstance = 0;     
+          AgBlock *PALJ::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALJ();        
+                   return mInstance;        
+          }     
+          void PALJ::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALJ_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALJ");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=8;              
+                            shape.Z(0)=55.71*inch;              
+                            shape.Z(1)=56.21*inch;              
+                            shape.Z(2)=56.21*inch;              
+                            shape.Z(3)=64.71*inch;              
+                            shape.Z(4)=79.71*inch;              
+                            shape.Z(5)=109.477*inch;              
+                            shape.Z(6)=109.477*inch;              
+                            shape.Z(7)=110.237*inch;              
+                            shape.Rmin(0)=0.7875*inch;              
+                            shape.Rmin(1)=0.7875*inch;              
+                            shape.Rmin(2)=0.7875*inch;              
+                            shape.Rmin(3)=0.7875*inch;              
+                            shape.Rmin(4)=1.5*inch;              
+                            shape.Rmin(5)=1.5*inch;              
+                            shape.Rmin(6)=1.5*inch;              
+                            shape.Rmin(7)=1.5*inch;              
+                            shape.Rmax(0)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(1)=0.7875*inch+0.5775*inch;              
+                            shape.Rmax(2)=0.7875*inch+0.049*inch;              
+                            shape.Rmax(3)=0.7875*inch+0.049*inch;              
+                            shape.Rmax(4)=1.5*inch+0.049*inch;              
+                            shape.Rmax(5)=1.5*inch+0.049*inch;              
+                            shape.Rmax(6)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(7)=1.5*inch+0.8125*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=8               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALJ;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALJ:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALJ     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *PALK::mInstance = 0;     
+          AgBlock *PALK::Instance(){        
+                   if ( mInstance==0 ) mInstance = new PALK();        
+                   return mInstance;        
+          }     
+          void PALK::Block( AgCreate create )     
+          {         
+                ///@addtogroup PALK_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("PALK");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Pcon");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=0;              
+                            shape.par("dphi")=360;              
+                            shape.par("nz")=6;              
+                            shape.Z(0)=110.237*inch;              
+                            shape.Z(1)=110.997*inch;              
+                            shape.Z(2)=110.997*inch;              
+                            shape.Z(3)=158.241*inch;              
+                            shape.Z(4)=158.241*inch;              
+                            shape.Z(5)=159.000*inch;              
+                            shape.Rmin(0)=1.5*inch;              
+                            shape.Rmin(1)=1.5*inch;              
+                            shape.Rmin(2)=1.5*inch;              
+                            shape.Rmin(3)=1.5*inch;              
+                            shape.Rmin(4)=1.5*inch;              
+                            shape.Rmin(5)=1.5*inch;              
+                            shape.Rmax(0)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(1)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(2)=1.5*inch+0.049*inch;              
+                            shape.Rmax(3)=1.5*inch+0.049*inch;              
+                            shape.Rmax(4)=1.5*inch+0.8125*inch;              
+                            shape.Rmax(5)=1.5*inch+0.8125*inch;              
+                            /// Shape Pcon phi1=0 dphi=360 nz=6               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_PALK;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_PALK:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block PALK     
+    // ----------------------------------------------------------------------- geoctr
+       void PipeGeo2::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup PipeGeo2_revision        
+             ///@{           
+                   /// Author: Amilkar Quintero           
+             ///@}        
+             ///@addtogroup PipeGeo2_revision        
+             ///@{           
+                   /// Created: 11/Jan/2013           
+             ///@}        
+             AddBlock("PIPE", PIPE::Instance());        
+             AddBlock("PALH", PALH::Instance());        
+             AddBlock("PALQ", PALQ::Instance());        
+             AddBlock("PALR", PALR::Instance());        
+             AddBlock("PALS", PALS::Instance());        
+             AddBlock("PBES", PBES::Instance());        
+             AddBlock("PALI", PALI::Instance());        
+             AddBlock("PALJ", PALJ::Instance());        
+             AddBlock("PALK", PALK::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipv
+++pipv._index;
+pipv.version = 3.0;
+// pipv_docum.version = "3.0 version of the beam pipe";
+pipv.config = 3;
+// pipv_docum.config = "Configuration is three";
+PIPV.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill pipg
+++pipg._index;
+pipg.version = 3.0;
+// pipg_docum.version = "Default position and geometry";
+pipg.vacdens = 1.0e-5;
+// pipg_docum.vacdens = "Vaccuum density... needs to be verified";
+pipg.xoffset = 0.0;
+// pipg_docum.xoffset = "Default x position ";
+pipg.yoffset = 0.0;
+// pipg_docum.yoffset = "Default y position ";
+pipg.zoffset = 0.0;
+// pipg_docum.zoffset = "Default z position ";
+pipg.zoffber = 7.875*inch;
+// pipg_docum.zoffber = "Offset of beryllium as per drawing";
+PIPG.fill();
+        
+             _create = AgCreate("PIPE");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create PIPE           
+                   Create("PIPE");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("PIPE");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume PIPE to mother CAVE           
+                   place.TranslateX(pipg.xoffset);           
+                   /// Translate x = pipg.xoffset           
+                   place.TranslateY(pipg.yoffset);           
+                   /// Translate y = pipg.yoffset           
+                   place.TranslateZ(pipg.zoffset);           
+                   /// Translate z = pipg.zoffset           
+                   place.par("only")=AgPosition::kMany;           
+                   /// Overlap: agposition::kmany           
+                   _stacker -> Position( AgBlock::Find("PIPE"), place );           
+             } // end placement of PIPE        
+       }; // PipeGeo2     
+ }; // namespace PipeGeo2  
+ 

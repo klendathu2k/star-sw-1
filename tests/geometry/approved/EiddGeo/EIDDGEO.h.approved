@@ -1,0 +1,722 @@
+#ifndef __EIDDGEO__ 
+#define __EIDDGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace EIDDGEO // $NMSPC 
+{ 
+   struct eidv_t {
+float version;
+float eidconfig;
+int _index;
+};
+ 
+   struct _eidv_docum_ {
+string version;
+string eidconfig;
+string _index;
+};
+ 
+    struct _eidv_types_ {
+  typedef float version;
+  typedef float eidconfig;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct eidv_info {
+typedef eidv_t Type;
+static const char *name(){ return "eidv_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct eidv_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eidconfig {
+  static const char *name() { return  "eidconfig"; }
+  static size_t Offset(){ return offsetof( struct eidv_t, eidconfig ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct eidv_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidv_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct eidg_t {
+float version;
+float ettz;
+float etrvz;
+float etfvz;
+float eclvz;
+float rmin;
+float rmax;
+float dphi;
+float ettthick;
+float tfvthick;
+float tofthick;
+float tbxthick;
+float tpbthick;
+float tglthick;
+float tgpthick;
+float elvthick;
+float eclthick;
+float eaathick;
+float eabthick;
+float scnthick;
+float trvthick;
+float trdthick;
+float trathick;
+float tabthick;
+float tbdthick;
+int _index;
+};
+ 
+   struct _eidg_docum_ {
+string version;
+string ettz;
+string etrvz;
+string etfvz;
+string eclvz;
+string rmin;
+string rmax;
+string dphi;
+string ettthick;
+string tfvthick;
+string tofthick;
+string tbxthick;
+string tpbthick;
+string tglthick;
+string tgpthick;
+string elvthick;
+string eclthick;
+string eaathick;
+string eabthick;
+string scnthick;
+string trvthick;
+string trdthick;
+string trathick;
+string tabthick;
+string tbdthick;
+string _index;
+};
+ 
+    struct _eidg_types_ {
+  typedef float version;
+  typedef float ettz;
+  typedef float etrvz;
+  typedef float etfvz;
+  typedef float eclvz;
+  typedef float rmin;
+  typedef float rmax;
+  typedef float dphi;
+  typedef float ettthick;
+  typedef float tfvthick;
+  typedef float tofthick;
+  typedef float tbxthick;
+  typedef float tpbthick;
+  typedef float tglthick;
+  typedef float tgpthick;
+  typedef float elvthick;
+  typedef float eclthick;
+  typedef float eaathick;
+  typedef float eabthick;
+  typedef float scnthick;
+  typedef float trvthick;
+  typedef float trdthick;
+  typedef float trathick;
+  typedef float tabthick;
+  typedef float tbdthick;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct eidg_info {
+typedef eidg_t Type;
+static const char *name(){ return "eidg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ettz {
+  static const char *name() { return  "ettz"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, ettz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct etrvz {
+  static const char *name() { return  "etrvz"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, etrvz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct etfvz {
+  static const char *name() { return  "etfvz"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, etfvz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eclvz {
+  static const char *name() { return  "eclvz"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, eclvz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dphi {
+  static const char *name() { return  "dphi"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, dphi ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ettthick {
+  static const char *name() { return  "ettthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, ettthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tfvthick {
+  static const char *name() { return  "tfvthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tfvthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tofthick {
+  static const char *name() { return  "tofthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tofthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tbxthick {
+  static const char *name() { return  "tbxthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tbxthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tpbthick {
+  static const char *name() { return  "tpbthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tpbthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tglthick {
+  static const char *name() { return  "tglthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tglthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tgpthick {
+  static const char *name() { return  "tgpthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tgpthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct elvthick {
+  static const char *name() { return  "elvthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, elvthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eclthick {
+  static const char *name() { return  "eclthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, eclthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eaathick {
+  static const char *name() { return  "eaathick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, eaathick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct eabthick {
+  static const char *name() { return  "eabthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, eabthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scnthick {
+  static const char *name() { return  "scnthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, scnthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trvthick {
+  static const char *name() { return  "trvthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, trvthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trdthick {
+  static const char *name() { return  "trdthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, trdthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct trathick {
+  static const char *name() { return  "trathick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, trathick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tabthick {
+  static const char *name() { return  "tabthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tabthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct tbdthick {
+  static const char *name() { return  "tbdthick"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, tbdthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct eidg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)eidg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- ETTV -- 
+   ///@defgroup ETTV_doc 
+   ///@class ETTV 
+   ///@brief is the whole ETTIE detector volume [TGeoVolume] 
+   class ETTV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ETTV() : AgBlock("ETTV","is the whole ETTIE detector volume [TGeoVolume]"){ 
+      }; 
+      ~ETTV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ETRV -- 
+   ///@defgroup ETRV_doc 
+   ///@class ETRV 
+   ///@brief is the endcap TRD detector volume (3 layers) [TGeoVolume] 
+   class ETRV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ETRV() : AgBlock("ETRV","is the endcap TRD detector volume (3 layers) [TGeoVolume]"){ 
+      }; 
+      ~ETRV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ECLV -- 
+   ///@defgroup ECLV_doc 
+   ///@class ECLV 
+   ///@brief is the endcap convertor-scintillator volume  [TGeoVolume] 
+   class ECLV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ECLV() : AgBlock("ECLV","is the endcap convertor-scintillator volume  [TGeoVolume]"){ 
+      }; 
+      ~ECLV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ETFV -- 
+   ///@defgroup ETFV_doc 
+   ///@class ETFV 
+   ///@brief is the endcap TOF volume  [TGeoVolume] 
+   class ETFV : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ETFV() : AgBlock("ETFV","is the endcap TOF volume  [TGeoVolume]"){ 
+      }; 
+      ~ETFV(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ETOF -- 
+   ///@defgroup ETOF_doc 
+   ///@class ETOF 
+   ///@brief is the ETOF supermodule [TGeoVolume] 
+   class ETOF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ETOF() : AgBlock("ETOF","is the ETOF supermodule [TGeoVolume]"){ 
+      }; 
+      ~ETOF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TBOX -- 
+   ///@defgroup TBOX_doc 
+   ///@class TBOX 
+   ///@brief is the ETOF module gas box [TGeoVolume] 
+   class TBOX : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TBOX() : AgBlock("TBOX","is the ETOF module gas box [TGeoVolume]"){ 
+      }; 
+      ~TBOX(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TGAS -- 
+   ///@defgroup TGAS_doc 
+   ///@class TGAS 
+   ///@brief is the ETOF module gas volume [TGeoVolume] 
+   class TGAS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TGAS() : AgBlock("TGAS","is the ETOF module gas volume [TGeoVolume]"){ 
+      }; 
+      ~TGAS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TPCB -- 
+   ///@defgroup TPCB_doc 
+   ///@class TPCB 
+   ///@brief is the MRPC readout Board [TGeoVolume] 
+   class TPCB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TPCB() : AgBlock("TPCB","is the MRPC readout Board [TGeoVolume]"){ 
+      }; 
+      ~TPCB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TGLA -- 
+   ///@defgroup TGLA_doc 
+   ///@class TGLA 
+   ///@brief is the MRPC glass plate [TGeoVolume] 
+   class TGLA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TGLA() : AgBlock("TGLA","is the MRPC glass plate [TGeoVolume]"){ 
+      }; 
+      ~TGLA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TGAP -- 
+   ///@defgroup TGAP_doc 
+   ///@class TGAP 
+   ///@brief is the MRPC gas gap (sensitive) [TGeoVolume] 
+   class TGAP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TGAP() : AgBlock("TGAP","is the MRPC gas gap (sensitive) [TGeoVolume]"){ 
+      }; 
+      ~TGAP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TECL -- 
+   ///@defgroup TECL_doc 
+   ///@class TECL 
+   ///@brief is the TECL supermodule [TGeoVolume] 
+   class TECL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TECL() : AgBlock("TECL","is the TECL supermodule [TGeoVolume]"){ 
+      }; 
+      ~TECL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TEAA -- 
+   ///@defgroup TEAA_doc 
+   ///@class TEAA 
+   ///@brief is the 1st lead convertor [TGeoVolume] 
+   class TEAA : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TEAA() : AgBlock("TEAA","is the 1st lead convertor [TGeoVolume]"){ 
+      }; 
+      ~TEAA(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TEAB -- 
+   ///@defgroup TEAB_doc 
+   ///@class TEAB 
+   ///@brief is the 2nd lead convertor [TGeoVolume] 
+   class TEAB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TEAB() : AgBlock("TEAB","is the 2nd lead convertor [TGeoVolume]"){ 
+      }; 
+      ~TEAB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- SCIN -- 
+   ///@defgroup SCIN_doc 
+   ///@class SCIN 
+   ///@brief is the plastic scintillator (sensitive) [TGeoVolume] 
+   class SCIN : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      SCIN() : AgBlock("SCIN","is the plastic scintillator (sensitive) [TGeoVolume]"){ 
+      }; 
+      ~SCIN(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- ETRD -- 
+   ///@defgroup ETRD_doc 
+   ///@class ETRD 
+   ///@brief is the ETRD supermodule [TGeoVolume] 
+   class ETRD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      ETRD() : AgBlock("ETRD","is the ETRD supermodule [TGeoVolume]"){ 
+      }; 
+      ~ETRD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TRAD -- 
+   ///@defgroup TRAD_doc 
+   ///@class TRAD 
+   ///@brief is the TR radiator [TGeoVolume] 
+   class TRAD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TRAD() : AgBlock("TRAD","is the TR radiator [TGeoVolume]"){ 
+      }; 
+      ~TRAD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TABS -- 
+   ///@defgroup TABS_doc 
+   ///@class TABS 
+   ///@brief is the TRD Xe absorber (sensitive) [TGeoVolume] 
+   class TABS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TABS() : AgBlock("TABS","is the TRD Xe absorber (sensitive) [TGeoVolume]"){ 
+      }; 
+      ~TABS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TBOD -- 
+   ///@defgroup TBOD_doc 
+   ///@class TBOD 
+   ///@brief is the TRD readout mother board [TGeoVolume] 
+   class TBOD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TBOD() : AgBlock("TBOD","is the TRD readout mother board [TGeoVolume]"){ 
+      }; 
+      ~TBOD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class EIDDGEO 
+   /// \brief  is the ETTIE (Endcap Trd-Tof for Iding Electron) Detector of STAR  
+   class EIDDGEO : public AgModule 
+   { 
+      public: 
+      EIDDGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~EIDDGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace EIDDGEO 
+#endif // __EIDDGEO__ 

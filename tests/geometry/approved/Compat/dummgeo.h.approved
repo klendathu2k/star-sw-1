@@ -1,0 +1,35 @@
+#ifndef __dummgeo__ 
+#define __dummgeo__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace DUMMGEO // $NMSPC 
+{ 
+   /// \class dummgeo 
+   /// \brief Dummy dummy geometry 
+   class dummgeo : public AgModule 
+   { 
+      public: 
+      dummgeo(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~dummgeo(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace dummgeo 
+#endif // __dummgeo__ 

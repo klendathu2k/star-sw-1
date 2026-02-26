@@ -1,0 +1,761 @@
+#ifndef __HCALGEO1__ 
+#define __HCALGEO1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace HCALGEO1 // $NMSPC 
+{ 
+   struct hgeo_t {
+float version;
+float p1;
+float p2;
+float p3;
+float p4;
+float p12;
+float p34;
+float depth;
+float nx;
+float ny;
+float dx;
+float dy;
+float clearance;
+float nlayer;
+float dzlay;
+float dxabs;
+float dyabs;
+float dzabs;
+float dxsci;
+float dysci;
+float dzsci;
+float dzrsp;
+float dyspc;
+float dxwls;
+float dywls;
+int _index;
+};
+ 
+   struct _hgeo_docum_ {
+string version;
+string p1;
+string p2;
+string p3;
+string p4;
+string p12;
+string p34;
+string depth;
+string nx;
+string ny;
+string dx;
+string dy;
+string clearance;
+string nlayer;
+string dzlay;
+string dxabs;
+string dyabs;
+string dzabs;
+string dxsci;
+string dysci;
+string dzsci;
+string dzrsp;
+string dyspc;
+string dxwls;
+string dywls;
+string _index;
+};
+ 
+    struct _hgeo_types_ {
+  typedef float version;
+  typedef float p1;
+  typedef float p2;
+  typedef float p3;
+  typedef float p4;
+  typedef float p12;
+  typedef float p34;
+  typedef float depth;
+  typedef float nx;
+  typedef float ny;
+  typedef float dx;
+  typedef float dy;
+  typedef float clearance;
+  typedef float nlayer;
+  typedef float dzlay;
+  typedef float dxabs;
+  typedef float dyabs;
+  typedef float dzabs;
+  typedef float dxsci;
+  typedef float dysci;
+  typedef float dzsci;
+  typedef float dzrsp;
+  typedef float dyspc;
+  typedef float dxwls;
+  typedef float dywls;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct hgeo_info {
+typedef hgeo_t Type;
+static const char *name(){ return "hgeo_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p1 {
+  static const char *name() { return  "p1"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p1 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p2 {
+  static const char *name() { return  "p2"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p2 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p3 {
+  static const char *name() { return  "p3"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p3 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p4 {
+  static const char *name() { return  "p4"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p4 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p12 {
+  static const char *name() { return  "p12"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p12 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct p34 {
+  static const char *name() { return  "p34"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, p34 ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct depth {
+  static const char *name() { return  "depth"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, depth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nx {
+  static const char *name() { return  "nx"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, nx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ny {
+  static const char *name() { return  "ny"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, ny ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dx {
+  static const char *name() { return  "dx"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dx ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dy {
+  static const char *name() { return  "dy"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dy ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct clearance {
+  static const char *name() { return  "clearance"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, clearance ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct nlayer {
+  static const char *name() { return  "nlayer"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, nlayer ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzlay {
+  static const char *name() { return  "dzlay"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dzlay ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dxabs {
+  static const char *name() { return  "dxabs"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dxabs ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dyabs {
+  static const char *name() { return  "dyabs"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dyabs ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzabs {
+  static const char *name() { return  "dzabs"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dzabs ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dxsci {
+  static const char *name() { return  "dxsci"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dxsci ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dysci {
+  static const char *name() { return  "dysci"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dysci ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzsci {
+  static const char *name() { return  "dzsci"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dzsci ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dzrsp {
+  static const char *name() { return  "dzrsp"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dzrsp ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dyspc {
+  static const char *name() { return  "dyspc"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dyspc ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dxwls {
+  static const char *name() { return  "dxwls"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dxwls ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dywls {
+  static const char *name() { return  "dywls"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, dywls ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct hgeo_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct hoff_t {
+float ns;
+float xoffset;
+float yoffset;
+float zoffset;
+float angle;
+int _index;
+};
+ 
+   struct _hoff_docum_ {
+string ns;
+string xoffset;
+string yoffset;
+string zoffset;
+string angle;
+string _index;
+};
+ 
+    struct _hoff_types_ {
+  typedef float ns;
+  typedef float xoffset;
+  typedef float yoffset;
+  typedef float zoffset;
+  typedef float angle;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct hoff_info {
+typedef hoff_t Type;
+static const char *name(){ return "hoff_t"; }
+struct ns {
+  static const char *name() { return  "ns"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, ns ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct xoffset {
+  static const char *name() { return  "xoffset"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, xoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct yoffset {
+  static const char *name() { return  "yoffset"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, yoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct zoffset {
+  static const char *name() { return  "zoffset"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, zoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct angle {
+  static const char *name() { return  "angle"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, angle ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct hoff_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hoff_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct hcut_t {
+float cutgam;
+float cutele;
+float cutneu;
+float cuthad;
+float cutmuo;
+float dcute;
+float dcutm;
+float bcute;
+float bcutm;
+int _index;
+};
+ 
+   struct _hcut_docum_ {
+string cutgam;
+string cutele;
+string cutneu;
+string cuthad;
+string cutmuo;
+string dcute;
+string dcutm;
+string bcute;
+string bcutm;
+string _index;
+};
+ 
+    struct _hcut_types_ {
+  typedef float cutgam;
+  typedef float cutele;
+  typedef float cutneu;
+  typedef float cuthad;
+  typedef float cutmuo;
+  typedef float dcute;
+  typedef float dcutm;
+  typedef float bcute;
+  typedef float bcutm;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct hcut_info {
+typedef hcut_t Type;
+static const char *name(){ return "hcut_t"; }
+struct cutgam {
+  static const char *name() { return  "cutgam"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, cutgam ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutele {
+  static const char *name() { return  "cutele"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, cutele ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutneu {
+  static const char *name() { return  "cutneu"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, cutneu ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cuthad {
+  static const char *name() { return  "cuthad"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, cuthad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutmuo {
+  static const char *name() { return  "cutmuo"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, cutmuo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcute {
+  static const char *name() { return  "dcute"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, dcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcutm {
+  static const char *name() { return  "dcutm"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, dcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcute {
+  static const char *name() { return  "bcute"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, bcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcutm {
+  static const char *name() { return  "bcutm"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, bcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct hcut_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)hcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- HMOD -- 
+   ///@defgroup HMOD_doc 
+   ///@class HMOD 
+   ///@brief is a stack of FCS hadron module [TGeoVolume] 
+   class HMOD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HMOD() : AgBlock("HMOD","is a stack of FCS hadron module [TGeoVolume]"){ 
+      }; 
+      ~HMOD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HTOW -- 
+   ///@defgroup HTOW_doc 
+   ///@class HTOW 
+   ///@brief is a FCS HCal tower [TGeoVolume] 
+   class HTOW : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HTOW() : AgBlock("HTOW","is a FCS HCal tower [TGeoVolume]"){ 
+      }; 
+      ~HTOW(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HRSP -- 
+   ///@defgroup HRSP_doc 
+   ///@class HRSP 
+   ///@brief is a FCS HCal tower Rear Steel Plate [TGeoVolume] 
+   class HRSP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HRSP() : AgBlock("HRSP","is a FCS HCal tower Rear Steel Plate [TGeoVolume]"){ 
+      }; 
+      ~HRSP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HSCI -- 
+   ///@defgroup HSCI_doc 
+   ///@class HSCI 
+   ///@brief is a FCS HCal tower Scintillator Plate [TGeoVolume] 
+   class HSCI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HSCI() : AgBlock("HSCI","is a FCS HCal tower Scintillator Plate [TGeoVolume]"){ 
+      }; 
+      ~HSCI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HABS -- 
+   ///@defgroup HABS_doc 
+   ///@class HABS 
+   ///@brief is a FCS HCal tower iron absorber plate [TGeoVolume] 
+   class HABS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HABS() : AgBlock("HABS","is a FCS HCal tower iron absorber plate [TGeoVolume]"){ 
+      }; 
+      ~HABS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HGAP -- 
+   ///@defgroup HGAP_doc 
+   ///@class HGAP 
+   ///@brief is a FCS HCal tower gap between scinti and absorber [TGeoVolume] 
+   class HGAP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HGAP() : AgBlock("HGAP","is a FCS HCal tower gap between scinti and absorber [TGeoVolume]"){ 
+      }; 
+      ~HGAP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HWSP -- 
+   ///@defgroup HWSP_doc 
+   ///@class HWSP 
+   ///@brief is a FCS HCal tower WLS Plate [TGeoVolume] 
+   class HWSP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HWSP() : AgBlock("HWSP","is a FCS HCal tower WLS Plate [TGeoVolume]"){ 
+      }; 
+      ~HWSP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- HSPC -- 
+   ///@defgroup HSPC_doc 
+   ///@class HSPC 
+   ///@brief is a FCS HCal tower Steel Spacer [TGeoVolume] 
+   class HSPC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HSPC() : AgBlock("HSPC","is a FCS HCal tower Steel Spacer [TGeoVolume]"){ 
+      }; 
+      ~HSPC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class HCALGEO1 
+   /// \brief  is the Forward Calorimeter System HCal GEOmetry  
+   class HCALGEO1 : public AgModule 
+   { 
+      public: 
+      HCALGEO1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~HCALGEO1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace HCALGEO1 
+#endif // __HCALGEO1__ 

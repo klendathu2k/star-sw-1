@@ -1,0 +1,748 @@
+#ifndef __FTROGEO__ 
+#define __FTROGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace FTROGEO // $NMSPC 
+{ 
+   struct ftrg_t {
+float version;
+float n;
+float ftpcz;
+float ftpclen;
+float length;
+float angoffset;
+float rin;
+float rout;
+float inrin;
+float inrout;
+float inrthk;
+float ofrin;
+float ofrout;
+float ofrthk;
+float ofz;
+float ofnholes;
+float ofholerad;
+float ofholer;
+float strutlen;
+float struthgt;
+float strutwth;
+float strutthk;
+float strutholer;
+float strutnholes;
+float ftpowth;
+float ftpothk;
+float ftpor;
+float ftpiwth;
+float ftpithk;
+float ftpir;
+float shellthk;
+float rimthk;
+float rimwth;
+float plankwth;
+float plankthk;
+int _index;
+};
+ 
+   struct _ftrg_docum_ {
+string version;
+string n;
+string ftpcz;
+string ftpclen;
+string length;
+string angoffset;
+string rin;
+string rout;
+string inrin;
+string inrout;
+string inrthk;
+string ofrin;
+string ofrout;
+string ofrthk;
+string ofz;
+string ofnholes;
+string ofholerad;
+string ofholer;
+string strutlen;
+string struthgt;
+string strutwth;
+string strutthk;
+string strutholer;
+string strutnholes;
+string ftpowth;
+string ftpothk;
+string ftpor;
+string ftpiwth;
+string ftpithk;
+string ftpir;
+string shellthk;
+string rimthk;
+string rimwth;
+string plankwth;
+string plankthk;
+string _index;
+};
+ 
+    struct _ftrg_types_ {
+  typedef float version;
+  typedef float n;
+  typedef float ftpcz;
+  typedef float ftpclen;
+  typedef float length;
+  typedef float angoffset;
+  typedef float rin;
+  typedef float rout;
+  typedef float inrin;
+  typedef float inrout;
+  typedef float inrthk;
+  typedef float ofrin;
+  typedef float ofrout;
+  typedef float ofrthk;
+  typedef float ofz;
+  typedef float ofnholes;
+  typedef float ofholerad;
+  typedef float ofholer;
+  typedef float strutlen;
+  typedef float struthgt;
+  typedef float strutwth;
+  typedef float strutthk;
+  typedef float strutholer;
+  typedef float strutnholes;
+  typedef float ftpowth;
+  typedef float ftpothk;
+  typedef float ftpor;
+  typedef float ftpiwth;
+  typedef float ftpithk;
+  typedef float ftpir;
+  typedef float shellthk;
+  typedef float rimthk;
+  typedef float rimwth;
+  typedef float plankwth;
+  typedef float plankthk;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct ftrg_info {
+typedef ftrg_t Type;
+static const char *name(){ return "ftrg_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct n {
+  static const char *name() { return  "n"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, n ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpcz {
+  static const char *name() { return  "ftpcz"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpcz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpclen {
+  static const char *name() { return  "ftpclen"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpclen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct length {
+  static const char *name() { return  "length"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, length ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct angoffset {
+  static const char *name() { return  "angoffset"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, angoffset ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rin {
+  static const char *name() { return  "rin"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, rin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rout {
+  static const char *name() { return  "rout"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, rout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct inrin {
+  static const char *name() { return  "inrin"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, inrin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct inrout {
+  static const char *name() { return  "inrout"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, inrout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct inrthk {
+  static const char *name() { return  "inrthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, inrthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofrin {
+  static const char *name() { return  "ofrin"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofrin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofrout {
+  static const char *name() { return  "ofrout"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofrout ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofrthk {
+  static const char *name() { return  "ofrthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofrthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofz {
+  static const char *name() { return  "ofz"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofnholes {
+  static const char *name() { return  "ofnholes"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofnholes ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofholerad {
+  static const char *name() { return  "ofholerad"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofholerad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ofholer {
+  static const char *name() { return  "ofholer"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ofholer ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct strutlen {
+  static const char *name() { return  "strutlen"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, strutlen ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct struthgt {
+  static const char *name() { return  "struthgt"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, struthgt ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct strutwth {
+  static const char *name() { return  "strutwth"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, strutwth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct strutthk {
+  static const char *name() { return  "strutthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, strutthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct strutholer {
+  static const char *name() { return  "strutholer"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, strutholer ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct strutnholes {
+  static const char *name() { return  "strutnholes"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, strutnholes ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpowth {
+  static const char *name() { return  "ftpowth"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpowth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpothk {
+  static const char *name() { return  "ftpothk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpothk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpor {
+  static const char *name() { return  "ftpor"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpor ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpiwth {
+  static const char *name() { return  "ftpiwth"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpiwth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpithk {
+  static const char *name() { return  "ftpithk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpithk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct ftpir {
+  static const char *name() { return  "ftpir"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, ftpir ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct shellthk {
+  static const char *name() { return  "shellthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, shellthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rimthk {
+  static const char *name() { return  "rimthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, rimthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rimwth {
+  static const char *name() { return  "rimwth"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, rimwth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct plankwth {
+  static const char *name() { return  "plankwth"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, plankwth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct plankthk {
+  static const char *name() { return  "plankthk"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, plankthk ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct ftrg_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)ftrg_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- FTMO -- 
+   ///@defgroup FTMO_doc 
+   ///@class FTMO 
+   ///@brief is the mother of the single FTPC RO barrel [TGeoVolume] 
+   class FTMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTMO() : AgBlock("FTMO","is the mother of the single FTPC RO barrel [TGeoVolume]"){ 
+      }; 
+      ~FTMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTCM -- 
+   ///@defgroup FTCM_doc 
+   ///@class FTCM 
+   ///@brief is the mother of the core struts and PCBs [TGeoVolume] 
+   class FTCM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTCM() : AgBlock("FTCM","is the mother of the core struts and PCBs [TGeoVolume]"){ 
+      }; 
+      ~FTCM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTCD -- 
+   ///@defgroup FTCD_doc 
+   ///@class FTCD 
+   ///@brief is the division of the FTCM [TGeoVolume] 
+   class FTCD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTCD() : AgBlock("FTCD","is the division of the FTCM [TGeoVolume]"){ 
+      }; 
+      ~FTCD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTOF -- 
+   ///@defgroup FTOF_doc 
+   ///@class FTOF 
+   ///@brief is the outer flange [TGeoVolume] 
+   class FTOF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTOF() : AgBlock("FTOF","is the outer flange [TGeoVolume]"){ 
+      }; 
+      ~FTOF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTIF -- 
+   ///@defgroup FTIF_doc 
+   ///@class FTIF 
+   ///@brief is the inner flange [TGeoVolume] 
+   class FTIF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTIF() : AgBlock("FTIF","is the inner flange [TGeoVolume]"){ 
+      }; 
+      ~FTIF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTRM -- 
+   ///@defgroup FTRM_doc 
+   ///@class FTRM 
+   ///@brief is the rim connected to the inner flange [TGeoVolume] 
+   class FTRM : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTRM() : AgBlock("FTRM","is the rim connected to the inner flange [TGeoVolume]"){ 
+      }; 
+      ~FTRM(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTOH -- 
+   ///@defgroup FTOH_doc 
+   ///@class FTOH 
+   ///@brief is a hole the outer flange [TGeoVolume] 
+   class FTOH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTOH() : AgBlock("FTOH","is a hole the outer flange [TGeoVolume]"){ 
+      }; 
+      ~FTOH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSMO -- 
+   ///@defgroup FSMO_doc 
+   ///@class FSMO 
+   ///@brief is the mother of the strut [TGeoVolume] 
+   class FSMO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSMO() : AgBlock("FSMO","is the mother of the strut [TGeoVolume]"){ 
+      }; 
+      ~FSMO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTPL -- 
+   ///@defgroup FTPL_doc 
+   ///@class FTPL 
+   ///@brief is the plank covering the strut [TGeoVolume] 
+   class FTPL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTPL() : AgBlock("FTPL","is the plank covering the strut [TGeoVolume]"){ 
+      }; 
+      ~FTPL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSTL -- 
+   ///@defgroup FSTL_doc 
+   ///@class FSTL 
+   ///@brief is the flat part of the strut [TGeoVolume] 
+   class FSTL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSTL() : AgBlock("FSTL","is the flat part of the strut [TGeoVolume]"){ 
+      }; 
+      ~FSTL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSTC -- 
+   ///@defgroup FSTC_doc 
+   ///@class FSTC 
+   ///@brief is the central beam of the strut [TGeoVolume] 
+   class FSTC : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSTC() : AgBlock("FSTC","is the central beam of the strut [TGeoVolume]"){ 
+      }; 
+      ~FSTC(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FSHL -- 
+   ///@defgroup FSHL_doc 
+   ///@class FSHL 
+   ///@brief is a hole the beam of the strut [TGeoVolume] 
+   class FSHL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FSHL() : AgBlock("FSHL","is a hole the beam of the strut [TGeoVolume]"){ 
+      }; 
+      ~FSHL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTPO -- 
+   ///@defgroup FTPO_doc 
+   ///@class FTPO 
+   ///@brief is the outer PCB [TGeoVolume] 
+   class FTPO : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTPO() : AgBlock("FTPO","is the outer PCB [TGeoVolume]"){ 
+      }; 
+      ~FTPO(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTPI -- 
+   ///@defgroup FTPI_doc 
+   ///@class FTPI 
+   ///@brief is the inner PCB [TGeoVolume] 
+   class FTPI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTPI() : AgBlock("FTPI","is the inner PCB [TGeoVolume]"){ 
+      }; 
+      ~FTPI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- FTSH -- 
+   ///@defgroup FTSH_doc 
+   ///@class FTSH 
+   ///@brief is the protective shell [TGeoVolume] 
+   class FTSH : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      FTSH() : AgBlock("FTSH","is the protective shell [TGeoVolume]"){ 
+      }; 
+      ~FTSH(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class FTROGEO 
+   /// \brief  is the geometry of the readout structure of the FTPC  
+   class FTROGEO : public AgModule 
+   { 
+      public: 
+      FTROGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~FTROGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace FTROGEO 
+#endif // __FTROGEO__ 

@@ -1,0 +1,404 @@
+      MODULE EpdmGeo0   Event Plane Detector (Full geometry)
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Author Sam, Jason and Prashanth
+      Created 03 Dec 2017
+      +CDE,agecom, gconst, gcunit.
+      CONTENT EPDM,
+      EPSS,
+      EPDT
+      real *4 rotz
+
+      Integer *4 tt,      ss,      icolor
+
+      STRUCTURE mcdt { version,int onoff,x,y,z(2),thick,srad,lrad}
+      STRUCTURE cdta { version,int onoff,x(31),y(31),z,rot(31),dz(31),h(31),bl(31),
+            tl(31),alp(31)}
+      STRUCTURE cdtb { version,int onoff,x(31),y(31),z,rot(31),dz(31),h(31),bl(31),
+            tl(31),alp(31)}
+      STRUCTURE cdtc { version,int onoff,x,y,z,rot,dz,h,bl,tl,alp}
+      STRUCTURE cdtd { version,int onoff,x,y,z,rot,dz,h,bl,tl,alp}
+      FILL mcdt		! EPD geometry
+      Version = 1.0 ! Geometry version
+      onoff = 1 !  0 off, 1 on
+      x = 0.0 ! x cdt of mother
+      y = 0.0 ! y cdt of mother
+      z  = {  -374.0,   374.0} !  Distance from center of star (prototype dist, not correct)
+      thick = 1.2/2 ! thickness of detector
+      srad = 3.0 ! check inner radius
+      lrad = 100 ! check outer radius
+      ENDFILL
+      FILL cdta		!  Corrdiante of a single sectors
+      version = 1.0 ! None
+      onoff = 1 ! None
+      y  = {       0.0,    1.3875,   -1.3875,    2.0125, 
+               -2.0125,      2.72,     -2.72,    3.5075, 
+               -3.5075,    4.2925,   -4.2925,      5.07, 
+                 -5.07,    5.8125,   -5.8125,    6.5275, 
+               -6.5275,    7.2425,   -7.2425,    7.9575, 
+               -7.9575,    8.6725,   -8.6725,    9.3875, 
+               -9.3875,   10.1025,  -10.1025,     10.82, 
+                -10.82,   11.7675,  -11.7675} !  None
+      x  = {      0.0,  10.6075,  10.6075,  14.9275,  14.9275, 
+              19.7975,  19.7975,  25.2225,  25.2225,    30.65, 
+                30.65,   36.105,   36.105,   41.515,   41.515, 
+                46.95,    46.95,   52.385,   52.385,  57.8225, 
+              57.8225,    63.26,    63.26,   68.695,   68.695, 
+              74.1325,  74.1325,  79.5675,  79.5675,  84.9925, 
+              84.9925} !  None
+      z = 0.0 ! None
+      rot  = {    0.0,  -7.41,   7.41,  -7.49,   7.49,  -7.50, 
+                 7.50,  -7.51,   7.51,  -7.51,   7.51,  -8.09, 
+                 8.09,  -7.48,   7.48,  -7.49,   7.49,  -7.50, 
+                 7.50,  -7.47,   7.47,  -7.48,   7.48,  -7.49, 
+                 7.49,  -7.52,   7.52,  -7.52,   7.52,  -7.74, 
+                 7.74} !  None
+      dz  = {    0.0,  1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2, 
+               1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2, 
+               1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2, 
+               1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2, 
+               1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2,  1.2/2, 
+               1.2/2} !  None
+      h  = {    0.0,   2.12,   2.12,   2.12,   2.12,  2.685, 
+              2.685,  2.685,  2.685,  2.685,  2.685,  2.685, 
+              2.685,   2.68,   2.68,   2.68,   2.68,   2.68, 
+               2.68,   2.68,   2.68,   2.68,   2.68,   2.68, 
+               2.68,   2.68,   2.68,   2.68,   2.68,   2.72, 
+               2.72} !  None
+      bl  = {     0.0,   1.013,   1.013,   1.533,   1.533, 
+                2.047,   2.047,   2.697,   2.697,   3.349, 
+                3.349,   4.004,   4.004,   4.674,   4.674, 
+                5.396,   5.396,   6.117,   6.117,   6.838, 
+                6.838,   7.559,   7.559,   8.280,   8.280, 
+                9.002,   9.002,   9.728,   9.728,  10.449, 
+               10.449} !  None
+      tl  = {     0.0,   1.512,   1.512,   2.032,   2.032, 
+                2.682,   2.682,   3.328,   3.328,   3.979, 
+                3.979,   4.656,   4.656,   5.375,   5.375, 
+                6.097,   6.097,   6.818,   6.818,   7.538, 
+                7.538,   8.260,   8.260,   8.981,   8.981, 
+                9.703,   9.703,  10.424,  10.424,  10.692, 
+               10.692} !  None
+      alp  = {     0.0,   0.896,  -0.896,   0.790,  -0.790, 
+                 0.747,  -0.747,   0.785,  -0.785,   0.746, 
+                -0.746,   0.109,  -0.109,   0.023,  -0.023, 
+                 0.013,  -0.013,   0.006,  -0.006,   0.011, 
+                -0.011,   0.030,  -0.030,   0.023,  -0.023, 
+                -0.005,   0.005,  -0.060,   0.060,   4.773, 
+                -4.773} !  None
+      ENDFILL
+      FILL cdtb		!  Corrdiante of a single sectors
+      version = 1.0 ! None
+      onoff = 1 ! None
+      y  = {      0.0,   0.1075,  -0.1075,   0.1625,  -0.1625, 
+               0.2275,  -0.2275,      0.3,     -0.3,     0.37, 
+                -0.37,     0.43,    -0.43,    0.455,   -0.455, 
+                0.455,   -0.455,    0.455,   -0.455,    0.455, 
+               -0.455,    0.455,   -0.455,    0.455,   -0.455, 
+                0.455,   -0.455,    0.455,   -0.455,    0.685, 
+               -0.685} !  None
+      x  = {      0.0,   10.775,   10.775,    15.17,    15.17, 
+               20.125,   20.125,   25.645,   25.645,  31.1675, 
+              31.1675,   36.715,   36.715,    42.22,    42.22, 
+                47.75,    47.75,    53.28,    53.28,    58.81, 
+                58.81,    64.34,    64.34,    69.87,    69.87, 
+              75.4025,  75.4025,  80.9325,  80.9325,  86.4725, 
+              86.4725} !  None
+      z = 0.0 ! None
+      rot  = {     0.0,  -10.30,   10.30,   -6.48,    6.48, 
+                 -7.67,    7.67,   -7.76,    7.76,   -7.30, 
+                  7.30,   -7.02,    7.02,   -7.59,    7.59, 
+                 -7.59,    7.59,   -7.59,    7.59,   -7.59, 
+                  7.59,   -7.59,    7.59,   -7.59,    7.59, 
+                 -7.22,    7.22,   -7.22,    7.22,   -7.38, 
+                  7.38} !  None
+      dz  = {     0.0,  0.5175,  0.5175,  0.5025,  0.5025, 
+               0.4875,  0.4875,  0.4725,  0.4725,  0.4575, 
+               0.4575,  0.4425,  0.4425,  0.4275,  0.4275, 
+               0.4125,  0.4125,  0.3975,  0.3975,  0.3825, 
+               0.3825,  0.3675,  0.3675,  0.3525,  0.3525, 
+               0.3375,  0.3375,  0.3225,  0.3225,  0.3075, 
+               0.3075} !  None
+      h  = {    0.0,   2.12,   2.12,   2.12,   2.12,  2.685, 
+              2.685,  2.685,  2.685,  2.685,  2.685,  2.685, 
+              2.685,   2.68,   2.68,   2.68,   2.68,   2.68, 
+               2.68,   2.68,   2.68,   2.68,   2.68,   2.68, 
+               2.68,   2.68,   2.68,   2.68,   2.68,   2.72, 
+               2.72} !  None
+      bl  = {    0.0,  0.000,  0.000,  0.055,  0.055,  0.116, 
+               0.116,  0.187,  0.187,  0.257,  0.257,  0.327, 
+               0.327,  0.378,  0.378,  0.378,  0.378,  0.378, 
+               0.378,  0.378,  0.378,  0.378,  0.378,  0.378, 
+               0.378,  0.378,  0.378,  0.378,  0.378,  0.378, 
+               0.378} !  None
+      tl  = {    0.0,  0.056,  0.056,  0.111,  0.111,  0.182, 
+               0.182,  0.257,  0.257,  0.328,  0.328,  0.375, 
+               0.375,  0.378,  0.378,  0.378,  0.378,  0.378, 
+               0.378,  0.378,  0.378,  0.378,  0.378,  0.378, 
+               0.378,  0.378,  0.378,  0.378,  0.378,  0.842, 
+               0.842} !  None
+      alp  = {     0.0,  -9.560,   9.560,  -7.020,   7.020, 
+                -7.212,   7.212,  -7.067,   7.067,  -7.134, 
+                 7.134,  -6.487,   6.487,  -7.595,   7.595, 
+                -7.595,   7.595,  -7.595,   7.595,  -7.595, 
+                 7.595,  -7.595,   7.595,  -7.595,   7.595, 
+                -6.843,   6.843,  -6.843,   6.843,  -2.285, 
+                 2.285} !  None
+      ENDFILL
+      FILL cdtc		!  Corrdiante of  upper triangle
+      version = 1.0 ! None
+      onoff = 1 ! None
+      y = 0.0 ! None
+      x = 8.375 ! None
+      z = 0.0 ! None
+      rot = 0 ! None
+      dz = 1.2/2.0 ! None
+      h = 0.135 ! None
+      bl = 2.05 ! None
+      tl = 0.0 ! None
+      alp = 0.0 ! None
+      ENDFILL
+      FILL cdtd		!  Corrdiante of rest of tile  one
+      version = 1.0 ! None
+      onoff = 1 ! None
+      y = 0.0 ! None
+      x = 6.215 ! None
+      z = 0.0 ! None
+      rot = 0.0 ! None
+      dz = 1.2/2.0 ! None
+      h = 2.025 ! None
+      bl = 0.97 ! None
+      tl = 2.05 ! None
+      alp = 0.0 ! None
+      ENDFILL
+      CREATE EPDM
+      CALL AgsReset 
+      CALL agml_position_begin('EPDM') 
+      %mother = 'CAVE' 
+      %title = 'EPDM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(mcdt_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(mcdt_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(mcdt_z(1)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 0.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('EPDM') 
+      %mother = 'CAVE' 
+      %title = 'EPDM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'MANY' 
+      ag_x = real(mcdt_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(mcdt_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(mcdt_z(2)) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 180.0 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- EPDM
+      BLOCK EPDM   Mother volume
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE tube rmin=mcdt_srad rmax=mcdt_lrad,
+            dz=mcdt_thick
+      DO ss = 0, 11
+      rotz=-105-(30*ss);
+      CREATE EPSS
+      CALL AgsReset 
+      CALL agml_position_begin('EPSS') 
+      %title = 'EPSS' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 0.0 
+      CALL agml_translate_x( %x ) 
+      ag_y = 0.0 
+      CALL agml_translate_y( %y ) 
+      ag_z = 0.0 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 180.0 
+      CALL agml_rotate_y(%alphay) 
+      ag_alphaz = real(rotz) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EPSS
+      BLOCK EPSS   Mother volume
+      MATERIAL Air
+      MEDIUM Standard
+      ATTRIBUTE None seen=0 colo=3
+      SHAPE tubs rmin=mcdt_srad rmax=mcdt_lrad,
+            phi1=-15 phi2=15
+      icolor=2;
+      CREATE EPDT
+      CALL AgsReset 
+      CALL agml_position_begin('EPDT') 
+      %mother = 'EPSS' 
+      %title = 'EPDT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(cdtd_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-cdtd_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(cdtd_z) 
+      CALL agml_translate_z( %z ) 
+      %dz = real(cdtd_dz) 
+      %thet = 0.0 
+      %phi = 0.0 
+      %h1 = real(cdtd_h) 
+      %h2 = real(cdtd_h) 
+      %bl1 = real(cdtd_bl) 
+      %bl2 = real(cdtd_bl) 
+      %tl1 = real(cdtd_tl) 
+      %tl2 = real(cdtd_tl) 
+      %alp1 = real(cdtd_alp) 
+      %alp2 = real(cdtd_alp) 
+      ag_alphaz = real(-90-cdtd_rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      icolor=6;
+      CREATE EPDT
+      CALL AgsReset 
+      CALL agml_position_begin('EPDT') 
+      %mother = 'EPSS' 
+      %title = 'EPDT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(cdtc_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-cdtc_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(cdtc_z) 
+      CALL agml_translate_z( %z ) 
+      %dz = real(cdtc_dz) 
+      %thet = 0.0 
+      %phi = 0.0 
+      %h1 = real(cdtc_h) 
+      %h2 = real(cdtc_h) 
+      %bl1 = real(cdtc_bl) 
+      %bl2 = real(cdtc_bl) 
+      %tl1 = real(cdtc_tl) 
+      %tl2 = real(cdtc_tl) 
+      %alp1 = real(cdtc_alp) 
+      %alp2 = real(cdtc_alp) 
+      ag_alphaz = real(-90-cdtc_rot) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      DO tt = 2, 31
+      icolor=4;
+      CREATE EPDT
+      CALL AgsReset 
+      CALL agml_position_begin('EPDT') 
+      %mother = 'EPSS' 
+      %title = 'EPDT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(cdtb_x(tt)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-cdtb_y(tt)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real((0.6-cdtb_dz(tt))) 
+      CALL agml_translate_z( %z ) 
+      %dz = real(cdtb_dz(tt)) 
+      %thet = 0.0 
+      %phi = 0.0 
+      %h1 = real(cdtb_h(tt)) 
+      %h2 = real(cdtb_h(tt)) 
+      %bl1 = real(cdtb_bl(tt)) 
+      %bl2 = real(cdtb_bl(tt)) 
+      %tl1 = real(cdtb_tl(tt)) 
+      %tl2 = real(cdtb_tl(tt)) 
+      %alp1 = real(cdtb_alp(tt)) 
+      %alp2 = real(cdtb_alp(tt)) 
+      ag_alphaz = real(-90+cdtb_rot(tt)) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      icolor=3;
+      CREATE EPDT
+      CALL AgsReset 
+      CALL agml_position_begin('EPDT') 
+      %mother = 'EPSS' 
+      %title = 'EPDT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = real(cdta_x(tt)) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(-cdta_y(tt)) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(cdta_z) 
+      CALL agml_translate_z( %z ) 
+      %dz = real(cdta_dz(tt)) 
+      %thet = 0.0 
+      %phi = 0.0 
+      %h1 = real(cdta_h(tt)) 
+      %h2 = real(cdta_h(tt)) 
+      %bl1 = real(cdta_bl(tt)) 
+      %bl2 = real(cdta_bl(tt)) 
+      %tl1 = real(cdta_tl(tt)) 
+      %tl2 = real(cdta_tl(tt)) 
+      %alp1 = real(cdta_alp(tt)) 
+      %alp2 = real(cdta_alp(tt)) 
+      ag_alphaz = real(-90+cdta_rot(tt)) 
+      CALL agml_rotate_z(%alphaz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- EPDT
+      BLOCK EPDT   EPD a general trapzoid
+      MATERIAL POLYSTYREN
+      MATERIAL Cpolystyren isvol=1
+      IF ( icolor.eq.6 ) THEN
+      ATTRIBUTE None seen=1 colo=6
+      ENDIF
+      IF ( icolor.eq.2 ) THEN
+      ATTRIBUTE None seen=1 colo=2
+      ENDIF
+      IF ( icolor.eq.4 ) THEN
+      ATTRIBUTE None seen=1 colo=4
+      ENDIF
+      IF ( icolor.eq.3 ) THEN
+      ATTRIBUTE None seen=1 colo=3
+      ENDIF
+      SHAPE trap dz=0 thet=0 phi=0 h1=0 bl1=0,
+            tl1=0 alp1=0 h2=0 bl2=0 tl2=0 alp2=0
+      Call GStPar(ag_imed, 'CUTGAM',0.00008)
+      Call GStPar(ag_imed, 'CUTELE',0.001)
+      Call GStPar(ag_imed, 'BCUTE',0.0001)
+      Call GStPar(ag_imed, 'CUTNEU',0.001)
+      Call GStPar(ag_imed, 'CUTHAD',0.001)
+      Call GStPar(ag_imed, 'CUTMUO',0.001)
+      Call GStPar(ag_imed, 'BIRK1', 1.000)
+      Call GStPar(ag_imed, 'BIRK2', 0.013)
+      Call GStPar(ag_imed, 'BIRK3', 9.6E-6)
+      HITS EPDT eloss:0:S(0,100.0) tof:0:S(0,10)
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module EpdmGeo0]	 <<==='; (A32,/,/);
+      END! Module EpdmGeo0

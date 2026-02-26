@@ -1,0 +1,493 @@
+#ifndef __PRESGEO1__ 
+#define __PRESGEO1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PRESGEO1 // $NMSPC 
+{ 
+   struct pver_t {
+float version;
+int active;
+int _index;
+};
+ 
+   struct _pver_docum_ {
+string version;
+string active;
+string _index;
+};
+ 
+    struct _pver_types_ {
+  typedef float version;
+  typedef int active;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pver_info {
+typedef pver_t Type;
+static const char *name(){ return "pver_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct pver_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct active {
+  static const char *name() { return  "active"; }
+  static size_t Offset(){ return offsetof( struct pver_t, active ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pver_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pver_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pgeo_t {
+float dbox[3];
+float dhole;
+float scthick;
+float scwidth;
+float scwrap;
+float sclth[10];
+float xoff[2][6];
+float yoff[2][6];
+float zoff[2][6];
+int nslat[2][6];
+float angslat[2][6];
+float bpdz;
+int _index;
+};
+ 
+   struct _pgeo_docum_ {
+string dbox;
+string dhole;
+string scthick;
+string scwidth;
+string scwrap;
+string sclth;
+string xoff;
+string yoff;
+string zoff;
+string nslat;
+string angslat;
+string bpdz;
+string _index;
+};
+ 
+    struct _pgeo_types_ {
+  typedef float dbox[3];
+  typedef float dhole;
+  typedef float scthick;
+  typedef float scwidth;
+  typedef float scwrap;
+  typedef float sclth[10];
+  typedef float xoff[2][6];
+  typedef float yoff[2][6];
+  typedef float zoff[2][6];
+  typedef int nslat[2][6];
+  typedef float angslat[2][6];
+  typedef float bpdz;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pgeo_info {
+typedef pgeo_t Type;
+static const char *name(){ return "pgeo_t"; }
+struct dbox {
+  static const char *name() { return  "dbox"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, dbox ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct dhole {
+  static const char *name() { return  "dhole"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, dhole ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scthick {
+  static const char *name() { return  "scthick"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, scthick ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scwidth {
+  static const char *name() { return  "scwidth"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, scwidth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct scwrap {
+  static const char *name() { return  "scwrap"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, scwrap ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct sclth {
+  static const char *name() { return  "sclth"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, sclth ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[10];
+};
+struct xoff {
+  static const char *name() { return  "xoff"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, xoff ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2][6];
+};
+struct yoff {
+  static const char *name() { return  "yoff"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, yoff ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2][6];
+};
+struct zoff {
+  static const char *name() { return  "zoff"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, zoff ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2][6];
+};
+struct nslat {
+  static const char *name() { return  "nslat"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, nslat ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type[2][6];
+};
+struct angslat {
+  static const char *name() { return  "angslat"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, angslat ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2][6];
+};
+struct bpdz {
+  static const char *name() { return  "bpdz"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, bpdz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pgeo_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pgeo_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct pcut_t {
+float cutgam;
+float cutele;
+float cutneu;
+float cuthad;
+float cutmuo;
+float dcute;
+float dcutm;
+float bcute;
+float bcutm;
+int _index;
+};
+ 
+   struct _pcut_docum_ {
+string cutgam;
+string cutele;
+string cutneu;
+string cuthad;
+string cutmuo;
+string dcute;
+string dcutm;
+string bcute;
+string bcutm;
+string _index;
+};
+ 
+    struct _pcut_types_ {
+  typedef float cutgam;
+  typedef float cutele;
+  typedef float cutneu;
+  typedef float cuthad;
+  typedef float cutmuo;
+  typedef float dcute;
+  typedef float dcutm;
+  typedef float bcute;
+  typedef float bcutm;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct pcut_info {
+typedef pcut_t Type;
+static const char *name(){ return "pcut_t"; }
+struct cutgam {
+  static const char *name() { return  "cutgam"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, cutgam ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutele {
+  static const char *name() { return  "cutele"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, cutele ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutneu {
+  static const char *name() { return  "cutneu"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, cutneu ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cuthad {
+  static const char *name() { return  "cuthad"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, cuthad ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct cutmuo {
+  static const char *name() { return  "cutmuo"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, cutmuo ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcute {
+  static const char *name() { return  "dcute"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, dcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct dcutm {
+  static const char *name() { return  "dcutm"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, dcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcute {
+  static const char *name() { return  "bcute"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, bcute ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct bcutm {
+  static const char *name() { return  "bcutm"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, bcutm ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct pcut_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)pcut_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- PMOD -- 
+   ///@defgroup PMOD_doc 
+   ///@class PMOD 
+   ///@brief is mother volume for FCS Pres [TGeoVolume] 
+   class PMOD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PMOD() : AgBlock("PMOD","is mother volume for FCS Pres [TGeoVolume]"){ 
+      }; 
+      ~PMOD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PLAY -- 
+   ///@defgroup PLAY_doc 
+   ///@class PLAY 
+   ///@brief is a layer of FCS PRES [TGeoVolume] 
+   class PLAY : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PLAY() : AgBlock("PLAY","is a layer of FCS PRES [TGeoVolume]"){ 
+      }; 
+      ~PLAY(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PSCI -- 
+   ///@defgroup PSCI_doc 
+   ///@class PSCI 
+   ///@brief is a piece of scintillator in FMS Preshower [TGeoVolume] 
+   class PSCI : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PSCI() : AgBlock("PSCI","is a piece of scintillator in FMS Preshower [TGeoVolume]"){ 
+      }; 
+      ~PSCI(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- PBKB -- 
+   ///@defgroup PBKB_doc 
+   ///@class PBKB 
+   ///@brief is the G10 back board [TGeoVolume] 
+   class PBKB : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      PBKB() : AgBlock("PBKB","is the G10 back board [TGeoVolume]"){ 
+      }; 
+      ~PBKB(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PRESGEO1 
+   /// \brief  is the Forward Calorimeter System PREShower GEOmetry  
+   class PRESGEO1 : public AgModule 
+   { 
+      public: 
+      PRESGEO1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PRESGEO1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PRESGEO1 
+#endif // __PRESGEO1__ 

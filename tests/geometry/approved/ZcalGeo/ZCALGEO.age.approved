@@ -1,0 +1,247 @@
+      MODULE ZCALGEO    is the geometry of the Zero deg. Quartz Calorimeter
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created  10-Feb-1997
+      Author W.B.Christie
+      +CDE,agecom.
+      +CDE,gcunit.
+      CONTENT ZCAL,QCAL,QDIV,QSCI,PIPH,PVAH,PLAT,PLVA,PIPJ,PVAJ
+      STRUCTURE CALP { Version,DROutR,DRdz,PHLeng,PHInnR,PHOutR,Pltdz,PltOutR,HOutR,
+            PJInnR,PJOutR,PJLeng,QCdx,QCdy,QCdz,SCdz,Sdiv}
+      REAL z1,z2,z3,z4
+
+      FILL CALP		! Quartz Calorimeter Data
+      version = 1 !  Geometry version number
+      DROutR = 30.0 !  Outer radius of mother volume tube
+      DRdz = 250.0 !  Half length of mother volume
+      PHLeng = 133.35 !  Half Length of large diameter Pipe.
+      PHInnR = 20.0 !  Inner radius of Pipe H
+      PHOutR = 20.96 !  Outer radius of Pipe H
+      Pltdz = 0.47 !  Half thickness of plate at end of large dia pipe.
+      PltOutR = 20.96 !  Radius of plate.
+      HOutR = 6.35 !  Radius of holes in the End plate
+      PJInnR = 6.07 !  Inner radius of final beam pipe
+      PJOutR = 6.35 !  Outer radius of final beam pipe
+      PJLeng = 91.5 !  Half length of final beam pipe
+      QCdx = 5.0 !  Half width of Qcal (cm)
+      QCdy = 5.0 !  Half width of Qcal (cm)
+      QCdz = 65.0 !  Half length of Qcal (cm)
+      SCdz = 0.05 !  Half length of Fiber layer (cm)
+      Sdiv = 260 !  Number of Fiber layers in Qcal
+      ENDFILL
+      use CALP Version = 1
+      z1 = -calp_drdz + calp_phleng  ! Center of Large Dia. Pipe (-116.65)
+      z2 = z1+calp_phleng+calp_pltdz ! Center of lrg pipe end plate (17.17)
+      z3 = z2+calp_pltdz+0.24+calp_pjleng    ! Center of beam pipes
+      z4 = z2+calp_pltdz+40.0+calp_qcdz ! Center of Qcal
+      CREATE ZCAL
+      CALL AgsReset 
+      CALL agml_position_begin('ZCAL') 
+      %mother = 'CAVE' 
+      %title = 'ZCAL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = 1767.66 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('ZCAL') 
+      %mother = 'CAVE' 
+      %title = 'ZCAL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = -1767.66 
+      CALL agml_translate_z( %z ) 
+      %thetax = 90.0 
+      %thetay = 90.0 
+      %thetaz = 180.0 
+      %phix = 0.0 
+      %phiy = 90.0 
+      %phiz = 0.0 
+      CALL agml_set_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- ZCAL
+      BLOCK ZCAL   is the region between the DX and the D0 magnets
+      MATERIAL Air
+      MEDIUM standard
+      ATTRIBUTE ZCAL seen=0 colo=1
+      SHAPE tube rmin=0.0 rmax=calp_droutr dz=calp_drdz
+      CREATE PIPH
+      CALL AgsReset 
+      CALL agml_position_begin('PIPH') 
+      %title = 'PIPH' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(z1) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PLAT
+      CALL AgsReset 
+      CALL agml_position_begin('PLAT') 
+      %title = 'PLAT' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(z2) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE QCAL
+      CALL AgsReset 
+      CALL agml_position_begin('QCAL') 
+      %title = 'QCAL' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(z4) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE PIPJ
+      CALL AgsReset 
+      CALL agml_position_begin('PIPJ') 
+      %title = 'PIPJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 12.82 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(z3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = 1.074 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PIPJ') 
+      %title = 'PIPJ' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -12.82 
+      CALL agml_translate_x( %x ) 
+      ag_z = real(z3) 
+      CALL agml_translate_z( %z ) 
+      ag_alphay = -1.074 
+      CALL agml_rotate_y(%alphay) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PIPH
+      BLOCK PIPH   is the Large diameter Pipe before the beam pipes split
+      MATERIAL Iron
+      ATTRIBUTE Piph seen=1 colo=2
+      SHAPE tube rmin=0 rmax=calp_phOutR dz=calp_phLeng
+      CREATE PVAH
+      CALL AgsReset 
+      CALL agml_position_begin('PVAH') 
+      %title = 'PVAH' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PVAH
+      BLOCK PVAH   is the Vacuum Volume of the large diameter pipe
+      MATERIAL Vacuum
+      SHAPE tube rmax=calp_phInnR
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PLAT
+      BLOCK PLAT   is the End Plate of the large dia. Pipe
+      MATERIAL Iron
+      ATTRIBUTE Plat seen=1 colo=2
+      SHAPE tube rmin=0 rmax=calp_pltOutR dz=calp_pltdz
+      CREATE PLVA
+      CALL AgsReset 
+      CALL agml_position_begin('PLVA') 
+      %title = 'PLVA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = 11.1 
+      CALL agml_translate_x( %x ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('PLVA') 
+      %title = 'PLVA' 
+      %exname = 'POSITION' ! agml placement 
+      ag_x = -11.1 
+      CALL agml_translate_x( %x ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'X_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PLVA
+      BLOCK PLVA   is the Vacuum Volume of the beam pipe holes in the end plate
+      MATERIAL Vacuum
+      SHAPE tube rmax=calp_houtR
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PIPJ
+      BLOCK PIPJ   are the final beam Pipes
+      MATERIAL Iron
+      ATTRIBUTE PIPJ seen=1 colo=7
+      SHAPE tube rmin=0 rmax=calp_pjOutR dz=calp_pjleng
+      CREATE PVAJ
+      CALL AgsReset 
+      CALL agml_position_begin('PVAJ') 
+      %title = 'PVAJ' 
+      %exname = 'POSITION' ! agml placement 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- PVAJ
+      BLOCK PVAJ   is the Vacuum Volume of the final beam pipes
+      MATERIAL Vacuum
+      SHAPE tube rmax=calp_pjinnr
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QCAL
+      BLOCK QCAL   is the Zero degree calorimeter
+      MATERIAL Lead
+      MATERIAL dirty_lead isvol=0
+      ATTRIBUTE Qcal seen=1 colo=4
+      SHAPE box dx=calp_qcdx dy=calp_qcdy dz=calp_qcdz
+      Call GStPar(ag_imed, 'CUTGAM',0.0005)
+      Call GStPar(ag_imed, 'CUTELE',0.00015)
+      CREATE QDIV
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QDIV
+      BLOCK QDIV   is one section/layer of the Quartz Calorimeter
+      SHAPE division ndiv=calp_sdiv iaxis=3
+      CREATE QSCI
+      CALL AgsReset 
+      CALL agml_position_begin('QSCI') 
+      %title = 'QSCI' 
+      %exname = 'POSITION' ! agml placement 
+      ag_z = real(-calp_qcdz/(calp_sdiv)+calp_scdz) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- QSCI
+      BLOCK QSCI   is a sensitive Fiber layer
+      MATERIAL Polystyren
+      MATERIAL scintillator isvol=1
+      ATTRIBUTE QSCI seen=1 colo=3
+      SHAPE box dz=calp_scdz
+      Call GStPar(ag_imed, 'CUTGAM',0.0005)
+      Call GStPar(ag_imed, 'CUTELE',0.00015)
+      HITS QSCI eloss:0:(0,10)
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module ZCALGEO]	 <<==='; (A32,/,/);
+      END! Module ZCALGEO

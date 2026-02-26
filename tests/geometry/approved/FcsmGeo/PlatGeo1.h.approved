@@ -1,0 +1,314 @@
+#ifndef __PlatGeo1__ 
+#define __PlatGeo1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace PLATGEO1 // $NMSPC 
+{ 
+   struct wpfm_t {
+float version;
+float poled[4];
+float polep[3];
+float istrd[4];
+float ist1p[3];
+float ist2p[3];
+float ustfd[4];
+float ustfp[3];
+float ustnd[4];
+float ustnp[3];
+float ustsd[4];
+float ustsp[3];
+int _index;
+};
+ 
+   struct _wpfm_docum_ {
+string version;
+string poled;
+string polep;
+string istrd;
+string ist1p;
+string ist2p;
+string ustfd;
+string ustfp;
+string ustnd;
+string ustnp;
+string ustsd;
+string ustsp;
+string _index;
+};
+ 
+    struct _wpfm_types_ {
+  typedef float version;
+  typedef float poled[4];
+  typedef float polep[3];
+  typedef float istrd[4];
+  typedef float ist1p[3];
+  typedef float ist2p[3];
+  typedef float ustfd[4];
+  typedef float ustfp[3];
+  typedef float ustnd[4];
+  typedef float ustnp[3];
+  typedef float ustsd[4];
+  typedef float ustsp[3];
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct wpfm_info {
+typedef wpfm_t Type;
+static const char *name(){ return "wpfm_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct poled {
+  static const char *name() { return  "poled"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, poled ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct polep {
+  static const char *name() { return  "polep"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, polep ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct istrd {
+  static const char *name() { return  "istrd"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, istrd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct ist1p {
+  static const char *name() { return  "ist1p"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ist1p ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct ist2p {
+  static const char *name() { return  "ist2p"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ist2p ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct ustfd {
+  static const char *name() { return  "ustfd"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustfd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct ustfp {
+  static const char *name() { return  "ustfp"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustfp ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct ustnd {
+  static const char *name() { return  "ustnd"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustnd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct ustnp {
+  static const char *name() { return  "ustnp"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustnp ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct ustsd {
+  static const char *name() { return  "ustsd"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustsd ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[4];
+};
+struct ustsp {
+  static const char *name() { return  "ustsp"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, ustsp ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[3];
+};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct wpfm_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)wpfm_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- WPPL -- 
+   ///@defgroup WPPL_doc 
+   ///@class WPPL 
+   ///@brief is a pole for west platform [TGeoVolume] 
+   class WPPL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPPL() : AgBlock("WPPL","is a pole for west platform [TGeoVolume]"){ 
+      }; 
+      ~WPPL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPIS -- 
+   ///@defgroup WPIS_doc 
+   ///@class WPIS 
+   ///@brief is a I-struct for west platform [TGeoVolume] 
+   class WPIS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPIS() : AgBlock("WPIS","is a I-struct for west platform [TGeoVolume]"){ 
+      }; 
+      ~WPIS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPUF -- 
+   ///@defgroup WPUF_doc 
+   ///@class WPUF 
+   ///@brief is a front U-struct for west platform [TGeoVolume] 
+   class WPUF : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPUF() : AgBlock("WPUF","is a front U-struct for west platform [TGeoVolume]"){ 
+      }; 
+      ~WPUF(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPUN -- 
+   ///@defgroup WPUN_doc 
+   ///@class WPUN 
+   ///@brief is a north U-struct for west platform [TGeoVolume] 
+   class WPUN : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPUN() : AgBlock("WPUN","is a north U-struct for west platform [TGeoVolume]"){ 
+      }; 
+      ~WPUN(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPUS -- 
+   ///@defgroup WPUS_doc 
+   ///@class WPUS 
+   ///@brief is a south U-struct for west platform [TGeoVolume] 
+   class WPUS : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPUS() : AgBlock("WPUS","is a south U-struct for west platform [TGeoVolume]"){ 
+      }; 
+      ~WPUS(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- WPAR -- 
+   ///@defgroup WPAR_doc 
+   ///@class WPAR 
+   ///@brief is a platform structs air [TGeoVolume] 
+   class WPAR : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      WPAR() : AgBlock("WPAR","is a platform structs air [TGeoVolume]"){ 
+      }; 
+      ~WPAR(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class PlatGeo1 
+   /// \brief  is the Forward Calorimeter System Platform GEOmetry  
+   class PlatGeo1 : public AgModule 
+   { 
+      public: 
+      PlatGeo1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~PlatGeo1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace PlatGeo1 
+#endif // __PlatGeo1__ 

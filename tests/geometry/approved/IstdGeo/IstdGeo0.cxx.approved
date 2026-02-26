@@ -1,0 +1,814 @@
+#include "IstdGeo0.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace ISTDGEO0 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          ///@addtogroup IstdGeo0_vars     
+          ///@{        
+                float aangle,bangle,raddeg,inix,iniy,module_thk,ladder_thk,ladder_width,ladder_length,xpos,ypos,zpos,moduleradius,half;        
+                //        
+                /// float aangle,bangle,raddeg,inix,iniy,module_thk,ladder_thk,ladder_width,ladder_length,xpos,ypos,zpos,moduleradius,half        
+          ///@}     
+          ///@addtogroup IstdGeo0_vars     
+          ///@{        
+                int nl,ly,nu,cable,istlayer,debug;        
+                //        
+                /// int nl,ly,nu,cable,istlayer,debug        
+          ///@}     
+          ismg_t *__ismg = new ismg_t; // dummy
+ AgMLStructure<ismg_t,ismg_info> ISMG("ismg");
+ismg_t &ismg = ISMG;
+     
+          // Selectors for ismg
+isEqual<ismg_t, int> __ismg_version__( __ismg, &__ismg->version );
+isEqual<ismg_t, int> __ismg_subversion__( __ismg, &__ismg->subversion );
+isEqual<ismg_t, float> __ismg_rin__( __ismg, &__ismg->rin );
+isEqual<ismg_t, float> __ismg_rout__( __ismg, &__ismg->rout );
+isEqual<ismg_t, int> __ismg__index__( __ismg, &__ismg->_index );
+     
+          
+	void              *ismg_info::address   = &ismg;
+	AgMLStructureBase   *ismg_info::structure = &ISMG;
+     
+          isbg_t *__isbg = new isbg_t; // dummy
+ AgMLStructure<isbg_t,isbg_info> ISBG("isbg");
+isbg_t &isbg = ISBG;
+     
+          // Selectors for isbg
+isEqual<isbg_t, int> __isbg_layer__( __isbg, &__isbg->layer );
+isEqual<isbg_t, int> __isbg_nladder__( __isbg, &__isbg->nladder );
+isEqual<isbg_t, int> __isbg_nunit__( __isbg, &__isbg->nunit );
+isEqual<isbg_t, float> __isbg_radius__( __isbg, &__isbg->radius );
+isEqual<isbg_t, float> __isbg_tilt__( __isbg, &__isbg->tilt );
+isEqual<isbg_t, float> __isbg_gap__( __isbg, &__isbg->gap );
+isEqual<isbg_t, int> __isbg__index__( __isbg, &__isbg->_index );
+     
+          
+	void              *isbg_info::address   = &isbg;
+	AgMLStructureBase   *isbg_info::structure = &ISBG;
+     
+          isan_t *__isan = new isan_t; // dummy
+ AgMLStructure<isan_t,isan_info> ISAN("isan");
+isan_t &isan = ISAN;
+     
+          // Selectors for isan
+isEqual<isan_t, int> __isan_version__( __isan, &__isan->version );
+isEqual<isan_t, float> __isan_rmin__( __isan, &__isan->rmin );
+isEqual<isan_t, float> __isan_thk__( __isan, &__isan->thk );
+isEqual<isan_t, int> __isan__index__( __isan, &__isan->_index );
+     
+          
+	void              *isan_info::address   = &isan;
+	AgMLStructureBase   *isan_info::structure = &ISAN;
+     
+          isss_t *__isss = new isss_t; // dummy
+ AgMLStructure<isss_t,isss_info> ISSS("isss");
+isss_t &isss = ISSS;
+     
+          // Selectors for isss
+isEqual<isss_t, int> __isss_version__( __isss, &__isss->version );
+isEqual<isss_t, float> __isss_activew__( __isss, &__isss->activew );
+isEqual<isss_t, float> __isss_activeh__( __isss, &__isss->activeh );
+isEqual<isss_t, float> __isss_activethk__( __isss, &__isss->activethk );
+isEqual<isss_t, float> __isss_passivethk__( __isss, &__isss->passivethk );
+isEqual<isss_t, int> __isss__index__( __isss, &__isss->_index );
+     
+          
+	void              *isss_info::address   = &isss;
+	AgMLStructureBase   *isss_info::structure = &ISSS;
+     
+          paro_t *__paro = new paro_t; // dummy
+ AgMLStructure<paro_t,paro_info> PARO("paro");
+paro_t &paro = PARO;
+     
+          // Selectors for paro
+isEqual<paro_t, int> __paro_version__( __paro, &__paro->version );
+isEqual<paro_t, float> __paro_dx__( __paro, &__paro->dx );
+isEqual<paro_t, float> __paro_dy__( __paro, &__paro->dy );
+isEqual<paro_t, float> __paro_dz__( __paro, &__paro->dz );
+isEqual<paro_t, float> __paro_mult__( __paro, &__paro->mult );
+isEqual<paro_t, int> __paro__index__( __paro, &__paro->_index );
+     
+          
+	void              *paro_info::address   = &paro;
+	AgMLStructureBase   *paro_info::structure = &PARO;
+     
+          para_t *__para = new para_t; // dummy
+ AgMLStructure<para_t,para_info> PARA("para");
+para_t &para = PARA;
+     
+          // Selectors for para
+isEqual<para_t, int> __para_version__( __para, &__para->version );
+isEqual<para_t, float> __para_da__( __para, &__para->da );
+isEqual<para_t, float> __para_db__( __para, &__para->db );
+isEqual<para_t, float> __para_dg__( __para, &__para->dg );
+isEqual<para_t, float> __para_mult__( __para, &__para->mult );
+isEqual<para_t, int> __para__index__( __para, &__para->_index );
+     
+          
+	void              *para_info::address   = &para;
+	AgMLStructureBase   *para_info::structure = &PARA;
+     
+       IstdGeo0::IstdGeo0()     
+         : AgModule("IstdGeo0"," is the the STAR IST detector test")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *IBMO::mInstance = 0;     
+          AgBlock *IBMO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new IBMO();        
+                   return mInstance;        
+          }     
+          void IBMO::Block( AgCreate create )     
+          {         
+                ///@addtogroup IBMO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("IBMO");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=ismg.rin;              
+                            shape.par("rmax")=ismg.rout;              
+                            shape.par("dz")=ladder_length/2.0;              
+                            /// Shape Tube rmin=ismg.rin rmax=ismg.rout dz=ladder_length/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_IBMO;              
+                            _stacker -> Build(this);              
+                      }           
+                      moduleradius=isbg.radius+module_thk/2.0-isss.activethk/2.0;           
+                      /// Loop on nl from 1 to isbg.nladder step=1           
+                      for ( nl=1; (1>0)? (nl<=isbg.nladder):(nl>=isbg.nladder); nl+=1 )           
+                      {              
+                            aangle=(360.0/isbg.nladder)*nl-isbg.tilt;              
+                            bangle=(aangle+isbg.tilt)*raddeg;              
+                            inix=0.0;              
+                            iniy=0.0;              
+                            if ( debug==1 )              
+                            {                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("shiftinX=%6.4f",paro.dx*paro.mult)  );                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("shiftinY=%6.4f",paro.dy*paro.mult)  );                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("shiftinZ=%6.4f",paro.dz*paro.mult)  );                 
+                            }              
+                            xpos=moduleradius*sin((aangle+half)*raddeg)+(paro.dx*paro.mult)*paro.lad[int(nl)-1];              
+                            ypos=moduleradius*cos((aangle+half)*raddeg)+(paro.dy*paro.mult)*paro.lad[int(nl)-1];              
+                            zpos=0.0+(paro.dz*paro.mult)*paro.lad[int(nl)-1];              
+                            if ( debug==1 )              
+                            {                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("aabgle=%6.3f",aangle)  );                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("bangle=%6.3f",bangle)  );                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("x=%6.3f",xpos)  );                 
+                                  // - Info -                  
+                                  Info( GetName(), Form("y=%6.3f",ypos)  );                 
+                            }              
+                            _create = AgCreate("IBAM");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create IBAM                 
+                                  Create("IBAM");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("IBAM");                 
+                                  place.SetMother("IBMO");                 
+                                  /// Add daughter volume IBAM to mother IBMO                 
+                                  place.TranslateX(xpos);                 
+                                  /// Translate x = xpos                 
+                                  place.TranslateY(ypos);                 
+                                  /// Translate y = ypos                 
+                                  place.TranslateZ(zpos);                 
+                                  /// Translate z = zpos                 
+                                  place.par("only")=AgPosition::kMany;                 
+                                  /// Overlap: agposition::kmany                 
+                                  if ( debug==1 )                 
+                                  {                    
+                                        // - Info -                     
+                                        Info( GetName(), Form("rotalongX=%6.4f",para.da*para.mult)  );                    
+                                        // - Info -                     
+                                        Info( GetName(), Form("rotalongY=%6.4f",para.db*para.mult)  );                    
+                                        // - Info -                     
+                                        Info( GetName(), Form("rotalongZ=%6.4f",para.dg*para.mult)  );                    
+                                  }                 
+                                  place.AlphaZ(-1*aangle-(isbg.tilt+para.dg*para.mult*para.lad[int(nl)-1]));                 
+                                  /// Rotate: AlphaZ = -1*aangle-(isbg.tilt+para.dg*para.mult*para.lad[int(nl)-1])                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  place.AlphaX(-1*(para.da*para.mult)*para.lad[int(nl)-1]);                 
+                                  /// Rotate: AlphaX = -1*(para.da*para.mult)*para.lad[int(nl)-1]                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  place.AlphaY(-1*(para.db*para.mult)*para.lad[int(nl)-1]);                 
+                                  /// Rotate: AlphaY = -1*(para.db*para.mult)*para.lad[int(nl)-1]                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  _stacker -> Position( AgBlock::Find("IBAM"), place );                 
+                            } // end placement of IBAM              
+                      }           
+                      END_OF_IBMO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block IBMO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *IBAM::mInstance = 0;     
+          AgBlock *IBAM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new IBAM();        
+                   return mInstance;        
+          }     
+          void IBAM::Block( AgCreate create )     
+          {         
+                ///@addtogroup IBAM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("IBAM");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=ladder_width/2.0;              
+                            shape.par("dy")=ladder_thk/2.0;              
+                            shape.par("dz")=ladder_length/2.0;              
+                            /// Shape Bbox dx=ladder_width/2.0 dy=ladder_thk/2.0 dz=ladder_length/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_IBAM;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Loop on nu from 1 to isbg.nunit step=1           
+                      for ( nu=1; (1>0)? (nu<=isbg.nunit):(nu>=isbg.nunit); nu+=1 )           
+                      {              
+                            _create = AgCreate("IBLM");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create IBLM                 
+                                  Create("IBLM");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("IBLM");                 
+                                  place.SetMother("IBAM");                 
+                                  /// Add daughter volume IBLM to mother IBAM                 
+                                  place.TranslateX(0);                 
+                                  /// Translate x = 0                 
+                                  place.TranslateY(0);                 
+                                  /// Translate y = 0                 
+                                  place.TranslateZ(-1.0*ladder_length/2.+isss.activeh*(nu-0.5));                 
+                                  /// Translate z = -1.0*ladder_length/2.+isss.activeh*(nu-0.5)                 
+                                  if ( debug==1 )                 
+                                  {                    
+                                        // - Info -                     
+                                        Info( GetName(), Form("zpos=%6.3f",-1.0*ladder_length/2.+isss.activeh*(nu-0.5))  );                    
+                                  }                 
+                                  _stacker -> Position( AgBlock::Find("IBLM"), place );                 
+                            } // end placement of IBLM              
+                      }           
+                      END_OF_IBAM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block IBAM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *IBLM::mInstance = 0;     
+          AgBlock *IBLM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new IBLM();        
+                   return mInstance;        
+          }     
+          void IBLM::Block( AgCreate create )     
+          {         
+                ///@addtogroup IBLM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("IBLM");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=ladder_width/2.0;              
+                            shape.par("dy")=module_thk/2.0;              
+                            shape.par("dz")=isss.activeh/2.0;              
+                            /// Shape Bbox dx=ladder_width/2.0 dy=module_thk/2.0 dz=isss.activeh/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_IBLM;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("IBSS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create IBSS              
+                            Create("IBSS");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("IBSS");              
+                            place.SetMother("IBLM");              
+                            /// Add daughter volume IBSS to mother IBLM              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY((-1.0*module_thk/2.0)+(isss.activethk/2.0));              
+                            /// Translate y = (-1.0*module_thk/2.0)+(isss.activethk/2.0)              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            _stacker -> Position( AgBlock::Find("IBSS"), place );              
+                      } // end placement of IBSS           
+                      _create = AgCreate("IBSP");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create IBSP              
+                            Create("IBSP");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("IBSP");              
+                            place.SetMother("IBLM");              
+                            /// Add daughter volume IBSP to mother IBLM              
+                            place.TranslateX(0.0);              
+                            /// Translate x = 0.0              
+                            place.TranslateY((1.0*module_thk/2.0)-(isss.passivethk/2.0));              
+                            /// Translate y = (1.0*module_thk/2.0)-(isss.passivethk/2.0)              
+                            place.TranslateZ(0.0);              
+                            /// Translate z = 0.0              
+                            _stacker -> Position( AgBlock::Find("IBSP"), place );              
+                      } // end placement of IBSP           
+                      END_OF_IBLM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block IBLM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *IBSP::mInstance = 0;     
+          AgBlock *IBSP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new IBSP();        
+                   return mInstance;        
+          }     
+          void IBSP::Block( AgCreate create )     
+          {         
+                ///@addtogroup IBSP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Silicon            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Silicon");              
+                            _material = mat;              
+                      }           
+                      /// Material PassiveSilicon isvol=0            
+                      { AgMaterial &mat = AgMaterial::Get("Passivesilicon");              
+                            mat.par("isvol")=0;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("IBSP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=isss.activew/2.0;              
+                            shape.par("dy")=isss.passivethk/2.0;              
+                            shape.par("dz")=isss.activeh/2.0;              
+                            /// Shape Bbox dx=isss.activew/2.0 dy=isss.passivethk/2.0 dz=isss.activeh/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_IBSP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_IBSP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block IBSP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *IBSS::mInstance = 0;     
+          AgBlock *IBSS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new IBSS();        
+                   return mInstance;        
+          }     
+          void IBSS::Block( AgCreate create )     
+          {         
+                ///@addtogroup IBSS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      /// Material Silicon            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Silicon");              
+                            _material = mat;              
+                      }           
+                      /// Material ISTSSensitive isvol=1            
+                      { AgMaterial &mat = AgMaterial::Get("Istssensitive");              
+                            mat.par("isvol")=1;              
+                            _material = mat;              
+                      }           
+                      { AgAttribute attr = AgAttribute("IBSS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=isss.activew/2.0;              
+                            shape.par("dy")=isss.activethk/2.0;              
+                            shape.par("dz")=isss.activeh/2.0;              
+                            /// Shape Bbox dx=isss.activew/2.0 dy=isss.activethk/2.0 dz=isss.activeh/2.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_IBSS;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "IBSS", "z", .001, 0, 0, "S");           
+                      // deferred module()->AddHit( "IBSS", "y", .001, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "x", .001, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "ptot", 16, 0, 100, "");           
+                      // deferred module()->AddHit( "IBSS", "cx", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "cy", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "cz", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "sleng", 16, 0, 500, "");           
+                      // deferred module()->AddHit( "IBSS", "tof", 16, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "step", .01, 0, 0, "");           
+                      // deferred module()->AddHit( "IBSS", "eloss", 16, 0, 0, "");           
+                      END_OF_IBSS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block IBSS     
+    // ----------------------------------------------------------------------- geoctr
+       void IstdGeo0::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup IstdGeo0_revision        
+             ///@{           
+                   /// Created:   12/06/14            
+             ///@}        
+             ///@addtogroup IstdGeo0_revision        
+             ///@{           
+                   /// Author: Jonathan Bouchet           
+             ///@}        
+             AddBlock("IBMO", IBMO::Instance());        
+             AddBlock("IBAM", IBAM::Instance());        
+             AddBlock("IBLM", IBLM::Instance());        
+             AddBlock("IBSS", IBSS::Instance());        
+             AddBlock("IBSP", IBSP::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill ismg
+++ismg._index;
+ismg.version = 1.0;
+// ismg_docum.version = " Version, this goes to g2t_volume_id.g ;//;// ";
+ismg.subversion = 0;
+// ismg_docum.subversion = " For future use with g2t_volume_id.g ";
+ismg.rin = 13.50;
+// ismg_docum.rin = "Inner Radius";
+ismg.rout = 15.0;
+// ismg_docum.rout = "Outer Radius (Length = Ladder length)";
+ISMG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill isbg
+++isbg._index;
+isbg.layer = 1.0;
+// isbg_docum.layer = " Layer index, just one layer left ";
+isbg.nladder = 24;
+// isbg_docum.nladder = " Number of ladders in this layers ";
+isbg.nunit = 12;
+// isbg_docum.nunit = "Number of sensors per ladder in this layer";
+isbg.radius = 14.0;
+// isbg_docum.radius = " Radius centers of active silicon sensors ";
+isbg.tilt = 15.0;
+// isbg_docum.tilt = " Tilt angle of the ladders ";
+isbg.gap = 0.0;
+// isbg_docum.gap = " Gaps btw the sensors ";
+ISBG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill isan
+++isan._index;
+isan.version = 1;
+// isan_docum.version = "Version";
+isan.rmin = 14.2;
+// isan_docum.rmin = "InnerRadius (length = ladder length)";
+isan.thk = 0.0636;
+// isan_docum.thk = "Thickness (1% RL silicon)";
+ISAN.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill isss
+++isss._index;
+isss.version = 1;
+// isss_docum.version = " Version ";
+isss.activew = 3.6823;
+// isss_docum.activew = " Active Area Width ";
+isss.activeh = 4.0400;
+// isss_docum.activeh = " Active area Height ";
+isss.activethk = 0.0300;
+// isss_docum.activethk = " Active Area Thickness ";
+isss.passivethk = 0.0800;
+// isss_docum.passivethk = " Passive Area Thickness ";
+ISSS.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill paro
+++paro._index;
+paro.version = 0;
+// paro_docum.version = "None";
+paro.dx = 0;
+// paro_docum.dx = " default : no shift ";
+paro.dy = 0;
+// paro_docum.dy = " default : no shift ";
+paro.dz = 0;
+// paro_docum.dz = " default : no shift ";
+paro.mult = 0;
+// paro_docum.mult = " default : no shift ";
+{
+paro_info::lad::Type temp = {
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0),
+paro_info::lad::BaseType(0)
+}
+;
+memcpy(&paro.lad, &temp, sizeof(temp));;
+}
+// paro_docum.lad = "1..24";
+PARO.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill paro
+++paro._index;
+paro.version = 1;
+// paro_docum.version = "None";
+paro.dx = 0;
+// paro_docum.dx = " shift for all ladders";
+paro.dy = 0;
+// paro_docum.dy = " default = no shift ";
+paro.dz = 1;
+// paro_docum.dz = " default = no shift ";
+paro.mult = 5;
+// paro_docum.mult = " max is 1 cm";
+{
+paro_info::lad::Type temp = {
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1),
+paro_info::lad::BaseType(1)
+}
+;
+memcpy(&paro.lad, &temp, sizeof(temp));;
+}
+// paro_docum.lad = "1..24";
+PARO.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill para
+++para._index;
+para.version = 0;
+// para_docum.version = "None";
+para.da = 0;
+// para_docum.da = " default = no rot ";
+para.db = 0;
+// para_docum.db = " default = no rot. ";
+para.dg = 0;
+// para_docum.dg = " default = no rot. ";
+para.mult = 0;
+// para_docum.mult = " default = no rot. ";
+{
+para_info::lad::Type temp = {
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0),
+para_info::lad::BaseType(0)
+}
+;
+memcpy(&para.lad, &temp, sizeof(temp));;
+}
+// para_docum.lad = "1..24";
+PARA.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill para
+++para._index;
+para.version = 1;
+// para_docum.version = "None";
+para.da = 0;
+// para_docum.da = " no rot.";
+para.db = 0;
+// para_docum.db = " no rot. ";
+para.dg = 1;
+// para_docum.dg = " rot. for all ladders ";
+para.mult = 1;
+// para_docum.mult = " max is 1 degrees ";
+{
+para_info::lad::Type temp = {
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1),
+para_info::lad::BaseType(1)
+}
+;
+memcpy(&para.lad, &temp, sizeof(temp));;
+}
+// para_docum.lad = "1..24";
+PARA.fill();
+        
+             raddeg=3.14159265/180.0;        
+             half=isbg.tilt/2.0;        
+             /// USE ismg version=1;        
+             ISMG.use( __ismg_version__ = 1 );
+        
+             /// USE isan version=1;        
+             ISAN.use( __isan_version__ = 1 );
+        
+             /// USE isss version=1;        
+             ISSS.use( __isss_version__ = 1 );
+        
+             /// USE paro version=0;        
+             PARO.use( __paro_version__ = 0 );
+        
+             /// USE para version=0;        
+             PARA.use( __para_version__ = 0 );
+        
+             module_thk=isss.activethk+isss.passivethk;        
+             ladder_thk=module_thk;        
+             ladder_width=isss.activew;        
+             debug=0;        
+             ladder_length=isbg.nunit*isss.activeh;        
+             _create = AgCreate("IBMO");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create IBMO           
+                   Create("IBMO");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("IBMO");           
+                   place.SetMother("IDSM");           
+                   /// Add daughter volume IBMO to mother IDSM           
+                   _stacker -> Position( AgBlock::Find("IBMO"), place );           
+             } // end placement of IBMO        
+       }; // IstdGeo0     
+ }; // namespace IstdGeo0  
+ 

@@ -1,0 +1,95 @@
+#ifndef __TestGeo1__ 
+#define __TestGeo1__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace TESTGEO1 // $NMSPC 
+{ 
+   // ---------------------------------------------------------------------- MAIN -- 
+   ///@defgroup MAIN_doc 
+   ///@class MAIN 
+   ///@brief A master volume [TGeoVolume] 
+   class MAIN : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      MAIN() : AgBlock("MAIN","A master volume [TGeoVolume]"){ 
+      }; 
+      ~MAIN(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TUBD -- 
+   ///@defgroup TUBD_doc 
+   ///@class TUBD 
+   ///@brief A division of the mother volume along Y-axis [TGeoVolume] 
+   class TUBD : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TUBD() : AgBlock("TUBD","A division of the mother volume along Y-axis [TGeoVolume]"){ 
+      }; 
+      ~TUBD(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TUBP -- 
+   ///@defgroup TUBP_doc 
+   ///@class TUBP 
+   ///@brief A parent volume for the tubes [TGeoVolume] 
+   class TUBP : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TUBP() : AgBlock("TUBP","A parent volume for the tubes [TGeoVolume]"){ 
+      }; 
+      ~TUBP(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- TUBE -- 
+   ///@defgroup TUBE_doc 
+   ///@class TUBE 
+   ///@brief A sub volume setup for shape defintion when positioned [TGeoVolume] 
+   class TUBE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      TUBE() : AgBlock("TUBE","A sub volume setup for shape defintion when positioned [TGeoVolume]"){ 
+      }; 
+      ~TUBE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class TestGeo1 
+   /// \brief Test of paramterized placement of volumes 
+   class TestGeo1 : public AgModule 
+   { 
+      public: 
+      TestGeo1(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~TestGeo1(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace TestGeo1 
+#endif // __TestGeo1__ 

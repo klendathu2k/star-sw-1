@@ -1,0 +1,616 @@
+      MODULE FtsdGeo    is the Beam Beam Counter Modules GEOmetry
+      """ AGML variables """
+      REAL :: agml_rotm(9), agml_thetax, agml_phix, agml_thetay, agml_phiy, agml_thetaz,
+             agml_phiz
+      COMMON /agml_vars/ agml_rotm, agml_thetax, agml_phix, agml_thetay, agml_phiy,
+             agml_thetaz, agml_phiz
+      Created 10/7/2015
+      Author Jason Webb
+      +CDE,agecom,gconst,gcunit.
+      CONTENT FTSM,
+      FTSD,
+      FTSA,
+      FTSS
+      STRUCTURE MAIN { version,useids,active(20)}
+      STRUCTURE FDSK { version,int diskid,x,y,z,rmax,rmin,rmaxsens,rminsens,thksens,
+            thksupp}
+      Integer *4 ndisk/0/, idisk/0/
+
+      real *4 zmin,    zmax,    rmin,    rmax,    xcenter,    ycenter,    zcenter,
+                zdisk,    dzdisk,    Rin/0/,    Rout/0/
+
+      !* Lambda function eta2tan
+      real etax ! arguement for etax
+      real eta2tan
+      eta2tan(etax) = tan(2*atan(exp(-etax)))
+      FILL MAIN		! Select configuration
+      version = 3.0 ! selector
+      useids = 1.0 ! defines placement 0=in cave, 1=in idsm
+      active  = {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 
+                   1,  1,  1,  1,  1,  1,  1,  1,  1} !  switch on/off up to 20 disks
+      ENDFILL
+      use MAIN
+      IF ( MAIN_version==1.0 ) THEN
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = 70.0 ! z center of disk [cm]
+      rmin = 70*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = 70*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = 70*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = 70*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      ndisk = ndisk + 1
+      FILL FDSK		! Second disk
+      version = 1.1 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = 93.33 ! z center of disk [cm]
+      rmin = 93.33*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = 93.33*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = 93.33*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = 93.33*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      ndisk = ndisk + 1
+      FILL FDSK		! Third disk
+      version = 1.2 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = 116.66 ! z center of disk [cm]
+      rmin = 116.66*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = 116.66*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = 116.66*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = 116.66*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.2 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      ndisk = ndisk + 1
+      FILL FDSK		! Fourth disk
+      version = 1.2 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = 140.0 ! z center of disk [cm]
+      rmin = 140.0*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = 140.0*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = 140.0*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = 140.0*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      ENDIF
+      IF ( MAIN_version==2.0 ) THEN
+      zdisk = 70.0;
+      dzdisk = 30.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Second disk
+      version = 1.1 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Third disk
+      version = 1.2 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fourth disk
+      version = 1.3 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fifth disk
+      version = 1.4 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Sixth disk
+      version = 1.5 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      ENDFILL
+      ENDIF
+      IF ( MAIN_version==3.0 ) THEN
+      zdisk  = 70.0;
+      dzdisk = 23.3333333;
+      Rin    = 2.25
+      Rout   = 32.25
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = Rin-0.5 ! minimum radius of disk [cm]
+      rmax = Rout+0.5 ! maximum radius of disk [cm]
+      rminsens = Rin ! minimum radius of sensitive layer [cm]
+      rmaxsens = Rout ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Second disk
+      version = 1.1 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Third disk
+      version = 1.2 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fourth disk
+      version = 1.3 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fifth disk
+      version = 1.4 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Sixth disk
+      version = 1.5 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      ENDIF
+      IF ( MAIN_version==4.0 ) THEN
+      zdisk = 240.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 244.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 400.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 404.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 700.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 704.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-1.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+1.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      ENDIF
+      IF ( MAIN_version==5.0 ) THEN
+      zdisk  = 70.0;
+      dzdisk = 23.3333333;
+      Rin    = 2.25
+      Rout   = 32.25
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = Rin-0.5 ! minimum radius of disk [cm]
+      rmax = Rout+0.5 ! maximum radius of disk [cm]
+      rminsens = Rin ! minimum radius of sensitive layer [cm]
+      rmaxsens = Rout ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Second disk
+      version = 1.1 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Third disk
+      version = 1.2 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fourth disk
+      version = 1.3 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Fifth disk
+      version = 1.4 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = zdisk + dzdisk
+      ndisk = ndisk + 1
+      FILL FDSK		! Sixth disk
+      version = 1.5 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      ENDFILL
+      zdisk = 240.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 244.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 470.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 474.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 700.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      zdisk = 704.0;
+      ndisk = ndisk + 1
+      FILL FDSK		! First disk
+      version = 1.0 ! disk version
+      diskid = ndisk ! disk number
+      x = 0.0 ! x center of disk [cm]
+      y = 0.0 ! y center of disk [cm]
+      z = zdisk ! z center of disk [cm]
+      rmin = zdisk*eta2tan(4.0)-3.0 ! minimum radius of disk [cm]
+      rmax = zdisk*eta2tan(2.5)+3.0 ! maximum radius of disk [cm]
+      rminsens = zdisk*eta2tan(4.0) ! minimum radius of sensitive layer [cm]
+      rmaxsens = zdisk*eta2tan(2.5) ! maximum radius of sensitive layer [cm]
+      thksens = 0.03744 ! thickness of sensitive layer [cm]
+      thksupp = 0.8 ! thickness of support material [cm]
+      ENDFILL
+      ENDIF
+      use FDSK
+      use FDSK diskid=1
+      zmin = FDSK_z    - FDSK_thksupp
+      rmin = FDSK_rmin
+      use FDSK diskid=ndisk
+      zmax = FDSK_z    + FDSK_thksupp
+      rmax = FDSK_rmax
+      xcenter = 0
+      ycenter = 0
+      zcenter = zmin + (zmax-zmin) / 2.0
+      CREATE FTSM
+      IF MAIN_useids.eq.1.0 { 
+      CALL AgsReset 
+      CALL agml_position_begin('FTSM') 
+      %mother = 'IDSM' 
+      %title = 'FTSM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(xcenter) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ycenter) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zcenter) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      } !//IF MAIN_useids.eq.1.0 
+      CALL AgsReset 
+      CALL agml_position_begin('FTSM') 
+      %mother = 'CAVE' 
+      %title = 'FTSM' 
+      %exname = 'POSITION' ! agml placement 
+      %konly = 'ONLY' 
+      ag_x = real(xcenter) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(ycenter) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(zcenter) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_KONLY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ! ---------------------------------------------------------------------------------- FTSM
+      BLOCK FTSM   Mother volume for the FTS
+      MATERIAL air
+      MATERIAL air isvol=0
+      MEDIUM standard
+      ATTRIBUTE FSTM seen=0 colo=1
+      SHAPE tube rmin=rmin rmax=rmax dz=(zmax-zmin)/2.0
+      DO idisk = 1, ndisk
+      use FDSK diskid=idisk
+      IF ( MAIN_active(idisk).eq.1 ) THEN
+      CREATE FTSD
+      CALL AgsReset 
+      CALL agml_position_begin('FTSD') 
+      %mother = 'FTSM' 
+      %title = 'FTSD' 
+      %exname = 'POSITION' ! agml placement 
+      %ncopy = real(idisk) 
+      ag_x = real(FDSK_x) 
+      CALL agml_translate_x( %x ) 
+      ag_y = real(FDSK_y) 
+      CALL agml_translate_y( %y ) 
+      ag_z = real(FDSK_z-zcenter) 
+      CALL agml_translate_z( %z ) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'MOTHER_NCOPY_X_Y_Z_THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      <W> idisk;  ('Positioning FTSD ', I2);
+      ENDIF
+      END DO
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FTSD
+      BLOCK FTSD   FTS disk
+      ATTRIBUTE FTSD seen=0 colo=3
+      SHAPE tube rmin=FDSK_rmin rmax=FDSK_rmax,
+            dz=FDSK_thksupp
+      CREATE FTSA
+      CALL AgsReset 
+      CALL agml_position_begin('FTSA') 
+      %title = 'FTSA' 
+      %exname = 'POSITION' ! agml placement 
+      %rmin = real(FDSK_rminsens) 
+      %rmax = real(FDSK_rmaxsens) 
+      %dz = real(FDSK_thksens) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CREATE FTSS
+      CALL AgsReset 
+      CALL agml_position_begin('FTSS') 
+      %title = 'FTSS' 
+      %exname = 'POSITION' ! agml placement 
+      %rmin = real(FDSK_rmin) 
+      %rmax = real(FDSK_rminsens) 
+      %dz = real(FDSK_thksupp) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      CALL AgsReset 
+      CALL agml_position_begin('FTSS') 
+      %title = 'FTSS' 
+      %exname = 'POSITION' ! agml placement 
+      %rmin = real(FDSK_rmaxsens) 
+      %rmax = real(FDSK_rmax) 
+      %dz = real(FDSK_thksupp) 
+      CALL agml_get_translation( %x, %y, %z ) 
+      CALL agml_get_angles(%thetax,%phix,%thetay,%phiy,%thetaz,%phiz) 
+      %parlist = 'THETAX_PHIX_THETAY_PHIY_THETAZ_PHIZ' 
+      CALL AxPosition 
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FTSA
+      BLOCK FTSA   Active volume of the FTS
+      ATTRIBUTE FTSA seen=1 colo=4
+      MATERIAL silicon
+      MATERIAL silicon isvol=1
+      SHAPE tube rmin=0 rmax=0 dz=0
+      HITS FTSA z:.00001:S y:.00001:S x:.00001:S ptot:16:(0,100) cx:10: cy:10: cz:10:,
+            sleng:16:(0,500) tof:16: step:.0001: eloss:16:
+      ENDBLOCK
+      ! ---------------------------------------------------------------------------------- FTSS
+      BLOCK FTSS   Support structure for each disk
+      ATTRIBUTE FTSS seen=1 colo=3
+      MATERIAL aluminium
+      MATERIAL aluminium isvol=0
+      SHAPE tube rmin=0 rmax=0 dz=0
+      ENDBLOCK
+      <W> '===>> 	[End AgML Module FtsdGeo]	 <<==='; (A32,/,/);
+      END! Module FtsdGeo

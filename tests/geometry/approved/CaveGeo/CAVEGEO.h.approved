@@ -1,0 +1,235 @@
+#ifndef __CAVEGEO__ 
+#define __CAVEGEO__ 
+
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+ 
+ 
+#include "StarVMC/StarAgmlLib/AgModule.h" 
+#include "StarVMC/StarAgmlLib/AgMLStructure.h" 
+#include <stddef.h> 
+ 
+namespace CAVEGEO // $NMSPC 
+{ 
+   struct cvcf_t {
+float version;
+int config;
+int tpcrefsys;
+int _index;
+};
+ 
+   struct _cvcf_docum_ {
+string version;
+string config;
+string tpcrefsys;
+string _index;
+};
+ 
+    struct _cvcf_types_ {
+  typedef float version;
+  typedef int config;
+  typedef int tpcrefsys;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cvcf_info {
+typedef cvcf_t Type;
+static const char *name(){ return "cvcf_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct config {
+  static const char *name() { return  "config"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, config ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct tpcrefsys {
+  static const char *name() { return  "tpcrefsys"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, tpcrefsys ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cvcf_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cvcf_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   struct cave_t {
+float version;
+float rmin;
+float rmax[2];
+float dz[2];
+float dconc;
+int _index;
+};
+ 
+   struct _cave_docum_ {
+string version;
+string rmin;
+string rmax;
+string dz;
+string dconc;
+string _index;
+};
+ 
+    struct _cave_types_ {
+  typedef float version;
+  typedef float rmin;
+  typedef float rmax[2];
+  typedef float dz[2];
+  typedef float dconc;
+  typedef int _index;
+};
+ 
+   
+#ifndef __CINT__
+
+struct cave_info {
+typedef cave_t Type;
+static const char *name(){ return "cave_t"; }
+struct version {
+  static const char *name() { return  "version"; }
+  static size_t Offset(){ return offsetof( struct cave_t, version ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmin {
+  static const char *name() { return  "rmin"; }
+  static size_t Offset(){ return offsetof( struct cave_t, rmin ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct rmax {
+  static const char *name() { return  "rmax"; }
+  static size_t Offset(){ return offsetof( struct cave_t, rmax ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dz {
+  static const char *name() { return  "dz"; }
+  static size_t Offset(){ return offsetof( struct cave_t, dz ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type[2];
+};
+struct dconc {
+  static const char *name() { return  "dconc"; }
+  static size_t Offset(){ return offsetof( struct cave_t, dconc ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef float BaseType;
+  typedef float Type;
+  static const int rank = 0;};
+struct _index {
+  static const char *name() { return  "_index"; }
+  static size_t Offset(){ return offsetof( struct cave_t, _index ); }
+  static void* address(){ 
+         size_t iadd = (size_t)cave_info::address;
+         iadd += Offset();
+         return (void *)iadd;}
+  typedef int BaseType;
+  typedef int Type;
+  static const int rank = 0;};
+static void              *address;
+static AgMLStructureBase *structure;
+};
+#endif
+ 
+   // ---------------------------------------------------------------------- HALL -- 
+   ///@defgroup HALL_doc 
+   ///@class HALL 
+   ///@brief is GSTAR building [TGeoVolume] 
+   class HALL : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      HALL() : AgBlock("HALL","is GSTAR building [TGeoVolume]"){ 
+      }; 
+      ~HALL(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   // ---------------------------------------------------------------------- CAVE -- 
+   ///@defgroup CAVE_doc 
+   ///@class CAVE 
+   ///@brief is GSTAR cave with subsystem envelopes [TGeoVolume] 
+   class CAVE : public AgBlock 
+   {  public: 
+         static AgBlock *Instance(); 
+      CAVE() : AgBlock("CAVE","is GSTAR cave with subsystem envelopes [TGeoVolume]"){ 
+      }; 
+      ~CAVE(){ }; 
+      virtual void Block( AgCreate c ); 
+      virtual void End(){ }; 
+      protected: 
+        static AgBlock *mInstance; 
+   }; 
+   /// \class CAVEGEO 
+   /// \brief   builds CAVE for GSTAR  
+   class CAVEGEO : public AgModule 
+   { 
+      public: 
+      CAVEGEO(); 
+      virtual void ConstructGeometry( const Char_t *dummy="" ); 
+      ~CAVEGEO(){ }; 
+      public: 
+   }; 
+   // endElement in class Module 
+}; // namespace CAVEGEO 
+#endif // __CAVEGEO__ 

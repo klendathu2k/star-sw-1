@@ -1,0 +1,2433 @@
+#include "BTOFGEO1.h"  
+ 
+/*
+ ******************************************************************************
+ ******************************************************************************
+ **                                                                          **
+ ** This is generated code.  Do not alter.  You should instead edit the XML  **
+ ** module which corresponds to your detector.  This code will be replaced   **
+ ** on the next compilation.                                                 **
+ **                                                                          **
+ ******************************************************************************
+ ******************************************************************************
+ */
+  
+ // ---------------------------------------------------------------------------------------------------  
+ //  
+ #include "StarVMC/StarAgmlLib/StarAgmlStacker.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/AgMaterial.h"  
+ #include "StarVMC/StarAgmlLib/AgMedium.h"  
+ #include "StarVMC/StarAgmlLib/AgShape.h"  
+ #include "StarVMC/StarAgmlLib/AgBlock.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include "StarVMC/StarAgmlLib/AgSTAR.h"  
+ //  
+ #include "StarVMC/StarAgmlLib/Mortran.h"  
+ #include "StarVMC/StarAgmlLib/AgMath.h"  
+ #include <iostream>  
+ #include <vector>  
+ #include <map>  
+ const Int_t _printlevel = 0;  
+ #define LOG_PRINT if(_printlevel>0) std::cout << GetName() << " -Print- "  
+ #define LOG_INFO  if(_printlevel>1) std::cout << GetName() << " -Info-  "  
+ #define LOG_DEBUG if(_printlevel>2) std::cout << GetName() << " -Debug- "  
+ #define LOG_WARN  if(_printlevel>3) std::cout << GetName() << " -Warn-  "  
+ #define printf(fmt,...) LOG_PRINT << Form(fmt,##__VA_ARGS__) << std::endl;  
+ #include "StarVMC/Geometry/Helpers.h"  
+ //  
+ namespace BTOFGEO1 // $NMSPC  
+ {     
+       //     
+       // ---------------------------------------------------------------------------------------------------     
+          btog_t *__btog = new btog_t; // dummy
+ AgMLStructure<btog_t,btog_info> BTOG("btog");
+btog_t &btog = BTOG;
+     
+          // Selectors for btog
+isEqual<btog_t, float> __btog_version__( __btog, &__btog->version );
+isEqual<btog_t, float> __btog_rmin__( __btog, &__btog->rmin );
+isEqual<btog_t, float> __btog_rmax__( __btog, &__btog->rmax );
+isEqual<btog_t, float> __btog_dz__( __btog, &__btog->dz );
+isEqual<btog_t, float> __btog_choice__( __btog, &__btog->choice );
+isEqual<btog_t, float> __btog_posit1__( __btog, &__btog->posit1 );
+isEqual<btog_t, float> __btog_posit2__( __btog, &__btog->posit2 );
+isEqual<btog_t, int> __btog__index__( __btog, &__btog->_index );
+     
+          
+	void              *btog_info::address   = &btog;
+	AgMLStructureBase   *btog_info::structure = &BTOG;
+     
+          tray_t *__tray = new tray_t; // dummy
+ AgMLStructure<tray_t,tray_info> TRAY("tray");
+tray_t &tray = TRAY;
+     
+          // Selectors for tray
+isEqual<tray_t, float> __tray_height__( __tray, &__tray->height );
+isEqual<tray_t, float> __tray_width__( __tray, &__tray->width );
+isEqual<tray_t, float> __tray_length__( __tray, &__tray->length );
+isEqual<tray_t, float> __tray_wallthk__( __tray, &__tray->wallthk );
+isEqual<tray_t, float> __tray_supfullh__( __tray, &__tray->supfullh );
+isEqual<tray_t, float> __tray_supfullw__( __tray, &__tray->supfullw );
+isEqual<tray_t, float> __tray_suplen__( __tray, &__tray->suplen );
+isEqual<tray_t, float> __tray_supbaset__( __tray, &__tray->supbaset );
+isEqual<tray_t, float> __tray_supbasew__( __tray, &__tray->supbasew );
+isEqual<tray_t, float> __tray_suparmt__( __tray, &__tray->suparmt );
+isEqual<tray_t, float> __tray_cooloutr__( __tray, &__tray->cooloutr );
+isEqual<tray_t, float> __tray_coolinnr__( __tray, &__tray->coolinnr );
+isEqual<tray_t, float> __tray_stript__( __tray, &__tray->stript );
+isEqual<tray_t, float> __tray_footinse__( __tray, &__tray->footinse );
+isEqual<tray_t, float> __tray_footthk__( __tray, &__tray->footthk );
+isEqual<tray_t, float> __tray_foot1len__( __tray, &__tray->foot1len );
+isEqual<tray_t, float> __tray_foot2thk__( __tray, &__tray->foot2thk );
+isEqual<tray_t, float> __tray_foot3len__( __tray, &__tray->foot3len );
+isEqual<tray_t, int> __tray__index__( __tray, &__tray->_index );
+     
+          
+	void              *tray_info::address   = &tray;
+	AgMLStructureBase   *tray_info::structure = &TRAY;
+     
+          ctbb_t *__ctbb = new ctbb_t; // dummy
+ AgMLStructure<ctbb_t,ctbb_info> CTBB("ctbb");
+ctbb_t &ctbb = CTBB;
+     
+          // Selectors for ctbb
+isEqual<ctbb_t, float> __ctbb_slab1len__( __ctbb, &__ctbb->slab1len );
+isEqual<ctbb_t, float> __ctbb_slab2len__( __ctbb, &__ctbb->slab2len );
+isEqual<ctbb_t, float> __ctbb_slab1x__( __ctbb, &__ctbb->slab1x );
+isEqual<ctbb_t, float> __ctbb_slab2x__( __ctbb, &__ctbb->slab2x );
+isEqual<ctbb_t, float> __ctbb_slabthck__( __ctbb, &__ctbb->slabthck );
+isEqual<ctbb_t, float> __ctbb_slabwid__( __ctbb, &__ctbb->slabwid );
+isEqual<ctbb_t, float> __ctbb_convlen__( __ctbb, &__ctbb->convlen );
+isEqual<ctbb_t, float> __ctbb_convwidm__( __ctbb, &__ctbb->convwidm );
+isEqual<ctbb_t, float> __ctbb_convthck__( __ctbb, &__ctbb->convthck );
+isEqual<ctbb_t, float> __ctbb_pmtlen__( __ctbb, &__ctbb->pmtlen );
+isEqual<ctbb_t, float> __ctbb_pmtmaxr__( __ctbb, &__ctbb->pmtmaxr );
+isEqual<ctbb_t, float> __ctbb_pmtminr__( __ctbb, &__ctbb->pmtminr );
+isEqual<ctbb_t, float> __ctbb_baselen__( __ctbb, &__ctbb->baselen );
+isEqual<ctbb_t, float> __ctbb_basemaxr__( __ctbb, &__ctbb->basemaxr );
+isEqual<ctbb_t, float> __ctbb_baseminr__( __ctbb, &__ctbb->baseminr );
+isEqual<ctbb_t, float> __ctbb_electhck__( __ctbb, &__ctbb->electhck );
+isEqual<ctbb_t, float> __ctbb_wrap__( __ctbb, &__ctbb->wrap );
+isEqual<ctbb_t, float> __ctbb_shim__( __ctbb, &__ctbb->shim );
+isEqual<ctbb_t, int> __ctbb__index__( __ctbb, &__ctbb->_index );
+     
+          
+	void              *ctbb_info::address   = &ctbb;
+	AgMLStructureBase   *ctbb_info::structure = &CTBB;
+     
+          toff_t *__toff = new toff_t; // dummy
+ AgMLStructure<toff_t,toff_info> TOFF("toff");
+toff_t &toff = TOFF;
+     
+          // Selectors for toff
+isEqual<toff_t, float> __toff_slat1len__( __toff, &__toff->slat1len );
+isEqual<toff_t, float> __toff_slat1z__( __toff, &__toff->slat1z );
+isEqual<toff_t, float> __toff_slatdz__( __toff, &__toff->slatdz );
+isEqual<toff_t, float> __toff_slatthck__( __toff, &__toff->slatthck );
+isEqual<toff_t, float> __toff_slatwid__( __toff, &__toff->slatwid );
+isEqual<toff_t, float> __toff_slatang__( __toff, &__toff->slatang );
+isEqual<toff_t, float> __toff_pmtlen__( __toff, &__toff->pmtlen );
+isEqual<toff_t, float> __toff_pmtmaxr__( __toff, &__toff->pmtmaxr );
+isEqual<toff_t, float> __toff_pmtminr__( __toff, &__toff->pmtminr );
+isEqual<toff_t, float> __toff_baselen__( __toff, &__toff->baselen );
+isEqual<toff_t, float> __toff_basemaxr__( __toff, &__toff->basemaxr );
+isEqual<toff_t, float> __toff_baseminr__( __toff, &__toff->baseminr );
+isEqual<toff_t, float> __toff_elecx__( __toff, &__toff->elecx );
+isEqual<toff_t, float> __toff_elec1z__( __toff, &__toff->elec1z );
+isEqual<toff_t, float> __toff_elecdz__( __toff, &__toff->elecdz );
+isEqual<toff_t, float> __toff_electhck__( __toff, &__toff->electhck );
+isEqual<toff_t, float> __toff_elecwid__( __toff, &__toff->elecwid );
+isEqual<toff_t, float> __toff_eleclen__( __toff, &__toff->eleclen );
+isEqual<toff_t, float> __toff_railthck__( __toff, &__toff->railthck );
+isEqual<toff_t, float> __toff_railwid__( __toff, &__toff->railwid );
+isEqual<toff_t, float> __toff_coolinnr__( __toff, &__toff->coolinnr );
+isEqual<toff_t, float> __toff_cooloutr__( __toff, &__toff->cooloutr );
+isEqual<toff_t, int> __toff__index__( __toff, &__toff->_index );
+     
+          
+	void              *toff_info::address   = &toff;
+	AgMLStructureBase   *toff_info::structure = &TOFF;
+     
+          ///@addtogroup BTOFGEO1_vars     
+          ///@{        
+                Float_t support_arm_width,support_arm_xpos,support_arm_ypos,support_aile_width,support_aile_ypos,xpos,ypos,zpos,totlen,zpbass,zpfee;        
+                //        
+                /// Float_t support_arm_width,support_arm_xpos,support_arm_ypos,support_aile_width,support_aile_ypos,xpos,ypos,zpos,totlen,zpbass,zpfee        
+          ///@}     
+          ///@addtogroup BTOFGEO1_vars     
+          ///@{        
+                Int_t i,is,choice,tof,year;        
+                //        
+                /// Int_t i,is,choice,tof,year        
+          ///@}     
+       BTOFGEO1::BTOFGEO1()     
+         : AgModule("BTOFGEO1"," is the Geometry of Barrel Trigger / Time Of Flight system  ")     
+       {        
+       }     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTOF::mInstance = 0;     
+          AgBlock *BTOF::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTOF();        
+                   return mInstance;        
+          }     
+          void BTOF::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTOF_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTOF");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      /// Medium Standard           
+                      {  AgMedium med = AgMedium::CopyMedium("Standard");              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=btog.rmin;              
+                            shape.par("rmax")=btog.rmax;              
+                            shape.par("dz")=btog.dz;              
+                            /// Shape Tube rmin=btog.rmin rmax=btog.rmax dz=btog.dz               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTOF;              
+                            _stacker -> Build(this);              
+                      }           
+                      choice=btog.choice;           
+                      _create = AgCreate("BTOH");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTOH              
+                            Create("BTOH");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTOH");              
+                            place.SetMother("BTOF");              
+                            /// Add daughter volume BTOH to mother BTOF              
+                            place.TranslateZ(+btog.dz/2);              
+                            /// Translate z = +btog.dz/2              
+                            place.AlphaY(180);              
+                            /// Rotate: AlphaY = 180              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("BTOH"), place );              
+                      } // end placement of BTOH           
+                      if ( (choice!=2) )           
+                      {              
+                            choice=1;              
+                      }           
+                      _create = AgCreate("BTOH");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTOH              
+                            Create("BTOH");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTOH");              
+                            place.SetMother("BTOF");              
+                            /// Add daughter volume BTOH to mother BTOF              
+                            place.TranslateZ(-btog.dz/2);              
+                            /// Translate z = -btog.dz/2              
+                            _stacker -> Position( AgBlock::Find("BTOH"), place );              
+                      } // end placement of BTOH           
+                      END_OF_BTOF:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTOF     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTOH::mInstance = 0;     
+          AgBlock *BTOH::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTOH();        
+                   return mInstance;        
+          }     
+          void BTOH::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTOH_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTOH");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.par("serial")=choice;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dz")=btog.dz/2;              
+                            /// Shape Tube dz=btog.dz/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTOH;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Loop on is from 1 to 60 step=1           
+                      for ( is=1; (1>0)? (is<=60):(is>=60); is+=1 )           
+                      {              
+                            tof=0;              
+                            if ( (choice==2) )              
+                            {                 
+                                  tof=1;                 
+                            }              
+                            if ( (choice==3&&51<=is&&is<=65) )              
+                            {                 
+                                  tof=1;                 
+                            }              
+                            if ( (choice==4&&is==btog.posit1) )              
+                            {                 
+                                  tof=1;                 
+                            }              
+                            _create = AgCreate("BSEC");              
+                            {                 
+                                  AgShape myshape; // undefined shape                 
+                                  ///Create BSEC                 
+                                  Create("BSEC");                  
+                            }              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("BSEC");                 
+                                  place.SetMother("BTOH");                 
+                                  /// Add daughter volume BSEC to mother BTOH                 
+                                  place.AlphaZ(102+6*is);                 
+                                  /// Rotate: AlphaZ = 102+6*is                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  _stacker -> Position( AgBlock::Find("BSEC"), place );                 
+                            } // end placement of BSEC              
+                      }           
+                      END_OF_BTOH:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTOH     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BSEC::mInstance = 0;     
+          AgBlock *BSEC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BSEC();        
+                   return mInstance;        
+          }     
+          void BSEC::Block( AgCreate create )     
+          {         
+                ///@addtogroup BSEC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BSEC");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.par("serial")=tof;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tubs");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("phi1")=-3.0;              
+                            shape.par("phi2")=3.0;              
+                            /// Shape Tubs phi1=-3.0 phi2=3.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BSEC;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BTRA");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTRA              
+                            Create("BTRA");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTRA");              
+                            place.SetMother("BSEC");              
+                            /// Add daughter volume BTRA to mother BSEC              
+                            place.TranslateX(btog.rmin+(tray.supfullh+tray.height+tray.stript)/2);              
+                            /// Translate x = btog.rmin+(tray.supfullh+tray.height+tray.stript)/2              
+                            _stacker -> Position( AgBlock::Find("BTRA"), place );              
+                      } // end placement of BTRA           
+                      END_OF_BSEC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BSEC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTRA::mInstance = 0;     
+          AgBlock *BTRA::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTRA();        
+                   return mInstance;        
+          }     
+          void BTRA::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTRA_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTRA");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=(tray.supfullh+tray.height+tray.stript)/2;              
+                            shape.par("dy")=tray.width/2;              
+                            /// Shape Bbox dx=(tray.supfullh+tray.height+tray.stript)/2 dy=tray.width/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTRA;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BXTR");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BXTR              
+                            Create("BXTR");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BXTR");              
+                            place.SetMother("BTRA");              
+                            /// Add daughter volume BXTR to mother BTRA              
+                            place.TranslateX((tray.supfullh+tray.stript)/2);              
+                            /// Translate x = (tray.supfullh+tray.stript)/2              
+                            place.TranslateZ((btog.dz-tray.length)/2);              
+                            /// Translate z = (btog.dz-tray.length)/2              
+                            _stacker -> Position( AgBlock::Find("BXTR"), place );              
+                      } // end placement of BXTR           
+                      _create = AgCreate("BUND");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BUND              
+                            Create("BUND");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BUND");              
+                            place.SetMother("BTRA");              
+                            /// Add daughter volume BUND to mother BTRA              
+                            place.TranslateX(-(tray.height+tray.stript)/2);              
+                            /// Translate x = -(tray.height+tray.stript)/2              
+                            place.TranslateZ((btog.dz-tray.suplen)/2);              
+                            /// Translate z = (btog.dz-tray.suplen)/2              
+                            _stacker -> Position( AgBlock::Find("BUND"), place );              
+                      } // end placement of BUND           
+                      END_OF_BTRA:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTRA     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BXTR::mInstance = 0;     
+          AgBlock *BXTR::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BXTR();        
+                   return mInstance;        
+          }     
+          void BXTR::Block( AgCreate create )     
+          {         
+                ///@addtogroup BXTR_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BXTR");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.height/2;              
+                            shape.par("dz")=tray.length/2;              
+                            /// Shape Bbox dx=tray.height/2 dz=tray.length/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BXTR;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BTTC");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTTC              
+                            Create("BTTC");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTTC");              
+                            place.SetMother("BXTR");              
+                            /// Add daughter volume BTTC to mother BXTR              
+                            _stacker -> Position( AgBlock::Find("BTTC"), place );              
+                      } // end placement of BTTC           
+                      _create = AgCreate("BMTC");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BMTC              
+                            Create("BMTC");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BMTC");              
+                            place.SetMother("BXTR");              
+                            /// Add daughter volume BMTC to mother BXTR              
+                            _stacker -> Position( AgBlock::Find("BMTC"), place );              
+                      } // end placement of BMTC           
+                      END_OF_BXTR:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BXTR     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BMTC::mInstance = 0;     
+          AgBlock *BMTC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BMTC();        
+                   return mInstance;        
+          }     
+          void BMTC::Block( AgCreate create )     
+          {         
+                ///@addtogroup BMTC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BMTC");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=5;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.height/2-tray.wallthk;              
+                            shape.par("dy")=tray.width/2-tray.wallthk;              
+                            shape.par("dz")=tray.length/2-tray.wallthk;              
+                            /// Shape Bbox dx=tray.height/2-tray.wallthk dy=tray.width/2-tray.wallthk dz=tray.length/2-tray.wallthk               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BMTC;              
+                            _stacker -> Build(this);              
+                      }           
+                      zpos=(tray.length-ctbb.slab1len)/2-tray.wallthk-ctbb.wrap;           
+                      xpos=-tray.height/2+ctbb.slab1x;           
+                      _create = AgCreate("BXSA");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BXSA              
+                            Create("BXSA");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BXSA");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BXSA to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dx")=ctbb.slabthck/2;              
+                            place.par("dy")=ctbb.slabwid/2;              
+                            place.par("dz")=ctbb.slab1len/2;              
+                            _stacker -> Position( AgBlock::Find("BXSA"), place );              
+                      } // end placement of BXSA           
+                      zpos=zpos-(ctbb.slab1len+ctbb.convlen)/2;           
+                      _create = AgCreate("BCCV");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCCV              
+                            Create("BCCV");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCCV");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCCV to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dz")=ctbb.convlen/2;              
+                            place.par("dx1")=ctbb.slabthck/2;              
+                            place.par("dx2")=ctbb.slabthck/2;              
+                            place.par("dy1")=ctbb.convwidm/2;              
+                            place.par("dy2")=ctbb.slabwid/2;              
+                            _stacker -> Position( AgBlock::Find("BCCV"), place );              
+                      } // end placement of BCCV           
+                      zpos=zpos-(ctbb.convlen+ctbb.pmtlen)/2;           
+                      _create = AgCreate("BCPM");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCPM              
+                            Create("BCPM");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCPM");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCPM to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dz")=ctbb.pmtlen/2;              
+                            place.par("rmin")=ctbb.pmtminr;              
+                            place.par("rmax")=ctbb.pmtmaxr;              
+                            _stacker -> Position( AgBlock::Find("BCPM"), place );              
+                      } // end placement of BCPM           
+                      zpos=zpos-(ctbb.pmtlen+ctbb.baselen)/2;           
+                      _create = AgCreate("BCSK");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCSK              
+                            Create("BCSK");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCSK");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCSK to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dz")=ctbb.baselen/2;              
+                            place.par("rmin")=ctbb.baseminr;              
+                            place.par("rmax")=ctbb.basemaxr;              
+                            _stacker -> Position( AgBlock::Find("BCSK"), place );              
+                      } // end placement of BCSK           
+                      _create = AgCreate("BZEL");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BZEL              
+                            Create("BZEL");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BZEL");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BZEL to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dx")=ctbb.electhck/2;              
+                            place.par("dy")=ctbb.baseminr-0.1;              
+                            place.par("dz")=ctbb.baselen/2;              
+                            _stacker -> Position( AgBlock::Find("BZEL"), place );              
+                      } // end placement of BZEL           
+                      zpos=(tray.length-ctbb.slab2len)/2-tray.wallthk-ctbb.wrap-ctbb.shim;           
+                      xpos=-tray.height/2+ctbb.slab2x;           
+                      _create = AgCreate("BXSA");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BXSA              
+                            Create("BXSA");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BXSA");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BXSA to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(-zpos);              
+                            /// Translate z = -zpos              
+                            place.par("dx")=ctbb.slabthck/2;              
+                            place.par("dy")=ctbb.slabwid/2;              
+                            place.par("dz")=ctbb.slab2len/2;              
+                            _stacker -> Position( AgBlock::Find("BXSA"), place );              
+                      } // end placement of BXSA           
+                      zpos=zpos-(ctbb.slab2len+ctbb.convlen)/2;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCCV");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCCV to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(-zpos);              
+                            /// Translate z = -zpos              
+                            place.par("dz")=ctbb.convlen/2;              
+                            place.par("dx1")=ctbb.slabthck/2;              
+                            place.par("dx2")=ctbb.slabthck/2;              
+                            place.par("dy1")=ctbb.convwidm/2;              
+                            place.par("dy2")=ctbb.slabwid/2;              
+                            place.AlphaX(180);              
+                            /// Rotate: AlphaX = 180              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("BCCV"), place );              
+                      } // end placement of BCCV           
+                      zpos=zpos-(ctbb.convlen+ctbb.pmtlen)/2;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCPM");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCPM to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(-zpos);              
+                            /// Translate z = -zpos              
+                            place.par("dz")=ctbb.pmtlen/2;              
+                            place.par("rmin")=ctbb.pmtminr;              
+                            place.par("rmax")=ctbb.pmtmaxr;              
+                            _stacker -> Position( AgBlock::Find("BCPM"), place );              
+                      } // end placement of BCPM           
+                      zpos=zpos-(ctbb.pmtlen+ctbb.baselen)/2;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCSK");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BCSK to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(-zpos);              
+                            /// Translate z = -zpos              
+                            place.par("dz")=ctbb.baselen/2;              
+                            place.par("rmin")=ctbb.baseminr;              
+                            place.par("rmax")=ctbb.basemaxr;              
+                            _stacker -> Position( AgBlock::Find("BCSK"), place );              
+                      } // end placement of BCSK           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BZEL");              
+                            place.SetMother("BMTC");              
+                            /// Add daughter volume BZEL to mother BMTC              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateZ(-zpos);              
+                            /// Translate z = -zpos              
+                            place.par("dx")=ctbb.electhck/2;              
+                            place.par("dy")=ctbb.baseminr-0.1;              
+                            place.par("dz")=ctbb.baselen/2;              
+                            _stacker -> Position( AgBlock::Find("BZEL"), place );              
+                      } // end placement of BZEL           
+                      END_OF_BMTC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BMTC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTTC::mInstance = 0;     
+          AgBlock *BTTC::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTTC();        
+                   return mInstance;        
+          }     
+          void BTTC::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTTC_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTTC");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component C	a=12	z=6	w=1           
+                      /// Component H2	a=1	z=1	w=2           
+                      /// Mixture LastAFoam dens=0.048           
+                      {  AgMaterial &mix = AgMaterial::Get("Lastafoam");              
+                            mix.Component("C",12,6,1);              
+                            mix.Component("H2",1,1,2);              
+                            mix.par("dens")=0.048;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.height/2-tray.wallthk;              
+                            shape.par("dy")=tray.width/2-tray.wallthk;              
+                            shape.par("dz")=tray.length/2-tray.wallthk;              
+                            /// Shape Bbox dx=tray.height/2-tray.wallthk dy=tray.width/2-tray.wallthk dz=tray.length/2-tray.wallthk               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTTC;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BFEE");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("BFEE");              
+                            createin.par("dx")=toff.electhck/2;              
+                            createin.par("dy")=toff.elecwid/2;              
+                            createin.par("dz")=toff.eleclen/2;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = toff.electhck/2              
+                            myshape.par("dx")=toff.electhck/2;              
+                            /// Set shape par: dy = toff.elecwid/2              
+                            myshape.par("dy")=toff.elecwid/2;              
+                            /// Set shape par: dz = toff.eleclen/2              
+                            myshape.par("dz")=toff.eleclen/2;              
+                            ///Create BFEE              
+                            Create("BFEE");               
+                      }           
+                      zpfee=toff.elec1z;           
+                      /// Loop on i from 1 to 9 step=1           
+                      for ( i=1; (1>0)? (i<=9):(i>=9); i+=1 )           
+                      {              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("BFEE");                 
+                                  place.SetMother("BTTC");                 
+                                  /// Add daughter volume BFEE to mother BTTC                 
+                                  place.TranslateX(toff.elecx);                 
+                                  /// Translate x = toff.elecx                 
+                                  place.TranslateZ(zpfee);                 
+                                  /// Translate z = zpfee                 
+                                  _stacker -> Position( AgBlock::Find("BFEE"), place );                 
+                            } // end placement of BFEE              
+                            zpfee=zpfee-toff.elecdz;              
+                      }           
+                      _create = AgCreate("BCOO");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCOO              
+                            Create("BCOO");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCOO");              
+                            place.SetMother("BTTC");              
+                            /// Add daughter volume BCOO to mother BTTC              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateY(0);              
+                            /// Translate y = 0              
+                            place.par("dx")=0;              
+                            place.par("dy")=0;              
+                            place.par("dz")=0;              
+                            _stacker -> Position( AgBlock::Find("BCOO"), place );              
+                      } // end placement of BCOO           
+                      _create = AgCreate("BMTM");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BMTM              
+                            Create("BMTM");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BMTM");              
+                            place.SetMother("BTTC");              
+                            /// Add daughter volume BMTM to mother BTTC              
+                            _stacker -> Position( AgBlock::Find("BMTM"), place );              
+                      } // end placement of BMTM           
+                      END_OF_BTTC:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTTC     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BMTM::mInstance = 0;     
+          AgBlock *BMTM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BMTM();        
+                   return mInstance;        
+          }     
+          void BMTM::Block( AgCreate create )     
+          {         
+                ///@addtogroup BMTM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BMTM");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Air            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Air");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.height/2-tray.wallthk;              
+                            shape.par("dy")=tray.width/2-tray.wallthk;              
+                            shape.par("dz")=tray.length/2-tray.wallthk;              
+                            /// Shape Bbox dx=tray.height/2-tray.wallthk dy=tray.width/2-tray.wallthk dz=tray.length/2-tray.wallthk               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BMTM;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BMTD");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BMTD              
+                            Create("BMTD");               
+                      }           
+                      END_OF_BMTM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BMTM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BMTD::mInstance = 0;     
+          AgBlock *BMTD::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BMTD();        
+                   return mInstance;        
+          }     
+          void BMTD::Block( AgCreate create )     
+          {         
+                ///@addtogroup BMTD_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BMTD");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Division");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("ndiv")=5;              
+                            shape.par("iaxis")=2;              
+                            /// Shape Division ndiv=5 iaxis=2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BMTD;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BASS");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BASS              
+                            Create("BASS");               
+                      }           
+                      zpbass=toff.slat1z;           
+                      /// Loop on i from 1 to 9 step=1           
+                      for ( i=1; (1>0)? (i<=9):(i>=9); i+=1 )           
+                      {              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("BASS");                 
+                                  place.SetMother("BMTD");                 
+                                  /// Add daughter volume BASS to mother BMTD                 
+                                  place.TranslateX(-0.8);                 
+                                  /// Translate x = -0.8                 
+                                  place.TranslateZ(zpbass);                 
+                                  /// Translate z = zpbass                 
+                                  place.par("only")=AgPosition::kMany;                 
+                                  /// Overlap: agposition::kmany                 
+                                  place.AlphaY(toff.slatang);                 
+                                  /// Rotate: AlphaY = toff.slatang                 
+                                  /// G3 Reference: thetax = 90                 
+                                  /// G3 Reference: phix = 0                 
+                                  /// G3 Reference: thetay = 90                 
+                                  /// G3 Reference: phiy = 90                 
+                                  /// G3 Reference: thetaz = 0                 
+                                  /// G3 Reference: phiz = 0                 
+                                  _stacker -> Position( AgBlock::Find("BASS"), place );                 
+                            } // end placement of BASS              
+                            zpbass=zpbass-toff.slatdz;              
+                      }           
+                      END_OF_BMTD:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BMTD     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BASS::mInstance = 0;     
+          AgBlock *BASS::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BASS();        
+                   return mInstance;        
+          }     
+          void BASS::Block( AgCreate create )     
+          {         
+                ///@addtogroup BASS_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BASS");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      totlen=toff.slat1len+toff.pmtlen+toff.baselen;           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=toff.pmtmaxr;              
+                            shape.par("dy")=(tray.width/2-tray.wallthk)/5.;              
+                            shape.par("dz")=totlen/2.;              
+                            /// Shape Bbox dx=toff.pmtmaxr dy=(tray.width/2-tray.wallthk)/5. dz=totlen/2.               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BASS;              
+                            _stacker -> Build(this);              
+                      }           
+                      zpos=-(totlen-toff.slat1len)/2;           
+                      _create = AgCreate("BCSB");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCSB              
+                            Create("BCSB");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCSB");              
+                            place.SetMother("BASS");              
+                            /// Add daughter volume BCSB to mother BASS              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            _stacker -> Position( AgBlock::Find("BCSB"), place );              
+                      } // end placement of BCSB           
+                      zpos=zpos+(toff.slat1len+toff.pmtlen)/2;           
+                      _create = AgCreate("BCPM");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCPM              
+                            Create("BCPM");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCPM");              
+                            place.SetMother("BASS");              
+                            /// Add daughter volume BCPM to mother BASS              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dz")=toff.pmtlen/2;              
+                            place.par("rmin")=toff.pmtminr;              
+                            place.par("rmax")=toff.pmtmaxr;              
+                            _stacker -> Position( AgBlock::Find("BCPM"), place );              
+                      } // end placement of BCPM           
+                      zpos=zpos+(toff.pmtlen+toff.baselen)/2;           
+                      _create = AgCreate("BTSK");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTSK              
+                            Create("BTSK");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTSK");              
+                            place.SetMother("BASS");              
+                            /// Add daughter volume BTSK to mother BASS              
+                            place.TranslateX(0);              
+                            /// Translate x = 0              
+                            place.TranslateZ(zpos);              
+                            /// Translate z = zpos              
+                            place.par("dz")=toff.baselen/2;              
+                            place.par("rmin")=toff.pmtminr;              
+                            place.par("rmax")=toff.pmtmaxr;              
+                            _stacker -> Position( AgBlock::Find("BTSK"), place );              
+                      } // end placement of BTSK           
+                      _create = AgCreate("BCEL");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("BCEL");              
+                            createin.par("dz")=toff.electhck/2;              
+                            createin.par("rmin")=0;              
+                            createin.par("rmax")=toff.pmtminr;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dz = toff.electhck/2              
+                            myshape.par("dz")=toff.electhck/2;              
+                            /// Set shape par: rmin = 0              
+                            myshape.par("rmin")=0;              
+                            /// Set shape par: rmax = toff.pmtminr              
+                            myshape.par("rmax")=toff.pmtminr;              
+                            ///Create BCEL              
+                            Create("BCEL");               
+                      }           
+                      zpos=zpos+0.4-toff.baselen/2;           
+                      /// Loop on i from 1 to 4 step=1           
+                      for ( i=1; (1>0)? (i<=4):(i>=4); i+=1 )           
+                      {              
+                            {                 
+                                  AgPosition  place;                 
+                                  place.SetBlock("BCEL");                 
+                                  place.SetMother("BASS");                 
+                                  /// Add daughter volume BCEL to mother BASS                 
+                                  place.TranslateZ(zpos+i);                 
+                                  /// Translate z = zpos+i                 
+                                  _stacker -> Position( AgBlock::Find("BCEL"), place );                 
+                            } // end placement of BCEL              
+                      }           
+                      END_OF_BASS:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BASS     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BXSA::mInstance = 0;     
+          AgBlock *BXSA::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BXSA();        
+                   return mInstance;        
+          }     
+          void BXSA::Block( AgCreate create )     
+          {         
+                ///@addtogroup BXSA_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BXSA");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      /// Medium sensitive           
+                      ///  isvol = 1            
+                      {  AgMedium &med = AgMedium::Get("Sensitive");              
+                               med.Inherit(this);              
+                            med.par("isvol")=1;              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0;              
+                            shape.par("dy")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Bbox dx=0 dy=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BXSA;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "BXSA", "X", 0.01, 0, 0, "S");           
+                      // deferred module()->AddHit( "BXSA", "Y", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "Z", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "ptot", 18, 0.0, 100.0, "");           
+                      // deferred module()->AddHit( "BXSA", "cx", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "cy", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "cz", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "sleng", 0.1, 0, 500, "");           
+                      // deferred module()->AddHit( "BXSA", "tof", 16, 0.0, 1.0e-6, "");           
+                      // deferred module()->AddHit( "BXSA", "step", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BXSA", "eloss", 16, 0.0, 0.01, "");           
+                      END_OF_BXSA:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BXSA     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCSB::mInstance = 0;     
+          AgBlock *BCSB::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCSB();        
+                   return mInstance;        
+          }     
+          void BCSB::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCSB_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCSB");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=4;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      /// Medium sensitive           
+                      ///  isvol = 1            
+                      {  AgMedium &med = AgMedium::Get("Sensitive");              
+                               med.Inherit(this);              
+                            med.par("isvol")=1;              
+                            _medium = med;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=toff.slatthck/2;              
+                            shape.par("dy")=toff.slatwid/2;              
+                            shape.par("dz")=toff.slat1len/2;              
+                            /// Shape Bbox dx=toff.slatthck/2 dy=toff.slatwid/2 dz=toff.slat1len/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCSB;              
+                            _stacker -> Build(this);              
+                      }           
+                      // deferred module()->AddHit( "BCSB", "X", 0.01, 0, 0, "S");           
+                      // deferred module()->AddHit( "BCSB", "Y", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "Z", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "ptot", 18, 0.0, 100.0, "");           
+                      // deferred module()->AddHit( "BCSB", "cx", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "cy", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "cz", 10, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "sleng", 0.1, 0, 500, "");           
+                      // deferred module()->AddHit( "BCSB", "tof", 16, 0.0, 1.0e-6, "");           
+                      // deferred module()->AddHit( "BCSB", "step", 0.01, 0, 0, "");           
+                      // deferred module()->AddHit( "BCSB", "eloss", 16, 0.0, 0.01, "");           
+                      END_OF_BCSB:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCSB     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCCV::mInstance = 0;     
+          AgBlock *BCCV::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCCV();        
+                   return mInstance;        
+          }     
+          void BCCV::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCCV_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCCV");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Trd2");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx1")=0;              
+                            shape.par("dx2")=0;              
+                            shape.par("dy1")=0;              
+                            shape.par("dy2")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Trd2 dx1=0 dx2=0 dy1=0 dy2=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCCV;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BCCV:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCCV     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCPM::mInstance = 0;     
+          AgBlock *BCPM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCPM();        
+                   return mInstance;        
+          }     
+          void BCPM::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCPM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCPM");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCPM;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BCPM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCPM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCSK::mInstance = 0;     
+          AgBlock *BCSK::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCSK();        
+                   return mInstance;        
+          }     
+          void BCSK::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCSK_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCSK");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material polystyren            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Polystyren");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCSK;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BCSK:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCSK     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTSK::mInstance = 0;     
+          AgBlock *BTSK::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTSK();        
+                   return mInstance;        
+          }     
+          void BTSK::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTSK_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTSK");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTSK;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BTSK:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTSK     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BZEL::mInstance = 0;     
+          AgBlock *BZEL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BZEL();        
+                   return mInstance;        
+          }     
+          void BZEL::Block( AgCreate create )     
+          {         
+                ///@addtogroup BZEL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BZEL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=6;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material silicon            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Silicon");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0;              
+                            shape.par("dy")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Bbox dx=0 dy=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BZEL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BZEL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BZEL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCEL::mInstance = 0;     
+          AgBlock *BCEL::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCEL();        
+                   return mInstance;        
+          }     
+          void BCEL::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCEL_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCEL");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component Si	a=28.08	z=14	w=0.6*1*28./60.           
+                      /// Component O	a=16	z=8	w=0.6*2*16./60. + 0.4*4*16./174.           
+                      /// Component C	a=12	z=6	w=0.4*8*12./174.           
+                      /// Component H	a=1	z=1	w=0.4*14*1./174.           
+                      /// Mixture G10 dens=1.7           
+                      {  AgMaterial &mix = AgMaterial::Get("G10");              
+                            mix.Component("Si",28.08,14,0.6*1*28./60.);              
+                            mix.Component("O",16,8,0.6*2*16./60.+0.4*4*16./174.);              
+                            mix.Component("C",12,6,0.4*8*12./174.);              
+                            mix.Component("H",1,1,0.4*14*1./174.);              
+                            mix.par("dens")=1.7;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCEL;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BCEL:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCEL     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BFEE::mInstance = 0;     
+          AgBlock *BFEE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BFEE();        
+                   return mInstance;        
+          }     
+          void BFEE::Block( AgCreate create )     
+          {         
+                ///@addtogroup BFEE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BFEE");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component Si	a=28.08	z=14	w=0.6*1*28./60.           
+                      /// Component O	a=16	z=8	w=0.6*2*16./60.           
+                      /// Component C	a=12	z=6	w=0.4*8*12./174.           
+                      /// Component H	a=1	z=1	w=0.4*14*1./174.           
+                      /// Component O	a=16	z=8	w=0.4*4*16./174.           
+                      /// Mixture G10 dens=1.7           
+                      {  AgMaterial &mix = AgMaterial::Get("G10");              
+                            mix.Component("Si",28.08,14,0.6*1*28./60.);              
+                            mix.Component("O",16,8,0.6*2*16./60.);              
+                            mix.Component("C",12,6,0.4*8*12./174.);              
+                            mix.Component("H",1,1,0.4*14*1./174.);              
+                            mix.Component("O",16,8,0.4*4*16./174.);              
+                            mix.par("dens")=1.7;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0;              
+                            shape.par("dy")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Bbox dx=0 dy=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BFEE;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BFEE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BFEE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCOO::mInstance = 0;     
+          AgBlock *BCOO::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCOO();        
+                   return mInstance;        
+          }     
+          void BCOO::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCOO_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCOO");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0;              
+                            shape.par("dy")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Bbox dx=0 dy=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCOO;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BRAI");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("BRAI");              
+                            createin.par("dx")=toff.railthck/2;              
+                            createin.par("dy")=toff.railwid/2;              
+                            createin.par("dz")=tray.length/2-tray.wallthk;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dx = toff.railthck/2              
+                            myshape.par("dx")=toff.railthck/2;              
+                            /// Set shape par: dy = toff.railwid/2              
+                            myshape.par("dy")=toff.railwid/2;              
+                            /// Set shape par: dz = tray.length/2-tray.wallthk              
+                            myshape.par("dz")=tray.length/2-tray.wallthk;              
+                            ///Create BRAI              
+                            Create("BRAI");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BRAI");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BRAI to mother BCOO              
+                            place.TranslateX(toff.elecx-toff.railthck);              
+                            /// Translate x = toff.elecx-toff.railthck              
+                            place.TranslateY((tray.width/2-toff.railwid/2-tray.wallthk));              
+                            /// Translate y = (tray.width/2-toff.railwid/2-tray.wallthk)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("BRAI"), place );              
+                      } // end placement of BRAI           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BRAI");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BRAI to mother BCOO              
+                            place.TranslateX(toff.elecx-toff.railwid/2-toff.railthck/2);              
+                            /// Translate x = toff.elecx-toff.railwid/2-toff.railthck/2              
+                            place.TranslateY((tray.width/2-toff.railthck/2-tray.wallthk));              
+                            /// Translate y = (tray.width/2-toff.railthck/2-tray.wallthk)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            place.AlphaZ(90);              
+                            /// Rotate: AlphaZ = 90              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("BRAI"), place );              
+                      } // end placement of BRAI           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BRAI");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BRAI to mother BCOO              
+                            place.TranslateX(toff.elecx-toff.railthck);              
+                            /// Translate x = toff.elecx-toff.railthck              
+                            place.TranslateY(-(tray.width/2-toff.railwid/2-tray.wallthk));              
+                            /// Translate y = -(tray.width/2-toff.railwid/2-tray.wallthk)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("BRAI"), place );              
+                      } // end placement of BRAI           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BRAI");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BRAI to mother BCOO              
+                            place.TranslateX(toff.elecx-toff.railwid/2-toff.railthck/2);              
+                            /// Translate x = toff.elecx-toff.railwid/2-toff.railthck/2              
+                            place.TranslateY(-(tray.width/2-toff.railthck/2-tray.wallthk));              
+                            /// Translate y = -(tray.width/2-toff.railthck/2-tray.wallthk)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            place.AlphaZ(90);              
+                            /// Rotate: AlphaZ = 90              
+                            /// G3 Reference: thetax = 90              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            _stacker -> Position( AgBlock::Find("BRAI"), place );              
+                      } // end placement of BRAI           
+                      _create = AgCreate("BPIP");           
+                      { // Paramters passed in via the Create operator              
+                            AgCreate createin("BPIP");              
+                            createin.par("dz")=tray.length/2-tray.wallthk;              
+                            createin.par("rmin")=toff.coolinnr;              
+                            createin.par("rmax")=toff.cooloutr;              
+                            _create = createin;              
+                      }           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            /// Set shape par: dz = tray.length/2-tray.wallthk              
+                            myshape.par("dz")=tray.length/2-tray.wallthk;              
+                            /// Set shape par: rmin = toff.coolinnr              
+                            myshape.par("rmin")=toff.coolinnr;              
+                            /// Set shape par: rmax = toff.cooloutr              
+                            myshape.par("rmax")=toff.cooloutr;              
+                            ///Create BPIP              
+                            Create("BPIP");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BPIP");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BPIP to mother BCOO              
+                            place.TranslateX(toff.elecx-3.*toff.railthck/2.-toff.cooloutr);              
+                            /// Translate x = toff.elecx-3.*toff.railthck/2.-toff.cooloutr              
+                            place.TranslateY((tray.width/2-toff.railthck-tray.wallthk-toff.cooloutr));              
+                            /// Translate y = (tray.width/2-toff.railthck-tray.wallthk-toff.cooloutr)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("BPIP"), place );              
+                      } // end placement of BPIP           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BPIP");              
+                            place.SetMother("BCOO");              
+                            /// Add daughter volume BPIP to mother BCOO              
+                            place.TranslateX(toff.elecx-3.*toff.railthck/2.-toff.cooloutr);              
+                            /// Translate x = toff.elecx-3.*toff.railthck/2.-toff.cooloutr              
+                            place.TranslateY(-(tray.width/2-toff.railthck-tray.wallthk-toff.cooloutr));              
+                            /// Translate y = -(tray.width/2-toff.railthck-tray.wallthk-toff.cooloutr)              
+                            place.par("only")=AgPosition::kMany;              
+                            /// Overlap: agposition::kmany              
+                            _stacker -> Position( AgBlock::Find("BPIP"), place );              
+                      } // end placement of BPIP           
+                      END_OF_BCOO:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCOO     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BRAI::mInstance = 0;     
+          AgBlock *BRAI::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BRAI();        
+                   return mInstance;        
+          }     
+          void BRAI::Block( AgCreate create )     
+          {         
+                ///@addtogroup BRAI_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BRAI");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0.0;              
+                            shape.par("dy")=0.0;              
+                            shape.par("dz")=0.0;              
+                            /// Shape Bbox dx=0.0 dy=0.0 dz=0.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BRAI;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BRAI:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BRAI     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BPIP::mInstance = 0;     
+          AgBlock *BPIP::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BPIP();        
+                   return mInstance;        
+          }     
+          void BPIP::Block( AgCreate create )     
+          {         
+                ///@addtogroup BPIP_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BPIP");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=1;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=0;              
+                            shape.par("dz")=0;              
+                            /// Shape Tube rmin=0 rmax=0 dz=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BPIP;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BPIP:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BPIP     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BUND::mInstance = 0;     
+          AgBlock *BUND::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BUND();        
+                   return mInstance;        
+          }     
+          void BUND::Block( AgCreate create )     
+          {         
+                ///@addtogroup BUND_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BUND");              
+                            attr.par("seen")=0;              
+                            attr.par("colo")=1;              
+                            attr.par("serial")=0;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.supfullh/2;              
+                            shape.par("dy")=tray.width/2;              
+                            shape.par("dz")=tray.suplen/2;              
+                            /// Shape Bbox dx=tray.supfullh/2 dy=tray.width/2 dz=tray.suplen/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BUND;              
+                            _stacker -> Build(this);              
+                      }           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      xpos=(tray.supfullh-tray.footthk)/2;           
+                      ypos=(tray.width-tray.foot1len)/2-tray.footinse;           
+                      _create = AgCreate("BTFT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BTFT              
+                            Create("BTFT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(-ypos);              
+                            /// Translate y = -ypos              
+                            place.par("dx")=tray.footthk/2;              
+                            place.par("dy")=tray.foot1len/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(+ypos);              
+                            /// Translate y = +ypos              
+                            place.par("dx")=tray.footthk/2;              
+                            place.par("dy")=tray.foot1len/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      xpos=(tray.supfullh-tray.foot2thk)/2;           
+                      ypos=ypos-(tray.foot1len+tray.footthk)/2;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(-ypos);              
+                            /// Translate y = -ypos              
+                            place.par("dx")=tray.foot2thk/2;              
+                            place.par("dy")=tray.footthk/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(+ypos);              
+                            /// Translate y = +ypos              
+                            place.par("dx")=tray.foot2thk/2;              
+                            place.par("dy")=tray.footthk/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      xpos=(tray.supfullh+tray.footthk)/2-tray.foot2thk;           
+                      ypos=ypos-(tray.footthk+tray.foot3len)/2;           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(-ypos);              
+                            /// Translate y = -ypos              
+                            place.par("dx")=tray.footthk/2;              
+                            place.par("dy")=tray.foot3len/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BTFT");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BTFT to mother BUND              
+                            place.TranslateX(xpos);              
+                            /// Translate x = xpos              
+                            place.TranslateY(+ypos);              
+                            /// Translate y = +ypos              
+                            place.par("dx")=tray.footthk/2;              
+                            place.par("dy")=tray.foot3len/2;              
+                            _stacker -> Position( AgBlock::Find("BTFT"), place );              
+                      } // end placement of BTFT           
+                      support_aile_width=(tray.supfullh-tray.suparmt)/tan(60*degrad);           
+                      support_arm_width=(tray.supfullw-tray.supbasew)/2-support_aile_width;           
+                      support_aile_ypos=(tray.supbasew+support_aile_width)/2;           
+                      support_arm_xpos=(tray.supfullh-tray.suparmt)/2;           
+                      support_arm_ypos=(tray.supfullw-support_arm_width)/2;           
+                      /// Material Aluminium            
+                      {  AgMaterial mat = AgMaterial::CopyMaterial("Aluminium");              
+                            _material = mat;              
+                      }           
+                      _create = AgCreate("BASE");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BASE              
+                            Create("BASE");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BASE");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BASE to mother BUND              
+                            place.TranslateX((-tray.supfullh+tray.supbaset)/2);              
+                            /// Translate x = (-tray.supfullh+tray.supbaset)/2              
+                            _stacker -> Position( AgBlock::Find("BASE"), place );              
+                      } // end placement of BASE           
+                      _create = AgCreate("BARM");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BARM              
+                            Create("BARM");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BARM");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BARM to mother BUND              
+                            place.TranslateX(support_arm_xpos);              
+                            /// Translate x = support_arm_xpos              
+                            place.TranslateY(-support_arm_ypos);              
+                            /// Translate y = -support_arm_ypos              
+                            _stacker -> Position( AgBlock::Find("BARM"), place );              
+                      } // end placement of BARM           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BARM");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BARM to mother BUND              
+                            place.TranslateX(support_arm_xpos);              
+                            /// Translate x = support_arm_xpos              
+                            place.TranslateY(+support_arm_ypos);              
+                            /// Translate y = +support_arm_ypos              
+                            _stacker -> Position( AgBlock::Find("BARM"), place );              
+                      } // end placement of BARM           
+                      _create = AgCreate("BANG");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BANG              
+                            Create("BANG");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BANG");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BANG to mother BUND              
+                            place.TranslateY(-support_aile_ypos);              
+                            /// Translate y = -support_aile_ypos              
+                            _stacker -> Position( AgBlock::Find("BANG"), place );              
+                      } // end placement of BANG           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BANG");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BANG to mother BUND              
+                            place.TranslateY(+support_aile_ypos);              
+                            /// Translate y = +support_aile_ypos              
+                            /// G3 Reference: thetax = 270              
+                            /// G3 Reference: phix = 0              
+                            /// G3 Reference: thetay = 90              
+                            /// G3 Reference: phiy = 90              
+                            /// G3 Reference: thetaz = 0              
+                            /// G3 Reference: phiz = 0              
+                            Double_t _thetax=270,_phix=0,_thetay=90,_phiy=90,_thetaz=0,_phiz=0;              
+                            place.Reference( _thetax, _phix, _thetay, _phiy, _thetaz, _phiz );              
+                            _stacker -> Position( AgBlock::Find("BANG"), place );              
+                      } // end placement of BANG           
+                      _create = AgCreate("BCOV");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BCOV              
+                            Create("BCOV");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BCOV");              
+                            place.SetMother("BUND");              
+                            /// Add daughter volume BCOV to mother BUND              
+                            place.TranslateX(-tray.supfullh/2+tray.cooloutr);              
+                            /// Translate x = -tray.supfullh/2+tray.cooloutr              
+                            _stacker -> Position( AgBlock::Find("BCOV"), place );              
+                      } // end placement of BCOV           
+                      END_OF_BUND:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BUND     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BTFT::mInstance = 0;     
+          AgBlock *BTFT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BTFT();        
+                   return mInstance;        
+          }     
+          void BTFT::Block( AgCreate create )     
+          {         
+                ///@addtogroup BTFT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BTFT");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=0.0;              
+                            shape.par("dy")=0.0;              
+                            shape.par("dz")=0.0;              
+                            /// Shape Bbox dx=0.0 dy=0.0 dz=0.0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BTFT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BTFT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BTFT     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BARM::mInstance = 0;     
+          AgBlock *BARM::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BARM();        
+                   return mInstance;        
+          }     
+          void BARM::Block( AgCreate create )     
+          {         
+                ///@addtogroup BARM_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BARM");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.suparmt/2;              
+                            shape.par("dy")=support_arm_width/2;              
+                            /// Shape Bbox dx=tray.suparmt/2 dy=support_arm_width/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BARM;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BARM:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BARM     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BANG::mInstance = 0;     
+          AgBlock *BANG::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BANG();        
+                   return mInstance;        
+          }     
+          void BANG::Block( AgCreate create )     
+          {         
+                ///@addtogroup BANG_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BANG");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Para");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.suparmt/2;              
+                            shape.par("dy")=support_aile_width/2;              
+                            shape.par("alph")=-60;              
+                            shape.par("thet")=0;              
+                            shape.par("phi")=0;              
+                            /// Shape Para dx=tray.suparmt/2 dy=support_aile_width/2 alph=-60 thet=0 phi=0               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BANG;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BANG:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BANG     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BASE::mInstance = 0;     
+          AgBlock *BASE::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BASE();        
+                   return mInstance;        
+          }     
+          void BASE::Block( AgCreate create )     
+          {         
+                ///@addtogroup BASE_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BASE");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Bbox");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("dx")=tray.supbaset/2;              
+                            shape.par("dy")=tray.supbasew/2;              
+                            /// Shape Bbox dx=tray.supbaset/2 dy=tray.supbasew/2               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BASE;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BASE:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BASE     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BCOV::mInstance = 0;     
+          AgBlock *BCOV::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BCOV();        
+                   return mInstance;        
+          }     
+          void BCOV::Block( AgCreate create )     
+          {         
+                ///@addtogroup BCOV_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BCOV");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=2;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=tray.cooloutr;              
+                            /// Shape Tube rmin=0 rmax=tray.cooloutr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BCOV;              
+                            _stacker -> Build(this);              
+                      }           
+                      _create = AgCreate("BWAT");           
+                      {              
+                            AgShape myshape; // undefined shape              
+                            ///Create BWAT              
+                            Create("BWAT");               
+                      }           
+                      {              
+                            AgPosition  place;              
+                            place.SetBlock("BWAT");              
+                            place.SetMother("BCOV");              
+                            /// Add daughter volume BWAT to mother BCOV              
+                            _stacker -> Position( AgBlock::Find("BWAT"), place );              
+                      } // end placement of BWAT           
+                      END_OF_BCOV:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BCOV     
+          // ---------------------------------------------------------------------------------------------------     
+          AgBlock *BWAT::mInstance = 0;     
+          AgBlock *BWAT::Instance(){        
+                   if ( mInstance==0 ) mInstance = new BWAT();        
+                   return mInstance;        
+          }     
+          void BWAT::Block( AgCreate create )     
+          {         
+                ///@addtogroup BWAT_doc        
+                ///@{           
+                        AgBlock *_save = mCurrent;           
+                        mCurrent = this;           
+                        Bool_t _same_shape = true;           
+                      { AgAttribute attr = AgAttribute("BWAT");              
+                            attr.par("seen")=1;              
+                            attr.par("colo")=3;              
+                            attr.Inherit( AgBlock::previous() );               
+                            _attribute = attr;              
+                      }           
+                      /// Component H2	a=1	z=1	w=2           
+                      /// Component O	a=16	z=8	w=1           
+                      /// Mixture Water dens=1.0           
+                      {  AgMaterial &mix = AgMaterial::Get("Water");              
+                            mix.Component("H2",1,1,2);              
+                            mix.Component("O",16,8,1);              
+                            mix.par("dens")=1.0;              
+                            mix.lock();              
+                            _material = mix;              
+                            _material.lock();              
+                      }           
+                      {  AgShape shape = AgShape("Tube");              
+                            shape     .Inherit( AgBlock::previous() );              
+                            create     .SetParameters(shape);              
+                            shape.par("rmin")=0;              
+                            shape.par("rmax")=tray.coolinnr;              
+                            /// Shape Tube rmin=0 rmax=tray.coolinnr               
+                            _same_shape &= _stacker->SearchVolume( shape, _attribute );              
+                            _shape = shape;              
+                            if (_same_shape) goto END_OF_BWAT;              
+                            _stacker -> Build(this);              
+                      }           
+                      END_OF_BWAT:           
+                      mCurrent = _save;           
+                ///@}        
+          } // End Block BWAT     
+    // ----------------------------------------------------------------------- geoctr
+       void BTOFGEO1::ConstructGeometry( const Char_t *dummy )     
+       {        
+             ///@addtogroup BTOFGEO1_revision        
+             ///@{           
+                   /// Author: W.J. Llope, Geary Eppley, Harlan Howe, Pablo Yepes           
+             ///@}        
+             ///@addtogroup BTOFGEO1_revision        
+             ///@{           
+                   /// Created:     23 March 1996            
+             ///@}        
+             AddBlock("BTOF", BTOF::Instance());        
+             AddBlock("BTOH", BTOH::Instance());        
+             AddBlock("BSEC", BSEC::Instance());        
+             AddBlock("BTRA", BTRA::Instance());        
+             AddBlock("BUND", BUND::Instance());        
+             AddBlock("BTFT", BTFT::Instance());        
+             AddBlock("BASE", BASE::Instance());        
+             AddBlock("BARM", BARM::Instance());        
+             AddBlock("BANG", BANG::Instance());        
+             AddBlock("BWAT", BWAT::Instance());        
+             AddBlock("BCOV", BCOV::Instance());        
+             AddBlock("BXTR", BXTR::Instance());        
+             AddBlock("BMTC", BMTC::Instance());        
+             AddBlock("BTTC", BTTC::Instance());        
+             AddBlock("BMTM", BMTM::Instance());        
+             AddBlock("BMTD", BMTD::Instance());        
+             AddBlock("BASS", BASS::Instance());        
+             AddBlock("BXSA", BXSA::Instance());        
+             AddBlock("BCSB", BCSB::Instance());        
+             AddBlock("BCCV", BCCV::Instance());        
+             AddBlock("BCPM", BCPM::Instance());        
+             AddBlock("BCSK", BCSK::Instance());        
+             AddBlock("BTSK", BTSK::Instance());        
+             AddBlock("BZEL", BZEL::Instance());        
+             AddBlock("BCEL", BCEL::Instance());        
+             AddBlock("BFEE", BFEE::Instance());        
+             AddBlock("BCOO", BCOO::Instance());        
+             AddBlock("BRAI", BRAI::Instance());        
+             AddBlock("BPIP", BPIP::Instance());        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill btog
+++btog._index;
+btog.version = 2;
+// btog_docum.version = " geometry version ";
+btog.rmin = 207.80;
+// btog_docum.rmin = " minimum CTB/TOF system radius (as built) ";
+btog.rmax = 219.5;
+// btog_docum.rmax = " maximum CTB/TOF system radius ";
+btog.dz = 246.0;
+// btog_docum.dz = " CTB/TOF tube half length ";
+btog.choice = 4;
+// btog_docum.choice = " 1=CTB, 2=TOF, 3=25% TOF+CTB, 4=1 tray TOF+CTB ";
+btog.posit1 = 24;
+// btog_docum.posit1 = " TOF tray position for choice 4 ";
+BTOG.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill tray
+++tray._index;
+tray.height = 8.89;
+// tray_docum.height = " tray height ";
+tray.width = 21.59;
+// tray_docum.width = " full tray width ";
+tray.length = 241.62;
+// tray_docum.length = " full tray length ";
+tray.wallthk = 0.13;
+// tray_docum.wallthk = " tray wall thickness ";
+tray.supfullh = 2.03;
+// tray_docum.supfullh = " support height (radial) ";
+tray.supfullw = 15.24;
+// tray_docum.supfullw = " support full width with arms ";
+tray.suplen = 215.9;
+// tray_docum.suplen = " support length ";
+tray.supbasew = 9.22;
+// tray_docum.supbasew = " support base width ";
+tray.supbaset = 0.32;
+// tray_docum.supbaset = " support base thickness   ";
+tray.suparmt = 0.64;
+// tray_docum.suparmt = " support arm  thickness ";
+tray.cooloutr = 0.80;
+// tray_docum.cooloutr = " Cooling channel outer radius ";
+tray.coolinnr = 0.48;
+// tray_docum.coolinnr = " Cooling channel inner radius ";
+tray.stript = 0.08;
+// tray_docum.stript = " Thickness of polyethylene strip on bottom ";
+tray.footinse = 1.06;
+// tray_docum.footinse = " foot inset from tray edge ";
+tray.footthk = 0.23;
+// tray_docum.footthk = " thickness of foot material ";
+tray.foot1len = 1.68;
+// tray_docum.foot1len = " length (in section) of first part of foot ";
+tray.foot2thk = 1.16;
+// tray_docum.foot2thk = " thickness of second foot section ";
+tray.foot3len = 2.16;
+// tray_docum.foot3len = " length of third part of foot ";
+TRAY.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill ctbb
+++ctbb._index;
+ctbb.slab1len = 112.5;
+// ctbb_docum.slab1len = " first slab (B) length ";
+ctbb.slab2len = 130.0;
+// ctbb_docum.slab2len = " second slab (A)length  ";
+ctbb.slab1x = 5.84;
+// ctbb_docum.slab1x = " first slab (B) x position ";
+ctbb.slab2x = 2.67;
+// ctbb_docum.slab2x = " second slab (A) x position ";
+ctbb.slabthck = 1.0;
+// ctbb_docum.slabthck = " scintillator slab thicknesses ";
+ctbb.slabwid = 21.0;
+// ctbb_docum.slabwid = " scintillator slab width ";
+ctbb.convlen = 8.5;
+// ctbb_docum.convlen = " optical converter length ";
+ctbb.convwidm = 4.0;
+// ctbb_docum.convwidm = " optical convertor min width ";
+ctbb.convthck = 0.92;
+// ctbb_docum.convthck = " optical convertor thickness ";
+ctbb.pmtlen = 5.0;
+// ctbb_docum.pmtlen = " PMT length ";
+ctbb.pmtmaxr = 2.0;
+// ctbb_docum.pmtmaxr = " PMT max radius ";
+ctbb.pmtminr = 1.84;
+// ctbb_docum.pmtminr = " PMT min radius ";
+ctbb.baselen = 4.0;
+// ctbb_docum.baselen = " Base length ";
+ctbb.basemaxr = 2.13;
+// ctbb_docum.basemaxr = " Base max radius ";
+ctbb.baseminr = 1.0;
+// ctbb_docum.baseminr = " Base min radius ";
+ctbb.electhck = 0.25;
+// ctbb_docum.electhck = " readout electronics thickness ";
+ctbb.wrap = 0.13;
+// ctbb_docum.wrap = " thickness of Tyvek + black plastic ";
+ctbb.shim = 0.26;
+// ctbb_docum.shim = " thickness of shim to position slat 2 ";
+CTBB.fill();
+        
+             // ---------------------------------------------------------------------------------------------------        
+             // Fill toff
+++toff._index;
+toff.slat1len = 22.0;
+// toff_docum.slat1len = " slat length ";
+toff.slat1z = 101.5;
+// toff_docum.slat1z = " slat 1 Z position ";
+toff.slatdz = 24.;
+// toff_docum.slatdz = " slat Z separation (Same as toff_ElecDz) ";
+toff.slatthck = 2.0;
+// toff_docum.slatthck = " scintillator slab thicknesses ";
+toff.slatwid = 4.0;
+// toff_docum.slatwid = " scintillator slab width ";
+toff.slatang = 8.;
+// toff_docum.slatang = " slat assy. angle w.r.t. tray ";
+toff.pmtlen = 5.0;
+// toff_docum.pmtlen = " PMT length ";
+toff.pmtmaxr = 1.91;
+// toff_docum.pmtmaxr = " PMT max radius ";
+toff.pmtminr = 1.8;
+// toff_docum.pmtminr = " PMT min radius ";
+toff.baselen = 5.1;
+// toff_docum.baselen = " Base length ";
+toff.basemaxr = 1.91;
+// toff_docum.basemaxr = " Base max radius ";
+toff.baseminr = 1.8;
+// toff_docum.baseminr = " Base min radius   ";
+toff.elecx = 4.1;
+// toff_docum.elecx = " FEE Board x position ";
+toff.elec1z = 104.0;
+// toff_docum.elec1z = " FEE Board 1 z position ";
+toff.elecdz = toff.slatdz;
+// toff_docum.elecdz = " FEE Board Dz (Same as toff_SlatDz) ";
+toff.electhck = 0.17;
+// toff_docum.electhck = " FEE Board thickness (67 mils) ";
+toff.elecwid = 21.0;
+// toff_docum.elecwid = " FEE Board width ";
+toff.eleclen = 16.0;
+// toff_docum.eleclen = " FEE Board length ";
+toff.railthck = 0.2;
+// toff_docum.railthck = " Cooling loop rail thickness ";
+toff.railwid = 1.0;
+// toff_docum.railwid = " Cooling loop rail width ";
+toff.cooloutr = 0.375;
+// toff_docum.cooloutr = " Cooling loop pipe outer radius ";
+toff.coolinnr = 0.350;
+// toff_docum.coolinnr = " Cooling loop pipe inner radius ";
+TOFF.fill();
+        
+             /// USE btog _index=1;        
+             BTOG.use( __btog__index__ = 1 );
+        
+             /// USE tray _index=1;        
+             TRAY.use( __tray__index__ = 1 );
+        
+             /// USE ctbb _index=1;        
+             CTBB.use( __ctbb__index__ = 1 );
+        
+             /// USE toff _index=1;        
+             TOFF.use( __toff__index__ = 1 );
+        
+             _create = AgCreate("BTOF");        
+             {           
+                   AgShape myshape; // undefined shape           
+                   ///Create BTOF           
+                   Create("BTOF");            
+             }        
+             {           
+                   AgPosition  place;           
+                   place.SetBlock("BTOF");           
+                   place.SetMother("CAVE");           
+                   /// Add daughter volume BTOF to mother CAVE           
+                   _stacker -> Position( AgBlock::Find("BTOF"), place );           
+             } // end placement of BTOF        
+       }; // BTOFGEO1     
+ }; // namespace BTOFGEO1  
+ 
