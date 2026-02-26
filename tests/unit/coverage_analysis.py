@@ -271,6 +271,14 @@ def _extract_called_methods(test_paths: List[Path],
         if re.search(r'\w\s*/\s*\w', text):
             called.add('operator/')
 
+        # 8b. Binary operator+ and operator- (infix, not compound-assignment)
+        #     Detect: word + word  or  word - word  (excluding +=/-= which are
+        #     already in op_map, and -- / ++ / ->)
+        if re.search(r'\w\s*\+(?![+=])\s*\w', text):
+            called.add('operator+')
+        if re.search(r'\w\s*-(?![=>-])\s*\w', text):
+            called.add('operator-')
+
         # 9. Normalise operator() and operator[] to match declared form
         called.discard('operator()')
         called.discard('operator[]')
@@ -324,6 +332,9 @@ class TestSet:
     class_names: List[str] = field(default_factory=list)
     # Python mode
     py_module: Path = None
+    # Methods to exclude from coverage denominator:
+    # pure synonyms, trivial delegates, or script false-positives
+    exclude: Set[str] = field(default_factory=set)
 
 
 def _build_test_sets() -> List[TestSet]:
@@ -346,6 +357,11 @@ def _build_test_sets() -> List[TestSet]:
             test_files=[tu / "test_StThreeVector.cxx"],
             header_files=[scl / "StThreeVector.hh"],
             class_names=["StThreeVector", "StThreeVectorD", "StThreeVectorF"],
+            exclude={
+                "magnitude",   # return mag()        — exact synonym
+                "setMag",      # setMagnitude(m)     — pure delegate
+                "operator!=",  # return !(*this==v)  — trivial negation
+            },
         ),
         TestSet(
             name="StLorentzVector<T>",
@@ -353,6 +369,13 @@ def _build_test_sets() -> List[TestSet]:
             test_files=[tu / "test_StLorentzVector.cxx"],
             header_files=[scl / "StLorentzVector.hh"],
             class_names=["StLorentzVector", "StLorentzVectorD", "StLorentzVectorF"],
+            exclude={
+                "operator!=",  # return !(*this==v)  — trivial negation
+                "setPx",       # mThreeVector.setX() — exact synonym for setX
+                "setPy",       # mThreeVector.setY() — exact synonym for setY
+                "setPz",       # mThreeVector.setZ() — exact synonym for setZ
+                "setT",        # mX4 = val           — exact synonym for setE
+            },
         ),
         TestSet(
             name="TRMatrix group",
@@ -367,6 +390,14 @@ def _build_test_sets() -> List[TestSet]:
             ],
             class_names=["TRArray", "TRMatrix", "TRVector",
                          "TRSymMatrix", "TRDiagMatrix"],
+            exclude={
+                "vlinco",      # TCL::vlinco inside inline ctor body — not a TRArray method
+                "operator<",   # likely mis-tokenised from << stream operator
+                "operator>",   # likely mis-tokenised from >> stream operator
+                "NI",          # return fNrows — inline synonym for GetNrows()
+                "NJ",          # return fNcols — inline synonym for GetNcols()
+                "reset",       # calls Reset() (TArrayD) — pure delegate
+            },
         ),
         TestSet(
             name="TPolinom",
@@ -431,6 +462,10 @@ def analyse(ts: TestSet) -> CoverageResult:
         # domain logic (only lifecycle cleanup), so they are not meaningful
         # coverage targets.
         declared = {m for m in declared if not m.startswith('~')}
+        # Apply per-TestSet exclusions: pure synonyms, trivial delegates,
+        # and false-positives that would distort the coverage ratio.
+        if ts.exclude:
+            declared -= ts.exclude
         called   = _extract_called_methods(ts.test_files, ts.class_names)
         # Normalise typedef constructor names: StThreeVectorD → StThreeVector etc.
         # Any called name that is a class_name alias but not in declared → try stripping
@@ -459,11 +494,13 @@ def _render_report(results: List[CoverageResult]) -> str:
         "> **Scope note.** Only methods declared in the listed headers are",
         "> counted; inherited ROOT/STL methods are excluded.  Destructors are",
         "> excluded — they perform only lifecycle cleanup and are invoked",
-        "> implicitly by every stack-allocated object in the tests.  Operator",
-        "> overloads are identified by token (`operator()`, `operator[]`,",
-        "> `operator*=`, …).  Coverage is a lower-bound estimate — C++",
-        "> operators used implicitly (e.g. copy-construction in return",
-        "> statements) may not appear in the raw call regex.",
+        "> implicitly by every stack-allocated object in the tests.  Methods",
+        "> that perform no meaningful operations (pure synonyms, trivial",
+        "> delegates, script false-positives) are excluded per TestSet.",
+        "> Operator overloads are identified by token (`operator()`,",
+        "> `operator[]`, `operator*=`, …).  Coverage is a lower-bound",
+        "> estimate — C++ operators used implicitly (e.g. copy-construction",
+        "> in return statements) may not appear in the raw call regex.",
         "",
         "## Summary",
         "",

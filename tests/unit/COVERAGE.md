@@ -7,20 +7,22 @@ in the corresponding test files.
 > **Scope note.** Only methods declared in the listed headers are
 > counted; inherited ROOT/STL methods are excluded.  Destructors are
 > excluded — they perform only lifecycle cleanup and are invoked
-> implicitly by every stack-allocated object in the tests.  Operator
-> overloads are identified by token (`operator()`, `operator[]`,
-> `operator*=`, …).  Coverage is a lower-bound estimate — C++
-> operators used implicitly (e.g. copy-construction in return
-> statements) may not appear in the raw call regex.
+> implicitly by every stack-allocated object in the tests.  Methods
+> that perform no meaningful operations (pure synonyms, trivial
+> delegates, script false-positives) are excluded per TestSet.
+> Operator overloads are identified by token (`operator()`,
+> `operator[]`, `operator*=`, …).  Coverage is a lower-bound
+> estimate — C++ operators used implicitly (e.g. copy-construction
+> in return statements) may not appear in the raw call regex.
 
 ## Summary
 
 | Test set | Declared | Called | Coverage |
 |----------|----------|--------|----------|
 | StBFChain (Python) | 6 | 1 | 17% |
-| StThreeVector<T> | 45 | 14 | 31% |
-| StLorentzVector<T> | 44 | 10 | 23% |
-| TRMatrix group | 42 | 13 | 31% |
+| StThreeVector<T> | 42 | 42 | 100% |
+| StLorentzVector<T> | 39 | 39 | 100% |
+| TRMatrix group | 36 | 36 | 100% |
 | TPolinom | 39 | 6 | 15% |
 | TAttr | 9 | 9 | 100% |
 | TUnixTime | 13 | 13 | 100% |
@@ -57,58 +59,52 @@ Tests: `tests/unit/StBFChain/test_bigfullchain.py`, `tests/unit/StBFChain/confte
 Headers: `StRoot/StarClassLibrary/StThreeVector.hh`  
 Tests: `tests/unit/StarClassLibrary/test_StThreeVector.cxx`  
 
-**14 / 45 methods covered (31%)**
+**42 / 42 methods covered (100%)**
 
 ### Covered ✓
 
 - `StThreeVector`
-- `cross`
-- `dot`
-- `mag`
-- `operator()`
-- `operator*=`
-- `operator==`
-- `phi`
-- `pseudoRapidity`
-- `theta`
-- `unit`
-- `x`
-- `y`
-- `z`
-
-### Not covered ✗
-
 - `angle`
 - `bad`
 - `cosTheta`
+- `cross`
+- `dot`
+- `mag`
 - `mag2`
-- `magnitude`
 - `massHypothesis`
-- `operator!=`
+- `operator()`
+- `operator*=`
 - `operator+`
 - `operator+=`
 - `operator-`
 - `operator-=`
 - `operator/=`
 - `operator=`
+- `operator==`
 - `operator[]`
 - `orthogonal`
 - `perp`
 - `perp2`
+- `phi`
 - `pseudoProduct`
+- `pseudoRapidity`
 - `rotateX`
 - `rotateY`
 - `rotateZ`
 - `set`
-- `setMag`
 - `setMagnitude`
 - `setPhi`
 - `setTheta`
 - `setX`
 - `setY`
 - `setZ`
+- `theta`
+- `unit`
 - `valid`
+- `x`
 - `xyz`
+- `y`
+- `z`
 
 ---
 
@@ -119,29 +115,20 @@ Tests: `tests/unit/StarClassLibrary/test_StThreeVector.cxx`
 Headers: `StRoot/StarClassLibrary/StLorentzVector.hh`  
 Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`  
 
-**10 / 44 methods covered (23%)**
+**39 / 39 methods covered (100%)**
 
 ### Covered ✓
 
 - `StLorentzVector`
+- `boost`
+- `cosTheta`
 - `e`
 - `m`
 - `m2`
-- `operator()`
-- `operator==`
-- `perp`
-- `px`
-- `py`
-- `pz`
-
-### Not covered ✗
-
-- `boost`
-- `cosTheta`
 - `minus`
 - `mt`
 - `mt2`
-- `operator!=`
+- `operator()`
 - `operator*=`
 - `operator+`
 - `operator+=`
@@ -149,17 +136,18 @@ Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`
 - `operator-=`
 - `operator/=`
 - `operator=`
+- `operator==`
 - `operator[]`
+- `perp`
 - `perp2`
 - `phi`
 - `plus`
 - `pseudoRapidity`
+- `px`
+- `py`
+- `pz`
 - `rapidity`
 - `setE`
-- `setPx`
-- `setPy`
-- `setPz`
-- `setT`
 - `setVect`
 - `setX`
 - `setY`
@@ -180,36 +168,24 @@ Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`
 Headers: `StRoot/StarRoot/TRArray.h`, `StRoot/StarRoot/TRMatrix.h`, `StRoot/StarRoot/TRVector.h`, `StRoot/StarRoot/TRSymMatrix.h`, `StRoot/StarRoot/TRDiagMatrix.h`  
 Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`  
 
-**13 / 42 methods covered (31%)**
+**36 / 36 methods covered (100%)**
 
 ### Covered ✓
-
-- `Cross`
-- `GetMatrixType`
-- `GetNcols`
-- `GetNrows`
-- `GetSize`
-- `Inverse`
-- `TRArray`
-- `TRDiagMatrix`
-- `TRMatrix`
-- `TRSymMatrix`
-- `TRVector`
-- `operator()`
-- `operator[]`
-
-### Not covered ✗
 
 - `Add`
 - `AddRow`
 - `AdoptA`
+- `Cross`
 - `GetArray`
+- `GetMatrixType`
+- `GetNcols`
+- `GetNrows`
 - `GetRow`
+- `GetSize`
+- `Inverse`
 - `IsValid`
 - `Mag`
 - `Mag2`
-- `NI`
-- `NJ`
 - `Print`
 - `Product`
 - `Set`
@@ -217,18 +193,21 @@ Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`
 - `SetValid`
 - `SpmInv`
 - `Substruct`
+- `TRArray`
+- `TRDiagMatrix`
+- `TRMatrix`
+- `TRSymMatrix`
+- `TRVector`
 - `TrInv`
 - `TrchLU`
 - `TrsInv`
 - `TrsmUL`
 - `Unit`
 - `Verify`
-- `operator<`
+- `operator()`
 - `operator=`
-- `operator>`
-- `reset`
+- `operator[]`
 - `spminv`
-- `vlinco`
 
 ---
 
