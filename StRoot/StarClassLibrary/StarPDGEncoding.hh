@@ -1,6 +1,13 @@
 /*!
  * \file StarPDGEncoding.hh
  * \brief STAR-specific PDG Monte Carlo encoding constants and helper function.
+ *
+ * \details Supplements the standard PDG Monte Carlo numbering scheme with
+ * constants for particles not assigned PDG codes (hypertriton, Dalitz photon,
+ * Λ(1520)) and the `hid()` helper for heavy-ion and hypernucleus encodings.
+ *
+ * See `doc/PARTICLES.md` §"PDG Monte Carlo encoding" for a full description
+ * of the encoding formula and all named constants.
  */
 #ifndef __StarPDGEncodings_hh__
 #define __StarPDGEncodings_hh__
