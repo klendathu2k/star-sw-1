@@ -27,38 +27,70 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file StPhysicalHelix.hh
+ * \brief Physical helix with magnetic field and charge.
+ * \author Brian Lasiuk, Sep 1997
+ */
 #ifndef ST_PHYSICAL_HELIX_HH
 #define ST_PHYSICAL_HELIX_HH
 
 #include "StThreeVector.hh"
 #include "StHelix.hh"
 
+/*!
+ * \class StPhysicalHelix
+ * \brief Helix of a charged particle in a uniform magnetic field.
+ *
+ * \details Extends StHelix by coupling the geometric parametrisation to
+ * physical quantities: given a momentum 3-vector, an origin, the signed
+ * magnetic-field strength, and the particle charge, it provides momentum
+ * reconstruction, charge determination, and signed distance-of-closest-approach
+ * (DCA) calculations.
+ *
+ * \sa StHelix
+ */
 class StPhysicalHelix : public StHelix {
 public:
-    // Requires: momentum, origin, signed Magnetic Field
-    //           and Charge of particle (+/- 1)
+    /**
+     * \brief Construct from physical quantities.
+     * \param momentum  Momentum 3-vector at the origin.
+     * \param origin    Starting point of the helix.
+     * \param B         Signed magnetic field strength (in Tesla·units of SystemOfUnits).
+     * \param charge    Particle charge (+1 or -1).
+     */
     StPhysicalHelix(const StThreeVector<double>&,
 		    const StThreeVector<double>&,
 		    double, double);
     
-    // curvature, dip angle, phase, origin, h
+    /**
+     * \brief Construct from helix parameters directly.
+     * \param curvature Helix curvature (1/radius).
+     * \param dipAngle  Dip angle (pitch angle) in radians.
+     * \param phase     Phase angle at origin.
+     * \param origin    Origin point.
+     * \param h         Sense of rotation: +1 (right-handed) or -1 (left-handed, default).
+     */
     StPhysicalHelix(double, double, double,
 		    const StThreeVector<double>&, int h=-1);
+    /// Default constructor.
     StPhysicalHelix();
     
     ~StPhysicalHelix();
 
-    // Requires:  signed Magnetic Field
-    StThreeVector<double> momentum(double) const;     // returns the momentum at origin
-    StThreeVector<double> momentumAt(double, double) const; // returns momemtum at S
-    int                   charge(double)   const;     // returns charge of particle
-    // 2d DCA to x,y point signed relative to curvature
+    /// Return the momentum 3-vector at the origin for the given signed magnetic field \a B.
+    StThreeVector<double> momentum(double) const;
+    /// Return the momentum 3-vector at arc-length \a s for the given signed magnetic field \a B.
+    StThreeVector<double> momentumAt(double, double) const;
+    /// Return the particle charge sign (+1 or -1) for the given signed magnetic field \a B.
+    int                   charge(double)   const;
+    /// Return the 2-D DCA to point (x,y) with sign relative to the curvature direction.
     double curvatureSignedDistance(double x, double y) ;
-    // 2d DCA to x,y point signed relative to rotation 
+    /// Return the 2-D DCA to point (x,y) with sign relative to the rotation direction.
     double geometricSignedDistance(double x, double y) ;
-    // 3d DCA to 3d point signed relative to curvature
+    /// Return the 3-D DCA to a 3-D point with sign relative to the curvature direction.
     double curvatureSignedDistance(const StThreeVector<double>&) ;
-    // 3d DCA to 3d point signed relative to rotation
+    /// Return the 3-D DCA to a 3-D point with sign relative to the rotation direction.
     double geometricSignedDistance(const StThreeVector<double>&) ;
     
 #ifdef __ROOT__

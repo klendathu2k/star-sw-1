@@ -1,6 +1,18 @@
-/*!
- * \class StVertex 
+/**
+ * \class StVertex
+ * \brief Abstract base class for a reconstructed event vertex.
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StVertex holds the 3-D position, covariance matrix, fit
+ * quality (\f$\chi^2\f$, probability), and daughter-track links for a
+ * single reconstructed vertex.  Concrete sub-classes include
+ * StPrimaryVertex, StV0Vertex, StXiVertex, and StKinkVertex.
+ *
+ * The vertex type and status are encoded in the \c mFlag bit-field;
+ * helper predicates (isPrimaryVtx(), isV0Vtx(), …) test individual bits.
+ *
+ * \sa StPrimaryVertex, StV0Vertex, StXiVertex, StKinkVertex,
+ *     StMeasuredPoint, StTrack
  */
 /***************************************************************************
  *
@@ -92,20 +104,31 @@ public:
     int operator==(const StVertex&) const;
     int operator!=(const StVertex&) const;
 
-    virtual StVertexId     type() const {return mType; }
-    int                    flag() const {return mFlag; }
-    float                  chiSquared() const { return mChiSquared; }
-    float                  probChiSquared() const { return mProbChiSquared; }
-    StMatrixF              covariantMatrix() const;  // overwrite inherited
-    void                   covarianceMatrix(double covM[6]) const { std::copy(mCovariantMatrix, mCovariantMatrix + 6, covM); }
-    StThreeVectorF         positionError() const;    // overwrite inherited
-    StTrack*               parent()        { return mParent; }
+    /// \name Vertex type and fit quality
+    /// @{
+    virtual StVertexId     type() const {return mType; }              ///< Vertex type identifier (primary, V0, Xi, kink).
+    int                    flag() const {return mFlag; }              ///< Status/type bitmask (see kPrimaryVtxId etc.).
+    float                  chiSquared() const { return mChiSquared; } ///< \f$\chi^2\f$ of the vertex fit.
+    float                  probChiSquared() const { return mProbChiSquared; } ///< Probability of the \f$\chi^2\f$ value.
+    /// @}
+
+    /// \name Position and covariance
+    /// @{
+    StMatrixF              covariantMatrix() const;  // overwrite inherited ///< 3×3 position covariance matrix as StMatrixF.
+    void                   covarianceMatrix(double covM[6]) const { std::copy(mCovariantMatrix, mCovariantMatrix + 6, covM); } ///< Fill \a covM with the 6 independent covariance elements.
+    StThreeVectorF         positionError() const;    // overwrite inherited ///< 1-sigma position errors (sqrt of diagonal).
+    /// @}
+
+    /// \name Parent track and daughters
+    /// @{
+    StTrack*               parent()        { return mParent; }        ///< Track that produced this decay vertex (null for primary).
     const StTrack*         parent() const  { return mParent; }
-    virtual unsigned int   numberOfDaughters()    const {NotImplemented("numberOfDaughters"); return 0;}
-    virtual unsigned int   numberOfGoodTracks()   const {NotImplemented("numberOfGoodTracks"); return 0;}
-    virtual StTrack*       daughter(unsigned int)       {NotImplemented("daughter"); return 0;}
+    virtual unsigned int   numberOfDaughters()    const {NotImplemented("numberOfDaughters"); return 0;} ///< Number of outgoing daughter tracks.
+    virtual unsigned int   numberOfGoodTracks()   const {NotImplemented("numberOfGoodTracks"); return 0;} ///< Number of daughters passing quality cuts.
+    virtual StTrack*       daughter(unsigned int)       {NotImplemented("daughter"); return 0;}       ///< Daughter track by index.
     virtual const StTrack* daughter(unsigned int) const {NotImplemented("daughter"); return 0;}
-    virtual StPtrVecTrack  daughters(StTrackFilter&)    {NotImplemented("daughters"); return 0;}
+    virtual StPtrVecTrack  daughters(StTrackFilter&)    {NotImplemented("daughters"); return 0;}      ///< Daughters passing a user-supplied filter.
+    /// @}
 
     virtual void setFlag(int val) { mFlag = val; }
     virtual void setCovariantMatrix(float[6]);

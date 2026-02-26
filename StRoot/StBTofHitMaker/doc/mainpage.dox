@@ -1,0 +1,44 @@
+/**
+ * \mainpage StBTofHitMaker — Maker that converts raw BTOF data into StBTofCollection
+ *
+ * \section btof_purpose Purpose
+ * StBTofHitMaker reads raw Barrel Time-of-Flight (BTOF) sub-events from the
+ * STAR DAQ stream via the RTS reader.  It unpacks TDC leading- and
+ * trailing-edge words per tray and fiber, applies Integral Non-Linearity (INL)
+ * corrections, maps hardware channels to physical tray/module/channel
+ * addresses, and constructs \c StBTofRawHit and \c StBTofHit objects.
+ * The completed \c StBTofCollection is posted to \c StEvent.
+ *
+ * \section btof_input Input
+ * - Raw BTOF DAQ sub-event from the RTS reader (accessed via
+ *   \c StRTSBaseMaker::GetNextDaqElement()).
+ * - DAQ channel map (\c StBTofDaqMap) and INL correction tables
+ *   (\c StBTofINLCorr) loaded from the STAR database in \c InitRun().
+ *
+ * \section btof_output Output
+ * - \b StBTofCollection inside StEvent, containing:
+ *   - \c StBTofRawHit  — un-corrected TDC words with hardware address.
+ *   - \c StBTofHit     — corrected hits with tray/module/cell and time [ps].
+ *   - BTOF header with upVPD trigger-time stamps.
+ *
+ * \section btof_classes Key Classes
+ * | Class | Role |
+ * |-------|------|
+ * | StBTofHitMaker | Main maker; orchestrates unpacking and hit building |
+ * | StBTofRawHit | Raw TDC hit with hardware address |
+ * | StBTofHit | Corrected time-of-flight hit |
+ * | StBTofCollection | StEvent container for all BTOF data |
+ * | StBTofDaqMap | Hardware-channel-to-geometry mapping |
+ * | StBTofINLCorr | TDC Integral Non-Linearity correction |
+ * | StBTofSortRawHit | Helper to sort/match leading and trailing edges |
+ *
+ * \section btof_usage Usage Example
+ * \code{.cpp}
+ * StBTofHitMaker* btofHit = new StBTofHitMaker("tof_raw");
+ * chain->AddMaker(btofHit);
+ * \endcode
+ *
+ * \note TDC time-bin-to-picosecond constants: \n
+ *   VHRBIN2PS = 24.4140625 ps/bin (very-high-resolution mode) \n
+ *   HRBIN2PS  = 97.65625   ps/bin (high-resolution mode)
+ */

@@ -1,0 +1,44 @@
+# StFcsClusterMaker — Maker that clusters FCS hits into StFcsCollection
+
+## Purpose
+
+`StFcsClusterMaker` groups individual Forward Calorimeter System (FCS)
+tower-energy deposits (`StFcsHit`) in the ECal and HCal into spatial clusters
+(`StFcsCluster`).  The clustering uses a nearest-neighbour algorithm with
+configurable seed and inclusion energy thresholds, and can split overlapping
+showers at energy valleys.  Cluster shape is characterised by a first-moment
+analysis.  Results are stored in `StFcsCollection` inside `StEvent`.
+
+## Input
+
+- `StFcsHit` objects already present in `StFcsCollection`, filled by an
+  upstream waveform-fit maker (e.g. `StFcsWaveformFitMaker`).
+- FCS geometry and calibration from `StFcsDb` (STAR database).
+
+## Output
+
+- **`StFcsCluster`** objects appended to **`StFcsCollection`** in `StEvent`,
+  one collection entry per FCS detector (ECal north/south, HCal north/south).
+
+## Key Classes
+
+| Class | Role |
+|-------|------|
+| `StFcsClusterMaker` | Main maker; runs clustering for each FCS detector |
+| `StFcsHit` | Input tower-energy deposit |
+| `StFcsCluster` | Output spatial cluster of hits |
+| `StFcsCollection` | `StEvent` container for FCS hits and clusters |
+| `StFcsDb` | FCS geometry and calibration database accessor |
+
+## Usage Example
+
+```cpp
+StFcsClusterMaker* fcsClu = new StFcsClusterMaker("StFcsClusterMaker");
+// Optional tuning before Init():
+fcsClu->setNeighborDistance(1.01f, 2.01f);   // ECal, HCal [cell units]
+fcsClu->setTowerEThreSeed(1.0f, 1.0f);        // seed threshold [GeV]
+chain->AddMaker(fcsClu);
+```
+
+> **Note:** `StFcsClusterMaker` must run after the FCS waveform-fit maker that
+> creates `StFcsHit` objects, and before any FCS physics analysis maker.

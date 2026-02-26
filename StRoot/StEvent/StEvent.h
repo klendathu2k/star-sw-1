@@ -1,6 +1,29 @@
-/*!
- * \class StEvent 
+/**
+ * \class StEvent
+ * \brief Top-level transient event container for all STAR detector data.
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StEvent is the central in-memory store for every piece of
+ * reconstructed and raw data associated with a single STAR collision event.
+ * It is created and populated by StEventMaker and its sub-makers, then made
+ * available to all downstream analysis makers through the STAR framework data
+ * set mechanism.
+ *
+ * The object aggregates detector hit collections, reconstructed tracks and
+ * vertices, trigger information, and run/event metadata.  Track and vertex
+ * memory is managed through StTrackNode and the primary-vertex list
+ * respectively; all detector-collection pointers are owned by StEvent and
+ * are deleted in the destructor.
+ *
+ * Typical read access:
+ * \code
+ *   StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+ *   if (!event) return;
+ *   StTpcHitCollection* tpcHits = event->tpcHitCollection();
+ *   const StSPtrVecTrackNode& nodes = event->trackNodes();
+ * \endcode
+ *
+ * \sa StEventMaker, StTrack, StVertex, StHit, StRunInfo, StEventInfo
  */
 /***************************************************************************
  *
@@ -235,125 +258,234 @@ public:
     StEvent();
     virtual ~StEvent();
 
+    /// \name Event identification and metadata
+    /// @{
+    /// CVS tag of the StEvent library build.
     static const TString&               cvsTag();
-    
+    /// Event type string (e.g. "physics", "laser", "pedestal").
     TString                             type() const;
+    /// Unique event number within the run.
     int                                 id() const;
+    /// Run number.
     int                                 runId() const;
+    /// Unix timestamp of the event trigger.
     int                                 time() const;
+    /// Bitmask of fired L0 triggers.
     unsigned int                        triggerMask() const;
+    /// RHIC bunch-crossing number; \a index selects the 32-bit word (0 or 1).
     unsigned int                        bunchCrossingNumber(unsigned int) const;
-    
+    /// @}
+
+    /// \name Event and run information objects
+    /// @{
+    /// Per-event metadata (event/run numbers, timestamp, trigger mask).
     StEventInfo*                        info();
     const StEventInfo*                  info() const;
 
+    /// Run-level metadata (beam parameters, drift velocities, luminosity).
     StRunInfo*                          runInfo();
     const StRunInfo*                    runInfo() const;
 
+    /// Global event summary (multiplicity, centrality, energy sums).
     StEventSummary*                     summary();
     const StEventSummary*               summary() const;
+    /// @}
     
+    /// \name TPC and FTPC hit collections
+    /// @{
+    /// Main Time Projection Chamber hit collection.
     StTpcHitCollection*                 tpcHitCollection();
     const StTpcHitCollection*           tpcHitCollection() const;
+    /// Forward Time Projection Chamber hit collection.
     StFtpcHitCollection*                ftpcHitCollection();
     const StFtpcHitCollection*          ftpcHitCollection() const;
+    /// @}
+
+    /// \name SVT, SSD, and SST silicon hit collections
+    /// @{
+    /// Silicon Vertex Tracker hit collection.
     StSvtHitCollection*                 svtHitCollection();
     const StSvtHitCollection*           svtHitCollection() const;
+    /// Silicon Strip Detector hit collection.
     StSsdHitCollection*                 ssdHitCollection();
     const StSsdHitCollection*           ssdHitCollection() const;
+    /// Silicon Strip Tracker (SST/SSD upgrade) hit collection.
     StSstHitCollection*                 sstHitCollection();
     const StSstHitCollection*           sstHitCollection() const;
+    /// @}
+
+    /// \name Electromagnetic and forward calorimeter collections
+    /// @{
+    /// Barrel and Endcap EMC collection (towers, clusters, points).
     StEmcCollection*                    emcCollection();
     const StEmcCollection*              emcCollection() const;
+    /// Forward Calorimeter System (FCS) collection.
     StFcsCollection*                    fcsCollection();
     const StFcsCollection*              fcsCollection() const;
+    /// Forward Tracking Telescope (FTT) collection.
     StFttCollection*                    fttCollection();
     const StFttCollection*              fttCollection() const;
+    /// Forward Meson Spectrometer (FMS) collection.
     StFmsCollection*                    fmsCollection();
     const StFmsCollection*              fmsCollection() const;
+    /// RHICf calorimeter collection.
     StRHICfCollection*                  rhicfCollection();
     const StRHICfCollection*            rhicfCollection() const;
+    /// RICH detector collection.
     StRichCollection*                   richCollection();
     const StRichCollection*             richCollection() const;
+    /// Roman Pot System (pp2pp/RPS) collection.
     StRpsCollection*                    rpsCollection();
     const StRpsCollection*              rpsCollection() const;
+    /// @}
+
+    /// \name Time-of-flight and timing detector collections
+    /// @{
+    /// Legacy TOF (pVPD/TOFr) collection.
     StTofCollection*                    tofCollection();
     const StTofCollection*              tofCollection() const;
+    /// Barrel TOF (BTOF) collection.
     StBTofCollection*                   btofCollection();
     const StBTofCollection*             btofCollection() const;
+    /// Endcap TOF (ETOF) collection.
     StETofCollection*                   etofCollection();
     const StETofCollection*             etofCollection() const;
+    /// Muon Telescope Detector (MTD) collection.
     StMtdCollection*                    mtdCollection();
     const StMtdCollection*              mtdCollection() const;
+    /// @}
+
+    /// \name Other detector collections
+    /// @{
+    /// Forward Pion Detector (FPD) collection.
     StFpdCollection*                    fpdCollection();
     const StFpdCollection*              fpdCollection() const;
+    /// Photon Multiplicity Detector (PMD/PHMD) collection.
     StPhmdCollection*                   phmdCollection();
     const StPhmdCollection*             phmdCollection() const;
+    /// R&D generic hit collection.
     StRnDHitCollection*                 rndHitCollection();
     const StRnDHitCollection*           rndHitCollection() const;
+    /// Endcap tracking detector (ETr) hit collection.
     StEtrHitCollection*                 etrHitCollection();
     const StEtrHitCollection*           etrHitCollection() const;
+    /// High-Level Trigger event data.
     StHltEvent*                         hltEvent();
     const StHltEvent*                   hltEvent() const;
+    /// Forward GEM Tracker (FGT) collection.
     StFgtCollection*                    fgtCollection();
     const StFgtCollection*              fgtCollection() const;
+    /// @}
+
+    /// \name HFT pixel and strip detector collections (PXL, IST, FST)
+    /// @{
+    /// Pixel detector (PXL) hit collection.
     StPxlHitCollection*                 pxlHitCollection();
     const StPxlHitCollection*           pxlHitCollection() const;
+    /// Intermediate Silicon Tracker (IST) hit collection.
     StIstHitCollection*                 istHitCollection();
     const StIstHitCollection*           istHitCollection() const;
+    /// Forward Silicon Tracker (FST) event collection.
     StFstEvtCollection*                 fstEvtCollection();
     const StFstEvtCollection*           fstEvtCollection() const;
+    /// Forward Silicon Tracker (FST) hit collection.
     StFstHitCollection*                 fstHitCollection();
     const StFstHitCollection*           fstHitCollection() const;
+    /// Event Plane Detector (EPD) collection.
     StEpdCollection*                    epdCollection();
     const StEpdCollection*              epdCollection() const;
+    /// @}
+
+    /// \name Trigger objects
+    /// @{
+    /// Level-0 trigger data.
     StL0Trigger*                        l0Trigger();
     const StL0Trigger*                  l0Trigger() const;
+    /// Level-1 trigger data.
     StL1Trigger*                        l1Trigger();
     const StL1Trigger*                  l1Trigger() const;
+    /// Level-3 (online) trigger data.
     StL3Trigger*                        l3Trigger();
     const StL3Trigger*                  l3Trigger() const;
+    /// Trigger detector (CTB, ZDC, BBC, …) collection.
     StTriggerDetectorCollection*        triggerDetectorCollection();
     const StTriggerDetectorCollection*  triggerDetectorCollection() const;
+    /// Collection of trigger ID objects for this event.
     StTriggerIdCollection*              triggerIdCollection();
     const StTriggerIdCollection*        triggerIdCollection() const;
+    /// Raw trigger data bank.
     StTriggerData*                      triggerData();
     const StTriggerData*                triggerData() const;
+    /// Global Muon Trigger (GMT) collection.
     StGmtCollection*                    gmtCollection();
     const StGmtCollection*              gmtCollection() const;
+    /// @}
     
+    /// \name Track and track-detector info containers
+    /// @{
+    /// Collection of StTrackDetectorInfo objects shared among tracks.
     StSPtrVecTrackDetectorInfo&         trackDetectorInfo();
     const StSPtrVecTrackDetectorInfo&   trackDetectorInfo() const;
     
+    /// Ordered collection of StTrackNode objects; each node groups one
+    /// global track with its associated primary track(s).
     StSPtrVecTrackNode&                 trackNodes();
     const StSPtrVecTrackNode&           trackNodes() const;
+    /// @}
 
+    /// \name Primary and calibration vertices
+    /// @{
+    /// Number of primary-vertex candidates reconstructed in this event.
     unsigned int                        numberOfPrimaryVertices() const;
+    /// Primary vertex by rank index (default 0 = highest-ranked vertex).
     StPrimaryVertex*                    primaryVertex(unsigned int = 0);
     const StPrimaryVertex*              primaryVertex(unsigned int = 0) const;
 
+    /// Number of calibration vertices stored in this event.
     unsigned int                        numberOfCalibrationVertices() const;
+    /// Calibration vertex by index.
     StCalibrationVertex*                calibrationVertex(unsigned int);
     const StCalibrationVertex*          calibrationVertex(unsigned int) const;
+    /// @}
 
+    /// \name Secondary vertex collections (V0, Xi, Kink)
+    /// @{
+    /// Collection of V0 (two-prong neutral) decay vertices.
     StSPtrVecV0Vertex&                  v0Vertices();
     const StSPtrVecV0Vertex&            v0Vertices() const;
+    /// Collection of Xi (cascade) decay vertices.
     StSPtrVecXiVertex&                  xiVertices();
     const StSPtrVecXiVertex&            xiVertices() const;
+    /// Collection of kink decay vertices.
     StSPtrVecKinkVertex&                kinkVertices();
     const StSPtrVecKinkVertex&          kinkVertices() const;
+    /// @}
 
+    /// \name Forward track collection
+    /// @{
+    /// Collection of forward (FWD) reconstructed tracks.
     StFwdTrackCollection*               fwdTrackCollection();
     const StFwdTrackCollection*         fwdTrackCollection() const;
+    /// @}
 
+    /// \name Detector state and PSDs
+    /// @{
+    /// Detector status object for the given detector identifier.
     StDetectorState*                    detectorState(StDetectorId);
     const StDetectorState*              detectorState(StDetectorId) const;
     
+    /// Pseudo-Slow Control data for the given physics working group and index.
     StPsd*                              psd(StPwg, int);
     const StPsd*                        psd(StPwg, int) const;
+    /// Total number of PSDs stored.
     unsigned int                        numberOfPsds() const;
+    /// Number of PSDs for a specific physics working group.
     unsigned int                        numberOfPsds(StPwg) const;
+    /// @}
 
+    /// \name Generic hit collection access and I/O utilities
+    /// @{
+    /// Return named hit collection (used for non-standard detectors).
     StSPtrVecHit*                       hitCollection(const Char_t *name);
     
     StSPtrVecObject&                    content();               // for IO purposes only
@@ -362,60 +494,72 @@ public:
     StEventClusteringHints*             clusteringHints();       // for IO purposes only
     
     void                                statistics();            // *MENU*
+    /// @}
 
-    void setType(const char*);
-    void setRunId(int);
-    void setId(int);
-    void setTime(int);
-    void setTriggerMask(unsigned int);
-    void setBunchCrossingNumber(unsigned int, unsigned int);
-    void setInfo(StEventInfo*);
-    void setRunInfo(StRunInfo*);
-    void setSummary(StEventSummary*);
-    void setIdTruth();
+    /// \name Setters — event identification and metadata
+    /// @{
+    void setType(const char*);           ///< Set event type string.
+    void setRunId(int);                  ///< Set run number.
+    void setId(int);                     ///< Set event number.
+    void setTime(int);                   ///< Set Unix timestamp.
+    void setTriggerMask(unsigned int);   ///< Set L0 trigger bitmask.
+    void setBunchCrossingNumber(unsigned int, unsigned int); ///< Set RHIC bunch-crossing word \a index to \a value.
+    void setInfo(StEventInfo*);          ///< Attach an StEventInfo object (takes ownership).
+    void setRunInfo(StRunInfo*);         ///< Attach an StRunInfo object (takes ownership).
+    void setSummary(StEventSummary*);    ///< Attach an StEventSummary object (takes ownership).
+    void setIdTruth();                   ///< Propagate MC truth IDs from hits to tracks and vertices.
+    /// @}
 
-    void setTpcHitCollection(StTpcHitCollection*);
-    void setRnDHitCollection(StRnDHitCollection*);
-    void setEtrHitCollection(StEtrHitCollection*);
-    void setFtpcHitCollection(StFtpcHitCollection*);
-    void setSvtHitCollection(StSvtHitCollection*);
-    void setSsdHitCollection(StSsdHitCollection*);
-    void setSstHitCollection(StSstHitCollection*);
-    void setPxlHitCollection(StPxlHitCollection*);
-    void setIstHitCollection(StIstHitCollection*);
-    void setFstEvtCollection(StFstEvtCollection*);
-    void setFstHitCollection(StFstHitCollection*);
-    void setEmcCollection(StEmcCollection*);
-    void setEpdCollection(StEpdCollection*);
-    void setFcsCollection(StFcsCollection*);
-    void setFttCollection(StFttCollection*);
-    void setFmsCollection(StFmsCollection*);
-    void setRHICfCollection(StRHICfCollection*);
-    void setRichCollection(StRichCollection*);
-    void setRpsCollection(StRpsCollection*);
-    void setTofCollection(StTofCollection*);
-    void setBTofCollection(StBTofCollection*);
-    void setETofCollection(StETofCollection*);
-    void setMtdCollection(StMtdCollection*);
-    void setFpdCollection(StFpdCollection*);
-    void setPhmdCollection(StPhmdCollection*);
-    void setTriggerDetectorCollection(StTriggerDetectorCollection*);
-    void setTriggerIdCollection(StTriggerIdCollection*);
-    void setTriggerData(StTriggerData*);
-    void setL0Trigger(StL0Trigger*);
-    void setL1Trigger(StL1Trigger*);
-    void setL3Trigger(StL3Trigger*);
-    void setHltEvent(StHltEvent*);
-    void setFgtCollection(StFgtCollection*);
-    void setFwdTrackCollection(StFwdTrackCollection*);
+    /// \name Setters — detector hit and data collections
+    /// @{
+    void setTpcHitCollection(StTpcHitCollection*);      ///< Attach the TPC hit collection.
+    void setRnDHitCollection(StRnDHitCollection*);      ///< Attach the R&D hit collection.
+    void setEtrHitCollection(StEtrHitCollection*);      ///< Attach the ETr hit collection.
+    void setFtpcHitCollection(StFtpcHitCollection*);    ///< Attach the FTPC hit collection.
+    void setSvtHitCollection(StSvtHitCollection*);      ///< Attach the SVT hit collection.
+    void setSsdHitCollection(StSsdHitCollection*);      ///< Attach the SSD hit collection.
+    void setSstHitCollection(StSstHitCollection*);      ///< Attach the SST hit collection.
+    void setPxlHitCollection(StPxlHitCollection*);      ///< Attach the PXL hit collection.
+    void setIstHitCollection(StIstHitCollection*);      ///< Attach the IST hit collection.
+    void setFstEvtCollection(StFstEvtCollection*);      ///< Attach the FST event collection.
+    void setFstHitCollection(StFstHitCollection*);      ///< Attach the FST hit collection.
+    void setEmcCollection(StEmcCollection*);            ///< Attach the EMC collection.
+    void setEpdCollection(StEpdCollection*);            ///< Attach the EPD collection.
+    void setFcsCollection(StFcsCollection*);            ///< Attach the FCS collection.
+    void setFttCollection(StFttCollection*);            ///< Attach the FTT collection.
+    void setFmsCollection(StFmsCollection*);            ///< Attach the FMS collection.
+    void setRHICfCollection(StRHICfCollection*);        ///< Attach the RHICf collection.
+    void setRichCollection(StRichCollection*);          ///< Attach the RICH collection.
+    void setRpsCollection(StRpsCollection*);            ///< Attach the RPS collection.
+    void setTofCollection(StTofCollection*);            ///< Attach the legacy TOF collection.
+    void setBTofCollection(StBTofCollection*);          ///< Attach the BTOF collection.
+    void setETofCollection(StETofCollection*);          ///< Attach the ETOF collection.
+    void setMtdCollection(StMtdCollection*);            ///< Attach the MTD collection.
+    void setFpdCollection(StFpdCollection*);            ///< Attach the FPD collection.
+    void setPhmdCollection(StPhmdCollection*);          ///< Attach the PMD/PHMD collection.
+    void setTriggerDetectorCollection(StTriggerDetectorCollection*); ///< Attach the trigger-detector collection.
+    void setTriggerIdCollection(StTriggerIdCollection*);             ///< Attach the trigger-ID collection.
+    void setTriggerData(StTriggerData*);                ///< Attach the raw trigger data bank.
+    void setL0Trigger(StL0Trigger*);                    ///< Attach L0 trigger data.
+    void setL1Trigger(StL1Trigger*);                    ///< Attach L1 trigger data.
+    void setL3Trigger(StL3Trigger*);                    ///< Attach L3 trigger data.
+    void setHltEvent(StHltEvent*);                      ///< Attach the HLT event object.
+    void setFgtCollection(StFgtCollection*);            ///< Attach the FGT collection.
+    void setFwdTrackCollection(StFwdTrackCollection*);  ///< Attach the forward-track collection.
+    /// @}
+
+    /// \name Adders — vertices, detector states, and dynamic collections
+    /// @{
+    /// Add a primary vertex candidate; \a order controls ranking criterion.
     void addPrimaryVertex(StPrimaryVertex*, StPrimaryVertexOrder = orderByNumberOfDaughters);
-    void addCalibrationVertex(StCalibrationVertex*);
-    void addDetectorState(StDetectorState*);
-    void addPsd(StPsd*);
-    void removePsd(StPsd*);
-    void addHitCollection(StSPtrVecHit* p, const Char_t *name);
-    void removeHitCollection(const Char_t *name);
-    void setGmtCollection(StGmtCollection*);
+    void addCalibrationVertex(StCalibrationVertex*); ///< Add a calibration vertex.
+    void addDetectorState(StDetectorState*);          ///< Add a detector state record.
+    void addPsd(StPsd*);                              ///< Add a pseudo-slow-control data object.
+    void removePsd(StPsd*);                           ///< Remove and delete a PSD object.
+    void addHitCollection(StSPtrVecHit* p, const Char_t *name);    ///< Register a named hit collection.
+    void removeHitCollection(const Char_t *name);                   ///< Unregister a named hit collection.
+    void setGmtCollection(StGmtCollection*);          ///< Attach the GMT collection.
+    /// @}
 
     virtual Bool_t Notify();
     

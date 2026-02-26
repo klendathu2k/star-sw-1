@@ -93,16 +93,39 @@ class StMuMtdHeader;
 #define DO(TYPE,NAME) ARRAY(NAME)    OBJECT(TYPE,NAME)
 
 
-/** 
-    @class StMuDst
-    Top class of the 'dataformat'. This class exists only in memory and is not 
-    written/read to/from disk.
-    However, this class is used to hold the pointers to all the TClonesArrays that have 
-    been read from disk.
-    The class is used to navigate within a 'physics' event (to access tracks, 
-    detector info, etc).  
-    
-*/
+/*!
+ * \class StMuDst
+ * \brief Top-level class for navigating a STAR Micro-DST event.
+ *
+ * \details
+ * The MuDST (Micro Data Summary Tape) is a compact ROOT TTree-based event format
+ * designed for efficient physics analysis.  It is a serialised snapshot of the
+ * transient StEvent representation: raw detector hit collections are discarded and
+ * only the reconstructed quantities needed for most analyses (tracks, vertices,
+ * PID information, trigger data, and detector-subsystem collections) are retained.
+ *
+ * StMuDst itself is a purely in-memory navigation class; it is never written to or
+ * read from disk directly.  StMuDstMaker populates its static TClonesArray pointers
+ * from the on-disk TTree branches and this class provides a uniform accessor
+ * interface for analysis code.
+ *
+ * Typical usage inside an analysis maker (read mode):
+ * \code
+ *   StMuDst* mu = muDstMaker->muDst();
+ *   StMuEvent* ev = StMuDst::event();
+ *   unsigned int nPrim = StMuDst::numberOfPrimaryTracks();
+ *   for (unsigned int i = 0; i < nPrim; ++i) {
+ *       StMuTrack* trk = StMuDst::primaryTracks(i);
+ *       // ... analyse track ...
+ *   }
+ * \endcode
+ *
+ * \note All accessor methods are \c static so they can be called without a pointer
+ *       to the StMuDst instance.  The single in-memory instance is managed by
+ *       StMuDstMaker; use StMuDstMaker::muDst() to obtain a pointer to it.
+ *
+ * \sa StMuDstMaker, StMuEvent, StMuTrack, StMuPrimaryVertex, StMuArrays
+ */
 class StMuDst : public TObject {
 public:
   /// constructor
@@ -316,15 +339,15 @@ public:
   static TClonesArray* covGlobTrack() {return arrays[muCovGlobTrack];}
   static TClonesArray* covPrimTrack() {return arrays[muCovPrimTrack];}
 
-  /// returns pointer to current StMuEvent (class holding the event wise information, e.g. event number, run number)
+  /// Returns pointer to current StMuEvent (event-level data: run/event id, trigger, refMult, magnetic field, etc.).
   static StMuEvent* event() { return (StMuEvent*)arrays[muEvent]->UncheckedAt(0); }
-  /// return pointer to current primary vertex
+  /// Returns pointer to the current primary vertex (selected by setVertexIndex()).
   static StMuPrimaryVertex* primaryVertex() { return (StMuPrimaryVertex*)arrays[muPrimaryVertex]->UncheckedAt(mCurrVertexId); }
-  /// return pointer to i-th primary vertex
+  /// Returns pointer to the i-th primary vertex in the vertex list.
   static StMuPrimaryVertex* primaryVertex(int i) { return (StMuPrimaryVertex*)arrays[muPrimaryVertex]->UncheckedAt(i); }
-  /// return pointer to i-th primary track 
+  /// Returns pointer to the i-th primary track associated with the current primary vertex.
   static StMuTrack* primaryTracks(int i) { return (StMuTrack*)mCurrPrimaryTracks->UncheckedAt(i); }
-  /// return pointer to i-th global track 
+  /// Returns pointer to the i-th global (unconstrained) track.
   static StMuTrack* globalTracks(int i) { return (StMuTrack*)arrays[muGlobal]->UncheckedAt(i); }
   /// return pointer to i-th other track  (track that is not flagged as primary of global)
   static StMuTrack* otherTracks(int i) { return (StMuTrack*)arrays[muOther]->UncheckedAt(i); }
@@ -459,11 +482,11 @@ public:
   static  EztEmcRawData* eztESmd() 
         { return (EztEmcRawData*)eztArrays[muEztESmd]->UncheckedAt(0); }
 
-  static unsigned int numberOfPrimaryVertices()  { return arrays[muPrimaryVertex]->GetEntriesFast(); }
-  static unsigned int numberOfPrimaryTracks()  { return mCurrPrimaryTracks->GetEntriesFast(); }
-  static unsigned int numberOfGlobalTracks()   { return arrays[muGlobal]->GetEntriesFast(); }
-  static unsigned int numberOfOtherTracks()    { return arrays[muOther]->GetEntriesFast(); }
-  static unsigned int numberOfL3Tracks()       { return arrays[muL3]->GetEntriesFast(); }
+  static unsigned int numberOfPrimaryVertices()  { return arrays[muPrimaryVertex]->GetEntriesFast(); } ///< Returns number of primary vertices reconstructed in the event.
+  static unsigned int numberOfPrimaryTracks()  { return mCurrPrimaryTracks->GetEntriesFast(); } ///< Returns number of primary tracks belonging to the current vertex (set by setVertexIndex()).
+  static unsigned int numberOfGlobalTracks()   { return arrays[muGlobal]->GetEntriesFast(); }   ///< Returns total number of global (unconstrained) tracks in the event.
+  static unsigned int numberOfOtherTracks()    { return arrays[muOther]->GetEntriesFast(); }     ///< Returns number of tracks that are neither primary nor global.
+  static unsigned int numberOfL3Tracks()       { return arrays[muL3]->GetEntriesFast(); }        ///< Returns number of Level-3 online reconstructed tracks.
   static unsigned int numberOfRichSpectras()   { return arrays[muRich]->GetEntriesFast(); }
   static unsigned int numberOfDetectorStates() { return arrays[muState]->GetEntriesFast(); }
   static unsigned int numberOfL3AlgoAccepts()  { return arrays[muAccept]->GetEntriesFast(); }

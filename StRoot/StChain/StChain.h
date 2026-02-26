@@ -1,15 +1,24 @@
 /*!
- * \class StChain 
+ * \class StChain
+ * \brief Chain controller that manages a sequence of StMaker objects for event-loop processing.
  *
- *                                                                     
- * Main base class to control chains for the different STAR "chains"   
- *                                                                     
- * This class :                                                        
- *   - Initialises the run default parameters                          
- *   - Provides API to Set/Get run parameters                           
- *   - Creates the support lists (TClonesArrays) for the Event structure
- *   - Creates the physics objects makers                               
- *                                                                      
+ * \details
+ * StChain is the top-level orchestrator of the STAR reconstruction and analysis
+ * framework.  It owns a list of StMaker instances and drives them through the
+ * standard maker lifecycle (Init → [InitRun → Make → Clear → FinishRun]* → Finish)
+ * for every event in the input data stream.
+ *
+ * Typical usage in a macro:
+ * \code{.cpp}
+ *   StChain *chain = new StChain("myChain");
+ *   new MyInputMaker(chain);
+ *   new MyAnalysisMaker(chain);
+ *   chain->Init();
+ *   chain->EventLoop(1, 1000);   // process events 1–1000
+ *   chain->Finish();
+ * \endcode
+ *
+ * \sa StMaker, StEvtHddr, StIOInterFace
  */
 
 #ifndef STAR_StChain
@@ -48,12 +57,31 @@ class StChain : public StMaker {
    virtual Int_t      Make();
    virtual Int_t      Make(Int_t num){return IMake(num);}
    virtual Int_t      IsChain() const {return 1;}
+
+   /// Process exactly one event: calls Make() on all registered makers, then Clear().
+   /// This is the single-event equivalent of EventLoop().
+   /// \return kStOK on success, or the first non-OK maker return code.
    virtual Int_t      MakeEvent(); // *MENU*
+
+   /// Run the event loop from event \a jBeg to event \a jEnd (inclusive).
+   /// Calls Init() if not already initialised, then repeatedly calls MakeEvent().
+   /// An optional output maker \a outMk is notified at the end of each event.
+   /// \param jBeg   First event number to process (1-based).
+   /// \param jEnd   Last event number to process.
+   /// \param outMk  Optional maker to call after each event (e.g. for I/O flushing).
+   /// \return kStOK on normal completion, kStEOF on end-of-input, or an error code.
    virtual Int_t      EventLoop(Int_t jBeg,Int_t jEnd, StMaker *outMk=0); 
+
+   /// Convenience overload: run from event 1 to \a jEnd.
    virtual Int_t      EventLoop(Int_t jEnd=1000000, StMaker *outMk=0) 	{return EventLoop(1,jEnd,outMk);}
+
+   /// Return the StChain version number.
    Int_t              GetVersion()     const 				{return m_Version;}
+   /// Return the StChain version date (YYYYMMDD).
    Int_t              GetVersionDate() const 				{return m_VersionDate;}
+   /// Return the total number of events processed by the last EventLoop() call.
    Int_t              GetNTotal()      const 				{return mNTotal;}
+   /// Return the number of events for which at least one maker returned an error.
    Int_t              GetNFailed()     const 				{return mNFailed;}
    void               SetChainOpt(StChainOpt *opt) 			{mChainOpt=opt;}
    virtual const StChainOpt *GetChainOpt()    const;

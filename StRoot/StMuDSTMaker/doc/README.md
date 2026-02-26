@@ -1,0 +1,109 @@
+# StMuDSTMaker — STAR Micro-DST Package
+
+## What is the MuDST?
+
+The Micro-DST (MuDST) is the standard compact event format used for physics
+analysis in the STAR experiment at RHIC. It is derived from the full
+reconstructed event representation (`StEvent`) by retaining only the
+quantities needed for most analyses — reconstructed tracks, primary vertices,
+PID information, trigger data, and selected detector-subsystem hit collections —
+while discarding the raw and hit-level data that are too large for everyday use.
+
+Physically, a MuDST file is a ROOT file containing a single TTree (`MuDst`)
+whose branches correspond to `TClonesArray`s of the various physics objects.
+One TTree entry corresponds to exactly one physics event.
+
+## Write Workflow: StEvent → MuDST File
+
+`StMuDstMaker` runs in **write mode** when instantiated with `ioWrite`.
+It must sit downstream of whatever maker provides an `StEvent` object in the
+chain (typically the reconstruction chain or `StIOMaker` when reading a DST file).
+
+```cpp
+// Example: write a MuDST from an existing DST
+StChain* chain = new StChain;
+StIOMaker* ioMaker = new StIOMaker("IO","r","input.dst.root");
+StMuDstMaker* muMaker = new StMuDstMaker(ioWrite, ioIOMaker, "./", "", ".");
+// Optionally restrict which branches are written:
+//   muMaker->SetStatus("*", 0);
+//   muMaker->SetStatus("MuEventAll", 1);
+chain->Init();
+while (chain->Make() == kStOK) {}
+chain->Finish();
+```
+
+## Read Workflow: MuDST File → StMuDst
+
+`StMuDstMaker` runs in **read mode** when instantiated with `ioRead`.
+No `StEvent` is required; the maker reads TTree entries and populates the
+in-memory `StMuDst` object on every `Make()` call.
+
+```cpp
+// Example: read a MuDST and loop over events
+StChain* chain = new StChain;
+StMuDstMaker* muMaker =
+    new StMuDstMaker(ioRead, ioFix, "./", "input.MuDst.root");
+// Speed up reading by enabling only the branches you need:
+muMaker->SetStatus("*",           0);
+muMaker->SetStatus("MuEventAll",  1);
+muMaker->SetStatus("PrimaryTracks", 1);
+chain->Init();
+while (chain->Make() == kStOK) {
+    StMuDst* mu = muMaker->muDst();
+    StMuEvent* ev = StMuDst::event();
+    std::cout << "Run " << ev->runId()
+              << "  Event " << ev->eventId()
+              << "  refMult " << ev->refMult()
+              << '\n';
+    for (unsigned int i = 0; i < StMuDst::numberOfPrimaryTracks(); ++i) {
+        StMuTrack* trk = StMuDst::primaryTracks(i);
+        std::cout << "  pt=" << trk->pt()
+                  << "  eta=" << trk->eta()
+                  << '\n';
+    }
+}
+chain->Finish();
+```
+
+## Key Classes
+
+| Class | Role |
+|---|---|
+| `StMuDstMaker` | Maker that writes MuDST files from `StEvent` or reads them for analysis. |
+| `StMuDst` | In-memory navigation class; provides static accessors for all MuDST collections. |
+| `StMuEvent` | Per-event data: run/event id, magnetic field, trigger, reference multiplicities. |
+| `StMuTrack` | Reconstructed charged-particle track (global or primary); carries momenta, DCA, PID. |
+| `StMuPrimaryVertex` | Reconstructed primary interaction vertex: position, ranking, refMult. |
+| `StMuArrays` | Defines enumeration indices and metadata (names, types, sizes) for all `TClonesArray`s. |
+| `StMuBTofHit` / `StMuBTofPidTraits` | Barrel Time-of-Flight hit and PID traits. |
+| `StMuETofHit` / `StMuETofPidTraits` | Endcap Time-of-Flight hit and PID traits. |
+| `StMuMtdHit` / `StMuMtdPidTraits` | Muon Telescope Detector hit and PID traits. |
+| `StMuEmcCollection` | Electromagnetic calorimeter (BEMC/EEMC) cluster and tower data. |
+| `StMuFmsCollection` | Forward Meson Spectrometer data. |
+| `StMuFcsCollection` | Forward Calorimeter System data. |
+| `StMuEpdHit` | Event Plane Detector hit. |
+
+## Usage in ROOT Macros
+
+The MuDST can also be read directly from a ROOT macro without running a full
+STAR chain, using the `TChain` interface:
+
+```cpp
+// rootlogon.C should load the STAR libraries, then:
+TChain* chain = new TChain("MuDst");
+chain->Add("run123456.MuDst.root");
+
+TClonesArray* primaryTracks = 0;
+chain->SetBranchAddress("PrimaryTracks", &primaryTracks);
+
+for (Long64_t i = 0; i < chain->GetEntries(); ++i) {
+    chain->GetEntry(i);
+    // access objects in primaryTracks ...
+}
+```
+
+For typical analysis work the `StMuDstMaker` / `StMuDst` approach is strongly
+preferred because it handles branch address bookkeeping, multi-file chaining,
+and backward-compatibility transparently.
+
+**See also:** `StMuDstMaker`, `StMuDst`, `StMuEvent`, `StMuTrack`, `StMuPrimaryVertex`, `StMuArrays`

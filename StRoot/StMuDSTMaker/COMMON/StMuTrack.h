@@ -5,12 +5,33 @@
  *
  ***************************************************************************/
 
-/** @class StMuTrack
- * Class holding the track properties
- * All unitis are in standard STAR units: GeV,cm
- * Please keep in mind, for primary tracks the first measured point is the primary vertex.
- * This affects dca, length calculations, inner helix.
-*/
+/*!
+ * \class StMuTrack
+ * \brief Reconstructed charged-particle track in MuDST format.
+ *
+ * \details
+ * StMuTrack stores all reconstructed quantities for a single charged-particle track.
+ * All units follow the STAR convention: momenta in GeV/c, distances in cm.
+ *
+ * Two track types coexist in each MuDST event:
+ *  - \b Global tracks are fitted to all TPC hits belonging to the track node,
+ *    starting from the innermost measured point.  Their DCA is measured relative
+ *    to the beam axis or the primary vertex.
+ *  - \b Primary tracks are refitted with the constraint that the trajectory passes
+ *    through the primary vertex; consequently their first measured point \e is the
+ *    primary vertex, which affects DCA, track length, and the inner helix parameters.
+ *
+ * Global and primary tracks are linked: primaryTrack() returns the primary-vertex
+ * refit of a global track (if one exists), and globalTrack() returns the global
+ * counterpart of a primary track.  The association is maintained via index2Global().
+ *
+ * PID information is available as Bethe-Bloch n-sigma distances (nSigmaElectron(),
+ * nSigmaPion(), nSigmaKaon(), nSigmaProton()), as Bayesian pid probabilities
+ * (probPidTraits()), and through sub-detector-specific PID traits (btofPidTraits(),
+ * etofPidTraits(), mtdPidTraits()).
+ *
+ * \sa StMuDst, StMuEvent, StMuPrimaryVertex
+ */
 
 
 #ifndef StMuTrack_h

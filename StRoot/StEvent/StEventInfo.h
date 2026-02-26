@@ -1,6 +1,17 @@
-/*!
- * \class StEventInfo 
+/**
+ * \class StEventInfo
+ * \brief Per-event metadata stored inside StEvent.
  * \author Thomas Ullrich, Jun 2000
+ *
+ * \details StEventInfo stores the basic identifiers and timing information
+ * for a single collision event: event number, run number, Unix timestamp,
+ * L0 trigger mask, RHIC bunch-crossing numbers, and raw event size.  One
+ * instance is attached to each StEvent and accessed via StEvent::info().
+ *
+ * The trigger mask and event type string are the primary fields used in
+ * event selection.
+ *
+ * \sa StEvent, StRunInfo
  */
 /***************************************************************************
  *
@@ -46,13 +57,17 @@ public:
     StEventInfo();
     virtual ~StEventInfo();
 
-    const TString& type() const;
-    int            id() const;
-    int            runId() const;
-    int            time() const;
-    unsigned int   triggerMask() const;
+    /// \name Event identification
+    /// @{
+    const TString& type() const;                              ///< Event type string (e.g. "physics", "laser").
+    int            id() const;                                ///< Event number within the run.
+    int            runId() const;                             ///< Run number.
+    int            time() const;                              ///< Unix timestamp of the event trigger.
+    unsigned int   triggerMask() const;                       ///< Bitmask of fired L0 triggers.
+    /// RHIC bunch-crossing number; \a index selects the 32-bit word (0 or 1).
     unsigned int   bunchCrossingNumber(unsigned int) const;
-    unsigned int   eventSize() const;
+    unsigned int   eventSize() const;                         ///< Raw event size in bytes.
+    /// @}
      
     void setType(const char*);
     void setRunId(int);

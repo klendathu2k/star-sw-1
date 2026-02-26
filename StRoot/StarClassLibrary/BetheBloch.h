@@ -28,6 +28,16 @@
 //
 //
 
+/*!
+ * \file BetheBloch.h
+ * \brief Bethe-Bloch dE/dx parametrisation for the STAR TPC.
+ *
+ * \details Provides a functor and static utility functions for the expected
+ * ionisation energy loss of a charged particle traversing the TPC gas.
+ * The parametrisation is tuned to STAR TPC conditions.
+ *
+ * \sa BetheBloch::operator()(), BetheBloch::Sirrf(), BetheBloch::Girrf()
+ */
 #ifndef BetheBloch_hh
 #define BetheBloch_hh
 #include "Rtypes.h"
@@ -36,14 +46,37 @@
 using std::map;
 #endif
 
+/*!
+ * \class BetheBloch
+ * \brief Functor returning the expected TPC dE/dx as a function of momentum/mass.
+ *
+ * \details The internal lookup map is populated at construction time with a
+ * preliminary parametrisation tuned to STAR TPC conditions.  The static
+ * methods Sirrf() and Girrf() provide an alternative GEANT3-based prediction.
+ */
 class BetheBloch {
     map<double, double> mMap; //!
 public:
     BetheBloch();
     virtual ~BetheBloch();
     static   int noWarn;
+    /// Return the expected dE/dx (keV/cm) for a particle with momentum-over-mass \f$p/m = \beta\gamma\f$.
     double   operator() (double);
+    /**
+     * \brief STAR parametrisation of dE/dx (keV/cm).
+     * \param poverm  Momentum divided by mass (\f$\beta\gamma\f$).
+     * \param Length  Track length in the TPC (cm), default 60 cm.
+     * \param k       Parametrisation variant index, default 0.
+     * \return Expected mean dE/dx in keV/cm.
+     */
     static   Double_t Sirrf(Double_t poverm, Double_t Length=60., Int_t k=0);
+    /**
+     * \brief GEANT3-based dE/dx prediction.
+     * \param poverm  Momentum divided by mass (\f$\beta\gamma\f$).
+     * \param Tmin    Minimum kinetic energy cut-off (GeV), default 1 MeV.
+     * \param k       Parametrisation variant index, default 0.
+     * \return Expected mean dE/dx in keV/cm.
+     */
     static   Double_t Girrf(Double_t poverm, Double_t Tmin=1.e-3, Int_t k=0);
 };
 #endif

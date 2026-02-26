@@ -58,23 +58,59 @@ class StFcsPoint;
 class StFcsDb;
 class StMuDst;
 
+/**
+ * \file  StFcsClusterMaker.h
+ * \brief Declaration of StFcsClusterMaker, the maker that clusters FCS
+ *        (Forward Calorimeter System) hits into StFcsCluster objects stored
+ *        in StFcsCollection within StEvent.
+ */
+
+/**
+ * \class StFcsClusterMaker
+ * \brief Maker that clusters FCS calorimeter hits into StFcsCollection.
+ *
+ * \details StFcsClusterMaker groups individual StFcsHit tower-energy deposits
+ * in the Forward Calorimeter System (ECal and HCal) into spatial clusters.
+ * Clusters are stored as StFcsCluster objects inside StFcsCollection in StEvent.
+ * Moment analysis is performed to characterise cluster shape, and clusters may
+ * be split at energy valleys when two overlapping showers are detected.
+ *
+ * \par Inputs
+ * - StFcsHit objects in StFcsCollection (filled by the upstream waveform-fit maker).
+ * - StFcsDb geometry/calibration database.
+ *
+ * \par Output
+ * - StFcsCluster objects appended to StFcsCollection in StEvent.
+ *
+ * \note Clustering parameters (seed threshold, neighbor distance, split ratio)
+ *       can be tuned via the setter methods before Init().
+ *
+ * \sa StFcsHit, StFcsCluster, StFcsCollection, StFcsDb
+ */
 class StFcsClusterMaker : public StMaker {
 public:
     
-    StFcsClusterMaker(const char* name = "StFcsClusterMaker");
+    StFcsClusterMaker(const char* name = "StFcsClusterMaker"); ///< Constructor. \param name Maker name passed to StMaker.
     ~StFcsClusterMaker();
-    int InitRun(int runNumber);
-    int Make();
-    void Clear(Option_t* option = "");
+    int InitRun(int runNumber); ///< Loads geometry and calibration from StFcsDb. \param runNumber Run number. \return kStOK on success.
+    int Make();                 ///< Clusters FCS hits and fills StFcsCollection in StEvent. \return kStOK on success.
+    void Clear(Option_t* option = ""); ///< Clears transient per-event state. \param option Passed to StMaker::Clear().
     
-    void setDebug(int v) {SetDebug(v);}
+    void setDebug(int v) {SetDebug(v);}  ///< Set debug verbosity level. \param v Debug level (0 = off).
 
+    /// Set neighbor-search distance for ECal and HCal. \param e ECal distance in cell units. \param h HCal distance in cell units.
     void setNeighborDistance(float e, float h){mNeighborDistance_Ecal=e; mNeighborDistance_Hcal=h;}
+    /// Set distance advantage factor favouring higher-energy clusters. \param e ECal factor. \param h HCal factor.
     void setDistanceAdvantage(float e, float h){mDistanceAdvantage_Ecal=e; mDistanceAdvantage_Hcal=h;}
+    /// Set tower energy seed threshold for new cluster formation. \param e ECal threshold [GeV]. \param h HCal threshold [GeV].
     void setTowerEThreSeed(float e, float h){mTowerEThreSeed_Ecal=e; mTowerEThreSeed_Hcal=h;}
+    /// Set minimum tower energy to be included in a cluster. \param e ECal threshold [GeV]. \param h HCal threshold [GeV].
     void setTowerEThreshold(float e, float h){mTowerEThreshold_Ecal=e; mTowerEThreshold_Hcal=h;}
+    /// Set tower energy threshold used in moment analysis. \param e ECal threshold [GeV]. \param h HCal threshold [GeV].
     void setTowerEThreMoment(float e, float h){mTowerEThreMoment_Ecal=e; mTowerEThreMoment_Hcal=h;}
+    /// Set energy ratio threshold to decide cluster splitting vs merging. \param e ECal ratio. \param h HCal ratio.
     void setTowerERatio2Split(float e, float h){mTowerERatio2Split_Ecal=e; mTowerERatio2Split_Hcal=h;}
+    /// Set hit-sorting mode. \param v 1 = sort by ID (cosmic tracking), 0 = sort by energy (default).
     void sortById(int v=1){mSortById=v;}
 
  private:

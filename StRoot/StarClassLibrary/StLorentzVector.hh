@@ -67,13 +67,32 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file StLorentzVector.hh
+ * \brief Template Lorentz 4-vector (px, py, pz, E).
+ * \author Brian Lasiuk, Thomas Ullrich, April 1998
+ */
 #ifndef ST_LORENTZ_VECTOR_HH
 #define ST_LORENTZ_VECTOR_HH
 
 #include "StThreeVector.hh"
+/*!
+ * \class StLorentzVector
+ * \brief Template Lorentz 4-vector (px, py, pz, E) for relativistic kinematics.
+ *
+ * \tparam T Numeric type (typically \c float or \c double).
+ *
+ * \details Stores a momentum 3-vector and an energy/time component.
+ * Provides all standard relativistic quantities: invariant mass, rapidity,
+ * transverse mass, boost, etc.  Instantiated in practice as
+ * \c StLorentzVectorF (float) and \c StLorentzVectorD (double).
+ * Modelled after the CLHEP \c HepLorentzVector class.
+ */
 template<class T> class StLorentzVector {
 public:
+    /// Construct from explicit (x, y, z, t) components.
     StLorentzVector(T, T, T, T);
+    /// Default constructor; initialises all components to zero.
     StLorentzVector();
     virtual ~StLorentzVector();
     
@@ -86,29 +105,50 @@ public:
     template<class X> StLorentzVector<T>& operator=(const StLorentzVector<X>&);
     // StLorentzVector(const StLorentzVector<T>&);                use default
     // StLorentzVector<T>& operator=(const StLorentzVector<T>&);  use default
+    /// Return the x (px) component.
     T x()                     const;
+    /// Return the y (py) component.
     T y()                     const;
+    /// Return the z (pz) component.
     T z()                     const;
+    /// Return the time (energy) component.
     T t()                     const;
+    /// Return the x momentum component (synonym for x()).
     T px()                    const;
+    /// Return the y momentum component (synonym for y()).
     T py()                    const;
+    /// Return the z momentum component (synonym for z()).
     T pz()                    const;
+    /// Return the energy component (synonym for t()).
     T e()                     const;
+    /// Element access by index (0–2: px/py/pz, 3: E); throws out_of_range if index > 3.
     T operator()  (size_t)    const;
+    /// Element access by index (0–2: px/py/pz, 3: E); throws out_of_range if index > 3.
     T operator[]  (size_t)    const;
     
+    /// Mutable element access by index (0–2: px/py/pz, 3: E).
     T& operator()  (size_t);
+    /// Mutable element access by index (0–2: px/py/pz, 3: E).
     T& operator[]  (size_t);
 
+    /// Return a const reference to the spatial 3-vector component.
     const StThreeVector<T>& vect() const;    
     
+    /// Set the x (px) component.
     void setX(T);
+    /// Set the y (py) component.
     void setY(T);
+    /// Set the z (pz) component.
     void setZ(T);
+    /// Set the x momentum component (synonym for setX()).
     void setPx(T);
+    /// Set the y momentum component (synonym for setY()).
     void setPy(T);
+    /// Set the z momentum component (synonym for setZ()).
     void setPz(T);
+    /// Set the energy component (synonym for setT()).
     void setE(T);
+    /// Set the time (energy) component.
     void setT(T);
     
 #if !defined(ST_NO_MEMBER_TEMPLATES) && !defined(__CINT__)
@@ -118,32 +158,50 @@ public:
     void setVect(const StThreeVector<double>&);
 #endif   
 
+    /// Return the transverse momentum \f$p_T = \sqrt{p_x^2+p_y^2}\f$.
     T perp()               const;
+    /// Return \f$p_T^2\f$.
     T perp2()              const;
+    /// Return the pseudorapidity \f$\eta\f$ of the spatial 3-vector.
     T pseudoRapidity()     const;
+    /// Return the azimuthal angle \f$\phi\f$ of the spatial 3-vector (radians).
     T phi()                const;
+    /// Return the polar angle \f$\theta\f$ of the spatial 3-vector (radians).
     T theta()              const;
+    /// Return \f$\cos\theta\f$ of the spatial 3-vector.
     T cosTheta()           const;
     
+    /// Return the light-cone plus component \f$E + p_z\f$.
     T plus()               const;
+    /// Return the light-cone minus component \f$E - p_z\f$.
     T minus()              const;
     
+    /// Return the invariant mass \f$m = \text{sign}(m^2)\sqrt{|m^2|}\f$.
     T m()                  const; 
+    /// Return the Lorentz invariant \f$m^2 = E^2 - |\mathbf{p}|^2\f$.
     T m2()                 const; 
+    /// Return the transverse mass \f$m_T = \text{sign}(m_T^2)\sqrt{|m_T^2|}\f$.
     T mt()                 const;
+    /// Return \f$m_T^2 = p_T^2 + m^2\f$.
     T mt2()                const;
+    /// Return the rapidity \f$y = \frac{1}{2}\ln\!\left(\frac{E+p_z}{E-p_z}\right)\f$.
     T rapidity()           const;
     
 #if !defined(ST_NO_MEMBER_TEMPLATES) && !defined(__CINT__)
+    /// Boost this 4-vector into the rest frame defined by \a pframe.
     template<class X> StLorentzVector<T> boost(const StLorentzVector<X>&) const;
 #else
     StLorentzVector<T> boost(const StLorentzVector<float>&) const;
     StLorentzVector<T> boost(const StLorentzVector<double>&) const;
 #endif   
     
+    /// Unary negation: return \f$(-E, -\mathbf{p})\f$.
     StLorentzVector<T>  operator- ();
+    /// Unary plus: return a copy of this 4-vector.
     StLorentzVector<T>  operator+ ();
+    /// Multiply all components by scalar \a c in place.
     StLorentzVector<T>& operator*= (double);
+    /// Divide all components by scalar \a c in place.
     StLorentzVector<T>& operator/= (double);
 
 #if !defined(ST_NO_MEMBER_TEMPLATES) && !defined(__CINT__)

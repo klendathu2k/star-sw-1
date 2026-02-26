@@ -1,3 +1,16 @@
+/// \file StMessMgr.h
+/// \brief Abstract messaging interface for the STAR offline framework.
+///
+/// \details Provides the LOG_INFO / LOG_WARN / LOG_ERROR / LOG_DEBUG /
+/// LOG_QA / LOG_UCM stream-style logging macros and the StMessMgr abstract
+/// class.  The concrete implementation lives in StMessageManager
+/// (StUtilities package).
+///
+/// Typical usage:
+/// \code
+///   LOG_INFO << "Processing run " << runId << endm;
+///   LOG_WARN << "Missing calibration — using defaults" << endm;
+/// \endcode
 /*!
   \class StMessMgr
   \author G. Van Buren, BNL
@@ -26,6 +39,19 @@
    if (StMessMgr::CurrentMessager()->_NAME3_(is,MESSAGELEVEL,Enabled)()) \
    StMessMgr::CurrentMessager()->MESSAGELEVEL("","O",__FUNCTION__, __LINE__) 
 
+/// \name Logging macros
+/// Stream-style logging macros.  Each macro guards the message construction
+/// with an \c isXxxEnabled() check so that disabled levels incur no overhead.
+/// Terminate a message stream with the global \c endm sentinel.
+/// \code
+///   LOG_INFO  << "info text"  << endm;
+///   LOG_WARN  << "warn text"  << endm;
+///   LOG_ERROR << "error text" << endm;
+///   LOG_DEBUG << "debug text" << endm;
+///   LOG_QA    << "QA text"    << endm;
+///   LOG_UCM   << "UCM text"   << endm;
+/// \endcode
+///@{
 #  define LOG_INFO  LOGGERMESSAGE(Info)
 #  define LOG_WARN  LOGGERMESSAGE(Warning)
 #  define LOG_ERROR LOGGERMESSAGE(Error)
@@ -33,6 +59,7 @@
 #  define LOG_DEBUG LOGGERMESSAGE(Debug)
 #  define LOG_QA    LOGGERMESSAGE(QAInfo)
 #  define LOG_UCM   LOGGERMESSAGE(UCMInfo)
+///@}
 
 #define STAR_INFO(name) \
    GetLogger(_QUITE_(name))->MESSAGELEVEL(__FUNCTION__, __LINE__) 
@@ -121,9 +148,10 @@ class StMessMgr : public std::ostringstream {
    // fake operator= to follish the bug in the RootCint
   StMessMgr& operator=(const StMessMgr&){ return *this;}
  public: 
-    enum ESTARMakerErrorLevels {
+   /// \brief Severity levels used by SetLevel()/GetLevel().
+   enum ESTARMakerErrorLevels {
        kAll=-5, kFatal, kError, kWarning, kInfo, kDefault, kDebug, kDebug2 
-    }; 
+   }; 
    StMessMgr();
    StMessMgr(const StMessMgr&){;}
    virtual ~StMessMgr(){;}
@@ -132,6 +160,12 @@ class StMessMgr : public std::ostringstream {
    virtual std::ostream& OperatorShift(std::ostream& os, StMessage* stm) = 0;
 
 // Generic Messages:
+   /// Post a message of the given \a type with options \a opt.
+   /// \param mess   Message text (may be empty when using stream <<).
+   /// \param type   Message type string, e.g. "I", "W", "E", "D".
+   /// \param opt    Output options: "O"=stdout, "E"=stderr, "S"=file, "T"=time-stamp.
+   /// \param sourceFileName  Source file name inserted automatically by the macros.
+   /// \param lineNumber      Source line number inserted automatically by the macros.
    virtual std::ostringstream& Message(const char* mess="", const char* type="",
          const char* opt=0,const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual       void Print() =0;
@@ -144,10 +178,14 @@ class StMessMgr : public std::ostringstream {
    virtual        int RemoveMessage(StMessage* mess) =0;
    virtual        int RemoveMessage(const char* s1, const char* s2="",
          const char* s3="", const char* s4="") =0;
+   /// Limit the number of times a message matching \a str is printed to \a n.
+   /// Pass \a n=0 to remove the limit for that pattern.
    virtual       void SetLimit(const char* str, int n=0) =0;
+   /// \return The current print limit for messages matching \a str, or 0 if unlimited.
    virtual        int GetLimit(const char* str) =0;
    virtual       void ListLimits() =0;
    virtual       void RemoveLimit(const char* str) =0;
+   /// Set the minimum severity level that will be processed (see ESTARMakerErrorLevels).
    virtual       void SetLevel(Int_t logLevel)       =0;
    virtual      Int_t GetLevel(Int_t logLevel) const =0;
    virtual const char *GetName() const = 0;
@@ -157,7 +195,9 @@ class StMessMgr : public std::ostringstream {
    virtual       void NoLimits() =0;
    virtual       void Summary(size_t nTerms=1) =0;
    virtual       void MemorySummary() =0;
+   /// Enable in-memory storage of all posted messages (required before MemorySummary()).
    virtual       void MemoryOn() =0;
+   /// Disable in-memory storage of messages and free the stored list.
    virtual       void MemoryOff() =0;
    virtual        int AddType(const char* type, const char* text) =0;
    virtual        int ListTypes() =0;
@@ -208,6 +248,11 @@ protected:
          
 public:
 // Info Messages:
+   /// Open an informational (type "I") message stream.
+   /// \param mess            Initial message text; continue streaming with <<.
+   /// \param opt             Output options ("O" = stdout by default).
+   /// \param sourceFileName  Filled automatically by LOG_INFO macro.
+   /// \param lineNumber      Filled automatically by LOG_INFO macro.
    virtual std::ostringstream& Info(const char* mess="", const char* opt="O",const char *sourceFileName=0, int lineNumber=-1)=0;
    virtual        int PrintInfos() =0;
    virtual const messVec* GetInfos() =0;
@@ -217,6 +262,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Warning Messages:
+   /// Open a warning (type "W") message stream (default opt "E" = stderr).
    virtual std::ostringstream& Warning(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual        int PrintWarnings() =0;
    virtual const messVec* GetWarnings() =0;
@@ -226,6 +272,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Error Messages:
+   /// Open an error (type "E") message stream (default opt "E" = stderr).
    virtual std::ostringstream& Error(const char* mess="", const char* opt="E",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintErrors() =0;
    virtual const messVec* GetErrors() =0;
@@ -235,6 +282,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // Debug Messages:
+   /// Open a debug (type "D") message stream (default opt "OT" = stdout + time-stamp).
    virtual std::ostringstream& Debug(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
    virtual        int PrintDebug() =0;
    virtual const messVec* GetDebugs() =0;
@@ -244,6 +292,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // QAInfo Messages:
+   /// Open a QA-info (type "QA") message stream, written to stdout and the QA log file.
    virtual std::ostringstream& QAInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintQAInfo() =0;
    virtual const messVec* GetQAInfos() =0;
@@ -253,6 +302,7 @@ public:
          const char* s3="", const char* s4="") =0;
 
 // UCMInfo Messages:
+   /// Open a UCM-info (type "UCM") message stream for Unified Conditions Monitoring.
    virtual std::ostringstream& UCMInfo(const char* mess="", const char* opt="OS",const char *sourceFileName=0, int lineNumber=-1) = 0;
    virtual        int PrintUCMInfo() =0;
    virtual const messVec* GetUCMInfos() =0;
@@ -265,8 +315,10 @@ public:
    virtual std::ostringstream& out(const char* mess="") = 0;
    virtual std::ostringstream& err(const char* mess="") = 0;
 
+   /// Print the version/build information line (equivalent to gMessMgr->PrintInfo()).
    virtual       void PrintInfo() =0;
    // Fatal Messages:
+   /// Open a fatal (type "F") message stream; the framework will abort after printing.
    virtual std::ostringstream& Fatal(const char* mess="", const char* opt="OT",const char *sourceFileName=0, int lineNumber=-1)= 0;
 
 #ifdef __ROOT__
@@ -274,10 +326,14 @@ public:
 #endif
 };
 
-//______________________________________________________________________________
-//
-//  StTurnLogger - an aux class to simply "save/restore the "current" logger
-//______________________________________________________________________________
+/**
+ * \class StTurnLogger
+ * \brief RAII helper to temporarily redirect logging to a different StMessMgr.
+ *
+ * \details Saves the current messenger on construction and restores it on
+ * destruction, allowing scoped changes to the active logging backend without
+ * manual save/restore calls.
+ */
 class StTurnLogger
 {
    private:

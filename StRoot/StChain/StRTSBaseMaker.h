@@ -1,6 +1,11 @@
 #ifndef STAR_StRTSBaseMaker_H
 #define STAR_StRTSBaseMaker_H
 
+/*!
+ * \file StRTSBaseMaker.h
+ * \brief Declaration of StRTSBaseMaker, the abstract base for DAQ data-access makers.
+ */
+
 /***************************************************************************
  *
  * $Id: StRTSBaseMaker.h,v 1.13 2014/08/06 11:42:55 jeromel Exp $
@@ -18,7 +23,17 @@ class StRtsTable;
 //! \date 27/04/2008
 
 /*! \brief  Class StRTSBaseMaker - is an abstract StMaker to define 
- *       the  interface to access the DAQ data from the STAR production chain
+ *       the  interface to access the DAQ data from the STAR production chain.
+ *
+ * \details
+ * Concrete subclasses implement Make() to parse a specific detector subsystem's
+ * raw DAQ data and populate the STAR event model.  The protected helper methods
+ * GetNextRaw(), GetNextAdc(), GetNextLegacy(), and GetNext() iterate over the
+ * raw data blocks delivered by the DAQ reader, returning them as StRtsTable
+ * objects.  Call DaqDta() after any of those helpers to access the current block.
+ *
+ * Static accessors (Token(), Trgcmd(), Daqbits(), etc.) expose the per-event
+ * trigger and DAQ metadata available from the raw data stream.
  */
 /// \sa StRtsReaderMaker.h
 ///
@@ -62,10 +77,14 @@ class StRTSBaseMaker : public StMaker
 
      StRTSBaseMaker(const char *detectorName,const char *makerName="");
      virtual ~StRTSBaseMaker() ;
- 
+
+     /// Return the TPC sector index of the most recently retrieved DAQ data block.
      Int_t Sector () const;
+     /// Return the pad number of the most recently retrieved DAQ data block.
      Int_t Pad () const;
+     /// Return the RDO index of the most recently retrieved DAQ data block.
      Int_t Rdo () const;
+     /// Return the pad-row number of the most recently retrieved DAQ data block.
      Int_t Row () const;
 
      // DAQ Event raw data

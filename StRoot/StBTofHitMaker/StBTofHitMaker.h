@@ -1,6 +1,12 @@
 #ifndef STAR_StBTofHitMaker_H
 #define STAR_StBTofHitMaker_H
 
+/**
+ * \file  StBTofHitMaker.h
+ * \brief Declaration of StBTofHitMaker, the maker that converts raw BTOF DAQ
+ *        data into StBTofCollection in StEvent.
+ */
+
 /***************************************************************************
  *
  * $Id: StBTofHitMaker.h,v 1.12 2017/10/20 17:50:32 smirnovd Exp $
@@ -42,10 +48,30 @@ typedef std::vector<UInt_t>  UIntVec;
 
 
 /**
-   \class StBTofHitMaker
-   
-   Class to read in TOF data from DAQ and store into StBTofCollection   
-*/
+ * \class StBTofHitMaker
+ * \brief Maker that converts raw BTOF DAQ data into StBTofCollection in StEvent.
+ *
+ * \details StBTofHitMaker reads raw time-of-flight data from the Barrel TOF
+ * (BTOF) sub-event via the RTS DAQ reader.  It unpacks TDC leading- and
+ * trailing-edge words, applies INL corrections, maps hardware channels to
+ * physical tray/module/channel addresses, and constructs StBTofRawHit and
+ * StBTofHit objects.  The completed StBTofCollection is posted to StEvent.
+ *
+ * \par Inputs
+ * - Raw BTOF DAQ sub-event from the RTS reader.
+ * - Daq map (StBTofDaqMap) and INL correction tables (StBTofINLCorr) from
+ *   the STAR database.
+ *
+ * \par Output
+ * - StBTofCollection in StEvent containing StBTofRawHit and StBTofHit
+ *   objects, plus upVPD trigger-time information.
+ *
+ * \note TDC time-bin-to-picosecond conversion constants: \n
+ *   VHRBIN2PS = 24.4140625 ps/bin (very-high-resolution mode) \n
+ *   HRBIN2PS  = 97.65625   ps/bin (high-resolution mode)
+ *
+ * \sa StBTofHit, StBTofCollection, StBTofDaqMap, StBTofINLCorr
+ */
 class StBTofHitMaker:public StRTSBaseMaker
 {
    private: 
@@ -85,21 +111,21 @@ class StBTofHitMaker:public StRTSBaseMaker
 
    public:
 
-     /// Default constructor
+     /// Default constructor. \param name Maker name passed to StRTSBaseMaker.
      StBTofHitMaker(const char *name="tof_raw");
      
     ~StBTofHitMaker() ;
 
-     void   Clear(Option_t* option="");
-     Int_t  Init();
-     Int_t  InitRun(Int_t);
-     Int_t  FinishRun(Int_t);
-     Int_t  Finish();
-     Int_t  Make();
+     void   Clear(Option_t* option=""); ///< Clears per-event transient data. \param option Passed to StMaker::Clear().
+     Int_t  Init();                     ///< Initialises daq-map and INL-correction objects. \return kStOK on success.
+     Int_t  InitRun(Int_t);             ///< Loads run-dependent calibration tables. \param runnumber Run number. \return kStOK on success.
+     Int_t  FinishRun(Int_t);           ///< Run-end clean-up. \return kStOK.
+     Int_t  Finish();                   ///< Job-end finalisation. \return kStOK.
+     Int_t  Make();                     ///< Unpacks raw BTOF DAQ data and fills StBTofCollection in StEvent. \return kStOK on success.
 
      /// obtain the whole list of leading edge hits
      std::vector<TofRawHit> getLeadingHits();
-     /// obtain the whole list of trainling edge hits
+     /// obtain the whole list of trailing edge hits
      std::vector<TofRawHit> getTrailingHits();
      
   /// cvs

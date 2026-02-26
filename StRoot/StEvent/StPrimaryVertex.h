@@ -1,6 +1,20 @@
-/*!
- * \class StPrimaryVertex 
+/**
+ * \class StPrimaryVertex
+ * \brief Reconstructed primary interaction vertex.
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StPrimaryVertex is the concrete StVertex sub-class that
+ * represents the primary collision point reconstructed from global tracks.
+ * It holds a list of StPrimaryTrack daughters and additional quality
+ * quantities produced by the vertex finder (ranking, number of matched
+ * fast-detector hits, mean dip angle, etc.).
+ *
+ * Multiple primary-vertex candidates may exist per event, ordered by the
+ * StPrimaryVertexOrder criterion (default: by number of daughter tracks).
+ * Access them through StEvent::primaryVertex(unsigned int index).
+ *
+ * \sa StVertex, StPrimaryTrack, StEvent::primaryVertex(),
+ *     StEvent::addPrimaryVertex()
  */
 /***************************************************************************
  *
@@ -76,40 +90,40 @@ public:
     // StPrimaryVertex& operator=(const StPrimaryVertex&); use default
     ~StPrimaryVertex();
     
-    StVertexId                   type() const;
-    UInt_t                       numberOfDaughters() const;
-    UInt_t                       numberOfGoodTracks() const; 
-    StTrack*                     daughter(UInt_t); 
+    StVertexId                   type() const;                             ///< Returns kPrimaryVtx.
+    UInt_t                       numberOfDaughters() const;                ///< Number of primary tracks from this vertex.
+    UInt_t                       numberOfGoodTracks() const;               ///< Number of daughters passing quality cuts.
+    StTrack*                     daughter(UInt_t);                         ///< Primary track by index.
     const StTrack*               daughter(UInt_t) const;
-    StSPtrVecPrimaryTrack       &daughters()       {return mDaughters;}
+    StSPtrVecPrimaryTrack       &daughters()       {return mDaughters;}    ///< Direct reference to the daughter-track array.
     const StSPtrVecPrimaryTrack &daughters() const {return mDaughters;}
-    StPtrVecTrack                daughters(StTrackFilter&);
+    StPtrVecTrack                daughters(StTrackFilter&);                ///< Daughters passing a user-supplied filter.
     void                         addDaughter(StTrack*);
     void                         removeDaughter(StTrack*);
     void setParent(StTrack*);     // overwrite inherited
     //
     //  Vertex finder specifics
     //
-    StVertexFinderId vertexFinderId()           const {return mVertexFinderId;}
-    UShort_t numTracksUsedInFinder()            const {return mNumTracksUsedInFinder;} 		
-    UShort_t numMatchesWithCTB()     		const {return mNumMatchesWithCTB;}    
-    UShort_t numMatchesWithTOF()     		const {return mNumMatchesWithTOF;}    
-    UShort_t numMatchesWithBTOF()    		const {return mNumMatchesWithTOF;}    
-    UShort_t numMatchesWithBEMC()    		const {return mNumMatchesWithBEMC;}   
-    UShort_t numMatchesWithEEMC()    		const {return mNumMatchesWithEEMC;}   
-    UShort_t numNotMatchesWithCTB()  		const {return mNumNotMatchesWithCTB;} 
-    UShort_t numNotMatchesWithTOF()  		const {return mNumNotMatchesWithTOF;} 
-    UShort_t numNotMatchesWithBTOF() 		const {return mNumNotMatchesWithTOF;} 
-    UShort_t numNotMatchesWithBEMC()  		const {return mNumNotMatchesWithBEMC;}
-    UShort_t numNotMatchesWithEEMC()  		const {return mNumNotMatchesWithEEMC;}
-    UShort_t numTracksCrossingCentralMembrane() const {return mNumTracksCrossingCentralMembrane;} 
-    Float_t  meanDip()                          const {return mMeanDip;}
-    Float_t  sumOfTrackPt()                     const {return mSumOfTrackPt;}
-    Float_t  ranking()                          const {return mRanking;}
-    UShort_t numTracksWithPromptHit()           const {return mNumTracksWithPromptHit;}
-    UShort_t numPostXTracks()            const {return mNumPostXTracks;}
-    UShort_t numTracksTpcWestOnly() const {return mNumTracksTpcWestOnly;} 
-    UShort_t numTracksTpcEastOnly() const {return mNumTracksTpcEastOnly;} 
+    StVertexFinderId vertexFinderId()           const {return mVertexFinderId;}           ///< Identifier of the vertex finder algorithm used.
+    UShort_t numTracksUsedInFinder()            const {return mNumTracksUsedInFinder;}    ///< Number of tracks used by the vertex finder.
+    UShort_t numMatchesWithCTB()     		const {return mNumMatchesWithCTB;}         ///< Tracks matched to the CTB.
+    UShort_t numMatchesWithTOF()     		const {return mNumMatchesWithTOF;}         ///< Tracks matched to TOF.
+    UShort_t numMatchesWithBTOF()    		const {return mNumMatchesWithTOF;}         ///< Tracks matched to BTOF (alias for TOF).
+    UShort_t numMatchesWithBEMC()    		const {return mNumMatchesWithBEMC;}        ///< Tracks matched to BEMC.
+    UShort_t numMatchesWithEEMC()    		const {return mNumMatchesWithEEMC;}        ///< Tracks matched to EEMC.
+    UShort_t numNotMatchesWithCTB()  		const {return mNumNotMatchesWithCTB;}      ///< Tracks actively not matched to CTB.
+    UShort_t numNotMatchesWithTOF()  		const {return mNumNotMatchesWithTOF;}      ///< Tracks actively not matched to TOF.
+    UShort_t numNotMatchesWithBTOF() 		const {return mNumNotMatchesWithTOF;}      ///< Tracks actively not matched to BTOF.
+    UShort_t numNotMatchesWithBEMC()  		const {return mNumNotMatchesWithBEMC;}     ///< Tracks actively not matched to BEMC.
+    UShort_t numNotMatchesWithEEMC()  		const {return mNumNotMatchesWithEEMC;}     ///< Tracks actively not matched to EEMC.
+    UShort_t numTracksCrossingCentralMembrane() const {return mNumTracksCrossingCentralMembrane;} ///< Tracks crossing the TPC central membrane.
+    Float_t  meanDip()                          const {return mMeanDip;}                  ///< Mean dip angle of daughter tracks (rad).
+    Float_t  sumOfTrackPt()                     const {return mSumOfTrackPt;}             ///< Scalar sum of daughter track \f$p_T\f$ (GeV/c).
+    Float_t  ranking()                          const {return mRanking;}                  ///< Vertex-finder quality ranking (higher = better).
+    UShort_t numTracksWithPromptHit()           const {return mNumTracksWithPromptHit;}   ///< Tracks with a prompt (SVT/SSD) hit.
+    UShort_t numPostXTracks()            const {return mNumPostXTracks;}                  ///< Tracks with post-crossing hits.
+    UShort_t numTracksTpcWestOnly() const {return mNumTracksTpcWestOnly;}                 ///< Tracks in TPC west sector only.
+    UShort_t numTracksTpcEastOnly() const {return mNumTracksTpcEastOnly;}                 ///< Tracks in TPC east sector only.
     void setTrackNumbers();
     void setNumMatchesWithCTB(UShort_t val)     {mNumMatchesWithCTB  = val;} 
     void setNumMatchesWithTOF(UShort_t val)  	{mNumMatchesWithTOF  = val;} 

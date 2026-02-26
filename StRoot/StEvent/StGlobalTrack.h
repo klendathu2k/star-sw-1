@@ -1,6 +1,18 @@
-/*!
- * \class StGlobalTrack 
+/**
+ * \class StGlobalTrack
+ * \brief Reconstructed global track (fitted without vertex constraint).
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StGlobalTrack is the concrete StTrack sub-class for tracks
+ * reconstructed by the main tracking algorithm without constraining the
+ * helix to pass through any vertex.  It additionally stores DCA geometry
+ * (StDcaGeometry) — the track state at the point of closest approach to
+ * the beam line — which is used for precise impact-parameter measurements.
+ *
+ * Global tracks are stored in StTrackNode objects and accessed through
+ * StEvent::trackNodes().
+ *
+ * \sa StTrack, StPrimaryTrack, StDcaGeometry, StTrackNode
  */
 /***************************************************************************
  *

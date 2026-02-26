@@ -1,3 +1,5 @@
+/// \file StObject.h
+/// \brief Defines StObject, the ROOT-persistent base class for all STAR objects.
 // $Id: StObject.h,v 1.21 2021/05/11 23:57:40 perev Exp $
 // $Log: StObject.h,v $
 // Revision 1.21  2021/05/11 23:57:40  perev
@@ -35,11 +37,22 @@
 #define STAR_StObject
  
  
-//////////////////////////////////////////////////////////////////////////
-//                                                                      //
-// StObject class is a base class to implement StEvent                  //
-//                                                                      //
-//////////////////////////////////////////////////////////////////////////
+/**
+ * \class StObject
+ * \brief ROOT-persistent base class for all STAR offline objects.
+ *
+ * \details StObject extends TObject to provide the common base for every
+ * class in the StEvent data model that is stored in ROOT files.  It adds
+ * zombie-state management, a unique-ID tally used by the cross-reference
+ * machinery, and the streaming infrastructure required for multi-branch
+ * I/O.
+ *
+ * All concrete StEvent classes (tracks, vertices, hits, …) inherit from
+ * StObject rather than directly from TObject so that the STAR I/O layer
+ * can locate and cross-link them at read/write time.
+ *
+ * \sa StArray.h, StTree.h
+ */
 #include "TBuffer.h"
 #include "TDataSet.h"
 
@@ -48,46 +61,61 @@ class StXRefMain;
 class StRefArray;
 class StStrArray;
 
+/// Bit flag used by StEventDisplay to mark objects selected for rendering.
 enum EStObjectDrawBit { kMark2Draw = BIT(24)}; // mark object to be rendered by "EventDisplay"
 
 //_____________________________________________________________________________
 class StObject : public TObject {
 
 public:
+          /// Default constructor.
           StObject(){;}
+          /// Copy constructor.  Clears the \c kBelongs bit so the copy is
+          /// not considered part of a structured container.
           StObject(const StObject &sto);
+          /// Assignment operator.  Also clears the \c kBelongs bit.
           StObject &operator=(const StObject &sto);
   virtual ~StObject();
   
+  /// Return a heap-allocated clone of this object (delegates to TObject::Clone()).
   virtual TObject *clone() 	const {return ((TObject*)this)->Clone();}
+  /// \return Non-zero if this object is in the zombie state (see TObject::IsZombie()).
   Int_t   isZombie() 		const {return IsZombie();}
+  /// Set (\a flg=1, default) or clear (\a flg=0) the zombie bit.
   virtual void makeZombie(int flg=1)
     {if (flg) {MakeZombie();} else {((UInt_t*)this)[1] &=~(kZombie);}} 
+  /// Write the object's unique ID into \a R__b and return it; used by the
+  /// cross-reference streaming layer.
   UInt_t  Ztreamer(TBuffer &R__b);
   ClassDef(StObject,3) // Base class for StEvent
 
+/// Global tally of StObject instances used to assign unique IDs during I/O.
 static UInt_t 	         fgTally;
 
 };
 
 //_____________________________________________________________________________
-//////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//  StUUDGen                                                             //
-//  The uuidgen creates a new universally unique identifier (UUID)      //
-//  using the libuuid(3) library.					//
-//                                                                      //
-//////////////////////////////////////////////////////////////////////////
+/**
+ * \class StUUId
+ * \brief Universally Unique Identifier used to cross-link StEvent branches.
+ *
+ * \details Each StXRef (and therefore each top-level StEvent branch) owns a
+ * StUUId that is persisted in the ROOT file.  At read time the
+ * StXRefManager uses these IDs to reconnect pointer-based cross references
+ * between branches that were written independently.
+ */
 class StUUId
 {
 protected:
-   UInt_t fID[4];
+   UInt_t fID[4]; ///< 128-bit identifier stored as four 32-bit words.
 public:
     	StUUId();
 virtual ~StUUId(){};
+/// Generate a new (pseudo-)unique ID based on hostname, PID, object address, and time.
 void 	Generate();
 StUUId  &operator=(const StUUId &from);
 StUUId  &operator=(const char  *from);
+/// \return Non-zero if the identifier is all zeros (i.e. not yet set).
 Int_t  IsNull() const {return (fID[3]==0);}
 
 //void  Streamer(TBuffer &b);
@@ -99,6 +127,15 @@ ClassDef(StUUId,1)
 #include "TDataSet.h"
 
 //_____________________________________________________________________________
+/**
+ * \class StXRef
+ * \brief Abstract base for a cross-referenced branch of a STAR event.
+ *
+ * \details An StXRef node is attached to an StXRefMain (the event "root") and
+ * holds a StUUId so that pointer cross references can be restored after
+ * independent branch I/O.  Concrete subclasses implement MakeMain() and
+ * Synchro().
+ */
 class StXRef :public TDataSet 
 {
 public:
@@ -127,6 +164,14 @@ ClassDef(StXRef,1)
 
 
 //_____________________________________________________________________________
+/**
+ * \class StXRefMain
+ * \brief Concrete root node of a cross-referenced event tree.
+ *
+ * \details Inherits StXRef and is marked as the "main" node
+ * (IsMain() returns non-zero).  Subclasses implement Split() to distribute
+ * the event data across branches for parallel I/O.
+ */
 class StXRefMain :public StXRef {
 public:
     	 StXRefMain(const char *name="") : StXRef(name){};

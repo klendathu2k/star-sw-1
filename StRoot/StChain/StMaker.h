@@ -1,7 +1,47 @@
 /*!
+ * \file StMaker.h
+ * \brief Declaration of the StMaker abstract base class for STAR analysis makers.
+ */
+
+/*!
  * \class StMaker
+ * \brief Abstract base class for all STAR analysis makers.
  *
- * StMaker virtual base class for Makers
+ * \details
+ * StMaker defines the standard lifecycle interface used by every reconstruction
+ * and analysis module ("maker") in the STAR software framework.  Every maker is
+ * a node in a TDataSet tree and participates in a processing chain managed by
+ * StChain.
+ *
+ * ### Maker Lifecycle
+ * The chain calls each maker's methods in the following order:
+ *  -# Init()       — called once before the event loop; allocate resources and book histograms.
+ *  -# InitRun()    — called at the start of each new run; re-read run-dependent calibrations.
+ *  -# Make()       — called once per event; perform reconstruction or analysis.
+ *  -# Clear()      — called after each event to release transient per-event data.
+ *  -# FinishRun()  — called at the end of each run; finalise run-level objects.
+ *  -# Finish()     — called once after the event loop; write output and free resources.
+ *
+ * ### Data Exchange (White-board)
+ * Makers communicate through a TDataSet tree:
+ *  - AddData() / GetDataSet() post and retrieve named datasets visible to all makers.
+ *  - GetDataBase() queries the STAR conditions database by logical name.
+ *  - ToWhiteBoard() places arbitrary objects onto the shared white-board.
+ *
+ * ### Return Codes
+ * Make() and the other lifecycle methods should return one of:
+ *  - \b kStOK    (0) — success; continue processing.
+ *  - \b kStWarn  (1) — non-fatal warning; processing continues.
+ *  - \b kStEOF   (2) — end of input; stop the event loop.
+ *  - \b kStErr   (3) — recoverable error; leave the current sub-chain.
+ *  - \b kStFatal (4) — fatal error; abort processing entirely.
+ *
+ * ### Histogram Management
+ * Call AddHist() inside Init() to register TH1-derived histograms.  They are
+ * collected into the ".hist" directory and can be retrieved at any time with
+ * GetHistList() or GetHist().
+ *
+ * \sa StChain, StEvtHddr, TDataSet, StIOInterFace
  */
 
 #ifndef STAR_StMaker
@@ -94,23 +134,62 @@ protected:
    inline StMessMgr    *GetLogger() const {return fLogger;}
 public:
 
-   /// Constructor & Destructor
-
+   /// \name Constructors and Destructor
+   ///@{
+   /// Construct a maker with the given \a name.  The optional \a dummy argument is unused.
                         StMaker(const char *name="",const char *dummy=0);
    virtual              ~StMaker();
+   ///@}
    virtual Int_t IsChain() const {return 0;}
 
 
-   /// User defined functions
+   /// \name Maker Lifecycle Methods
+   /// Override these in concrete makers to implement processing logic.
+   ///@{
+
+   /// Reset transient per-event data.  Called by the framework after every event.
+   /// Always call the base-class version when overriding.
    virtual void         Clear(Option_t *option="");
+
+   /// Called at the start of each new run (when the run number changes).
+   /// Override to reload run-dependent calibrations from the database.
+   /// \param runumber  New run number.
+   /// \return kStOK on success, or an error code.
    virtual Int_t        InitRun(Int_t runumber);
+
+   /// Called once before the event loop.
+   /// Override to allocate resources, open files, and book histograms.
+   /// \return kStOK on success; kStErr or kStFatal on failure.
    virtual Int_t        Init();
+
+   /// Framework hook called immediately before Make().  Not normally overridden.
    virtual void         StartMaker();
+
+   /// Called once per event — the primary analysis entry point.
+   /// Override to perform reconstruction or analysis for the current event.
+   /// \return kStOK on success; kStWarn, kStEOF, kStErr, or kStFatal otherwise.
    virtual Int_t        Make();
+
+   /// Calls Make() after setting the internal event serial number.
+   /// \param number  Serial event number passed to SetNumber().
+   /// \return Result of Make().
    virtual Int_t        IMake(Int_t number){SetNumber(number);return Make();};
+
+   /// Framework hook called immediately after Make() with its return code.
+   /// \param ierr  Return code returned by Make().
    virtual void         EndMaker  (Int_t ierr);
+
+   /// Called once after the event loop.
+   /// Override to write output histograms/trees and release resources.
+   /// \return kStOK on success.
    virtual Int_t        Finish();
+
+   /// Called at the end of a run, just before the run number changes.
+   /// Override to finalise run-level summary objects.
+   /// \param oldrunumber  The run number that just ended.
+   /// \return kStOK on success.
    virtual Int_t        FinishRun(Int_t oldrunumber);
+   ///@}
 
    
    virtual void         FatalErr(Int_t Ierr, const char *Com);  
@@ -122,8 +201,19 @@ public:
 #else
    virtual void   MakeDoc(const TString &/* stardir ="$(STAR)" */,const TString &/* outdir="$(STAR)/StRoot/html" */,Bool_t /* baseClasses=kTRUE */) {}
 #endif
-   ///  User methods
+   /// \name Data Management Methods
+   /// Methods for posting and retrieving data on the shared white-board.
+   ///@{
+
+   /// Post \a data into the named sub-directory of the maker's dataset tree.
+   /// \param data  Dataset to add (maker takes ownership unless owned elsewhere).
+   /// \param dir   Target sub-directory path (default ".data").
    virtual void  AddData (TDataSet *data,const char *dir=".data");
+   /// Add a TObject to the named directory, optionally transferring ownership.
+   /// \param obj   Object to store.
+   /// \param dir   Target sub-directory path.
+   /// \param owner Non-zero if the dataset tree should own (and delete) \a obj.
+   /// \return Wrapping TObjectSet node.
    virtual TDataSet *AddObj  (TObject *obj ,const char *dir, int owner=1);
    virtual TDataSet *ToWhiteBoard(const char *name, void *dat);
    virtual TDataSet *ToWhiteBoard(const char *name, void *dat, void *del);
@@ -138,23 +228,40 @@ public:
    virtual Int_t        Skip(Int_t nskip);     //Skip events
 
    virtual void         AddConst(TDataSet *data=0){AddData(data,".const");}
+   /// Register a histogram with the maker.  The histogram is added to the ".hist"
+   /// directory and becomes part of the output written by Finish().
+   /// \param h    Histogram to register (must not be null).
+   /// \param dir  Optional sub-directory within ".hist"; nullptr uses the default.
    virtual void         AddHist(TH1 *h,const char *dir=0);
    virtual void         AddGarb (TDataSet *data=0){AddData(data,".garb");};
    virtual void         AddRunco (TDataSet *data=0){AddData(data,".runco");};
    virtual void         AddRunco (Double_t par,const char *name,const char *comment);
            void         AddRunCont (TDataSet *data=0){AddRunco(data);}; //alias
+
+   /// Return the list of all histograms registered with this maker.
+   /// \return Pointer to the TList in the ".hist" directory, or nullptr if empty.
    virtual TList       *GetHistList() const {return (TList*)GetDirObj(".hist");};
+
+   /// Find a registered histogram by name.
+   /// \param histName  Name of the histogram as registered with AddHist().
+   /// \return Pointer to the TH1, or nullptr if not found.
    virtual TH1         *GetHist(const char *histName) const {TList *l=GetHistList(); return l?(TH1*)l->FindObject(histName):(TH1*)0;};
    virtual StMaker     *cd(){StMaker *ret = fgStChain; fgStChain=this; return ret;};
    virtual StMaker     *Cd(){return cd();};
    static  StMaker     *New(const char *classname, const char *name="", void *title=0);
 
 
-   /// STAR methods
+   ///@}  // Data Management Methods
+
+   /// \name STAR Chain Navigation
+   ///@{
    virtual Int_t        GetNumber() const ;
    virtual void         SetNumber(Int_t number) ;
+   /// Return a pointer to the top-level StChain (the root of the maker tree).
    static  StMaker     *GetTopChain(){return fgTopChain;}
+   /// Return a pointer to the currently executing StChain.
    static  StMaker     *GetChain(){return fgStChain;}
+   /// Return a pointer to the maker that caused the last processing error.
    static  StMaker     *GetFailedMaker(){return fgFailedMaker;}
    virtual StMaker     *GetParentChain() const;
    virtual Int_t        GetIventNumber() const ;
@@ -171,20 +278,34 @@ public:
 
 
    // Get methods
+   ///@}  // STAR Chain Navigation
+
+   /// \name Dataset and Database Access
+   ///@{
    virtual TDataSet  *GetData(const char *name, const char *dir=".data") const;
    virtual TDataSet  *GetData()  const {return m_DataSet ;}
    virtual TDataSet  *GetConst() const {return m_ConstSet;}
+
+   /// Retrieve a named dataset from the shared white-board.
+   /// Searches the maker tree upward from this maker.
+   /// \param logInput  Logical name of the dataset (may include path separators).
+   /// \return Pointer to the TDataSet, or nullptr if not found.
    virtual TDataSet  *GetDataSet (const char *logInput) const {return FindDataSet(logInput);}
    virtual TDataSet  *   DataSet (const char *logInput)   const 
                            {return GetDataSet(logInput);};
    virtual TDataSet  *GetInputDS (const char *logInput)   const 
                            {return GetDataSet(logInput);};
 
+   /// Query the STAR conditions database for the dataset identified by \a logInput.
+   /// An optional timestamp \a td overrides the event time used for the lookup.
+   /// \param logInput  Logical database path (e.g. "Calibrations/tpc/tpcGain").
+   /// \param td        Optional explicit timestamp; nullptr uses the current event time.
+   /// \return Pointer to the conditions TDataSet, or nullptr on failure.
    virtual TDataSet  *GetDataBase(const char *logInput,const TDatime *td=0);
    virtual TDataSet  *GetInputDB (const char *logInput)
                           {return GetDataBase(logInput);};
 
-
+   /// Return the current debug verbosity level (0 = silent).
    virtual Int_t        GetDebug() const {return m_DebugLevel;}
    virtual Int_t           Debug() const {return GetDebug();};
    virtual Int_t        GetMakeReturn() const {return m_MakeReturn;}
@@ -194,18 +315,33 @@ public:
    virtual TString      GetOutput(const char *log) const {return GetAlias(log,".aliases");};
    virtual TList       *GetMakeList() const ;
    virtual StMaker     *GetParentMaker () const;
+
+   /// Find a child maker by name within this maker's subtree.
+   /// \param mkname  Name of the maker to find.
+   /// \return Pointer to the named StMaker, or nullptr if not found.
    virtual StMaker     *GetMaker (const char *mkname);
+
+   /// Find the first child maker whose class inherits from \a mktype.
+   /// Useful for locating a maker when its exact name is unknown.
+   /// \param mktype  Name of the base class to search for (e.g. "StTpcHitMaker").
+   /// \return Pointer to the first matching StMaker, or nullptr if not found.
    virtual StMaker     *GetMakerInheritsFrom (const char *mktype) const;
    virtual Bool_t       IsActive() {return TestBIT(kActive);}
    virtual StMaker     *Maker (const char *mkname){return GetMaker (mkname);};
+   ///@}  // Dataset and Database Access
 
 
+   /// \name Debug and Status Control
+   ///@{
    /// Maker Status Bits 
    virtual void         SetBIT(EMakerStatus k)   {SETBIT(fStatus,k);}
    virtual void         ResetBIT(EMakerStatus k) {CLRBIT(fStatus,k);}
    virtual Bool_t       TestBIT(EMakerStatus k)  {return TESTBIT(fStatus,k);}
    /// Setters for flags and switches
    virtual void         SetActive(Bool_t k=kTRUE) {if(k) SetBIT(kActive); else ResetBIT(kActive);} 
+
+   /// Set the debug verbosity level.  Higher values produce more output.
+   /// \param l  Debug level (0 = off, 1 = normal debug, higher = more verbose).
    virtual void         SetDebug(Int_t l=1);          // *MENU*
    virtual void         SetDEBUG(Int_t l=1);          // *MENU*
    virtual void         SetFlavor(const char *flav,const char *tabname);  //Set DB Flavor
@@ -232,10 +368,14 @@ public:
    virtual void         StopTimer(){m_Timer.Stop();}
    virtual void         PrintTimer(Option_t *option="");
    virtual void         PrintTotalTime(){}
+   ///@}  // Debug and Status Control
+
 ///  special overload
    virtual const char  *GetName() const;
 
-   /// Static functions
+   /// \name Static Utility Methods
+   ///@{
+   /// Return a pointer to the StMaker that owns the given dataset node.
    static  StMaker     *GetMaker(const TDataSet *ds)  ;
    static EDataSetPass  ClearDS (TDataSet* ds,void *user );
    static const char *RetCodeAsString(Int_t kode);
@@ -244,9 +384,11 @@ public:
    static      const char  *AliasGeometry(const char *alias);
    static const DbAlias_t  *GetDbAliases();
    static      void     SetTestMaker(StTestMaker *mk)	{fgTestMaker=mk;}
+   ///@}  // Static Utility Methods
 
 TObject        *GetDirObj(const char *dir) const;
 void            SetDirObj(TObject *obj,const char *dir);
+  /// Return the CVS version string for this header (tag, id, build date/time).
   virtual const char *GetCVS() const
   {static const char cvs[]="Tag $Name:  $ $Id: StMaker.h,v 1.101 2017/04/26 18:33:12 perev Exp $ built " __DATE__ " " __TIME__ ; return cvs;}
 protected:

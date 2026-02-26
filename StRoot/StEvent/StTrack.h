@@ -1,6 +1,24 @@
-/*!
- * \class StTrack 
+/**
+ * \class StTrack
+ * \brief Abstract base class for a reconstructed charged-particle track.
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StTrack stores the geometry, fit quality, PID traits, and
+ * detector-matching status for a single reconstructed track.  Concrete
+ * sub-classes are StGlobalTrack (fitted without a vertex constraint) and
+ * StPrimaryTrack (refitted through the primary vertex).
+ *
+ * Track quality is encoded in the flag word (mFlag).  The layout is
+ * \c zxyy where \c z flags pile-up tracks, \c x encodes the detector
+ * combination used in the fit, and \c yy gives the fit status
+ * (positive = good fit, negative = bad fit).  See the header comment for
+ * full flag definitions.
+ *
+ * \note Use numberOfPossiblePoints(StDetectorId) rather than the legacy
+ *       numberOfPossiblePoints() when per-detector granularity is needed.
+ *
+ * \sa StGlobalTrack, StPrimaryTrack, StTrackGeometry, StTrackFitTraits,
+ *     StTrackPidTraits, StTrackNode
  */
 /***************************************************************************
  *
@@ -202,57 +220,85 @@ public:
     StTrack & operator=(const StTrack&);
     virtual ~StTrack();
 
-    virtual StTrackType            type() const = 0;
-    virtual const StVertex*        vertex() const = 0;
-    virtual int                    key() const { return mKey; }
-    short                          flag() const;
-    unsigned int                   flagExtension() const { return mFlagExtension; }
-    unsigned short                 encodedMethod() const;
-    bool                           finderMethod(StTrackFinderMethod) const;
-    StTrackFittingMethod           fittingMethod() const;
-    float                          impactParameter() const;
-    float                          length() const;
-    unsigned short                 numberOfPossiblePoints() const;
-    unsigned short                 numberOfPossiblePoints(StDetectorId) const;
-    const StTrackTopologyMap&      topologyMap() const;
+    /// \name Track type and status
+    /// @{
+    virtual StTrackType            type() const = 0;           ///< Track type: global or primary.
+    virtual const StVertex*        vertex() const = 0;         ///< Vertex this track is associated with (null for global).
+    virtual int                    key() const { return mKey; } ///< Unique track key within the event.
+    short                          flag() const;               ///< Track quality flag (positive=good, negative=bad; see class docs).
+    unsigned int                   flagExtension() const { return mFlagExtension; } ///< Bitmask for fast-detector matching status.
+    unsigned short                 encodedMethod() const;      ///< Encoded finder+fitter method identifier.
+    bool                           finderMethod(StTrackFinderMethod) const; ///< True if the given finder method was used.
+    StTrackFittingMethod           fittingMethod() const;      ///< Track-fitting algorithm used for this track.
+    /// @}
+
+    /// \name Track kinematics and geometry
+    /// @{
+    float                          impactParameter() const;    ///< Signed DCA to the primary vertex (cm).
+    float                          length() const;             ///< Arc length of the fitted helix (cm).
+    const StTrackTopologyMap&      topologyMap() const;        ///< Bit-map of detector layers with hits.
+    /// Inner helix geometry (at the innermost hit or DCA).
     StTrackGeometry*               geometry();
     const StTrackGeometry*         geometry() const;
+    /// Outer helix geometry (at the outermost hit).
     StTrackGeometry*               outerGeometry();
     const StTrackGeometry*         outerGeometry() const;
+    /// Extended geometry (e.g. at a specific detector surface).
     StExtGeometry*                 extGeometry()	 {return mExtGeometry;}
     const StExtGeometry*           extGeometry()   const {return mExtGeometry;}
-    StTrackDetectorInfo*           detectorInfo();
+    /// @}
+
+    /// \name Hit counts and detector information
+    /// @{
+    /// Legacy total number of possible (expected) points — use per-detector version where available.
+    unsigned short                 numberOfPossiblePoints() const;
+    /// Number of possible points for a specific detector.
+    unsigned short                 numberOfPossiblePoints(StDetectorId) const;
+    StTrackDetectorInfo*           detectorInfo();             ///< Detector-hit summary object shared with sibling tracks.
     const StTrackDetectorInfo*     detectorInfo() const;
-    StTrackFitTraits&              fitTraits();
-    const StTrackFitTraits&        fitTraits() const;
-    const StSPtrVecTrackPidTraits& pidTraits() const;
-    StSPtrVecTrackPidTraits&       pidTraits();
-    StPtrVecTrackPidTraits         pidTraits(StDetectorId) const;
-    const StParticleDefinition*    pidTraits(StPidAlgorithm&) const;
-    StTrackNode*                   node();
-    const StTrackNode*             node() const;
-    
+    /// Seed quality metric from ITTF (replaces legacy mNumberOfPossiblePoints).
     unsigned short                 seedQuality() const {return mSeedQuality;}
-    bool       isCtbMatched()      const {return testBit(kCtbMatched);}
-    bool       isToFMatched()  	   const {return testBit(kToFMatched);}   
-    bool       isBToFMatched()     const {return testBit(kToFMatched);}
-    bool       isBemcMatched() 	   const {return testBit(kBemcMatched);}  
-    bool       isEemcMatched() 	   const {return testBit(kEemcMatched);}  
+    /// @}
 
-    bool       isCtbNotMatched()       const {return testBit(kCtbNotMatched);}
-    bool       isToFNotMatched()  	   const {return testBit(kToFNotMatched);}   
-    bool       isBToFNotMatched()  	   const {return testBit(kToFNotMatched);}   
-    bool       isBemcNotMatched() 	   const {return testBit(kBemcNotMatched);}  
-    bool       isEemcNotMatched() 	   const {return testBit(kEemcNotMatched);}  
+    /// \name Fit traits and PID
+    /// @{
+    StTrackFitTraits&              fitTraits();                ///< Fit-quality quantities (chi2, number of fit points, dE/dx).
+    const StTrackFitTraits&        fitTraits() const;
+    const StSPtrVecTrackPidTraits& pidTraits() const;          ///< All PID-traits objects attached to this track.
+    StSPtrVecTrackPidTraits&       pidTraits();
+    StPtrVecTrackPidTraits         pidTraits(StDetectorId) const; ///< PID-traits objects from a specific detector.
+    const StParticleDefinition*    pidTraits(StPidAlgorithm&) const; ///< Best particle hypothesis from a PID algorithm.
+    /// @}
 
-    bool       isDecayTrack()  	   const {return testBit(kDecayTrack);}   
-    bool       isPromptTrack() 	   const {return testBit(kPromptTrack);}       
-    bool       isPostXTrack()            const {return testBit(kPostXTrack);} 
-    bool       isMembraneCrossingTrack() const {return testBit(kXMembrane);} 
-    bool       isShortTrack2EMC()        const {return testBit(kShortTrack2EMC);}
-    bool       isRejected()              const {return testBit(kRejectedTrack);}
-    bool       isWestTpcOnly()           const {return testBit(kWestTpcOnlyTrack);}
-    bool       isEastTpcOnly()           const {return testBit(kEastTpcOnlyTrack);}
+    /// \name Track-node link
+    /// @{
+    StTrackNode*                   node();                     ///< TrackNode that owns this track.
+    const StTrackNode*             node() const;
+    /// @}
+
+    /// \name Fast-detector matching predicates
+    /// @{
+    bool       isCtbMatched()      const {return testBit(kCtbMatched);}   ///< Track matched to CTB.
+    bool       isToFMatched()  	   const {return testBit(kToFMatched);}   ///< Track matched to TOF.
+    bool       isBToFMatched()     const {return testBit(kToFMatched);}   ///< Track matched to BTOF (alias).
+    bool       isBemcMatched() 	   const {return testBit(kBemcMatched);}  ///< Track matched to BEMC.
+    bool       isEemcMatched() 	   const {return testBit(kEemcMatched);}  ///< Track matched to EEMC.
+
+    bool       isCtbNotMatched()       const {return testBit(kCtbNotMatched);}  ///< Track actively rejected by CTB.
+    bool       isToFNotMatched()  	   const {return testBit(kToFNotMatched);}  ///< Track actively rejected by TOF.
+    bool       isBToFNotMatched()  	   const {return testBit(kToFNotMatched);}  ///< Track actively rejected by BTOF.
+    bool       isBemcNotMatched() 	   const {return testBit(kBemcNotMatched);} ///< Track actively rejected by BEMC.
+    bool       isEemcNotMatched() 	   const {return testBit(kEemcNotMatched);} ///< Track actively rejected by EEMC.
+
+    bool       isDecayTrack()  	   const {return testBit(kDecayTrack);}       ///< Track flagged as decay product.
+    bool       isPromptTrack() 	   const {return testBit(kPromptTrack);}      ///< Track has a prompt (SVT) hit.
+    bool       isPostXTrack()            const {return testBit(kPostXTrack);}  ///< Track has post-crossing hits.
+    bool       isMembraneCrossingTrack() const {return testBit(kXMembrane);}   ///< Track crosses the TPC central membrane.
+    bool       isShortTrack2EMC()        const {return testBit(kShortTrack2EMC);} ///< Short track pointing toward EEMC.
+    bool       isRejected()              const {return testBit(kRejectedTrack);}  ///< Track flagged as rejected.
+    bool       isWestTpcOnly()           const {return testBit(kWestTpcOnlyTrack);} ///< Track in TPC west sector only.
+    bool       isEastTpcOnly()           const {return testBit(kEastTpcOnlyTrack);} ///< Track in TPC east sector only.
+    /// @}
 
     virtual void setCtbMatched()       {setBit(kCtbMatched);}
     virtual void setToFMatched()  	   {setBit(kToFMatched);}   

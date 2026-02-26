@@ -1,44 +1,41 @@
 // $Id: StEmcRawMaker.h,v 1.10 2014/08/06 11:43:07 jeromel Exp $
 
-/*!\class StEmcRawMaker
-\author Alexandre A. P. Suaide
- 
-This class copies the BEMC raw data from DAQ file into StEvent.
-This make should run only in production or when reading DAQ
-files. The tasks performed by this maker are:
- 
-  1. Get EMC data from DAQ files \n
-  2. Fills B+E emcRawData with the daq data \n
-  3.a Check for BEMC corruption but does not remove BEMC sub-event. \n
-  3.b Check for EEMC corruption and  does remove EEMC sub-event. \n
-  4. Fills StEmcRawHits depending on the BEMC settings defined
-     by the user. For EEMC works only daqReader->StEvent. \n
-  5. Fills some QA histograms for BEMC & EEMC \n
+/**
+ * \file  StEmcRawMaker.h
+ * \brief Declaration of StEmcRawMaker, the maker that decodes raw
+ *        electromagnetic calorimeter DAQ data into StEmcCollection in StEvent.
+ */
 
-The controlADCtoE tables can be partially controlled in the
-BFC chain by use of the GoptEMC option. The option is immediately
-followed by 6 hexadecimal numbers corresponding to the 6 components
-of the EMC system as follows:
-
-  BTOW \n
-  ETOW \n
-  BSMD \n
-  ESMD \n
-  BPSD \n
-  EPSD \n
-
-...where PSD means both pre and post shower components.
-Each hexadecimal number is a bit patter of what to do for that
-particular detector. Implemented so far are values of 1 or 0 for
-these bits in the BEMC (where bit 0 is the least significant bit):
-
- bit 0: sets CheckStatus to 1 or 0 \n
- bit 1: sets CutOffType to 1 or 0 \n
-
-An example would be using the chain option "GoptEMC000020" which
-would set CheckStatus to 0 for BTOW+BSMD+BPSD, and CutOffType to
-0 for BTOW+BSMD and 1 for BPSD.
-*/
+/**
+ * \class StEmcRawMaker
+ * \brief Maker that decodes raw electromagnetic calorimeter data into StEmcCollection.
+ *
+ * \author Alexandre A. P. Suaide
+ *
+ * \details This maker reads raw BEMC and EEMC sub-events from the DAQ stream,
+ * unpacks ADC values, performs basic corruption checks, and fills
+ * StEmcCollection (accessible via StEvent::emcCollection()) with
+ * StEmcRawData and StEmcRawHit objects.
+ *
+ * Tasks performed each event:
+ * -# Retrieve raw EMC data from the DAQ reader.
+ * -# Fill BEMC and EEMC raw-data containers with DAQ payload.
+ * -# Check BEMC sub-event for corruption (flagged but not removed).
+ * -# Check EEMC sub-event for corruption (removed if corrupt).
+ * -# Convert ADC counts to StEmcRawHit objects using controlADCtoE calibration tables.
+ * -# Fill QA monitoring histograms for both BEMC and EEMC.
+ *
+ * The \c controlADCtoE tables can be tuned via the BFC chain option \c GoptEMC
+ * followed by 6 hexadecimal digits, one per sub-detector component
+ * (BTOW, ETOW, BSMD, ESMD, BPSD, EPSD).  Bit 0 controls \c CheckStatus;
+ * bit 1 controls \c CutOffType.  Example: \c "GoptEMC000020" sets
+ * CutOffType=1 for BPSD only.
+ *
+ * \note This maker is intended for production running or when reading raw DAQ
+ *       files.  It fills StEmcCollection inside StEvent.
+ *
+ * \sa StBemcRaw, StEemcRaw, StEmcCollection
+ */
 
 #ifndef STAR_StEmcRawMaker
 #define STAR_StEmcRawMaker
@@ -74,12 +71,12 @@ protected:
     Bool_t                   makeEemc(); ///< Make the Endcap-EMC detector
 
 public:
-    StEmcRawMaker(const char *name="EmcRaw"); ///< StEmcRawMaker constructor
-    virtual                   ~StEmcRawMaker(); ///< StEmcRawMaker destructor
-    virtual Int_t             Init(); ///< Init function. This method initializes the histograms
-    virtual Int_t             InitRun(Int_t runumber); ///< InitRun function
-    virtual Int_t             Make(); ///< Process each event
-    virtual Int_t             Finish(); ///< Finish function.
+    StEmcRawMaker(const char *name="EmcRaw"); ///< Constructor. \param name Maker name passed to StMaker.
+    virtual                   ~StEmcRawMaker(); ///< Destructor; releases owned resources.
+    virtual Int_t             Init(); ///< Initialises QA histograms and sub-maker objects. \return kStOK on success.
+    virtual Int_t             InitRun(Int_t runumber); ///< Loads run-dependent calibration tables. \param runumber Run number. \return kStOK on success.
+    virtual Int_t             Make(); ///< Decodes raw BEMC/EEMC DAQ data and fills StEmcCollection in StEvent. \return kStOK on success, kStWarn/kStErr on data issues.
+    virtual Int_t             Finish(); ///< Writes QA histograms and finalises. \return kStOK.
 
     StRtsTable* Dta()
       {

@@ -60,6 +60,18 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file SystemOfUnits.h
+ * \brief Coherent system of measurement units for the StarClassLibrary, adapted from CLHEP.
+ *
+ * \details All unit constants are declared inside the \c units namespace and
+ * then brought into scope with a \c using directive at the end of the file.
+ * The base unit for length is the centimeter, energy is GeV, time is seconds,
+ * and charge is the positron charge (eplus).
+ *
+ * An optional set of short CLHEP-compatible aliases (\c mm, \c cm, \c ns, …)
+ * is provided under the compile-time flag \c ST_ADD_OLD_CLHEP_SYSTEM_OF_UNITS.
+ */
 #ifndef HEP_SYSTEM_OF_UNITS_H
 #define HEP_SYSTEM_OF_UNITS_H
 

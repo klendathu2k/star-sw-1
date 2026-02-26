@@ -40,11 +40,29 @@ class StMuCut;
 class StTofCollection; // calibrated vpd for TOF
 class StTriggerData;
 
-/**
-   @class StMuEvent
-   The StMuEvent class holds the event-wise information of the STAR's common muDst.  
-   Most of its data members are classes from the StEvent package.
-   Please refer to the StEvent manual for information on these classes.
+/*!
+ * \class StMuEvent
+ * \brief Per-event data container for the MuDST.
+ *
+ * \details
+ * StMuEvent stores all event-level quantities that are written into each entry of
+ * the MuDST TTree.  Most data members are copied directly from the corresponding
+ * StEvent structures (StRunInfo, StEventInfo, StEventSummary, trigger detectors,
+ * etc.); please refer to the StEvent documentation for full details of those classes.
+ *
+ * Key quantities accessible through this class:
+ *  - Run and event identifiers via runId() / eventId().
+ *  - Magnetic field strength via eventSummary().magneticField() or magneticField().
+ *  - Trigger information via triggerIdCollection() and individual trigger-detector
+ *    accessors (zdcTriggerDetector(), bbcTriggerDetector(), etc.).
+ *  - Reference multiplicities (refMult(), refMultPos(), refMultNeg(), and FTPC
+ *    variants) used for centrality determination.
+ *  - Primary vertex position for backward compatibility via primaryVertexPosition();
+ *    for multi-vertex events prefer StMuPrimaryVertex.
+ *
+ * \note StMuEvent exists once per TTree entry and is accessed via StMuDst::event().
+ *
+ * \sa StMuDst, StMuPrimaryVertex, StMuDstMaker
  */
 class StMuEvent : public TObject {
  public:
@@ -56,14 +74,14 @@ class StMuEvent : public TObject {
     mEventSummary.Clear(opt);
   }
 
-  int eventId();
-  int eventNumber();
-  int runId();
-  int runNumber();
+  int eventId();     ///< Returns the event identifier (unique within a run).
+  int eventNumber(); ///< Alias for eventId().
+  int runId();       ///< Returns the run number.
+  int runNumber();   ///< Alias for runId().
   // classes taken straight from StEvent
-  StRunInfo& runInfo();
-  StEventInfo& eventInfo();
-  StEventSummary& eventSummary();
+  StRunInfo& runInfo();              ///< Returns run-level information (beam conditions, timestamps, etc.).
+  StEventInfo& eventInfo();          ///< Returns basic event identifiers and timestamp.
+  StEventSummary& eventSummary();    ///< Returns event summary (magnetic field, multiplicity estimates, etc.).
   StVpdTriggerDetector& vpdTriggerDetector();
   StMtdTriggerDetector& mtdTriggerDetector();
   StCtbTriggerDetector& ctbTriggerDetector();
@@ -75,9 +93,9 @@ class StMuEvent : public TObject {
   StFpdCollection& fpdCollection(); 
   StL0Trigger& l0Trigger(); 
   // Special classes for the muDst
-  StMuL3EventSummary& l3EventSummary();
-  StMuTriggerIdCollection& triggerIdCollection();
-  const StTriggerData* triggerData() const;
+  StMuL3EventSummary& l3EventSummary();            ///< Returns Level-3 trigger event summary.
+  StMuTriggerIdCollection& triggerIdCollection();  ///< Returns the collection of trigger IDs that fired for this event.
+  const StTriggerData* triggerData() const;        ///< Returns raw trigger data object (may be null for older files).
 
   /// Reference multiplicity of positive particles as defined in StEventUtilities/StuRefMult.hh for vertex vtx_id (-1 is default index from StMuDst)
   unsigned short refMultPos(int vtx_id = -1);
@@ -103,7 +121,7 @@ class StMuEvent : public TObject {
   /// Currently not filled properly.
   double reactionPlanePtWgt(unsigned short);
   void   setReactionPlanePtWgt(unsigned short, double v);
-  double magneticField();
+  double magneticField();               ///< Returns the solenoidal magnetic field strength in kGauss.
   double zdcAdcAttentuatedSumWest();
   double zdcAdcAttentuatedSumEast();
   double ctbMultiplicity();

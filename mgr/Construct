@@ -397,6 +397,9 @@ if ($STAR_SYS !~ /x86_darwin/) {
     }
 #}
 
+# Add Catch2 unit tests when the directory is present.
+push @sysdirlist, "tests/unit" if -d "tests/unit";
+
 #print "sysdirlist = @sysdirlist \n subdirs = @subdirs\n";
 
 @skip_dirs = split(/\|/, $items);

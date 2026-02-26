@@ -117,17 +117,54 @@ class StMuMtdHit;
 class StMuMtdRawHit;
 class StMuMtdHeader;
 
-/**
-   \class StMuDstMaker
-
-   Class to create and read STAR's common micro dst (StMuDst)
-
-   This class is a true maker in the STAR sense. It inherits from "StMaker" and implements
-   the functions "int Init()", "void Clear()", int Make()", and "int Finish()" in order to
-   run as part of an "StChain". Please refer to the STAR Computing Web pages in case you do
-   not know what "StMaker" and "StChain" mean.
-
-*/
+/*!
+ * \class StMuDstMaker
+ * \brief Maker for writing and reading STAR Micro-DST files.
+ *
+ * \details
+ * StMuDstMaker is a STAR maker (deriving from StIOInterFace / StMaker) that
+ * operates in two complementary modes selected at construction time:
+ *
+ * \par Write mode (\c ioWrite)
+ * Run as part of a reconstruction chain that has a populated StEvent available.
+ * On each Make() call the maker copies the relevant data from StEvent into a set
+ * of TClonesArrays and flushes them as branches of a ROOT TTree into an output
+ * \c .MuDst.root file.  Branches can be selectively enabled or disabled with
+ * SetStatus() to reduce file size.  Track filtering is configurable via
+ * setTrackFilter() and setL3TrackFilter().
+ *
+ * \par Read mode (\c ioRead)
+ * Run standalone (without StEvent) to read an existing MuDST file or a chain of
+ * files.  On each Make() call the maker reads the next TTree entry and populates
+ * the in-memory StMuDst object, making all data accessible through the static
+ * accessor methods of StMuDst (e.g. StMuDst::event(), StMuDst::primaryTracks()).
+ * Use muDst() to obtain the pointer to the StMuDst navigation object.
+ *
+ * \par Selecting branches (read mode)
+ * Use SetStatus() to activate only the branches required by the analysis and
+ * thereby speed up I/O significantly:
+ * \code
+ *   maker->SetStatus("*",          0);  // disable everything
+ *   maker->SetStatus("MuEventAll", 1);  // re-enable event-level branches
+ *   maker->SetStatus("PrimaryTracks", 1);
+ * \endcode
+ * Branch name constants are defined in StMuArrays::arrayNames.
+ *
+ * \par Typical write workflow
+ * \code
+ *   StMuDstMaker* maker = new StMuDstMaker(ioWrite, ioIOMaker, "./", "", ".");
+ *   // maker is added to the StChain; StEvent must be upstream
+ * \endcode
+ *
+ * \par Typical read workflow
+ * \code
+ *   StMuDstMaker* maker = new StMuDstMaker(ioRead, ioFix, "./", "input.MuDst.root");
+ *   // In Make() loop:
+ *   StMuDst* mu = maker->muDst();
+ * \endcode
+ *
+ * \sa StMuDst, StMuEvent, StMuTrack, StMuPrimaryVertex, StMuArrays
+ */
 class StMuDstMaker : public StIOInterFace {
  public:
     /// Default constructor
@@ -146,6 +183,11 @@ class StMuDstMaker : public StIOInterFace {
   virtual  Int_t MakeWrite();
   virtual int  Finish();
           void printArrays();
+          /// Enable or disable individual TTree branches by name pattern.
+          /// Use \c "*" to match all branches.  Special group names (e.g. \c "MuEventAll",
+          /// \c "StrangeAll", \c "EmcAll", \c "TofAll") activate entire subsystem sets.
+          /// \param arrType  Branch name or group keyword (see StMuArrays::arrayNames).
+          /// \param status   1 to enable, 0 to disable.
           void SetStatus(const char *arrType,int status);
   /// Set event list for reading only preselected events (generate list using chain()->Draw()
   void SetEventList( TEventList *e ) { mEventList = e; }
@@ -172,12 +214,12 @@ class StMuDstMaker : public StIOInterFace {
 
   */
   void setProbabilityPidFile(const char* file=NULL);
-  /// Returns pointer to the StMuDst object, the transient class that holds all the TClonesArrays and has access functions to the tracks, v0s, etc.
-  /// Returns null pointer if no StMuDst available.
+  /// Returns pointer to the StMuDst navigation object for the current event.
+  /// Returns null pointer if no StMuDst is available (e.g. before Init() or in write mode before the first Make()).
   StMuDst* muDst();
-  /// In read mode, returns pointer to the chain of .MuDst.root files that where selected.
+  /// In read mode, returns pointer to the TChain of .MuDst.root files that were selected.
   TChain* chain();
-  /// Returns pointer to the current TTree, the top level io structure that holds the event, track, v0, etc. information in branches of that tree.
+  /// Returns pointer to the current TTree (top-level I/O structure holding all MuDST branches for the current file).
   TTree* tree();
 
   /// Returns name of current input or output file, depending on mode (GetFileName does the same, see StIOInterface

@@ -31,6 +31,11 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file StParticleDefinition.hh
+ * \brief Base class describing a particle species and its properties.
+ * \author Thomas Ullrich, May 1999 (based on Geant4 G4ParticleDefinition)
+ */
 #ifndef StParticleDefinition_hh
 #define StParticleDefinition_hh
 #ifdef __ROOT__
@@ -45,6 +50,17 @@ using std::string;
 
 class StParticleTable;
 
+/*!
+ * \class StParticleDefinition
+ * \brief Immutable record of a particle species and its quantum-number properties.
+ *
+ * \details Each concrete particle class (e.g., StProton, StPionPlus) inherits from
+ * this class and is registered as a singleton in StParticleTable.  The design
+ * mirrors Geant4's G4ParticleDefinition.  Instances are created by the
+ * particle-type subclasses; users obtain them through StParticleTable.
+ *
+ * \sa StParticleTable
+ */
 class StParticleDefinition {
 public:
     StParticleDefinition(const string  &  aName,  
@@ -68,25 +84,45 @@ public:
     int   operator==(const StParticleDefinition &right) const;
     int   operator!=(const StParticleDefinition &right) const;
     
+    /// Return the particle name string.
     string   name() const            {return mParticleName;}
+    /// Return the PDG mass in units of equivalent energy (GeV).
     double   mass() const            {return mPDGMass;}
+    /// Return the decay width (GeV); zero for stable particles.
     double   width() const           {return mPDGWidth;} 
+    /// Return the particle charge in units of the positron charge.
     double   charge() const          {return mPDGCharge;}
+    /// Return the total spin in units of 1 (i.e., iSpin/2).
     double   spin() const            {return mPDGSpin;}
+    /// Return twice the total spin (integer, units of ℏ/2).
     int      iSpin() const           {return mPDGiSpin;}
+    /// Return the parity quantum number (+1, -1, or 0 if undefined).
     int      iParity() const         {return mPDGiParity;}
+    /// Return the charge-conjugation quantum number (+1 or -1).
     int      iConjugation() const    {return mPDGiConjugation;}
+    /// Return the isospin in units of 1 (i.e., iIsospin/2).
     double   isospin() const         {return mPDGiIsospin;}
+    /// Return the isospin third-component in units of 1 (i.e., iIsospin3/2).
     double   isospin3() const        {return mPDGiIsospin3;}
+    /// Return twice the total isospin (integer).
     int      iIsospin() const        {return mPDGiIsospin;}
+    /// Return twice the isospin third-component (integer).
     int      iIsospin3() const       {return mPDGiIsospin3;}
+    /// Return the G-parity quantum number (+1 or -1).
     int      iGParity() const        {return mPDGiGParity;}
+    /// Return a descriptive type string (e.g., "meson", "baryon", "lepton").
     string   type() const            {return mParticleType;}
+    /// Return the lepton number.
     int      leptonNumber() const    {return mLeptonNumber;}
+    /// Return the baryon number.
     int      baryonNumber() const    {return mBaryonNumber;}    
+    /// Return the PDG Monte Carlo encoding (PDG ID).
     int      pdgEncoding() const     {return mPDGEncoding;}
+    /// Return the PDG Monte Carlo encoding for the corresponding anti-particle.
     int      antiPdgEncoding() const {return mAntiPDGEncoding;}
+    /// Return \c true if the particle is treated as stable (no decay).
     bool     stable() const          {return mPDGStable;}    
+    /// Return the mean lifetime in seconds; \c DBL_MAX for stable particles.
     double   lifeTime() const        {return mPDGLifeTime;}
 
     StParticleTable* particleTable() const {return mParticleTable;}

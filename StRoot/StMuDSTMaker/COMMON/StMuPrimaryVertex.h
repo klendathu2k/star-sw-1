@@ -7,6 +7,30 @@
  * $Id: StMuPrimaryVertex.h,v 1.11 2017/05/17 16:03:04 smirnovd Exp $ 
  */
 
+/*!
+ * \class StMuPrimaryVertex
+ * \brief Primary interaction vertex stored in the MuDST.
+ *
+ * \details
+ * StMuPrimaryVertex stores the reconstructed position and quality information
+ * for a primary interaction vertex.  Its data members are largely a copy of
+ * StPrimaryVertex from the StEvent package.
+ *
+ * A single MuDST event may contain multiple primary vertex candidates ranked by
+ * a vertex finder.  The highest-ranked (best) vertex is at index 0 in the
+ * primaryVertices() array.  The active vertex used by primaryTracks() and
+ * StMuEvent::refMult() is selected via StMuDst::setVertexIndex().
+ *
+ * Key quantities:
+ *  - position() and posError() — 3-D vertex position and its uncertainty (cm).
+ *  - ranking() — figure-of-merit assigned by the vertex finder (higher is better).
+ *  - nTracksUsed() — number of tracks used in the vertex fit.
+ *  - chiSquared() — chi-squared of the vertex fit.
+ *  - refMult() — reference multiplicity of charged tracks associated with this vertex.
+ *
+ * \sa StMuDst, StMuEvent, StMuTrack
+ */
+
 #include "TObject.h"
 #include "StThreeVectorF.hh"
 #include "StEnumerations.h"
@@ -25,12 +49,12 @@ class StMuPrimaryVertex : public TObject {
   StMuPrimaryVertex(const StPrimaryVertex* vertex);
 
   ~StMuPrimaryVertex() {;}
-   Int_t            flag() const {return mFlag; }
-   StThreeVectorF   position() const        { return mPosition; }
-   StThreeVectorF   posError() const        { return mPosError; }
-   StVertexFinderId vertexFinderId()  const { return mVertexFinderId; } 
-   Float_t          ranking()  const        { return mRanking; }
-   UShort_t         nTracksUsed() const     { return mNTracksUsed; }
+   Int_t            flag() const {return mFlag; }               ///< Returns vertex flag (bit field encoding vertex properties, e.g. beam-constraint).
+   StThreeVectorF   position() const        { return mPosition; }  ///< Returns the 3-D vertex position in cm.
+   StThreeVectorF   posError() const        { return mPosError; }  ///< Returns the 1-sigma uncertainty on the vertex position in cm.
+   StVertexFinderId vertexFinderId()  const { return mVertexFinderId; }  ///< Returns the identifier of the vertex finder algorithm used.
+   Float_t          ranking()  const        { return mRanking; }     ///< Returns the vertex ranking score (higher rank = better vertex quality).
+   UShort_t         nTracksUsed() const     { return mNTracksUsed; } ///< Returns the number of tracks used in the vertex fit.
    UShort_t         nBTOFMatch()  const     { return mNBTOFMatch; }
    UShort_t         nCTBMatch()   const     { return mNCTBMatch; }
    UShort_t         nBEMCMatch()  const     { return mNBEMCMatch; }
@@ -45,16 +69,16 @@ class StMuPrimaryVertex : public TObject {
    UShort_t         nTpcWestOnly() const  { return mNTpcWestOnly; }
    UShort_t         nTpcEastOnly() const  { return mNTpcEastOnly; }
    
-   Float_t          sumTrackPt() const      { return mSumTrackPt; }
-   Float_t          meanDip() const         { return mMeanDip; }
-   Float_t          chiSquared() const      { return mChiSquared; }
-   UShort_t         noTracks() const {return mNTracks;}
-   UShort_t         refMultPos() const      { return mRefMultPos; }
-   UShort_t         refMultNeg() const      { return mRefMultNeg; }
-   UShort_t         refMult()    const      { return refMultPos() + refMultNeg(); }
-   UShort_t         refMultFtpcEast() const { return mRefMultFtpcEast; }
-   UShort_t         refMultFtpcWest() const { return mRefMultFtpcWest; }
-   UShort_t         refMultFtpc()     const { return refMultFtpcEast() + refMultFtpcWest(); }
+   Float_t          sumTrackPt() const      { return mSumTrackPt; }  ///< Returns scalar sum of track pT for tracks used in the fit (GeV/c).
+   Float_t          meanDip() const         { return mMeanDip; }     ///< Returns mean dip angle of tracks used in the fit (rad).
+   Float_t          chiSquared() const      { return mChiSquared; }  ///< Returns the chi-squared of the vertex fit.
+   UShort_t         noTracks() const {return mNTracks;}              ///< Returns the total number of tracks associated with this vertex.
+   UShort_t         refMultPos() const      { return mRefMultPos; }            ///< Returns reference multiplicity of positive particles.
+   UShort_t         refMultNeg() const      { return mRefMultNeg; }            ///< Returns reference multiplicity of negative particles.
+   UShort_t         refMult()    const      { return refMultPos() + refMultNeg(); } ///< Returns total reference multiplicity (positive + negative) for this vertex.
+   UShort_t         refMultFtpcEast() const { return mRefMultFtpcEast; }       ///< Returns FTPC east reference multiplicity.
+   UShort_t         refMultFtpcWest() const { return mRefMultFtpcWest; }       ///< Returns FTPC west reference multiplicity.
+   UShort_t         refMultFtpc()     const { return refMultFtpcEast() + refMultFtpcWest(); } ///< Returns combined FTPC reference multiplicity (east + west).
    void setPosition(const StThreeVectorF &pos)     { mPosition = pos; }
    void setPosError(const StThreeVectorF &pos_err) { mPosError = pos_err; }
    Int_t            idTruth() const { return mIdTruth;}

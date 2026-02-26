@@ -61,6 +61,11 @@
  * Revised to build new StEvent version
  *
  **************************************************************************/
+/**
+ * \file  StEventMaker.h
+ * \brief Declaration of StEventMaker, the maker that creates and registers
+ *        the StEvent object on the StChain whiteboard.
+ */
 #ifndef STAR_StEventMaker
 #define STAR_StEventMaker
 
@@ -70,17 +75,42 @@ class StEvent;
 class StTrack;
 class StRunInfo;
 
+/**
+ * \class StEventMaker
+ * \brief Maker that creates and registers the StEvent object for each event.
+ *
+ * \details StEventMaker is the first maker in the reconstruction chain
+ * responsible for creating a new StEvent instance at the start of every
+ * event and posting it to the StChain whiteboard under the key "StEvent".
+ * Downstream makers retrieve this object via \c GetInputDS("StEvent") or
+ * the typed helper \c GetStEvent().
+ *
+ * In legacy mode, StEventMaker can also load pre-formed hit collections from
+ * a DST dataset (TPC, FTPC, SVT, SSD) and optionally populate tracking
+ * results from the Tpt or Est finders.  These code paths are controlled by
+ * the public boolean flags (doLoadTpcHits, doLoadFtpcHits, etc.).
+ *
+ * \par Inputs
+ * - Optional DST dataset from GetDataSet("dst").
+ * - StRunInfo filled from detector-database beam-info tables.
+ *
+ * \par Output
+ * - A new StEvent instance registered on the StChain whiteboard under
+ *   the key "StEvent".
+ *
+ * \sa StEvent, StRunInfo, StChain
+ */
 class StEventMaker : public StMaker {
 public: 
-    StEventMaker(const char *name="StEventMaker", const char *title="");
+    StEventMaker(const char *name="StEventMaker", const char *title=""); ///< Constructor. \param name Maker name. \param title Optional title.
     virtual ~StEventMaker();
     
-    virtual Int_t           Init();
-    virtual Int_t           Make();
-    virtual void            setEventManager(StEventManager* mgr); 
-    virtual StEventManager* eventManager();
-    virtual StEvent*        event();
-    virtual void            Clear(const char* opt="");
+    virtual Int_t           Init();  ///< Initialises internal state and event manager. \return kStOK on success.
+    virtual Int_t           Make();  ///< Creates a new StEvent, loads optional legacy hit collections, and posts it to the whiteboard. \return kStOK on success.
+    virtual void            setEventManager(StEventManager* mgr); ///< Override the default event manager. \param mgr Pointer to the replacement manager.
+    virtual StEventManager* eventManager(); ///< \return Pointer to the current event manager.
+    virtual StEvent*        event();        ///< \return Pointer to the StEvent for the current event, or nullptr if Make() has not been called.
+    virtual void            Clear(const char* opt=""); ///< Releases the current StEvent pointer without deleting the object. \param opt Passed to StMaker::Clear().
        
     virtual const char *GetCVS() const
     {

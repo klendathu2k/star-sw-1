@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+# Conscript for Catch2 v3 unit tests
+# Builds one executable per tested package.
+
+Import qw ( env INCLUDE LIB BIN BUILD OBJ warnoff_dirs );
+
+( my $build = $OBJ ) =~ s/\#//g;
+$build =~ s/\\/\//g;
+( my $obj_dir = DirPath '.' ) =~ s/\\/\//g;
+( my $Dir = $obj_dir ) =~ s/$build\///g;
+my $ObjDir = "#" . $obj_dir;
+
+my $ROOTSYS   = $env->{ENV}->{ROOTSYS};
+my $STAR_ROOT = $env->{ENV}->{STAR} || ".";
+
+# ---- include paths -------------------------------------------------------
+# tests/unit itself (for catch_amalgamated.hpp), plus each tested package.
+my $CPPPATH = $ObjDir
+    . $main::PATH_SEPARATOR . $INCLUDE
+    . $main::PATH_SEPARATOR . "#StRoot/St_base"
+    . $main::PATH_SEPARATOR . "#StRoot/StChain"
+    . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
+    . $main::PATH_SEPARATOR . "#StRoot/Table"
+    . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
+
+# ---- libraries -----------------------------------------------------------
+my $LIBPATH = $LIB
+    . $main::PATH_SEPARATOR . $ROOTSYS . "/lib";
+
+my $ROOTLIBS = $env->{ROOTLIBS} || "-lCore -lCint -lRIO -lThread -lMathCore";
+my $LIBS     = "-lSt_base -lStChain -lStarClassLibrary "
+             . $ROOTLIBS . " "
+             . $env->{CLIBS};
+
+# ---- compiler flags ------------------------------------------------------
+# Suppress -Werror for this directory: Catch2 generates many warnings under
+# GCC 4.8 that are not our responsibility.
+my $CXXFLAGS = $env->{CXXFLAGS};
+$CXXFLAGS =~ s/-Werror\b//g;
+$CXXFLAGS .= " -std=c++14";
+
+my $CPPFLAGS = $env->{CPPFLAGS};
+
+# ---- cloned environment --------------------------------------------------
+my $envTest = $env->clone(
+    'CPPPATH'  => $CPPPATH,
+    'CXXFLAGS' => $CXXFLAGS,
+    'CPPFLAGS' => $CPPFLAGS,
+    'LIBPATH'  => $LIBPATH,
+    'LIBS'     => $LIBS,
+    'ObjDir'   => $obj_dir,
+);
+
+# ---- Catch2 implementation object ----------------------------------------
+# Compiled once and shared by all three test executables via @catch_obj.
+my @catch_obj = Objects $envTest "catch_amalgamated.cpp";
+
+# ---- helper: build a test executable ------------------------------------
+# build_test($name, @test_sources)
+#   Compiles each test_*.cxx, links with the Catch2 object, and installs.
+sub build_test {
+    my ($name, @srcs) = @_;
+    my @objs = Objects $envTest @srcs;
+    Program $envTest $name, (@catch_obj, @objs);
+    Install $envTest $BIN, $name;
+}
+
+# ---- test executables ----------------------------------------------------
+build_test( "test_St_base",
+    "St_base/test_StObject.cxx",
+    "St_base/test_StArray.cxx",
+    "St_base/test_StMessMgr.cxx",
+);
+
+build_test( "test_StChain",
+    "StChain/test_StMaker.cxx",
+    "StChain/test_StChain.cxx",
+);
+
+build_test( "test_StarClassLibrary",
+    "StarClassLibrary/test_StThreeVector.cxx",
+    "StarClassLibrary/test_StLorentzVector.cxx",
+);

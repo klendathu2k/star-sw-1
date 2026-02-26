@@ -1,3 +1,27 @@
+/*!
+ * \file StEvtHddr.h
+ * \brief Declaration of StEvtHddr, the STAR event-header dataset.
+ */
+
+/*!
+ * \class StEvtHddr
+ * \brief Event header containing run/event identifiers, trigger information, and timing.
+ *
+ * \details
+ * StEvtHddr is a TDataSet that is posted onto the white-board by input makers and
+ * consumed by any maker that needs event-level metadata.  It carries:
+ *  - Run and event numbers (GetRunNumber(), GetEventNumber())
+ *  - Sequential inventory number within the DAQ/Geant input file (GetIventNumber())
+ *  - Event timestamp and production timestamp (GetDateTime(), GetProdDateTime())
+ *  - Trigger and DAQ command masks (GetTriggerMask(), GetInputTriggerMask())
+ *  - Collision geometry for simulated events (GetBImpact(), GetAEast(), etc.)
+ *  - Center-of-mass energy and beam bunch-crossing numbers
+ *
+ * IsNewRun() returns non-zero when the run number has changed since the last event,
+ * which is the signal used by StMaker::InitRun() and StMaker::FinishRun().
+ *
+ * \sa StMaker, StChain
+ */
 #ifndef StEvtHddr_h
 #define StEvtHddr_h
 #include <TDatime.h>
@@ -7,41 +31,63 @@ struct EvtHddr_st;
 class StEvtHddr : public TDataSet
 {
 public:
+  /// \name Constructors
+  ///@{
   StEvtHddr(TDataSet *parent=0);
   StEvtHddr(const StEvtHddr &hddr, const char *name=0);
  ~StEvtHddr(){};
   StEvtHddr &operator=(const StEvtHddr &hddr);
   virtual TObject *Clone(const char *name=0) const {return new StEvtHddr(*this,name);}
   virtual TObject *Clone()      {return ((const StEvtHddr*)this)->Clone();};
-//		Get methods
+  ///@}
 
+  /// \name Get Methods
+  ///@{
+  /// Return the current run number.
   Int_t 	GetRunNumber()    const {return mRunNumber;};
+  /// Return the run number of the previous event (used by IsNewRun()).
   Int_t 	GetOldRunNumber() const {return mOldRunNumber;};
+  /// Return a string describing the event type (e.g. "physics", "pedestal").
   const Char_t *GetEventType()    const {return (const Char_t*)mEventType;};
+  /// Return the level-1 trigger mask word.
   UInt_t 	GetTriggerMask()  const {return mTriggerMask;};
+  /// Return the raw input trigger mask (before any DAQ prescaling).
   UInt_t 	GetInputTriggerMask()    const {return mInputTriggerMask;};
+  /// Return the center-of-mass energy per nucleon pair [GeV].
   Float_t       GetCenterOfMassEnergy()  const {return mCenterOfMassEnergy;};
   UInt_t       	GetBunchCrossingNumber(int i) const {return mBunchCrossingNumber[i];};
-  Int_t       	GetAEast()        const {return mAEast;};
-  Int_t       	GetZEast() 	  const {return mZEast;};
-  Int_t       	GetAWest() 	  const {return mAWest;};
-  Int_t       	GetZWest() 	  const {return mZWest;};
+  Int_t       	GetAEast()        const {return mAEast;};   ///< Mass number of the east beam nucleus.
+  Int_t       	GetZEast() 	  const {return mZEast;};   ///< Charge number of the east beam nucleus.
+  Int_t       	GetAWest() 	  const {return mAWest;};   ///< Mass number of the west beam nucleus.
+  Int_t       	GetZWest() 	  const {return mZWest;};   ///< Charge number of the west beam nucleus.
   Float_t     	GetLuminosity()   const {return mLuminosity;};
+  /// Return the impact parameter of the collision [fm] (simulation only).
   Float_t     	GetBImpact()      const {return mBImpact;};
   Float_t     	GetPhiImpact()    const {return mPhImpact;};
   Float_t     	GetPhImpact()     const {return GetPhiImpact();};
+  /// Return the event Unix timestamp.
   UInt_t     	GetUTime() 	  const ;
+  /// Return the event date in the format YYYYMMDD.
   Int_t     	GetDate()  	  const {return mEventTime.GetDate();};
+  /// Return the event time in the format HHMMSS.
   Int_t     	GetTime()  	  const {return mEventTime.GetTime();};
+  /// Return the full event timestamp as a TDatime object.
   const TDatime  &GetDateTime()    const {return mEventTime;};
+  /// Return the production timestamp (when the event was reconstructed).
   const TDatime &GetProdDateTime() const {return mProdTime;};
+  /// Return the sequential inventory number within the input DAQ/Geant file.
   Int_t     	GetIventNumber()  const {return mIventNumber;};
   Int_t     	GetEventSize()    const {return mEventSize;};
+  /// Return the experiment event number (as assigned by the DAQ system).
   Int_t     	GetEventNumber()  const {return mEventNumber;};
   Int_t     	GetGenerType()    const {return mGenerType;};
+  /// Return non-zero if the run number changed since the previous event.
+  /// This is the trigger for StMaker::InitRun() / StMaker::FinishRun().
   Int_t     	IsNewRun()    const {return (mRunNumber!=mOldRunNumber);};
-  void          FillTag(EvtHddr_st *tag);  
-//		Set methods
+  void          FillTag(EvtHddr_st *tag);
+
+  /// \name Set Methods
+  ///@{
 
   void          SetRunNumber(int run)	{mOldRunNumber=mRunNumber;mRunNumber=run;};
   void		SetEventType(const Char_t *type){mEventType=type;};
@@ -67,6 +113,7 @@ public:
   void     	SetEventNumber(int ev)	{mEventNumber=ev;};
   void     	SetGenerType(int g)	{mGenerType=g;};
   void     	Print(Option_t* option="") const;
+  ///@}  // Set Methods
 
 //		Data Members
 protected:

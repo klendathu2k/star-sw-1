@@ -1,6 +1,18 @@
-/*!
- * \class StHit 
+/**
+ * \class StHit
+ * \brief Abstract base class for all detector hits.
  * \author Thomas Ullrich, Jan 1999
+ *
+ * \details StHit represents a single measured space-point from any STAR
+ * sub-detector.  It records the 3-D position and position error, the
+ * integrated charge, hardware address, and Monte Carlo truth information.
+ * Concrete sub-classes (e.g. StTpcHit, StSvtHit, StEmcRawHit) are
+ * stored inside the corresponding hit collections owned by StEvent.
+ *
+ * The \c mFitFlag indicates whether this hit was used in a track fit.
+ * The \c mTrackRefCount records how many tracks reference this hit.
+ *
+ * \sa StMeasuredPoint, StTpcHit, StSvtHit, StSsdHit, StPxlHit
  */
 /***************************************************************************
  *
@@ -140,17 +152,28 @@ public:
     int operator==(const StHit&) const;
     int operator!=(const StHit&) const;
     
-    float           charge() const;
-    unsigned int    trackReferenceCount() const;
-    unsigned int    flag() const;
-    StThreeVectorF  positionError() const;     // overwrite inherited
-    StMatrixF       covariantMatrix() const;   // overwrite inherited
-    int             usedInFit() const;
-    int             idTruth() const;
-    int             qaTruth() const { return mQuality; }
-    int  	        id()      const;
-    const StHit*    nextHit() const;
-    unsigned int    hardwarePosition() const;
+    /// \name Hit properties
+    /// @{
+    float           charge() const;                            ///< Integrated charge (ADC counts × calibration).
+    unsigned int    trackReferenceCount() const;               ///< Number of tracks that reference this hit.
+    unsigned int    flag() const;                              ///< Hit status flag (bit 0 = used in fit).
+    StThreeVectorF  positionError() const;     // overwrite inherited ///< 1-sigma position errors in local coordinates (cm).
+    StMatrixF       covariantMatrix() const;   // overwrite inherited ///< Full 3×3 position covariance matrix.
+    int             usedInFit() const;                         ///< Non-zero if this hit was included in a track fit.
+    /// @}
+
+    /// \name Hardware position and identifier
+    /// @{
+    unsigned int    hardwarePosition() const;                  ///< Packed hardware address (sector, row, pad, etc.).
+    int             id()      const;                           ///< Hit identifier (cluster/strip index).
+    const StHit*    nextHit() const;                           ///< Pointer to the next hit in a sorted list (transient).
+    /// @}
+
+    /// \name Monte Carlo truth
+    /// @{
+    int             idTruth() const;                           ///< Geant track ID of the primary contributor.
+    int             qaTruth() const { return mQuality; }       ///< Fraction of charge from \c idTruth track (percent).
+    /// @}
     
     
     void setCharge(float);

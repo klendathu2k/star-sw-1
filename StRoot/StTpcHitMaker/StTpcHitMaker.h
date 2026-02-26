@@ -1,3 +1,8 @@
+/**
+ * \file  StTpcHitMaker.h
+ * \brief Declaration of StTpcHitMaker, the maker that converts raw TPC ADC data
+ *        into StTpcHit objects stored in StTpcHitCollection within StEvent.
+ */
 #ifndef StTpcHitMaker_H
 #define StTpcHitMaker_H
 
@@ -99,6 +104,30 @@ class tpc_cl;
 class daq_cld;
 class tpc_t;
 class StTpcHitCollection;
+/**
+ * \class StTpcHitMaker
+ * \brief Maker that produces TPC space-point hits from raw ADC data.
+ *
+ * \details StTpcHitMaker reads raw ADC samples and pre-formed cluster data
+ * from the TPC/TPX DAQ sub-event and converts them into StTpcHit objects
+ * that are collected in StTpcHitCollection and posted to StEvent.
+ *
+ * Supported operation modes (EMode) cover normal TPC/TPX/iTPC readout,
+ * pulser calibration, raw-pixel dumping, and laser-averaging runs.
+ *
+ * \par Inputs
+ * - Raw DAQ data via the RTS (Real-Time System) reader (TPC and TPX sectors).
+ * - Calibration constants from STAR database (gains, T0, wire positions).
+ *
+ * \par Output
+ * - StTpcHitCollection inside StEvent, containing StTpcHit objects with
+ *   position, charge, and hardware-address information.
+ *
+ * \note Call StTpcHitMaker::SetCosmics() before Init() for cosmic-ray runs to
+ *       disable beam-geometry sanity cuts.
+ *
+ * \sa StTpcHit, StTpcHitCollection, StRTSBaseMaker
+ */
 class StTpcHitMaker : public StRTSBaseMaker {
  public:
   enum EReaderType {kUnknown, kLegacyTpc, kLegacyTpx, kStandardTpx, kStandardiTPC};
@@ -109,12 +138,12 @@ class StTpcHitMaker : public StRTSBaseMaker {
 	      kTpcAvLaser, kTpxAvLaser,      // averaging on pixel level
 	      kTpxO,
 	      kAll};
-  StTpcHitMaker(const char *name="tpc_hits");
+  StTpcHitMaker(const char *name="tpc_hits"); ///< Constructor. \param name Maker name passed to StRTSBaseMaker.
   virtual ~StTpcHitMaker() {}
 
-  Int_t   Init();
-  Int_t   InitRun(Int_t runnumber);
-  Int_t   Make();
+  Int_t   Init();       ///< Initialises histograms, sector-range selection, and mode flags. \return kStOK on success.
+  Int_t   InitRun(Int_t runnumber); ///< Loads run-dependent calibration constants. \param runnumber Run number. \return kStOK on success.
+  Int_t   Make();       ///< Reads raw TPC/TPX DAQ data sector-by-sector and fills StTpcHitCollection in StEvent. \return kStOK on success.
   void    DoPulser(Int_t sector);
   void    TpxAvLaser(Int_t sector);
   void    TpcAvLaser(Int_t sector);

@@ -1,0 +1,42 @@
+# St_base — STAR Offline Base Package
+
+## Overview
+
+The `St_base` package provides the fundamental infrastructure that all
+STAR offline software builds upon. It contains:
+
+- **StObject** — ROOT-persistent base class for all StEvent data-model
+  classes. Every track, vertex, hit, and higher-level object in the STAR
+  event model ultimately inherits from `StObject` rather than directly from
+  `TObject`, so that the STAR cross-reference I/O layer can locate and
+  reconnect pointers between independently-written branches.
+
+- **StMessMgr / logging macros** — Abstract messaging interface and the
+  `LOG_INFO`, `LOG_WARN`, `LOG_ERROR`, `LOG_DEBUG`, `LOG_QA`, `LOG_UCM`,
+  and `LOG_FATAL` stream-style macros used throughout the framework. The
+  concrete implementation is provided by `StMessageManager` in the
+  `StUtilities` package.
+
+- **StArray / StObjArray / StStrArray / StRefArray** — Dynamic
+  ROOT-persistent array containers. The `StCollectionDef(T)` macro
+  generates type-safe `StPtrVec<T>` (non-owning) and `StSPtrVec<T>`
+  (owning) specialisations for any `StObject` subclass.
+
+- **StTree / StBranch / StFile / StIO** — Multi-file event tree I/O
+  layer. An `StTree` collects several `StBranch` objects each backed by
+  its own ROOT file; `StFile` iterates over a list of such files.
+
+- **StUUId / StXRef / StXRefMain / StXRefManager** — Cross-reference
+  machinery that restores inter-branch pointers after independent branch
+  I/O using 128-bit universally unique identifiers.
+
+- **Stiostream.h / Stsstream.h** — Platform-portable wrappers for the
+  C++ standard I/O stream headers, smoothing over differences between
+  pre-ANSI and ANSI `iostream` on various STAR build platforms.
+
+## Further Reading
+
+- STAR C++ tutorial (archived):
+  <http://www.star.bnl.gov/STAR/html/comp_l/train/root/Star2C++tut.html>
+- Original design presentation (July 1999):
+  <http://sol.star.bnl.gov/~fine/Publications/STARJuly99Meeting/index.htm>

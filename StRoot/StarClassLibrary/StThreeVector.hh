@@ -90,6 +90,11 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file StThreeVector.hh
+ * \brief Template 3-component Cartesian vector.
+ * \author Brian Lasiuk, Thomas Ullrich, April 1998
+ */
 #ifndef ST_THREE_VECTOR_HH
 #define ST_THREE_VECTOR_HH
 #ifdef __ROOT__
@@ -112,9 +117,23 @@ using std::out_of_range;
 #endif
 #endif // __CINT__
 
+/*!
+ * \class StThreeVector
+ * \brief 3-component Cartesian vector template for use in STAR geometry and physics calculations.
+ *
+ * \tparam T Numeric type (typically \c float or \c double).
+ *
+ * \details Provides a complete set of 3-vector operations including arithmetic,
+ * rotations, dot/cross products, and kinematic quantities such as pseudorapidity
+ * and transverse momentum.  Instantiated in practice as
+ * \c StThreeVectorF (float) and \c StThreeVectorD (double).
+ * Modelled after the CLHEP \c Hep3Vector class.
+ */
 template<class T> class StThreeVector {
-public:    
+public:
+    /// Default constructor; initialises all components to zero.
     StThreeVector();
+    /// Construct from explicit (x, y, z) components.
     StThreeVector(T, T, T);
   //                     ROOT_VERSION(5,03,01)
 #if ROOT_VERSION_CODE >= 328449
@@ -139,55 +158,96 @@ public:
     StThreeVector<T>& operator=(const StThreeVector<double>&);
 #endif
     
+    /// Set the x-component.
     void setX(T);
+    /// Set the y-component.
     void setY(T);
+    /// Set the z-component.
     void setZ(T);
+    /// Set all three components at once.
     void set(T X,T Y, T Z) {mX1=X;mX2=Y;mX3=Z;}
 
+    /// Set the azimuthal angle \f$\phi\f$ (radians), preserving r and \f$\theta\f$.
     void setPhi(T);
+    /// Set the polar angle \f$\theta\f$ (radians), preserving r and \f$\phi\f$.
     void setTheta(T);
+    /// Set the magnitude, preserving direction.
     void setMag(T);
+    /// Set the magnitude (synonym for setMag()), preserving direction.
     void setMagnitude(T);
     
+    /// Return a const reference to the x-component.
     const T& x()                   const;
+    /// Return a const reference to the y-component.
     const T& y()                   const;
+    /// Return a const reference to the z-component.
     const T& z()                   const;
+    /// Return a const pointer to the internal (x,y,z) array.
     const T* xyz()                 const;
+    /// Return a mutable pointer to the internal (x,y,z) array.
           T* xyz();
+    /// Return the polar angle \f$\theta\f$ (radians) with respect to the z-axis.
     T   theta()                    const;
+    /// Return \f$\cos\theta\f$.
     T   cosTheta()                 const;
+    /// Return the azimuthal angle \f$\phi\f$ (radians) in [-π, π].
     T   phi()                      const;
+    /// Return the transverse magnitude \f$\sqrt{x^2+y^2}\f$.
     T   perp()                     const;
+    /// Return the square of the transverse magnitude \f$x^2+y^2\f$.
     T   perp2()                    const;
+    /// Return the 3-vector magnitude (synonym for mag()).
     T   magnitude()                const;
+    /// Return the 3-vector magnitude \f$|\mathbf{v}|\f$.
     T   mag()                      const;
+    /// Return the square of the 3-vector magnitude \f$|\mathbf{v}|^2\f$.
     T   mag2()                     const;
+    /// Return the pseudorapidity \f$\eta = -\ln\tan(\theta/2)\f$.
     T   pseudoRapidity()           const;
+    /// Element access by index (0=x, 1=y, 2=z); throws out_of_range if index > 2.
     T   operator() (size_t)        const;
+    /// Element access by index (0=x, 1=y, 2=z); throws out_of_range if index > 2.
     T   operator[] (size_t)        const;
 
+    /// Mutable element access by index (0=x, 1=y, 2=z).
     T&  operator() (size_t);
+    /// Mutable element access by index (0=x, 1=y, 2=z).
     T&  operator[] (size_t);
     
+    /// Return \f$\sqrt{|\mathbf{v}|^2 + m^2}\f$ — energy under a given mass hypothesis.
     T   massHypothesis(T mass)     const;
     
+    /// Return the unit vector in the same direction.
     StThreeVector<T>  unit()       const;
+    /// Return a vector orthogonal to this one (direction is implementation-defined).
     StThreeVector<T>  orthogonal() const;
 
+    /// Rotate the vector by \a angle (radians) about the x-axis.
     void  rotateX(T);
+    /// Rotate the vector by \a angle (radians) about the y-axis.
     void  rotateY(T);
+    /// Rotate the vector by \a angle (radians) about the z-axis.
     void  rotateZ(T);
     
+    /// Unary negation: return \f$-\mathbf{v}\f$.
     StThreeVector<T>  operator- ();
+    /// Unary plus: return a copy of this vector.
     StThreeVector<T>  operator+ ();
+    /// Multiply all components by scalar \a c in place.
     StThreeVector<T>& operator*= (double);
+    /// Divide all components by scalar \a c in place.
     StThreeVector<T>& operator/= (double);
+    /// Component-wise product with explicit (x,y,z) scale factors.
     StThreeVector<T>  pseudoProduct(double,double,double) const;
  
 #if !defined(ST_NO_MEMBER_TEMPLATES) && !defined(__CINT__)
+    /// Return the angle (radians) between this vector and \a v.
     template<class X> T                angle(const StThreeVector<X>&) const;
+    /// Return the cross product \f$\mathbf{this} \times \mathbf{v}\f$.
     template<class X> StThreeVector<T> cross(const StThreeVector<X>&) const;
+    /// Return the scalar dot product \f$\mathbf{this} \cdot \mathbf{v}\f$.
     template<class X> T                dot  (const StThreeVector<X>&) const;
+    /// Return the component-wise product with \a v.
     template<class X> StThreeVector<T> pseudoProduct(const StThreeVector<X>&) const;
     
     template<class X> bool operator == (const StThreeVector<X>& v) const;
@@ -216,7 +276,9 @@ public:
     StThreeVector<T>& operator+= (const StThreeVector<double>&);
     StThreeVector<T>& operator-= (const StThreeVector<double>&);
 #endif
+  /// Return non-zero if all components are finite and within \a world.
   int             valid(double world = 1.e+5) const;
+  /// Return non-zero error code if any component is non-finite or exceeds \a world.
   int               bad(double world = 1.e+5) const;
 protected:
     T    mX1, mX2, mX3;

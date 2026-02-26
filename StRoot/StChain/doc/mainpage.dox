@@ -1,0 +1,120 @@
+/*!
+ * \mainpage StChain — STAR Reconstruction and Analysis Chain
+ *
+ * \section intro Overview
+ *
+ * StChain is the backbone of the STAR software framework.  Every reconstruction
+ * algorithm and analysis task is implemented as a **maker** — a concrete subclass
+ * of StMaker — and executed by StChain inside a uniform event loop.  The chain
+ * pattern separates the concerns of I/O, reconstruction, calibration, and analysis
+ * into independent, composable units that can be assembled at runtime without
+ * recompilation.
+ *
+ * \section pattern The Maker Pattern
+ *
+ * A maker is a self-contained processing module that:
+ *  - declares its dependencies on other makers' outputs through named TDataSet keys,
+ *  - performs its work inside Make(),
+ *  - posts its results back onto the shared white-board (a TDataSet tree) so
+ *    downstream makers can consume them.
+ *
+ * Makers are arranged in a tree whose root is an StChain instance.  StChain walks
+ * the tree depth-first, calling each maker's lifecycle methods in the correct order.
+ *
+ * \section lifecycle Init / Make / Clear / Finish Lifecycle
+ *
+ * | Method          | When called                          | Typical use                                  |
+ * |-----------------|--------------------------------------|----------------------------------------------|
+ * | Init()          | Once, before the event loop          | Open files, book histograms, allocate objects |
+ * | InitRun(run)    | At the start of each new run         | Re-read calibrations, reset run counters     |
+ * | Make()          | Once per event                       | Reconstruction and analysis                  |
+ * | Clear()         | After each event                     | Reset transient data, free per-event memory  |
+ * | FinishRun(run)  | At the end of each run               | Finalise run-level summary objects           |
+ * | Finish()        | Once, after the event loop           | Write output, close files, print summaries   |
+ *
+ * \section new_maker Writing a New Maker
+ *
+ * Derive from StMaker, override the lifecycle methods you need, and post your
+ * output onto the white-board:
+ *
+ * \code{.cpp}
+ * #include "StMaker.h"
+ *
+ * class MyMaker : public StMaker {
+ * public:
+ *     explicit MyMaker(const char *name = "MyMaker") : StMaker(name) {}
+ *
+ *     Int_t Init() override {
+ *         // Book histograms, open auxiliary files, etc.
+ *         AddHist(new TH1F("hPt", "Track p_{T};p_{T} (GeV/c);counts", 100, 0, 10));
+ *         return kStOK;
+ *     }
+ *
+ *     Int_t Make() override {
+ *         // Retrieve input data posted by an upstream maker.
+ *         TDataSet *evt = GetDataSet("StEvent");
+ *         if (!evt) return kStWarn;   // non-fatal: log and skip
+ *
+ *         // ... process event ...
+ *
+ *         return kStOK;
+ *     }
+ *
+ *     Int_t Finish() override {
+ *         // Histograms are written automatically; add any final printout here.
+ *         return kStOK;
+ *     }
+ *
+ *     ClassDef(MyMaker, 0)
+ * };
+ * \endcode
+ *
+ * Register the maker with the chain before calling Init():
+ *
+ * \code{.cpp}
+ *   StChain *chain = new StChain("myChain");
+ *   new StMuDstMaker(chain, ...);   // upstream I/O maker
+ *   new MyMaker(chain);             // our custom maker
+ *   chain->Init();
+ *   chain->EventLoop(1, 500);
+ *   chain->Finish();
+ * \endcode
+ *
+ * \section event_loop How StChain Orchestrates the Event Loop
+ *
+ * StChain::EventLoop(jBeg, jEnd) drives the following sequence for each event
+ * number \e n in [jBeg, jEnd]:
+ *  -# If the run number changed, call FinishRun(oldRun) then InitRun(newRun) on
+ *     every maker in the tree.
+ *  -# Call StChain::MakeEvent(), which calls Make() on every maker depth-first.
+ *     Processing stops early if any maker returns kStEOF or kStFatal.
+ *  -# Call Clear() on every maker to release transient per-event data.
+ *
+ * \section data_flow Data Flow and StEvent
+ *
+ * Makers communicate through the white-board, a TDataSet tree managed by the
+ * top-level StChain.  The central payload is **StEvent** (package StEvent), a
+ * collection of tracks, vertices, hits, and detector-specific containers.
+ *
+ *  - **Input makers** (StIOInterFace subclasses) read raw or reconstructed data and
+ *    post an StEvent onto the white-board under the key `"StEvent"`.
+ *  - **Reconstruction makers** retrieve `"StEvent"`, add or modify collections
+ *    (e.g. TPC hits, global tracks), and re-post it.
+ *  - **Analysis makers** read `"StEvent"` in read-only fashion and fill histograms
+ *    or ntuples.
+ *
+ * Conditions-database access is provided through StMaker::GetDataBase(), which
+ * queries the STAR calibrations database keyed by logical path and event timestamp.
+ *
+ * \section classes Key Classes
+ *
+ * | Class              | Role                                                        |
+ * |--------------------|-------------------------------------------------------------|
+ * | StMaker            | Abstract base class for all makers                          |
+ * | StChain            | Top-level chain controller; drives the event loop           |
+ * | StIOInterFace      | Abstract base for I/O makers (MuDST, XDF, ROOT trees, …)   |
+ * | StRTSBaseMaker     | Abstract base for makers that read raw DAQ data             |
+ * | StEvtHddr          | Per-event header (run/event numbers, trigger masks, timing) |
+ *
+ * \sa StMaker, StChain, StIOInterFace, StRTSBaseMaker, StEvtHddr
+ */

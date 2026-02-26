@@ -31,6 +31,11 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file StParticleTable.hh
+ * \brief Singleton registry mapping names and PDG codes to particle definitions.
+ * \author Thomas Ullrich, May 1999 (based on Geant4 G4ParticleTable)
+ */
 #ifndef StParticleTable_hh
 #define StParticleTable_hh
 #ifdef __ROOT__
@@ -54,29 +59,54 @@ typedef vector<StParticleDefinition*, allocator<StParticleDefinition*> > StVecPt
 typedef vector<StParticleDefinition*> StVecPtrParticleDefinition;
 #endif
 
+/*!
+ * \class StParticleTable
+ * \brief Singleton registry of all known particle species.
+ *
+ * \details Maintains three parallel lookup structures keyed by particle name,
+ * PDG encoding, and Geant3 ID respectively.  All concrete particle singletons
+ * register themselves here at program start.  The single instance is obtained
+ * via instance() or particleTable().
+ *
+ * \sa StParticleDefinition
+ */
 class StParticleTable {
 public:
     virtual ~StParticleTable();
     
+    /// Return the singleton StParticleTable instance (synonym for instance()).
     static StParticleTable* particleTable();
+    /// Return the singleton StParticleTable instance.
     static StParticleTable* instance();
     
+    /// Return the number of registered particles (synonym for size()).
     unsigned int entries() const;
+    /// Return the number of registered particles.
     unsigned int size() const;
     
-    bool contains(const string &) const;              // by name
-    bool contains(int) const;                         // by PDG encoding
-    bool containsGeantId(int) const;                  // by Geant3 id
+    /// Return \c true if a particle with the given \a name is registered.
+    bool contains(const string &) const;
+    /// Return \c true if a particle with the given PDG \a encoding is registered.
+    bool contains(int) const;
+    /// Return \c true if a particle with the given Geant3 \a id is registered.
+    bool containsGeantId(int) const;
     
-    StParticleDefinition* findParticle(const string&)  const; // by name    
-    StParticleDefinition* findParticle(int)  const;           // by PDG encoding   
-    StParticleDefinition* findParticleByGeantId(int) const;   // by Geant3 id
+    /// Find a particle by name; returns \c nullptr if not found.
+    StParticleDefinition* findParticle(const string&)  const;
+    /// Find a particle by PDG encoding; returns \c nullptr if not found.
+    StParticleDefinition* findParticle(int)  const;
+    /// Find a particle by Geant3 ID; returns \c nullptr if not found.
+    StParticleDefinition* findParticleByGeantId(int) const;
     
+    /// Register a new particle definition.
     void insert(StParticleDefinition*);
+    /// Remove a particle definition from the table.
     void erase(StParticleDefinition*);
     
+    /// Dump a human-readable summary of all registered particles to \a os.
     void dump(ostream& = cout);
 
+    /// Return a vector of pointers to all registered particle definitions.
     StVecPtrParticleDefinition allParticles() const;
     
     friend class nobody;

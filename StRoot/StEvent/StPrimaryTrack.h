@@ -1,6 +1,19 @@
-/*!
- * \class StPrimaryTrack 
+/**
+ * \class StPrimaryTrack
+ * \brief Reconstructed primary track (refitted through the primary vertex).
  * \author Thomas Ullrich, Sep 1999
+ *
+ * \details StPrimaryTrack is the concrete StTrack sub-class for tracks
+ * that have been refitted with a constraint to pass through the primary
+ * vertex, giving improved momentum resolution for prompt particles.
+ * Each StPrimaryTrack is linked to its parent StPrimaryVertex and shares
+ * hit-detector info with the corresponding StGlobalTrack sibling via the
+ * common StTrackNode.
+ *
+ * Primary tracks are accessed through StPrimaryVertex::daughters() or
+ * through the track node's track list.
+ *
+ * \sa StTrack, StGlobalTrack, StPrimaryVertex, StTrackNode
  */
 /***************************************************************************
  *

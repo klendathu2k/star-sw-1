@@ -3,13 +3,52 @@
  * $Id: StMuArrays.h,v 1.35 2019/02/21 13:32:54 jdb Exp $
  * Author: Frank Laue, BNL, laue@bnl.gov
  ***************************************************************************/
+/*!
+ * \file StMuArrays.h
+ * \brief Defines the enumeration indices and size constants for all MuDST TClonesArrays.
+ *
+ * \details
+ * The MuDST TTree stores physics objects (tracks, vertices, hits, etc.) as
+ * named branches, each backed by a TClonesArray.  This file centralises the
+ * bookkeeping for those arrays through two mechanisms:
+ *
+ *  - \b Enumerations — one enum per detector subsystem whose enumerators serve
+ *    as indices into the corresponding TClonesArray pointer arrays held by
+ *    StMuDst and StMuDstMaker.  For example, \c muDstTypes::muEvent selects the
+ *    event branch, \c btofTypes::muBTofHit selects the barrel TOF hit branch, etc.
+ *
+ *  - \b NARRAYS constants — the \c __N*ARRAYS__ enumerators in the \c NARRAYS enum
+ *    record how many TClonesArrays exist for each subsystem and the total
+ *    \c __NALLARRAYS__ count used to size the flat array in StMuDstMaker.
+ *
+ * The StMuArrays class holds the corresponding static metadata arrays:
+ *  - \c arrayNames[] — TBranch names as stored in the ROOT file.
+ *  - \c arrayTypes[] — Class names of the objects stored in each TClonesArray.
+ *  - \c arraySizes[] — Default maximum size (capacity) of each TClonesArray.
+ *  - \c arrayCounters[] — Per-event entry counts (currently unused).
+ *
+ * When adding a new detector subsystem, add a new enum here, increment the
+ * matching \c __N*ARRAYS__ constant, and extend the metadata arrays in
+ * StMuArrays.cxx accordingly.
+ *
+ * \sa StMuDst, StMuDstMaker
+ */
 /** 
-    @class StMuArrays 
-    Class holding the definitions of the TClonesArrays as static data members.
-    There are two sets of TClonesArrays. The 'arrays' for tracks and event information,
-    as well as the 'strangeArrays' holding the information that has been copied from the 
-    StStrangeMuDst (i.e. V0s, Kinks, etc.)
-*/
+ * \class StMuArrays
+ * \brief Holds static metadata (names, types, sizes) for all MuDST TClonesArrays.
+ *
+ * \details
+ * StMuArrays provides three parallel static arrays indexed by the enumeration
+ * values defined in this file:
+ *  - \c arrayNames[]   — TBranch names as they appear in the .MuDst.root file.
+ *  - \c arrayTypes[]   — ROOT class names of the objects stored in each array.
+ *  - \c arraySizes[]   — Default maximum capacity of each TClonesArray.
+ *
+ * These arrays are used internally by StMuDstMaker to create, clear, and connect
+ * TTree branches.  Analysis code should not need to access them directly.
+ *
+ * \sa StMuDstMaker, StMuDst
+ */
 #ifndef StMuArrays_hh
 #define StMuArrays_hh
 #include "Rtypes.h"

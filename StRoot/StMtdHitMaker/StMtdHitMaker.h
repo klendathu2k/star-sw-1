@@ -1,6 +1,12 @@
 #ifndef STAR_StMtdHitMaker_H
 #define STAR_StMtdHitMaker_H
 
+/**
+ * \file  StMtdHitMaker.h
+ * \brief Declaration of StMtdHitMaker, the maker that converts raw MTD DAQ
+ *        data into StMtdCollection in StEvent.
+ */
+
 /***************************************************************************
  *
  * $Id: StMtdHitMaker.h,v 1.13 2015/01/22 22:10:58 marr Exp $ 
@@ -67,10 +73,31 @@ struct MTDOneSideHit{
                               // 97.65625= 1000*100/1024  (ps/chn)
 
 /**
-   \class StMtdHitMaker
-   
-   Class to read in MTD data from DAQ and store into StMtdCollection   
-*/
+ * \class StMtdHitMaker
+ * \brief Maker that converts raw MTD DAQ data into StMtdCollection in StEvent.
+ *
+ * \details StMtdHitMaker reads raw Muon Telescope Detector (MTD) data from
+ * the DAQ stream via the RTS reader.  It unpacks TDC leading- and
+ * trailing-edge words per THUB fiber, applies INL corrections, matches
+ * single-sided hits into double-sided StMtdHit objects using time-of-flight
+ * trigger-window cuts, and stores the results in StMtdCollection in StEvent.
+ *
+ * \par Inputs
+ * - Raw MTD DAQ sub-event from the RTS reader.
+ * - INL correction tables (StBTofINLCorr) and tray/TDIG geometry maps from
+ *   the STAR database.
+ *
+ * \par Output
+ * - StMtdCollection in StEvent containing StMtdRawHit and StMtdHit objects.
+ *
+ * \note TDC time-bin-to-picosecond conversion constants: \n
+ *   VHRBIN2PS = 24.4140625 ps/bin (very-high-resolution mode) \n
+ *   HRBIN2PS  = 97.65625   ps/bin (high-resolution mode) \n
+ *   Run-specific corrections (backleg swap in Run 13, strip reversal in
+ *   Run 14) are applied when the corresponding setters are called.
+ *
+ * \sa StMtdHit, StMtdCollection, StBTofINLCorr
+ */
 class StMtdHitMaker:public StRTSBaseMaker {
  private:
   StEvent                 *mStEvent;
@@ -126,26 +153,26 @@ class StMtdHitMaker:public StRTSBaseMaker {
 
  public:
 
-  /// Default constructor
+  /// Default constructor. \param name Maker name passed to StRTSBaseMaker.
   StMtdHitMaker(const char *name="mtd_raw");     
   ~StMtdHitMaker() ;
-  void setUseMuDst(Int_t val);
-  void setTriggerWndSelection(Bool_t val);
-  void setSwapBacklegInRun13(Int_t swap);
-  void setReverseStripInRun14(Bool_t re);
-  void setCosmicEvent(Bool_t val);
-  void setCosmicTrigTimeWinFile(const char *file);
+  void setUseMuDst(Int_t val);                   ///< Enable reading from MuDst instead of StEvent. \param val 1 = use MuDst.
+  void setTriggerWndSelection(Bool_t val);        ///< Enable/disable trigger time-window selection. \param val kTRUE to enable.
+  void setSwapBacklegInRun13(Int_t swap);         ///< Apply backleg swap correction for Run 13. \param swap 0 = none, 1 = first half, 2 = second half.
+  void setReverseStripInRun14(Bool_t re);         ///< Reverse strips in backleg 7 module 5 for Run 14. \param re kTRUE to apply.
+  void setCosmicEvent(Bool_t val);                ///< Flag run as a cosmic-ray event (relaxes hit-matching). \param val kTRUE for cosmics.
+  void setCosmicTrigTimeWinFile(const char *file);///< Set path to cosmic trigger time-window file. \param file File path.
 
-  void   Clear(Option_t* option="");
-  Int_t  Init();
-  Int_t  InitRun(Int_t);
-  Int_t  FinishRun(Int_t);
-  Int_t  Finish();
-  Int_t  Make();
+  void   Clear(Option_t* option=""); ///< Clears per-event transient data. \param option Passed to StMaker::Clear().
+  Int_t  Init();                     ///< Initialises channel maps and INL corrections. \return kStOK on success.
+  Int_t  InitRun(Int_t);             ///< Loads run-dependent calibration tables and geometry. \param runnumber Run number. \return kStOK on success.
+  Int_t  FinishRun(Int_t);           ///< Run-end clean-up. \return kStOK.
+  Int_t  Finish();                   ///< Job-end finalisation. \return kStOK.
+  Int_t  Make();                     ///< Unpacks raw MTD DAQ data and fills StMtdCollection in StEvent. \return kStOK on success.
 
   /// obtain the whole list of leading edge hits
   vector<MtdRawHit> getLeadingHits();
-  /// obtain the whole list of trainling edge hits
+  /// obtain the whole list of trailing edge hits
   vector<MtdRawHit> getTrailingHits();
   
   /// cvs

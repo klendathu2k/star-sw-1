@@ -1,0 +1,47 @@
+/**
+ * \mainpage StEventMaker — Maker that creates and registers the StEvent object
+ *
+ * \section evtmkr_purpose Purpose
+ * StEventMaker is the gateway maker that creates a fresh \c StEvent instance
+ * at the start of every event and posts it to the StChain whiteboard under
+ * the key \c "StEvent".  All downstream makers retrieve the event object via
+ * \c GetStEvent() or \c GetInputDS("StEvent").  Without StEventMaker running
+ * first, no other maker can store or retrieve event data.
+ *
+ * In legacy production mode, StEventMaker can also load pre-formed hit
+ * collections from a DST dataset and attach them to StEvent.  Boolean flags
+ * on the maker instance control which collections are loaded
+ * (\c doLoadTpcHits, \c doLoadFtpcHits, \c doLoadSvtHits, \c doLoadSsdHits,
+ * \c doLoadTptTracks, \c doLoadEstTracks).
+ *
+ * \section evtmkr_input Input
+ * - Optional DST dataset (\c GetDataSet("dst")) for legacy hit loading.
+ * - \c StDetectorDbBeamInfo database table for StRunInfo population.
+ *
+ * \section evtmkr_output Output
+ * - A new \b StEvent instance registered on the StChain whiteboard under
+ *   the key \c "StEvent", with \c StRunInfo populated.
+ *
+ * \section evtmkr_classes Key Classes
+ * | Class | Role |
+ * |-------|------|
+ * | StEventMaker | Creates and registers StEvent each event |
+ * | StEvent | Central event data store for the STAR framework |
+ * | StRunInfo | Run-level metadata (beam energy, species, etc.) |
+ * | StEventManager | Abstract interface for event management |
+ * | StRootEventManager | ROOT-based implementation of StEventManager |
+ *
+ * \section evtmkr_usage Usage Example
+ * \code{.cpp}
+ * // StEventMaker should be the first maker in the chain:
+ * StEventMaker* evtMaker = new StEventMaker("StEventMaker", "StEventMaker");
+ * chain->AddMaker(evtMaker);
+ *
+ * // Downstream maker retrieves StEvent:
+ * StEvent* event = (StEvent*) GetInputDS("StEvent");
+ * \endcode
+ *
+ * \note StEventMaker must be the first (or one of the first) makers in any
+ *       reconstruction or analysis chain so that StEvent exists before any
+ *       maker tries to fill or read it.
+ */

@@ -1,0 +1,68 @@
+# StarClassLibrary — STAR Mathematics, Geometry, and Particle-Physics Utilities
+
+## Purpose
+
+The StarClassLibrary (SCL) provides the core mathematical and physics utility
+classes used throughout the STAR experiment software framework. It supplies:
+
+- **Template geometric vectors** for 3-D and 4-D kinematics.
+- **Helix parametrisation** for tracking and DCA calculations.
+- **A particle database** mapping PDG/Geant3 codes to particle properties.
+- **Physical constants** and a coherent **system of units** consistent with CLHEP.
+- **dE/dx parametrisation** (Bethe-Bloch) for the STAR TPC.
+- Supplementary random-number generators and small matrix classes.
+
+## Key Classes
+
+| Class | Description |
+|---|---|
+| `StThreeVector<T>` | 3-component Cartesian vector (dot, cross, rotations, η, …) |
+| `StLorentzVector<T>` | Lorentz 4-vector (px, py, pz, E); mass, rapidity, boost |
+| `StHelix` | Mathematical helix parametrisation (arc-length, DCA, path-length) |
+| `StPhysicalHelix` | Physical helix: adds magnetic field, momentum, signed DCA |
+| `StParticleDefinition` | Immutable record of a particle's quantum numbers and PDG data |
+| `StParticleTable` | Singleton registry: look up particles by name or PDG/Geant3 ID |
+| `BetheBloch` | Functor for expected TPC dE/dx as a function of βγ |
+
+Concrete instantiations `StThreeVectorF` / `StThreeVectorD` and
+`StLorentzVectorF` / `StLorentzVectorD` are provided via typedef headers
+`StThreeVectorF.hh`, `StThreeVectorD.hh`, `StLorentzVectorF.hh`, and
+`StLorentzVectorD.hh`.
+
+## Relationship to CLHEP
+
+The vector and unit/constant headers are directly inspired by (and in the
+case of `PhysicalConstants.h`, taken almost verbatim from) the
+[CLHEP](https://proj-clhep.web.cern.ch/proj-clhep/) library, version 1.2.
+The naming conventions differ slightly to suit the STAR coding style:
+
+- Full-word unit names instead of single letters (`meter` not `m`).
+- All prefixes spelled out explicitly (`nanosecond` not `ns`).
+- Constants grouped inside the `units` namespace (`SystemOfUnits.h`).
+
+## Usage Notes
+
+Include the relevant header and use the double-precision typedefs for most
+physics work:
+
+```cpp
+#include "StThreeVectorD.hh"
+#include "StLorentzVectorD.hh"
+#include "PhysicalConstants.h"
+
+StThreeVectorD mom(px, py, pz);
+StLorentzVectorD p4(mom, energy);
+double mass = p4.m();
+double eta  = mom.pseudoRapidity();
+```
+
+To look up a particle by name:
+
+```cpp
+#include "StParticleTable.hh"
+StParticleDefinition* pion = StParticleTable::instance()->findParticle("pi+");
+double m = pion->mass();
+```
+
+> **Note:** The SCL does **not** depend on Geant4 or CLHEP at link time; the
+> relevant constants and unit definitions are reproduced locally.

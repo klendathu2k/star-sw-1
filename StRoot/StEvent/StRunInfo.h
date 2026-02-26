@@ -1,6 +1,15 @@
-/*!
- * \class StRunInfo 
+/**
+ * \class StRunInfo
+ * \brief Run-level metadata stored inside StEvent.
  * \author Thomas Ullrich, Sep 2001
+ *
+ * \details StRunInfo holds configuration and environmental quantities that
+ * are constant across all events in a single run: beam species and energy,
+ * magnetic field, TPC and SVT drift velocities, RHIC luminosity monitor
+ * rates (ZDC, BBC), and reconstruction software version.  One instance is
+ * attached to each StEvent and accessed via StEvent::runInfo().
+ *
+ * \sa StEvent, StEventInfo
  */
 /***************************************************************************
  *
@@ -55,33 +64,50 @@ public:
     // StRunInfo& operator=(const StRunInfo&); use default
     virtual ~StRunInfo();
 
-    int      runId() const;
-    time_t   productionTime() const;
-    TString  productionVersion() const;
-    double   centerOfMassEnergy() const;
-    int      beamMassNumber(StBeamDirection) const;
-    float    beamEnergy(StBeamDirection) const;
-    float    initialBeamIntensity(StBeamDirection) const;
-    float    beamLifeTime(StBeamDirection) const;
-    float    beamFillNumber(StBeamDirection) const;
-    double   magneticField() const;
-    double   tpcDriftVelocity(StBeamDirection) const;
-    double   svtDriftVelocityScaler() const;
-    
-    double   zdcWestRate() const;
-    double   zdcEastRate() const;
-    double   zdcCoincidenceRate() const;
-    double   bbcCoincidenceRate() const;
-    double   backgroundRate() const;
-    double   l0RateToRich() const;
+    /// \name Run identification
+    /// @{
+    int      runId() const;                              ///< Run number.
+    time_t   productionTime() const;                     ///< Unix timestamp when this run was reconstructed.
+    TString  productionVersion() const;                  ///< Reconstruction software version string.
+    /// @}
 
-    double   bbcEastRate() const;
-    double   bbcWestRate() const;
-    double   bbcBlueBackgroundRate() const;
-    double   bbcYellowBackgroundRate() const;
+    /// \name Beam and collision parameters
+    /// @{
+    double   centerOfMassEnergy() const;                 ///< \f$\sqrt{s_{NN}}\f$ in GeV.
+    int      beamMassNumber(StBeamDirection) const;      ///< Mass number A of the beam species (east or west).
+    float    beamEnergy(StBeamDirection) const;          ///< Beam energy per nucleon (GeV) for the given direction.
+    float    initialBeamIntensity(StBeamDirection) const; ///< Initial beam intensity at fill start.
+    float    beamLifeTime(StBeamDirection) const;        ///< Beam lifetime (hours).
+    float    beamFillNumber(StBeamDirection) const;      ///< RHIC fill number for the given beam direction.
+    /// @}
 
-    int      spaceChargeCorrectionMode() const;
-    float    spaceCharge() const;
+    /// \name Detector parameters
+    /// @{
+    double   magneticField() const;                      ///< Solenoidal magnetic field (kG, positive = along +z).
+    double   tpcDriftVelocity(StBeamDirection) const;    ///< TPC drift velocity for east/west half (cm/µs).
+    double   svtDriftVelocityScaler() const;             ///< SVT drift-velocity scale factor.
+    /// @}
+
+    /// \name Luminosity monitor rates
+    /// @{
+    double   zdcWestRate() const;                        ///< ZDC west single-arm rate (Hz).
+    double   zdcEastRate() const;                        ///< ZDC east single-arm rate (Hz).
+    double   zdcCoincidenceRate() const;                 ///< ZDC east–west coincidence rate (Hz).
+    double   bbcCoincidenceRate() const;                 ///< BBC east–west coincidence rate (Hz).
+    double   backgroundRate() const;                     ///< Estimated beam-background rate (Hz).
+    double   l0RateToRich() const;                       ///< L0 trigger rate delivered to the RICH (Hz).
+
+    double   bbcEastRate() const;                        ///< BBC east single-arm rate (Hz).
+    double   bbcWestRate() const;                        ///< BBC west single-arm rate (Hz).
+    double   bbcBlueBackgroundRate() const;              ///< BBC blue-beam background rate (Hz).
+    double   bbcYellowBackgroundRate() const;            ///< BBC yellow-beam background rate (Hz).
+    /// @}
+
+    /// \name Space charge correction
+    /// @{
+    int      spaceChargeCorrectionMode() const;          ///< TPC space-charge correction mode flag.
+    float    spaceCharge() const;                        ///< TPC space-charge correction value.
+    /// @}
 
     void     setRunId(int);
     void     setProductionTime(time_t);                 
