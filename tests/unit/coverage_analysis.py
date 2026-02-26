@@ -412,6 +412,11 @@ def analyse(ts: TestSet) -> CoverageResult:
         declared = _extract_public_methods_multi(ts.header_files, ts.class_names)
         # Remove bare 'operator' keyword (parsing artefact)
         declared.discard('operator')
+        # Exclude destructors: they are called implicitly at the end of every
+        # test that constructs the class on the stack, and typically perform no
+        # domain logic (only lifecycle cleanup), so they are not meaningful
+        # coverage targets.
+        declared = {m for m in declared if not m.startswith('~')}
         called   = _extract_called_methods(ts.test_files, ts.class_names)
         # Normalise typedef constructor names: StThreeVectorD → StThreeVector etc.
         # Any called name that is a class_name alias but not in declared → try stripping
@@ -438,7 +443,9 @@ def _render_report(results: List[CoverageResult]) -> str:
         "in the corresponding test files.",
         "",
         "> **Scope note.** Only methods declared in the listed headers are",
-        "> counted; inherited ROOT/STL methods are excluded.  Operator",
+        "> counted; inherited ROOT/STL methods are excluded.  Destructors are",
+        "> excluded — they perform only lifecycle cleanup and are invoked",
+        "> implicitly by every stack-allocated object in the tests.  Operator",
         "> overloads are identified by token (`operator()`, `operator[]`,",
         "> `operator*=`, …).  Coverage is a lower-bound estimate — C++",
         "> operators used implicitly (e.g. copy-construction in return",

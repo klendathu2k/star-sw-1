@@ -5,7 +5,9 @@ each tested class and the subset of those names that appear as calls
 in the corresponding test files.
 
 > **Scope note.** Only methods declared in the listed headers are
-> counted; inherited ROOT/STL methods are excluded.  Operator
+> counted; inherited ROOT/STL methods are excluded.  Destructors are
+> excluded — they perform only lifecycle cleanup and are invoked
+> implicitly by every stack-allocated object in the tests.  Operator
 > overloads are identified by token (`operator()`, `operator[]`,
 > `operator*=`, …).  Coverage is a lower-bound estimate — C++
 > operators used implicitly (e.g. copy-construction in return
@@ -16,12 +18,12 @@ in the corresponding test files.
 | Test set | Declared | Called | Coverage |
 |----------|----------|--------|----------|
 | StBFChain (Python) | 6 | 1 | 17% |
-| StThreeVector<T> | 46 | 14 | 30% |
-| StLorentzVector<T> | 45 | 10 | 22% |
-| TRMatrix group | 47 | 13 | 28% |
-| TPolinom | 41 | 5 | 12% |
-| TAttr | 10 | 9 | 90% |
-| TUnixTime | 14 | 8 | 57% |
+| StThreeVector<T> | 45 | 14 | 31% |
+| StLorentzVector<T> | 44 | 10 | 23% |
+| TRMatrix group | 42 | 13 | 31% |
+| TPolinom | 39 | 5 | 13% |
+| TAttr | 9 | 9 | 100% |
+| TUnixTime | 13 | 8 | 62% |
 
 ---
 
@@ -55,7 +57,7 @@ Tests: `tests/unit/StBFChain/test_bigfullchain.py`, `tests/unit/StBFChain/confte
 Headers: `StRoot/StarClassLibrary/StThreeVector.hh`  
 Tests: `tests/unit/StarClassLibrary/test_StThreeVector.cxx`  
 
-**14 / 46 methods covered (30%)**
+**14 / 45 methods covered (31%)**
 
 ### Covered ✓
 
@@ -107,7 +109,6 @@ Tests: `tests/unit/StarClassLibrary/test_StThreeVector.cxx`
 - `setZ`
 - `valid`
 - `xyz`
-- `~StThreeVector`
 
 ---
 
@@ -118,7 +119,7 @@ Tests: `tests/unit/StarClassLibrary/test_StThreeVector.cxx`
 Headers: `StRoot/StarClassLibrary/StLorentzVector.hh`  
 Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`  
 
-**10 / 45 methods covered (22%)**
+**10 / 44 methods covered (23%)**
 
 ### Covered ✓
 
@@ -169,7 +170,6 @@ Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`
 - `x`
 - `y`
 - `z`
-- `~StLorentzVector`
 
 ---
 
@@ -180,7 +180,7 @@ Tests: `tests/unit/StarClassLibrary/test_StLorentzVector.cxx`
 Headers: `StRoot/StarRoot/TRArray.h`, `StRoot/StarRoot/TRMatrix.h`, `StRoot/StarRoot/TRVector.h`, `StRoot/StarRoot/TRSymMatrix.h`, `StRoot/StarRoot/TRDiagMatrix.h`  
 Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`  
 
-**13 / 47 methods covered (28%)**
+**13 / 42 methods covered (31%)**
 
 ### Covered ✓
 
@@ -229,11 +229,6 @@ Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`
 - `reset`
 - `spminv`
 - `vlinco`
-- `~TRArray`
-- `~TRDiagMatrix`
-- `~TRMatrix`
-- `~TRSymMatrix`
-- `~TRVector`
 
 ---
 
@@ -244,7 +239,7 @@ Tests: `tests/unit/StarRoot/test_TRMatrix.cxx`
 Headers: `StRoot/StarRoot/TPolinom.h`  
 Tests: `tests/unit/StarRoot/test_TPolinom.cxx`  
 
-**5 / 41 methods covered (12%)**
+**5 / 39 methods covered (13%)**
 
 ### Covered ✓
 
@@ -290,8 +285,6 @@ Tests: `tests/unit/StarRoot/test_TPolinom.cxx`
 - `TestCorr`
 - `Wtot`
 - `operator=`
-- `~TPoliFitter`
-- `~TPolinom`
 
 ---
 
@@ -302,7 +295,7 @@ Tests: `tests/unit/StarRoot/test_TPolinom.cxx`
 Headers: `StRoot/StarRoot/TAttr.h`  
 Tests: `tests/unit/StarRoot/test_TAttr.cxx`  
 
-**9 / 10 methods covered (90%)**
+**9 / 9 methods covered (100%)**
 
 ### Covered ✓
 
@@ -316,10 +309,6 @@ Tests: `tests/unit/StarRoot/test_TAttr.cxx`
 - `TAttr`
 - `UAttr`
 
-### Not covered ✗
-
-- `~TAttr`
-
 ---
 
 ## TUnixTime
@@ -329,7 +318,7 @@ Tests: `tests/unit/StarRoot/test_TAttr.cxx`
 Headers: `StRoot/StarRoot/TUnixTime.h`  
 Tests: `tests/unit/StarRoot/test_TUnixTime.cxx`  
 
-**8 / 14 methods covered (57%)**
+**8 / 13 methods covered (62%)**
 
 ### Covered ✓
 
@@ -349,7 +338,6 @@ Tests: `tests/unit/StarRoot/test_TUnixTime.cxx`
 - `GetLTime`
 - `SetLTime`
 - `operator=`
-- `~TUnixTime`
 
 ---
 
