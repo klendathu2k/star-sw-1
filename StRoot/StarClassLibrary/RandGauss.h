@@ -33,11 +33,20 @@
  *
  **************************************************************************/
 
+/*!
+ * \file RandGauss.h
+ * \brief RandGauss: Gaussian distribution, adapted from CLHEP for STAR.
+ */
 #ifndef RandGauss_h
 #define RandGauss_h 1
 
 #include "Random.h"
 
+/*!
+ * \class RandGauss
+ * \brief Samples from a Gaussian (normal) distribution with specified mean and
+ *        standard deviation; uses the Box-Muller method.
+ */
 class RandGauss : public HepRandom {
 
 public:

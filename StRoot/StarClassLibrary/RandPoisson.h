@@ -29,11 +29,20 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file RandPoisson.h
+ * \brief RandPoisson: Poisson distribution, adapted from CLHEP for STAR.
+ */
 #ifndef RandPoisson_h
 #define RandPoisson_h 1
 
 #include "Random.h"
 
+/*!
+ * \class RandPoisson
+ * \brief Samples integers from a Poisson distribution with specified mean;
+ *        both static and instance interfaces provided.
+ */
 class RandPoisson : public HepRandom {
 
 public:

@@ -38,6 +38,10 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file Random.h
+ * \brief HepRandom: CLHEP-derived random-number generator facade, adapted for STAR.
+ */
 #ifndef HepRandom_h
 #define HepRandom_h 1
 
@@ -45,6 +49,11 @@
 
 #include "RandomEngine.h"
 
+/*!
+ * \class HepRandom
+ * \brief Facade for the HEP random-number module; provides static interface
+ *        and per-instance methods for flat and distribution sampling.
+ */
 class HepRandom {
 
 public:

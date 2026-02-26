@@ -30,11 +30,21 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file RandBreitWigner.h
+ * \brief RandBreitWigner: Breit-Wigner (Cauchy/Lorentzian) distribution,
+ *        adapted from CLHEP for STAR.
+ */
 #ifndef RandBreitWigner_h
 #define RandBreitWigner_h 1
 
 #include "RandFlat.h"
 
+/*!
+ * \class RandBreitWigner
+ * \brief Samples from a relativistic Breit-Wigner distribution with specified
+ *        mean and half-width; also provides a non-relativistic flat variant.
+ */
 class RandBreitWigner : public HepRandom {
 
 public:

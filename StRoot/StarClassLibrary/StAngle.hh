@@ -17,34 +17,80 @@
  * Initial Revision.
  *
  **************************************************************************/
+/*!
+ * \file StAngle.hh
+ * \brief Angle value confined to [-π, π] with correct circular arithmetic.
+ */
 #ifndef StAngle_hh
 #define StAngle_hh
 
 #include <cmath>
 #include <float.h>
 
+/*!
+ * \class StAngle
+ * \brief Angle value confined to [-π, π] with correct circular arithmetic.
+ * \details Keeps an angle within the range [-π, π] in radians and performs
+ *          all arithmetic (addition, subtraction, scaling) with proper
+ *          wrap-around so that differences between angles are always
+ *          meaningful.  The class can be used transparently as a \c double
+ *          through the implicit conversion operator.
+ */
 class StAngle {
 public:
     StAngle();
-    StAngle(const StAngle& val);   
+    StAngle(const StAngle& val);
     StAngle(double);
-    
+
+    /// \brief Return the angle in degrees in the range [0, 360).
+    /// \return Angle converted to degrees, mapped to [0, 360).
     double degree();  // range [0-360]
 
+    /// \brief Implicit conversion to \c double (radians in [-π, π]).
+    /// \return Angle value in radians.
     operator double() const { return phi; }
-    
-    StAngle operator= (double);
-    StAngle operator+= (StAngle);
-    StAngle operator-= (StAngle);
-    StAngle operator*= (double);
-    StAngle operator/= (double);
-    int     operator== (const StAngle&) const;
-    
+
+    /// \brief Assign a raw radian value, wrapping to [-π, π].
+    /// \param val Radian value to assign.
+    /// \return Reference to this angle after assignment.
+    StAngle operator= (double val);
+
+    /// \brief Add another angle in-place, keeping result in [-π, π].
+    /// \param val Angle to add.
+    /// \return This angle after addition.
+    StAngle operator+= (StAngle val);
+
+    /// \brief Subtract another angle in-place, keeping result in [-π, π].
+    /// \param val Angle to subtract.
+    /// \return This angle after subtraction.
+    StAngle operator-= (StAngle val);
+
+    /// \brief Scale angle by a scalar in-place, keeping result in [-π, π].
+    /// \param val Scalar multiplier.
+    /// \return This angle after scaling.
+    StAngle operator*= (double val);
+
+    /// \brief Divide angle by a scalar in-place, keeping result in [-π, π].
+    /// \param val Scalar divisor.
+    /// \return This angle after division.
+    StAngle operator/= (double val);
+
+    /// \brief Test equality within floating-point epsilon.
+    /// \param a Angle to compare with.
+    /// \return Non-zero if the angles are equal within FLT_EPSILON.
+    int     operator== (const StAngle& a) const;
+
+    /// \brief Add two angles, returning result wrapped to [-π, π].
     friend StAngle operator+ (StAngle, StAngle);
+    /// \brief Subtract two angles, returning result wrapped to [-π, π].
     friend StAngle operator- (StAngle, StAngle);
+    /// \brief Multiply an angle by a scalar, result wrapped to [-π, π].
     friend StAngle operator* (StAngle, double);
+    /// \brief Divide an angle by a scalar, result wrapped to [-π, π].
     friend StAngle operator/ (StAngle, double);
-    
+
+    /// \brief Compute the circular average of two angles.
+    /// \return The angle halfway between \p a and \p b along the shorter arc.
     friend StAngle average(StAngle, StAngle);
     
 private: 

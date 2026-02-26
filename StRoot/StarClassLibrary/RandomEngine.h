@@ -48,6 +48,11 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file RandomEngine.h
+ * \brief HepRandomEngine: abstract base class for random-number engines,
+ *        adapted from CLHEP for STAR.
+ */
 #ifndef HepRandomEngine_h
 #define HepRandomEngine_h 1
 
@@ -61,6 +66,11 @@ using std::vector;
 
 #include "StGlobals.hh"
 
+/*!
+ * \class HepRandomEngine
+ * \brief Abstract interface for a pseudo-random number engine; concrete engines
+ *        inherit from this class and implement the seven pure-virtual methods.
+ */
 class HepRandomEngine {
 
 public:

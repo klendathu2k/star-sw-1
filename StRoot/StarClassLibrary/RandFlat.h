@@ -34,11 +34,20 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file RandFlat.h
+ * \brief RandFlat: flat (uniform) distribution, adapted from CLHEP for STAR.
+ */
 #ifndef RandFlat_h
 #define RandFlat_h 1
 
 #include "Random.h"
 
+/*!
+ * \class RandFlat
+ * \brief Samples from a uniform distribution on [a, b]; provides both static
+ *        shoot() and instance-based fire() interfaces.
+ */
 class RandFlat : public HepRandom {
 
 public:

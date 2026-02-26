@@ -33,11 +33,20 @@
  * Initial Revision
  *
  **************************************************************************/
+/*!
+ * \file RandExponential.h
+ * \brief RandExponential: exponential distribution, adapted from CLHEP for STAR.
+ */
 #ifndef RandExponential_h
 #define RandExponential_h 1
 
 #include "Random.h"
 
+/*!
+ * \class RandExponential
+ * \brief Samples from an exponential distribution with specified mean;
+ *        both static shoot() and instance fire() interfaces provided.
+ */
 class RandExponential : public HepRandom {
 
 public:
