@@ -1,0 +1,80 @@
+/*!
+\mainpage StBFChain — STAR Big Full Chain Controller
+
+\section overview Overview
+
+\c StBFChain is the central controller for STAR's <b>Big Full Chain</b> (BFC)
+reconstruction and simulation workflows.  A user selects the desired processing
+steps by providing a comma- or space-separated string of option keys:
+
+\code{.cpp}
+StBFChain *chain = new StBFChain("bfc");
+chain->Setup();
+chain->SetFlags("P2014a,btof,BEmcChkStat,Corr4,OSpaceZ2,OGridLeak3D");
+chain->Set_IO_Files(inputFile, outputFile);
+chain->Load();
+chain->Instantiate();
+chain->Init();
+while (chain->Make() == kStOk) {}
+chain->Finish();
+\endcode
+
+\c StBFChain translates this string into a set of \c Bfc_st entries from the
+\c BigFullChain.h option table, resolves all transitive dependencies, loads the
+required shared libraries, instantiates the maker objects, and configures each
+maker via \c SetAttr calls.
+
+\section bfc_struct Option Table Structure
+
+Every BFC option is represented by a \c Bfc_st row (defined in \c Bfc.h):
+
+| Field  | Max length | Purpose |
+|--------|-----------|---------|
+| \c Key | 63 | User-facing nick name; case-insensitive lookup via \c kOpt() |
+| \c Name | 63 | Maker instance name |
+| \c Chain | 63 | Parent sub-chain; empty = top chain |
+| \c Opts | 255 | Comma-separated dependencies (prefix \c - disables) |
+| \c Maker | 63 | C++ class to instantiate; empty = alias only |
+| \c Libs | 255 | Shared libraries to load |
+| \c Comment | 255 | Description / option value storage |
+| \c Flag | 1 | Runtime on/off |
+
+The full table (~1,062 entries in 16 sections) is defined in
+<tt>BigFullChain.h</tt>.  An auto-generated Markdown reference is in
+<tt>doc/bfc_options_table.md</tt>; regenerate it with:
+
+\code{.sh}
+python3 tests/unit/StBFChain/generate_options_table.py
+\endcode
+
+\section dep_resolution Dependency Resolution
+
+The option activation pipeline is:
+
+\code
+SetFlags("optA optB -optC")
+  → SetOptions("optA optB -optC", "Chain")
+      → SetOption(+k_A)   // enable optA and its dependencies (recursive)
+      → SetOption(+k_B)   // enable optB and its dependencies
+      → SetOption(-k_C)   // disable optC only (no recursion)
+\endcode
+
+\c SetOption(k) for a positive \a k first calls \c SetOptions(fBFC[k].Opts)
+(depth-first expansion of dependencies), then sets \c fBFC[k].Flag = \c kTRUE.
+For a negative \a k it only clears \c fBFC[-k].Flag; no dependency expansion
+is performed on disable.
+
+\c kOpt() does a case-insensitive linear scan matching \a tag against both the
+\c Key and \c Maker fields of every entry.  Timestamp options matching
+<tt>sdt|dbv YYYYMMDD[.HHMMSS]</tt> are handled dynamically without a static
+table entry.
+
+\section seealso See Also
+
+- \c StBFChain — main class documentation
+- \c StBFChainOpt — \c StChainOpt adapter
+- <a href="README.md">doc/README.md</a> — full narrative documentation
+  including all \c SetAttr tables
+- <a href="bfc_options_table.md">doc/bfc_options_table.md</a> — complete BFC
+  options reference table
+*/

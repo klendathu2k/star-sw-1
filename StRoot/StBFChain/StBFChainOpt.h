@@ -8,7 +8,13 @@
  \author Victor Perev, 
  \date   2006/04/17 
 
- Overload of abstract StChainOpt for interface with StBFChain
+ \brief Adapter exposing StBFChain configuration through the StChainOpt interface.
+
+ Downstream makers that need to query the active BFC chain configuration
+ (input/output filenames, TFile handle, geometry tag) use the \c StChainOpt
+ abstract interface rather than depending directly on \c StBFChain.
+ \c StBFChainOpt bridges the two by delegating each query to the owning
+ \c StBFChain instance.
 
 */
 //////////////////////////////////////////////////////////////////////////

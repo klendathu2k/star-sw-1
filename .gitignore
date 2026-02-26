@@ -3,4 +3,8 @@
 .consign
 .DS_Store
 .vscode/
-StRoot/StBFChain/doc/
+StRoot/StBFChain/doc/html/
+StRoot/StBFChain/doc/latex/
+docs/dep_graph.dot
+docs/dep_graph.svg
+
