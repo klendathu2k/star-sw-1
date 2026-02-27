@@ -22,6 +22,7 @@ my $CPPPATH = $ObjDir
     . $main::PATH_SEPARATOR . "#StRoot/StChain"
     . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
     . $main::PATH_SEPARATOR . "#StRoot/StarRoot"
+    . $main::PATH_SEPARATOR . "#StRoot/StEvent"
     . $main::PATH_SEPARATOR . "#StRoot/Table"
     . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
 
@@ -103,3 +104,64 @@ my $envBFC = $envTest->clone(
 my @bfc_objs = Objects $envBFC "StBFChain/test_StBFChain.cxx";
 Program $envBFC "test_StBFChain", (@catch_obj, @bfc_objs);
 Install $envBFC $BIN, "test_StBFChain";
+
+# ---- StEvent unit tests --------------------------------------------------
+# One executable per major detector subsystem.  StEvent data classes are
+# self-contained and do not require a TApplication or full STAR runtime for
+# structural (constructor / getter / setter) tests.
+my $envEvent = $envTest->clone(
+    'LIBS' => "-lStEvent "
+            . $envTest->{LIBS},
+);
+
+sub build_event_test {
+    my ($name, @srcs) = @_;
+    my @objs = Objects $envEvent @srcs;
+    Program $envEvent $name, (@catch_obj, @objs);
+    Install $envEvent $BIN, $name;
+}
+
+build_event_test( "test_StEvent_core",
+    "StEvent/test_core.cxx" );
+
+build_event_test( "test_StEvent_vertex_track",
+    "StEvent/test_vertex_track.cxx" );
+
+build_event_test( "test_StEvent_tpc",
+    "StEvent/test_tpc.cxx" );
+
+build_event_test( "test_StEvent_silicon",
+    "StEvent/test_silicon.cxx" );
+
+build_event_test( "test_StEvent_emc",
+    "StEvent/test_emc.cxx" );
+
+build_event_test( "test_StEvent_btof",
+    "StEvent/test_btof.cxx" );
+
+build_event_test( "test_StEvent_hft",
+    "StEvent/test_hft.cxx" );
+
+build_event_test( "test_StEvent_mtd_epd",
+    "StEvent/test_mtd_epd.cxx" );
+
+build_event_test( "test_StEvent_etof",
+    "StEvent/test_etof.cxx" );
+
+build_event_test( "test_StEvent_fms_fcs",
+    "StEvent/test_fms_fcs.cxx" );
+
+build_event_test( "test_StEvent_fgt_gmt",
+    "StEvent/test_fgt_gmt.cxx" );
+
+build_event_test( "test_StEvent_forward",
+    "StEvent/test_forward.cxx" );
+
+build_event_test( "test_StEvent_rps_rhicf",
+    "StEvent/test_rps_rhicf.cxx" );
+
+build_event_test( "test_StEvent_hlt",
+    "StEvent/test_hlt.cxx" );
+
+build_event_test( "test_StEvent_triggerdata",
+    "StEvent/test_triggerdata.cxx" );
