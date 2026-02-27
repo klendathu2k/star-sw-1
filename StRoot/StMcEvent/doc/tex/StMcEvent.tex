@@ -3253,6 +3253,1941 @@ unsigned long countGoodPrimaryTracks(StMcEvent *event)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+%% ---- New class references added 2026 ----
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcBTofHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcBTofHit}
+\index{barrel time-of-flight hit} \index{StMcBTofHit|textbf}
+\label{sec:StMcBTofHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcBTofHit} represents a Monte Carlo hit in the Barrel
+    Time-of-Flight (BTof) detector.
+
+\item[Synopsis]
+    \verb+#include "StMcBTofHit.hh"+\\
+    \verb+class StMcBTofHit;+\\
+
+\item[Description]
+    \name{StMcBTofHit} stores the tray, module, and cell geometry
+    identifiers together with the energy deposited, Geant track path
+    length, exact and simulated time-of-flight, collected charge,
+    hit position in global coordinates, and a pointer to the parent
+    MC track.  Unlike most other STAR MC hit classes it inherits
+    directly from \name{StObject} rather than \name{StMcHit}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Hits are owned and accessed through
+    \name{StMcBTofHitCollection} (see~\ref{sec:StMcBTofHitCollection}).
+    The parent track is of type \name{StMcTrack}.
+    \index{StMcBTofHitCollection}
+    \index{StMcTrack}
+
+\item[Public\\ Constructors]
+    \verb+StMcBTofHit();+\\
+    Creates a default-initialised \name{StMcBTofHit}.
+
+    \verb+StMcBTofHit(int tray, int module, int cell,+\\
+    \verb+            float dE, float pathLength,+\\
+    \verb+            float tof_exact, float tof_measured, float charge);+\\
+    Creates an instance with geometry identifiers and physics
+    quantities.  The hit position and parent track pointer are
+    left at their default values.
+
+    \verb+StMcBTofHit(int tray, int module, int cell,+\\
+    \verb+            float dE, float pathLength,+\\
+    \verb+            float tof_exact, float tof_measured, float charge,+\\
+    \verb+            StThreeVectorF& position, StMcTrack* parentTrack);+\\
+    Creates a fully-specified instance including hit position and
+    parent track pointer.
+
+\item[Public Member\\ Functions]
+    \verb+virtual int tray() const;+\\
+    Returns the BTof tray number.\\
+
+    \verb+virtual int module() const;+\\
+    Returns the module number within the tray.\\
+
+    \verb+virtual int cell() const;+\\
+    Returns the cell number within the module.\\
+
+    \verb+virtual float dE() const;+\\
+    Returns the energy deposited in the active material (GeV).\\
+
+    \verb+virtual float pathLength() const;+\\
+    Returns the Geant track path length through the active material (cm).\\
+
+    \verb+virtual float time() const;+\\
+    Returns the exact Geant time of flight (ns).\\
+
+    \verb+virtual float tof() const;+\\
+    Returns the simulated (smeared) time of flight (ns).\\
+
+    \verb+virtual float charge() const;+\\
+    Returns the collected charge.\\
+
+    \verb+virtual StThreeVectorF position() const;+\\
+    Returns the hit position in global coordinates.\\
+
+    \verb+virtual StMcTrack* parentTrack() const;+\\
+    Returns a pointer to the parent MC track.\\
+
+    \verb+virtual int parentTrackId() const;+\\
+    Returns the integer identifier of the parent MC track.\\
+
+    \verb+bool sameCell(const StMcBTofHit&) const;+\\
+    Returns \texttt{true} if both hits share the same tray, module,
+    and cell.\\
+
+    \verb+void operator+=(const StMcBTofHit&);+\\
+    Accumulates energy deposit and path length from a hit in the
+    same cell into this hit.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcBTofHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcBTofHitCollection}
+\index{detector hit collection} \index{StMcBTofHitCollection|textbf}
+\label{sec:StMcBTofHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcBTofHitCollection} is the top-level container for all
+    Barrel Time-of-Flight MC hits in an event.
+
+\item[Synopsis]
+    \verb+#include "StMcBTofHitCollection.hh"+\\
+    \verb+class StMcBTofHitCollection;+\\
+
+\item[Description]
+    \name{StMcBTofHitCollection} owns a flat vector of
+    \name{StMcBTofHit} pointers and provides methods to add hits,
+    query the hit count, and retrieve the underlying vector.
+    The collection stores hits in an \name{StSPtrVecMcBTofHit},
+    which manages the lifetimes of the pointed-to objects.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Elements of the collection are of type
+    \name{StMcBTofHit} (see~\ref{sec:StMcBTofHit}).
+    \index{StMcBTofHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcBTofHitCollection();+\\
+    Creates an empty collection.
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcBTofHit*);+\\
+    Adds a hit to the collection; returns \texttt{false} if the
+    supplied pointer is null.\\
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the number of hits currently in the collection.\\
+
+    \verb+StSPtrVecMcBTofHit& hits();+\\
+    Returns a mutable reference to the internal hit vector.\\
+
+    \verb+const StSPtrVecMcBTofHit& hits() const;+\\
+    Returns a const reference to the internal hit vector.\\
+
+    \verb+void Clear(const char* opt="");+\\
+    Clears and frees all hits owned by the collection.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcMtdHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcMtdHit}
+\index{muon telescope detector hit} \index{StMcMtdHit|textbf}
+\label{sec:StMcMtdHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcMtdHit} represents a Monte Carlo hit in the Muon
+    Telescope Detector (MTD).
+
+\item[Synopsis]
+    \verb+#include "StMcMtdHit.hh"+\\
+    \verb+class StMcMtdHit;+\\
+
+\item[Description]
+    \name{StMcMtdHit} extends \name{StMcHit} with the MTD-specific
+    geometry identifiers backleg, module, and cell, together with
+    the Geant track path length and the parent track identifier.
+    It can be constructed either with default values or directly
+    from a \texttt{g2t\_mtd\_hit\_st} Geant table row, which is
+    the standard path used by \name{StMcEventMaker}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Hits are owned and accessed through
+    \name{StMcMtdHitCollection} (see~\ref{sec:StMcMtdHitCollection}).
+    \name{StMcMtdHit} inherits position, momentum, energy deposit,
+    and time-of-flight from \name{StMcHit}.
+    \index{StMcMtdHitCollection}
+    \index{StMcHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcMtdHit();+\\
+    Creates a default-initialised \name{StMcMtdHit}.
+
+    \verb+StMcMtdHit(g2t_mtd_hit_st*);+\\
+    Creates an instance of \name{StMcMtdHit} from a Geant table
+    row; this is the standard construction path in
+    \name{StMcEventMaker}.
+
+\item[Public Member\\ Functions]
+    \verb+virtual int backleg() const;+\\
+    Returns the MTD backleg number.\\
+
+    \verb+virtual int module() const;+\\
+    Returns the module number within the backleg.\\
+
+    \verb+virtual int cell() const;+\\
+    Returns the cell number within the module.\\
+
+    \verb+virtual float pathLength() const;+\\
+    Returns the Geant track path length through the active material (cm).\\
+
+    \verb+virtual int parentTrackId() const;+\\
+    Returns the integer identifier of the parent MC track.\\
+
+    \verb+bool sameCell(const StMcMtdHit&) const;+\\
+    Returns \texttt{true} if both hits share the same backleg,
+    module, and cell.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcMtdHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcMtdHitCollection}
+\index{detector hit collection} \index{StMcMtdHitCollection|textbf}
+\label{sec:StMcMtdHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcMtdHitCollection} is the top-level container for all
+    Muon Telescope Detector MC hits in an event.
+
+\item[Synopsis]
+    \verb+#include "StMcMtdHitCollection.hh"+\\
+    \verb+class StMcMtdHitCollection;+\\
+
+\item[Description]
+    \name{StMcMtdHitCollection} owns a flat vector of
+    \name{StMcMtdHit} pointers stored in an
+    \name{StSPtrVecMcMtdHit} and provides methods to add hits,
+    query the hit count, and retrieve the underlying vector by
+    mutable or const reference.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Elements of the collection are of type
+    \name{StMcMtdHit} (see~\ref{sec:StMcMtdHit}).
+    \index{StMcMtdHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcMtdHitCollection();+\\
+    Creates an empty collection.
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcMtdHit*);+\\
+    Adds a hit to the collection; returns \texttt{false} if the
+    supplied pointer is null.\\
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the number of hits currently in the collection.\\
+
+    \verb+StSPtrVecMcMtdHit& hits();+\\
+    Returns a mutable reference to the internal hit vector.\\
+
+    \verb+const StSPtrVecMcMtdHit& hits() const;+\\
+    Returns a const reference to the internal hit vector.\\
+
+    \verb+void Clear(const char* opt="");+\\
+    Clears and frees all hits owned by the collection.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcTofHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcTofHit}
+\index{time-of-flight hit} \index{StMcTofHit|textbf}
+\label{sec:StMcTofHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcTofHit} represents a Monte Carlo hit for the legacy
+    pVPD/TOFr detector (pre-Run~8 era).
+
+\item[Synopsis]
+    \verb+#include "StMcTofHit.hh"+\\
+    \verb+class StMcTofHit;+\\
+
+\item[Description]
+    \name{StMcTofHit} extends \name{StMcHit} with a single
+    additional datum: the Geant s-track coordinate along the
+    detector strip (\texttt{mStrack}).  All other quantities ---
+    position, momentum, energy deposit, path length, and
+    time-of-flight --- are inherited from \name{StMcHit}.
+    The class can be constructed from explicit quantities or
+    directly from a \texttt{g2t\_ctf\_hit\_st} Geant table row,
+    which is the standard path used by \name{StMcEventMaker}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Hits are owned and accessed through
+    \name{StMcTofHitCollection} (see~\ref{sec:StMcTofHitCollection}).
+    \name{StMcTofHit} inherits from \name{StMcHit}.
+    \index{StMcTofHitCollection}
+    \index{StMcHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcTofHit();+\\
+    Creates a default-initialised \name{StMcTofHit} with the
+    s-track coordinate set to zero.
+
+    \verb+StMcTofHit(const StThreeVectorF& x, const StThreeVectorF& p,+\\
+    \verb+           Float_t de=0, Float_t ds=0, Float_t tof=0,+\\
+    \verb+           Long_t k=0, Long_t volId=0, StMcTrack* parent=0);+\\
+    Creates an instance with explicit hit quantities, forwarding
+    all arguments to the \name{StMcHit} base-class constructor and
+    initialising the s-track coordinate to zero.
+
+    \verb+StMcTofHit(g2t_ctf_hit_st* pt, Float_t cl_x=0, Float_t cl_t=0);+\\
+    Creates an instance of \name{StMcTofHit} from a Geant
+    \texttt{g2t\_ctf\_hit\_st} table row; this is the standard
+    construction path in \name{StMcEventMaker}.
+
+\item[Public Member\\ Functions]
+    \verb+Float_t sTrack() const;+\\
+    Returns the Geant s-track coordinate along the detector strip.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcTofHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcTofHitCollection}
+\index{detector hit collection} \index{StMcTofHitCollection|textbf}
+\label{sec:StMcTofHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcTofHitCollection} is the container for all legacy
+    pVPD/TOFr MC hits in an event.
+
+\item[Synopsis]
+    \verb+#include "StMcTofHitCollection.hh"+\\
+    \verb+class StMcTofHitCollection;+\\
+
+\item[Description]
+    \name{StMcTofHitCollection} owns a flat vector of
+    \name{StMcTofHit} pointers stored in an
+    \name{StSPtrVecMcTofHit} and provides methods to add hits,
+    query the hit count, and retrieve the underlying vector by
+    mutable or const reference.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Elements of the collection are of type
+    \name{StMcTofHit} (see~\ref{sec:StMcTofHit}).
+    \index{StMcTofHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcTofHitCollection();+\\
+    Creates an empty collection.
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcTofHit*);+\\
+    Adds a hit to the collection; returns \texttt{false} if the
+    supplied pointer is null.\\
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the number of hits currently in the collection.\\
+
+    \verb+StSPtrVecMcTofHit& hits();+\\
+    Returns a mutable reference to the internal hit vector.\\
+
+    \verb+const StSPtrVecMcTofHit& hits() const;+\\
+    Returns a const reference to the internal hit vector.\\
+
+    \verb+void Clear(const char* opt="");+\\
+    Clears and frees all hits owned by the collection.
+
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcCtbHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcCtbHitCollection}
+\index{CTB hit collection} \index{StMcCtbHitCollection|textbf}
+\label{sec:StMcCtbHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcCtbHitCollection} is a flat-array container for all Monte Carlo
+    Central Trigger Barrel (CTB) hits in an event.
+
+\item[Synopsis]
+    \verb+#include "StMcCtbHitCollection.hh"+\\
+    \verb+class StMcCtbHitCollection;+\\
+
+\item[Description]
+    \name{StMcCtbHitCollection} holds all \name{StMcCtbHit} objects produced
+    in the CTB for a single event.  Unlike the hierarchical collections used
+    by detectors such as the TPC, all hits are stored in a single
+    \verb+StSPtrVecMcCtbHit+.  The class inherits from \name{StObject} and
+    supports ROOT browsing via the \verb+Browse()+ method.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Each element of the collection is an \name{StMcCtbHit}
+    \ref{sec:StMcCtbHit}.
+    \index{StMcCtbHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcCtbHitCollection();+\\
+    Default constructor; initialises an empty hit vector.
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcCtbHit*);+\\
+    Appends the supplied hit pointer to the collection.
+    Returns \verb+true+ on success.
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the total number of CTB hits stored in the collection.
+
+    \verb+StSPtrVecMcCtbHit& hits();+\\
+    \verb+const StSPtrVecMcCtbHit& hits() const;+\\
+    Return a reference to (or a const reference to) the internal hit vector.
+
+    \verb+void Clear(const char* opt="");+\\
+    Empties the collection, releasing all owned hit objects.
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcEtrHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcEtrHit}
+\index{ETR hit} \index{StMcEtrHit|textbf}
+\label{sec:StMcEtrHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcEtrHit} represents a single Monte Carlo hit in the
+    End-cap Tagger Ring (ETR).
+
+\item[Synopsis]
+    \verb+#include "StMcEtrHit.hh"+\\
+    \verb+class StMcEtrHit;+\\
+
+\item[Description]
+    \name{StMcEtrHit} inherits from \name{StMcHit} and adds the
+    ETR-specific geometric identifiers: the layer number and the
+    sector number within that layer.  Instances are normally
+    constructed directly from the Geant output table
+    \verb+g2t_etr_hit_st+.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Hits are owned by \name{StMcEtrHitCollection}
+    \ref{sec:StMcEtrHitCollection}.
+    The base class \name{StMcHit} supplies position, momentum,
+    energy loss, path-length, time-of-flight, key, and parent-track
+    information.
+    \index{StMcEtrHitCollection}
+    \index{StMcHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcEtrHit();+\\
+    Default constructor; delegates to the \name{StMcHit} default constructor.
+
+    \verb+StMcEtrHit(g2t_etr_hit_st* pt);+\\
+    Constructs an \name{StMcEtrHit} from the Geant hit table row pointed to
+    by \name{pt}.  This is the standard constructor used by
+    \name{StMcEventMaker}.
+
+\item[Public Member\\ Functions]
+    \verb+int layer() const;+\\
+    Returns the ETR layer number of the hit.
+
+    \verb+int sector() const;+\\
+    Returns the sector number within the ETR layer.
+
+    \verb+void Print(Option_t* option="") const;+\\
+    Prints a summary of the hit to standard output.  Accessible
+    from the ROOT object browser (\verb+*MENU*+).
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcEtrHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcEtrHitCollection}
+\index{ETR hit collection} \index{StMcEtrHitCollection|textbf}
+\label{sec:StMcEtrHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcEtrHitCollection} is a container for all Monte Carlo
+    End-cap Tagger Ring (ETR) hits in an event.
+
+\item[Synopsis]
+    \verb+#include "StMcEtrHitCollection.hh"+\\
+    \verb+class StMcEtrHitCollection;+\\
+
+\item[Description]
+    \name{StMcEtrHitCollection} holds all \name{StMcEtrHit} objects produced
+    in the ETR for a single event, stored in a flat
+    \verb+StSPtrVecMcEtrHit+.  The class also exposes the geometry
+    constants of the ETR: three layers and twelve sectors per layer.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Each element is an \name{StMcEtrHit} \ref{sec:StMcEtrHit}.
+    \index{StMcEtrHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcEtrHitCollection();+\\
+    Default constructor; initialises an empty hit vector.
+
+\item[Enumerations]
+    \verb+enum { mNumberOfLayers  = 3  };+\\
+    \verb+enum { mNumberOfSectors = 12 };+\\
+    Compile-time constants encoding the ETR geometry.
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcEtrHit*);+\\
+    Appends the supplied hit pointer to the collection.
+    Returns \verb+true+ on success.
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the total number of ETR hits stored in the collection.
+
+    \verb+unsigned int numberOfLayers() const;+\\
+    Returns the number of ETR layers (currently 3).
+
+    \verb+unsigned int numberOfSectors() const;+\\
+    Returns the number of sectors per layer (currently 12).
+
+    \verb+StSPtrVecMcEtrHit& hits();+\\
+    \verb+const StSPtrVecMcEtrHit& hits() const;+\\
+    Return a reference to (or a const reference to) the internal hit vector.
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcFgtHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcFgtHit}
+\index{FGT hit} \index{StMcFgtHit|textbf}
+\label{sec:StMcFgtHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcFgtHit} represents a single Monte Carlo hit in the
+    Forward GEM Tracker (FGT).
+
+\item[Synopsis]
+    \verb+#include "StMcFgtHit.hh"+\\
+    \verb+class StMcFgtHit;+\\
+
+\item[Description]
+    \name{StMcFgtHit} inherits from \name{StMcHit} and adds the
+    FGT-specific identifiers: the layer (disk) number and the
+    quadrant.  The layer and quadrant are encoded in the
+    \verb+volume_id+ field of the Geant hit table and are decoded
+    by the accessor methods.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Hits are owned by \name{StMcFgtLayerHitCollection}
+    \ref{sec:StMcFgtLayerHitCollection}, which is in turn owned by
+    \name{StMcFgtHitCollection} \ref{sec:StMcFgtHitCollection}.
+    The base class \name{StMcHit} provides position, momentum,
+    energy loss, path-length, time-of-flight, key, and parent-track
+    accessors.
+    \index{StMcFgtHitCollection}
+    \index{StMcFgtLayerHitCollection}
+    \index{StMcHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcFgtHit();+\\
+    Default constructor; delegates to the \name{StMcHit} default constructor.
+
+    \verb+StMcFgtHit(const StThreeVectorF& x, const StThreeVectorF& p,+\\
+    \verb+           Float_t de, Float_t ds, Float_t tof, Long_t k,+\\
+    \verb+           Long_t volId, StMcTrack* parent);+\\
+    Constructs an \name{StMcFgtHit} from explicit hit parameters.
+
+    \verb+StMcFgtHit(g2t_fgt_hit_st* pt);+\\
+    Constructs an \name{StMcFgtHit} from the Geant FGT hit table row
+    pointed to by \name{pt}.  This is the standard constructor used
+    by \name{StMcEventMaker}.
+
+\item[Public Member\\ Functions]
+    \verb+ULong_t layer() const;+\\
+    Returns the FGT layer (disk) number decoded from the volume identifier.
+
+    \verb+ULong_t quad() const;+\\
+    Returns the FGT quadrant number decoded from the volume identifier.
+
+    \verb+virtual void Print(Option_t* option="") const;+\\
+    Prints a summary of the hit to standard output.  Accessible
+    from the ROOT object browser (\verb+*MENU*+).
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcFgtHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcFgtHitCollection}
+\index{FGT hit collection} \index{StMcFgtHitCollection|textbf}
+\label{sec:StMcFgtHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcFgtHitCollection} is the top-level container for all Monte
+    Carlo Forward GEM Tracker (FGT) hits in an event, organised by layer.
+
+\item[Synopsis]
+    \verb+#include "StMcFgtHitCollection.hh"+\\
+    \verb+class StMcFgtHitCollection;+\\
+
+\item[Description]
+    \name{StMcFgtHitCollection} owns an array of
+    \name{StMcFgtLayerHitCollection} objects, one per FGT disk (layer).
+    There are nine layers in total, corresponding to the nine FGT disk
+    positions as defined in \verb+StFgtGeom+.  Hits are routed to the
+    correct layer sub-collection by \verb+addHit()+.  The class inherits
+    from \name{StObject}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Each layer sub-collection is an \name{StMcFgtLayerHitCollection}
+    \ref{sec:StMcFgtLayerHitCollection}.
+    Each hit within a layer is an \name{StMcFgtHit} \ref{sec:StMcFgtHit}.
+    \index{StMcFgtLayerHitCollection}
+    \index{StMcFgtHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcFgtHitCollection();+\\
+    Default constructor; initialises the nine layer sub-collections.
+
+\item[Enumerations]
+    \verb+enum { mNumberOfLayers = 9 };+\\
+    Compile-time constant for the number of FGT layers (disks).
+
+\item[Public Member\\ Functions]
+    \verb+bool addHit(StMcFgtHit*);+\\
+    Routes the supplied hit to the appropriate layer sub-collection.
+    Returns \verb+true+ on success.
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the total number of FGT hits summed across all layers.
+
+    \verb+unsigned int numberOfLayers() const;+\\
+    Returns the number of FGT layers (currently 9).
+
+    \verb+StMcFgtLayerHitCollection* layer(unsigned int);+\\
+    \verb+const StMcFgtLayerHitCollection* layer(unsigned int) const;+\\
+    Return a pointer to (or a const pointer to) the
+    \name{StMcFgtLayerHitCollection} for the specified layer index
+    (0-based).
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcFgtLayerHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcFgtLayerHitCollection}
+\index{FGT layer hit collection} \index{StMcFgtLayerHitCollection|textbf}
+\label{sec:StMcFgtLayerHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcFgtLayerHitCollection} is the per-layer sub-collection of
+    Monte Carlo FGT hits, holding all hits recorded in a single FGT disk.
+
+\item[Synopsis]
+    \verb+#include "StMcFgtLayerHitCollection.hh"+\\
+    \verb+class StMcFgtLayerHitCollection;+\\
+
+\item[Description]
+    \name{StMcFgtLayerHitCollection} stores \name{StMcFgtHit} objects
+    belonging to one FGT disk layer in a
+    \verb+StSPtrVecMcFgtHit+.  Nine instances of this class are owned
+    by \name{StMcFgtHitCollection}, one per layer.  The class inherits
+    from \name{StObject} and supports ROOT browsing.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    Nine instances are owned by \name{StMcFgtHitCollection}
+    \ref{sec:StMcFgtHitCollection}.
+    Each element is an \name{StMcFgtHit} \ref{sec:StMcFgtHit}.
+    \index{StMcFgtHitCollection}
+    \index{StMcFgtHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcFgtLayerHitCollection();+\\
+    Default constructor; initialises an empty hit vector.
+
+\item[Public Member\\ Functions]
+    \verb+unsigned long numberOfHits() const;+\\
+    Returns the number of hits in this layer.
+
+    \verb+StSPtrVecMcFgtHit& hits();+\\
+    \verb+const StSPtrVecMcFgtHit& hits() const;+\\
+    Return a reference to (or a const reference to) the internal hit vector.
+
+    \verb+void Clear(const char* opt="");+\\
+    Empties the layer collection, releasing all owned hit objects.
+
+\end{Entry}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcHitT
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcHitT\textless{}T\textgreater{}}
+\index{StMcHitT|textbf}
+\label{sec:StMcHitT}
+\begin{Entry}
+\item[Summary]
+    \name{StMcHitT\textless{}T\textgreater{}} is a template adapter that wraps a
+    single row of a Geant hit table (a \verb+g2t_*_hit_st+ struct) and
+    exposes it through the \name{StMcHitI} interface.
+
+\item[Synopsis]
+    \verb+#include "StMcHitT.hh"+\\
+    \verb+template <class T> class StMcHitT;+\\
+
+\item[Description]
+    \name{StMcHitT\textless{}T\textgreater{}} inherits from both
+    \verb+StEventObject<T>+ (which holds a pointer or value of type
+    \verb+T+) and from the pure interface \name{StMcHitI}.
+    It provides concrete implementations of all \name{StMcHitI} accessors
+    by reading directly from the underlying table row.
+    This design avoids duplicating the accessor implementations across every
+    concrete MC hit class that maps one-to-one onto a Geant table.
+
+    A full explicit specialisation for \verb+g2t_emc_hit_st*+ is provided
+    in the same header to handle the reduced field set of the EMC hit table.
+
+    Concrete hit classes (e.g.\ \name{StMcFgtHit}, \name{StMcEtrHit})
+    inherit from \name{StMcHit} rather than from \name{StMcHitT} directly;
+    \name{StMcHitT} is used where a hit class maps directly and completely
+    onto a single Geant table row.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcHitI} defines the pure virtual interface satisfied by this
+    template.
+    \verb+StEventObject<T>+ manages the underlying table-row storage.
+    \index{StMcHitI}
+
+\item[Template\\ Parameter]
+    \verb+T+ --- a pointer to a Geant hit table row struct
+    (e.g.\ \verb+g2t_fgt_hit_st*+).  The struct must expose at minimum
+    the fields \verb+x[3]+, \verb+p[3]+, \verb+de+, \verb+ds+,
+    \verb+tof+, \verb+id+, \verb+volume_id+, and \verb+track_p+.
+
+\item[Public\\ Constructors]
+    \verb+StMcHitT(T data);+\\
+    Constructs the adapter from an existing table-row pointer \name{data},
+    forwarding it to \verb+StEventObject<T>+.
+
+\item[Public Member\\ Functions]
+    \verb+virtual float x()       const;+\\
+    \verb+virtual float y()       const;+\\
+    \verb+virtual float z()       const;+\\
+    Return the $x$, $y$, and $z$ hit position coordinates (cm) read from
+    \verb+fData->x[0..2]+.
+
+    \verb+virtual float px()      const;+\\
+    \verb+virtual float py()      const;+\\
+    \verb+virtual float pz()      const;+\\
+    Return the $x$, $y$, and $z$ local momentum components (GeV/$c$) read
+    from \verb+fData->p[0..2]+.
+
+    \verb+virtual float dE()      const;+\\
+    Returns the energy deposited in the hit volume (GeV), from
+    \verb+fData->de+.
+
+    \verb+virtual float dS()      const;+\\
+    Returns the path length through the hit volume (cm), from
+    \verb+fData->ds+.
+
+    \verb+virtual float tof()     const;+\\
+    Returns the time of flight to the hit (ns), from \verb+fData->tof+.
+
+    \verb+virtual long  key()     const;+\\
+    Returns the Geant hit identifier, from \verb+fData->id+.
+
+    \verb+virtual long  volumeId() const;+\\
+    Returns the encoded volume identifier, from \verb+fData->volume_id+.
+
+    \verb+virtual long  parentTrackIndex() const;+\\
+    Returns the index of the parent Geant track, from
+    \verb+fData->track_p+.
+
+    \verb+int operator==(const StMcHitT&) const;+\\
+    \verb+int operator!=(const StMcHitT&) const;+\\
+    Equality and inequality operators, delegating to
+    \verb+StEventObject<T>::operator==()+.
+
+\end{Entry}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcIstHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcIstHit}
+\index{IST hit} \index{StMcIstHit|textbf}
+\label{sec:StMcIstHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcIstHit} represents a monte carlo IST (Inner Silicon Tracker) hit.
+
+\item[Synopsis]
+    \verb+#include "StMcIstHit.hh"+\\
+    \verb+class StMcIstHit;+\\
+
+\item[Description]
+    \name{StMcIstHit} inherits most functionality from \name{StMcHit}.
+    For a complete description of the inherited member functions see
+    \name{StMcHit} (sec.~\ref{sec:StMcHit}).
+
+    In the \StMcEvent\ data model each track keeps references to the
+    associated hits and vice versa.  All hits have a pointer to their
+    parent track.  This is especially important for the making of the
+    associations in \StAssociationMaker.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcIstHit} is derived directly from \name{StMcHit}.
+    The way to retrieve hits for a given ladder and sensor starting
+    from the top-level \name{StMcEvent} pointer is:\\
+    \verb+mcEvt->istHitCollection()->layer(ly)->hits()+\\
+    (using the layer-based collection), or via the ladder/sensor hierarchy
+    introduced in 2015.
+    The hits are kept in an instance of \name{StSPtrVecMcIstHit}
+    where they are stored by pointer (see \ref{sec:containers}).
+    Each instance of \name{StMcTrack} holds a list of IST hits
+    which belong to that track.
+    \index{StMcHit}
+    \index{StMcTrack}
+    \index{StMcIstHitCollection}
+
+\item[Public\\ Constructors]
+    \verb+StMcIstHit();+\\
+    Default constructor.
+
+    \verb+StMcIstHit(const StThreeVectorF& x, const StThreeVectorF& p,+\\
+    \verb+           Float_t de, Float_t ds, Float_t tof,+\\
+    \verb+           Long_t k, Long_t volId, StMcTrack* parent);+\\
+    Create an instance of \name{StMcIstHit} with position \name{x},
+    local momentum \name{p}, energy deposition \name{de}, path length
+    \name{ds}, time of flight \name{tof}, primary key \name{k},
+    volume id \name{volId} and parent track \name{parent}.
+
+    \verb+StMcIstHit(g2t_ist_hit_st* pt);+\\
+    Construct from a GEANT \texttt{g2t\_ist\_hit} table row.
+
+\item[Public Member\\ Functions]
+
+    \verb+ULong_t layer() const;+\\
+    Returns the layer number; always returns 1 for the IST.
+    \index{layer, IST}
+
+    \verb+ULong_t ladder() const;+\\
+    Returns the ladder number decoded from the volume id.
+    \index{ladder, IST}
+
+    \verb+ULong_t wafer() const;+\\
+    Returns the wafer (sensor) number decoded from the volume id.
+    \index{wafer, IST}
+
+    \verb+ULong_t side();+\\
+    Returns the side of the ladder (1\,=\,inner; 2\,=\,outer) decoded
+    from the volume id.
+    \index{side, IST}
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+//  Print IST hits belonging to a track.
+//
+void printIstHits(StMcTrack* track)
+{
+    StPtrVecMcIstHit& hits = track->istHits();
+    for (StMcIstHitIterator it = hits.begin();
+         it != hits.end(); ++it)
+        cout << *(*it) << endl;
+}
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcIstHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcIstHitCollection}
+\index{IST hit collection} \index{StMcIstHitCollection|textbf}
+\label{sec:StMcIstHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcIstHitCollection} is the top-level container for IST monte
+    carlo hits, organised by layer.
+
+\item[Synopsis]
+    \verb+#include "StMcIstHitCollection.hh"+\\
+    \verb+class StMcIstHitCollection;+\\
+
+\item[Description]
+    \name{StMcIstHitCollection} is the first step down the hierarchy of hits
+    for the IST.  It provides methods to return a particular layer
+    sub-collection and to count the total number of hits across all IST layers.
+    The collection holds an array of 24 \name{StMcIstLayerHitCollection}
+    objects.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcIstHitCollection} contains an array of
+    {\tt StMcIstLayerHitCollection} objects (size~24).  See
+    \name{StMcIstLayerHitCollection} \ref{sec:StMcIstLayerHitCollection}
+    and \name{StMcIstHit} \ref{sec:StMcIstHit}.
+    \index{StMcIstLayerHitCollection}
+    \index{StMcIstHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcIstHitCollection();+\\
+    Create an instance of \name{StMcIstHitCollection} and
+    initialise the internal layer sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+bool addHit(StMcIstHit*);+\\
+    Add a hit to the appropriate layer sub-collection.
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Count the total number of hits across all layers.
+
+    \verb+unsigned int  numberOfLayers() const;+\\
+    Return the number of layer sub-collections (24).
+
+    \verb+StMcIstLayerHitCollection*       layer(unsigned int);+\\
+    \verb+const StMcIstLayerHitCollection* layer(unsigned int) const;+\\
+    Return the mutable or const layer sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Count total IST hits and print per-layer totals.
+//
+StMcIstHitCollection* coll = mcEvt->istHitCollection();
+cout << "Total IST hits: " << coll->numberOfHits() << endl;
+for (unsigned int ly = 0; ly < coll->numberOfLayers(); ++ly)
+    cout << "  layer " << ly << ": "
+         << coll->layer(ly)->numberOfHits() << endl;
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcIstLadderHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcIstLadderHitCollection}
+\index{IST ladder hit collection} \index{StMcIstLadderHitCollection|textbf}
+\label{sec:StMcIstLadderHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcIstLadderHitCollection} is a container for IST hits in one
+    ladder, organised by sensor.
+
+\item[Synopsis]
+    \verb+#include "StMcIstLadderHitCollection.hh"+\\
+    \verb+class StMcIstLadderHitCollection;+\\
+
+\item[Description]
+    \name{StMcIstLadderHitCollection} forms the second level of the
+    ladder--sensor hit hierarchy introduced for the IST in 2015.  Each
+    ladder holds an array of up to 6
+    \name{StMcIstSensorHitCollection} objects.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcIstLadderHitCollection} contains an array of
+    {\tt StMcIstSensorHitCollection} objects (size~6).  See
+    \name{StMcIstSensorHitCollection} \ref{sec:StMcIstSensorHitCollection}
+    and \name{StMcIstHit} \ref{sec:StMcIstHit}.
+    \index{StMcIstSensorHitCollection}
+    \index{StMcIstHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcIstLadderHitCollection();+\\
+    Create an instance of \name{StMcIstLadderHitCollection} and
+    initialise the internal sensor sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Count the total number of hits across all sensors in this ladder.
+
+    \verb+unsigned int  numberOfSensors() const;+\\
+    Return the number of sensor sub-collections (6).
+
+    \verb+StMcIstSensorHitCollection*       sensor(unsigned int);+\\
+    \verb+const StMcIstSensorHitCollection* sensor(unsigned int) const;+\\
+    Return the mutable or const sensor sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcIstSensorHitCollection for an example.
+// These classes normally go hand in hand.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcIstLayerHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcIstLayerHitCollection}
+\index{IST layer hit collection} \index{StMcIstLayerHitCollection|textbf}
+\label{sec:StMcIstLayerHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcIstLayerHitCollection} is the leaf node in the
+    layer-based IST hit hierarchy; it directly stores the IST hits for
+    one layer.
+
+\item[Synopsis]
+    \verb+#include "StMcIstLayerHitCollection.hh"+\\
+    \verb+class StMcIstLayerHitCollection;+\\
+
+\item[Description]
+    \name{StMcIstLayerHitCollection} is the second (and final) step down
+    the layer-based hierarchy for IST hits.  It stores the actual
+    \name{StMcIstHit} pointers in a \name{StSPtrVecMcIstHit} container.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcIstLayerHitCollection} contains a
+    {\tt StSPtrVecMcIstHit}, which owns the hit objects.  See the
+    section on containers \ref{sec:containers} for more information.
+    The parent collection is
+    \name{StMcIstHitCollection} \ref{sec:StMcIstHitCollection}.
+    \index{StMcIstHitCollection}
+    \index{StMcIstHit}
+    \index{StSPtrVecMcIstHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcIstLayerHitCollection();+\\
+    Create an instance of \name{StMcIstLayerHitCollection} and
+    initialise the internal hit container.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Return the number of hits stored in this layer.
+
+    \verb+StSPtrVecMcIstHit&       hits();+\\
+    \verb+const StSPtrVecMcIstHit& hits() const;+\\
+    Return a reference to the container of IST hits for this layer.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Iterate over all hits in a given IST layer.
+//
+StMcIstHitCollection* coll = mcEvt->istHitCollection();
+StSPtrVecMcIstHit& hits = coll->layer(0)->hits();
+for (StMcIstHitIterator it = hits.begin();
+     it != hits.end(); ++it)
+    cout << *(*it) << endl;
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcIstSensorHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcIstSensorHitCollection}
+\index{IST sensor hit collection} \index{StMcIstSensorHitCollection|textbf}
+\label{sec:StMcIstSensorHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcIstSensorHitCollection} is the leaf node in the
+    ladder--sensor IST hit hierarchy; it directly stores the IST hits for
+    one sensor.
+
+\item[Synopsis]
+    \verb+#include "StMcIstSensorHitCollection.hh"+\\
+    \verb+class StMcIstSensorHitCollection;+\\
+
+\item[Description]
+    \name{StMcIstSensorHitCollection} stores the actual
+    \name{StMcIstHit} pointers in a \name{StSPtrVecMcIstHit} container
+    for a single IST sensor.  It is part of the ladder--sensor hierarchy
+    introduced in 2015.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcIstSensorHitCollection} contains a
+    {\tt StSPtrVecMcIstHit}, which owns the hit objects.  See the
+    section on containers \ref{sec:containers}.
+    The parent collection is
+    \name{StMcIstLadderHitCollection} \ref{sec:StMcIstLadderHitCollection}.
+    \index{StMcIstLadderHitCollection}
+    \index{StMcIstHit}
+    \index{StSPtrVecMcIstHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcIstSensorHitCollection();+\\
+    Create an instance of \name{StMcIstSensorHitCollection} and
+    initialise the internal hit container.
+
+\item[Public Member\\ Functions]
+
+    \verb+StSPtrVecMcIstHit&       hits();+\\
+    \verb+const StSPtrVecMcIstHit& hits() const;+\\
+    Return a reference to the container of IST hits for this sensor.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcIstLadderHitCollection for an example.
+// These classes normally go hand in hand.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcPxlHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcPxlHit}
+\index{PXL hit} \index{StMcPxlHit|textbf}
+\label{sec:StMcPxlHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcPxlHit} represents a monte carlo PXL (Pixel) detector hit.
+
+\item[Synopsis]
+    \verb+#include "StMcPxlHit.hh"+\\
+    \verb+class StMcPxlHit;+\\
+
+\item[Description]
+    \name{StMcPxlHit} inherits most functionality from \name{StMcHit}.
+    For a complete description of the inherited member functions see
+    \name{StMcHit} (sec.~\ref{sec:StMcHit}).
+
+    In the \StMcEvent\ data model each track keeps references to the
+    associated hits and vice versa.  All hits have a pointer to their
+    parent track.  This is especially important for the making of the
+    associations in \StAssociationMaker.
+
+    The PXL detector is organised into sectors (10), ladders (4 per
+    sector), and sensors (10 per ladder).  The geometry numbering
+    scheme is described at
+    \texttt{drupal.star.bnl.gov/STAR/system/files/HFT\%20numbering\%20scheme\_v5\_0.pdf}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcPxlHit} is derived directly from \name{StMcHit}.
+    The way to retrieve hits for a given sector, ladder, and sensor
+    starting from the top-level \name{StMcEvent} pointer is:\\
+    \verb+mcEvt->pxlHitCollection()->sector(s)->ladder(ld)->sensor(sn)->hits()+\\
+    Each instance of \name{StMcTrack} holds a list of PXL hits
+    which belong to that track.
+    \index{StMcHit}
+    \index{StMcTrack}
+    \index{StMcPxlHitCollection}
+
+\item[Public\\ Constructors]
+    \verb+StMcPxlHit();+\\
+    Default constructor.
+
+    \verb+StMcPxlHit(const StThreeVectorF& x, const StThreeVectorF& p,+\\
+    \verb+           float de, float ds, float tof,+\\
+    \verb+           long int k, long int volId, StMcTrack* parent);+\\
+    Create an instance of \name{StMcPxlHit} with position \name{x},
+    local momentum \name{p}, energy deposition \name{de}, path length
+    \name{ds}, time of flight \name{tof}, primary key \name{k},
+    volume id \name{volId} and parent track \name{parent}.
+
+    \verb+StMcPxlHit(g2t_pix_hit_st* pt);+\\
+    Construct from a GEANT \texttt{g2t\_pix\_hit} table row.
+
+\item[Public Member\\ Functions]
+
+    \verb+int sector() const;+\\
+    Returns the sector number (1--10, numbered clockwise when viewed
+    from East).
+    \index{sector, PXL}
+
+    \verb+int ladder() const;+\\
+    Returns the ladder number (1--4, numbered clockwise when viewed from
+    East; ladder~4 is the inner ladder).
+    \index{ladder, PXL}
+
+    \verb+int sensor() const;+\\
+    Returns the sensor number (1--10, numbered from East to West).
+    \index{sensor, PXL}
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+//  Print PXL hits belonging to a track.
+//
+void printPxlHits(StMcTrack* track)
+{
+    StPtrVecMcPxlHit& hits = track->pxlHits();
+    for (StMcPxlHitIterator it = hits.begin();
+         it != hits.end(); ++it)
+        cout << *(*it) << endl;
+}
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcPxlHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcPxlHitCollection}
+\index{PXL hit collection} \index{StMcPxlHitCollection|textbf}
+\label{sec:StMcPxlHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcPxlHitCollection} is the top-level container for PXL monte
+    carlo hits, organised by sector.
+
+\item[Synopsis]
+    \verb+#include "StMcPxlHitCollection.hh"+\\
+    \verb+class StMcPxlHitCollection;+\\
+
+\item[Description]
+    \name{StMcPxlHitCollection} is the first step down the hierarchy of hits
+    for the PXL detector.  It provides methods to return a particular sector
+    sub-collection and to count the total number of hits across all sectors.
+    The collection holds an array of 10 \name{StMcPxlSectorHitCollection}
+    objects, one per sector.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcPxlHitCollection} contains an array of
+    {\tt StMcPxlSectorHitCollection} objects (size~10).  See
+    \name{StMcPxlSectorHitCollection} \ref{sec:StMcPxlSectorHitCollection},
+    \name{StMcPxlLadderHitCollection} \ref{sec:StMcPxlLadderHitCollection},
+    \name{StMcPxlSensorHitCollection} \ref{sec:StMcPxlSensorHitCollection},
+    and \name{StMcPxlHit} \ref{sec:StMcPxlHit}.
+    \index{StMcPxlSectorHitCollection}
+    \index{StMcPxlLadderHitCollection}
+    \index{StMcPxlSensorHitCollection}
+    \index{StMcPxlHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcPxlHitCollection();+\\
+    Create an instance of \name{StMcPxlHitCollection} and
+    initialise the internal sector sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+bool addHit(StMcPxlHit*);+\\
+    Add a hit to the appropriate sector sub-collection.
+
+    \verb+unsigned int numberOfHits() const;+\\
+    Count the total number of hits across all sectors.
+
+    \verb+unsigned int numberOfSectors() const;+\\
+    Return the number of sector sub-collections (10).
+
+    \verb+StMcPxlSectorHitCollection*       sector(unsigned int);+\\
+    \verb+const StMcPxlSectorHitCollection* sector(unsigned int) const;+\\
+    Return the mutable or const sector sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Count total PXL hits.
+//
+StMcPxlHitCollection* coll = mcEvt->pxlHitCollection();
+cout << "Total PXL hits: " << coll->numberOfHits() << endl;
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcPxlLadderHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcPxlLadderHitCollection}
+\index{PXL ladder hit collection} \index{StMcPxlLadderHitCollection|textbf}
+\label{sec:StMcPxlLadderHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcPxlLadderHitCollection} is a container for PXL hits in one
+    ladder, organised by sensor.
+
+\item[Synopsis]
+    \verb+#include "StMcPxlLadderHitCollection.hh"+\\
+    \verb+class StMcPxlLadderHitCollection;+\\
+
+\item[Description]
+    \name{StMcPxlLadderHitCollection} is the third level in the
+    sector--ladder--sensor hit hierarchy for the PXL detector.  Each
+    ladder holds an array of 10 \name{StMcPxlSensorHitCollection} objects,
+    one per sensor.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcPxlLadderHitCollection} contains an array of
+    {\tt StMcPxlSensorHitCollection} objects (size~10).  See
+    \name{StMcPxlSectorHitCollection} \ref{sec:StMcPxlSectorHitCollection},
+    \name{StMcPxlSensorHitCollection} \ref{sec:StMcPxlSensorHitCollection},
+    and \name{StMcPxlHit} \ref{sec:StMcPxlHit}.
+    \index{StMcPxlSectorHitCollection}
+    \index{StMcPxlSensorHitCollection}
+    \index{StMcPxlHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcPxlLadderHitCollection();+\\
+    Create an instance of \name{StMcPxlLadderHitCollection} and
+    initialise the internal sensor sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned int numberOfHits() const;+\\
+    Count the total number of hits across all sensors in this ladder.
+
+    \verb+unsigned int numberOfSensors() const;+\\
+    Return the number of sensor sub-collections (10).
+
+    \verb+StMcPxlSensorHitCollection*       sensor(unsigned int);+\\
+    \verb+const StMcPxlSensorHitCollection* sensor(unsigned int) const;+\\
+    Return the mutable or const sensor sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcPxlSensorHitCollection for an example.
+// These classes normally go hand in hand.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcPxlSectorHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcPxlSectorHitCollection}
+\index{PXL sector hit collection} \index{StMcPxlSectorHitCollection|textbf}
+\label{sec:StMcPxlSectorHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcPxlSectorHitCollection} is a container for PXL hits in one
+    sector, organised by ladder.
+
+\item[Synopsis]
+    \verb+#include "StMcPxlSectorHitCollection.hh"+\\
+    \verb+class StMcPxlSectorHitCollection;+\\
+
+\item[Description]
+    \name{StMcPxlSectorHitCollection} is the second level in the
+    sector--ladder--sensor hit hierarchy for the PXL detector.  Each
+    sector holds an array of 4 \name{StMcPxlLadderHitCollection} objects,
+    one per ladder.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcPxlSectorHitCollection} contains an array of
+    {\tt StMcPxlLadderHitCollection} objects (size~4).  See
+    \name{StMcPxlHitCollection} \ref{sec:StMcPxlHitCollection},
+    \name{StMcPxlLadderHitCollection} \ref{sec:StMcPxlLadderHitCollection},
+    and \name{StMcPxlHit} \ref{sec:StMcPxlHit}.
+    \index{StMcPxlHitCollection}
+    \index{StMcPxlLadderHitCollection}
+    \index{StMcPxlHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcPxlSectorHitCollection();+\\
+    Create an instance of \name{StMcPxlSectorHitCollection} and
+    initialise the internal ladder sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned int numberOfHits() const;+\\
+    Count the total number of hits across all ladders in this sector.
+
+    \verb+unsigned int numberOfLadders() const;+\\
+    Return the number of ladder sub-collections (4).
+
+    \verb+StMcPxlLadderHitCollection*       ladder(unsigned int);+\\
+    \verb+const StMcPxlLadderHitCollection* ladder(unsigned int) const;+\\
+    Return the mutable or const ladder sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Traverse the full PXL hierarchy to print all hit positions.
+//
+StMcPxlHitCollection* pxl = mcEvt->pxlHitCollection();
+for (unsigned int s = 0; s < pxl->numberOfSectors(); ++s) {
+  for (unsigned int ld = 0;
+       ld < pxl->sector(s)->numberOfLadders(); ++ld) {
+    for (unsigned int sn = 0;
+         sn < pxl->sector(s)->ladder(ld)->numberOfSensors(); ++sn) {
+      StSPtrVecMcPxlHit& hits =
+          pxl->sector(s)->ladder(ld)->sensor(sn)->hits();
+      for (StMcPxlHitIterator it = hits.begin();
+           it != hits.end(); ++it)
+          cout << (*it)->position() << endl;
+    }
+  }
+}
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcPxlSensorHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcPxlSensorHitCollection}
+\index{PXL sensor hit collection} \index{StMcPxlSensorHitCollection|textbf}
+\label{sec:StMcPxlSensorHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcPxlSensorHitCollection} is the leaf node in the PXL hit
+    hierarchy; it directly stores the PXL hits for one sensor.
+
+\item[Synopsis]
+    \verb+#include "StMcPxlSensorHitCollection.hh"+\\
+    \verb+class StMcPxlSensorHitCollection;+\\
+
+\item[Description]
+    \name{StMcPxlSensorHitCollection} stores the actual
+    \name{StMcPxlHit} pointers in a \name{StSPtrVecMcPxlHit} container
+    for a single PXL sensor.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcPxlSensorHitCollection} contains a
+    {\tt StSPtrVecMcPxlHit}, which owns the hit objects.  See the
+    section on containers \ref{sec:containers}.
+    The parent collection is
+    \name{StMcPxlLadderHitCollection} \ref{sec:StMcPxlLadderHitCollection}.
+    \index{StMcPxlLadderHitCollection}
+    \index{StMcPxlHit}
+    \index{StSPtrVecMcPxlHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcPxlSensorHitCollection();+\\
+    Create an instance of \name{StMcPxlSensorHitCollection} and
+    initialise the internal hit container.
+
+\item[Public Member\\ Functions]
+
+    \verb+StSPtrVecMcPxlHit&       hits();+\\
+    \verb+const StSPtrVecMcPxlHit& hits() const;+\\
+    Return a reference to the container of PXL hits for this sensor.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcPxlSectorHitCollection for a full traversal example.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcSsdHit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcSsdHit}
+\index{SSD hit} \index{StMcSsdHit|textbf}
+\label{sec:StMcSsdHit}
+\begin{Entry}
+\item[Summary]
+    \name{StMcSsdHit} represents a monte carlo SSD (Silicon Strip Detector) hit.
+
+\item[Synopsis]
+    \verb+#include "StMcSsdHit.hh"+\\
+    \verb+class StMcSsdHit;+\\
+
+\item[Description]
+    \name{StMcSsdHit} inherits most functionality from \name{StMcHit}.
+    For a complete description of the inherited member functions see
+    \name{StMcHit} (sec.~\ref{sec:StMcHit}).
+
+    In the \StMcEvent\ data model each track keeps references to the
+    associated hits and vice versa.  All hits have a pointer to their
+    parent track.  This is especially important for the making of the
+    associations in \StAssociationMaker.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcSsdHit} is derived directly from \name{StMcHit}.
+    The way to retrieve hits for a given ladder and wafer starting
+    from the top-level \name{StMcEvent} pointer is:\\
+    \verb+mcEvt->ssdHitCollection()->ladder(ld)->wafer(w)->hits()+\\
+    The hits are kept in an instance of \name{StSPtrVecMcSsdHit}
+    where they are stored by pointer (see \ref{sec:containers}).
+    Each instance of \name{StMcTrack} holds a list of SSD hits
+    which belong to that track.
+    \index{StMcHit}
+    \index{StMcTrack}
+    \index{StMcSsdHitCollection}
+
+\item[Public\\ Constructors]
+    \verb+StMcSsdHit();+\\
+    Default constructor.
+
+    \verb+StMcSsdHit(const StThreeVectorF& x, const StThreeVectorF& p,+\\
+    \verb+           Float_t de, Float_t ds, Float_t tof,+\\
+    \verb+           Long_t k, Long_t volId, StMcTrack* parent);+\\
+    Create an instance of \name{StMcSsdHit} with position \name{x},
+    local momentum \name{p}, energy deposition \name{de}, path length
+    \name{ds}, time of flight \name{tof}, primary key \name{k},
+    volume id \name{volId} and parent track \name{parent}.
+
+    \verb+StMcSsdHit(g2t_ssd_hit_st* pt);+\\
+    Construct from a GEANT \texttt{g2t\_ssd\_hit} table row.
+
+\item[Public Member\\ Functions]
+
+    \verb+ULong_t ladder() const;+\\
+    Returns the ladder number decoded from the volume id.
+    \index{ladder, SSD}
+
+    \verb+ULong_t wafer() const;+\\
+    Returns the wafer number decoded from the volume id.
+    \index{wafer, SSD}
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+//  Print SSD hits belonging to a track.
+//
+void printSsdHits(StMcTrack* track)
+{
+    StPtrVecMcSsdHit& hits = track->ssdHits();
+    for (StMcSsdHitIterator it = hits.begin();
+         it != hits.end(); ++it)
+        cout << *(*it) << endl;
+}
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcSsdHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcSsdHitCollection}
+\index{SSD hit collection} \index{StMcSsdHitCollection|textbf}
+\label{sec:StMcSsdHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcSsdHitCollection} is the top-level container for SSD monte
+    carlo hits, organised by ladder.
+
+\item[Synopsis]
+    \verb+#include "StMcSsdHitCollection.hh"+\\
+    \verb+class StMcSsdHitCollection;+\\
+
+\item[Description]
+    \name{StMcSsdHitCollection} is the first step down the hierarchy of hits
+    for the SSD.  It provides methods to return a particular ladder
+    sub-collection and to count the total number of hits across all SSD
+    ladders.  The collection holds an array of 20
+    \name{StMcSsdLadderHitCollection} objects, one per ladder.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcSsdHitCollection} contains an array of
+    {\tt StMcSsdLadderHitCollection} objects (size~20).  See
+    \name{StMcSsdLadderHitCollection} \ref{sec:StMcSsdLadderHitCollection},
+    \name{StMcSsdWaferHitCollection} \ref{sec:StMcSsdWaferHitCollection},
+    and \name{StMcSsdHit} \ref{sec:StMcSsdHit}.
+    \index{StMcSsdLadderHitCollection}
+    \index{StMcSsdWaferHitCollection}
+    \index{StMcSsdHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcSsdHitCollection();+\\
+    Create an instance of \name{StMcSsdHitCollection} and
+    initialise the internal ladder sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+bool addHit(StMcSsdHit*);+\\
+    Add a hit to the appropriate ladder sub-collection.
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Count the total number of hits across all ladders.
+
+    \verb+unsigned int  numberOfLadders() const;+\\
+    Return the number of ladder sub-collections (20).
+
+    \verb+StMcSsdLadderHitCollection*       ladder(unsigned int);+\\
+    \verb+const StMcSsdLadderHitCollection* ladder(unsigned int) const;+\\
+    Return the mutable or const ladder sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Count total SSD hits.
+//
+StMcSsdHitCollection* coll = mcEvt->ssdHitCollection();
+cout << "Total SSD hits: " << coll->numberOfHits() << endl;
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcSsdLadderHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcSsdLadderHitCollection}
+\index{SSD ladder hit collection} \index{StMcSsdLadderHitCollection|textbf}
+\label{sec:StMcSsdLadderHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcSsdLadderHitCollection} is a container for SSD hits in one
+    ladder, organised by wafer.
+
+\item[Synopsis]
+    \verb+#include "StMcSsdLadderHitCollection.hh"+\\
+    \verb+class StMcSsdLadderHitCollection;+\\
+
+\item[Description]
+    \name{StMcSsdLadderHitCollection} is the second level in the
+    ladder--wafer hit hierarchy for the SSD.  Each ladder holds an array of
+    up to 16 \name{StMcSsdWaferHitCollection} objects.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcSsdLadderHitCollection} contains an array of
+    {\tt StMcSsdWaferHitCollection} objects (size~16).  See
+    \name{StMcSsdHitCollection} \ref{sec:StMcSsdHitCollection},
+    \name{StMcSsdWaferHitCollection} \ref{sec:StMcSsdWaferHitCollection},
+    and \name{StMcSsdHit} \ref{sec:StMcSsdHit}.
+    \index{StMcSsdHitCollection}
+    \index{StMcSsdWaferHitCollection}
+    \index{StMcSsdHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcSsdLadderHitCollection();+\\
+    Create an instance of \name{StMcSsdLadderHitCollection} and
+    initialise the internal wafer sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Count the total number of hits across all wafers in this ladder.
+
+    \verb+unsigned int  numberOfWafers() const;+\\
+    Return the number of wafer sub-collections (16).
+
+    \verb+StMcSsdWaferHitCollection*       wafer(unsigned int);+\\
+    \verb+const StMcSsdWaferHitCollection* wafer(unsigned int) const;+\\
+    Return the mutable or const wafer sub-collection at 0-based index
+    \name{i}.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcSsdWaferHitCollection for an example.
+// These classes normally go hand in hand.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcSsdWaferHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcSsdWaferHitCollection}
+\index{SSD wafer hit collection} \index{StMcSsdWaferHitCollection|textbf}
+\label{sec:StMcSsdWaferHitCollection}
+\begin{Entry}
+\item[Summary]
+    \name{StMcSsdWaferHitCollection} is the leaf node in the SSD hit
+    hierarchy; it directly stores the SSD hits for one wafer.
+
+\item[Synopsis]
+    \verb+#include "StMcSsdWaferHitCollection.hh"+\\
+    \verb+class StMcSsdWaferHitCollection;+\\
+
+\item[Description]
+    \name{StMcSsdWaferHitCollection} stores the actual
+    \name{StMcSsdHit} pointers in a \name{StSPtrVecMcSsdHit} container
+    for a single SSD wafer.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcSsdWaferHitCollection} contains a
+    {\tt StSPtrVecMcSsdHit}, which owns the hit objects.  See the
+    section on containers \ref{sec:containers}.
+    The parent collection is
+    \name{StMcSsdLadderHitCollection} \ref{sec:StMcSsdLadderHitCollection}.
+    \index{StMcSsdLadderHitCollection}
+    \index{StMcSsdHit}
+    \index{StSPtrVecMcSsdHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcSsdWaferHitCollection();+\\
+    Create an instance of \name{StMcSsdWaferHitCollection} and
+    initialise the internal hit container.
+
+\item[Public Member\\ Functions]
+
+    \verb+StSPtrVecMcSsdHit&       hits();+\\
+    \verb+const StSPtrVecMcSsdHit& hits() const;+\\
+    Return a reference to the container of SSD hits for this wafer.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Print number of SSD hits and their positions.
+//
+StMcSsdHitCollection* ssdColl = mcEvt->ssdHitCollection();
+cout << "Total SSD hits: " << ssdColl->numberOfHits() << endl;
+for (unsigned int ld = 0; ld < ssdColl->numberOfLadders(); ++ld) {
+  for (unsigned int w = 0;
+       w < ssdColl->ladder(ld)->numberOfWafers(); ++w) {
+    StSPtrVecMcSsdHit& hits =
+        ssdColl->ladder(ld)->wafer(w)->hits();
+    for (StMcSsdHitIterator it = hits.begin();
+         it != hits.end(); ++it)
+        cout << (*it)->position() << endl;
+  }
+}
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    Reference: StMcSvtBarrelHitCollection
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{StMcSvtBarrelHitCollection}
+\index{SVT barrel hit collection} \index{StMcSvtBarrelHitCollection|textbf}
+\label{sec:StMcSvtBarrelHitCollection}
+\textbf{[Renamed from StMcSvtLayerHitCollection]}
+This class replaced \textbf{StMcSvtLayerHitCollection} when the SVT hit
+storage scheme was reorganised from layer--ladder--wafer to
+barrel--ladder--wafer order (commit \texttt{f98478bb68}).
+The stub entry for the old name is at \S\ref{sec:StMcSvtLayerHitCollection}.
+\begin{Entry}
+\item[Summary]
+    \name{StMcSvtBarrelHitCollection} is a container for SVT hits in one
+    barrel, organised by ladder.  It is the second level in the
+    barrel--ladder--wafer hit hierarchy.
+
+\item[Synopsis]
+    \verb+#include "StMcSvtBarrelHitCollection.hh"+\\
+    \verb+class StMcSvtBarrelHitCollection;+\\
+
+\item[Description]
+    \name{StMcSvtBarrelHitCollection} is the second step down the
+    hierarchy of hits for the SVT.  Each barrel holds an array of up to 20
+    \name{StMcSvtLadderHitCollection} objects.  The capacity is 20 to
+    accommodate the SSD barrel, which has more ladders than each SVT barrel.
+
+    This class replaces \name{StMcSvtLayerHitCollection}
+    (see \S\ref{sec:StMcSvtLayerHitCollection}), reflecting the change in
+    the SVT storage scheme from layer--ladder--wafer to
+    barrel--ladder--wafer introduced in commit \texttt{f98478bb68}.
+
+\item[Persistence]
+    None
+
+\item[Related Classes]
+    \name{StMcSvtBarrelHitCollection} contains an array of
+    {\tt StMcSvtLadderHitCollection} objects (size~20).  See
+    \name{StMcSvtHitCollection} \ref{sec:StMcSvtHitCollection},
+    \name{StMcSvtLadderHitCollection} \ref{sec:StMcSvtLadderHitCollection},
+    and \name{StMcSvtWaferHitCollection} \ref{sec:StMcSvtWaferHitCollection}.
+    \index{StMcSvtHitCollection}
+    \index{StMcSvtLadderHitCollection}
+    \index{StMcSvtWaferHitCollection}
+    \index{StMcSvtHit}
+
+\item[Public\\ Constructors]
+    \verb+StMcSvtBarrelHitCollection();+\\
+    Create an instance of \name{StMcSvtBarrelHitCollection} and
+    initialise the internal ladder sub-collections.
+
+\item[Public Member\\ Functions]
+
+    \verb+unsigned long numberOfHits() const;+\\
+    Count the total number of hits across all ladders in this barrel.
+
+    \verb+unsigned int  numberOfLadders() const;+\\
+    Return the number of ladder sub-collections (up to 20).
+
+    \verb+StMcSvtLadderHitCollection*       ladder(unsigned int);+\\
+    \verb+const StMcSvtLadderHitCollection* ladder(unsigned int) const;+\\
+    Return the mutable or const ladder sub-collection at 0-based index
+    \name{i}.
+
+    \verb+void setBarrelNumber(int);+\\
+    Set the barrel index and propagate it to all ladder sub-collections.
+
+\item[Examples]
+{\footnotesize
+\begin{verbatim}
+//
+// Look in StMcSvtWaferHitCollection for a full traversal example.
+// These classes normally go hand in hand.
+\end{verbatim}
+}%footnotesize
+\end{Entry}
+\clearpage
+
 \printindex
 
 \end{document}
