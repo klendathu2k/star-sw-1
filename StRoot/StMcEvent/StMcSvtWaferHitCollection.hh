@@ -36,6 +36,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcSvtWaferHitCollection.hh
+/// @brief Monte Carlo SVT wafer hit collection — leaf level of the SVT hierarchy.
+
 #ifndef StMcSvtWaferHitCollection_hh
 #define StMcSvtWaferHitCollection_hh
 #include "StMcContainers.hh"
@@ -43,6 +46,7 @@
 
 class StMcSvtHit;
 
+/// @brief Container holding all MC SVT/SSD hits on a single silicon wafer.
 class StMcSvtWaferHitCollection : public StObject
 {
 public:
@@ -50,15 +54,18 @@ public:
     // StMcSvtWaferHitCollection(const StMcSvtWaferHitCollection&); use default
     // const StMcSvtWaferHitCollection& operator=(const StMcSvtWaferHitCollection&); use default
     virtual ~StMcSvtWaferHitCollection();
+    /// @brief Clear all hits from this wafer collection.
     void Clear(const char* opt="");
     bool IsFolder() const { return true;};
 virtual void Browse(TBrowser *b); 
     
+    /// @brief Return the mutable vector of hits on this wafer.
     StSPtrVecMcSvtHit&       hits();
+    /// @brief Return the const vector of hits on this wafer.
     const StSPtrVecMcSvtHit& hits() const;
 
 protected:
-    StSPtrVecMcSvtHit mHits;
+    StSPtrVecMcSvtHit mHits; ///< Hits stored on this SVT/SSD wafer.
     ClassDef(StMcSvtWaferHitCollection,1)
 };
 #endif

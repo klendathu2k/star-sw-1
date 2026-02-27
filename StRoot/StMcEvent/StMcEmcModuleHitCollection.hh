@@ -37,6 +37,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcEmcModuleHitCollection.hh
+/// @brief Per-module sub-collection of Monte Carlo EMC hits.
 #ifndef StMcEmcModuleHitCollection_hh
 #define StMcEmcModuleHitCollection_hh
 #include "StMcContainers.hh"
@@ -44,21 +46,37 @@
 
 class StMcCalorimeterHit;
 
+/// @brief Per-module sub-collection of Monte Carlo EMC hits.
+///
+/// Stores two vectors of StMcCalorimeterHit: track-associated hits and
+/// detector hits (energy summed per cell, parent track not preserved).
 class StMcEmcModuleHitCollection : public TDataSet {
 public:
+    /// @brief Default constructor.
     StMcEmcModuleHitCollection();
+    /// @brief Constructor specifying the module index.
     StMcEmcModuleHitCollection(const unsigned int m);
+    /// @brief Destructor.
     virtual ~StMcEmcModuleHitCollection();
+    /// @brief Clears all hits from both collections.
     void Clear(const char* opt="");
+    /// @brief Returns true; this collection is a folder in the ROOT browser.
 virtual bool IsFolder() const { return true;};
+    /// @brief Populates the ROOT browser with hit entries.
 virtual void Browse(TBrowser *b); 
 
+    /// @brief Initialises the module index.
     void init(const unsigned int m);
+    /// @brief Returns the number of track-associated hits in this module.
     unsigned long numberOfHits() const;
+    /// @brief Returns the number of detector hits (energy-summed per cell) in this module.
     unsigned long numberOfDetectorHits() const;
+    /// @brief Returns the total energy deposit across all hits in this module (GeV).
     float sum() const;
 
+    /// @brief Returns the vector of track-associated calorimeter hits.
     StSPtrVecMcCalorimeterHit&       hits();
+    /// @brief Returns the const vector of track-associated calorimeter hits.
     const StSPtrVecMcCalorimeterHit& hits() const;
     
     // detector hits are like hits, but there is at most one detector hit per
@@ -66,15 +84,18 @@ virtual void Browse(TBrowser *b);
     // element their energy depositions are summed, regardless of the parent track.
     // Also, detector hits do not preserve information about the parent track of 
     // the hit, since there may be more than one.  APK - 09/07
+    /// @brief Returns the vector of detector hits (energy summed per cell, no track info).
     StSPtrVecMcCalorimeterHit&       detectorHits();
+    /// @brief Returns the const vector of detector hits.
     const StSPtrVecMcCalorimeterHit& detectorHits() const;
 
 
+    /// @brief Reinitialises the module index (functor interface).
     void operator()(const unsigned int m) { init(m); } 
 
 protected:
-    StSPtrVecMcCalorimeterHit mHits;
-    StSPtrVecMcCalorimeterHit mDetectorHits;
+    StSPtrVecMcCalorimeterHit mHits;         ///< Track-associated calorimeter hits.
+    StSPtrVecMcCalorimeterHit mDetectorHits; ///< Energy-summed detector hits (no track info).
     ClassDef(StMcEmcModuleHitCollection,1)
 };
 #endif

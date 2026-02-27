@@ -15,27 +15,39 @@
  *
  *
  **************************************************************************/
+/// @file StMcFgtHitCollection.hh
+/// @brief Top-level container for Monte Carlo Forward GEM Tracker (FGT) hits.
 #ifndef StMcFgtHitCollection_hh
 #define StMcFgtHitCollection_hh
 
 #include "StMcFgtLayerHitCollection.hh"
 class StMcFgtHit;
 
+/// @brief Top-level container for Monte Carlo Forward GEM Tracker (FGT) hits.
+///
+/// Organises StMcFgtHit objects into per-layer (per-disc) sub-collections.
 class StMcFgtHitCollection : public StObject {
 public:
     
+    /// @brief Default constructor.
     StMcFgtHitCollection();
+    /// @brief Destructor.
     ~StMcFgtHitCollection();
     
+    /// @brief Adds an FGT hit to the appropriate layer sub-collection; returns true on success.
     bool addHit(StMcFgtHit*);
+    /// @brief Returns the total number of hits across all layers.
     unsigned long numberOfHits() const;
+    /// @brief Returns the number of layers (discs) in the FGT.
     unsigned int  numberOfLayers() const;
     
+    /// @brief Returns a pointer to the sub-collection for the given layer index.
     StMcFgtLayerHitCollection*       layer(unsigned int);
+    /// @brief Returns a const pointer to the sub-collection for the given layer index.
     const StMcFgtLayerHitCollection* layer(unsigned int) const;
 protected:
-    enum { mNumberOfLayers = 9 }; // layer = disk in StFgtGeom WMZ
-    StMcFgtLayerHitCollection mLayers[mNumberOfLayers];
+    enum { mNumberOfLayers = 9 }; ///< Number of FGT layers (discs). @see StFgtGeom.
+    StMcFgtLayerHitCollection mLayers[mNumberOfLayers]; ///< Per-layer hit sub-collections.
     ClassDef(StMcFgtHitCollection,1)
 };
 #endif

@@ -32,12 +32,18 @@
  *
  *
  **************************************************************************/
+/// @file StMcSvtBarrelHitCollection.hh
+/// @brief Monte Carlo SVT barrel hit collection — second level of the SVT hierarchy.
+
 #ifndef StMcSvtBarrelHitCollection_hh
 #define StMcSvtBarrelHitCollection_hh
 
 #include "StMcSvtLadderHitCollection.hh"
 
-
+/// @brief Container for MC SVT/SSD hits in one barrel, organised by ladder.
+///
+/// Up to 20 ladders are supported to accommodate the SSD barrel which has
+/// more ladders than each SVT barrel.
 class StMcSvtBarrelHitCollection : public StObject
 {    
 public:
@@ -47,18 +53,23 @@ public:
     // const StMcSvtBarrelHitCollection&
     // operator=(const StMcSvtBarrelHitCollection&);               use default
     
+    /// @brief Total number of hits across all ladders in this barrel.
     unsigned long numberOfHits() const;
+    /// @brief Number of ladder sub-collections available in this barrel.
     unsigned int  numberOfLadders() const;
     
+    /// @brief Return the mutable ladder sub-collection at index @p i (0-based).
     StMcSvtLadderHitCollection*       ladder(unsigned int);
+    /// @brief Return the const ladder sub-collection at index @p i (0-based).
     const StMcSvtLadderHitCollection* ladder(unsigned int) const;
 
+    /// @brief Set the barrel number and propagate it to all ladder sub-collections.
     void setBarrelNumber(int);
     
 protected:
-    enum { mMaxNumberOfLadders = 20 };
-    int                    mBarrelNumber;
-    StMcSvtLadderHitCollection mLadders[mMaxNumberOfLadders];
+    enum { mMaxNumberOfLadders = 20 };                      ///< Maximum ladders per barrel (SSD has up to 20).
+    int                    mBarrelNumber;                   ///< Index of this barrel within the SVT/SSD system.
+    StMcSvtLadderHitCollection mLadders[mMaxNumberOfLadders]; ///< Per-ladder hit sub-collections.
     ClassDef(StMcSvtBarrelHitCollection,1)
 };
 #endif

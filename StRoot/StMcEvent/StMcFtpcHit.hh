@@ -58,25 +58,35 @@
  *
  *
  **************************************************************************/
+/// @file StMcFtpcHit.hh
+/// @brief Monte Carlo Forward TPC (FTPC) hit class.
+
 #ifndef StMcFtpcHit_hh
 #define StMcFtpcHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_ftp_hit_Table.h" 
 
+/// @brief Monte Carlo hit in the Forward Time Projection Chamber (FTPC).
+///
+/// Encodes position, momentum, and energy loss from the Geant g2t_ftp_hit table.
+/// The volume ID is decoded to provide plane (1–20) and sector (1–6) numbers.
 class StMcFtpcHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcFtpcHit() {}
+  /// @brief Construct from explicit position, momentum, and track parameters.
   StMcFtpcHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	      Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Construct from a Geant g2t_ftp_hit table row.
   StMcFtpcHit(g2t_ftp_hit_st* pt, Float_t cl_x=0, Float_t cl_t=0) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
   ~StMcFtpcHit() {}
-  ULong_t plane() const; // 1-20, where 1-10 = West and 11-20 = East
-  ULong_t sector() const; // 1-6
+  ULong_t plane() const;  ///< Plane number 1–20 (1–10 = West FTPC, 11–20 = East FTPC).
+  ULong_t sector() const; ///< Sector number 1–6, decoded from volume ID.
   virtual void Print(Option_t *option="") const; // *MENU* 
 
 private:

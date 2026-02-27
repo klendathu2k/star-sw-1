@@ -23,6 +23,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcTpcHitCollection.hh
+/// @brief Top-level collection of Monte Carlo TPC hits, organised by sector.
+
 #ifndef StMcTpcHitCollection_hh
 #define StMcTpcHitCollection_hh
 
@@ -30,6 +33,8 @@
 
 class StMcTpcHit;
 
+/// @brief Top-level container for MC TPC hits arranged in a 3-level hierarchy:
+///        collection → sector → padrow.
 class StMcTpcHitCollection : public StObject {
 public:
     StMcTpcHitCollection();
@@ -37,16 +42,21 @@ public:
     // StMcTpcHitCollection(const StMcTpcHitCollection&);            use default
     // StMcTpcHitCollection& operator=(const StMcTpcHitCollection&); use default
     
+    /// @brief Add a hit to the appropriate sector/padrow sub-collection.
     bool  addHit(StMcTpcHit*);
+    /// @brief Total number of hits across all sectors.
     unsigned long numberOfHits() const;
+    /// @brief Number of sector sub-collections (always 24).
     unsigned int  numberOfSectors() const;
     
+    /// @brief Return the mutable sector sub-collection at index @p i (0-based).
     StMcTpcSectorHitCollection*       sector(unsigned int);
+    /// @brief Return the const sector sub-collection at index @p i (0-based).
     const StMcTpcSectorHitCollection* sector(unsigned int) const;
 
 protected:
-    enum { mNumberOfSectors = 24 };
-    StMcTpcSectorHitCollection mSectors[mNumberOfSectors];
+    enum { mNumberOfSectors = 24 };                       ///< Fixed number of TPC sectors.
+    StMcTpcSectorHitCollection mSectors[mNumberOfSectors]; ///< Per-sector hit sub-collections.
     ClassDef(StMcTpcHitCollection,1)
 };
 

@@ -140,6 +140,8 @@
  *
  * 
  **************************************************************************/
+/// @file StMcEvent.hh
+/// @brief Top-level Monte Carlo event class for STAR MC truth data.
 #ifndef StMcEvent_hh
 #define StMcEvent_hh
 
@@ -166,12 +168,16 @@ class StMcFgtHitCollection;
 class StMcVertex;
 class g2t_event_st;
 
+/// @brief Top-level container for Monte Carlo truth data, the MC counterpart of StEvent.
 class StMcEvent : public TDataSet {
     
 public:
+  /// @brief Default constructor.
   StMcEvent();  
+  /// @brief Construct from a GEANT g2t_event table row.
   StMcEvent(g2t_event_st*);
   virtual ~StMcEvent();
+  /// @brief Allow TBrowser to browse this object's contents.
   virtual void Browse(TBrowser *b); 
   virtual bool IsFolder() const {return true;}; 
   int operator==(const StMcEvent&) const;
@@ -185,42 +191,79 @@ public:
   //"Get" Methods
   
   // The following stuff will be read directly from g2t_event table
+  /// @brief Return the CVS tag string for this class.
   static const TString&                    cvsTag()       {return mCvsTag; }
+  /// @brief Return the event generator event label.
   unsigned long          eventGeneratorEventLabel() const {return mEventGeneratorEventLabel; }		
+  /// @brief Return the event number within the run.
   unsigned long                       eventNumber() const {return mEventNumber; }					
+  /// @brief Return the run number.
   unsigned long                         runNumber() const {return mRunNumber;}
+  /// @brief Return the event type flag.
   unsigned long                              type() const {return mType;}
+  /// @brief Return the charge number of the West beam nucleus.
   unsigned long                             zWest() const {return mZWest;}
+  /// @brief Return the mass number of the West beam nucleus.
   unsigned long                             nWest() const {return mNWest;}
+  /// @brief Return the charge number of the East beam nucleus.
   unsigned long                             zEast() const {return mZEast;}
+  /// @brief Return the mass number of the East beam nucleus.
   unsigned long                             nEast() const {return mNEast;}
+  /// @brief Return the number of final-state event-generator tracks.
   unsigned long    eventGeneratorFinalStateTracks() const {return mEvGenFSTracks;}		
+  /// @brief Return the number of primary tracks.
   unsigned long             numberOfPrimaryTracks() const {return mPrimaryTracks;}				
+  /// @brief Return the Pythia sub-process ID.
   unsigned long                      subProcessId() const {return mSubProcessId;}					
+  /// @brief Return the impact parameter (fm).
   float                           impactParameter() const {return mImpactParameter; }					
+  /// @brief Return the reaction-plane azimuthal angle (rad).
   float                          phiReactionPlane() const {return mPhiReactionPlane; }					
+  /// @brief Return the trigger time offset (ns).
   float                         triggerTimeOffset() const {return mTriggerTimeOffset;}					
+  /// @brief Return the number of binary nucleon–nucleon collisions.
   unsigned long                           nBinary() const {return mNBinary;}						
+  /// @brief Return the number of wounded nucleons in the East beam.
   unsigned long                      nWoundedEast() const {return mNWoundedEast;}					
+  /// @brief Return the number of wounded nucleons in the West beam.
   unsigned long                      nWoundedWest() const {return mNWoundedWest;}
+  /// @brief Return the number of jets.
   unsigned long                             nJets() const {return mNJets;}  
+  /// @brief Return a pointer to the primary (collision) vertex.
   StMcVertex*                       primaryVertex()       {return mPrimaryVertex;}
+  /// @brief Return a const pointer to the primary vertex.
   const StMcVertex*                 primaryVertex() const {return mPrimaryVertex;}					
+  /// @brief Return a reference to the collection of all MC vertices.
   StSPtrVecMcVertex&                     vertices()       {return mVertices;}
+  /// @brief Return a const reference to the collection of all MC vertices.
   const StSPtrVecMcVertex&               vertices() const {return mVertices;}					
+  /// @brief Return a reference to the collection of all MC tracks.
   StSPtrVecMcTrack&                        tracks()       {return mTracks;}
+  /// @brief Return a const reference to the collection of all MC tracks.
   const StSPtrVecMcTrack&                  tracks() const {return mTracks;}						
+  /// @brief Return a pointer to the TPC hit collection.
   StMcTpcHitCollection*          tpcHitCollection()       {return mTpcHits;}					
+  /// @brief Return a const pointer to the TPC hit collection.
   const StMcTpcHitCollection*    tpcHitCollection() const {return mTpcHits;}				
+  /// @brief Return a pointer to the SVT hit collection.
   StMcSvtHitCollection*          svtHitCollection()       {return mSvtHits;}					
+  /// @brief Return a const pointer to the SVT hit collection.
   const StMcSvtHitCollection*    svtHitCollection() const {return mSvtHits;}				
+  /// @brief Return a pointer to the SSD hit collection.
   StMcSsdHitCollection*          ssdHitCollection()       {return mSsdHits;}					
+  /// @brief Return a const pointer to the SSD hit collection.
   const StMcSsdHitCollection*    ssdHitCollection() const {return mSsdHits;}				
+  /// @brief Return a pointer to the FTPC hit collection.
   StMcFtpcHitCollection*        ftpcHitCollection()       {return mFtpcHits;}					
+  /// @brief Return a const pointer to the FTPC hit collection.
   const StMcFtpcHitCollection*  ftpcHitCollection() const {return mFtpcHits;}			
+  /// @brief Return a pointer to the RICH hit collection.
   StMcRichHitCollection*        richHitCollection()       {return mRichHits;}					
+  /// @brief Return a const pointer to the RICH hit collection.
   const StMcRichHitCollection*  richHitCollection() const {return mRichHits;}			
+  /// @brief Return a pointer to the CTB hit collection.
   StMcCtbHitCollection*          ctbHitCollection()       {return mCtbHits;}					
+  /// @brief Return a const pointer to the CTB hit collection.
   const StMcCtbHitCollection*    ctbHitCollection() const {return mCtbHits;}				
   			        
   StMcEmcHitCollection*          emcHitCollection(const Char_t *name) {
@@ -274,76 +317,105 @@ public:
   
   // "Set" Methods
   
+  /// @brief Set the event generator event label.
   void setEventGeneratorEventLabel(unsigned long);
+  /// @brief Set the event number.
   void setEventNumber(unsigned long);
+  /// @brief Set the run number.
   void setRunNumber(unsigned long);
+  /// @brief Set the event type flag.
   void setType(unsigned long);
+  /// @brief Set the charge number of the West beam nucleus.
   void setZWest(unsigned long);
+  /// @brief Set the mass number of the West beam nucleus.
   void setNWest(unsigned long);
+  /// @brief Set the charge number of the East beam nucleus.
   void setZEast(unsigned long);
+  /// @brief Set the mass number of the East beam nucleus.
   void setNEast(unsigned long);
+  /// @brief Set the number of final-state event-generator tracks.
   void setEventGeneratorFinalStateTracks(unsigned long);
+  /// @brief Set the number of primary tracks.
   void setNumberOfPrimaryTracks(unsigned long);
+  /// @brief Set the impact parameter (fm).
   void setImpactParameter(float);
+  /// @brief Set the reaction-plane azimuthal angle (rad).
   void setPhiReactionPlane(float);
+  /// @brief Set the trigger time offset (ns).
   void setTriggerTimeOffset(float);
+  /// @brief Set the number of binary collisions.
   void setNBinary(unsigned long);
+  /// @brief Set the number of wounded nucleons in the East beam.
   void setNWoundedEast(unsigned long);
+  /// @brief Set the number of wounded nucleons in the West beam.
   void setNWoundedWest(unsigned long);
+  /// @brief Set the number of jets.
   void setNJets(unsigned long);
+  /// @brief Set the primary vertex pointer.
   void setPrimaryVertex(StMcVertex*);  
+  /// @brief Set the TPC hit collection (transfers ownership).
   void setTpcHitCollection(StMcTpcHitCollection*);               
+  /// @brief Set the SVT hit collection (transfers ownership).
   void setSvtHitCollection(StMcSvtHitCollection*);               
+  /// @brief Set the SSD hit collection (transfers ownership).
   void setSsdHitCollection(StMcSsdHitCollection*);               
+  /// @brief Set the FTPC hit collection (transfers ownership).
   void setFtpcHitCollection(StMcFtpcHitCollection*);              
+  /// @brief Set the RICH hit collection (transfers ownership).
   void setRichHitCollection(StMcRichHitCollection*);
+  /// @brief Set the TOF hit collection (transfers ownership).
   void setTofHitCollection(StMcTofHitCollection*);
+  /// @brief Set the Barrel TOF hit collection (transfers ownership).
   void setBTofHitCollection(StMcBTofHitCollection*);
+  /// @brief Set the MTD hit collection (transfers ownership).
   void setMtdHitCollection(StMcMtdHitCollection*);
+  /// @brief Set the Pixel (PXL) hit collection (transfers ownership).
   void setPxlHitCollection(StMcPxlHitCollection*);       
+  /// @brief Set the IST hit collection (transfers ownership).
   void setIstHitCollection(StMcIstHitCollection*); 
+  /// @brief Set the FGT hit collection (transfers ownership).
   void setFgtHitCollection(StMcFgtHitCollection*);       
   virtual void Print(Option_t *option="") const; // *MENU* 
  protected:
   char mBeg[1];				//!
-  unsigned long                  mEventGeneratorEventLabel;
-  unsigned long                  mEventNumber;
-  unsigned long                  mRunNumber;
-  unsigned long                  mType;  
-  unsigned long                  mZWest;
-  unsigned long                  mNWest;
-  unsigned long                  mZEast;
-  unsigned long                  mNEast;
-  unsigned long                  mEvGenFSTracks; // Number of final state event generator tracks
-  unsigned long                  mPrimaryTracks;
-  unsigned long                  mSubProcessId; // Pythia subprocess Id
-  float                          mImpactParameter;
-  float                          mPhiReactionPlane;
-  float                          mTriggerTimeOffset; // time offset wrt trigger event
-  unsigned long                  mNBinary;           // Number of Binary Collisions
-  unsigned long                  mNWoundedEast;      // Number of Wounded Nucleons East
-  unsigned long                  mNWoundedWest;      // Number of Wounded Nucleons West
-  unsigned long                  mNJets;             // Number of Jets
-  StMcVertex*                    mPrimaryVertex;
+  unsigned long                  mEventGeneratorEventLabel; ///< Event generator event label
+  unsigned long                  mEventNumber;              ///< Event number within the run
+  unsigned long                  mRunNumber;                ///< Run number
+  unsigned long                  mType;                     ///< Event type flag
+  unsigned long                  mZWest;                    ///< Charge number of West beam nucleus
+  unsigned long                  mNWest;                    ///< Mass number of West beam nucleus
+  unsigned long                  mZEast;                    ///< Charge number of East beam nucleus
+  unsigned long                  mNEast;                    ///< Mass number of East beam nucleus
+  unsigned long                  mEvGenFSTracks; ///< Number of final state event generator tracks
+  unsigned long                  mPrimaryTracks;            ///< Number of primary tracks
+  unsigned long                  mSubProcessId; ///< Pythia subprocess Id
+  float                          mImpactParameter;          ///< Impact parameter (fm)
+  float                          mPhiReactionPlane;         ///< Reaction-plane azimuthal angle (rad)
+  float                          mTriggerTimeOffset; ///< time offset wrt trigger event
+  unsigned long                  mNBinary;           ///< Number of Binary Collisions
+  unsigned long                  mNWoundedEast;      ///< Number of Wounded Nucleons East
+  unsigned long                  mNWoundedWest;      ///< Number of Wounded Nucleons West
+  unsigned long                  mNJets;             ///< Number of Jets
+  StMcVertex*                    mPrimaryVertex;            ///< Pointer to the primary vertex
   StObject*                      mBegColl[1];		//!
-  StMcTpcHitCollection*          mTpcHits;
-  StMcSvtHitCollection*          mSvtHits;
-  StMcSsdHitCollection*          mSsdHits;
-  StMcFtpcHitCollection*         mFtpcHits;
-  StMcRichHitCollection*         mRichHits;
-  StMcCtbHitCollection*          mCtbHits;
-  StMcTofHitCollection*          mTofHits;
-  StMcBTofHitCollection*         mBTofHits;
-  StMcMtdHitCollection*          mMtdHits;
-  StMcPxlHitCollection*          mPxlHits;
-  StMcIstHitCollection*          mIstHits;
-  StMcFgtHitCollection*          mFgtHits;
-  StMcEtrHitCollection*          mEtrHits;
+  StMcTpcHitCollection*          mTpcHits;                  ///< TPC hit collection
+  StMcSvtHitCollection*          mSvtHits;                  ///< SVT hit collection
+  StMcSsdHitCollection*          mSsdHits;                  ///< SSD hit collection
+  StMcFtpcHitCollection*         mFtpcHits;                 ///< FTPC hit collection
+  StMcRichHitCollection*         mRichHits;                 ///< RICH hit collection
+  StMcCtbHitCollection*          mCtbHits;                  ///< CTB hit collection
+  StMcTofHitCollection*          mTofHits;                  ///< TOF hit collection
+  StMcBTofHitCollection*         mBTofHits;                 ///< Barrel TOF hit collection
+  StMcMtdHitCollection*          mMtdHits;                  ///< MTD hit collection
+  StMcPxlHitCollection*          mPxlHits;                  ///< Pixel detector hit collection
+  StMcIstHitCollection*          mIstHits;                  ///< IST hit collection
+  StMcFgtHitCollection*          mFgtHits;                  ///< FGT hit collection
+  StMcEtrHitCollection*          mEtrHits;                  ///< ETR hit collection
   StObject*                      mEndColl[1];	//!
   char                           mEnd[1];	//!
-  StSPtrVecMcVertex              mVertices;
-  StSPtrVecMcTrack               mTracks;
-  static TString                 mCvsTag;
+  StSPtrVecMcVertex              mVertices;                  ///< Owning collection of all MC vertices
+  StSPtrVecMcTrack               mTracks;                   ///< Owning collection of all MC tracks
+  static TString                 mCvsTag;                   ///< CVS revision tag string
  protected:
   const StMcEvent& operator=(const StMcEvent&);
   StMcEvent(const StMcEvent&);

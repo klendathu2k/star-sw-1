@@ -21,6 +21,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcSsdHitCollection.hh
+/// @brief Top-level Monte Carlo hit collection for the STAR SSD detector.
+
 #ifndef StMcSsdHitCollection_hh
 #define StMcSsdHitCollection_hh
 
@@ -28,21 +31,32 @@
 
 class StMcSsdHit;
 
+/// @brief Top-level collection of Monte Carlo SSD hits, organised by ladder.
+///
+/// Contains StMcSsdLadderHitCollection objects for each of the 20 SSD ladders.
 class StMcSsdHitCollection : public StObject {
 public:
 
+    /// @brief Default constructor.
     StMcSsdHitCollection();
+    /// @brief Destructor.
     virtual ~StMcSsdHitCollection();
     
+    /// @brief Adds a hit to the appropriate ladder/wafer sub-collection.
+    /// @return true if the hit was added successfully.
     bool addHit(StMcSsdHit*);
+    /// @brief Returns the total number of hits across all ladders.
     unsigned long numberOfHits() const;
+    /// @brief Returns the number of ladders in this collection.
     unsigned int  numberOfLadders() const;
     
+    /// @brief Returns a pointer to the ladder sub-collection at the given index.
     StMcSsdLadderHitCollection*       ladder(unsigned int);
+    /// @brief Returns a const pointer to the ladder sub-collection at the given index.
     const StMcSsdLadderHitCollection* ladder(unsigned int) const;
 protected:
-    enum { mNumberOfLadders = 20 };
-    StMcSsdLadderHitCollection mLadders[mNumberOfLadders];
+    enum { mNumberOfLadders = 20 }; ///< Number of SSD ladders.
+    StMcSsdLadderHitCollection mLadders[mNumberOfLadders]; ///< Array of ladder sub-collections.
     ClassDef(StMcSsdHitCollection,1)
 };
 #endif

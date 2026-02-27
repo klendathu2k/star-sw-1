@@ -32,6 +32,8 @@
  * 
  * 
  **********************************************/
+/// @file StMcHitComparisons.hh
+/// @brief Functor structs for ordering MC and reconstructed hit pointers in sorted containers.
 #ifndef StMcHitComparisons_HH
 #define StMcHitComparisons_HH
 class StHit;
@@ -53,10 +55,12 @@ class StMcRichHit;
 // bool is defined in utility for SUNPRO_CC 4.2
 #include <utility> 
 #endif
+/// @brief Comparison functor for ordering reconstructed StHit pointers (by position).
 struct compHit{
     bool operator()(const StHit*, const StHit*) const;
 };
 
+/// @brief Comparison functor for ordering StMcHit pointers (by position).
 struct compMcHit{
     bool operator()(const StMcHit*, const StMcHit*) const;
 };
@@ -77,12 +81,15 @@ struct compMcHit{
 //     bool operator()(const StMcSvtHit* h1,const StMcSvtHit* h2) const;
 // };
 
+/// @brief Comparison functor ordering 3-vectors by (r, phi) — used for FTPC hit sorting.
 struct compRPhi{
     bool operator()(const StThreeVectorF&, const StThreeVectorF&) const;
 };
+/// @brief Comparison functor for ordering reconstructed StFtpcHit pointers.
 struct compFtpcHit{
     bool operator()(const StFtpcHit*,const StFtpcHit*) const;
 };
+/// @brief Comparison functor for ordering StMcFtpcHit pointers.
 struct compMcFtpcHit{
     bool operator()(const StMcFtpcHit*,const StMcFtpcHit*) const;
 };

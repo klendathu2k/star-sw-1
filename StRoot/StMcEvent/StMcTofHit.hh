@@ -28,27 +28,38 @@
  * Fix bug in StMcVertex and in clearing of some hit collections.
  *
  */
+/// @file StMcTofHit.hh
+/// @brief Monte Carlo hit for the legacy pVPD/TOFr detector (pre-Run 8 era).
 #ifndef StMcTofHit_hh
 #define StMcTofHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_ctf_hit_Table.h"  
 
+/// @brief Monte Carlo hit for the legacy pVPD/TOFr detector (pre-Run 8 era).
+///
+/// Inherits position, momentum, energy deposit, path length, and time-of-flight
+/// from StMcHit and adds a Geant s-track coordinate used by the legacy TOF geometry.
 class StMcTofHit : public StMcHit {
 public:
+  /// @brief Default constructor; initialises mStrack to zero.
   StMcTofHit() {mStrack=0;}
+  /// @brief Constructor from explicit hit quantities.
   StMcTofHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {mStrack=0;}
+  /// @brief Constructor from a g2t_ctf_hit_st Geant table row.
   StMcTofHit(g2t_ctf_hit_st* pt, Float_t cl_x=0, Float_t cl_t=0): 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {mStrack=0;}
+  /// @brief Destructor.
   ~StMcTofHit() {}
+  /// @brief Returns the Geant s-track coordinate along the detector strip.
   Float_t sTrack() const {return mStrack;}
   virtual void Print(Option_t *option="") const; // *MENU* 
 private:
-  Float_t               mStrack; 
+  Float_t               mStrack; ///< Geant s-track coordinate along the detector strip.
   ClassDef(StMcTofHit,2)
 };
 

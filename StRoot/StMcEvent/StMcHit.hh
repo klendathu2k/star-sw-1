@@ -58,6 +58,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcHit.hh
+/// @brief Abstract base class for all Monte Carlo detector hits.
 #ifndef StMcHit_hh
 #define StMcHit_hh
 
@@ -67,15 +69,20 @@
 #include "tables/St_g2t_hits_Table.h"
 #include "StMcTrack.hh"
 
+/// @brief Abstract base class for all Monte Carlo detector hits in STAR.
 class StMcHit : public StObject {
 public:
+  /// @brief Bit flags for hit matching status.
   enum EMcHitBits {
-    kMatched = BIT(23) // if hit has matched with reconstructed one
+    kMatched = BIT(23) ///< Set when this hit has been matched to a reconstructed hit
   };
+  /// @brief Default constructor; initializes all fields to zero.
   StMcHit()  : mPosition(0,0,0), mLocalMomentum(0,0,0), mdE(0),mdS(0),mTof(0),mKey(0),mVolumeId(0),mParentTrack(0) {}
+  /// @brief Construct with all hit properties specified explicitly.
   StMcHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	  Float_t de, Float_t ds, Float_t tof, Long_t k, Long_t volId, StMcTrack* parent=0)
     : mPosition(x), mLocalMomentum(p), mdE(de), mdS(ds), mTof(tof), mKey(k), mVolumeId(volId), mParentTrack(parent) {}
+  /// @brief Construct from a GEANT g2t_hits table row.
   StMcHit(g2t_hits_st* pt) : mPosition(pt->x[0],pt->x[1],pt->x[2]), mLocalMomentum(pt->p[0],pt->p[1],pt->p[2]),
 			     mdE(pt->de), mdS(pt->ds), mTof(pt->tof), mKey(pt->id), mVolumeId(0),
 			     mParentTrack(0) {}
@@ -88,35 +95,51 @@ public:
     
 
   // "Get" Methods
+  /// @brief Return the global position of the hit (cm).
   virtual const StThreeVectorF&      position() const { return mPosition;}
+  /// @brief Return the local momentum vector of the particle at the hit (GeV/c).
   virtual const StThreeVectorF& localMomentum() const { return mLocalMomentum;}
+  /// @brief Return the energy deposited in the sensitive volume (GeV).
   virtual Float_t                            dE() const { return mdE; }
+  /// @brief Return the step length through the sensitive volume (cm).
   virtual Float_t                            dS() const { return mdS; }
+  /// @brief Return the global time of flight at the hit (ns).
   virtual Float_t                           tof() const { return mTof; }
+  /// @brief Return the primary key (g2t row index) of this hit.
   virtual Long_t                            key() const { return mKey; }
+  /// @brief Return the detector volume ID encoding (detector-specific).
   virtual Long_t                       volumeId() const { return mVolumeId; }
+  /// @brief Return a pointer to the MC track that produced this hit.
   virtual StMcTrack*              parentTrack() const { return mParentTrack; }	
   // "Set" Methods
 
+  /// @brief Set the global hit position.
   virtual void setPosition(const StThreeVectorF& val) { mPosition = val; }
+  /// @brief Set the local momentum at the hit.
   virtual void setLocalMomentum(const StThreeVectorF& val) { mLocalMomentum = val; }
+  /// @brief Set the energy deposited.
   virtual void setdE(Float_t val) 	{ mdE  = val;}
+  /// @brief Set the step length.
   virtual void setdS(Float_t  val) 	{ mdS  = val;}
+  /// @brief Set the time of flight.
   virtual void setTof(Float_t tof) 	{ mTof = tof;}
+  /// @brief Set the g2t primary key.
   virtual void setKey(Long_t val) 	{ mKey = val;}
+  /// @brief Set the detector volume ID.
   virtual void setVolumeId(Long_t val) 	{ mVolumeId = val; }
+  /// @brief Set the parent MC track pointer.
   virtual void setParentTrack(StMcTrack* val) { mParentTrack = val; }
   virtual void Print(Option_t *option="") const; // *MENU* 
     
 protected:
-  StThreeVectorF       mPosition;
-  StThreeVectorF       mLocalMomentum;
-  Float_t              mdE;
-  Float_t              mdS;
-  Float_t              mTof;    
-  Long_t               mKey;
-  Long_t               mVolumeId;
-  StMcTrack*           mParentTrack;
+  StThreeVectorF       mPosition;       ///< Global hit position (cm)
+  StThreeVectorF       mLocalMomentum;  ///< Local momentum at the hit (GeV/c)
+  Float_t              mdE;             ///< Energy deposited in the volume (GeV)
+  Float_t              mdS;             ///< Step length through the volume (cm)
+  Float_t              mTof;            ///< Time of flight at the hit (ns)
+  Long_t               mKey;            ///< Primary key (g2t row index)
+  Long_t               mVolumeId;       ///< Detector volume ID (encoding is detector-specific)
+  StMcTrack*           mParentTrack;    ///< Parent MC track that produced this hit
   ClassDef(StMcHit,2)
 };
 ostream&  operator<<(ostream& os, const StMcHit&);

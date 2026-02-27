@@ -33,11 +33,15 @@
  *
  *
  **************************************************************************/
+/// @file StMcTpcSectorHitCollection.hh
+/// @brief Monte Carlo TPC sector hit collection — second level of the TPC hierarchy.
+
 #ifndef StMcTpcSectorHitCollection_hh
 #define StMcTpcSectorHitCollection_hh
 
 #include "StMcTpcPadrowHitCollection.hh"
 
+/// @brief Container for MC TPC hits belonging to one TPC sector, organised by padrow.
 class StMcTpcSectorHitCollection : public StObject
 {    
 public:
@@ -46,15 +50,19 @@ public:
     // StMcTpcSectorHitCollection(const StMcTpcSectorHitCollection&);            use default
     // StMcTpcSectorHitCollection& operator=(const StMcTpcSectorHitCollection&); use default
     
+    /// @brief Total number of hits across all padrows in this sector.
     unsigned long numberOfHits() const;
+    /// @brief Number of padrow sub-collections (up to 100).
     unsigned int  numberOfPadrows() const;
     
+    /// @brief Return the mutable padrow sub-collection at index @p i (0-based).
     StMcTpcPadrowHitCollection*       padrow(unsigned int);
+    /// @brief Return the const padrow sub-collection at index @p i (0-based).
     const StMcTpcPadrowHitCollection* padrow(unsigned int) const;
 
 protected:
-    enum { mNumberOfPadrows = 100 };
-    StMcTpcPadrowHitCollection mPadrows[mNumberOfPadrows];
+    enum { mNumberOfPadrows = 100 };                        ///< Maximum number of TPC padrows per sector.
+    StMcTpcPadrowHitCollection mPadrows[mNumberOfPadrows];  ///< Per-padrow hit sub-collections.
     ClassDef(StMcTpcSectorHitCollection,1)
 };
 #endif

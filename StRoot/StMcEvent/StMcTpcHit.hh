@@ -69,12 +69,19 @@
  *
  *
  **************************************************************************/
+/// @file StMcTpcHit.hh
+/// @brief Monte Carlo TPC hit class derived from the Geant g2t_tpc_hit table.
+
 #ifndef StMcTpcHit_hh
 #define StMcTpcHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_tpc_hit_Table.h"  
 
+/// @brief Monte Carlo space point in the Time Projection Chamber (TPC).
+///
+/// Stores position, momentum, energy loss, and TPC-specific quantities
+/// (sector, padrow, ADC, dE/dx) derived from the Geant g2t_tpc_hit table.
 class StMcTpcHit : public StMcHit {
 public:
   StMcTpcHit() : StMcHit(),
@@ -103,30 +110,37 @@ public:
     mdESum = pt->dESum;;
   }
   virtual ~StMcTpcHit() {}
-  ULong_t sector()     const { return (mVolumeId%10000)/100; }// 1-24
-  ULong_t padrow()     const { return (mVolumeId%100); }      // 1-45
+  ULong_t sector()     const { return (mVolumeId%10000)/100; } ///< Sector number (1–24).
+  ULong_t padrow()     const { return (mVolumeId%100); }       ///< Padrow number (1–45).
 
-  ULong_t isDet()      const { return mVolumeId/100000; }     // pseudo pad row
+  ULong_t isDet()      const { return mVolumeId/100000; }      ///< Pseudo-padrow detector flag decoded from volume ID.
+  /// @brief Log10 of the Lorentz gamma factor (ALOG10(Ekin/mass)) from Geant.
   Float_t lgamma()     const { return mLgamma;}
+  /// @brief Track length accumulated up to this hit.
   Float_t length()     const { return mLength;}
+  /// @brief Simulated ADC signal at this hit position.
   Float_t adc()        const { return mAdc;}
+  /// @brief Average pad coordinate (fractional pad number).
   Float_t pad()        const { return mMcl_x;}
+  /// @brief Average time-bucket coordinate.
   Float_t timeBucket() const { return mMcl_t;}
   
   virtual void Print(Option_t *option="") const; // *MENU* 
   
 private:
-  Float_t     mLgamma; //  ALOG10(GEKin/AMass) from g2t_tpc_hit
-  Float_t     mLength; //  track length up to this hit
-  Float_t     mAdc;        
-  Float_t     mMcl_x;      /* average pad */
-  Float_t     mMcl_t;      /* average timebucket */
-  Int_t       mnP;         /* no. of primary electrons */
-  Int_t       mne;         /* no. of conducting electrons */
-  Float_t     mAdc0, mAdc1, mAdc2;    /* adc signal in 0 => row - 1, 1 => row, 2 => row+1 */
-  Float_t     mdNdx;
-  Float_t     mdSSum;
-  Float_t     mdESum;
+  Float_t     mLgamma; ///<  ALOG10(Ekin/mass) from g2t_tpc_hit, used for dE/dx correction.
+  Float_t     mLength; ///<  Track length up to this hit (cm).
+  Float_t     mAdc;    ///<  Simulated ADC value at the hit location.
+  Float_t     mMcl_x;  ///<  Average fractional pad coordinate.
+  Float_t     mMcl_t;  ///<  Average fractional time-bucket coordinate.
+  Int_t       mnP;     ///<  Number of primary electrons produced at this hit.
+  Int_t       mne;     ///<  Total number of conducting (ionisation) electrons.
+  Float_t     mAdc0;   ///<  ADC signal in padrow − 1.
+  Float_t     mAdc1;   ///<  ADC signal in padrow (this row).
+  Float_t     mAdc2;   ///<  ADC signal in padrow + 1.
+  Float_t     mdNdx;   ///<  dN/dx — number of primary clusters per unit length.
+  Float_t     mdSSum;  ///<  Summed path-length increments across sub-steps.
+  Float_t     mdESum;  ///<  Summed energy-loss increments across sub-steps.
   ClassDef(StMcTpcHit,5)
 };
 

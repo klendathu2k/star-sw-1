@@ -61,28 +61,38 @@
  *
  *
  **************************************************************************/
+/// @file StMcSvtHit.hh
+/// @brief Monte Carlo Silicon Vertex Tracker (SVT) hit class.
+
 #ifndef StMcSvtHit_hh
 #define StMcSvtHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_svt_hit_Table.h"
 
+/// @brief Monte Carlo hit in the Silicon Vertex Tracker (SVT) or Silicon Strip Detector (SSD).
+///
+/// Position, momentum, and energy loss are stored in the StMcHit base class.
+/// The encoded volume ID is decoded to give barrel, layer, ladder, and wafer numbers.
 class StMcSvtHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcSvtHit() {}
+  /// @brief Construct from explicit position, momentum, and track parameters.
   StMcSvtHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Construct from a Geant g2t_svt_hit table row.
   StMcSvtHit(g2t_svt_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
   ~StMcSvtHit() {}
-  ULong_t layer()  const {return  (mVolumeId%10000)/1000;}      // layer=[1,6] with SSD [1-8]
-  ULong_t ladder() const {return   (mVolumeId)%100;}   // ladder=[1-8] with SSD [1-20]
-  ULong_t wafer()  const {return   mVolumeId%10000 < 7101 ?  ((mVolumeId)%1000)/100 :  (((mVolumeId%10000)/100)-70);}  // wafer=[1-7] with SSD [1-16]
-  ULong_t barrel() const {return  (layer()+1)/2; }    // barrel=[1-3] with SSD [1-4]
-  ULong_t hybrid() const {return  0; } 
+  ULong_t layer()  const {return  (mVolumeId%10000)/1000;}      ///< Layer number: SVT 1–6, SSD 1–8.
+  ULong_t ladder() const {return   (mVolumeId)%100;}            ///< Ladder number: SVT 1–8, SSD 1–20.
+  ULong_t wafer()  const {return   mVolumeId%10000 < 7101 ?  ((mVolumeId)%1000)/100 :  (((mVolumeId%10000)/100)-70);}  ///< Wafer number: SVT 1–7, SSD 1–16.
+  ULong_t barrel() const {return  (layer()+1)/2; }              ///< Barrel number derived from layer: SVT 1–3, SSD 1–4.
+  ULong_t hybrid() const {return  0; }                          ///< Hybrid identifier (always 0 for SVT MC hits).
   virtual void Print(Option_t *option="") const; // *MENU* 
 protected:
     ClassDef(StMcSvtHit,2)

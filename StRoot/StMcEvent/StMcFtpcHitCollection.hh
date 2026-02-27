@@ -26,27 +26,40 @@
  *
  *
  **************************************************************************/
+/// @file StMcFtpcHitCollection.hh
+/// @brief Top-level collection of Monte Carlo FTPC hits, organised by plane.
+
 #ifndef StMcFtpcHitCollection_hh
 #define StMcFtpcHitCollection_hh
 
 #include "StMcFtpcPlaneHitCollection.hh"
 class StMcFtpcHit;
 
+/// @brief Top-level container for MC FTPC hits arranged in a 2-level hierarchy:
+///        collection → plane.
+///
+/// Covers all 20 planes (10 West + 10 East).  Sector assignment is left to
+/// reconstruction and is therefore not represented here.
 class StMcFtpcHitCollection : public StObject {
 public:
 
     StMcFtpcHitCollection();
     virtual ~StMcFtpcHitCollection();
     
+    /// @brief Add a hit to the appropriate plane sub-collection.
     bool addHit(StMcFtpcHit*);
+    /// @brief Total number of hits across all planes.
     unsigned long numberOfHits() const;
+    /// @brief Number of plane sub-collections (always 20).
     unsigned int  numberOfPlanes() const;
     
+    /// @brief Return the mutable plane sub-collection at index @p i (0-based).
     StMcFtpcPlaneHitCollection*       plane(unsigned int);
+    /// @brief Return the const plane sub-collection at index @p i (0-based).
     const StMcFtpcPlaneHitCollection* plane(unsigned int) const;
 protected:
-    enum { mNumberOfPlanes = 20 };
-    StMcFtpcPlaneHitCollection mPlanes[mNumberOfPlanes];
+    enum { mNumberOfPlanes = 20 };                      ///< Total number of FTPC planes (10 West + 10 East).
+    StMcFtpcPlaneHitCollection mPlanes[mNumberOfPlanes]; ///< Per-plane hit sub-collections.
     ClassDef(StMcFtpcHitCollection,1)
 };
 #endif

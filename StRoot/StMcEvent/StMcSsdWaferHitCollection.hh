@@ -39,6 +39,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcSsdWaferHitCollection.hh
+/// @brief Monte Carlo hit collection for one SSD wafer.
+
 #ifndef StMcSsdWaferHitCollection_hh
 #define StMcSsdWaferHitCollection_hh
 #include "StMcContainers.hh"
@@ -46,22 +49,32 @@
 
 class StMcSsdHit;
 
+/// @brief Collection of Monte Carlo SSD hits for a single wafer.
+///
+/// Stores a vector of StMcSsdHit pointers for one SSD wafer.
 class StMcSsdWaferHitCollection : public StObject
 {
 public:
+    /// @brief Default constructor.
     StMcSsdWaferHitCollection();
     // StMcSsdWaferHitCollection(const StMcSsdWaferHitCollection&); use default
     // const StMcSsdWaferHitCollection& operator=(const StMcSsdWaferHitCollection&); use default
+    /// @brief Destructor.
     virtual ~StMcSsdWaferHitCollection();
+    /// @brief Clears the hit vector.
     void Clear(const char* opt="");
+    /// @brief Returns true to allow ROOT browser folding.
     bool IsFolder() const { return true;};
-virtual void Browse(TBrowser *b); 
+    /// @brief Populates the ROOT browser with hits.
+    virtual void Browse(TBrowser *b); 
     
+    /// @brief Returns a reference to the vector of hits.
     StSPtrVecMcSsdHit&       hits();
+    /// @brief Returns a const reference to the vector of hits.
     const StSPtrVecMcSsdHit& hits() const;
 
 protected:
-    StSPtrVecMcSsdHit mHits;
+    StSPtrVecMcSsdHit mHits; ///< Vector of Monte Carlo SSD hits.
     ClassDef(StMcSsdWaferHitCollection,1)
 };
 #endif

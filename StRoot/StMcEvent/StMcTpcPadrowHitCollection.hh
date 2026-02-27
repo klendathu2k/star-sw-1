@@ -36,17 +36,22 @@
  *
  *
  **************************************************************************/
+/// @file StMcTpcPadrowHitCollection.hh
+/// @brief Monte Carlo TPC padrow hit collection — leaf level of the TPC hierarchy.
+
 #ifndef StMcTpcPadrowHitCollection_hh
 #define StMcTpcPadrowHitCollection_hh
 
 #include "StMcContainers.hh"
 #include "StObject.h"
 
+/// @brief Container holding all MC TPC hits on a single padrow within one sector.
 class StMcTpcPadrowHitCollection : public StObject
 {
 public:
     StMcTpcPadrowHitCollection();
     virtual ~StMcTpcPadrowHitCollection();
+    /// @brief Clear all hits from this padrow collection.
     void Clear(const char* opt="");
     bool IsFolder() const { return true;};
 virtual void Browse(TBrowser *b); 
@@ -55,11 +60,13 @@ virtual void Browse(TBrowser *b);
     // const StMcTpcPadrowHitCollection&
     // operator=(const StMcTpcPadrowHitCollection&);                use default
     
+    /// @brief Return the mutable vector of hits on this padrow.
     StSPtrVecMcTpcHit&       hits();
+    /// @brief Return the const vector of hits on this padrow.
     const StSPtrVecMcTpcHit& hits() const;
 
 protected:
-    StSPtrVecMcTpcHit mHits;
+    StSPtrVecMcTpcHit mHits; ///< Hits stored on this padrow.
     ClassDef(StMcTpcPadrowHitCollection,1)
 };
 #endif

@@ -116,6 +116,8 @@
  * Completely revised for new StEvent
  *
  **************************************************************************/
+/// @file StMcContainers.hh
+/// @brief Typedef declarations for all StMcEvent vector containers and iterators.
 #ifndef StMcContainers_hh
 #define StMcContainers_hh
 
@@ -145,76 +147,76 @@ class StMcMtdHit;
 class StMcTrack;
    
 // Owners
-typedef vector<StMcHit*>     StSPtrVecMcHit;     
-typedef vector<StMcVertex*>  StSPtrVecMcVertex; 
-typedef vector<StMcCalorimeterHit*>     StSPtrVecMcCalorimeterHit;   
-typedef vector<StMcSvtHit*>  StSPtrVecMcSvtHit; 
-typedef vector<StMcSsdHit*>  StSPtrVecMcSsdHit; 
-typedef vector<StMcTpcHit*>  StSPtrVecMcTpcHit; 
-typedef vector<StMcFtpcHit*> StSPtrVecMcFtpcHit; 
-typedef vector<StMcRichHit*> StSPtrVecMcRichHit; 
-typedef vector<StMcCtbHit*>  StSPtrVecMcCtbHit; 
-typedef vector<StMcPxlHit*> StSPtrVecMcPxlHit; 
-typedef vector<StMcIstHit*>  StSPtrVecMcIstHit; 
-typedef vector<StMcFgtHit*>  StSPtrVecMcFgtHit; 
-typedef vector<StMcEtrHit*>  StSPtrVecMcEtrHit; 
-typedef vector<StMcTofHit*>  StSPtrVecMcTofHit; 
-typedef vector<StMcBTofHit*>  StSPtrVecMcBTofHit; 
-typedef vector<StMcMtdHit*>  StSPtrVecMcMtdHit; 
-typedef vector<StMcTrack*>   StSPtrVecMcTrack;  
+typedef vector<StMcHit*>     StSPtrVecMcHit;              ///< Owning vector of StMcHit pointers
+typedef vector<StMcVertex*>  StSPtrVecMcVertex;            ///< Owning vector of StMcVertex pointers
+typedef vector<StMcCalorimeterHit*>     StSPtrVecMcCalorimeterHit;   ///< Owning vector of StMcCalorimeterHit pointers
+typedef vector<StMcSvtHit*>  StSPtrVecMcSvtHit;            ///< Owning vector of StMcSvtHit pointers
+typedef vector<StMcSsdHit*>  StSPtrVecMcSsdHit;            ///< Owning vector of StMcSsdHit pointers
+typedef vector<StMcTpcHit*>  StSPtrVecMcTpcHit;            ///< Owning vector of StMcTpcHit pointers
+typedef vector<StMcFtpcHit*> StSPtrVecMcFtpcHit;           ///< Owning vector of StMcFtpcHit pointers
+typedef vector<StMcRichHit*> StSPtrVecMcRichHit;           ///< Owning vector of StMcRichHit pointers
+typedef vector<StMcCtbHit*>  StSPtrVecMcCtbHit;            ///< Owning vector of StMcCtbHit pointers
+typedef vector<StMcPxlHit*> StSPtrVecMcPxlHit;             ///< Owning vector of StMcPxlHit pointers
+typedef vector<StMcIstHit*>  StSPtrVecMcIstHit;            ///< Owning vector of StMcIstHit pointers
+typedef vector<StMcFgtHit*>  StSPtrVecMcFgtHit;            ///< Owning vector of StMcFgtHit pointers
+typedef vector<StMcEtrHit*>  StSPtrVecMcEtrHit;            ///< Owning vector of StMcEtrHit pointers
+typedef vector<StMcTofHit*>  StSPtrVecMcTofHit;            ///< Owning vector of StMcTofHit pointers
+typedef vector<StMcBTofHit*>  StSPtrVecMcBTofHit;          ///< Owning vector of StMcBTofHit pointers
+typedef vector<StMcMtdHit*>  StSPtrVecMcMtdHit;            ///< Owning vector of StMcMtdHit pointers
+typedef vector<StMcTrack*>   StSPtrVecMcTrack;             ///< Owning vector of StMcTrack pointers
 // Not owners
-typedef vector<StMcVertex*>  StPtrVecMcVertex; 
-typedef vector<StMcCalorimeterHit*>     StPtrVecMcCalorimeterHit;   
-typedef vector<StMcHit*>     StPtrVecMcHit;     
-typedef vector<StMcSvtHit*>  StPtrVecMcSvtHit; 
-typedef vector<StMcSsdHit*>  StPtrVecMcSsdHit; 
-typedef vector<StMcTpcHit*>  StPtrVecMcTpcHit; 
-typedef vector<StMcFtpcHit*> StPtrVecMcFtpcHit; 
-typedef vector<StMcRichHit*> StPtrVecMcRichHit; 
-typedef vector<StMcCtbHit*>  StPtrVecMcCtbHit; 
-typedef vector<StMcPxlHit*> StPtrVecMcPxlHit; 
-typedef vector<StMcIstHit*>  StPtrVecMcIstHit; 
-typedef vector<StMcFgtHit*>  StPtrVecMcFgtHit; 
-typedef vector<StMcEtrHit*>  StPtrVecMcEtrHit; 
-typedef vector<StMcTofHit*>  StPtrVecMcTofHit; 
-typedef vector<StMcBTofHit*>  StPtrVecMcBTofHit; 
-typedef vector<StMcMtdHit*>  StPtrVecMcMtdHit; 
-typedef vector<StMcTrack*>   StPtrVecMcTrack; 
+typedef vector<StMcVertex*>  StPtrVecMcVertex;              ///< Non-owning vector of StMcVertex pointers
+typedef vector<StMcCalorimeterHit*>     StPtrVecMcCalorimeterHit;    ///< Non-owning vector of StMcCalorimeterHit pointers
+typedef vector<StMcHit*>     StPtrVecMcHit;                ///< Non-owning vector of StMcHit pointers
+typedef vector<StMcSvtHit*>  StPtrVecMcSvtHit;             ///< Non-owning vector of StMcSvtHit pointers
+typedef vector<StMcSsdHit*>  StPtrVecMcSsdHit;             ///< Non-owning vector of StMcSsdHit pointers
+typedef vector<StMcTpcHit*>  StPtrVecMcTpcHit;             ///< Non-owning vector of StMcTpcHit pointers
+typedef vector<StMcFtpcHit*> StPtrVecMcFtpcHit;            ///< Non-owning vector of StMcFtpcHit pointers
+typedef vector<StMcRichHit*> StPtrVecMcRichHit;            ///< Non-owning vector of StMcRichHit pointers
+typedef vector<StMcCtbHit*>  StPtrVecMcCtbHit;             ///< Non-owning vector of StMcCtbHit pointers
+typedef vector<StMcPxlHit*> StPtrVecMcPxlHit;              ///< Non-owning vector of StMcPxlHit pointers
+typedef vector<StMcIstHit*>  StPtrVecMcIstHit;             ///< Non-owning vector of StMcIstHit pointers
+typedef vector<StMcFgtHit*>  StPtrVecMcFgtHit;             ///< Non-owning vector of StMcFgtHit pointers
+typedef vector<StMcEtrHit*>  StPtrVecMcEtrHit;             ///< Non-owning vector of StMcEtrHit pointers
+typedef vector<StMcTofHit*>  StPtrVecMcTofHit;             ///< Non-owning vector of StMcTofHit pointers
+typedef vector<StMcBTofHit*>  StPtrVecMcBTofHit;           ///< Non-owning vector of StMcBTofHit pointers
+typedef vector<StMcMtdHit*>  StPtrVecMcMtdHit;             ///< Non-owning vector of StMcMtdHit pointers
+typedef vector<StMcTrack*>   StPtrVecMcTrack;              ///< Non-owning vector of StMcTrack pointers
 //Iterators
-typedef StPtrVecMcVertex::iterator  StMcVertexIterator; 
-typedef StPtrVecMcCalorimeterHit::iterator  StMcCalorimeterHitIterator; 
-typedef StPtrVecMcHit::iterator     StMcHitIterator; 
-typedef StPtrVecMcSvtHit::iterator  StMcSvtHitIterator; 
-typedef StPtrVecMcSsdHit::iterator  StMcSsdHitIterator; 
-typedef StPtrVecMcTpcHit::iterator  StMcTpcHitIterator; 
-typedef StPtrVecMcFtpcHit::iterator StMcFtpcHitIterator; 
-typedef StPtrVecMcRichHit::iterator StMcRichHitIterator; 
-typedef StPtrVecMcCtbHit::iterator  StMcCtbHitIterator; 
-typedef StPtrVecMcPxlHit::iterator StMcPxlHitIterator; 
-typedef StPtrVecMcIstHit::iterator  StMcIstHitIterator; 
-typedef StPtrVecMcFgtHit::iterator  StMcFgtHitIterator; 
-typedef StPtrVecMcEtrHit::iterator  StMcEtrHitIterator; 
-typedef StPtrVecMcTofHit::iterator  StMcTofHitIterator; 
-typedef StPtrVecMcBTofHit::iterator  StMcBTofHitIterator; 
-typedef StPtrVecMcMtdHit::iterator  StMcMtdHitIterator; 
-typedef StPtrVecMcTrack::iterator   StMcTrackIterator; 
+typedef StPtrVecMcVertex::iterator  StMcVertexIterator;             ///< Mutable iterator over StMcVertex pointers
+typedef StPtrVecMcCalorimeterHit::iterator  StMcCalorimeterHitIterator;  ///< Mutable iterator over StMcCalorimeterHit pointers
+typedef StPtrVecMcHit::iterator     StMcHitIterator;                ///< Mutable iterator over StMcHit pointers
+typedef StPtrVecMcSvtHit::iterator  StMcSvtHitIterator;             ///< Mutable iterator over StMcSvtHit pointers
+typedef StPtrVecMcSsdHit::iterator  StMcSsdHitIterator;             ///< Mutable iterator over StMcSsdHit pointers
+typedef StPtrVecMcTpcHit::iterator  StMcTpcHitIterator;             ///< Mutable iterator over StMcTpcHit pointers
+typedef StPtrVecMcFtpcHit::iterator StMcFtpcHitIterator;            ///< Mutable iterator over StMcFtpcHit pointers
+typedef StPtrVecMcRichHit::iterator StMcRichHitIterator;            ///< Mutable iterator over StMcRichHit pointers
+typedef StPtrVecMcCtbHit::iterator  StMcCtbHitIterator;             ///< Mutable iterator over StMcCtbHit pointers
+typedef StPtrVecMcPxlHit::iterator StMcPxlHitIterator;              ///< Mutable iterator over StMcPxlHit pointers
+typedef StPtrVecMcIstHit::iterator  StMcIstHitIterator;             ///< Mutable iterator over StMcIstHit pointers
+typedef StPtrVecMcFgtHit::iterator  StMcFgtHitIterator;             ///< Mutable iterator over StMcFgtHit pointers
+typedef StPtrVecMcEtrHit::iterator  StMcEtrHitIterator;             ///< Mutable iterator over StMcEtrHit pointers
+typedef StPtrVecMcTofHit::iterator  StMcTofHitIterator;             ///< Mutable iterator over StMcTofHit pointers
+typedef StPtrVecMcBTofHit::iterator  StMcBTofHitIterator;           ///< Mutable iterator over StMcBTofHit pointers
+typedef StPtrVecMcMtdHit::iterator  StMcMtdHitIterator;             ///< Mutable iterator over StMcMtdHit pointers
+typedef StPtrVecMcTrack::iterator   StMcTrackIterator;              ///< Mutable iterator over StMcTrack pointers
 //Const Iterators
-typedef StPtrVecMcVertex::const_iterator  StMcVertexConstIterator; 
-typedef StPtrVecMcCalorimeterHit::const_iterator  StMcCalorimeterHitConstIterator;
-typedef StPtrVecMcHit::const_iterator     StMcSvtConstIterator; 
-typedef StPtrVecMcSvtHit::const_iterator  StMcSvtHitConstIterator; 
-typedef StPtrVecMcSsdHit::const_iterator  StMcSsdHitConstIterator; 
-typedef StPtrVecMcTpcHit::const_iterator  StMcTpcHitConstIterator; 
-typedef StPtrVecMcFtpcHit::const_iterator StMcFtpcHitConstIterator; 
-typedef StPtrVecMcRichHit::const_iterator StMcRichHitConstIterator; 
-typedef StPtrVecMcCtbHit::const_iterator  StMcCtbHitConstIterator; 
-typedef StPtrVecMcPxlHit::const_iterator StMcPxlHitConstIterator; 
-typedef StPtrVecMcIstHit::const_iterator  StMcIstHitConstIterator;
-typedef StPtrVecMcFgtHit::const_iterator  StMcFgtHitConstIterator; 
-typedef StPtrVecMcEtrHit::const_iterator  StMcEtrHitConstIterator; 
-typedef StPtrVecMcTofHit::const_iterator  StMcTofHitConstIterator; 
-typedef StPtrVecMcBTofHit::const_iterator  StMcBTofHitConstIterator; 
-typedef StPtrVecMcMtdHit::const_iterator  StMcMtdHitConstIterator; 
-typedef StPtrVecMcTrack::const_iterator   StMcTrackConstIterator; 
+typedef StPtrVecMcVertex::const_iterator  StMcVertexConstIterator;           ///< Const iterator over StMcVertex pointers
+typedef StPtrVecMcCalorimeterHit::const_iterator  StMcCalorimeterHitConstIterator;  ///< Const iterator over StMcCalorimeterHit pointers
+typedef StPtrVecMcHit::const_iterator     StMcSvtConstIterator;              ///< Const iterator over StMcHit pointers (legacy name)
+typedef StPtrVecMcSvtHit::const_iterator  StMcSvtHitConstIterator;           ///< Const iterator over StMcSvtHit pointers
+typedef StPtrVecMcSsdHit::const_iterator  StMcSsdHitConstIterator;           ///< Const iterator over StMcSsdHit pointers
+typedef StPtrVecMcTpcHit::const_iterator  StMcTpcHitConstIterator;           ///< Const iterator over StMcTpcHit pointers
+typedef StPtrVecMcFtpcHit::const_iterator StMcFtpcHitConstIterator;          ///< Const iterator over StMcFtpcHit pointers
+typedef StPtrVecMcRichHit::const_iterator StMcRichHitConstIterator;          ///< Const iterator over StMcRichHit pointers
+typedef StPtrVecMcCtbHit::const_iterator  StMcCtbHitConstIterator;           ///< Const iterator over StMcCtbHit pointers
+typedef StPtrVecMcPxlHit::const_iterator StMcPxlHitConstIterator;            ///< Const iterator over StMcPxlHit pointers
+typedef StPtrVecMcIstHit::const_iterator  StMcIstHitConstIterator;           ///< Const iterator over StMcIstHit pointers
+typedef StPtrVecMcFgtHit::const_iterator  StMcFgtHitConstIterator;           ///< Const iterator over StMcFgtHit pointers
+typedef StPtrVecMcEtrHit::const_iterator  StMcEtrHitConstIterator;           ///< Const iterator over StMcEtrHit pointers
+typedef StPtrVecMcTofHit::const_iterator  StMcTofHitConstIterator;           ///< Const iterator over StMcTofHit pointers
+typedef StPtrVecMcBTofHit::const_iterator  StMcBTofHitConstIterator;         ///< Const iterator over StMcBTofHit pointers
+typedef StPtrVecMcMtdHit::const_iterator  StMcMtdHitConstIterator;           ///< Const iterator over StMcMtdHit pointers
+typedef StPtrVecMcTrack::const_iterator   StMcTrackConstIterator;            ///< Const iterator over StMcTrack pointers
 //     ClassDef(StMcContainers,0)
 #endif //StMcContainers

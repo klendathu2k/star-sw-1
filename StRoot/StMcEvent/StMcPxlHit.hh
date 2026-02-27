@@ -10,21 +10,33 @@
  *
  * 
  **************************************************************************/
+/// @file StMcPxlHit.hh
+/// @brief Monte Carlo hit in the STAR Pixel detector (PXL).
+
 #ifndef StMcPxlHit_hh
 #define StMcPxlHit_hh
 #include "StMcHit.hh"
 #include "tables/St_g2t_pix_hit_Table.h" 
 
+/// @brief Monte Carlo hit in the Pixel detector (PXL).
+///
+/// Part of the HFT system (Run 14+). Extends StMcHit with PXL-specific
+/// geometry accessors (sector, ladder, sensor) decoded from the volume ID.
+/// The PXL has 10 sectors, each with 4 ladders; each ladder has 10 sensors.
 class StMcPxlHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcPxlHit() {}
+  /// @brief Constructor from hit properties.
   StMcPxlHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     float de = 0, float ds = 0, float tof = 0, long int k = 0, long int volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Constructor from a GEANT pixel hit table row.
   StMcPxlHit(g2t_pix_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
+  /// @brief Destructor.
   ~StMcPxlHit() {}
 
   ///
@@ -41,6 +53,7 @@ public:
   int sensor() const {return  (mVolumeId - sector()*1000000 - ladder()*10000)/100;} 
 
 
+  /// @brief Prints hit information.
   virtual void Print(Option_t *option="") const; // *MENU* 
 
 private:

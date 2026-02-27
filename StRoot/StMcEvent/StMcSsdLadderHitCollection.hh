@@ -35,6 +35,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcSsdLadderHitCollection.hh
+/// @brief Monte Carlo hit collection for one SSD ladder.
+
 #ifndef StMcSsdLadderHitCollection_hh
 #define StMcSsdLadderHitCollection_hh
 
@@ -43,19 +46,28 @@
 
 #include "StMcSsdWaferHitCollection.hh"
 
+/// @brief Collection of Monte Carlo SSD hits for a single ladder.
+///
+/// Holds up to mMaxNumberOfWafers StMcSsdWaferHitCollection objects.
 class StMcSsdLadderHitCollection : public StObject
 {
 public:
+  /// @brief Default constructor.
   StMcSsdLadderHitCollection() {}
+  /// @brief Destructor.
   virtual ~StMcSsdLadderHitCollection() {}
 protected:
-    enum { mMaxNumberOfWafers = 16 };
-    StMcSsdWaferHitCollection  mWafers[mMaxNumberOfWafers];
+    enum { mMaxNumberOfWafers = 16 }; ///< Maximum number of wafers per ladder.
+    StMcSsdWaferHitCollection  mWafers[mMaxNumberOfWafers]; ///< Array of wafer sub-collections.
 public:
+    /// @brief Returns the total number of hits across all wafers in this ladder.
     unsigned long numberOfHits() const;
-  unsigned int  numberOfWafers() const {return mMaxNumberOfWafers;}
+    /// @brief Returns the number of wafers in this ladder.
+    unsigned int  numberOfWafers() const {return mMaxNumberOfWafers;}
     
+    /// @brief Returns a pointer to the wafer sub-collection at the given index.
     StMcSsdWaferHitCollection*       wafer(unsigned int);
+    /// @brief Returns a const pointer to the wafer sub-collection at the given index.
     const StMcSsdWaferHitCollection* wafer(unsigned int) const;
     
     ClassDef(StMcSsdLadderHitCollection,1)

@@ -35,6 +35,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcIstLayerHitCollection.hh
+/// @brief Monte Carlo hit collection for one IST layer (ladder slot).
+
 #ifndef StMcIstLayerHitCollection_hh
 #define StMcIstLayerHitCollection_hh
 
@@ -43,21 +46,33 @@
 
 class StMcIstHit;
 
+/// @brief Collection of Monte Carlo IST hits for a single layer entry.
+///
+/// Stores a flat vector of StMcIstHit pointers for one IST layer/ladder slot.
+/// Used as the second level of the IST hit hierarchy in StMcIstHitCollection.
 class StMcIstLayerHitCollection : public StObject {
 public:
+    /// @brief Default constructor.
     StMcIstLayerHitCollection();
+    /// @brief Destructor.
     virtual ~StMcIstLayerHitCollection();
+    /// @brief Clears the hit vector.
     void Clear(const char* opt="");
+    /// @brief Returns true to allow ROOT browser folding.
     bool IsFolder() const { return true;};
-virtual void Browse(TBrowser *b); 
+    /// @brief Populates the ROOT browser with hits.
+    virtual void Browse(TBrowser *b); 
     
+    /// @brief Returns the number of hits in this layer.
     unsigned long numberOfHits() const;
 
+    /// @brief Returns a reference to the vector of hits.
     StSPtrVecMcIstHit&       hits();
+    /// @brief Returns a const reference to the vector of hits.
     const StSPtrVecMcIstHit& hits() const; 
 
 protected:
-    StSPtrVecMcIstHit mHits;
+    StSPtrVecMcIstHit mHits; ///< Vector of Monte Carlo IST hits.
     ClassDef(StMcIstLayerHitCollection,1)
 };
 #endif

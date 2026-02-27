@@ -27,6 +27,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcFgtLayerHitCollection.hh
+/// @brief Per-layer sub-collection of Monte Carlo FGT hits.
 #ifndef StMcFgtLayerHitCollection_hh
 #define StMcFgtLayerHitCollection_hh
 
@@ -35,22 +37,33 @@
 
 class StMcFgtHit;
 
+/// @brief Per-layer sub-collection of Monte Carlo FGT hits.
+///
+/// Stores all StMcFgtHit objects for a single FGT disc (layer).
 class StMcFgtLayerHitCollection : public StObject
 {
 public:
+    /// @brief Default constructor.
     StMcFgtLayerHitCollection();
+    /// @brief Destructor.
     virtual ~StMcFgtLayerHitCollection();
+    /// @brief Clears all hits from the collection.
     void Clear(const char* opt="");
+    /// @brief Returns true; this collection is a folder in the ROOT browser.
     bool IsFolder() const { return true;};
+    /// @brief Populates the ROOT browser with hit entries.
 virtual void Browse(TBrowser *b); 
     
+    /// @brief Returns the number of hits in this layer.
     unsigned long numberOfHits() const;
 
+    /// @brief Returns the vector of FGT hits for this layer.
     StSPtrVecMcFgtHit&       hits();
+    /// @brief Returns the const vector of FGT hits for this layer.
     const StSPtrVecMcFgtHit& hits() const; 
 
 protected:
-    StSPtrVecMcFgtHit mHits;
+    StSPtrVecMcFgtHit mHits; ///< Collection of Monte Carlo FGT hits for this layer.
     ClassDef(StMcFgtLayerHitCollection,1)
 };
 #endif

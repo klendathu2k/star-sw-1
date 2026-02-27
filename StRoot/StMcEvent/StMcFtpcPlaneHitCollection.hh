@@ -37,6 +37,9 @@
  *
  *
  **************************************************************************/
+/// @file StMcFtpcPlaneHitCollection.hh
+/// @brief Monte Carlo FTPC plane hit collection — leaf level of the FTPC hierarchy.
+
 #ifndef StMcFtpcPlaneHitCollection_hh
 #define StMcFtpcPlaneHitCollection_hh
 
@@ -45,22 +48,31 @@
 
 class StMcFtpcHit;
 
+/// @brief Container holding all MC FTPC hits on a single detector plane.
+///
+/// No sector sub-division is applied here because sector assignment depends
+/// on reconstruction (magnetic-field mapping etc.) and is not available at
+/// Monte Carlo level.
 class StMcFtpcPlaneHitCollection : public StObject
 {
 public:
     StMcFtpcPlaneHitCollection();
     virtual ~StMcFtpcPlaneHitCollection();
+    /// @brief Clear all hits from this plane collection.
     void Clear(const char* opt="");
     bool IsFolder() const { return true;};
 virtual void Browse(TBrowser *b); 
     
+    /// @brief Number of hits on this plane.
     unsigned long numberOfHits() const;
 
+    /// @brief Return the mutable vector of hits on this plane.
     StSPtrVecMcFtpcHit&       hits();
+    /// @brief Return the const vector of hits on this plane.
     const StSPtrVecMcFtpcHit& hits() const; 
 
 protected:
-    StSPtrVecMcFtpcHit mHits;
+    StSPtrVecMcFtpcHit mHits; ///< Hits stored on this FTPC plane.
     ClassDef(StMcFtpcPlaneHitCollection,1)
 };
 #endif

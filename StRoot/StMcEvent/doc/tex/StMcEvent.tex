@@ -726,6 +726,12 @@ For more information on the specific methods to do this, refer to the relevant s
 \index{StMcEventReadMacro.C}
 \index{root4star}
 \index{ROOT files}
+\textbf{[Note]} The example macro \texttt{StMcEventReadMacro.C} described in
+this section reflects the original 1999--2006 CVS layout and ROOT~3/4 API.
+Current usage examples can be found in
+\texttt{StRoot/StMcEventMaker/macros/} and the STAR software documentation
+wiki at \texttt{https://drupal.star.bnl.gov/STAR/comp}.
+
 \StMcEvent\ has now been a package in the STAR library for a while.  The
 new version which this guide refers to is, as of this writing,
 available in starnew and stardev.  Remember, that libraries
@@ -795,6 +801,11 @@ This is done inside the macro with the command \name{SetBranch}.
 
 \subsection{StMcEventMaker}
 \index{StMcEventMaker}
+\textbf{[Note]} \name{StMcEventMaker} is maintained in the separate package
+\texttt{StRoot/StMcEventMaker}, not in this package.
+The description below reflects the original design; consult the current
+source in \texttt{StRoot/StMcEventMaker/} for the up-to-date interface.
+
 \name{StMcEventMaker} is the code that actually does the opening of
 the geant.root file and uses the information there to set up the
 whole \StMcEvent .  If you want to use \StMcEvent\ you have to make
@@ -1135,50 +1146,11 @@ array, no further hierarchy.
 \end{Entry}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%    Reference: className
+%    Reference: className  [TEMPLATE PLACEHOLDER — suppressed]
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{className}
-\index{className|textbf}
-\label{sec:className}
-\begin{Entry}
-\item[Summary]
-
-\item[Synopsis]
-    \verb+#include "className.hh"+\\
-    \verb+class className;+\\
-
-\item[Description]
-
-\item[Persistence]
-    None
-
-\item[Related Classes]
-
-\item[Public\\ Constructors]
-
-\item[Public Member\\ Functions]
-
-\item[Public Member\\ Operators]
-
-\item[Public Functions]
-
-\item[Public Operators]
-
-\item[Examples]
-{\footnotesize
-\begin{verbatim}
-//
-//  What the example does
-//
-
-\end{verbatim}
-}%footnotesize
-
-\end{Entry}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%    Reference: StMcEmcHitCollection
+%    This was an unfilled template left in the original document.
+%    New class entries should follow the \subsection{ClassName} structure
+%    shown throughout this section.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{StMcEmcHitCollection}
@@ -2379,6 +2351,10 @@ void getHits(StMcTrack *track)
 \subsection{StMcSvtLayerHitCollection}
 \index{SVT hit collection} \index{StMcSvtLayerHitCollection|textbf}
 \label{sec:StMcSvtLayerHitCollection}
+\textbf{[Renamed]} This class was renamed to \textbf{StMcSvtBarrelHitCollection}
+when the SVT hit storage scheme was reorganised from layer--ladder--wafer to
+barrel--ladder--wafer order (commit \texttt{f98478bb68}).
+See \S\ref{sec:StMcSvtBarrelHitCollection} for the current class reference.
 \begin{Entry}
 \item[Summary]
     \name{StMcSvtLayerHitCollection} is a container for the

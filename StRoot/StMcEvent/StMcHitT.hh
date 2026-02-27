@@ -16,17 +16,24 @@
   *
  *
  **************************************************************************/
+/// @file StMcHitT.hh
+/// @brief Template adapter wrapping a g2t hit table row as a typed MC hit object.
 #ifndef StMcHitT_hh
 #define StMcHitT_hh
 
 #include "StEventObject.h"
 #include "StMcHitI.h"
 
+/// @brief Template adapter that wraps a g2t hit table struct pointer as a typed StMcHitI object.
+///
+/// The template parameter T is expected to be a pointer to a GEANT table row struct
+/// (e.g. g2t_tpc_hit_st*).  A full specialization for g2t_emc_hit_st* is provided below.
 template <class T>
 class StMcHitT : public StEventObject<T>, public StMcHitI {
 protected:
     StMcHitT(){;}
 public:
+    /// @brief Construct from a pointer to a GEANT table row struct.
     StMcHitT(T data) :StEventObject<T>(data) {;}
     // StMcHitT(const StSvtHit&);                  use default
     // const StMcHitT & operator=(const StMcHitT&);   use default
@@ -52,6 +59,7 @@ public:
 };
 
 struct g2t_emc_hit_st;
+/// @brief Specialization of StMcHitT for EMC hits (g2t_emc_hit_st), which lack position and momentum fields.
 template <>
 class StMcHitT<g2t_emc_hit_st*> : public StEventObject<g2t_emc_hit_st*>, public StMcHitI {
 protected:

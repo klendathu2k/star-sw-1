@@ -49,23 +49,35 @@
  *
  *
  **************************************************************************/
+/// @file StMcIstHit.hh
+/// @brief Monte Carlo hit in the STAR Intermediate Silicon Tracker (IST).
+
 #ifndef StMcIstHit_hh
 #define StMcIstHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_ist_hit_Table.h" 
 
-
+/// @brief Monte Carlo hit in the Intermediate Silicon Tracker (IST).
+///
+/// Part of the HFT system (Run 14+). Extends StMcHit with IST-specific
+/// geometry accessors (layer, ladder, wafer/sensor, side) decoded from
+/// the volume ID. The IST has 24 ladders with 6 sensors each arranged
+/// in 3 layers.
 class StMcIstHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcIstHit() : StMcHit() {}
+  /// @brief Constructor from hit properties.
   StMcIstHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Constructor from a GEANT IST hit table row.
   StMcIstHit(g2t_ist_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
+  /// @brief Destructor.
   ~StMcIstHit() {}
   
 #ifdef POOL
@@ -73,10 +85,14 @@ public:
   void  operator delete(void* p) { mPool.free(p); }
 #endif
   
-  ULong_t layer()  const {return 1;} // 
+  /// @brief Returns the IST layer number (always 1 for current geometry).
+  ULong_t layer()  const {return 1;}
+  /// @brief Returns the ladder number decoded from the volume ID (0-based).
   ULong_t ladder() const {return mVolumeId/1000000 -1;}
+  /// @brief Returns the sensor (wafer) number decoded from the volume ID.
   ULong_t wafer()  const {return  (mVolumeId%1000000)/10000;} 
-  ULong_t side()   {return (mVolumeId%10);} //1=inner; 2=outer;
+  /// @brief Returns the ladder side decoded from the volume ID (1=inner, 2=outer).
+  ULong_t side()   {return (mVolumeId%10);}
   
   // Willie: Added function wafer() to return wafer number (1-12)
   // unsigned long wafer() const;
@@ -85,6 +101,7 @@ public:
   // ULong_t wafer() {return ((mVolumeId/100)%20);}
   // ULong_t side() {return (mVolumeId%10);} //1=inner; 2=outer;
 
+  /// @brief Prints hit information.
   virtual void Print(Option_t *option="") const; // *MENU* 
   
 private:

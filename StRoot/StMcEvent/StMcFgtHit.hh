@@ -28,26 +28,39 @@
  *
  *
  **************************************************************************/
+/// @file StMcFgtHit.hh
+/// @brief Monte Carlo hit class for the Forward GEM Tracker (FGT).
 #ifndef StMcFgtHit_hh
 #define StMcFgtHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_fgt_hit_Table.h" 
 
+/// @brief Monte Carlo hit class for the Forward GEM Tracker (FGT).
+///
+/// Inherits position, momentum, and track information from StMcHit.
+/// The volume ID encodes the disc (layer), quadrant, and strip indices.
 class StMcFgtHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcFgtHit() {}
+  /// @brief Constructor from hit kinematics, energy, and volume ID.
   StMcFgtHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Constructor from a GEANT g2t_fgt_hit table row.
   StMcFgtHit(g2t_fgt_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
+  /// @brief Destructor.
   ~StMcFgtHit() {}
   
+  /// @brief Returns the disc (layer) index decoded from the volume ID.
   ULong_t layer() const;
+  /// @brief Returns the quadrant index decoded from the volume ID.
   ULong_t quad() const;
+  /// @brief Prints hit information to standard output (ROOT menu entry).
   virtual void Print(Option_t *option="") const; // *MENU* 
     
 private:

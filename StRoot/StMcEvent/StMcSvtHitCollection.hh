@@ -34,12 +34,19 @@
  *
  *
  **************************************************************************/
+/// @file StMcSvtHitCollection.hh
+/// @brief Top-level collection of Monte Carlo SVT/SSD hits, organised by barrel.
+
 #ifndef StMcSvtHitCollection_hh
 #define StMcSvtHitCollection_hh
 
 #include "StMcSvtBarrelHitCollection.hh"
 class StMcSvtHit;
 
+/// @brief Top-level container for MC SVT/SSD hits arranged in a 4-level hierarchy:
+///        collection → barrel → ladder → wafer.
+///
+/// The fourth barrel slot accommodates SSD hits alongside the three SVT barrels.
 class StMcSvtHitCollection : public StObject {
 public:
     StMcSvtHitCollection();
@@ -47,16 +54,21 @@ public:
     // StMcSvtHitCollection(const StMcSvtHitCollection&);            use default
     // StMcSvtHitCollection& operator=(const StMcSvtHitCollection&); use default
     
+    /// @brief Add a hit to the appropriate barrel/ladder/wafer sub-collection.
     bool          addHit(StMcSvtHit*);
+    /// @brief Total number of hits across all barrels.
     unsigned long numberOfHits() const;
+    /// @brief Number of barrel sub-collections (3 SVT + 1 SSD = 4).
     unsigned int  numberOfBarrels() const;
     
+    /// @brief Return the mutable barrel sub-collection at index @p i (0-based).
     StMcSvtBarrelHitCollection*       barrel(unsigned int);
+    /// @brief Return the const barrel sub-collection at index @p i (0-based).
     const StMcSvtBarrelHitCollection* barrel(unsigned int) const;
 
 protected:
-    enum { mNumberOfBarrels = 4 }; // Keeping the SSD along with SVT
-    StMcSvtBarrelHitCollection mBarrels[mNumberOfBarrels];
+    enum { mNumberOfBarrels = 4 };                          ///< 3 SVT barrels + 1 SSD barrel.
+    StMcSvtBarrelHitCollection mBarrels[mNumberOfBarrels];  ///< Per-barrel hit sub-collections.
     ClassDef(StMcSvtHitCollection,1)
 };
 

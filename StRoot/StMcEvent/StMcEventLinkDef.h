@@ -1,3 +1,5 @@
+/// @file StMcEventLinkDef.h
+/// @brief ROOT CINT/Cling dictionary link directives for StMcEvent classes and typedefs.
 #ifdef __CINT__
 #pragma link off all globals;
 #pragma link off all classes;

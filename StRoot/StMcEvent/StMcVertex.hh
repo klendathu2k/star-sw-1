@@ -62,6 +62,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcVertex.hh
+/// @brief Monte Carlo vertex class representing a particle interaction point.
 #ifndef StMcVertex_hh
 #define StMcVertex_hh
 #include "StMcContainers.hh"
@@ -72,9 +74,12 @@
 
 class g2t_vertex_st;
 
+/// @brief Monte Carlo vertex representing a particle production or decay point.
 class StMcVertex : public StObject {
 public:
+    /// @brief Default constructor.
     StMcVertex();
+    /// @brief Construct from a GEANT g2t_vertex table row.
     StMcVertex(g2t_vertex_st*);
     ~StMcVertex();
     
@@ -83,42 +88,60 @@ public:
     
     // "Get" Methods
     
+  /// @brief Return the 3-D position of the vertex (cm).
   const StThreeVectorF&       position() const          { return *&mPosition;}
+  /// @brief Return the list of daughter tracks produced at this vertex.
   StPtrVecMcTrack&            daughters()               { return *&mDaughters; } 
   const StPtrVecMcTrack&      daughters() const         { return *&mDaughters; } 
+  /// @brief Return the number of daughter tracks.
   unsigned int                numberOfDaughters()       { return mDaughters.size(); }
   unsigned int                numberOfDaughters() const { return mDaughters.size(); }
+  /// @brief Return the i-th daughter track, or nullptr if out of range.
   StMcTrack*                  daughter(unsigned int i)  { return (i < mDaughters.size() ? mDaughters[i] : 0); }
   const StMcTrack*            daughter(unsigned int i) const { return (i < mDaughters.size() ? mDaughters[i] : 0); }
+  /// @brief Return the parent (incoming) track that created this vertex.
   const StMcTrack*            parent() const            { return mParent; }   
+  /// @brief Return the GEANT volume name where the vertex occurred.
   TString const               &geantVolume() const      { return *&mGeantVolume; }
+  /// @brief Return the global time of flight at which the vertex occurred (ns).
   float tof() const { return mTof; }  
+  /// @brief Return the GEANT process code that created the vertex.
   long geantProcess() const { return mGeantProcess; }      
+  /// @brief Return the GEANT medium ID where the vertex occurred.
   long geantMedium() const { return mGeantMedium; }      
+  /// @brief Return the generator-level process code.
   long generatorProcess() const { return mGeneratorProcess; }      
+  /// @brief Return the primary key (g2t row index) of this vertex.
   long key() const { return mKey; }      
     
   // "Set" Methods
   
+    /// @brief Set the 3-D position of the vertex.
     void setPosition(const StThreeVectorF&);
+    /// @brief Set the parent track pointer.
     void setParent(StMcTrack* );         
+    /// @brief Add a daughter track to the vertex.
     void addDaughter(StMcTrack*);
+    /// @brief Set the GEANT volume name.
     void setGeantVolume(const Char_t *name);
+    /// @brief Set the time of flight at the vertex.
     void setTof(float);
+    /// @brief Set the GEANT process code.
     void setGeantProcess(int); 
+    /// @brief Remove a daughter track from the vertex.
     void removeDaughter(StMcTrack*);
     virtual void Print(Option_t *option="") const; // *MENU* 
 protected:
     
-    StThreeVectorF       mPosition;
-    StPtrVecMcTrack      mDaughters;
-    StMcTrack*           mParent;
-    TString              mGeantVolume;
-    float                mTof;
-    long                 mGeantProcess;
-    long                 mGeneratorProcess;
-    long                 mKey;
-    long                 mGeantMedium;
+    StThreeVectorF       mPosition;          ///< 3-D position of the vertex (cm)
+    StPtrVecMcTrack      mDaughters;         ///< Tracks produced at this vertex
+    StMcTrack*           mParent;            ///< Parent track that created this vertex
+    TString              mGeantVolume;       ///< GEANT volume name where vertex occurred
+    float                mTof;              ///< Global time of flight at the vertex (ns)
+    long                 mGeantProcess;      ///< GEANT process code
+    long                 mGeneratorProcess;  ///< Generator-level process code
+    long                 mKey;              ///< Primary key (g2t row index)
+    long                 mGeantMedium;       ///< GEANT medium ID
     ClassDef(StMcVertex,1)
 };
 ostream&  operator<<(ostream& os, const StMcVertex&);

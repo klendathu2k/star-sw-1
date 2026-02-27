@@ -37,25 +37,37 @@
  *
  *
  **************************************************************************/
+/// @file StMcRichHit.hh
+/// @brief Monte Carlo hit class for the RICH detector.
 #ifndef StMcRichHit_hh
 #define StMcRichHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_rch_hit_Table.h"
 
+/// @brief Monte Carlo hit class for the Ring Imaging Cherenkov (RICH) detector.
+///
+/// Inherits position, momentum, and track information from StMcHit.
+/// The volume ID encodes the pad number (bits 0-7) and row number (bits 8-15).
 class StMcRichHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcRichHit() {}
+  /// @brief Constructor from hit kinematics, energy, and volume ID.
   StMcRichHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Constructor from a GEANT g2t_rch_hit table row.
   StMcRichHit(g2t_rch_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
+  /// @brief Destructor.
   ~StMcRichHit() {}
 
+  /// @brief Returns the pad number (bits 0-7 of the volume ID).
   UShort_t  pad() const {return (mVolumeId & 0xff);}  // first 8 bits
+  /// @brief Returns the row number (bits 8-15 of the volume ID).
   UShort_t  row() const {return ( (mVolumeId>>8) & 0xff);}  // second 8 bits
 private:
     ClassDef(StMcRichHit,1)

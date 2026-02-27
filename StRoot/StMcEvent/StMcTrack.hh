@@ -128,6 +128,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcTrack.hh
+/// @brief Monte Carlo track representing a simulated particle trajectory.
 #ifndef StMcTrack_hh
 #define StMcTrack_hh 
 #include "Stiostream.h"
@@ -143,9 +145,12 @@ ostream&  operator<<(ostream& os, const StMcTrack&);
 
 class StMcTrack : public StObject {
 public:
+    /// @brief Default constructor.
     StMcTrack();
     virtual ~StMcTrack();
+    /// @brief Construct from a GEANT g2t_track table row.
     StMcTrack(g2t_track_st* trk);
+    /// @brief Construct from a generator particle table row.
     StMcTrack(particle_st* trk);
     
     // StMcTrack(const StMcTrack&);                     use default
@@ -156,32 +161,53 @@ public:
 
     void initToZero();
   // "Get" Methods
+  /// @brief Return the 4-momentum (px, py, pz, E) of the track.
   const StLorentzVectorF& fourMomentum() const { return mFourMomentum; }
+  /// @brief Return the 3-momentum vector of the track.
   const StThreeVectorF& momentum() const { return mFourMomentum.vect(); }
+  /// @brief Return the energy of the track (GeV).
   float energy() const { return mFourMomentum.e(); }
+  /// @brief Return the transverse momentum pT (GeV/c).
   float pt() const { return mFourMomentum.perp(); }
+  /// @brief Return the rapidity of the track.
   float rapidity() const { return mFourMomentum.rapidity(); }
+  /// @brief Return the pseudo-rapidity (eta) of the track.
   float pseudoRapidity() const { return mFourMomentum.pseudoRapidity(); }
+  /// @brief Return the vertex where this track was created.
   StMcVertex* startVertex() { return mStartVertex; }
+  /// @brief Return the vertex where this track was created (const).
   const StMcVertex* startVertex() const { return mStartVertex; }
+  /// @brief Return the vertex where this track stopped (nullptr if it left the detector).
   StMcVertex* stopVertex() { return mStopVertex; }
+  /// @brief Return the stop vertex (const).
   const StMcVertex* stopVertex() const { return mStopVertex; }
+  /// @brief Return the parent track that produced this track (nullptr for primary tracks).
   StMcTrack* parent() { return mParent; }
+  /// @brief Return the parent track (const).
   const StMcTrack* parent() const { return mParent; }
+  /// @brief Return the list of intermediate decay/scatter vertices along the track.
   StPtrVecMcVertex& intermediateVertices() { return mIntermediateVertices; }
+  /// @brief Return the list of intermediate vertices (const).
   const StPtrVecMcVertex& intermediateVertices() const { return mIntermediateVertices; }
+  /// @brief Return the list of TPC hits produced by this track.
   StPtrVecMcTpcHit& tpcHits() { return mTpcHits; }
   const StPtrVecMcTpcHit& tpcHits() const { return mTpcHits; }
+  /// @brief Return the list of SVT hits produced by this track.
   StPtrVecMcSvtHit& svtHits() { return mSvtHits; }
   const StPtrVecMcSvtHit& svtHits() const { return mSvtHits; }
+  /// @brief Return the list of SSD hits produced by this track.
   StPtrVecMcSsdHit& ssdHits() { return mSsdHits; }
   const StPtrVecMcSsdHit& ssdHits() const { return mSsdHits; }
+  /// @brief Return the list of FTPC hits produced by this track.
   StPtrVecMcFtpcHit& ftpcHits() { return mFtpcHits; }
   const StPtrVecMcFtpcHit& ftpcHits() const { return mFtpcHits; }
+  /// @brief Return the list of RICH hits produced by this track.
   StPtrVecMcRichHit& richHits() { return mRichHits; }
   const StPtrVecMcRichHit& richHits() const { return mRichHits; }
+  /// @brief Return the list of CTB hits produced by this track.
   StPtrVecMcCtbHit& ctbHits() { return mCtbHits; }
   const StPtrVecMcCtbHit& ctbHits() const { return mCtbHits; }
+  /// @brief Return the list of Barrel EMC hits produced by this track.
   StPtrVecMcCalorimeterHit& bemcHits() { return mBemcHits; }
   const StPtrVecMcCalorimeterHit& bemcHits() const { return mBemcHits; }
   StPtrVecMcCalorimeterHit& bprsHits() { return mBprsHits; }
@@ -190,10 +216,13 @@ public:
   const StPtrVecMcCalorimeterHit& bsmdeHits() const { return mBsmdeHits; }
   StPtrVecMcCalorimeterHit& bsmdpHits() { return mBsmdpHits; }
   const StPtrVecMcCalorimeterHit& bsmdpHits() const { return mBsmdpHits; }
+  /// @brief Return the list of TOF hits produced by this track.
   StPtrVecMcTofHit& tofHits() { return mTofHits; }
   const StPtrVecMcTofHit& tofHits() const { return mTofHits; }
+  /// @brief Return the list of MTD hits produced by this track.
   StPtrVecMcMtdHit& mtdHits() { return mMtdHits; }
   const StPtrVecMcMtdHit& mtdHits() const { return mMtdHits; }
+  /// @brief Return the list of Endcap EMC hits produced by this track.
   StPtrVecMcCalorimeterHit& eemcHits() { return mEemcHits; }
   const StPtrVecMcCalorimeterHit& eemcHits() const { return mEemcHits; }
   StPtrVecMcCalorimeterHit& eprsHits() { return mEprsHits; }
@@ -206,27 +235,42 @@ public:
   const StPtrVecMcCalorimeterHit& fpdHits() const { return mFpdHits; }
   StPtrVecMcCalorimeterHit& fscHits() { return mFscHits; }
   const StPtrVecMcCalorimeterHit& fscHits() const { return mFscHits; }
+  /// @brief Return the list of Pixel detector hits produced by this track.
   StPtrVecMcPxlHit& pxlHits() { return mPxlHits; }
   const StPtrVecMcPxlHit& pxlHits() const { return mPxlHits; }
+  /// @brief Return the list of IST hits produced by this track.
   StPtrVecMcIstHit& istHits() { return mIstHits; }
   const StPtrVecMcIstHit& istHits() const { return mIstHits; }
+  /// @brief Return the list of FGT hits produced by this track.
   StPtrVecMcFgtHit& fgtHits() { return mFgtHits; }
   const StPtrVecMcFgtHit& fgtHits() const { return mFgtHits; }
+  /// @brief Return the list of ETR hits produced by this track.
   StPtrVecMcEtrHit& etrHits() { return mEtrHits; }
   const StPtrVecMcEtrHit& etrHits() const { return mEtrHits; }
+  /// @brief Return the particle definition (type) for this track; loads from DB if needed.
   StParticleDefinition* particleDefinition();
   const StParticleDefinition* particleDefinition() const { return mParticleDefinition; }
+  /// @brief Return all hits for a given detector ID; returns nullptr if unsupported.
   const StPtrVecMcHit *Hits(StDetectorId Id) const;
+  /// @brief Return calorimeter hits for a given detector ID; returns nullptr if unsupported.
   const StPtrVecMcCalorimeterHit *CalorimeterHits(StDetectorId Id) const;
+  /// @brief Return non-zero if this track belongs to an EM/hadronic shower.
   int isShower() const { return mIsShower; }
+  /// @brief Return the GEANT particle ID for this track.
   long geantId() const { return mGeantId; }
+  /// @brief Return the PDG particle encoding for this track.
   long pdgId() const { return mPdgId; }
+  /// @brief Return the primary key (g2t row index) of this track.
   long key() const { return mKey; }
+  /// @brief Return the event-generator label used to index the generator particle table.
   long eventGenLabel() const { return mEventGenLabel; }
 
   // "Set" Methods
+    /// @brief Set the 4-momentum of this track.
     void setFourMomentum(const StLorentzVectorF&); 
+    /// @brief Set the start (creation) vertex.
     void setStartVertex(StMcVertex*); 
+    /// @brief Set the stop (termination) vertex.
     void setStopVertex(StMcVertex*); 
     void setIntermediateVertices(StPtrVecMcVertex&); 
     void setTpcHits(StPtrVecMcTpcHit&); 
@@ -251,12 +295,19 @@ public:
     void setFgtHits(StPtrVecMcFgtHit&); 
     void setEtrHits(StPtrVecMcEtrHit&); 
 
+    /// @brief Set the shower flag (non-zero if the track belongs to a shower).
     void setShower(char); 
+    /// @brief Set the GEANT particle ID.
     void setGeantId(long); 
+    /// @brief Set the PDG particle encoding.
     void setPdgId(long); 
+    /// @brief Set the g2t primary key for this track.
     void setKey(long);     
+    /// @brief Set the event-generator label for this track.
     void setEventGenLabel(long);     
+    /// @brief Set the parent track pointer.
     void setParent(StMcTrack*);     
+  /// @brief Mark the track as primary (produced at the collision vertex).
   void setPrimary(Bool_t val) {mIsPrimary = val;}
 
     void addTpcHit(StMcTpcHit*); 
@@ -303,44 +354,45 @@ public:
     void removeFgtHit(StMcFgtHit*); 
     void removeEtrHit(StMcEtrHit*); 
   void Print(Option_t *option="") const;
+  /// @brief Return true if this is a primary track.
   Bool_t IsPrimary() const {return mIsPrimary;}
     //    void setTopologyMap(StTrackTopologyMap&); 
     
 protected:
-    StLorentzVectorF         mFourMomentum;  
-    StMcVertex*              mStartVertex; 
-    StMcVertex*              mStopVertex; 
-    StPtrVecMcVertex         mIntermediateVertices; 
-    StPtrVecMcTpcHit         mTpcHits; 
-    StPtrVecMcSvtHit         mSvtHits; 
-    StPtrVecMcSsdHit         mSsdHits; 
-    StPtrVecMcFtpcHit        mFtpcHits; 
-    StPtrVecMcRichHit        mRichHits; 
-    StPtrVecMcCtbHit         mCtbHits; 
-    StPtrVecMcCalorimeterHit mBemcHits; 
-    StPtrVecMcCalorimeterHit mBprsHits; 
-    StPtrVecMcCalorimeterHit mBsmdeHits; 
-    StPtrVecMcCalorimeterHit mBsmdpHits; 
-    StPtrVecMcTofHit         mTofHits; 
-    StPtrVecMcMtdHit         mMtdHits; 
-    StPtrVecMcCalorimeterHit mEemcHits; 
-    StPtrVecMcCalorimeterHit mEprsHits; 
-    StPtrVecMcCalorimeterHit mEsmduHits; 
-    StPtrVecMcCalorimeterHit mEsmdvHits; 
-    StPtrVecMcCalorimeterHit mFpdHits; 
-    StPtrVecMcCalorimeterHit mFscHits; 
-    StPtrVecMcPxlHit         mPxlHits; 
-    StPtrVecMcIstHit         mIstHits;
-    StPtrVecMcFgtHit         mFgtHits; 
-    StPtrVecMcEtrHit         mEtrHits; 
+    StLorentzVectorF         mFourMomentum;              ///< 4-momentum (px, py, pz, E)
+    StMcVertex*              mStartVertex;               ///< Vertex where the track was created
+    StMcVertex*              mStopVertex;                ///< Vertex where the track stopped
+    StPtrVecMcVertex         mIntermediateVertices;      ///< Intermediate scatter/decay vertices
+    StPtrVecMcTpcHit         mTpcHits;                  ///< TPC hits from this track
+    StPtrVecMcSvtHit         mSvtHits;                  ///< SVT hits from this track
+    StPtrVecMcSsdHit         mSsdHits;                  ///< SSD hits from this track
+    StPtrVecMcFtpcHit        mFtpcHits;                 ///< FTPC hits from this track
+    StPtrVecMcRichHit        mRichHits;                 ///< RICH hits from this track
+    StPtrVecMcCtbHit         mCtbHits;                  ///< CTB hits from this track
+    StPtrVecMcCalorimeterHit mBemcHits;                 ///< Barrel EMC hits from this track
+    StPtrVecMcCalorimeterHit mBprsHits;                 ///< Barrel PRS hits from this track
+    StPtrVecMcCalorimeterHit mBsmdeHits;                ///< Barrel SMD-eta hits from this track
+    StPtrVecMcCalorimeterHit mBsmdpHits;                ///< Barrel SMD-phi hits from this track
+    StPtrVecMcTofHit         mTofHits;                  ///< TOF hits from this track
+    StPtrVecMcMtdHit         mMtdHits;                  ///< MTD hits from this track
+    StPtrVecMcCalorimeterHit mEemcHits;                 ///< Endcap EMC hits from this track
+    StPtrVecMcCalorimeterHit mEprsHits;                 ///< Endcap PRS hits from this track
+    StPtrVecMcCalorimeterHit mEsmduHits;                ///< Endcap SMD-U hits from this track
+    StPtrVecMcCalorimeterHit mEsmdvHits;                ///< Endcap SMD-V hits from this track
+    StPtrVecMcCalorimeterHit mFpdHits;                  ///< FPD hits from this track
+    StPtrVecMcCalorimeterHit mFscHits;                  ///< FSC hits from this track
+    StPtrVecMcPxlHit         mPxlHits;                  ///< Pixel detector hits from this track
+    StPtrVecMcIstHit         mIstHits;                  ///< IST hits from this track
+    StPtrVecMcFgtHit         mFgtHits;                  ///< FGT hits from this track
+    StPtrVecMcEtrHit         mEtrHits;                  ///< ETR hits from this track
   StParticleDefinition*    mParticleDefinition; //!
-    StMcTrack*               mParent;
-    char                     mIsShower; 
-    long                     mGeantId; 
-    long                     mPdgId; 
-    long                     mKey;     
-    long                     mEventGenLabel; 
-  Bool_t                   mIsPrimary;
+    StMcTrack*               mParent;                   ///< Parent track (nullptr for primaries)
+    char                     mIsShower;                 ///< Non-zero if track belongs to a shower
+    long                     mGeantId;                  ///< GEANT particle ID
+    long                     mPdgId;                    ///< PDG particle encoding
+    long                     mKey;                      ///< Primary key (g2t row index)
+    long                     mEventGenLabel;            ///< Event-generator index for debugging
+  Bool_t                   mIsPrimary;                  ///< True if this is a primary track
     ClassDef(StMcTrack,2)
 };
 #endif

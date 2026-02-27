@@ -70,6 +70,8 @@
  *
  *
  **************************************************************************/
+/// @file StMcEventTypes.hh
+/// @brief Convenience header that includes all StMcEvent detector hit and collection types.
 #ifndef StMcEventTypes_hh
 #define StMcEventTypes_hh
 

@@ -30,27 +30,42 @@
  *
  *
  **************************************************************************/
+/// @file StMcIstHitCollection.hh
+/// @brief Top-level Monte Carlo hit collection for the STAR IST detector.
+
 #ifndef StMcIstHitCollection_hh
 #define StMcIstHitCollection_hh
 
 #include "StMcIstLayerHitCollection.hh"
 class StMcIstHit;
 
+/// @brief Top-level collection of Monte Carlo IST hits, organised by layer/ladder.
+///
+/// Contains StMcIstLayerHitCollection objects indexed by ladder number
+/// (mNumberOfLayers entries, corresponding to the 24 IST ladders).
 class StMcIstHitCollection : public StObject {
 public:
 
+    /// @brief Default constructor.
     StMcIstHitCollection();
+    /// @brief Destructor.
     virtual ~StMcIstHitCollection();
     
+    /// @brief Adds a hit to the appropriate layer sub-collection.
+    /// @return true if the hit was added successfully.
     bool addHit(StMcIstHit*);
+    /// @brief Returns the total number of hits across all layers.
     unsigned long numberOfHits() const;
+    /// @brief Returns the number of layer sub-collections in this container.
     unsigned int  numberOfLayers() const;
     
+    /// @brief Returns a pointer to the layer sub-collection at the given index.
     StMcIstLayerHitCollection*       layer(unsigned int);
+    /// @brief Returns a const pointer to the layer sub-collection at the given index.
     const StMcIstLayerHitCollection* layer(unsigned int) const;
 protected:
-    enum { mNumberOfLayers = 24 };
-    StMcIstLayerHitCollection mLayers[mNumberOfLayers];
+    enum { mNumberOfLayers = 24 }; ///< Number of IST ladders (index dimension).
+    StMcIstLayerHitCollection mLayers[mNumberOfLayers]; ///< Array of layer sub-collections.
     ClassDef(StMcIstHitCollection,1)
 };
 #endif

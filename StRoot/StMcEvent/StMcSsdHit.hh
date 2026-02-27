@@ -29,26 +29,39 @@
  *
  *
  **************************************************************************/
+/// @file StMcSsdHit.hh
+/// @brief Monte Carlo hit in the STAR Silicon Strip Detector (SSD).
+
 #ifndef StMcSsdHit_hh
 #define StMcSsdHit_hh
 
 #include "StMcHit.hh"
 #include "tables/St_g2t_ssd_hit_Table.h" 
 
-
+/// @brief Monte Carlo hit in the Silicon Strip Detector (SSD).
+///
+/// Extends StMcHit with SSD-specific geometry accessors (ladder and wafer)
+/// decoded from the volume ID.
 class StMcSsdHit : public StMcHit {
 public:
+  /// @brief Default constructor.
   StMcSsdHit() {}
+  /// @brief Constructor from hit properties.
   StMcSsdHit(const StThreeVectorF& x,const StThreeVectorF& p,
 	     Float_t de = 0, Float_t ds = 0, Float_t tof = 0, Long_t k = 0, Long_t volId = 0, StMcTrack* parent=0) : 
     StMcHit(x,p,de,ds,tof,k,volId,parent) {}
+  /// @brief Constructor from a GEANT SSD hit table row.
   StMcSsdHit(g2t_ssd_hit_st* pt) : 
     StMcHit(StThreeVectorF(pt->x[0], pt->x[1], pt->x[2]),
 	    StThreeVectorF(pt->p[0], pt->p[1], pt->p[2]), 
 	    pt->de, pt->ds, pt->tof, pt->id, pt->volume_id, 0) {}
+  /// @brief Destructor.
   ~StMcSsdHit() {}
+  /// @brief Returns the SSD ladder number decoded from the volume ID.
   ULong_t ladder() const {return  mVolumeId%100;     }
+  /// @brief Returns the SSD wafer number decoded from the volume ID.
   ULong_t wafer()  const {return ((mVolumeId%10000-7000)/100)%100;}
+  /// @brief Prints hit information.
   virtual void Print(Option_t *option="") const; // *MENU* 
     
 private:

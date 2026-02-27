@@ -28,6 +28,8 @@
 // Initial revision
 //
 //                                                                           
+/// @file StMcCalorimeterHit.hh
+/// @brief Abstract base class for Monte Carlo calorimeter hits.
 #ifndef StMcCalorimeterHit_hh
 #define StMcCalorimeterHit_hh
 
@@ -38,43 +40,65 @@
 
 class StMcTrack;
 
+/// @brief Abstract base class representing a Monte Carlo hit in a calorimeter detector.
+///
+/// Stores energy deposit and volume identification (module, eta bin, sub-sector)
+/// for simulated hits. Used as the concrete hit type for BEMC and EEMC collections.
 class StMcCalorimeterHit : public StObject {
 public:
+    /// @brief Default constructor.
     StMcCalorimeterHit();
+    /// @brief Constructor with module, eta, sub-sector, and energy deposit.
     StMcCalorimeterHit(int, int, int, float);
+    /// @brief Constructor with module, eta, sub-sector, energy deposit, and parent track.
     StMcCalorimeterHit(int, int, int, float, StMcTrack*);
+    /// @brief Destructor.
     virtual ~StMcCalorimeterHit();
     
+    /// @brief Equality operator; returns non-zero if both hits occupy the same cell.
     int operator==(const StMcCalorimeterHit&) const;
+    /// @brief Inequality operator; returns non-zero if hits are in different cells.
     int operator!=(const StMcCalorimeterHit&) const;
+    /// @brief Accumulates the energy deposit from another hit in the same cell.
     void operator+=(const StMcCalorimeterHit&);
 
+    /// @brief Returns true if this hit and the argument share the same cell (module/eta/sub).
     bool sameCell(const StMcCalorimeterHit&) const;
 
   // "Get" Methods
+    /// @brief Returns the module number.
     virtual int                          module() const;
+    /// @brief Returns the eta bin index.
     virtual int                             eta() const;
+    /// @brief Returns the sub-sector index.
     virtual int                             sub() const;
+    /// @brief Returns the energy deposit (GeV).
     virtual float                            dE() const;
+    /// @brief Returns a pointer to the parent Monte Carlo track.
     virtual StMcTrack*              parentTrack() const;	
 
   // "Set" Methods
 
+    /// @brief Sets the module number.
     virtual void setModule(int);
+    /// @brief Sets the eta bin index.
     virtual void setEta(int);
+    /// @brief Sets the sub-sector index.
     virtual void setSub(int);
+    /// @brief Sets the energy deposit (GeV).
     virtual void setdE(float);
+    /// @brief Sets the parent Monte Carlo track.
     virtual void setParentTrack(StMcTrack*);
     
   //  void* operator new(size_t)     { return mPool.alloc(); }
   //  void  operator delete(void* p) { mPool.free(p); }
     
 protected:
-    int                  mModule;
-    int                  mEta;
-    int                  mSub;
-    float                mdE;
-    StMcTrack*           mParentTrack;
+    int                  mModule;      ///< Module number.
+    int                  mEta;         ///< Eta bin index.
+    int                  mSub;         ///< Sub-sector index.
+    float                mdE;          ///< Energy deposit in GeV.
+    StMcTrack*           mParentTrack; ///< Pointer to the parent Monte Carlo track.
 
   //private:
   //  static StMemoryPool mPool; 
