@@ -23,6 +23,7 @@ my $CPPPATH = $ObjDir
     . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
     . $main::PATH_SEPARATOR . "#StRoot/StarRoot"
     . $main::PATH_SEPARATOR . "#StRoot/StEvent"
+    . $main::PATH_SEPARATOR . "#StRoot/StMcEvent"
     . $main::PATH_SEPARATOR . "#StRoot/Table"
     . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
 
@@ -165,3 +166,40 @@ build_event_test( "test_StEvent_hlt",
 
 build_event_test( "test_StEvent_triggerdata",
     "StEvent/test_triggerdata.cxx" );
+
+# ---- StMcEvent unit tests ------------------------------------------------
+# One executable per major detector subsystem.  StMcEvent data classes are
+# self-contained and do not require a TApplication or full STAR runtime for
+# structural (constructor / getter / setter) tests.
+my $envMcEvent = $envTest->clone(
+    'LIBS' => "-lStMcEvent -lStEvent "
+            . $envTest->{LIBS},
+);
+
+sub build_mcevent_test {
+    my ($name, @srcs) = @_;
+    my @objs = Objects $envMcEvent @srcs;
+    Program $envMcEvent $name, (@catch_obj, @objs);
+    Install $envMcEvent $BIN, $name;
+}
+
+build_mcevent_test( "test_StMcEvent_core",
+    "StMcEvent/test_core.cxx" );
+
+build_mcevent_test( "test_StMcEvent_tpc",
+    "StMcEvent/test_tpc.cxx" );
+
+build_mcevent_test( "test_StMcEvent_silicon",
+    "StMcEvent/test_silicon.cxx" );
+
+build_mcevent_test( "test_StMcEvent_emc",
+    "StMcEvent/test_emc.cxx" );
+
+build_mcevent_test( "test_StMcEvent_btof_tof",
+    "StMcEvent/test_btof_tof.cxx" );
+
+build_mcevent_test( "test_StMcEvent_hft",
+    "StMcEvent/test_hft.cxx" );
+
+build_mcevent_test( "test_StMcEvent_other",
+    "StMcEvent/test_other.cxx" );
