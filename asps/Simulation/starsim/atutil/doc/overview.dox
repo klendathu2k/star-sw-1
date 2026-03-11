@@ -1,0 +1,469 @@
+/**
+ * @defgroup atutil atutil — Tracking support utilities (formerly irecon)
+ * @{
+ * @brief Low-level numerical and algorithmic building blocks for STARSIM
+ *        reconstruction and digitisation: helix extrapolation, hit clustering,
+ *        FUMILI least-squares fitting, detector-plane traversal, physics
+ *        utilities, and track data structures.
+ *
+ * @details
+ * `atutil` (formerly named `irecon`) collects all utilities that are shared
+ * across the STARSIM pattern-recognition and detector-response layers.
+ *
+ * Key subsystems:
+ * - **Helix geometry** (`helixa.age`) — extrapolates a charged-particle helix
+ *   from the `/HELVAR/` common block to a cylindrical surface or z-plane.
+ * - **Hit clustering** (`arclus.age`) — merges adjacent hit digits into
+ *   clusters for pixel or strip geometries.
+ * - **FUMILI fitter** (`fumfit.age`, `fumili.age`, `fumclean.age`,
+ *   `fumsize.age`) — a least-squares track fitter based on CERNLIB D520.
+ * - **Plane traversal** (`agplane.age`, `aggplane.age`, `agetplane.age`) —
+ *   step a fitted track through successive detector planes.
+ * - **Geometry table** (`agdecode.age`) — build the `AGCRTAB` look-up table
+ *   from the GEANT volume tree for a given sensitive detector.
+ * - **Kinematic utilities** (`agfkine.age`, `agukine.F`) — restore GCKINE
+ *   common block and compute derived quantities; pre-tracking filter hook.
+ * - **Error-matrix transformations** (`trscsd.F`, `trscsp.F`, `trsdsc.F`,
+ *   `trspsc.F`) — GEANE-based covariance-matrix rotations.
+ * - **Random numbers** (`agrndm.F`, `agrndmq.F`, `aranlux.F`) — RANECU and
+ *   RANLUX implementations local to `atutil`.
+ * - **C++ COMMON-block bridge** (`CommonBlocks.cxx/h`) — register and look up
+ *   FORTRAN COMMON block addresses from C++.
+ * - **General utilities** — degree-trig (`trigon.age`), Poisson sampler
+ *   (`nxpoiss.age`), string helpers (`lstrg.age`), histogram shortcuts
+ *   (`mybook.age`, `myfill.age`, `mynum.age`, `xntup.age`), weighted linear
+ *   fit (`xstrit.age`), integer-to-float re-interpretation (`argum.age`),
+ *   hex/octal formatter (`bitch.age`).
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `helixa.age` | Helix extrapolation to radius or z |
+ * | `arclus.age` | Adjacent-hit cluster finding |
+ * | `fumfit.age` | FUMILI track fit to TRBANK hit bank |
+ * | `fumili.age` | Core FUMILI minimiser |
+ * | `fumclean.age` | Outlier rejection for FUMILI |
+ * | `fumsize.age` | Initialise FUMILI parameter bounds |
+ * | `agplane.age` | Single-plane track stepping |
+ * | `aggplane.age` | General-geometry multi-plane stepping |
+ * | `agetplane.age` | Reconstruct GEANT geometry for one plane element |
+ * | `agsfunct.age` | Register a scalar function for the fitter |
+ * | `agdecode.age` | Build AGCRTAB geometry table from GEANT volumes |
+ * | `agukine.F` | Pre-tracking filter hook (calls filt_act) |
+ * | `agfkine.age` | Restore GCKINE + fill FUMVAR for a track |
+ * | `trigon.age` | Degree-argument trig functions |
+ * | `nxpoiss.age` | Poisson random-number sampler |
+ * | `argum.age` | Integer ↔ real bit-reinterpretation |
+ * | `lstrg.age` | Length of non-blank prefix of a string |
+ * | `bitch.age` | Integer to hex/octal character conversion |
+ * | `mynum.age` | Find or create an HBOOK ID by title |
+ * | `mybook.age` | Book an HBOOK1 histogram by title |
+ * | `myfill.age` | Fill an HBOOK histogram by title |
+ * | `xntup.age` | Book/fill an HBOOK column-wise Ntuple by title |
+ * | `xstrit.age` | Weighted linear regression |
+ * | `trscsd.F` | SC → detector error-matrix transform |
+ * | `trscsp.F` | SC → spline error-matrix transform |
+ * | `trsdsc.F` | Detector → SC error-matrix transform |
+ * | `trspsc.F` | Spline → SC error-matrix transform |
+ * | `agrndm.F` | RANECU random-number generator |
+ * | `agrndmq.F` | RANECU seed get/set |
+ * | `aranlux.F` | RANLUX luxury random-number generator |
+ * | `CommonBlocks.cxx` | C++ COMMON-block address registry |
+ * | `CommonBlocks.h` | Header for CommonBlocks singleton |
+ * | `trbank.inc` | Track hit-point array COMMON /TRBANK/ |
+ * | `trroad.inc` | Track road parameters COMMON /TRROAD/ |
+ *
+ * @}
+ */
+
+/* ========================================================================
+   Helix geometry
+   ======================================================================== */
+
+/**
+ * @fn HELIXA(OPTION, TOWHERE)
+ * @brief Extrapolate a helix track to a cylindrical surface or z-plane.
+ * @param[in] OPTION    Extrapolation mode: 1 = barrel (radius), 2 = end-cap
+ *                      (z-plane).  A fractional part encodes a tilt angle.
+ * @param[in] TOWHERE(2) Target coordinate: TOWHERE(1) = radius or z-value;
+ *                       TOWHERE(2) = plane azimuth (for tilted planes).
+ * @details Updates the track state in /HELVAR/.  Trapped (looping) particles
+ *          are stopped at their maximum radius.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Hit clustering
+   ======================================================================== */
+
+/**
+ * @fn ARCLUS(Par, Key)
+ * @brief Merge adjacent hit digits into clusters.
+ * @param[in]  Par(3)  Cluster parameters: Par(1)=type (1=pixel, 2=strip),
+ *                     Par(2)=phi pitch, Par(3)=z pitch.
+ * @param[out] Key     Cluster type indicator: >0 pixel, <0 strip;
+ *                     sign encodes primary measurement direction.
+ * @details Operates on the /agcclus/ digit arrays (Edig, Fdig, Zdig, Ltra,
+ *          Nclu).
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   FUMILI least-squares fitter
+   ======================================================================== */
+
+/**
+ * @fn FUMFIT(TAG, NPAR)
+ * @brief Least-squares track fit to the TRBANK hit bank using FUMILI.
+ * @param[in]  TAG   6-character fit-tag string (used for print control).
+ * @param[out] NPAR  Number of free parameters after the fit.
+ * @details Fills the EX array in /FUMUSE/ and calls FUMILI_ iteratively.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn FUMILI_(S, M, N1, N2, N3, EPS, AKP, ALM, IT, MC)
+ * @brief Core FUMILI minimiser (adapted from CERNLIB D520).
+ * @param[out]    S    Final chi-squared value.
+ * @param[in]     M    Number of free parameters.
+ * @param[in]     N1   Number of measurement points.
+ * @param[in,out] N2   Number of fixed parameters.
+ * @param[in,out] N3   Number of constraints.
+ * @param[in]     EPS  Convergence tolerance.
+ * @param[in]     AKP  Step-size control parameter.
+ * @param[in]     ALM  Levenberg-Marquardt damping factor.
+ * @param[out]    IT   Number of iterations performed.
+ * @param[in]     MC   Maximum number of iterations allowed.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn FUMCLEAN(IFL)
+ * @brief Remove the worst outlier measurement from the FUMILI fit.
+ * @param[out] IFL  Number of points rejected (0 or 1).
+ * @details Searches EX for the point with the largest chi² residual
+ *          exceeding 5σ; inflates its error weight by 100× if found.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn FUMSIZE()
+ * @brief Initialise FUMILI parameter bounds to ±10^30.
+ * @details Must be called before the first FUMFIT to reset AMX/AMN arrays.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Detector-plane traversal
+   ======================================================================== */
+
+/**
+ * @fn AGPLANE(Cset, Ip)
+ * @brief Step a track through successive planes of detector set @p Cset.
+ * @param[in]     Cset  4-character detector-set name.
+ * @param[in,out] Ip    Plane index; initialised to ≤0 or >999 on first call.
+ * @details Loads digit arrays via AgFDIGI, extrapolates with HELIXA, and
+ *          accumulates hits in TRBANK.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn AGGPLANE(Cset, Ipp)
+ * @brief General-geometry multi-plane traversal (barrel + end-cap).
+ * @param[in]     Cset  4-character detector-set name.
+ * @param[in,out] Ipp   Plane index; ≤0 or >999 triggers initialisation.
+ * @details Handles both modular and full-2π geometries; uses AGCRTAB tables
+ *          built by AgDECODE.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn AGETPLANE(Clev, IP, IF, IZ)
+ * @brief Reconstruct GEANT geometry parameters for one AGCRTAB element.
+ * @param[in]  Clev  Generic layer name.
+ * @param[in]  IP    Plane number in AGCRTAB.
+ * @param[in]  IF    Phi-sector index.
+ * @param[in]  IZ    Z-segment index.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn AGSFUNCT(ext, ia)
+ * @brief Register a scalar function for use by the track fitter.
+ * @param[in] ext  External function reference.
+ * @param[in] ia   Function flag stored in /AGCRFUN/.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn AgDECODE(Cdet, itype)
+ * @brief Build the AGCRTAB geometry look-up table for detector @p Cdet.
+ * @param[in] Cdet   4-character detector name.
+ * @param[in] itype  Detector type; if >10 only elements with this serial
+ *                   number are scanned.
+ * @details Traverses the GEANT volume tree to determine phi and z
+ *          periodicities and fills AGCRTAB.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Kinematic utilities
+   ======================================================================== */
+
+/**
+ * @fn AGUKINE()
+ * @brief Pre-tracking filter hook.
+ * @details Calls filt_act(4,0,0) (RejectGT) to set IEOTRI and veto
+ *          the current track before GEANT tracking begins.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn AgFKINE(ITR)
+ * @brief Restore GCKINE and fill AGMYKINE / FUMVAR for track @p ITR.
+ * @param[in] ITR  Track number (1-based; negative sign is accepted).
+ * @details Calls GFKINE and GFPART to restore VERT/PVERT/IPART; computes
+ *          pt, θ, φ, pseudorapidity, rapidity, and calorimeter-impact
+ *          rapidity; fills FUMVAR for subsequent track fitting.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Physics utilities
+   ======================================================================== */
+
+/**
+ * @fn sind(x)
+ * @brief Sine of @p x in degrees.
+ * @param[in] x  Angle in degrees.
+ * @return sin(x°).
+ * @ingroup atutil
+ */
+
+/**
+ * @fn cosd(x)
+ * @brief Cosine of @p x in degrees.
+ * @param[in] x  Angle in degrees.
+ * @return cos(x°).
+ * @ingroup atutil
+ */
+
+/**
+ * @fn tand(x)
+ * @brief Tangent of @p x in degrees.
+ * @param[in] x  Angle in degrees.
+ * @return tan(x°).
+ * @ingroup atutil
+ */
+
+/**
+ * @fn asind(x)
+ * @brief Arc-sine returning result in degrees.
+ * @param[in] x  Sine value (−1 to 1).
+ * @return asin(x) in degrees.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn acosd(x)
+ * @brief Arc-cosine returning result in degrees.
+ * @param[in] x  Cosine value (−1 to 1).
+ * @return acos(x) in degrees.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn atand(x)
+ * @brief Arc-tangent returning result in degrees.
+ * @param[in] x  Tangent value.
+ * @return atan(x) in degrees.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn atan2d(x, y)
+ * @brief Four-quadrant arc-tangent returning result in degrees.
+ * @param[in] x  y-component.
+ * @param[in] y  x-component.
+ * @return atan2(x,y) in degrees.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn NXPOISS(w)
+ * @brief Sample an integer from a Poisson distribution.
+ * @param[in] w  Poisson mean.
+ * @return Sampled non-negative integer.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   General utilities
+   ======================================================================== */
+
+/**
+ * @fn ARGUM(Iarg)
+ * @brief Interpret a 32-bit integer as either a FORTRAN integer or REAL.
+ * @param[in] Iarg  Input integer bit pattern.
+ * @return If |Iarg| ≤ 10^6 returns REAL(Iarg); otherwise re-interprets the
+ *         bits as a single-precision REAL.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn LSTRG(STRING)
+ * @brief Return the position of the last non-blank character.
+ * @param[in] STRING  Input character string.
+ * @return Position (1-based) of last non-blank, or 0 if all blank.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn BITCH(INT, FORMAT)
+ * @brief Convert a 32-bit integer to a hex or octal character string.
+ * @param[in] INT     Bit-string input (32 bits).
+ * @param[in] FORMAT  @c 'H' for 8-digit hex, @c 'O' for 11-digit octal.
+ * @return Right-justified character string of the appropriate length.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn MYNUM(tit, jj)
+ * @brief Look up or allocate an HBOOK histogram ID by title.
+ * @param[in]  tit  Histogram title string.
+ * @param[in]  jj   Base ID offset.
+ * @return Integer histogram ID.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn MYBOOK(tit, N, Ia, Ib)
+ * @brief Book an HBOOK1 histogram identified by title.
+ * @param[in] tit  Title string.
+ * @param[in] N    Number of bins.
+ * @param[in] Ia   Lower axis limit.
+ * @param[in] Ib   Upper axis limit.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn MYFILL(tt, Ix, Iy)
+ * @brief Fill a previously booked histogram by title.
+ * @param[in] tt  Title string.
+ * @param[in] Ix  x value (or channel).
+ * @param[in] Iy  y value (weight or second axis).
+ * @ingroup atutil
+ */
+
+/**
+ * @fn XNTUP(TIT, IVAR)
+ * @brief Book or fill an HBOOK column-wise Ntuple by title.
+ * @param[in]     TIT   Ntuple title string.
+ * @param[in,out] IVAR  Variable array; on first call (booking) this defines
+ *                      the number of columns; on subsequent calls it holds
+ *                      the values to fill.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn XSTRIT(x, y, Dy, N, A, Da, Xi)
+ * @brief Weighted linear regression y = A(1)·x + A(2).
+ * @param[in]  x(N)   x values.
+ * @param[in]  y(N)   y values.
+ * @param[in]  Dy(N)  y uncertainties (points with Dy≤0 are ignored).
+ * @param[in]  N      Number of points.
+ * @param[out] A(2)   Fitted slope (A(1)) and intercept (A(2)).
+ * @param[out] Da(2)  Errors on slope and intercept.
+ * @param[out] Xi     Chi-squared of the fit; −1 if N < 2.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Error-matrix transformations
+   ======================================================================== */
+
+/**
+ * @fn TRSCSD(PC, RC, PD, RD, H, CH, IERR, SPU, DJ, DK)
+ * @brief Transform a track error matrix from SC to detector (u,v,w) variables.
+ * @param[in]  PC(3)   Momentum parameters (1/p, λ, φ) in SC frame.
+ * @param[in]  RC(15)  5×5 error matrix in SC variables (lower triangle).
+ * @param[out] PD(3)   Momentum parameters (1/p, v′, w′) in detector frame.
+ * @param[out] RD(15)  5×5 error matrix in (1/p,v′,w′,v,w) variables (lower triangle).
+ * @param[in]  H(3)    Magnetic field vector.
+ * @param[in]  CH      Particle charge.
+ * @param[out] IERR    Error code: 1 if particle moves ⊥ to u-axis.
+ * @param[out] SPU     Sign of u-component of particle momentum.
+ * @param[in]  DJ(3)   Unit vector in v-direction of detector system.
+ * @param[in]  DK(3)   Unit vector in w-direction of detector system.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn TRSCSP(PC, RC, PS, RS, H, CH, IERR, SPX)
+ * @brief Transform a track error matrix from SC to spline (y,z) variables.
+ * @param[in]  PC(3)   Momentum parameters (1/p, λ, φ) in SC frame.
+ * @param[in]  RC(15)  5×5 error matrix in SC variables (lower triangle).
+ * @param[out] PS(3)   Momentum parameters (1/p, y′, z′) in spline frame.
+ * @param[out] RS(15)  5×5 error matrix in (1/p,y′,z′,y,z) variables (lower triangle).
+ * @param[in]  H(3)    Magnetic field vector.
+ * @param[in]  CH      Particle charge.
+ * @param[out] IERR    Error code: 1 if particle moves ⊥ to x-axis.
+ * @param[out] SPX     Sign of x-component of particle momentum.
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   Random number generators
+   ======================================================================== */
+
+/**
+ * @fn aGRNDM(RVEC, LEN)
+ * @brief Fill a vector with RANECU uniform [0,1) random numbers.
+ * @param[out] RVEC(LEN)  Output random-number vector.
+ * @param[in]  LEN         Number of values requested.
+ * @details Uses JSEQ(1) to select the active sequence from GCRNDM.
+ *          Auto-initialises seeds if JSEQ(1) ≤ 0 or > 255.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn aGRNDMQ(IS1, IS2, ISEQ, CHOPT)
+ * @brief Get or set RANECU seeds for a given sequence.
+ * @param[in,out] IS1    First seed.
+ * @param[in,out] IS2    Second seed.
+ * @param[in]     ISEQ   Sequence number (1-based).
+ * @param[in]     CHOPT  @c 'S' = set seeds, @c 'G' = get seeds.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn aRANLUX(RVEC, LENV)
+ * @brief Fill a vector with RANLUX luxury pseudorandom numbers.
+ * @param[out] RVEC(LENV)  Output random-number vector.
+ * @param[in]  LENV         Number of values requested.
+ * @details Entries: RLUXGO (initialise from seed), RLUXAT (query state),
+ *          RLUXIN / aRLUXIN (restore state from 25-integer vector),
+ *          RLUXUT (save state to 25-integer vector),
+ *          aRLUXCN (set counter).
+ * @ingroup atutil
+ */
+
+/* ========================================================================
+   C++ COMMON-block bridge
+   ======================================================================== */
+
+/**
+ * @fn CommonBlocks::Register(name, ptr)
+ * @brief Register a FORTRAN COMMON block address in the global table.
+ * @param[in] name  COMMON block name (as a std::string).
+ * @param[in] ptr   Pointer to the first word of the COMMON block.
+ * @ingroup atutil
+ */
+
+/**
+ * @fn CommonBlocks::Address(name)
+ * @brief Retrieve the address of a previously registered COMMON block.
+ * @param[in] name  COMMON block name.
+ * @return Void pointer to the COMMON block; aborts if not found.
+ * @ingroup atutil
+ */

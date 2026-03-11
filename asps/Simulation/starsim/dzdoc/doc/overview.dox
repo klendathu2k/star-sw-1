@@ -1,0 +1,614 @@
+/**
+ * @defgroup DZDoc DZDoc — ZEBRA DZDOC self-documenting bank system
+ * @{
+ * @brief STARSIM extensions and local replacements for the CERNLIB ZEBRA
+ *        DZDOC self-documenting bank package.
+ *
+ * @details
+ * DZDOC allows ZEBRA banks to carry structured field documentation — names,
+ * types, ranges, status-bit meanings, and commentary — inside the bank tree
+ * itself.  This package provides:
+ *
+ * - **Bank documentation engine** (DZDDOC, DZDENT, DZDGDS, DZDHEA, DZDBNK,
+ *   DZDDIV, DZDIRE): define and retrieve bank documentation, walk bank trees.
+ * - **Output formatters** (DZDHTM, DZDPSC, DZDTOG, DZDTXT, DZDWRT, DZDWTR,
+ *   DZDDTR): write documentation as HTML, PostScript, SGML, or plain text.
+ * - **Format converters** (DZE2HT, DZECPP, DZEDRW, DZEHPE, DZELIN, DZENPG,
+ *   DZEPPA, DZEPSB, DZESGP, DZEWEM): convert between documentation formats.
+ * - **FZ sequential I/O** (FZICHH, FZIREC, FZODAT, DZIOPH): low-level ZEBRA
+ *   FZ record management, extended for unlimited structure lengths.
+ * - **ZEBRA MZ pool management** (MZCHNB, MZLINK, MZLINT, MZPAW, MZPUSH,
+ *   MZRELB, MZSTOR, MZWORK): local replacements for core ZEBRA MZ routines.
+ * - **RZ file I/O** (RZFILE, RZIN, RZINK, RZINS, RZIODO, RZLOGL, RZMAKE,
+ *   RZPURG, RZREAD): local replacements for the ZEBRA RZ package.
+ * - **Error handlers** (ZFATAL, ZFATAM, ZTELL): ZEBRA fatal error and
+ *   diagnostic reporting.
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `dzdbnk.F`  | Draw a bank graphically (center+data+next-link boxes) |
+ * | `dzddoc.F`  | Core DZDOC dump/examine routine |
+ * | `dzddtr.F`  | Drive DZDOC for SGML/meta output |
+ * | `dzdent.F`  | Parse bank-description entry (fields, types, bits) |
+ * | `dzdgds.F`  | Get a documentation string line from a bank |
+ * | `dzdhea.F`  | Draw the header box of a bank |
+ * | `dzddiv.F`  | DZDOC division initialisation and RZ-path management |
+ * | `dzdire.F`  | List DZDOC directory of documented banks |
+ * | `dzdhtm.F`  | Write bank documentation as HTML |
+ * | `dzdpsc.F`  | Write bank documentation as PostScript |
+ * | `dzdtog.F`  | Toggle DZDOC graphical output workstation |
+ * | `dzdtxt.F`  | Draw text string on DZDOC canvas |
+ * | `dzdwrt.F`  | Write characters to DZDOC output stream |
+ * | `dzdwtr.F`  | Walk bank tree, write WEB/SGML representation |
+ * | `dze2ht.F`  | Convert DZDOC sequential format to HTML |
+ * | `dzecpp.F`  | C-preprocessor-style filter for DZDOC source |
+ * | `dzedrw.F`  | DZDOC editor/drawing dispatcher; also DZEDRA, DZEHTM |
+ * | `dzehpe.F`  | Write PostScript header/prolog |
+ * | `dzelin.F`  | Read one line from DZDOC index file |
+ * | `dzenpg.F`  | Emit new-page command for PostScript output |
+ * | `dzeppa.F`  | Write PostScript page-setup preamble |
+ * | `dzepsb.F`  | Write PostScript bounding-box comment |
+ * | `dzesgp.F`  | Convert DZDOC SGML to PostScript/EPS |
+ * | `dzewem.F`  | Write WEB/SGML end-matter |
+ * | `ighcxy.F`  | HIGZ character-xy coordinate helper |
+ * | `fzichh.F`  | FZ steering/fast-block scanner |
+ * | `fzirec.F`  | FZ logical-record manager (exchange format) |
+ * | `fzodat.F`  | Write FZ direct-access table |
+ * | `dzioph.F`  | Low-level FZ physical record I/O |
+ * | `mzchnb.F`  | Check link is not inside a bank |
+ * | `mzlink.F`  | Register permanent link area |
+ * | `mzlint.F`  | Register temporary link area |
+ * | `mzpaw.F`   | Allocate PAW working space |
+ * | `mzpush.F`  | Resize a ZEBRA bank |
+ * | `mzrelb.F`  | Relocate links after garbage collection |
+ * | `mzstor.F`  | Initialise ZEBRA store region |
+ * | `mzwork.F`  | Allocate ZEBRA working space |
+ * | `rzfile.F`  | Open existing RZ file |
+ * | `rzin.F`    | Read RZ record into ZEBRA data structure |
+ * | `rzink.F`   | Read RZ record by key from current directory |
+ * | `rzins.F`   | Read continuation of RZ data structure |
+ * | `rziodo.F`  | Low-level RZ physical record I/O |
+ * | `rzlogl.F`  | Set RZ logging level |
+ * | `rzmake.F`  | Create new RZ file |
+ * | `rzpurg.F`  | Purge old RZ cycles |
+ * | `rzread.F`  | Read words from current RZ record |
+ * | `zfatal.F`  | ZEBRA fatal error handler |
+ * | `zfatam.F`  | ZEBRA fatal error with message |
+ * | `ztell.F`   | Signal trouble situation |
+ * @}
+ */
+
+/* ================================================================
+ * Bank documentation
+ * ================================================================ */
+
+/**
+ * @fn DZDBNK(LB, IB, L, X0, Y0, DX, DY, HID, HIDNX, HIDU, NID, ND)
+ * @brief Draw a ZEBRA bank as a graphical box.
+ * @details Draws a center block (bank identity), data box, and links to next
+ *          and up banks.  Used by the DZDOC display engine (O. Schaile).
+ * @param[in] LB     ZEBRA link area.
+ * @param[in] IB     ZEBRA index area.
+ * @param[in] L      Link to the bank.
+ * @param[in] X0,Y0  Lower-left corner of the bank center box.
+ * @param[in] DX     Width of the data section.
+ * @param[in] DY     Thickness of the bank.
+ * @param[in] HID    Hollerith bank identifier.
+ * @param[in] HIDNX  Hollerith identifier of the next bank.
+ * @param[in] HIDU   Hollerith identifier of the up-bank.
+ * @param[in] NID    Numerical bank identifier.
+ * @param[in] ND     Number of data words.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDDOC(IXSTOR, L, CHBANK, CHOPT, IF1, IL1, LUN, CHPF, NKEEPS)
+ * @brief Walk a ZEBRA data structure and dump bank documentation.
+ * @details CHOPT selects output format: `'U'` suppress undefined, `'K'` keep
+ *          sequences, `'D'` INTEGER offset statements, `'O'` PARAMETER offset
+ *          statements, `'Z'` hexadecimal, `'T'` character banks, `'C'` values
+ *          only, `'='` IQ assignment form, `'R'` recover incomplete doc,
+ *          `'V'` return values in VVAR, `'P'` return path in VVAR,
+ *          `'I'` return IO char in CHPF, `'E'` examine/check ranges.
+ * @param[in]  IXSTOR  Store index.
+ * @param[in]  L       Link to bank to dump.
+ * @param[in]  CHBANK  4-character bank name.
+ * @param[in]  CHOPT   Option string.
+ * @param[in]  IF1     First word to dump.
+ * @param[in]  IL1     Last word to dump.
+ * @param[in]  LUN     Output Fortran unit number.
+ * @param[in]  CHPF    Prefix string for FORTRAN code generation.
+ * @param[in]  NKEEPS  Number of data words for which offsets are kept.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDGVA(IXSTOR, L, CHOPT, CVREQ, NVAL, VVAR, ITYYY)
+ * @brief Entry in DZDDOC: return data word values or paths into VVAR.
+ * @param[in]  IXSTOR  Store index.
+ * @param[in]  L       Link to bank.
+ * @param[in]  CHOPT   Option string (`'V'`, `'P'`, ...).
+ * @param[in]  CVREQ   Requested variable name.
+ * @param[out] NVAL    Number of values returned.
+ * @param[out] VVAR    Output array of values or paths.
+ * @param[out] ITYYY   Type code array.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDDTR(LUNSGM, LUNLOG, LUNMET, IWMETA, ITMETA, L, CHOPT)
+ * @brief Drive DZDOC to produce SGML/meta output for a bank tree.
+ * @param[in] LUNSGM  Output unit for SGML.
+ * @param[in] LUNLOG  Logging unit.
+ * @param[in] LUNMET  Metadata output unit.
+ * @param[in] IWMETA  Width of metadata.
+ * @param[in] ITMETA  Type code for metadata.
+ * @param[in] L       Link to the root bank.
+ * @param[in] CHOPT   Option string.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDENT()
+ * @brief Parse a DZDOC bank-description entry.
+ * @details Reads field names, types (I, F, D, H, ...), status-bit descriptions,
+ *          link descriptions, and range information from the documentation bank.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDGDS(CHBANK, CLINE, NLT, NLU)
+ * @brief Get a documentation string line from a bank's documentation bank.
+ * @param[in]  CHBANK  4-character bank name.
+ * @param[out] CLINE   Character line returned.
+ * @param[out] NLT     Starting line number.
+ * @param[out] NLU     Ending line number.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDHEA(LB, IB, L)
+ * @brief Draw the header box of a ZEBRA bank in the graphical display.
+ * @param[in] LB  ZEBRA link area.
+ * @param[in] IB  ZEBRA index area.
+ * @param[in] L   Link to the bank.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDDIV(IXDIVP, LDUMMY, RZPATH, CHOPT0, ...)
+ * @brief Initialise and manage a DZDOC division; handle RZ-path bank storage.
+ * @param[in]  IXDIVP  Division index pointer.
+ * @param[in]  LDUMMY  Dummy link.
+ * @param[in]  RZPATH  RZ path string for documentation storage.
+ * @param[in]  CHOPT0  Option string.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDIRE()
+ * @brief Display or list the DZDOC directory of documented banks in a store.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * Output formatters
+ * ================================================================ */
+
+/**
+ * @fn DZDHTM(ISTORE, L, CFLAG)
+ * @brief Walk a data structure at L and write bank documentation as HTML.
+ * @param[in] ISTORE  Store index.
+ * @param[in] L       Link to the root bank.
+ * @param[in] CFLAG   `'S'` single bank; `'T'` bank tree (default);
+ *                    `'N'` no data words; `'P'` plain text (no hyperlinks).
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDPSC(ISTORE, LEV, CF)
+ * @brief Write bank documentation as PostScript.
+ * @param[in] ISTORE  Store index.
+ * @param[in] LEV     Depth level to document.
+ * @param[in] CF      Format option character.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDTOG(IWKID)
+ * @brief Toggle the DZDOC graphical output workstation.
+ * @param[in] IWKID  HIGZ workstation identifier.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDTXT(CHT, NCM, X0, Y0, CS, ANG, IALG)
+ * @brief Draw a text string on the DZDOC graphical canvas.
+ * @param[in] CHT   Text string.
+ * @param[in] NCM   Number of characters.
+ * @param[in] X0,Y0 Position.
+ * @param[in] CS    Character size.
+ * @param[in] ANG   Text angle (degrees).
+ * @param[in] IALG  Alignment code.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDWRT(CTEMP, N)
+ * @brief Write N characters of string CTEMP to the DZDOC output stream.
+ * @param[in] CTEMP  Character string.
+ * @param[in] N      Number of characters to write.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZDWTR(ISTORE, L, LRET)
+ * @brief Walk a bank tree and write the WEB/SGML representation.
+ * @param[in]  ISTORE  Store index.
+ * @param[in]  L       Link to root bank.
+ * @param[out] LRET    Return link.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * HTML / format conversion
+ * ================================================================ */
+
+/**
+ * @fn DZE2HT(LUNIN, LUNUSE, FLAG, UPUP1)
+ * @brief Convert DZDOC sequential format on LUNIN to HTML on LUNUSE.
+ * @param[in]  LUNIN   Input Fortran unit (DZDOC sequential format).
+ * @param[in]  LUNUSE  Output Fortran unit (HTML).
+ * @param[in]  FLAG    Conversion option flag.
+ * @param[in]  UPUP1   Upper-level path prefix.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZECPP(LUNIN, LUNOUT)
+ * @brief C-preprocessor-style filter for DZDOC source.
+ * @details Expands `#include` directives and conditional blocks in the
+ *          DZDOC source on LUNIN, writing the expanded output to LUNOUT.
+ * @param[in] LUNIN   Input unit.
+ * @param[in] LUNOUT  Output unit.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEDRW()
+ * @brief Main DZDOC editor and drawing dispatcher.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEDRA()
+ * @brief Entry in DZEDRW: draw the bank tree diagram.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEHTM()
+ * @brief Entry in DZEDRW: drive HTML output generation.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEHPE(LUN)
+ * @brief Write the PostScript header and prolog to unit LUN.
+ * @param[in] LUN  Output Fortran unit.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZELIN(LUNIND, LO)
+ * @brief Read one line from the DZDOC index file into the internal line buffer.
+ * @param[in]  LUNIND  Index file unit.
+ * @param[out] LO      Line offset within the buffer.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZENPG(IPAGE)
+ * @brief Emit a new-page command for PostScript output at page IPAGE.
+ * @param[in] IPAGE  Page number.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEPPA(LUN, CPN, IXW, IYW)
+ * @brief Write the PostScript page-setup preamble to LUN.
+ * @param[in] LUN   Output unit.
+ * @param[in] CPN   Page name string.
+ * @param[in] IXW   Page width in points.
+ * @param[in] IYW   Page height in points.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEPSB(IX1, IY1, IX2, IY2, LUOUT)
+ * @brief Write a PostScript bounding-box comment to LUOUT.
+ * @param[in] IX1,IY1  Lower-left corner (points).
+ * @param[in] IX2,IY2  Upper-right corner (points).
+ * @param[in] LUOUT    Output unit.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZESGP(LUSGML, LUPPIC, LUNOUT, CHOPT)
+ * @brief Convert DZDOC SGML source to PostScript/EPS output.
+ * @param[in] LUSGML  Input SGML unit.
+ * @param[in] LUPPIC  Embedded picture unit.
+ * @param[in] LUNOUT  Output PostScript unit.
+ * @param[in] CHOPT   Format variant option string.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZEWEM(LUNSGM)
+ * @brief Write WEB/SGML end-matter (closing tags) to LUNSGM.
+ * @param[in] LUNSGM  Output SGML unit.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * FZ sequential I/O
+ * ================================================================ */
+
+/**
+ * @fn FZICHH(IOMODE, MREC, IHOW)
+ * @brief Scan FZ steering or fast blocks in exchange format.
+ * @details IHOW=1 expects a fast block; IHOW=0 expects a steering block;
+ *          IHOW=-1 scans for next steering block; IHOW=-2 expects steering
+ *          at start.  Returns IRETN in IQUEST(1).
+ * @param[in]  IOMODE  I/O mode flag.
+ * @param[in]  MREC    Physical record control array.
+ * @param[in]  IHOW    Block-type expectation flag.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn FZIREC()
+ * @brief Logical-record manager for FZ exchange-format input.
+ * @details Service routine to FZIFFX/FZIN.  Extended by P. Nevski (2001) to
+ *          support unlimited total structure lengths.  Called with IFLAGI > 0
+ *          to initiate a new data structure, = 0 to copy buffer control
+ *          parameters, or < 0 to read continuation blocks.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn FZODAT(LUNP, IXDIVP, LENTP)
+ * @brief Write the direct-access table for an FZ output file.
+ * @param[in] LUNP    Output Fortran unit.
+ * @param[in] IXDIVP  Division index pointer.
+ * @param[in] LENTP   Length of the table.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn DZIOPH(IFIRST, ILAST)
+ * @brief Low-level FZ physical record I/O in exchange format.
+ * @details Reads or writes physical records between word indices IFIRST and
+ *          ILAST.  Handles data-type conversion (U/B/I/F/D/H/S/N/L).
+ * @param[in] IFIRST  First word index to process.
+ * @param[in] ILAST   Last word index to process.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * ZEBRA MZ pool management
+ * ================================================================ */
+
+/**
+ * @fn MZCHNB(LIX)
+ * @brief Check that LIX is a link in working space or a link area, not in a bank.
+ * @details Guards against garbage-collection corruption when a routine
+ *          restores an input link back to the caller.
+ * @param[in] LIX  Link to check.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZLINK(IXSTOR, CHNAME, LAREA, LREF, LREFL)
+ * @brief Register a permanent link area with the ZEBRA system.
+ * @details Links in LAREA are relocated by the garbage collector.
+ * @param[in]  IXSTOR  Store index.
+ * @param[in]  CHNAME  Name string for the link area.
+ * @param[in]  LAREA   Link area array.
+ * @param[in]  LREF    First link reference.
+ * @param[in]  LREFL   Last link reference.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZLINT(IXSTOR, CHNAME, LAREA, LREF, LREFL)
+ * @brief Register a temporary (transient) link area with the ZEBRA system.
+ * @param[in]  IXSTOR  Store index.
+ * @param[in]  CHNAME  Name string.
+ * @param[in]  LAREA   Link area array.
+ * @param[in]  LREF    First link reference.
+ * @param[in]  LREFL   Last link reference.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZPAW(NWORDS, CHOPT)
+ * @brief Allocate PAW working space.
+ * @param[in] NWORDS  Number of words to allocate.
+ * @param[in] CHOPT   Option: `'R'` resets the working space.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZPUSH(IXDIV, LORGP, INCNLP, INCNDP, CHOPT)
+ * @brief Resize a ZEBRA bank: change its number of links and/or data words.
+ * @param[in] IXDIV   Division index.
+ * @param[in] LORGP   Link to the bank (origin link).
+ * @param[in] INCNLP  Increment in number of structural links.
+ * @param[in] INCNDP  Increment in number of data words.
+ * @param[in] CHOPT   Option string (see ZEBRA documentation).
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZRELB()
+ * @brief Relocate all links stored inside banks after a garbage collection.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZSTOR(IXSTOR, CHNAME, CHOPT, IFENCE, LV, LLR, LLD, LIMIT, LAST)
+ * @brief Initialise a new ZEBRA store region.
+ * @param[in]  IXSTOR  Store index (output).
+ * @param[in]  CHNAME  Store name.
+ * @param[in]  CHOPT   Option string.
+ * @param[in]  IFENCE  Fence word array.
+ * @param[in]  LV      Store vector.
+ * @param[in]  LLR     Relocation link array.
+ * @param[in]  LLD     Data link array.
+ * @param[in]  LIMIT   Store limit array.
+ * @param[in]  LAST    Last-word pointer array.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn MZWORK(IXSTOR, DFIRST, DLAST, IFLAGP)
+ * @brief Allocate or resize the ZEBRA working space.
+ * @param[in]  IXSTOR  Store index.
+ * @param[in]  DFIRST  First word of working space.
+ * @param[in]  DLAST   Last word of working space.
+ * @param[in]  IFLAGP  -1=reset empty, 0=new allocation, 1=vary limits.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * RZ random-access file I/O
+ * ================================================================ */
+
+/**
+ * @fn RZFILE(LUNIN, CHDIR, CHOPT)
+ * @brief Open an existing RZ file for access.
+ * @details Always uses exchange mode on Linux.
+ *          To create a new file use RZMAKE.
+ * @param[in] LUNIN  Logical unit (must be OPEN'd before the call).
+ * @param[in] CHDIR  Top-directory name for this file.
+ * @param[in] CHOPT  Options: default=disk, `'M'`=memory mode.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZIN(IXDIV, LSUP, JBIAS, KEYU, ICYCLE, CHOPT)
+ * @brief Read one RZ record and create the ZEBRA data structure.
+ * @param[in]  IXDIV   Division index to receive the data structure.
+ * @param[in]  LSUP    Supporting bank link or supporting link.
+ * @param[in]  JBIAS   Link bias: < 1 = structural link in LSUP bank,
+ *                     = 1 = LSUP is the top-level supporting link,
+ *                     = 2 = stand-alone data structure.
+ * @param[in]  KEYU    Keyword vector.
+ * @param[in]  ICYCLE  Cycle number (0=lowest, > max=highest).
+ * @param[in]  CHOPT   Options: `'A'` append, `'C'` cycle info, `'D'` delete, ...
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZINK(KEYU, ICYCLE, CHOPT)
+ * @brief Read an RZ record by key/cycle from the current working directory.
+ * @param[in] KEYU    Keyword vector.
+ * @param[in] ICYCLE  Cycle number.
+ * @param[in] CHOPT   Option string.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZINS(IXDIVP, LSUPP, JBIASP, LBANK)
+ * @brief Read a continuation of an RZ data structure and relocate links.
+ * @param[in]  IXDIVP  Division index.
+ * @param[in]  LSUPP   Supporting bank link.
+ * @param[in]  JBIASP  Link bias.
+ * @param[out] LBANK   Link to the created bank.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZIODO(LUNRZ, JREC, IREC1, IBUF, IRW)
+ * @brief Low-level RZ physical record I/O.
+ * @param[in]     LUNRZ  Fortran unit for the RZ file.
+ * @param[in]     JREC   Logical record number.
+ * @param[in]     IREC1  First word in the record.
+ * @param[in,out] IBUF   I/O buffer.
+ * @param[in]     IRW    1=read, 2=write.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZLOGL(LUN, LOGLEV)
+ * @brief Set the RZ logging level for logical unit LUN.
+ * @param[in] LUN    Fortran unit number.
+ * @param[in] LOGLEV Logging level: -3=suppress all, -2=errors only,
+ *                   0=normal, 1=rare events, 2=monitor calls, 3=short diag,
+ *                   4=full diagnostics.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZMAKE(LUNIN, CHDIR, NWKEY, CHFORM, CHTAG, NRECPin, CHOPT)
+ * @brief Create a new RZ file.
+ * @details Always uses exchange mode on Linux.
+ * @param[in] LUNIN    Logical unit (OPEN'd beforehand).
+ * @param[in] CHDIR    Top-directory name.
+ * @param[in] NWKEY    Number of key words (max 5).
+ * @param[in] CHFORM   Key format string: `'B'`=bit string, `'H'`=Hollerith, `'I'`=integer.
+ * @param[in] CHTAG    Key tag array `CHARACTER*8 CHTAG(NWKEY)`.
+ * @param[in] NRECPin  Number of records per block.
+ * @param[in] CHOPT    Option string.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZPURG(NKEEP)
+ * @brief Purge old cycles in the current RZ working directory.
+ * @details Keeps the NKEEP most recent cycles per key; NKEEP < 1 treated as 1.
+ * @param[in] NKEEP  Number of cycles to keep.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn RZREAD(V, N, IPC, IFORM)
+ * @brief Read N words from the current RZ record into array V.
+ * @param[out] V      Output array.
+ * @param[in]  N      Number of words to read.
+ * @param[in]  IPC    Byte offset into the record.
+ * @param[in]  IFORM  Format code.
+ * @ingroup DZDoc
+ */
+
+/* ================================================================
+ * Error / diagnostics
+ * ================================================================ */
+
+/**
+ * @fn ZFATAL()
+ * @brief ZEBRA fatal error handler.
+ * @details Prints the ZEBRA trace-back, dumps store state, and calls STOP.
+ *          Only the first call is acted upon (NQERR guard).
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn ZFATAM(message)
+ * @brief ZEBRA fatal error handler with an explicit message string.
+ * @param[in] message  Character string describing the error.
+ * @ingroup DZDoc
+ */
+
+/**
+ * @fn ZTELL(IDP, JFLP)
+ * @brief Signal a trouble situation.
+ * @details Called by the ZEBRA garbage collector when space is exhausted, or
+ *          by user code with IDP > 100.  Prints a diagnostic and stops batch
+ *          jobs.
+ * @param[in] IDP   Diagnostic code (19=out of space on output file).
+ * @param[in] JFLP  Flag word.
+ * @ingroup DZDoc
+ */

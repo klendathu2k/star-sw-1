@@ -1,0 +1,734 @@
+/**
+ * @defgroup AgZIO Event I/O Layer (agzio)
+ * @{
+ *
+ * @brief AGE processors for GENZ event file I/O, kinematic bank filling,
+ *        pileup merging, and external-generator format conversion in STARSIM.
+ *
+ * @details
+ * The `agzio/` directory provides the event I/O layer of the STARSIM detector
+ * simulation framework.  Each `.age` file is an AGE macro pre-processed into
+ * Fortran-77 and compiled into the `atlsim` library; the `.F` files are
+ * compiled directly.  Together they cover:
+ *
+ * - **Core ZEBRA event I/O**: open/read/write/close GENZ event streams
+ *   (`AgZOPEN`, `AgZREAD`, `AgZWRITE`, `AgZout`, `AgZBACK`).
+ * - **Kinematic I/O**: fill GEANT KINE/VERT banks from GENZ, EGZ, text,
+ *   and n-tuple formats (`AgGZKINE`, `AgEZKINE`, `AgSKINE`, `AgSPKINE`,
+ *   `LgKINE`, `LgVERT`, `AgREADTXT`, `AgNTOPEN`, `AgNTREAD`).
+ * - **File management**: RZ database open/close (`AgRFILE`), multi-file
+ *   chain reading (`AgFREAD`, `AgFOPEN`), bank output (`AgFOUT`), run-info
+ *   decoding (`AgfINFO`), and ZEBRA bank growth (`AgPUSH`, `AgCHAIN`).
+ * - **Pileup / event merging**: append events (`AgMERGE`), split events
+ *   (`AgSPLIT`), compact data (`agsqueeze`, `AgPUTRIM`), and track
+ *   time-tag utilities (`AgVTRBUNCH`, `AgVTRTIME`, `AgVTRSTAT`).
+ * - **Counters and reinit**: `AgCOUNTR`, `AgNEED`, `AgREINIT`, `AgHITSTAT`.
+ * - **Format converters**: PDG, HIJING, LUND/PYTHIA, ISA-JET to/from GEANT
+ *   particle code conversion.
+ * - **GNZ utilities**: read events from Generic N-tuple banks
+ *   (`AgNZGETE`, `AgNZGETP`, `AgNZGETG`, etc.) and print/browse GNZ content.
+ * - **Vertex/hit utilities**: `AgSVERT`, `AgTRIM`, `AgPOINTR`, `AgUPROD`,
+ *   `AgBEAMDAT`, `AgSDIFF`.
+ *
+ * ## Files
+ *
+ * ### Core ZEBRA event I/O
+ * | File | Purpose |
+ * |------|---------|
+ * | `agzopen.age`  | Open a GENZ event file (Fatmen, Fortran, or C); support file chains |
+ * | `agzread.age`  | Read the next GENZ event; fill EVNT/HEAD/KINE/VERT |
+ * | `agzwrite.age` | Write the current event to a GENZ stream |
+ * | `agzout.age`   | Write a single ZEBRA bank as a GENZ record with HEAD |
+ * | `agzback.age`  | AG pileup facility: read and time-order background events |
+ *
+ * ### Kinematic I/O
+ * | File | Purpose |
+ * |------|---------|
+ * | `agzkine.age`   | Main kinematic steering; dispatch to generator readers |
+ * | `aggzkine.age`  | Fill GEANT KINE/VERT from GENZ GENE/GENP banks |
+ * | `aggenz.age`    | Find EVNT/RUNT bank link at given depth |
+ * | `aggzuflt.age`  | Apply SLUG KINE-card selection cuts |
+ * | `agezkine.age`  | Fill GEANT KINE/VERT from EGZ (UrQMD) data |
+ * | `agskine.age`   | Store one track in the GEANT KINE bank |
+ * | `agspkine.age`  | Generate kinematics for a primary particle |
+ * | `lgkine.age`    | Return ZEBRA link to the I-th KINE track |
+ * | `lgvert.age`    | Return ZEBRA link to the I-th VERT vertex |
+ * | `agkinor.age`   | Provide sequential access to primary particles |
+ *
+ * ### File management
+ * | File | Purpose |
+ * |------|---------|
+ * | `agrfile.age`   | Open a GEANT/RZ database; read/write DETM + GEANT structures |
+ * | `agfopen.age`   | Open a Fortran formatted text input file |
+ * | `agfout.age`    | Write DETM bank (and optionally DOCU) via FZOUT |
+ * | `agfread.age`   | Loop over USER/INPUT files and dispatch to appropriate reader |
+ * | `agfinfo.age`   | Decode run history from RUNU bank |
+ * | `agntopen.age`  | Open a CW n-tuple with generated events |
+ * | `agntread.age`  | Read primary-track kinematics from a CW n-tuple |
+ * | `agpread.age`   | Read and re-assemble split sub-events from P stream |
+ * | `agpush.age`    | Grow a ZEBRA bank's link or data area |
+ * | `agchain.age`   | Chain a new bank if HITS or KINE exceeds maximum |
+ * | `agreadtxt.age` | Read GSTAR old/new text-format event generator files |
+ *
+ * ### Pileup / event merging
+ * | File | Purpose |
+ * |------|---------|
+ * | `agmerge.age`    | Append next event's KINE/VERT/HITS for pileup mixing |
+ * | `agmer.age`      | Internal helper for bank-range merging |
+ * | `agsplit.age`    | Split a large event into sub-events |
+ * | `agsqueeze.age`  | Compact KINE/VERT after pileup |
+ * | `agputrim.age`   | Filter KINE/VERTEX keeping only used tracks after pileup |
+ * | `agvtrbunch.age` | Return bunch-crossing ID for a track |
+ * | `agvtrstat.age`  | Save/restore HITS bank status during pileup |
+ * | `agvtrtime.age`  | Return time offset for a track |
+ * | `agsdiff.age`    | Compare two structures; drop the second if identical |
+ *
+ * ### Counters and reinit
+ * | File | Purpose |
+ * |------|---------|
+ * | `agcountr.age`  | Count hits for a set/detector |
+ * | `agneed.age`    | Check if a new event must be read |
+ * | `agreinit.age`  | Reinitialise for a new input file |
+ * | `aghitstat.age` | Save/clear HIT bank status words |
+ *
+ * ### Format converters
+ * | File | Purpose |
+ * |------|---------|
+ * | `hepefill.age`        | Fill HEPEVT from GEANT KINE/VERT |
+ * | `heperead.age`        | Fill GEANT KINE/VERT from HEPEVT |
+ * | `hijing_to_geant.age` | HIJING PID to GEANT PID |
+ * | `lund_to_geant.age`   | LUND/PYTHIA PID to GEANT PID |
+ * | `isa_to_geant.age`    | ISA-JET code to GEANT PID |
+ * | `apdg2gea.age`        | PDG MC code to GEANT PID |
+ * | `gepcode.age`         | Dispatch PDG/GEANT code conversion |
+ *
+ * ### GNZ utilities
+ * | File | Purpose |
+ * |------|---------|
+ * | `gnzpar.age`    | Get particle parameters by name from GNZ |
+ * | `gnzpdat.age`   | Get PDG particle mass/charge from GNZ table |
+ * | `gnzpnam.F`     | Get particle name for a PDG code |
+ * | `gnzprin.F`     | Print GNZ event bank contents |
+ * | `gnzdlis.F`     | Get daughter list from GNZ event bank |
+ * | `gnzgetv.F`     | Get vertex info (position, boost, rotation) from GNZ |
+ * | `gnzlgn.F`      | Return ZEBRA link to GNZ bank |
+ * | `agnzgetd.age`  | Get daughter info from GNZ event bank |
+ * | `agnzgete.age`  | Read GNZ event header (count, run/event, weight) |
+ * | `agnzgetg.age`  | Return number of events in a GNZ gate |
+ * | `agnzgetl.age`  | Get module/label info for a GNZ particle |
+ * | `agnzgetp.age`  | Get full kinematics for a GNZ particle |
+ * | `agnzprint.age` | Print a range of GNZ event entries |
+ *
+ * ### Vertex and hit utilities
+ * | File | Purpose |
+ * |------|---------|
+ * | `agsvert.age`   | Add vertex displacement and store in GEANT VERT bank |
+ * | `agtrim.age`    | Trim over-allocated HIT bank space |
+ * | `agpointr.age`  | Iterate non-empty HIT/DIGI bank links |
+ * | `aguprod.age`   | Update production counters and run-info banks |
+ * | `agbeamdat.age` | Store per-bunch beam-data statistics |
+ * | `detpdump.age`  | Dump DETP datacard structure for diagnostics |
+ *
+ * @}
+ */
+
+/* ------------------------------------------------------------------ */
+/* Core ZEBRA event I/O                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgZOPEN(stream, name, Copt, ier)
+ * @brief Open a GENZ event file on the given stream.
+ * @details Supports Fatmen (K=1), Fortran (K=2), and C (K=3) I/O backends.
+ *          Handles multi-file chains; option G on stream B reads geometry only once.
+ * @param[in]  stream  Stream identifier character.
+ * @param[in]  name    File name or Fatmen logical name.
+ * @param[in]  Copt    Options: I=input, O=output, G=geometry-only.
+ * @param[out] ier     0 on success, non-zero on error.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgZREAD(Stream, ier)
+ * @brief Read the next GENZ event from stream Stream.
+ * @details Fills EVNT, HEAD, KINE, and VERT banks.  Empty records are skipped.
+ *          In debug mode the ZEBRA store is verified after input.
+ * @param[in]  Stream  Stream identifier character.
+ * @param[out] ier     0 on success, non-zero at end-of-file or on error.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgZWRITE(Stream, ier)
+ * @brief Write the current GEANT event to GENZ stream Stream.
+ * @details Writes a start-of-run record on the first call.
+ * @param[in]  Stream  Stream identifier character.
+ * @param[out] ier     0 on success, non-zero on error.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgZout(LUN, Name, Key, Iev, Chopt, J, Var, K1, K2, Ier)
+ * @brief Write a single ZEBRA bank as a GENZ record with a prepended HEAD bank.
+ * @param[in]  LUN    Logical unit number.
+ * @param[in]  Name   4-character bank name.
+ * @param[in]  Key    1-character stream key.
+ * @param[in]  Iev    Event number.
+ * @param[in]  Chopt  Options (stream selection, P for primary stream).
+ * @param[in]  J      ZEBRA link to the bank.
+ * @param[in]  Var    Variable name.
+ * @param[in]  K1     Key word 1.
+ * @param[in]  K2     Key word 2.
+ * @param[out] Ier    0 on success.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgZBACK()
+ * @brief AG pileup facility: read and time-order background events for bunch-crossing simulation.
+ * @details SIMU flag selects sequential read (1) or closest-vertex selection (2).
+ *          Calls AgMERGE to combine tracks and hits.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* Kinematic I/O                                                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgZKINE()
+ * @brief Main kinematic steering: read one event and fill GEANT KINE/VERT banks.
+ * @details Dispatches to AgGZKINE, AgEZKINE, AgNTREAD, AgREADTXT, or a user hook.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgGZKINE(Iprin)
+ * @brief Fill GEANT KINE/VERT banks from GENZ GENE/GENP event banks.
+ * @param[in] Iprin  Print verbosity level.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn lgnfind(i, name)
+ * @brief Return the ZEBRA link to the EVNT or RUNT bank at nesting depth i.
+ * @param[in] i     Depth: 1=primary, 2=secondary (obsolete).
+ * @param[in] name  4-character bank name (EVNT, RUNT, or GENE).
+ * @return ZEBRA link, or -1 if not found.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgGZUFLT(COPTS, Ieven, Ipart, Idpdg, vert, Pmom, Irc)
+ * @brief Apply SLUG KINE-card particle selection cuts (pT, eta, phi, Emin/max, PDG code).
+ * @param[in]  COPTS  Option string (from KINE card).
+ * @param[in]  Ieven  Event number.
+ * @param[in]  Ipart  GEANT particle code.
+ * @param[in]  Idpdg  PDG particle code.
+ * @param[in]  vert   Vertex position (4 reals).
+ * @param[in]  Pmom   Momentum 4-vector.
+ * @param[out] Irc    0 if particle passes all cuts; non-zero to reject.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgEZKINE(Iprin)
+ * @brief Fill GEANT KINE/VERT banks from an EGZ (UrQMD-style) event structure.
+ * @param[in] Iprin  Print verbosity level.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgSKINE(Plab, Iparti, Nv, UB, NB, Nt)
+ * @brief Store one track in the GEANT KINE bank at vertex Nv.
+ * @param[in]  Plab    3-momentum components (GeV/c).
+ * @param[in]  Iparti  GEANT particle code.
+ * @param[in]  Nv      Vertex index.
+ * @param[in]  UB      User buffer array.
+ * @param[in]  NB      Number of user buffer words.
+ * @param[out] Nt      GEANT track number assigned.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgSPKINE()
+ * @brief Generate kinematics for a single primary particle from DETP/KINE card parameters.
+ * @details Supports collider mode (PDG code 0-1, pT/eta) and fixed-target mode
+ *          (PDG code 10-11, plab/theta).
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn LgKINE(JO, I)
+ * @brief Return the ZEBRA link to the I-th track in the KINE binary-tree structure.
+ * @param[out] JO  Link to the parent bank.
+ * @param[in]  I   Track number (1-based).
+ * @return ZEBRA link to the KINE bank for track I, or 0 if not found.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn LgVERT(JO, I)
+ * @brief Return the ZEBRA link to the I-th vertex in the VERT binary-tree structure.
+ * @param[out] JO  Link to the parent bank.
+ * @param[in]  I   Vertex number (1-based).
+ * @return ZEBRA link to the VERT bank for vertex I, or 0 if not found.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgREADTXT(Igate)
+ * @brief Read both old and new GSTAR text-format event generator files.
+ * @param[in] Igate  Gate index in Ccommand selecting the input file.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* File management                                                      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgRFILE(Lun, File, Option)
+ * @brief Open a GEANT/RZ database; read or write DETM and GEANT standard structures.
+ * @param[in] Lun     Logical unit number.
+ * @param[in] File    RZ file name.
+ * @param[in] Option  I=input, O=output.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgFOPEN(li, file, ier)
+ * @brief Open a Fortran formatted (text) data file for reading.
+ * @param[in]  li    Logical unit number.
+ * @param[in]  file  File name.
+ * @param[out] ier   0 on success, 1 if file cannot be opened (warning only).
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgFOUT(Lun, Chopt, Ier)
+ * @brief Write the DETM parameter bank, and optionally the DOCU bank, via FZOUT.
+ * @param[in]  Lun    Logical unit number.
+ * @param[in]  Chopt  Options: D or d also writes the DOCU bank.
+ * @param[out] Ier    0 on success.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgFREAD(ier)
+ * @brief Loop over all files opened by USER/INPUT datacards and dispatch to the appropriate reader.
+ * @details Command string e dispatches to AgPREAD; t to AgREADTXT.
+ * @param[out] ier  0 on success, 1 if any reader fails.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgfINFO()
+ * @brief Decode run history and generated dataset name from the RUNU user bank.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNTOPEN(File, IDH)
+ * @brief Open a CW n-tuple (HBOOK) containing generated events.
+ * @param[in] File  HBOOK file name.
+ * @param[in] IDH   N-tuple identifier.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNTREAD(ier)
+ * @brief Read primary-track kinematics of one event from the CW n-tuple.
+ * @param[out] ier  0 on success, non-zero at end-of-file.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgPREAD(ier)
+ * @brief Read and re-assemble split sub-events from the P stream.
+ * @details Sub-events split by AgSPLIT are reassembled by merging HEAD, KINE, VERT, and HITS.
+ * @param[out] ier  0 on success, non-zero on error or end-of-file.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgPUSH(iprin, LINK, NLINK, NDATA, Ier)
+ * @brief Grow a ZEBRA bank's link area to NLINK and data area to NDATA.
+ * @param[in]  iprin  Print verbosity.
+ * @param[in]  LINK   ZEBRA link to the bank to expand.
+ * @param[in]  NLINK  Requested number of links (ZEBRA limit: 64K).
+ * @param[in]  NDATA  Requested number of data words.
+ * @param[out] Ier    0 on success; non-zero if NLINK exceeds 64K.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgCHAIN(MaxHITS, MaxKINE)
+ * @brief Chain a new HITS or KINE bank if the current bank exceeds the maximum.
+ * @param[in] MaxHITS  Maximum allowed HITS bank size.
+ * @param[in] MaxKINE  Maximum allowed KINE bank size.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* Pileup / event merging                                               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgMERGE(Iprin, IbCurrent, IbEvnt, Tbunch, Ibunch, Ier)
+ * @brief Append the next event's KINE/VERT/HITS banks to the current event for pileup mixing.
+ * @param[in]  Iprin      Print verbosity.
+ * @param[in]  IbCurrent  Current bunch-crossing index.
+ * @param[in]  IbEvnt     Event's bunch-crossing index.
+ * @param[in]  Tbunch     Bunch time offset (ns).
+ * @param[in]  Ibunch     Bunch number.
+ * @param[out] Ier        0 on success.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgMER(Iprin, Jj, k, N1, N2)
+ * @brief Internal helper: merge bank entries in index range [N1,N2].
+ * @param[in] Iprin  Print verbosity.
+ * @param[in] Jj     ZEBRA link to the target bank.
+ * @param[in] k      Bank type selector.
+ * @param[in] N1     Start index.
+ * @param[in] N2     End index.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgSPLIT(N0, Ier)
+ * @brief Split the current event into sub-events for output on the P stream.
+ * @param[in]  N0   Maximum number of tracks per sub-event.
+ * @param[out] Ier  0 on success.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn agsqueeze()
+ * @brief Compact KINE/VERT data structures after pileup to reclaim over-allocated memory.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgPUTRIM()
+ * @brief After pileup: clean HEAD banks and filter KINE/VERTEX to retain only used tracks.
+ * @details Idig=2: keep all tracks from main event and BX0, plus used tracks from out-BX.
+ *          Idig=3: keep tracks from main event plus used tracks from BX0, drop out-BX.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgVTRBUNCH(ITRA)
+ * @brief Return the bunch-crossing event/bunch ID associated with track ITRA.
+ * @param[in] ITRA  Track number.
+ * @return Bunch ID, or 0 if no history is present.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgVTRSTAT(Link)
+ * @brief Save or restore the status words of HITS banks during pileup.
+ * @param[in] Link  ZEBRA link to the HITS top-level bank.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgVTRTIME(ITRA)
+ * @brief Return the time offset (ns) for track ITRA from the pileup time map.
+ * @param[in] ITRA  Track number.
+ * @return Time offset in nanoseconds.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgSDIFF(j1, j2, Ndif)
+ * @brief Compare two ZEBRA structures; drop the second if identical to the first.
+ * @param[in]  j1    ZEBRA link to the reference structure.
+ * @param[in]  j2    ZEBRA link to the candidate structure.
+ * @param[out] Ndif  Number of differing words (0 if identical).
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* Counters and reinit                                                  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgCOUNTR(ISET, IDET)
+ * @brief Return the number of hits stored for set ISET, detector IDET.
+ * @param[in] ISET  Set index.
+ * @param[in] IDET  Detector index.
+ * @return Total hit count, or 0 if set/detector not found.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNEED(IER)
+ * @brief Determine whether a new event must be read from input.
+ * @param[out] IER  0 if a new event is needed, 1 otherwise.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgREINIT()
+ * @brief Reinitialise counters and ZEBRA banks when moving to a new input file.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgHITSTAT()
+ * @brief Save current HIT-bank sizes in the HITS header; clear status words before new input.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* Format converters                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn hepefill()
+ * @brief Fill the HEPEVT common block from the GEANT KINE/VERT banks.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn heperead()
+ * @brief Read the HEPEVT common block and fill GEANT KINE/VERT banks.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn HIJING_TO_GEANT(LUID, GEID)
+ * @brief Convert a HIJING particle ID to the corresponding GEANT particle code.
+ * @param[in]  LUID  HIJING particle code.
+ * @param[out] GEID  GEANT particle code.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn lund_to_geant(lund_id, geant_id)
+ * @brief Convert a LUND/PYTHIA particle ID to the GEANT particle code.
+ * @param[in]  lund_id   LUND particle code.
+ * @param[out] geant_id  GEANT particle code.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn isa_to_geant(isa, id)
+ * @brief Convert an ISA-JET particle code to the GEANT particle code.
+ * @param[in]  isa  ISA-JET particle code.
+ * @param[out] id   GEANT particle code.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn aPDG2GEA(IDIN, IDOUT)
+ * @brief Convert a PDG Monte Carlo particle code to the GEANT particle code.
+ * @param[in]  IDIN   PDG particle code.
+ * @param[out] IDOUT  GEANT particle code.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GEPCODE(In, Io, Ic)
+ * @brief Dispatch PDG-to-GEANT or GEANT-to-PDG code conversion.
+ * @param[in]  In  Input particle code.
+ * @param[out] Io  Output particle code.
+ * @param[in]  Ic  Direction: 0=PDG to GEANT, non-zero=GEANT to PDG.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* GNZ utilities                                                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn GNZPAR(m, cnam, ipar)
+ * @brief Retrieve particle parameters by name cnam from the GNZ particle bank.
+ * @param[in]  m     GNZ bank index.
+ * @param[in]  cnam  Particle name string.
+ * @param[out] ipar  Parameter array.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GNZPDAT(IDPDG, CPNAM, PMASS, PCHAR, IER)
+ * @brief Retrieve mass and charge for PDG particle code IDPDG from the GNZ table.
+ * @param[in]  IDPDG  PDG particle code.
+ * @param[out] CPNAM  Particle name string.
+ * @param[out] PMASS  Particle mass (GeV/c^2).
+ * @param[out] PCHAR  Particle charge (units of e).
+ * @param[out] IER    0 on success, non-zero if not found.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GNZPNAM(IDPDG, CPNAM)
+ * @brief Return the particle name string for PDG code IDPDG.
+ * @param[in]  IDPDG  PDG particle code.
+ * @param[out] CPNAM  Particle name string.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GNZPRIN(ILINK, LEVL)
+ * @brief Print the full content of a GNZ event bank at verbosity level LEVL.
+ * @param[in] ILINK  ZEBRA link to the GNZ bank.
+ * @param[in] LEVL   Print detail level.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GNZDLIS(IGENP, IMOTH, NDAU, IDAU)
+ * @brief Return the daughter list for particle IGENP in the GNZ event bank.
+ * @param[in]  IGENP  Generator particle index.
+ * @param[out] IMOTH  Mother particle index.
+ * @param[out] NDAU   Number of daughters.
+ * @param[out] IDAU   Array of daughter indices.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn GNZGETV(IL, IE, IP, VSTAR, IMVRT, PRET, AROT, ROTMA)
+ * @brief Retrieve full vertex information from the GNZ event bank.
+ * @param[in]  IL     GNZ link index.
+ * @param[in]  IE     Event index.
+ * @param[in]  IP     Particle index.
+ * @param[out] VSTAR  Vertex position 4-vector.
+ * @param[out] IMVRT  Mother vertex index.
+ * @param[out] PRET   Particle 4-momentum in rest frame.
+ * @param[out] AROT   Rotation angles.
+ * @param[out] ROTMA  3x3 rotation matrix.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn LGN(i)
+ * @brief Return the ZEBRA link to GNZ bank i.
+ * @param[in] i  GNZ bank index.
+ * @return ZEBRA link.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNZGETD(IL, IDE, IMOTH, NDAU, IDAUG)
+ * @brief Get daughter-particle information from a GNZ event bank.
+ * @param[in]  IL    GNZ link index.
+ * @param[in]  IDE   Event index.
+ * @param[out] IMOTH Mother particle index.
+ * @param[out] NDAU  Number of daughters.
+ * @param[out] IDAUG Array of daughter indices.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNZGETE(ILK, IDE, NPART, IRUN, IEVT, CGNAM, VERT, IWTFL, WEIGH)
+ * @brief Read the header of GNZ event IDE.
+ * @param[in]  ILK    GNZ link index.
+ * @param[in]  IDE    Event index (1-based).
+ * @param[out] NPART  Number of particles in the event.
+ * @param[out] IRUN   Run number.
+ * @param[out] IEVT   Event number.
+ * @param[out] CGNAM  4-character generator name.
+ * @param[out] VERT   Primary vertex position 4-vector.
+ * @param[out] IWTFL  Weight flag.
+ * @param[out] WEIGH  Event weight.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNZGETG(ILINK, NEVEN)
+ * @brief Return the number of events stored in GNZ gate ILINK.
+ * @param[in]  ILINK  GNZ gate link index.
+ * @param[out] NEVEN  Number of events.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn agnzgetl(IL, IDE, IP, L1, MODUL)
+ * @brief Retrieve module/label info for particle IP in GNZ event IDE.
+ * @param[in]  IL     GNZ link index.
+ * @param[in]  IDE    Event index.
+ * @param[in]  IP     Particle index.
+ * @param[out] L1     Label.
+ * @param[out] MODUL  Module name.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNZGETP(IL, IDE, IP, ISTAT, IDPDG, P, AMASS, MOTH, TIME, IDAU1, V)
+ * @brief Retrieve complete kinematic data for particle IP from the GNZ event bank.
+ * @param[in]  IL    GNZ link index.
+ * @param[in]  IDE   Event index.
+ * @param[in]  IP    Particle index.
+ * @param[out] ISTAT Status code.
+ * @param[out] IDPDG PDG particle code.
+ * @param[out] P     4-momentum (px, py, pz, E) in GeV.
+ * @param[out] AMASS Mass in GeV/c^2.
+ * @param[out] MOTH  Mother particle index.
+ * @param[out] TIME  Production time (ns).
+ * @param[out] IDAU1 Index of first daughter.
+ * @param[out] V     Production vertex 4-vector.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgNZPRINT(i1, i2)
+ * @brief Print GNZ event bank entries i1 through i2.
+ * @param[in] i1  First entry index.
+ * @param[in] i2  Last entry index.
+ * @ingroup AgZIO
+ */
+
+/* ------------------------------------------------------------------ */
+/* Vertex and hit utilities                                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSVERT(Vertex, NtBeam, NtTarg, UBUF, NU, Nv)
+ * @brief Add a common vertex displacement and store the result in the GEANT VERT bank.
+ * @details Vertex(4) carries the time-of-flight offset (different from GSVERT convention).
+ * @param[in]  Vertex  4-vector: (x, y, z, tof) in cm and ns.
+ * @param[in]  NtBeam  Beam track number.
+ * @param[in]  NtTarg  Target track number.
+ * @param[in]  UBUF    User buffer array.
+ * @param[in]  NU      Number of user buffer words.
+ * @param[out] Nv      GEANT vertex number assigned.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgTRIM()
+ * @brief Trim over-allocated HIT bank space back to the actual stored content size.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgPOINTR(LINK, IS, ID)
+ * @brief Iterate non-empty HIT/DIGI bank links; return Iset/Idet of next non-empty bank.
+ * @param[in]    LINK  ZEBRA link to the HITS top-level bank.
+ * @param[inout] IS    Current set index; updated to next non-empty set.
+ * @param[inout] ID    Current detector index; updated to next non-empty detector.
+ * @return 0 while banks remain; non-zero when all banks are exhausted.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgUPROD()
+ * @brief Update production-run counters, event ID counters, and run-info banks.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn AgBEAMDAT()
+ * @brief Store per-bunch beam-data statistics in a dedicated ZEBRA bank.
+ * @ingroup AgZIO
+ */
+
+/**
+ * @fn DETPDUMP()
+ * @brief Dump the DETP datacard parameter structure to standard output for diagnostics.
+ * @ingroup AgZIO
+ */

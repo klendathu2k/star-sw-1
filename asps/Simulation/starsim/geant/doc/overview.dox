@@ -1,0 +1,927 @@
+/**
+ * @defgroup GeantMods GeantMods — GEANT 3.21 modifications for STARSIM
+ * @{
+ * @brief STARSIM replacement and extended versions of GEANT 3.21 subroutines.
+ *
+ * @details
+ * This directory contains FORTRAN 77 source files (`.F`) that replace or
+ * extend standard CERNLIB GEANT 3.21 subroutines for the STARSIM detector
+ * simulation framework.  Key changes include:
+ *
+ * - **Unlimited track/vertex banks** (GSKINE, GSVERT, GFKINE, GFVERT,
+ *   GTREVE, GLTRAC, GSSTAK, GZINIT): more than 64 K tracks/vertices per
+ *   event through chained KINE/VERT banks (P. Nevski, 1999–2000).
+ * - **MANY-volume tracking** (GTRACK, GTSWIM, GSNGTR): dynamic MANY-volume
+ *   list management for correct hits in overlapping geometries.
+ * - **Elastic ZEBRA store** (GZEBRA): 20 MW elastic store replacing the
+ *   fixed-size original.
+ * - **Physics corrections** back-ported from CERNLIB 1995–1999.
+ * - **Geometry extensions** (GNOBOX, GGCLOS, GGPPAR, GMEDIA): boolean MANY
+ *   operations and non-box boundaries.
+ * - **CALOR/GHEISHA integration** (GCALOR, GHEISHA, HIGCLU, FLUFIN).
+ * - **HERWIG common-block writers** (HWDECL, HWPDCL).
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `gtrack.F`  | Master particle tracking loop |
+ * | `gtswim.F`  | Magnetic-field swimming for a single step |
+ * | `gtgama.F`  | Photon tracking step |
+ * | `gtelec.F`  | Electron/positron tracking step |
+ * | `gthadr.F`  | Charged hadron tracking step |
+ * | `gtmuon.F`  | Muon tracking step |
+ * | `gtckov.F`  | Cherenkov photon tracking |
+ * | `gtmany.F`  | MANY-volume step handler |
+ * | `gthion.F`  | Heavy-ion tracking step |
+ * | `gtmonp.F`  | Magnetic monopole tracking |
+ * | `gltrac.F`  | Extract next track from the secondary stack |
+ * | `gspos.F`   | Place a volume copy inside a mother volume |
+ * | `gfpos.F`   | Retrieve volume position and rotation angles |
+ * | `gfrotm.F`  | Retrieve rotation matrix angles |
+ * | `gfxzrm.F`  | Retrieve transformation at geometry level |
+ * | `gflrad.F`  | Compute half-length of a shape along an axis |
+ * | `gvdphi.F`  | Compute phi-range limits for a rotated volume |
+ * | `ggclos.F`  | Close geometry; sort daughters; bounding boxes |
+ * | `ggordq.F`  | Order volume daughters for tracking efficiency |
+ * | `ggppar.F`  | Generate tracking parameters for a volume |
+ * | `gmedia.F`  | Find volume/medium containing a point |
+ * | `gnobox.F`  | Non-box boundary distance function |
+ * | `gsngtr.F`  | Step-length calculation with MANY support |
+ * | `gsxyz.F`   | Store track position/momentum in VERT header |
+ * | `gskine.F`  | Store track kinematics (unlimited) |
+ * | `gsvert.F`  | Create a new vertex bank (unlimited) |
+ * | `gfkine.F`  | Retrieve track kinematics |
+ * | `gfvert.F`  | Retrieve vertex parameters |
+ * | `gpkine.F`  | Print track kinematics |
+ * | `gpvert.F`  | Print vertex parameters |
+ * | `gsstak.F`  | Manage secondary-track stack |
+ * | `gxphys.F`  | Command-driven physics parameter control |
+ * | `gparmp.F`  | Charged particle propagation (RK wrapper) |
+ * | `grktmp.F`  | Runge-Kutta step with energy loss |
+ * | `gfpara.F`  | Retrieve volume shape parameters |
+ * | `gfmfin.F`  | Finalise material mixture definitions |
+ * | `gcalor.F`  | GEANT/CALOR interface |
+ * | `gheish.F`  | GHEISHA hadronic shower steering |
+ * | `gpairg.F`  | Pair production generation |
+ * | `gphot.F`   | Photon interactions |
+ * | `gfluct.F`  | Energy-loss fluctuations |
+ * | `gfcuts.F`  | Retrieve physics cuts for a medium |
+ * | `gsmixt.F`  | Define material mixture |
+ * | `gsdetv.F`  | Define sensitive detector volume |
+ * | `gsckov.F`  | Define optical medium properties |
+ * | `gbrele.F`  | Bremsstrahlung energy loss for electrons |
+ * | `gbrsge.F`  | Bremsstrahlung cross-section for electrons |
+ * | `gsahit.F`  | Store a sensitive-detector hit |
+ * | `gschit.F`  | Store a summarised hit |
+ * | `gtreve.F`  | Event-level tracking control |
+ * | `gzebra.F`  | Initialise ZEBRA store |
+ * | `gzinit.F`  | Initialise GEANT/ZEBRA data structures |
+ * | `gxcont.F`  | Command-driven general control |
+ * | `gxrz.F`    | RZ file I/O commands |
+ * | `gxdz.F`    | DZDOC display commands |
+ * | `gfinds.F`  | Find next sensitive volume on a line |
+ * | `gpart.F`   | Initialise particle table |
+ * | `gdecay.F`  | Particle decay simulation |
+ * | `gpdcay.F`  | Print decay modes |
+ * | `gfdcay.F`  | Retrieve decay modes |
+ * | `gdraw.F`   | Draw geometry object |
+ * | `gdraws.F`  | Draw a single shape |
+ * | `gxdraw.F`  | Command-driven geometry drawing |
+ * | `gxpick.F`  | Interactive volume picking |
+ * | `gdtr0.F`   | Draw track tree |
+ * | `jattf.F`   | Attribute word position in volume bank |
+ * | `akuget.F`  | Case-insensitive volume name lookup |
+ * | `gvtxout.F` | Write vertex information |
+ * | `grndm.F`   | Random number vector fill |
+ * | `ssmt5t.F`  | 5×5 symmetric matrix similarity transform |
+ * | `xmm55.F`   | 5×5 matrix multiply |
+ * | `trprfn.F`  | Helical track extrapolation |
+ * | `higclu.F`  | GHEISHA cluster x/pT generation |
+ * | `hwdecl.F`  | Write HERWIG integer/real declarations |
+ * | `hwpdcl.F`  | Write full HERWIG variable declarations |
+ * | `flufin.F`  | FLUKA finalisation stub |
+ * | `guscntr.F` | Boundary-loop control |
+ * | `guswmp.F`  | Special-particle swimming wrapper |
+ * | `rndpol.F`  | Polynomial random utility |
+ * @}
+ */
+
+/* ================================================================
+ * Tracking loop
+ * ================================================================ */
+
+/**
+ * @fn GTRACK()
+ * @brief Control tracking of the current particle through the detector.
+ * @details Dispatches to the appropriate particle-type handler (GTGAMA,
+ *          GTELEC, GTHADR, GTMUON, GTCKOV, GTHION, GTMONP, GTMANY) for
+ *          each step, managing MANY-volume lists and sequential/parallel
+ *          tracking modes.  Called by GUTRAK.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTSWIM()
+ * @brief Swim a charged particle through a magnetic field for one step.
+ * @details Handles the new MANY-volume logic.  Called by GTELEC, GTMUON,
+ *          GTHADR, GTHION, etc. when STEP > PREC.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTGAMA()
+ * @brief Photon tracking step: compute step size and propagate through volume.
+ * @details Handles photoelectric absorption, Compton scattering, pair
+ *          production, and Rayleigh scattering.  CERNLIB 1995–1999 ABAN
+ *          logic corrected.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTELEC()
+ * @brief Electron/positron tracking step.
+ * @details Handles ionisation, bremsstrahlung, pair production (positron),
+ *          δ-ray production, and annihilation.  Includes CERNLIB correction
+ *          for ABAN=1 case.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTHADR()
+ * @brief Charged hadron tracking step.
+ * @details Handles ionisation energy loss and hadronic interactions.
+ *          Called by GTRACK.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTMUON()
+ * @brief Muon tracking step.
+ * @details Handles ionisation, δ-ray, bremsstrahlung, and pair production
+ *          for muons.  Called by GTRACK.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTCKOV()
+ * @brief Cherenkov photon tracking.
+ * @details Simulates in-flight absorption and reflection/transmission at
+ *          dielectric-dielectric and dielectric-metal boundaries.  Surface
+ *          quality ranges from mirror to matte (GHSURF).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTMANY()
+ * @brief Handle one tracking step inside a MANY volume.
+ * @details Delegates to the appropriate particle-type handler for the step,
+ *          after establishing the MANY volume as the current volume.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTHION()
+ * @brief Heavy-ion tracking step.
+ * @details Bethe-Bloch dE/dx with Landau fluctuations (ILOSS=1,2,3) or no
+ *          fluctuations (ILOSS=4).  Uses abs(CHARGE) to support anti-nuclei.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GTMONP()
+ * @brief Magnetic monopole tracking in a constant B-field along z.
+ * @details Requires IFIELD=3.  Computes step size and propagates the monopole.
+ *          Author: P. Schieferdecker.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GLTRAC()
+ * @brief Extract the next track from the JSTAK stack and prepare tracking commons.
+ * @details Fills /GCTRAK/, /GCKINE/, /GCVOLU/.  Handles extended KINE bank
+ *          chains and treats unknown particles as geantinos.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Geometry
+ * ================================================================ */
+
+/**
+ * @fn GSPOS(CHNAME, NR, CHMOTH, X, Y, Z, IROT, CHONLY)
+ * @brief Place copy NR of volume CHNAME inside mother CHMOTH at (X,Y,Z).
+ * @param[in] CHNAME  4-character volume name to place.
+ * @param[in] NR      Copy number (user number).
+ * @param[in] CHMOTH  4-character mother volume name.
+ * @param[in] X,Y,Z   Position of the copy in the mother's frame (cm).
+ * @param[in] IROT    Rotation matrix index (0 = identity).
+ * @param[in] CHONLY  `'ONLY'` or `'MANY'` overlap flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFPOS(NMOT, NDAU, X, Y, Z, TET1, PHI1, TET2, PHI2, TET3, PHI3, RT)
+ * @brief Retrieve the position and rotation angles of a daughter volume.
+ * @param[in]  NMOT            Mother volume number.
+ * @param[in]  NDAU            Daughter copy index.
+ * @param[out] X,Y,Z           Position of the daughter in the mother frame.
+ * @param[out] TET1..PHI3      Euler rotation angles (degrees).
+ * @param[out] RT              ONLY/MANY flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFROTM(IROT, THETA1, PHI1, THETA2, PHI2, THETA3, PHI3)
+ * @brief Retrieve the rotation angles for rotation matrix index IROT.
+ * @param[in]  IROT       Rotation matrix index.
+ * @param[out] THETA1..PHI3  Euler angles (degrees).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFXZRM(NLEV_0, X, Y, Z, TET1, PHI1, TET2, PHI2, TET3, PHI3, TYPE)
+ * @brief Retrieve position and rotation parameters at geometry level NLEV_0.
+ * @param[in]  NLEV_0     Geometry level.
+ * @param[out] X,Y,Z      Global position.
+ * @param[out] TET1..PHI3 Euler rotation angles.
+ * @param[out] TYPE        ONLY/MANY flag character.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFLRAD(IAXIS, ISH, IROT, DX, PARS, CL, CH, IERR)
+ * @brief Compute the half-length of a shape along axis IAXIS after rotation IROT.
+ * @param[in]  IAXIS  Axis index (1=X, 2=Y, 3=Z).
+ * @param[in]  ISH    Shape index.
+ * @param[in]  IROT   Rotation matrix index.
+ * @param[in]  DX     Translation vector.
+ * @param[in]  PARS   Shape parameters.
+ * @param[out] CL,CH  Lower and upper limits.
+ * @param[out] IERR   Error flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GVDPHI(ISH, IROT, DX, PARS, CL, CH, IERR)
+ * @brief Compute the phi-range limits of a rotated volume.
+ * @param[in]  ISH    Shape index.
+ * @param[in]  IROT   Rotation matrix index.
+ * @param[in]  DX     Translation vector.
+ * @param[in]  PARS   Shape parameters.
+ * @param[out] CL,CH  Lower and upper phi limits.
+ * @param[out] IERR   Error flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GGCLOS()
+ * @brief Close the geometry definition.
+ * @details Builds virtual division structures, sorts daughters, and computes
+ *          bounding boxes for all volumes.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GGORDQ(IVO)
+ * @brief Order the daughters of volume IVO for tracking efficiency.
+ * @param[in] IVO  Volume index.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GGPPAR(JVOM, IN, NVAR, LVAR, LVOM, NPAR, PAR)
+ * @brief Generate tracking parameters for a volume in the context of its mother.
+ * @param[in]  JVOM   ZEBRA link to the mother volume bank.
+ * @param[in]  IN     Daughter index within the mother.
+ * @param[in]  NVAR   Number of variable parameters.
+ * @param[in]  LVAR   Offsets of variable parameters in PAR.
+ * @param[in]  LVOM   Offset in the volume-of-mother bank.
+ * @param[in]  NPAR   Total number of parameters.
+ * @param[out] PAR    Generated parameter array.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GMEDIA(X, NUMED)
+ * @brief Find the volume and tracking medium containing point X.
+ * @details Updates /GCVOLU/ and JGPAR.  Supports MANY boolean operations
+ *          and divisions along arbitrary axes (S. Giani, 1993).
+ * @param[in]  X      3-vector position (cm, global frame).
+ * @param[out] NUMED  Tracking medium number (0 if outside setup).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GNOBOX(X, PAR, IACT, SNEXT, SNXT, SAFE)
+ * @brief Compute boundary distances for a non-box tracking region.
+ * @param[in]  X      Current particle position.
+ * @param[in]  PAR    Region parameters.
+ * @param[in]  IACT   Action flag.
+ * @param[in]  SNEXT  Step requested to next boundary.
+ * @param[out] SNXT   Step to the boundary.
+ * @param[out] SAFE   Safety distance to nearest boundary.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSNGTR(X, P, IACT, SNEXT, SNXT, SAFE, INSIDE)
+ * @brief Step-length calculation for one tracking step, including MANY volumes.
+ * @param[in]  X       Current position.
+ * @param[in]  P       Current momentum direction.
+ * @param[in]  IACT    Action flag.
+ * @param[in]  SNEXT   Requested step to boundary.
+ * @param[out] SNXT    Step to the nearest boundary.
+ * @param[out] SAFE    Safety distance.
+ * @param[out] INSIDE  Flag: 1 if still inside, 0 if exiting.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSXYZ()
+ * @brief Store the current track position and momentum into the VERT bank header.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Kinematics / vertex banks
+ * ================================================================ */
+
+/**
+ * @fn GSKINE(PLAB, IPART, NV, BUF, NWBUF, NT)
+ * @brief Store kinematics of track NT originating from vertex NV.
+ * @details Auto-chains new KINE banks when the current one is full (> 64 K
+ *          tracks).  Unknown particle types are stored as geantinos.
+ * @param[in]  PLAB   4-vector momentum (GeV/c, local frame).
+ * @param[in]  IPART  GEANT particle type.
+ * @param[in]  NV     Originating vertex number.
+ * @param[in]  BUF    User buffer array.
+ * @param[in]  NWBUF  Number of user buffer words.
+ * @param[out] NT     Assigned track number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSVERT(V, NTBEAM, NTTARG, UBUF, NWBUF, NVTX)
+ * @brief Create a new interaction vertex bank.
+ * @details Supports unlimited vertex count through chained VERT banks.
+ * @param[in]  V       3-vector vertex position (cm, global frame).
+ * @param[in]  NTBEAM  Track number of beam particle (0 if primary).
+ * @param[in]  NTTARG  Track number of target particle.
+ * @param[in]  UBUF    User buffer array.
+ * @param[in]  NWBUF   Number of user buffer words.
+ * @param[out] NVTX    Assigned vertex number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFKINE(ITRA, VERT, PVERT, IPART, NVERT, UBUF, NWBUF)
+ * @brief Retrieve kinematics of track ITRA.
+ * @param[in]  ITRA   Track number.
+ * @param[out] VERT   Track origin vertex position (cm).
+ * @param[out] PVERT  4-momentum at vertex (GeV/c).
+ * @param[out] IPART  Particle type.
+ * @param[out] NVERT  Originating vertex number.
+ * @param[out] UBUF   User buffer.
+ * @param[out] NWBUF  Number of user buffer words returned.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFKINE_SETMAX(NWBUF)
+ * @brief Set the maximum number of user buffer words for GFKINE.
+ * @param[in] NWBUF  Maximum buffer words.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFKINE_GETMAX(NWBUF)
+ * @brief Retrieve the current maximum user buffer words setting.
+ * @param[out] NWBUF  Current maximum.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFKINE_RESET()
+ * @brief Reset the GFKINE internal bank pointer to the first KINE bank.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFVERT(NVTX, V, NTBEAM, NTTARG, TOFG, UBUF, NWBUF)
+ * @brief Retrieve vertex parameters for vertex NVTX.
+ * @param[in]  NVTX    Vertex number.
+ * @param[out] V       Vertex position (cm).
+ * @param[out] NTBEAM  Beam track number.
+ * @param[out] NTTARG  Target track number.
+ * @param[out] TOFG    Time of flight at vertex.
+ * @param[out] UBUF    User buffer.
+ * @param[out] NWBUF   Words in user buffer.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFVERT_SETMAX(NWBUF)
+ * @brief Set the maximum user buffer words for GFVERT.
+ * @param[in] NWBUF  Maximum words.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFVERT_GETMAX(NWBUF)
+ * @brief Retrieve the current maximum user buffer words for GFVERT.
+ * @param[out] NWBUF  Current maximum.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFVERT_RESET()
+ * @brief Reset the GFVERT internal bank pointer to the first VERT bank.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPKINE(IT)
+ * @brief Print the kinematics of track IT to LOUT.
+ * @param[in] IT  Track number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPVERT(IV)
+ * @brief Print the parameters of vertex IV to LOUT.
+ * @param[in] IV  Vertex number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSSTAK(IFLAG)
+ * @brief Manage the secondary-track stack (JSTAK).
+ * @param[in] IFLAG  0 = push current track; 1 = pop next track; -1 = reset.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Physics initialisation
+ * ================================================================ */
+
+/**
+ * @fn GXPHYS()
+ * @brief Command-driven physics parameter control.
+ * @details Handles KUTKIN (track cuts), DCAY (decay), MULS (multiple
+ *          scattering), LOSS (energy loss), PHOT (photon processes), COMP
+ *          (Compton), PAIR (pair production), BREM (bremsstrahlung), etc.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPARMP(CHARGE, STEP, MASS, VECT, VOUT, EOUT)
+ * @brief Propagate a charged particle through one step in a magnetic field.
+ * @details Wrapper around the Runge-Kutta stepper.
+ * @param[in]  CHARGE  Particle charge (units of e).
+ * @param[in]  STEP    Step length (cm).
+ * @param[in]  MASS    Particle mass (GeV/c²).
+ * @param[in]  VECT    Input state vector (x,y,z,px/p,py/p,pz/p,p).
+ * @param[out] VOUT    Output state vector after the step.
+ * @param[out] EOUT    Particle energy after the step (GeV).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn MONOTRAJ(R, Z, T, DT, TAU1, TAU2)
+ * @brief Integrate a monopole trajectory in a uniform B-field along z.
+ * @param[in,out] R,Z   Radial and z position.
+ * @param[in,out] T     Time.
+ * @param[in]     DT    Time step.
+ * @param[in]     TAU1  First time constant.
+ * @param[in]     TAU2  Second time constant.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GRKTMP(CHARGE, STEP, M0, VECT, VOUT, EOUT)
+ * @brief Runge-Kutta propagation with energy loss and magnetic field.
+ * @param[in]  CHARGE  Particle charge.
+ * @param[in]  STEP    Step length (cm).
+ * @param[in]  M0      Rest mass (GeV/c²).
+ * @param[in]  VECT    Input state vector.
+ * @param[out] VOUT    Output state vector.
+ * @param[out] EOUT    Energy after step.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GRKDMP(CHARGE, M0, Q, DQ)
+ * @brief Compute derivatives for the Runge-Kutta stepper.
+ * @param[in]  CHARGE  Particle charge.
+ * @param[in]  M0      Rest mass.
+ * @param[in]  Q       State vector.
+ * @param[out] DQ      Derivative vector.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFPARA(NAME, NUMBER, INTEXT, NPAR, NATT, PAR, ATT)
+ * @brief Retrieve shape parameters and attributes for volume NAME, copy NUMBER.
+ * @param[in]  NAME    4-character volume name.
+ * @param[in]  NUMBER  Copy number.
+ * @param[in]  INTEXT  0=internal, 1=external parameter convention.
+ * @param[out] NPAR    Number of shape parameters.
+ * @param[out] NATT    Number of tracking attributes.
+ * @param[out] PAR     Shape parameters.
+ * @param[out] ATT     Tracking attributes.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFMFIN()
+ * @brief Finalise material mixture definitions.
+ * @details Called after all GSMIXT definitions to compute derived quantities.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GCALOR()
+ * @brief GEANT interface to the CALOR hadronic shower package.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GHEISH()
+ * @brief Main steering routine for GHEISHA hadron shower development.
+ * @details NVE 15-JUN-1988 CERN Geneva; included with STARSIM modifications.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPAIRG()
+ * @brief Generate an electron-positron pair from a photon.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPHOT()
+ * @brief Simulate photon interactions: photoelectric, Compton, pair, Rayleigh.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFLUCT(DEMEAN, DE)
+ * @brief Compute energy-loss fluctuations around mean DEMEAN.
+ * @param[in]  DEMEAN  Mean energy loss (GeV).
+ * @param[out] DE      Sampled energy loss with fluctuations (GeV).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFCUTS(MNAME, CUTS)
+ * @brief Return the physics cuts array for medium MNAME.
+ * @param[in]  MNAME  4-character medium name.
+ * @param[out] CUTS   Array of 5 physics cut values (CUTGAM, CUTELE, CUTNEU, CUTHAD, CUTMUO).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSMIXT(IMAT, NAMATE, A, Z, DENS, NLMAT, WMAT)
+ * @brief Define a material mixture.
+ * @param[in] IMAT    Material index.
+ * @param[in] NAMATE  Array of element name strings.
+ * @param[in] A       Array of atomic masses.
+ * @param[in] Z       Array of atomic numbers.
+ * @param[in] DENS    Mixture density (g/cm³).
+ * @param[in] NLMAT   Number of elements; > 0 = mass fractions, < 0 = atomic proportions.
+ * @param[in] WMAT    Weight fractions or proportions.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSDETV(IUSET, IUDET, IDTYPE, NWHI, NWDI, ISET, IDET)
+ * @brief Define a sensitive detector volume.
+ * @param[in]  IUSET   User set name (4-char Hollerith).
+ * @param[in]  IUDET   User detector name (4-char Hollerith).
+ * @param[in]  IDTYPE  Detector type.
+ * @param[in]  NWHI    Number of hit words.
+ * @param[in]  NWDI    Number of digit words.
+ * @param[out] ISET    Assigned set number.
+ * @param[out] IDET    Assigned detector number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSCKOV(ITMED, NPCKOV, PPCKOV, ABSCO, EFFIC, RINDEX)
+ * @brief Define optical properties for a tracking medium.
+ * @param[in] ITMED   Medium index.
+ * @param[in] NPCKOV  Number of photon energy bins.
+ * @param[in] PPCKOV  Photon energy values (GeV).
+ * @param[in] ABSCO   Absorption length values (cm).
+ * @param[in] EFFIC   Detection efficiency values.
+ * @param[in] RINDEX  Refractive index values.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GBRELE(ZZ, T, BCUT)
+ * @brief Compute the bremsstrahlung energy-loss cross-section for an electron.
+ * @param[in] ZZ    Atomic number of the material.
+ * @param[in] T     Electron kinetic energy (GeV).
+ * @param[in] BCUT  Bremsstrahlung cut (GeV).
+ * @return Bremsstrahlung energy loss per unit path length.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GBRSGE(ZZ, T, BCUT)
+ * @brief Compute the bremsstrahlung total cross-section for an electron.
+ * @param[in] ZZ    Atomic number.
+ * @param[in] T     Electron kinetic energy (GeV).
+ * @param[in] BCUT  Bremsstrahlung cut (GeV).
+ * @return Bremsstrahlung total cross-section.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Hits
+ * ================================================================ */
+
+/**
+ * @fn GSAHIT(ISET, IDET, ITRA, NUMBV, HITS, IHIT)
+ * @brief Store a hit in sensitive detector (set ISET, detector IDET).
+ * @param[in]  ISET   Set number.
+ * @param[in]  IDET   Detector number.
+ * @param[in]  ITRA   Track number generating the hit.
+ * @param[in]  NUMBV  Volume copy number array.
+ * @param[in]  HITS   Hit data array.
+ * @param[out] IHIT   Assigned hit number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GSCHIT(ISET, IDET, ITRA, NUMBV, HITS, NHSUM, IHIT)
+ * @brief Store a summarised (accumulated) hit.
+ * @param[in]  ISET   Set number.
+ * @param[in]  IDET   Detector number.
+ * @param[in]  ITRA   Track number.
+ * @param[in]  NUMBV  Volume copy number array.
+ * @param[in]  HITS   Hit data array.
+ * @param[in]  NHSUM  Number of summation words.
+ * @param[out] IHIT   Assigned hit number.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Event management / ZEBRA initialisation
+ * ================================================================ */
+
+/**
+ * @fn GTREVE()
+ * @brief Control tracking of all particles in the current event.
+ * @details Loops over the secondary stack, calling GLTRAC and GTRACK.
+ *          Adapted for unlimited NTRACK and NVERTX.  Called by GUTREV.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GZEBRA(NZEB)
+ * @brief Initialise the ZEBRA store.
+ * @details Creates an elastic store of up to 20 MW.  Removed for 64-bit
+ *          support (uses COMMON array instead of malloc).
+ * @param[in] NZEB  Requested store size in words (overridden to 20 MW).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GZINIT()
+ * @brief Initialise GEANT/ZEBRA data structures.
+ * @details Sets up all GEANT bank directories (JVOLUM, JPART, JTMED, etc.)
+ *          and initialises ZEBRA.  Called by UGINIT.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GXCONT()
+ * @brief Command-driven general GEANT control (INIT, TRIG, STOP, KINE, …).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GXRZ()
+ * @brief Command-driven RZ file I/O control.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GXDZ()
+ * @brief Command-driven DZDOC/DZDUMP bank display.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFINDS()
+ * @brief Find the next sensitive volume along a straight line from the current position.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPART()
+ * @brief Initialise the GEANT particle table (JPART bank).
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Output / display
+ * ================================================================ */
+
+/**
+ * @fn GDRAW(NAME, UTHET, UPHI, UPSI, UU0, UV0, SU, SV)
+ * @brief Draw geometry object NAME on the display.
+ * @param[in] NAME       4-character volume name.
+ * @param[in] UTHET,UPHI Euler angles for rotation from lab to view frame (°).
+ * @param[in] UPSI       In-plane rotation of the 2-D projection (°).
+ * @param[in] UU0,UV0    Screen position of the drawing origin.
+ * @param[in] SU,SV      Scale factors in U and V.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GDRAWS(ISHAPE, PAR)
+ * @brief Draw a single volume shape.
+ * @param[in] ISHAPE  Shape type index.
+ * @param[in] PAR     Shape parameters.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GXDRAW()
+ * @brief Command-driven geometry drawing (DRAW, DCUT, DSPEC, DVIEW, …).
+ * @details Volume names are handled case-insensitively.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GXPICK()
+ * @brief Interactive volume picking on the geometry display.
+ * @details First click selects a volume; second click positions the label.
+ *          DCUT X sign is corrected for negative view projections.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GDTR0(IVTREE, IROOT, LEVMAX, IER)
+ * @brief Draw the track tree.
+ * @param[in]  IVTREE  Drawing option.
+ * @param[in]  IROOT   Root track number.
+ * @param[in]  LEVMAX  Maximum depth to draw.
+ * @param[out] IER     Error flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn JATTF(JJ)
+ * @brief Calculate the attribute-word position in a volume bank.
+ * @param[in] JJ  ZEBRA link to the volume bank.
+ * @return Word address of the attribute section.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn AKUGET(NAME)
+ * @brief Look up a volume by name; convert to upper case if not found.
+ * @details Converts NAME to uppercase and retries the lookup; prints a
+ *          diagnostic if IDEBUG > 0.
+ * @param[in,out] NAME  4-character volume name string.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GVTXOUT(IVERT, Length, IGENER, Ngener)
+ * @brief Write vertex information to the output stream.
+ * @param[in] IVERT   Vertex number.
+ * @param[in] Length  Number of words to write.
+ * @param[in] IGENER  Generator flag.
+ * @param[in] Ngener  Number of generator tracks.
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Decay
+ * ================================================================ */
+
+/**
+ * @fn GDECAY()
+ * @brief Simulate the decay of an unstable particle.
+ * @details Uses the branching ratios defined by GPDCAY/GFDCAY.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GPDCAY(IPART)
+ * @brief Print branching ratios and decay modes for particle IPART.
+ * @param[in] IPART  GEANT particle type number.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GFDCAY(IPART, BRATIO, MODE)
+ * @brief Retrieve branching ratios and decay mode vectors for particle IPART.
+ * @param[in]  IPART   GEANT particle type number.
+ * @param[out] BRATIO  Array of branching ratios.
+ * @param[out] MODE    Array of decay mode vectors (daughter particle types).
+ * @ingroup GeantMods
+ */
+
+/* ================================================================
+ * Miscellaneous / math utilities
+ * ================================================================ */
+
+/**
+ * @fn GRNDMO(RVEC, LEN)
+ * @brief Fill array RVEC with LEN uniform random numbers via CERNLIB RNDM.
+ * @param[out] RVEC  Output array.
+ * @param[in]  LEN   Number of random numbers to generate.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn SSMT5T(A, S, R)
+ * @brief Compute the symmetric 5×5 matrix similarity transform A·S·Aᵀ → R.
+ * @param[in]  A  General 5×5 matrix.
+ * @param[in]  S  Input symmetric 5×5 matrix (lower triangle stored).
+ * @param[out] R  Output symmetric 5×5 matrix.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn XMM55(A, B, C)
+ * @brief Multiply two 5×5 matrices: A·B → C.
+ * @param[in]  A  Left 5×5 matrix.
+ * @param[in]  B  Right 5×5 matrix.
+ * @param[out] C  Result 5×5 matrix.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn TRPRFN(X1,P1,H1,X2,P2,H2,CH,XL,R,MVAR,IFLAG,ITRAN,IERR)
+ * @brief Propagate a track from state (X1,P1) to state (X2,P2) using helical extrapolation.
+ * @param[in]  X1,P1,H1  Initial position, momentum, field.
+ * @param[out] X2,P2,H2  Final position, momentum, field.
+ * @param[in]  CH        Particle charge.
+ * @param[in]  XL        Path length.
+ * @param[out] R         Transport matrix.
+ * @param[in]  MVAR      Mode variable.
+ * @param[in]  IFLAG     Control flag.
+ * @param[out] ITRAN     Transport flag.
+ * @param[out] IERR      Error flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn HIGCLU(IPPP, NFL, AVERN)
+ * @brief Generate x and pT values for all particles produced in a GHEISHA cluster.
+ * @details NVE 01-AUG-1988 CERN Geneva.
+ * @param[in]  IPPP   Projectile particle type.
+ * @param[in]  NFL    Fireball type flag.
+ * @param[in]  AVERN  Average multiplicity.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn HWDECL(LUN, ITRUNC)
+ * @brief Write integer/real HERWIG common-block variable declarations to unit LUN.
+ * @param[in] LUN    Fortran output unit.
+ * @param[in] ITRUNC Truncation flag (limits length of declarations).
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn HWPDCL(LUN, ITRUNC)
+ * @brief Write integer, real, logical, and character HERWIG common-block declarations.
+ * @param[in] LUN    Fortran output unit.
+ * @param[in] ITRUNC Truncation flag.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn FLUFIN()
+ * @brief FLUKA/FLUFIN finalisation stub for the CALOR interface.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GUSCNTR(PRECOR)
+ * @brief Control looping near a volume boundary.
+ * @details Detects when a track is cycling near a boundary and modifies
+ *          the tracking precision to escape.
+ * @param[in,out] PRECOR  GEANT tracking precision parameter.
+ * @ingroup GeantMods
+ */
+
+/**
+ * @fn GUSWMP(CHARGE, STEP, MASS, VECT, VOUT, EOUT)
+ * @brief Swimming wrapper for special particle types.
+ * @param[in]  CHARGE  Particle charge.
+ * @param[in]  STEP    Step length (cm).
+ * @param[in]  MASS    Rest mass (GeV/c²).
+ * @param[in]  VECT    Input state vector.
+ * @param[out] VOUT    Output state vector.
+ * @param[out] EOUT    Energy after step (GeV).
+ * @ingroup GeantMods
+ */

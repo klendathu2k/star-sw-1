@@ -1,0 +1,538 @@
+/**
+ * @defgroup COMIS COMIS — Runtime FORTRAN/C Interpreter
+ * @{
+ * @brief Runtime interpreter for FORTRAN 77 and C code used by STARSIM and GEANT3.
+ *
+ * @details
+ * COMIS allows users to execute FORTRAN or C subroutines at run time without
+ * recompiling the main simulation executable.  It is derived from the CERNLIB
+ * COMIS package (authors V. Berezhnoi, R. Brun, J. Couet, P. Nevski) and has
+ * been adapted for 64-bit platforms and shared-library (`SHL`) compilation.
+ *
+ * Two execution paths are supported:
+ * -# **Shared-library path** (preferred, `CERNLIB_SHL` defined): source is compiled
+ *    by the system Fortran/C compiler via a shell script produced by CSCREXEC,
+ *    linked into a `.so`/`.sl`, and loaded with `dlopen`/`shl_load` through CSSHLD.
+ * -# **Pure-interpretation path** (fallback, `CERNLIB_COMISF` defined): the tokenised
+ *    source is evaluated directly by the interpreter loop CSINTX/CSINTZ without
+ *    generating native code.
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `csinit.F`    | Interpreter initialisation |
+ * | `csdefn.F`    | PAW/HBOOK symbol definition |
+ * | `cscrexec.F`  | Generate compilation shell script |
+ * | `cscrsl.F`    | Compile + load shared library |
+ * | `cscall.F`    | Call routine by name (up to 10 params) |
+ * | `cscalx.F`    | Call routine with array-passed parameters |
+ * | `cscath.F`    | Return current code-pointer position |
+ * | `cstran.F`    | Main tokeniser / translator |
+ * | `csintx.F`    | Central interpreter execution loop |
+ * | `csintz.F`    | IBM/legacy interpreter variant |
+ * | `csint1.F`    | Single-statement interpreter entry |
+ * | `csinta.F`    | Re-entrant (recursive) interpreter entry |
+ * | `cskcal.F`    | Interpreter CALL statement handler |
+ * | `csjcal1s.F`  | Jump/call with character-string parameter |
+ * | `csjcax.F`    | Low-level jump/call table dispatch |
+ * | `cspmfs.F`    | Pre-compiled module function stub |
+ * | `cspmd0-9.F`  | Pack 0–10 parameter addresses for dispatch |
+ * | `csincl.F`    | INCLUDE directive handler |
+ * | `csinc1.F`    | Unique include file name generator |
+ * | `csinccl.F`   | Close include file, restore scan class |
+ * | `csinfh.F`    | Heap statistics reporter |
+ * | `csinfn.F`    | Function/subroutine parameter info |
+ * | `csaddr.F`    | Resolve symbol address by name |
+ * | `csallo.c`    | C-level memory allocator |
+ * | `cschar.F`    | Character buffer write |
+ * | `csfile.F`    | Source file open / stack management |
+ * | `csfilx.F`    | Extended file-table lookup |
+ * | `cshlopt.F`   | Shared-library option string setter |
+ * | `csicha.F`    | Character I/O (read one char) |
+ * | `csicns.F`    | Character-constant scanner |
+ * | `cslink.F`    | Link shared object |
+ * | `csmap.F`     | Memory-map entry printer |
+ * | `csreset.F`   | Reset interpreter state |
+ * | `csrmsl.F`    | Unload and delete shared library |
+ * | `cssetc.F`    | Set compiler context record |
+ * | `csetc.F`     | Set execution context registers |
+ * | `csshld.F`    | Shared-library handle management |
+ * | `cbis.F`      | Integer → character-string conversion |
+ * | `ccopysa.F`   | Character-buffer copy with overlap |
+ * | `mhdef.F`     | Define memory heap |
+ * | `mhfree.F`    | Free memory heap block |
+ * | `mhloc.F`     | Locate / allocate heap block |
+ * | `mident.F`    | Extract identifier from character buffer |
+ * | `uhtoc.F`     | Hollerith-to-character conversion |
+ * | `mdext.F`     | Extend dynamic memory pool |
+ *
+ * @}
+ */
+
+/**
+ * @fn CSINIT(NW)
+ * @brief Initialise the COMIS interpreter.
+ * @param[in] NW  Workspace size in words to allocate for COMIS internal buffers.
+ *                Sets platform-dependent compiler and linker option strings,
+ *                opens the log unit, and zeroes all COMMON-block state.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSDEFN(LUNOUT, ISPAWC, OK)
+ * @brief Define PAW/HBOOK symbols in the COMIS symbol table.
+ * @param[in]  LUNOUT  Fortran logical unit for diagnostic output.
+ * @param[in]  ISPAWC  Logical flag: TRUE if PAW (PAWC common) is available.
+ * @param[out] OK      TRUE if symbol definition succeeded.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCREXEC(NAME, CPID, FEXT, FEXEC, IERR)
+ * @brief Generate and write a platform-specific compilation shell script.
+ * @param[in]  NAME   Base name of the source module (no extension).
+ * @param[in]  CPID   Compiler process ID string (used to form unique filenames).
+ * @param[in]  FEXT   Source file extension: `.c` or `.f`.
+ * @param[in]  FEXEC  Path of the shell script to write.
+ * @param[out] IERR   0 on success; non-zero on I/O error.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCRSL(NAME, CPID, FEXT, IERR)
+ * @brief Compile a source module and load the resulting shared library.
+ * @param[in]  NAME  Base module name.
+ * @param[in]  CPID  Compiler process ID string.
+ * @param[in]  FEXT  Source extension (`.c` or `.f`).
+ * @param[out] IERR  0 on success.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCALL(STR, NPAR, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)
+ * @brief Call a COMIS routine by name with up to 10 actual parameters.
+ * @param[in] STR   Character string containing the routine name.
+ * @param[in] NPAR  Number of parameters to pass (0–10).
+ * @param[in] P1..P10 Actual parameters (only the first NPAR are used).
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSJCAL(JSUB, NPAR, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)
+ * @brief Entry point of CSCALL: call a COMIS routine by integer address token.
+ * @param[in] JSUB  Integer address token obtained from CSLTGP/CSADDR.
+ * @param[in] NPAR  Number of parameters.
+ * @param[in] P1..P10 Actual parameters.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCALX(NAME, NPAR, M)
+ * @brief Call a COMIS routine by name with parameters in an integer array.
+ * @param[in] NAME  Routine name.
+ * @param[in] NPAR  Number of parameters.
+ * @param[in] M     Integer array of parameter (address) values.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCATH(I)
+ * @brief Return current code-buffer pointer position minus one.
+ * @param[out] I  Set to IPCP-1; used by the interpreter to inspect the
+ *                current operator type and operand addresses.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSTRAN(IPCB, IPCE, KPRO, LSTCL)
+ * @brief Tokenise and translate a FORTRAN/C source fragment.
+ * @param[in]  IPCB  Start position in the code buffer.
+ * @param[in]  IPCE  End position in the code buffer.
+ * @param[in]  KPRO  Processing flags (language mode, etc.).
+ * @param[out] LSTCL Last token class produced.
+ * @details This is the largest and most complex routine (~3 688 lines).
+ *          It scans the source character by character, classifies tokens
+ *          (keywords, identifiers, numeric/string literals, operators),
+ *          handles DO-loop bounds type coercion, and builds the internal
+ *          parse representation consumed by CSINTX.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINTX(IPCB)
+ * @brief Central interpreter execution loop.
+ * @param[in] IPCB  Starting code-buffer offset.
+ * @return Integer status: 0 = normal return, non-zero = exception/error.
+ * @details Dispatches on the token type at IPCB and recursively evaluates
+ *          all FORTRAN/C constructs: arithmetic, logical, string expressions,
+ *          IF/DO/WHILE control flow, CALL, and RETURN.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINTZ(IPARCE, IJMPT)
+ * @brief IBM/legacy variant interpreter entry point.
+ * @param[in] IPARCE  Parse-tree start offset.
+ * @param[in] IJMPT   Jump table base address.
+ * @return Integer status.
+ * @details Conditionally compiled only when `CERNLIB_IBM` is defined.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINT1(IPCB)
+ * @brief Thin wrapper around CSINTX; primary external interpreter entry.
+ * @param[in] IPCB  Code-buffer offset.
+ * @return Integer status from CSINTX.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINTA(IFP1, IPC1, IPC2)
+ * @brief Re-entrant (recursive) interpreter entry.
+ * @param[in,out] IFP1  Frame pointer: saved on entry and restored on return.
+ * @param[in]     IPC1  Code-buffer start offset.
+ * @param[in]     IPC2  Code-buffer end offset.
+ * @return Integer status from CSINTX.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSKCAL(KS)
+ * @brief Interpreter kernel: handle the CALL statement.
+ * @param[in] KS  Call-statement descriptor offset in the symbol table.
+ * @return Integer status.
+ * @details Resolves the callee, marshals actual parameters from the
+ *          interpreter stack, and dispatches to the callee (interpreted
+ *          or compiled).
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSJCAL1S(IADR, I1, I2)
+ * @brief Call the routine at address token IADR passing a Fortran character
+ *        string split into two integer parameters (address I1, length I2).
+ * @param[in] IADR  Integer address token of the routine.
+ * @param[in] I1    Address of the character string.
+ * @param[in] I2    Length of the character string.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSJCAX(J, NP, M)
+ * @brief Low-level jump/call table dispatch.
+ * @param[in] J   Integer address token of the callee.
+ * @param[in] NP  Number of parameters.
+ * @param[in] M   Array of NP parameter addresses.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMFS(IBCODE)
+ * @brief Pre-compiled module function stub; call the COMIS translator for module IBCODE.
+ * @param[in] IBCODE  Bytecode identifying the pre-parsed module.
+ * @return Integer status.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD0(M, MD, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10)
+ * @brief Pack 10 actual parameter addresses (via locb) into array M.
+ * @param[out] M   Integer array receiving parameter addresses.
+ * @param[in]  MD  Descriptor array (11 elements).
+ * @param[in]  P1..P10 Actual parameters.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD1(M, MD, P1)
+ * @brief Pack 1 actual parameter address into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD2(M, MD, P1, P2)
+ * @brief Pack 2 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD3(M, MD, P1, P2, P3)
+ * @brief Pack 3 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD4(M, MD, P1, P2, P3, P4)
+ * @brief Pack 4 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD5(M, MD, P1, P2, P3, P4, P5)
+ * @brief Pack 5 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD6(M, MD, P1, P2, P3, P4, P5, P6)
+ * @brief Pack 6 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD7(M, MD, P1, P2, P3, P4, P5, P6, P7)
+ * @brief Pack 7 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD8(M, MD, P1, P2, P3, P4, P5, P6, P7, P8)
+ * @brief Pack 8 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSPMD9(M, MD, P1, P2, P3, P4, P5, P6, P7, P8, P9)
+ * @brief Pack 9 actual parameter addresses into M.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINCL(LINE, NCH, LIBRD, INCLUN)
+ * @brief Detect and process an INCLUDE directive.
+ * @param[in]  LINE    Character string containing the source line.
+ * @param[in]  NCH     Length of LINE.
+ * @param[in]  LIBRD   Logical flag: library-read mode.
+ * @param[in]  INCLUN  Array of 10 available logical unit numbers.
+ * @return LOGICAL: .TRUE. if an INCLUDE was found and processed.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINC1(CHIN)
+ * @brief Generate a unique temporary include file name from CHIN.
+ * @param[in] CHIN  Base include file name string.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINCCL(IPADDR, LSTCL)
+ * @brief Close an include file and restore the source-scan class.
+ * @param[in]     IPADDR  Address of the include-file record.
+ * @param[in,out] LSTCL   Last scan class (restored from the file record).
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINFH(IND, NSIZE, NPIEC, NUSED, NFREE, NPERC, ...)
+ * @brief Report memory-heap statistics.
+ * @param[in]  IND    Heap index.
+ * @param[out] NSIZE  Total heap size in words.
+ * @param[out] NPIEC  Number of allocated pieces.
+ * @param[out] NUSED  Words in use.
+ * @param[out] NFREE  Free words.
+ * @param[out] NPERC  Percentage used.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSINFN(NFUN, ITPAR, NPAR)
+ * @brief Return parameter-type information for a known function/subroutine.
+ * @param[in]  NFUN   Index of the function in the symbol table.
+ * @param[out] ITPAR  Array of parameter type codes.
+ * @param[out] NPAR   Number of parameters.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSADDR(CHNAME)
+ * @brief Resolve the integer address token of symbol CHNAME.
+ * @param[in] CHNAME  Character name of the symbol.
+ * @return Integer address token (0 if not found).
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn csallo_(nwords)
+ * @brief C-level FORTRAN-callable memory allocator; returns word address of allocated block.
+ * @param[in] nwords  Number of 4-byte words to allocate.
+ * @return Word offset within COMIS pool.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn csfree_(iaddr)
+ * @brief C-level FORTRAN-callable free; releases block at word address iaddr.
+ * @param[in] iaddr  Word address previously returned by csallo_.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSCHAR(J, NH)
+ * @brief Store character NH at buffer address J.
+ * @param[in] J   Integer buffer address.
+ * @param[in] NH  Character code to store.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSFILE(FILENAME)
+ * @brief Open or select COMIS source file FILENAME; manages the source-file stack.
+ * @param[in] FILENAME  Path to the source file.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSFILX(NAME)
+ * @brief Look up NAME in the known-file table and return its index.
+ * @param[in] NAME  File name to look up.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSHLOPT(TEXT, CHVAR)
+ * @brief Append shared-library compiler/linker option TEXT into CHVAR.
+ * @param[in]    TEXT   Option string to append (e.g., "-fPIC").
+ * @param[inout] CHVAR  Accumulated option string.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSICHA(J, KOD)
+ * @brief Read one character from internal buffer at address J.
+ * @param[in]  J    Integer buffer address.
+ * @param[out] KOD  Character code read.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSICNS(J, N, NC)
+ * @brief Scan a character-constant literal delimited by single quotes.
+ * @param[in,out] J   Buffer position (advanced past constant on return).
+ * @param[in,out] N   Remaining buffer length (decremented).
+ * @param[out]    NC  Length of the constant found.
+ * @return Length of constant; 0 if not a constant.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSLINK
+ * @brief Link the most recently compiled shared-object file using CSSHLD.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSMAP(NAME)
+ * @brief Print the memory-map entry (address, size, type) for symbol NAME.
+ * @param[in] NAME  Symbol name.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSRESET
+ * @brief Reset the COMIS interpreter to its post-CSINIT state.
+ * @details Clears symbol tables, flushes I/O buffers, unloads all shared
+ *          libraries loaded during the session.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSRMSL(NAME1)
+ * @brief Unload and remove the shared library for module NAME1.
+ * @param[in] NAME1  Module name whose shared library is to be removed.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSSETC(J, N, K)
+ * @brief Set compiler context: store key K in the N-word record at position J.
+ * @param[in] J  Record position in the compiler context buffer.
+ * @param[in] N  Record length in words.
+ * @param[in] K  Key value to store.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSETC(I1, I2)
+ * @brief Set execution context registers I1 and I2 for re-entrancy.
+ * @param[in] I1  First context register value.
+ * @param[in] I2  Second context register value.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CSSHLD
+ * @brief Load the current shared object via cs_shl_load_() and register its handle.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CBIS(I, J, N)
+ * @brief Convert integer I to its decimal character representation at buffer (J, N).
+ * @param[in]     I  Integer value to convert.
+ * @param[in,out] J  Buffer address (advanced past the written characters).
+ * @param[in,out] N  Buffer remaining length.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn CCOPYS(J1, J2, N)
+ * @brief Copy N characters from buffer address J1 to J2 with overlap handling.
+ * @param[in] J1  Source buffer address.
+ * @param[in] J2  Destination buffer address.
+ * @param[in] N   Number of characters to copy.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn MHDEF(N, MEXP)
+ * @brief Define a COMIS memory heap of N words with expansion factor MEXP.
+ * @param[in] N     Initial heap size in words.
+ * @param[in] MEXP  Expansion factor for automatic growth.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn MHFREE(I)
+ * @brief Free the heap block at word index I.
+ * @param[in] I  Word index (offset) within the COMIS heap.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn MHLOC(...)
+ * @brief Locate or allocate a block within the COMIS heap.
+ * @return Word offset of the located/allocated block.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn MIDENT(J1, N1, J2, N2)
+ * @brief Extract the next identifier from character buffer (J1, N1) into (J2, N2).
+ * @param[in,out] J1  Source buffer address (advanced past identifier).
+ * @param[in,out] N1  Source buffer remaining length.
+ * @param[out]    J2  Destination buffer address.
+ * @param[in]     N2  Maximum identifier length to store.
+ * @return Actual length of the extracted identifier (may exceed N2).
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn UHTOC(MS, NPW, MT, NCH)
+ * @brief Convert Hollerith words to a character string.
+ * @param[in]  MS   Integer array of Hollerith-encoded words.
+ * @param[in]  NPW  Number of words in MS.
+ * @param[out] MT   Output character string (length >= NCH).
+ * @param[in]  NCH  Number of characters to convert.
+ * @ingroup COMIS
+ */
+
+/**
+ * @fn MDEXT(LENG, IND)
+ * @brief Extend the dynamic memory pool by LENG words.
+ * @param[in]  LENG  Number of additional words required.
+ * @param[out] IND   Word offset of the new pool extension.
+ * @return LOGICAL: .TRUE. if extension succeeded.
+ * @ingroup COMIS
+ */

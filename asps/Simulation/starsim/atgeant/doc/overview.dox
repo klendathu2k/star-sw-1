@@ -1,0 +1,1050 @@
+/**
+ * @defgroup AtGeant GEANT Interface Layer (atgeant)
+ * @{
+ *
+ * @brief High-level AGE processors that wrap GEANT3 calls for detector
+ *        geometry definition, hit/digi processing, and data documentation.
+ *
+ * @details
+ * The `atgeant/` directory provides the GEANT3 interface layer of the STARSIM
+ * detector simulation framework.  Each `.age` file is an AGE macro that is
+ * pre-processed into a Fortran-77 subroutine or function and compiled into the
+ * `atlsim` library.  The processors are called by the AGE steering layer during
+ * `MODULE` execution and cover:
+ *
+ * - **Geometry building**: volume creation (`AgSVOLU`), shape parameter
+ *   resolution (`AgSHAPE`), rotation matrices (`AgSROTM`), volume divisions
+ *   (`AgSDIVI`), materials (`AxMaterial`, `AxMixture`), tracking media
+ *   (`AgSMedi`, `AxMedium`), positioning (`AxPOSITION`), particles
+ *   (`axparticle`), and standard material tables (`AgSTAND`).
+ * - **Sensitive detectors**: detector registration (`AgSDETV`), hit-field
+ *   descriptors (`AgSDETH`, `AgSDETU`), dense packing (`AgSDIG0/1`),
+ *   path-tree analysis (`AgGDETV`, `AgGDETU`), and volume limit
+ *   computation (`AgGFDIM`, `AgGFLIM`).
+ * - **Hit and digi processing**: auto-hit filling (`AgGSTEP`, `AgGHIT`),
+ *   hit iteration (`AgFDIG0`, `AgFDIG1`, `AgFDIGI`), generic hit access
+ *   (`AGHITset`, `AGHITget`), and digi printing (`AgPHITS`, `AgPDIGI`).
+ * - **Physics**: cross-section re-initialisation (`AgPHYSI`) and per-medium
+ *   flag propagation (`AgPHYSCOR`).
+ * - **Self-documenting banks**: DZDOC integration (`AgDOCUM`, `AgDOCUME`,
+ *   `AgDOCBA`, `AgDOCRD`, `AgDOCWR`), structure dumping (`AgDUMP`, `AgKEEPS`),
+ *   include-file generation (`agdprina`), and format encoding (`AgDFORM`).
+ * - **Module lifecycle**: open/close (`AgSBEGM`, `AgSENDM`), reset (`AgSRESET`),
+ *   geometry close (`AgGCLOS`, `AgCHECK`), and the volume nesting stack
+ *   (`AgSPUSH`, `AgSPOPB`).
+ * - **Navigation**: volume existence (`AgEXIST`), path building (`AgFPATH`,
+ *   `agfpara`), tree traversal (`agvoluma`, `agfvolu`), and nick-name
+ *   generation (`AgSNAME`).
+ * - **Secondary particles**: `AgSSECOND`, `AgUSECOND`, `AgSKING`, `AgSTRACE`.
+ * - **Flags**: `AgSFLAG`, `AgPFLAG`, `AgAUTO`.
+ * - **Auxiliary I/O**: `ARZOUT`, `ARZUPDA`, `ARFROMC`, `ACFROMR`, `AgT2A`.
+ *
+ * ## Files
+ *
+ * ### Geometry building
+ * | File | Purpose |
+ * |------|---------|
+ * | `agsvolu.age` | Create or look up a GEANT volume (`GSVOLU`) |
+ * | `agshape.age` | Resolve shape name ↔ integer code and unpack parameters |
+ * | `agsrotm.age` | Find or register a GEANT rotation matrix |
+ * | `agsdivi.age` | Perform volume division (`GSDVN`, `GSDVT`, `GSDVN2`, `GSDVX`) |
+ * | `agsmedi.age` | Register a GEANT tracking medium (`GSTMED`) |
+ * | `agsmate.age` | Search/allocate a material/medium slot in a ZEBRA link |
+ * | `agstand.age` | Define PDG standard materials and a default tracking medium |
+ * | `axshape.age` | Top-level dispatch to `AgSDIVI` or `AgSHAPE`+`AgSVOLU` |
+ * | `axmaterial.age` | Introduce a GEANT material (`GSMATE`) with module name prefix |
+ * | `axmedium.age` | Introduce a GEANT tracking medium with name lookup |
+ * | `axmixture.age` | Introduce a material mixture (`GSMIXT`) |
+ * | `axcomponent.age` | Accumulate a component element into the mixture list |
+ * | `axposition.age` | Position a volume with `GSPOS`/`GSPOSP` |
+ * | `axattribute.age` | Apply GEANT drawing/tracking attributes (`GSATT`) |
+ * | `axparticle.age` | Define a new GEANT particle (`GSPART`) |
+ * | `axtables.age` | Dump DETM/RECB structure to DUI directories |
+ *
+ * ### Detector description
+ * | File | Purpose |
+ * |------|---------|
+ * | `agsdetv.age` | Create a GEANT sensitive detector and DETU bank |
+ * | `agsdeth.age` | Register one hit-field descriptor in DETU |
+ * | `agsdetu.age` | Close hit/digi descriptor; trigger `AgGDETV`/`AgGDETU` |
+ * | `agsdig0.age` | Prepare the dense-format digi output bank |
+ * | `agsdig1.age` | Pack one digi into the dense ZEBRA bank |
+ * | `aggdetv.age` | Walk volume tree to build NAMESV/NBITSV path descriptor |
+ * | `aggdetu.age` | Compute Nbit/Origin/Factor and fill DET/DETH/DETD banks |
+ * | `aggfdim.age` | Return the geometric extent of a sensitive volume on an axis |
+ * | `aggflim.age` | Set automatic hit limits from volume dimensions |
+ * | `aggetdig.age` | Unpack one hit/digi word from the dense bank |
+ * | `agkeeps.age` | Generate structure include files (STRUCTURES command) |
+ *
+ * ### Hit processing
+ * | File | Purpose |
+ * |------|---------|
+ * | `agghit.age` | Compute one hit quantity from the current GEANT step |
+ * | `aggstep.age` | Generic `GUSTEP`: auto-fill hits for all sensitive detectors |
+ * | `aghitget.age` | Sequential hit iterator: convert next packed hit to generic form |
+ * | `aghitset.age` | Prepare unpacking map for a set/detector |
+ * | `agfhit0.age` | Outer digitization control (calls `AgFDIG0` + `AgSDIG0`) |
+ * | `agfhit1.age` | Outer digitization print-control wrapper |
+ * | `agfhita.age` | Like `AgFHIT0` but skips `AgSDIG0` (additive digits) |
+ * | `agfdig0.age` | Build per-element hit chains for iteration |
+ * | `agfdig1.age` | Iterate: return all hits for the next detector element |
+ * | `agfdigi.age` | Return next digi for a physical volume identified by NVS list |
+ * | `agfdpar.age` | Return hit-field description (name, range, bin width) |
+ * | `agfipar.age` | Fetch shape parameters and attributes at the current hit |
+ * | `agphits.age` | Print hit summary (ATLAS dense format) |
+ * | `agpdigi.age` | Print hits or digi contents |
+ * | `gdhits.age` | Draw hit points of a track in GEANT graphics |
+ * | `gfdig1.age` | GEANT-compatible digi retrieval by volume path |
+ *
+ * ### Physics
+ * | File | Purpose |
+ * |------|---------|
+ * | `agphysi.age` | Re-run GEANT cross-section initialisation |
+ * | `agphyscor.age` | Propagate CUTS/PROCESS flags to all tracking media |
+ * | `agpmater.age` | HBOOK plots of material cross-section tables |
+ *
+ * ### Documentation banks
+ * | File | Purpose |
+ * |------|---------|
+ * | `agdocum.age` | Store bank with DZDOC documentation in DETM/RECB |
+ * | `agdocume.age` | Close a bank in the database |
+ * | `agdocba.age` | Fill a DZDOC documentation bank |
+ * | `agdocrd.age` | Read a record from a doc-bank field |
+ * | `agdocwr.age` | Insert a record into a doc-bank field |
+ * | `agdocline.age` | Retrieve comment string for a variable from a doc bank |
+ * | `agdprina.age` | Write compiler-readable structure include files |
+ * | `agdump.age` | Dump a DETM subtree via DZDOC |
+ * | `agdgetp.age` | Query parameter banks from DETM/RECB by path |
+ * | `agdlink.age` | Register a dynamic ZEBRA bank link |
+ * | `agdform.age` | Encode a bank layout map as a ZEBRA format string |
+ * | `agdreform.age` | Parse a ZEBRA format string to extract field count and type |
+ * | `agdtit.age` | Strip trivial words from a module title |
+ * | `agdatadr.age` | Identify address vs data fields in an FFREAD buffer |
+ * | `agdatcar.age` | Apply datacard values to a named parameter bank |
+ * | `agdblib.age` | Retired dynamic DB library stub |
+ *
+ * ### Module lifecycle
+ * | File | Purpose |
+ * |------|---------|
+ * | `agsbegm.age` | Open a geometry or digitisation module |
+ * | `agsendm.age` | Close a module |
+ * | `agsreset.age` | Reset WORK2 area before each processor call |
+ * | `agcheck.age` | Detect and repair improperly closed GEANT geometry |
+ * | `aggclos.age` | Fill hit structures for all sensitive detectors |
+ * | `agendfill.age` | Stub end-of-fill entry point |
+ * | `asbdete.age` | Register a sub-detector in DETM |
+ * | `agzini.age` | Initialise ZEBRA link areas |
+ *
+ * ### Volume navigation
+ * | File | Purpose |
+ * |------|---------|
+ * | `agfpath.age` | Build GEANT path to a sensitive-volume element |
+ * | `agfpara.age` | Return shape parameters at current `AgFPATH` level |
+ * | `agfvolu.age` | Extract parameters of a given GEANT volume |
+ * | `agfserial.age` | Return SERIAL attribute of a named volume |
+ * | `agexist.age` | Return GEANT volume number or 0 if not found |
+ * | `agvoluma.age` | Iterate the GEANT volume tree |
+ * | `agsname.age` | Generate a unique 4-character nick-name for a volume instance |
+ *
+ * ### Kinematic secondaries
+ * | File | Purpose |
+ * |------|---------|
+ * | `agssecond.age` | Default secondary handler: fill JSTAK, write shower vertices |
+ * | `agusecond.age` | Apply user-defined kinematic cuts before saving secondaries |
+ * | `agsking.age` | Save a stack track in KINE before its first hit |
+ * | `agstrace.age` | Set conditions for KINU trajectory storage |
+ *
+ * ### Stack and flags
+ * | File | Purpose |
+ * |------|---------|
+ * | `agspush.age` | Push the AGE nesting stack at start-of-block |
+ * | `agspopb.age` | Pop the AGE nesting stack at end-of-block |
+ * | `agsflag.age` | Set AGE runtime flags (PRIN, GRAP, HIST, GEOM, MFLD, DEBU, SIMU) |
+ * | `agpflag.age` | Get SLUG print-control flag for a detector/stage |
+ * | `agauto.age` | Set GEANT `IGAUTO` flag |
+ *
+ * ### Auxiliary I/O and utilities
+ * | File | Purpose |
+ * |------|---------|
+ * | `arzout.age` | Extended `RZOUT` with bank-consistency checking |
+ * | `arzupda.age` | Guard auxiliary RZ directory against default I/O |
+ * | `arfromc.age` | 4-character token → packed real |
+ * | `acfromr.age` | Packed real → 4-character token |
+ * | `agt2a.age` | Tangent → pseudo-angle; (x,y) → (θ,φ) conversion |
+ * | `agdrop.age` | Drop ZEBRA data structures by type code |
+ * | `agdropdig.age` | Drop hit/digi banks for a set/detector |
+ * | `agsstep.age` | Store user step-routine address in DETM |
+ * | `agfpartic.age` | Return particle link and count from GENT/GENP bank |
+ * | `getdynbank.age` | Return address of a dependent dynamic bank |
+ * | `agrot.F` | Rotation matrix utility stubs |
+ * | `assert.F` | Fortran assertion helper |
+ *
+ * @}
+ */
+
+/* ------------------------------------------------------------------ */
+/* Geometry building                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSVOLU()
+ * @brief Create or look up a GEANT volume; return `%Ivolume`, actual `Npar`, `Npo`.
+ * @details Calls `GSVOLU` for new volumes; reuses the existing volume number
+ *          if a volume with the same shape and parameters already exists.
+ *          Handles the special case of top-level volumes with holes.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSHAPE()
+ * @brief Resolve shape name ↔ integer code and unpack shape parameters into `%Par`.
+ * @details Supports all 16 standard GEANT shapes plus `GTRA` and `CTUB`.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSROTM()
+ * @brief Given (θ,φ) rotation parameters, find or register a GEANT rotation matrix.
+ * @details Normalises angles into canonical ranges before comparison so that
+ *          equivalent rotations share the same matrix number.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSDIVI()
+ * @brief Perform a GEANT volume division according to the current AGE parameters.
+ * @details Dispatches to `GSDVN`, `GSDVT`, `GSDVN2`, or `GSDVX` depending on
+ *          which of `%Ndiv`, `%Step`, and `%C0` are non-zero.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSMedi()
+ * @brief Register a new GEANT tracking medium via `GSTMED`.
+ * @details Called from `AxSHAPE` when a new material or medium parameter set
+ *          is encountered.  Module-prefixes the medium name if needed.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSMATE(CNAME, LINK, Par)
+ * @brief Search for an existing medium/material in a ZEBRA link; return slot index.
+ * @param[in]  CNAME  20-character material/medium name.
+ * @param[in]  LINK   ZEBRA link root (`JMATE` or `JTMED`).
+ * @param[in]  Par    Parameter array (A, Z, D, RadL, AbsL or medium params).
+ * @return Positive slot index if found; negative free-slot index if not found.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSTAND()
+ * @brief Install standard PDG materials (Si, LAr, gases, organics) and a default tracking medium.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxSHAPE()
+ * @brief Top-level dispatch: resolve medium, then call `AgSDIVI` or `AgSHAPE`+`AgSVOLU`.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxMaterial()
+ * @brief Introduce a GEANT material (`GSMATE`); prepend module name to avoid collisions.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxMedium()
+ * @brief Introduce a GEANT tracking medium (`GSTMED`); the actual `GSTMED` call is deferred
+ *        to `AxSHAPE` so that the correct material is known.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxMixture()
+ * @brief Introduce a material mixture (`GSMIXT`) and update `%A`, `%Z`, `%RadL`, `%AbsL`.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxComponent()
+ * @brief Accumulate one elemental component into the mixture list (`%AA`, `%ZZ`, `%WW`).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxPOSITION()
+ * @brief Position a daughter volume in its mother with `GSPOS` or `GSPOSP`.
+ * @details Handles the "fake positioning" case for divisions and the `KludGeo`
+ *          exception rule.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AxATTRIBUTE()
+ * @brief Set GEANT drawing/tracking attributes (`GSATT`) on the current nick-volume.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn axparticle()
+ * @brief Define a new particle in the GEANT particle table (`GSPART`) if not already present.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AXTABLES(Source, Destin)
+ * @brief TABLES command processor: dump a DETM structure subtree into DUI directories.
+ * @param[in] Source  Request path (UNIX-like or RECB-style).
+ * @param[in] Destin  DUI target directory.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Detector description                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSDETV(title)
+ * @brief Create a GEANT sensitive detector entry and initialise the DETU user bank.
+ * @param[in] title  4-character detector name (`%Det`).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSDETH(IEXT)
+ * @brief Register one hit-field descriptor in the DETU bank.
+ * @param[in] IEXT  External hit index.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSDETU(Title)
+ * @brief Close the hit/digi descriptor for `Title`; in digi-module mode trigger `AgGDETV`/`AgGDETU`.
+ * @param[in] Title  Detector title.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSDIG0(CSET, CDET)
+ * @brief Prepare the dense-format digi output bank for a set/detector.
+ * @param[in] CSET  4-character set name.
+ * @param[in] CDET  4-character detector name.
+ * @return 0 on success, negative on error.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSDIG1(LTRA, NUMBV, DIGI)
+ * @brief Pack one digi into the dense ZEBRA bank for the current set/detector.
+ * @param[in] LTRA   Track number that produced this digi.
+ * @param[in] NUMBV  Volume-number array identifying the physical cell.
+ * @param[in] DIGI   Real array of digi values.
+ * @return 0 on success, negative on error.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGDETV(Cdet, JDU)
+ * @brief Walk the GEANT volume tree to build the NAMESV/NBITSV path descriptor for a sensitive detector.
+ * @param[in] Cdet  4-character detector name.
+ * @param[in] JDU   ZEBRA link to the DETU bank.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGDETU(Iset, Idet, Jdu, IPRIN)
+ * @brief Compute Nbit/Origin/Factor encoding parameters and fill DET/DETH/DETD banks.
+ * @param[in] Iset  Set index.
+ * @param[in] Idet  Detector index within the set.
+ * @param[in] Jdu   ZEBRA link to the DETU bank.
+ * @param[in] IPRIN Print verbosity level.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGFDIM(Iax, Cdet, Cl0, Ch0, dens)
+ * @brief Return the geometric extent of a sensitive volume along axis `Iax`.
+ * @param[in]  Iax   Axis code (1–8: X,Y,Z,R,RR,PHI,THETA,ETA).
+ * @param[in]  Cdet  4-character detector name.
+ * @param[out] Cl0   Minimum coordinate value found.
+ * @param[out] Ch0   Maximum coordinate value found.
+ * @param[out] dens  Material density at the sensitive volume.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGFLIM(CHit, Cdet, CLo, CHi, Ifun)
+ * @brief Set automatic hit limits from GEANT volume dimensions for hit field `CHit`.
+ * @param[in]    CHit  4-character hit field name.
+ * @param[in]    Cdet  4-character detector name.
+ * @param[inout] CLo   Lower limit (filled if == Magic).
+ * @param[inout] CHi   Upper limit (filled if == Magic).
+ * @param[in]    Ifun  Hit field function code.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGETDIG(JD, JJ, NBV, DIGI)
+ * @brief Unpack one hit/digi word from the dense ZEBRA bank into a real array.
+ * @param[in]  JD    Link to the SEJD bank.
+ * @param[in]  JJ    Link to the hit/digi entry.
+ * @param[out] NBV   Volume-number array (cell address).
+ * @param[out] DIGI  Unpacked digi values.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgKEEPS(Request, Cdest, Idoc)
+ * @brief STRUCTURES command: generate language-independent include files from DETM data structures.
+ * @param[in] Request  REBANK path (default root DETM).
+ * @param[in] Cdest    File extension or DUI directory for output.
+ * @param[in] Idoc     1 if only one structure is requested, 0 otherwise.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Hit processing                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgGHIT(ic)
+ * @brief Compute one hit quantity from the current GEANT step.
+ * @param[in] ic  Hit field code (1=X, 2=Y, 3=Z, 4=R, 5=RR, 6=PHI, …, 30=rese).
+ * @return Hit value, or -9999 if `ic` is out of range.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGSTEP(Iret)
+ * @brief Generic `GUSTEP`: scan all sensitive detectors and auto-fill hit banks.
+ * @param[out] Iret  Return code.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AGHITget(mtra, xxx)
+ * @brief Sequential hit iterator: convert the next packed hit to generic floating-point form.
+ * @param[in]  mtra  ≤0 = iterate detector elements; =1 = start per-track loop; >1 = continue.
+ * @param[out] xxx   4-element array with hit coordinates.
+ * @return 0 on valid hit, non-zero when exhausted.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AGHITset(Cs, Cd)
+ * @brief Prepare the unpacking map for set `Cs`, detector `Cd`.
+ * @param[in] Cs  4-character set name.
+ * @param[in] Cd  Detector name (may include volume indices).
+ * @return Number of stored hits, or negative on error.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFHIT0(Cset, Cdet)
+ * @brief Outer digitization control: call `AgFDIG0` then `AgSDIG0` for the digi bank.
+ * @param[in] Cset  Set name.
+ * @param[in] Cdet  Detector name.
+ * @return 0 on success.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFHIT1(NHit, LTRA, ISC, HITS)
+ * @brief Outer digitization print-control wrapper around `AgFDIG1`.
+ * @param[in]  NHit  Hit counter (modified in place by `AgFDIG1`).
+ * @param[in]  LTRA  Track number.
+ * @param[in]  ISC   Volume-number array.
+ * @param[in]  HITS  Hit value array.
+ * @return Result of `AgFDIG1`.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFHITa(Cset, Cdet)
+ * @brief Like `AgFHIT0` but skips `AgSDIG0`, allowing additive (accumulated) digits.
+ * @param[in] Cset  Set name.
+ * @param[in] Cdet  Detector name.
+ * @return 0 on success.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFDIG0(Cset, Cdet)
+ * @brief Prepare hit chains per detector element and build the iteration buffer.
+ * @param[in] Cset  Set name (wildcard `*` accepted for `Cdet`).
+ * @param[in] Cdet  Detector name.
+ * @return 0 on success, non-zero if no hits found.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFDIG1(NHit, LTRA, ISC, HITS)
+ * @brief Iterate hit chains: return all hits for the next non-empty detector element.
+ * @param[out] NHit  Number of hits returned.
+ * @param[out] LTRA  Track number of the first contributing track.
+ * @param[out] ISC   Volume-number array (cell address).
+ * @param[out] HITS  Hit value array.
+ * @return 0 when a valid element is found, non-zero when all elements are exhausted.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFDIGI(Cset, Cdet, NVS, LTRA, NBV, DIGI, Iw, Iad)
+ * @brief Return the next digitisation for the physical volume identified by `NVS`.
+ * @param[in]  Cset  Set name.
+ * @param[in]  Cdet  Detector name.
+ * @param[in]  NVS   Volume-number list (path); ignored if NVS(1)<0.
+ * @param[out] LTRA  Track number that produced this digi.
+ * @param[out] NBV   Volume numbers identifying the physical cell.
+ * @param[out] DIGI  Digi values.
+ * @param[out] Iw    Sequential hit number; negative if set/det absent; 0 when done.
+ * @param[out] Iad   Access index.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFDPAR(hits, Chit, FHmin, FHmax, FHbin)
+ * @brief Return user-readable hit-field descriptions (name, min, max, bin width) from the DETU bank.
+ * @param[in]  hits   Hit values (used to select vectorised-hit region).
+ * @param[out] Chit   Array of 4-char hit-field names.
+ * @param[out] FHmin  Array of minimum values.
+ * @param[out] FHmax  Array of maximum values.
+ * @param[out] FHbin  Array of bin widths.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFIPAR(ISH, NPAR, NATT, PAR, ATT, CL, CH)
+ * @brief Fetch shape parameters and attributes for the volume at the current hit.
+ * @param[out] ISH   Shape code.
+ * @param[out] NPAR  Number of shape parameters.
+ * @param[out] NATT  Number of attributes.
+ * @param[out] PAR   Shape parameters.
+ * @param[out] ATT   Attributes.
+ * @param[out] CL    Lower volume limits (6 entries).
+ * @param[out] CH    Upper volume limits (6 entries).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgPHITS(CSET, CDET)
+ * @brief Print a GEANT hit summary in ATLAS dense format.
+ * @param[in] CSET  Set name (wildcard `*` selects all).
+ * @param[in] CDET  Detector name (wildcard `*` selects all).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgPDIGI(CSET, CDET)
+ * @brief Print GEANT hits or digi contents for a set/detector pair.
+ * @param[in] CSET  Set name.
+ * @param[in] CDET  Detector name.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn GDHITS(IUSET, IUDET, ITRS, ISYMB, SSYMB)
+ * @brief Draw hit points of track `ITRS` in detector `IUDET` of set `IUSET`.
+ * @param[in] IUSET  Set identifier.
+ * @param[in] IUDET  Detector identifier.
+ * @param[in] ITRS   Track number (-1 = all tracks).
+ * @param[in] ISYMB  Symbol type (-1=hardware char, 0=cross, 840–844=HPLOT).
+ * @param[in] SSYMB  Symbol size in cm.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn GFDIG1(IUSET, IUDET, NTDIM, NVS, LTRA, NTRA, NBV, KDIGI, Iw, Iacce)
+ * @brief Standard GEANT-compatible digi retrieval for a given volume path.
+ * @param[in]  IUSET  Set identifier.
+ * @param[in]  IUDET  Detector identifier.
+ * @param[in]  NTDIM  Maximum number of associated tracks.
+ * @param[in]  NVS    Volume-number list (path).
+ * @param[out] LTRA   Array of contributing track numbers.
+ * @param[out] NTRA   Total number of contributing tracks.
+ * @param[out] NBV    Volume numbers of the physical cell.
+ * @param[out] KDIGI  Digi values.
+ * @param[out] Iw     Hit sequential number; 0 when done.
+ * @param[out] Iacce  Access index.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Physics                                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgPHYSI()
+ * @brief Re-run GEANT cross-section initialisation; drop stale MUEL/MUMU banks first.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgPHYSCOR()
+ * @brief Propagate global CUTS and PROCESS flag values into all tracking media.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgPMATER(a, b)
+ * @brief Plot per-material cross-section ratios using HBOOK histograms.
+ * @param[in] a  Lower kinematic argument.
+ * @param[in] b  Upper kinematic argument.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Documentation banks                                                  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgDOCUM(Module, MTitle, Author, Created, Btit, Bank, Bpath, num, Lb, Map, Names, Comment, Par, LL, LL1, Link, Flag)
+ * @brief Store a ZEBRA bank in DETM/RECB together with a DZDOC documentation bank (FILL processor).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDOCUME(Module, MTitle, Author, Created, Btit, Bank, Bpath, num, Lb, Map, Names, Comment, Par, LL, LL1, Link, Flag)
+ * @brief Close a bank in the database.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDOCBA(Link, Bank, Tit, au, ve, io, NL, ND, Cvar, Comment, i)
+ * @brief Fill a DZDOC documentation bank with author, version, and variable descriptions.
+ * @param[in]  Link     ZEBRA link to the documentation bank.
+ * @param[in]  Bank     4-character bank name.
+ * @param[in]  Tit      Title string.
+ * @param[in]  au       Author string.
+ * @param[in]  ve       Version string.
+ * @param[in]  io       I/O flag string.
+ * @param[in]  NL       Number of links.
+ * @param[in]  ND       Array: (Ndata, dim1, dim2).
+ * @param[in]  Cvar     Variable names array.
+ * @param[in]  Comment  Comment strings array.
+ * @param[out] i        Success flag (should be 0).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDOCRD(Link, Cf, Ckey, N, ioff, L)
+ * @brief Find a record with content `Ckey` in field `Cf` of a documentation bank.
+ * @param[in]  Link  ZEBRA link to the documentation bank.
+ * @param[in]  Cf    Field type code (2-char: `au`, `ve`, `nd`, etc.).
+ * @param[in]  Ckey  Key string to match.
+ * @param[out] N     Record number if found; number of scanned records otherwise.
+ * @param[out] ioff  Offset of the record in the bank.
+ * @param[out] L     Length of the record text.
+ * @return 0 on success, -1 if not found.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDOCWR(Link, Cf, I1, I2, TEXT)
+ * @brief Insert a new record at the end of field `Cf` in a documentation bank.
+ * @param[in] Link  ZEBRA link to the documentation bank.
+ * @param[in] Cf    Field type code.
+ * @param[in] I1    Integer word 1.
+ * @param[in] I2    Integer word 2.
+ * @param[in] TEXT  Text string to insert.
+ * @return 0 on success, negative on error.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agdocline(L, Iprin, name, comment)
+ * @brief Retrieve the comment string for variable `name` from a documentation bank at link `L`.
+ * @param[in]  L        ZEBRA link to the bank.
+ * @param[in]  Iprin    Print verbosity.
+ * @param[in]  name     Variable name (8 characters).
+ * @param[out] comment  Comment string.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agdprina(Iprin, Lu, L, Lev, Iwr, Kw, Idl, upper)
+ * @brief Generate compiler-readable structure include files (`.def`, `.idl`, or in-memory DUI).
+ * @param[in] Iprin  Print verbosity.
+ * @param[in] Lu     Output logical unit.
+ * @param[in] L      ZEBRA link to the bank.
+ * @param[in] Lev    Nesting level.
+ * @param[in] Iwr    Output type: 0=global, 1=subsystem, 2=separate structs.
+ * @param[in] Kw     Endianness flag (0=swap, 1=native).
+ * @param[in] Idl    IDL format flag.
+ * @param[in] upper  Upper-case flag.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDUMP(CpathI, NUM, Chopt)
+ * @brief Dump a DETM subtree below path `CpathI` using DZDOC.
+ * @param[in] CpathI  DETM path.
+ * @param[in] NUM     Array of word counts (array of 1s if NUM(1)==0).
+ * @param[in] Chopt   Options: F=file, C=values only, U=undocumented, 1=skip large banks, S=SGML, H=HTML.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDLINK(Module, Bank, Link, LK)
+ * @brief Register a dynamic ZEBRA bank link in `/AGCDLINK/` for run-time access.
+ * @param[in]    Module  Module name.
+ * @param[in]    Bank    Bank name.
+ * @param[inout] Link    ZEBRA link variable (allocated if < 0).
+ * @param[in]    LK      Link kind.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDFORM(Names, map, LL1, LL, Cformo, Cforma)
+ * @brief Encode a bank layout map into ZEBRA format strings.
+ * @param[in]  Names   Array of variable names.
+ * @param[in]  map     2×LL1 array of (multiplicity, dimension) pairs.
+ * @param[in]  LL1     Number of variables.
+ * @param[in]  LL      Total bank length.
+ * @param[out] Cformo  Old-style format string.
+ * @param[out] Cforma  New-style format string.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agreform(format, num, type)
+ * @brief Parse a ZEBRA format string: advance `num` by the next field's count and set `type`.
+ * @param[in]    format  ZEBRA format string (e.g. `3F`, `2I`, `-H`).
+ * @param[inout] num     Cumulative word count.
+ * @param[out]   type    Field type string: `real`, `int`, or `char`.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDTIT(MTitle, Tshort)
+ * @brief Strip trivial words (THIS, IS, THE, GEOMETRY, …) from a module title.
+ * @param[in]  MTitle  Full module title.
+ * @param[out] Tshort  Compacted title.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDATADR(Temp, I1, I2, L)
+ * @brief Identify address fields (name=) vs data fields in an FFREAD buffer.
+ * @param[in]    Temp  FFREAD real buffer.
+ * @param[inout] I1    Start of current address field.
+ * @param[inout] I2    End of current address field.
+ * @param[in]    L     Buffer length.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDATCAR(Bank, Name, Value, names, map, LL1, vars, LL, Buf, Lbuf)
+ * @brief Apply datacard values from an FFREAD buffer to the named parameter bank.
+ * @param[in]    Bank    4-character bank selector name.
+ * @param[in]    Name    Variable name.
+ * @param[inout] Value   Selector value.
+ * @param[in]    names   Array of variable names.
+ * @param[in]    map     Layout map.
+ * @param[in]    LL1     Number of variables.
+ * @param[inout] vars    Variable value array.
+ * @param[in]    LL      Length of `vars`.
+ * @param[in]    Buf     FFREAD buffer.
+ * @param[in]    Lbuf    Buffer length.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Module lifecycle                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSBEGM()
+ * @brief Open a geometry or digitisation module; set up DETM links and AGE state.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSENDM()
+ * @brief Close the current module; optionally show documentation banks and draw the detector.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSRESET()
+ * @brief Reset the WORK2 area before each processor call so updated parameters take effect.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgCHECK()
+ * @brief Detect and repair an improperly closed GEANT geometry by calling `GGCLOS` if GPAR is bad.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgGCLOS()
+ * @brief After geometry definition: walk all sensitive detectors and fill hit structures.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgENDFILL()
+ * @brief Stub end-of-fill entry point (no-op).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AsBDETE(Cdet, ID)
+ * @brief Register a sub-detector `Cdet` in the DETM system description, assigning it `ID`.
+ * @param[in] Cdet  Detector name or `flag` prefix for default flag changes.
+ * @param[in] ID    Detector index or flag value.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgZINI()
+ * @brief Initialise ZEBRA link areas: `SCLINK`, `MAPP`, `GPAR`, and `GPA2`.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Volume navigation                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgFPATH(ISC)
+ * @brief Build the GEANT tracking path to the sensitive-volume element identified by `ISC`.
+ * @param[in] ISC  Volume-number array (0 in a position means the last copy).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agfpara(ish, npar, par)
+ * @brief Return shape code and parameters of the volume at the current `AgFPATH` level.
+ * @param[out] ish   Shape code.
+ * @param[out] npar  Number of parameters.
+ * @param[out] par   Parameter array.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn aGFVOLU(Ivol, Cvol, Cshap, numed, par, npar)
+ * @brief Wrapper around `GFVOLU`: extract name, shape, medium, and parameters of volume `Ivol`.
+ * @param[in]  Ivol   Volume index.
+ * @param[out] Cvol   4-character volume name.
+ * @param[out] Cshap  4-character shape name.
+ * @param[out] numed  Medium number.
+ * @param[out] par    Shape parameters.
+ * @param[out] npar   Number of shape parameters.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgFSERIAL(cname)
+ * @brief Return the SERIAL attribute of the first volume in the current path matching `cname`.
+ * @param[in] cname  Volume name (may end with `*` as a prefix wildcard).
+ * @return SERIAL attribute value, or -1 if not found.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgEXIST(Ctest)
+ * @brief Return the GEANT volume number of `Ctest`, or 0 if it does not exist.
+ * @param[in] Ctest  4-character volume name to look up.
+ * @return Volume index, or 0 if absent.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agvoluma(node, vol, pos, mot, who, copy, lpar, npar, nick, name)
+ * @brief Iterate the GEANT volume tree; return name, copy number, parameters, and mother info.
+ * @param[in]  node  Iterator handle (0 = start; negative = starting volume number).
+ * @param[out] vol   Volume name (4 char).
+ * @param[out] pos   Position vector (3 reals).
+ * @param[out] mot   Mother volume name (4 char).
+ * @param[out] who   Volume number in JVOLUM bank.
+ * @param[out] copy  Copy number.
+ * @param[out] lpar  ZEBRA link to parent.
+ * @param[out] npar  Number of shape parameters.
+ * @param[out] nick  Nick-name (4 char).
+ * @param[out] name  Generic name (4 char).
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSNAME(Volume, Ign, CNick)
+ * @brief Generate a unique 4-character nick-name for instance `(Volume, Ign)`.
+ * @param[in]  Volume  4-character generic volume name.
+ * @param[in]  Ign     Instance counter (0–1368).
+ * @param[out] CNick   Resulting nick-name.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Kinematic secondaries                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSSECOND()
+ * @brief Default secondary handler: put secondaries onto JSTAK; write shower vertices in new media.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgUSECOND()
+ * @brief Apply user-defined kinematic cuts (mechanism, Rmax, Zmax, Eparent, Esecond) from DETP TRAC card.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSKING()
+ * @brief Save the current GEANT stack track in the KINE bank before its first hit.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSTRACE()
+ * @brief Set conditions for storing MC particle trajectories in the KINU bank (from DETP TRAC card).
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Push/pop stack                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSPUSH()
+ * @brief Push the AGE nesting stack at start-of-block; inherit default attributes and parent volume.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSPOPB()
+ * @brief Pop the AGE nesting stack at end-of-block; close hit structure at the upper level.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Flags                                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn AgSFLAG(CflagI, Iflag)
+ * @brief Set an AGE runtime flag.
+ * @param[in] CflagI  Flag name: `PRIN`, `GRAP`, `HIST`, `GEOM`, `MFLD`, `DEBU`, or `SIMU`.
+ * @param[in] Iflag   New flag value.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgPFLAG(Cdet, Stage)
+ * @brief Return the SLUG print-control flag for detector `Cdet` at processing stage `Stage`.
+ * @param[in] Cdet   4-character detector name.
+ * @param[in] Stage  Processing stage name (e.g. `DIGI`, `RECO`).
+ * @return Flag value, or -1 if the detector does not exist.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgAUTO(IAUTO)
+ * @brief Set the GEANT `IGAUTO` flag (interactive-mode workaround).
+ * @param[in] IAUTO  Desired value of `IGAUTO`.
+ * @ingroup AtGeant
+ */
+
+/* ------------------------------------------------------------------ */
+/* Auxiliary I/O and utilities                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @fn ARZOUT(Idiv, Lo, CCKey, IC, opt)
+ * @brief Extended `RZOUT`: check bank/key consistency and skip write if bank is unchanged.
+ * @param[in] Idiv   ZEBRA division index.
+ * @param[in] Lo     ZEBRA link to the bank.
+ * @param[in] CCKey  RZ cycle key.
+ * @param[in] IC     RZ cycle counter.
+ * @param[in] opt    RZ options string.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn ARZUPDA()
+ * @brief Ensure the auxiliary RZ directory is not left as the default I/O directory.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn ARFROMC(Cvar)
+ * @brief Convert a 4-character token to a packed real number.
+ * @param[in] Cvar  4-character string.
+ * @return Real encoding of the token.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn ACFROMR(R)
+ * @brief Convert a packed real number back to a 4-character token.
+ * @param[in] R  Packed real value.
+ * @return 4-character string.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgT2A(t)
+ * @brief Convert a tangent value to a pseudo-angle in degrees.
+ * @param[inout] t  Input tangent; replaced by the angle in degrees.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgXY2RF(x, y)
+ * @brief Convert Cartesian (x,y) to (θ,φ) in degrees (ATAN-based).
+ * @param[inout] x  Input x; replaced by θ.
+ * @param[inout] y  Input y; replaced by φ.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDROP(Title)
+ * @brief Drop ZEBRA data structures by a type code character.
+ * @param[in] Title  Type code: `G`=RUNG, `P`=DRAW/PART, `A`=MATE, `M`=TMED, `V`=ROTM+VOLUM, `*`=ALL.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgDROPDIG(Cset, Cdet)
+ * @brief Drop hit and digi banks for a given set/detector.
+ * @param[in] Cset  Set name.
+ * @param[in] Cdet  Detector name.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn AgSSTEP(ext)
+ * @brief Store the address of user step routine `ext` in the DETM bank of the current module.
+ * @param[in] ext  External user step subroutine.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn agfpartic(link, num)
+ * @brief Return the ZEBRA link and particle count from the GENT/GENP event structure.
+ * @param[out] link  ZEBRA link to the first particle bank.
+ * @param[out] num   Number of particles.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn getdynbank(IDYN, IADR)
+ * @brief Return the memory address of dynamic bank `IDYN` from the `LkArP3` link area.
+ * @param[in]  IDYN  Dynamic bank index.
+ * @param[out] IADR  Memory address of the bank data.
+ * @ingroup AtGeant
+ */
+
+/**
+ * @fn assert(l, line, file)
+ * @brief Fortran assertion: abort with line/file diagnostic if logical `l` is `.FALSE.`
+ * @param[in] l     Logical condition that must be true.
+ * @param[in] line  Source line number.
+ * @param[in] file  Source file name.
+ * @ingroup AtGeant
+ */

@@ -1,0 +1,472 @@
+/**
+ * @defgroup atmain atmain — Main steering and GEANT user-hook layer
+ * @{
+ * @brief Top-level steering layer of STARSIM: program entry, KUIP/GEANT
+ *        initialisation, all thirteen GEANT3 user-hook callbacks, random
+ *        numbers, error handling, flag queries, and PAW/Motif glue.
+ *
+ * @details
+ * The `atmain` directory owns the program entry point (AGMAIN), initialises
+ * the KUIP command interface and GEANT, and implements every standard GEANT3
+ * user callback (`GUxxxx`).  Each callback consults a dynamic-dispatch table
+ * (via `CsADDR`/`CsJCAL`) so that user geometry modules can register override
+ * routines without relinking.
+ *
+ * The directory also provides:
+ * - The RANLUX/RANECU/RANMAR random-number wrappers (`GRNDM`, `GRNDMQ`, …)
+ * - Error and abnormal-exit handlers (`STERROR`, `TRACEQ`, `ONFAULT`, `ZABEND`)
+ * - Simulation flag queries (`IagFlag`, `ISLFLAG`, `IS_FLAG`)
+ * - File-search utilities (`AfNAME`, `AfEXIST`)
+ * - Token-file management for parallel batch production (`ATOKENS`)
+ * - HBOOK histogram helper (`HBOOK`)
+ * - PAW/KUIP event-loop entry (`AgPAWQ`)
+ * - Disabled MySQL/Zebra interface stubs (`dbuser.age`, `dblib.cxx`)
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `agmain.age` | Program entry (`AGMAIN`), session init (`AGINIT`), shutdown (`AGEXIT`) |
+ * | `agxinit.F` | Register `AGUSER` KUIP menu, print AGI banner |
+ * | `agxuser.age` | Implement all `AGUSER` KUIP commands (`DETP`, `GEXEC`, `MODE`, …) |
+ * | `uginit.age` | GEANT initialisation sequence |
+ * | `uglast.age` | GEANT finalisation: write output, save histograms |
+ * | `gustep.age` | GEANT per-step user hook |
+ * | `gukine.age` | GEANT per-track kinematics hook |
+ * | `gutrak.age` | GEANT per-track tracking control |
+ * | `gutrev.age` | GEANT per-event tracking control |
+ * | `gudcay.age` | GEANT particle-decay hook |
+ * | `gudigi.age` | GEANT digitisation hook |
+ * | `guout.age` | GEANT output hook (`GUOUT` shell + `GUOUTE`) |
+ * | `gufld.age` | GEANT magnetic-field hook |
+ * | `guhadr.age` | GEANT hadronic-interaction hook |
+ * | `guphad.age` | GEANT hadronic-initialisation hook |
+ * | `guskip.age` | GEANT track-skip hook |
+ * | `guinti.F` | GSUSER menu initialisation |
+ * | `hbook.age` | Unified 1-D/2-D histogram booking |
+ * | `sterror.age` | `StERROR`, `StWARNING`, `StINFO` message printers |
+ * | `traceq.age` | Abnormal-situation dispatcher |
+ * | `onfault.age` | HP-UX FP-trap control |
+ * | `zabend.age` | ZEBRA fatal-error handler |
+ * | `rndm.age` | Multi-generator random-number interface |
+ * | `rndset.age` | Save/restore random-number state to file |
+ * | `srndmc.age` | Test for random-state change |
+ * | `iagflag.age` | Named simulation flag query |
+ * | `islflag.age` | Detector flag query by name |
+ * | `is_flag.age` | Detector flag query by index |
+ * | `agversion.age` | Print AGI version banner |
+ * | `agrunnum.age` | Automatic unique run-number assignment |
+ * | `afname.age` | Locate auxiliary files in CWD or executable directory |
+ * | `afexist.age` | Test file existence and resolve symlinks |
+ * | `atokens.age` | Token-file management for batch production |
+ * | `dbuser.age` | *(disabled)* KUIP `DBSET` MySQL credential handler |
+ * | `dblib.cxx` | *(disabled)* Low-level C++ MySQL/ZEBRA bridge |
+ * | `agmotif.F` | Motif interface stubs |
+ * | `agpawq.age` | Start interactive PAW/KUIP event loop |
+ * | `filtAction.cxx` | C++ event-filter action mechanism |
+ * | `pyrpyth.F` | Pythia RLU → GRNDM bridge |
+ *
+ * @}
+ */
+
+/* ========================================================================
+   Program entry and session management
+   ======================================================================== */
+
+/**
+ * @fn AGMAIN()
+ * @brief Top-level program entry point.
+ * @details Calls AGINIT, AGPAWQ, and AGEXIT in sequence.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AGINIT()
+ * @brief Initialise the KUIP interface and GEANT.
+ * @details Parses command-line flags (-h, -b, -g), sizes GEANT/PAW memory,
+ *          calls UGINIT, registers commands, and enters the KUIP loop.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AGEXIT()
+ * @brief Orderly shutdown of the STARSIM session.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AGXINIT()
+ * @brief Register the AGUSER KUIP command tree and print the AGI banner.
+ * @details Called from UGINIT.  Fills the GUID banner array and calls KUCMD.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AGXUSER()
+ * @brief Implement all AGUSER KUIP command actions.
+ * @details Handles DETP, GEXEC, MODE, GFILTER, GPRINT, GTIME, HADR, …
+ * @ingroup atmain
+ */
+
+/* ========================================================================
+   GEANT3 user-hook callbacks
+   ======================================================================== */
+
+/**
+ * @fn UGINIT(C)
+ * @brief GEANT initialisation sequence.
+ * @param[in] C  Single-character mode flag (passed by GEANT).
+ * @details Calls GINIT, GZINIT, AGZINI, GPART, GMATE, then AGXINIT.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn UGLAST()
+ * @brief GEANT finalisation.
+ * @details Writes the output ZEBRA file, saves HBOOK histograms, prints
+ *          memory and event statistics, calls filter Finish().
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUSTEP()
+ * @brief User hook called by GEANT after each tracking step.
+ * @details Calls AgGSTEP for standard hit processing, AgSMATER for geantino
+ *          runs, AgSTRACE for intermediate-point storage, handles secondary
+ *          particles, and dispatches to user-registered AgUstep callback.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUKINE()
+ * @brief User hook to read or generate primary-track kinematics.
+ * @details Delegates to AgZKINE; resets NLEVEL and IPAOLD.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUTRAK()
+ * @brief User hook to control tracking of one track.
+ * @details Sets up ZEBRA bank lengths, optionally applies U-decay path
+ *          length for a selected particle type, dispatches to AGUTRAK
+ *          callback, then calls GTRACK.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUTREV()
+ * @brief User hook to control tracking of one event.
+ * @details Sets per-detector print levels, dispatches to AGUTREV callback,
+ *          steers simulation vs. read mode based on IKINE and CrunType.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUDCAY()
+ * @brief User hook for particle decay.
+ * @details Dispatches to user-registered AGUDCAY callback.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUDIGI()
+ * @brief User hook for digitisation.
+ * @details Loops over all detector/set combinations, calls `<DET>DIG` and
+ *          AGUDIGI callbacks, then calls AgPUTRIM.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUOUT()
+ * @brief User output hook (no-op shell).
+ * @details All real output logic is in GUOUTE.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUOUTE(IENT)
+ * @brief Write the ZEBRA event record and manage output streams.
+ * @param[in] IENT  Entry index: 1 = normal event, 2 = end-of-run.
+ * @details Opens the output ZEBRA file on first call, writes the event bank
+ *          via AgZwrite, calls user AGUOUT callback, and fills the
+ *          Direct-Access Table with vertex-Z.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUFLD(VECT, FIELD)
+ * @brief User hook to return the magnetic field at a point.
+ * @param[in]  VECT(3)   Tracking position (cm).
+ * @param[out] FIELD(3)  Magnetic field components (kG).
+ * @details Dispatches to user-registered AGUFLD callback; returns zero
+ *          if no callback is registered.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUHADR()
+ * @brief User hook to select and invoke a hadronic-interaction package.
+ * @details Selects GHEISH (IHADR≤3), FLUKA (IHADR=4), FLUKA+Mikap (IHADR=5),
+ *          or GCALOR (IHADR=6) based on the IHADR flag; dispatches to AGUHADR.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUPHAD()
+ * @brief User hook to initialise the selected hadronic package.
+ * @details Calls GPGHEI/FLDIST/GFMDIS/CALSIG according to IHADR; dispatches
+ *          to AGUPHAD callback.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GUSKIP(ISKIP)
+ * @brief User hook to skip unwanted tracks.
+ * @param[out] ISKIP  Set to -1 to skip the current track.
+ * @details Sets ISKIP=-1 for tracks that already have a produced vertex
+ *          (i.e. non-final-state particles); dispatches to AGUSKIP callback.
+ * @ingroup atmain
+ */
+
+/* ========================================================================
+   Random number interface
+   ======================================================================== */
+
+/**
+ * @fn GRNDM(RVEC, LEN)
+ * @brief Fill a vector with uniform [0,1) random numbers.
+ * @param[out] RVEC(LEN)  Output random-number vector.
+ * @param[in]  LEN         Number of values requested.
+ * @details Selects RANLUX, RANECU, or Pythia RLU depending on initialisation.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn GRNDMQ(I1, I2, ISEQ, CMD)
+ * @brief Get or set the random-number generator seeds.
+ * @param[in,out] I1    First seed.
+ * @param[in,out] I2    Second seed.
+ * @param[in]     ISEQ  Sequence number.
+ * @param[in]     CMD   Command string: 'S' = set, 'G' = get.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn RANLUX(RVEC, LEN)
+ * @brief Fill RVEC with LEN RANLUX random numbers.
+ * @param[out] RVEC(LEN)  Output vector.
+ * @param[in]  LEN         Number of values.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn RANMAR(RVEC, LEN)
+ * @brief Fill RVEC with LEN RANMAR random numbers.
+ * @param[out] RVEC(LEN)  Output vector.
+ * @param[in]  LEN         Number of values.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn NORMAL(A)
+ * @brief Return a single Gaussian random deviate.
+ * @param[out] A  Gaussian random number (mean=0, sigma=1).
+ * @ingroup atmain
+ */
+
+/**
+ * @fn RNPSSN(amu, N, ier)
+ * @brief Sample a Poisson-distributed integer.
+ * @param[in]  amu  Poisson mean.
+ * @param[out] N    Sampled value.
+ * @param[out] ier  Error code (0 = OK).
+ * @ingroup atmain
+ */
+
+/**
+ * @fn RNDSET(ir, irnd1, irnd2)
+ * @brief Save or restore the RANLUX state to/from a named file.
+ * @param[in] ir     Run index used to construct the file name.
+ * @param[in] irnd1  First seed component.
+ * @param[in] irnd2  Second seed component.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn SRNDMC(I1, I2)
+ * @brief Test whether the GRNDM state has changed since the last call.
+ * @param[in,out] I1  First seed (updated on exit).
+ * @param[in,out] I2  Second seed (updated on exit).
+ * @return `.TRUE.` if the state is unchanged; `.FALSE.` if it has advanced.
+ * @ingroup atmain
+ */
+
+/* ========================================================================
+   Error handling
+   ======================================================================== */
+
+/**
+ * @fn STERROR(text)
+ * @brief Print a StERROR diagnostic message.
+ * @param[in] text  Message string.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn STWARNING(text)
+ * @brief Print a StWARNING diagnostic message.
+ * @param[in] text  Message string.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn STINFO(text)
+ * @brief Print a StINFO informational message.
+ * @param[in] text  Message string.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn TRACEQ()
+ * @brief Dispatcher for arithmetic or ZEBRA abnormal situations.
+ * @details Prints CWD, last KUIP command, and KUIP call stack;
+ *          calls MZDUMP / TRACEQQ if available.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ON_FAULT(c, nn, name)
+ * @brief Control HP-UX floating-point exception handlers.
+ * @param[in] c    Flag string selecting which exceptions to arm (H=invalid,
+ *                 O=overflow, U=underflow, X=inexact, D=div-by-zero, *=all).
+ * @param[in] nn   Number of exceptions to allow before aborting.
+ * @param[in] name Name of a FORTRAN subroutine to call on exception (optional).
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ZABEND(NQCASE, LINK)
+ * @brief ZEBRA fatal-error handler.
+ * @param[in] NQCASE  ZEBRA error case code.
+ * @param[in] LINK    ZEBRA link associated with the error.
+ * @details Prints the ZEBRA bank chain around the failing link and suggests
+ *          increasing GCBANK size with the -g startup flag.
+ * @ingroup atmain
+ */
+
+/* ========================================================================
+   Flag queries
+   ======================================================================== */
+
+/**
+ * @fn IagFlag(CREQ)
+ * @brief Query a named simulation flag.
+ * @param[in] CREQ  Flag name (case-insensitive): @c 'skip' or @c 'batch'.
+ * @return Integer flag value; -1 if the flag name is unknown.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ISLFLAG(CHDET, CHFLAG)
+ * @brief Look up a named flag for a detector sub-system.
+ * @param[in] CHDET   4-character detector name.
+ * @param[in] CHFLAG  4-character flag name.
+ * @return Flag value; -1 if detector not found; -2 if flag not found.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn IS_FLAG(CHDET, IFLAG)
+ * @brief Look up a detector flag by integer index.
+ * @param[in] CHDET  4-character detector name.
+ * @param[in] IFLAG  Integer flag index (1-based).
+ * @return Flag value; -1 if detector not found.
+ * @ingroup atmain
+ */
+
+/* ========================================================================
+   Utilities
+   ======================================================================== */
+
+/**
+ * @fn AGVERSION()
+ * @brief Print the AGI version banner with build date.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AgRUNNUM(CRR)
+ * @brief Assign a unique run number via a shared log file and process ID.
+ * @param[in,out] CRR  8-character run-number string (output).
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AfNAME(def, exten)
+ * @brief Locate an auxiliary file in CWD or the executable's directory.
+ * @param[in,out] def    Default file path; updated to found path on success.
+ * @param[in]     exten  Extension or full filename to search for.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AfEXIST(File)
+ * @brief Test whether a file exists (following symlinks).
+ * @param[in,out] File  Filename (updated to resolved target for symlinks).
+ * @return `.TRUE.` if the file exists and is a regular file.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ATOKENS(Atoken)
+ * @brief Manage token files for parallel/batch production.
+ * @param[in,out] Atoken(2)  Token number array; initialised on first call.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ATOKSPECIAL(Ieven)
+ * @brief Mark the current token as special (unfinished).
+ * @param[in] Ieven  Event number.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ATOKLOG(Ieven)
+ * @brief Write a progress log line into the current token file.
+ * @param[in] Ieven  Event number.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ATOKEND(Atoken)
+ * @brief Close and finalise the current token file.
+ * @param[in] Atoken(2)  Token number array.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn ACNUMBER(Num, cnum)
+ * @brief Convert an integer to a blank-stripped character string.
+ * @param[in]  Num   Integer value.
+ * @param[out] cnum  Output character string.
+ * @ingroup atmain
+ */
+
+/**
+ * @fn HBOOK(IH, T, nx, ax, bx, ny, ay, by, nw)
+ * @brief Unified 1-D or 2-D HBOOK histogram booking.
+ * @param[in] IH          Histogram identifier.
+ * @param[in] T           Title string.
+ * @param[in] nx          Number of x bins.
+ * @param[in] ax,bx       x axis range.
+ * @param[in] ny          Number of y bins (0 for 1-D).
+ * @param[in] ay,by       y axis range (2-D only).
+ * @param[in] nw          Extra word count (2-D only).
+ * @ingroup atmain
+ */
+
+/**
+ * @fn AgPAWQ()
+ * @brief Start the interactive PAW++ or PAW/KUIP event loop.
+ * @ingroup atmain
+ */

@@ -1,0 +1,200 @@
+/**
+ * @defgroup ATLROOT atlroot — ROOT Interface for STARSIM
+ * @{
+ * @brief ROOT TCanvas/TGeometry display and ZEBRA→ROOT geometry conversion for STARSIM.
+ *
+ * @details
+ * The `atlroot` package bridges the STARSIM/GEANT3 simulation framework and the ROOT
+ * data-analysis toolkit.  It provides three main capabilities:
+ *
+ * 1. **Geometry visualisation** (`agconvert`): traverses the GEANT3/ZEBRA volume
+ *    tree via the FORTRAN callback `agvoluma_`, creates corresponding ROOT shape
+ *    objects (`TBRIK`, `TTUBE`, `TPCON`, etc.), and assembles them into a `TVolume`
+ *    hierarchy renderable with `TVolumeView`.
+ *
+ * 2. **KUIP↔ROOT command bridge** (`aroot`): wraps a `TRint` application, exposes
+ *    `kuexec()` so KUIP macro commands drive ROOT, and provides FORTRAN entry points
+ *    (`root_`, `audi_`) that run the ROOT event loop or open the AUDI viewer.
+ *
+ * 3. **ROOT event-file reader** (`roread.cxx`): opens a ROOT file with `TFileIter`,
+ *    iterates over `MCEvent` datasets, and unpacks particle/vertex tables into the
+ *    HEPEVT COMMON block for STARSIM consumption.
+ *
+ * A ROOT dictionary (`atlrootDict.cxx`, auto-generated) makes `aroot`, `agconvert`,
+ * `GtHash`, and the global instances `kuexec` and `Ag` visible to CINT/CLING.
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `aroot.h` / `aroot.cxx`             | aroot class and FORTRAN entry points |
+ * | `agconvert.h` / `agconvert.cxx`     | GEANT→ROOT geometry converter |
+ * | `GtHash.h` / `GtHash.cxx`           | Multi-word hash table for geometry lookup |
+ * | `atlroot.age`                        | AGE FORTRAN wrappers (open/read events) |
+ * | `roread.cxx`                         | ROOT file reader, HEPEVT filler |
+ * | `atlrootDict.cxx` / `atlrootDict.h` | ROOT auto-generated dictionary |
+ * | `LinkDef.h`                          | rootcint linkdef directives |
+ *
+ * @}
+ */
+
+/**
+ * @class aroot
+ * @brief Wraps a ROOT TRint application and provides a KUIP command interface.
+ * @details
+ * A single global instance `kuexec` is created at start-up.  The constructor
+ * initialises `gApplication` as a `TRint` if not already present.  `operator()`
+ * and the static `kuexec(command)` both forward to the FORTRAN-level `kuexec_()`.
+ *
+ * FORTRAN entry points defined in `aroot.cxx`:
+ * - `root_()` — run the ROOT interactive event loop (`TApplication::Run`).
+ * - `audi_()` — open the AUDI geometry-viewer canvas with "ag2root" and "ag2view" buttons.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn aroot::aroot()
+ * @brief Default constructor; creates TRint application if gApplication is null.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn aroot::kuexec(const char *command)
+ * @brief Execute a KUIP command string via the FORTRAN entry point kuexec_().
+ * @param[in] command  Null-terminated KUIP command string.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn root_()
+ * @brief FORTRAN-callable: run the ROOT event loop (TApplication::Run(kTRUE)).
+ * @details Updates status labels on the AUDI TCanvas before and after the loop.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn audi_()
+ * @brief FORTRAN-callable: open the AUDI geometry viewer TCanvas with control buttons.
+ * @details Creates a 400×400 TCanvas "c" with "ag2root" and "ag2view" TButton widgets.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @class agconvert
+ * @brief Converts the GEANT3/ZEBRA geometry tree to ROOT TVolume/TGeometry objects.
+ * @details
+ * The single global instance `Ag` (and its C reference `ag`) is created at load time.
+ * The conversion traverses the GEANT volume tree by calling the FORTRAN routine
+ * `agvoluma_` for each volume, creates ROOT shape objects for all supported GEANT
+ * shapes (BOX→TBRIK, TUBE→TTUBE, PCON→TPCON, PARA→TPARA, TRAP→TTRAP, GTRA→TGTRA,
+ * ELTU→TELTU, CONE→TCONE, CONS→TCONS, SPHE→TSPHE, PGON→TPGON, TRD1→TTRD1,
+ * TRD2→TTRD2, CTUB→TCTUB), and assembles them into a `TVolume` daughter hierarchy.
+ * A `GtHash` table maps GEANT volume names to existing ROOT objects to avoid duplicates.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn agconvert::ag2root()
+ * @brief Delete any existing gGeometry and rebuild the full ROOT TVolume tree.
+ * @return Pointer to the top-level TVolume, or nullptr if no geometry is available.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn agconvert::convert()
+ * @brief Recursively traverse the GEANT volume tree and create ROOT TVolume objects.
+ * @return Pointer to the top-level TVolume node.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn agconvert::ag2view(TVolume *tree, Int_t first, Int_t last)
+ * @brief Wrap the TVolume tree in a TVolumeView for 3-D rendering.
+ * @param[in] tree   Root of the TVolume tree (default: result of ag2root()).
+ * @param[in] first  First level to display (default: 3).
+ * @param[in] last   Last level to display (default: 5).
+ * @return Pointer to the created TVolumeView.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn ag2root_()
+ * @brief FORTRAN/CINT-callable wrapper for agconvert::ag2root().
+ * @return TVolume* (as C pointer).
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn ag2view_()
+ * @brief FORTRAN/CINT-callable wrapper for agconvert::ag2view().
+ * @return TVolumeView* (as C pointer).
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @class GtHash
+ * @brief ROOT THashTable extension for multi-word key lookup; used by agconvert.
+ * @details
+ * Keys are arrays of `ULong_t` words (typically a packed GEANT volume name).
+ * Internally uses `GtCradle` objects as hash entries; `TMath::Hash` over the word
+ * array provides the hash value.  `GetPointer` looks up an existing entry;
+ * `SetPointer` registers a new mapping after a successful `GetPointer` call that
+ * returned null.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn GtHash::GetPointer(void *array, Int_t narray)
+ * @brief Look up the user pointer associated with key array[0..narray-1].
+ * @param[in] array   Pointer to narray ULong_t words forming the key.
+ * @param[in] narray  Number of words in the key.
+ * @return User pointer if found, nullptr otherwise.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn GtHash::SetPointer(void *ptr)
+ * @brief Register ptr as the user pointer for the key from the most recent GetPointer call.
+ * @param[in] ptr  Non-null user pointer to associate with the key.
+ * @details Must be called immediately after a GetPointer call that returned nullptr.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn GtHash::GetNParams()
+ * @brief Return the number of words in the most recently queried key.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn GtHash::GetParams()
+ * @brief Return a pointer to the word array of the most recently queried key.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn roopen_(char *FileName, int len)
+ * @brief Open a ROOT event file for reading.
+ * @param[in] FileName  Path to the ROOT file (FORTRAN string, length len).
+ * @param[in] len       Length of FileName.
+ * @return -1 if opened successfully; 0 on failure (zombie TFile).
+ * @details Creates a TFileIter on FileName; also registers RootParticle,
+ *          RootVertex, EventInfoRoot, and RootGenEventProperties typedefs
+ *          in the ROOT interpreter.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn ronext_()
+ * @brief Read the next event from the open ROOT file into the HEPEVT common block.
+ * @return 0 = event read OK; 1 = end of file; -1 = error.
+ * @details Iterates the TFileIter to find the next MCEvent dataset, unpacks
+ *          RootParticle and RootVertex tables, and fills hepevt_/hepevtd_.
+ * @ingroup ATLROOT
+ */
+
+/**
+ * @fn roclose_()
+ * @brief Close the open ROOT event file and free the TFileIter.
+ * @return 0 always.
+ * @ingroup ATLROOT
+ */

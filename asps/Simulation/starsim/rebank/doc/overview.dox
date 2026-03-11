@@ -1,0 +1,264 @@
+/**
+ * @defgroup ReBANK ReBANK — Unix-path ZEBRA bank access library
+ * @{
+ * @brief Unix-like path navigation and allocation of ZEBRA in-memory banks.
+ *
+ * @details
+ * The ReBANK package allows STARSIM code to address ZEBRA bank hierarchies
+ * through Unix-style path strings (e.g. `/DETM/TPC/hits`) paired with an
+ * integer index vector `NVL(*)`.  The core routine `REBANK` parses the path,
+ * traverses structural ZEBRA links, and creates missing intermediate banks
+ * when write access is requested.  Higher-level helpers (`RBGET`, `RBPUT`,
+ * `RBSTORE`, `RBCOPY`) wrap `REBANK` with typed data I/O.
+ *
+ * Bank layouts are registered with `RBDEF` and cached in a sorted lookup
+ * table searched by `RBFIND`, so that `REBANK` can auto-size and auto-format
+ * new banks.  The current working directory can be saved and restored with
+ * `RBPUSHD`/`RBPOPD`.
+ *
+ * Detector-subsystem parameter banks (e.g. `DETP`) hanging off the `DETM`
+ * bank are managed by `ASLDETBA`, `ASLDETN`, `ASLGETBA`, `ASLSETBA`, and
+ * `AgDETP`.
+ *
+ * All shared state lives in COMMON blocks `/RBXBANK/`, `/RBXLIST/`,
+ * `/RBXFORM/` (defined in `atlsim/rbbank.inc`) and `/RBSTACK/` (in
+ * `rbpushd.age`).
+ *
+ * ## Source files
+ * | File | Purpose |
+ * |------|---------|
+ * | `rebank.age`   | Core path navigation and bank allocation |
+ * | `rbget.age`    | Read bank data into user area |
+ * | `rbput.age`    | Write user area data into bank |
+ * | `rbstore.age`  | Copy user array into bank with format registration |
+ * | `rbcopy.age`   | Copy bank contents into user array |
+ * | `rbdef.age`    | Register bank data layout in definition table |
+ * | `rbfind.age`   | Binary-search the bank definition table |
+ * | `rbdrop.age`   | Drop (free) a bank by path |
+ * | `rbcdir.age`   | Change current working directory |
+ * | `rbpushd.age`  | Push directory state onto link stack |
+ * | `rbpopd.age`   | Pop directory state from link stack |
+ * | `agdetp.age`   | Compose DETP commands (new/add) for a detector |
+ * | `asldetba.age` | Create or locate a detector parameter bank |
+ * | `asldetn.age`  | Find detector index by name in DETM |
+ * | `aslgetba.age` | Retrieve parameters from a detector bank |
+ * | `aslsetba.age` | Store parameters into a detector bank |
+ * @}
+ */
+
+/**
+ * @fn REBANK(Cname, NVL, Npar, Link, Ia)
+ * @brief Navigate or create a ZEBRA bank addressed by a Unix-like path.
+ * @param[in]  Cname  Unix-like path string (e.g. `/DETM/TPC/hits`).
+ *                    Components are 4-character ZEBRA bank names separated
+ *                    by `/`.  A leading `/` anchors to a top-level store
+ *                    root (DETM, RECB, HEAD, EVNT, SETS, MAPP); otherwise
+ *                    the search starts from the current directory `LKARP2`.
+ * @param[in]  NVL    Integer index vector.  `NVL(k)` selects the copy number
+ *                    at path level k.  0 means "first free slot" (write) or
+ *                    count request (read).  `BIG` (99999) means any copy.
+ * @param[in]  Npar   If > 0, write access: bank may be created or grown.
+ *                    If < 0, read access: bank must already exist.
+ *                    If 0,   drop/count request.
+ *                    Absolute value gives requested bank length in words;
+ *                    `BIG` triggers auto-sizing via `RBFIND`.
+ * @param[out] Link   ZEBRA link pointer to the target bank (> 0 on success).
+ * @param[out] Ia     Word displacement within the bank for row-by-row access.
+ *                    Negative on read-range error.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn REBANKM(i)
+ * @brief Set the chain-packing mode for `REBANK`.
+ * @param[in] i  IrMode value: < 0 prevents grouping, 0 allows grouping on
+ *               append, > 0 forces aggressive packing.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBGET(Cname, NVL)
+ * @brief Read data from a path-addressed bank into the pre-set user area.
+ * @param[in] Cname  Path string (see REBANK).
+ * @param[in] NVL   Index vector.  If `NVL(last) = 0`, returns element count
+ *                  without copying data.
+ * @return Number of words copied; 0 for count mode; -1 on error.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBPUT(Cname, NVL)
+ * @brief Write data from the pre-set user area into a path-addressed bank.
+ * @param[in] Cname  Path string (see REBANK).
+ * @param[in] NVL   Index vector.  If `NVL(last) = 0`, returns row index
+ *                  rather than word count.
+ * @return Number of words written; -1 on error.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBSTORE(Cname, NVL, Form, Npar, Array)
+ * @brief Copy a user array into a ZEBRA bank, registering its MZFORM format.
+ * @param[in]     Cname  Path string (see REBANK).
+ * @param[in,out] NVL    Index vector.  On return with `NVL(last) = 0`, the
+ *                        next free row index is stored there.
+ * @param[in,out] Form   4-character format name; replaced by its cached index
+ *                        after first registration.
+ * @param[in]     Npar   Number of words to store.
+ * @param[in]     Array  Integer/real array of Npar words.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBCOPY(Cname, NVL, Ndim, Npar, Array)
+ * @brief Return a copy of the bank addressed by path into a user array.
+ * @param[in]  Cname  Path string (see REBANK).
+ * @param[in,out] NVL Index vector.  If `NVL(last) = 0`, stores element count
+ *                     in `NVL(last)` and returns with `Npar = 0`.
+ * @param[in]  Ndim   Maximum words to copy.
+ * @param[out] Npar   Actual words copied; -1 on error.
+ * @param[out] Array  Destination array.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBDEF(Cname, First, Last, Form, Comment)
+ * @brief Register a bank's data layout in the sorted definition table.
+ * @param[in] Cname    4-character bank name.
+ * @param[in] First    Fortran variable marking the start of the data area
+ *                     (passed as an address via LOCF).
+ * @param[in] Last     Fortran variable one past the end of the data area.
+ * @param[in] Form     MZFORM format string (see CERNLIB MZFORM).
+ * @param[in] Comment  Integer comment word stored in the table (informational).
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBFIND
+ * @brief Binary search of the bank definition table for the current bank name.
+ * @details Uses the value of `INAM` (in `/RBXBANK/`) set by `REBANK` before
+ *          the call.  On exit, sets `IADR`, `LENG`, and `IOD` in `/RBXBANK/`.
+ *          If the name is not found, `IADR = 0`, `IOD = 3`, and `LENG = MM`.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBDROP(Cname, NVL)
+ * @brief Drop (free) the ZEBRA bank at the given path and index.
+ * @param[in] Cname  Path string (see REBANK).
+ * @param[in] NVL   Index vector identifying the specific copy to drop.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBCDIR(Cname, NVL)
+ * @brief Change the current working directory to the bank at the given path.
+ * @details Sets `LKARP2` to the link of the resolved bank, so that subsequent
+ *          relative path calls start from that bank.
+ * @param[in] Cname  Path string (see REBANK).
+ * @param[in] NVL   Index vector.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBPUSHD
+ * @brief Push the current directory state onto the link stack.
+ * @details Saves `LKARP1`, `LKARP2`, and `IrbDIV` onto a 20-element stack
+ *          in `/RBSTACK/`.  On first call, registers the stack area with
+ *          ZEBRA via `MZLINK`.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn RBPOPD
+ * @brief Pop directory state from the link stack.
+ * @details Restores `LKARP1`, `LKARP2`, and `IrbDIV` from the top of
+ *          `/RBSTACK/`.  Issues a warning if the stack is empty.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn AgDETP_add(Cpar, p, N)
+ * @brief Append parameter name and values to the current detector's DETP bank.
+ * @param[in] Cpar  Parameter name (up to 4 characters per word, variable length).
+ * @param[in] p     Integer/real array of N parameter values.
+ * @param[in] N     Number of parameter values.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn AgDETP_new(Cpar)
+ * @brief Select a new detector subsystem, dropping its existing DETP bank.
+ * @param[in] Cpar  4-character detector name (converted to upper case).
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn ASLDETBA(CHdet, CBank, Npar, LdetP)
+ * @brief Create or locate a named parameter bank attached to a detector's DETE bank.
+ * @details Locates the detector's `DETE` bank in `DETM`, then finds or creates
+ *          the named sub-bank (e.g. `DETP`) in its structural link area.
+ *          New words are filled with the sentinel value `DUMMY = -787878`.
+ *          `DETP` banks are always placed at structural link 1 (first).
+ * @param[in]  CHdet  4-character detector name.
+ * @param[in]  CBank  4-character bank name (typically starts with `DET`).
+ * @param[in]  Npar   0 = read request (return link only);
+ *                    > 0 = create/rewrite single bank of this many words;
+ *                    < 0 = add new bank in a linear chain.
+ * @param[out] LdetP  ZEBRA link to the bank (> 0 on success).
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn ASLDETN(CHdet, IDET)
+ * @brief Return the link-index of a detector in the DETM bank by name.
+ * @param[in]  CHdet  4-character detector name.
+ * @param[out] IDET   Link index (1-based) in DETM, or ≤ 0 if not found.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn SLDETN(CHdet, IDET)
+ * @brief Alias entry point for ASLDETN.
+ * @param[in]  CHdet  4-character detector name.
+ * @param[out] IDET   Link index in DETM, or ≤ 0 if not found.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn ASLGETBA(CHdet, CBank, NPMAX, Npar, PAR)
+ * @brief Retrieve up to NPMAX words from a detector's named parameter bank.
+ * @details Words equal to the sentinel `DUMMY = -787878` are not copied.
+ *          If `NPMAX < 0`, advances to the next bank in the linear chain.
+ * @param[in]  CHdet  4-character detector name.
+ * @param[in]  CBank  4-character bank name.
+ * @param[in]  NPMAX  Maximum words to return (> 0: first bank; < 0: next bank).
+ * @param[out] Npar   Actual number of words returned.
+ * @param[out] PAR    Integer array receiving the bank contents.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn SLGETBA(CHdet, CBank, NPMAX, Npar, PAR)
+ * @brief Alias entry point for ASLGETBA.
+ * @param[in]  CHdet  4-character detector name.
+ * @param[in]  CBank  4-character bank name.
+ * @param[in]  NPMAX  Maximum words to return.
+ * @param[out] Npar   Actual words returned.
+ * @param[out] PAR    Integer array.
+ * @ingroup ReBANK
+ */
+
+/**
+ * @fn ASLSETBA(CHdet, CBank, NPAR, PAR)
+ * @brief Store NPAR words into a detector's named parameter bank.
+ * @details If the bank's first word equals `DUMMY = -787878` (written by a
+ *          datacard reader before bank definition), only words that are still
+ *          `DUMMY` are overwritten.  Otherwise all words are replaced via
+ *          `UCOPY`.
+ * @param[in] CHdet  4-character detector name.
+ * @param[in] CBank  4-character bank name.
+ * @param[in] NPAR   Number of words to store.
+ * @param[in] PAR    Integer array of NPAR words.
+ * @ingroup ReBANK
+ */

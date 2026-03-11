@@ -1,0 +1,347 @@
+/**
+ * @defgroup DECCC deccc — C/C++ Interface Utilities for FORTRAN
+ * @{
+ * @brief Low-level OS and hardware interface functions called from FORTRAN in STARSIM/COMIS.
+ *
+ * @details
+ * The `deccc` package provides C and C++ glue routines that bridge the gap between
+ * FORTRAN 77 code (in STARSIM / COMIS) and the C runtime environment.  Areas covered:
+ *
+ * - **Pointer / address interop**: `locf_`, `locb_`, `idisp*_`, and the `csvptokn_`/`csvplong`
+ *   token registry allow FORTRAN INTEGER variables to safely hold 64-bit C pointers.
+ * - **Memory allocation**: `memget_`, `memgetf_` wrap `malloc` with FORTRAN calling conventions.
+ * - **Shared-library loading**: `cs_shl_load_`, `cs_get_func_`, `cs_shl_unload_` (Linux/HP-UX),
+ *   and an AIX `dlfcn` emulation (`cs_dlfcn.c`) used by the COMIS SHL path.
+ * - **COMIS type-dispatch callers**: `cscald_`, `cscalr_`, `cscali_` handle ABI differences
+ *   when returning double, float, or int from a dynamically loaded subroutine.
+ * - **Jump harness**: `jumptn`/`jumpxn` (CERNLIB KERNLIB Z043/Z042) and `acsjcal_` allow
+ *   indirect calls to C function addresses from FORTRAN and from the interpreter.
+ * - **OS wrappers**: `setenv_`, `unsetenv_`, `readlink_`, `finite_`.
+ * - **Diagnostics**: `traceqc_` (stack trace), `fpustack_`/`fpugetcw_`/`fpusetcw_` (FPU state).
+ *
+ * ## Files
+ * | File | Purpose |
+ * |------|---------|
+ * | `fputools.c`    | FPU stack inspection and control-word get/set |
+ * | `traceqc.c`     | Stack-trace printer callable from FORTRAN |
+ * | `locf.c`        | FORTRAN LOC/LOCF address-of-variable |
+ * | `memget.c`      | Dynamic memory allocation for FORTRAN |
+ * | `setenv.c`      | setenv/unsetenv OS wrappers |
+ * | `readlink.c`    | POSIX readlink wrapper |
+ * | `finite.c`      | IEEE finite-number test |
+ * | `idisp.c`       | Pointer displacement utilities |
+ * | `jumptn.c`      | KERNLIB Z043: jump to address with N params |
+ * | `jumpxn.c`      | KERNLIB Z042: set address then jump with N params |
+ * | `acsjcal.c`     | COMIS assembly-level jump/call dispatch |
+ * | `cscald.c`      | COMIS double-precision return-type caller |
+ * | `cscalr.c`      | COMIS real return-type caller |
+ * | `cscali.c`      | COMIS integer return-type caller |
+ * | `cscalia.c`     | Alpha OSF1 integer caller (disabled) |
+ * | `cs_hlshl.c`    | Portable shared-library loader (dlopen/shl_load) |
+ * | `cs_dlfcn.c`    | AIX dlfcn emulation |
+ * | `ccopys.c`      | Character-buffer copy (FORTRAN-callable) |
+ * | `csmytokn.cxx`  | 64-bit pointer ↔ 32-bit token registry |
+ * | `mykuip.c`      | KUIP command-interface structures |
+ * | `ctype.c`       | Static ctype tables (IFC/glibc workaround) |
+ * | `avost.c`       | Fault generator stub (body disabled) |
+ * | `cschar.c`      | Minimal CSCHAR stub |
+ *
+ * @}
+ */
+
+/**
+ * @fn fpustack_(int *fputag, int *fpustatus, int *fpuused, int *fpuoverflow)
+ * @brief Get information about the x87 FPU register stack.
+ * @param[out] fputag      FPU TAG word.
+ * @param[out] fpustatus   FPU status word.
+ * @param[out] fpuused     Number of stack registers currently in use (normally 0).
+ * @param[out] fpuoverflow 0 = OK; 1 = stack overflow occurred (fpuused > 8).
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn fpugetcw_(int *cw)
+ * @brief Read the x87 FPU control word into CW.
+ * @param[out] cw  FPU control word.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn fpusetcw_(int *cw)
+ * @brief Write CW into the x87 FPU control word.
+ * @param[in] cw  FPU control word to set.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn traceqc_()
+ * @brief Print a C-level stack trace; callable from FORTRAN.
+ * @details Uses `backtrace`/`backtrace_symbols` on Linux; `U_STACK_TRACE` on HP-UX.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn locf_(void *var)
+ * @brief Return the memory address of FORTRAN variable `var` as an integer token.
+ * @param[in] var  Pointer to any FORTRAN variable.
+ * @return 32-bit integer token encoding the 64-bit address (via csvptokn_).
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn locb_(void *var)
+ * @brief Return the byte address of FORTRAN variable `var` as an integer token.
+ * @param[in] var  Pointer to any FORTRAN variable.
+ * @return 32-bit integer token encoding the 64-bit byte address.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn memget_(int *n)
+ * @brief Allocate n bytes and return the base byte address as an integer.
+ * @param[in] n  Number of bytes requested.
+ * @return Base byte address of the allocated block.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn memgetf_(int *n)
+ * @brief Allocate n words and return the base word address as an integer.
+ * @param[in] n  Number of 4-byte words requested.
+ * @return Base word address of the allocated block.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn setenv_(const char *name, const char *value, int ln, int lv)
+ * @brief Set environment variable NAME=VALUE; callable from FORTRAN.
+ * @param[in] name   Variable name (not NUL-terminated; length given by ln).
+ * @param[in] value  Variable value (not NUL-terminated; length given by lv).
+ * @param[in] ln     Length of name.
+ * @param[in] lv     Length of value.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn unsetenv_(const char *name, int ln)
+ * @brief Unset environment variable NAME; callable from FORTRAN.
+ * @param[in] name  Variable name.
+ * @param[in] ln    Length of name.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn readlink_(char *a, char *b, int La, int Lb)
+ * @brief Resolve symlink at path a into buffer b; callable from FORTRAN.
+ * @param[in]  a   Symlink path (length La).
+ * @param[out] b   Buffer for resolved path (length Lb).
+ * @param[in]  La  Length of path a.
+ * @param[in]  Lb  Size of buffer b.
+ * @return Number of bytes placed in b, or -1 on error.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn finite_(float *r)
+ * @brief Test whether FORTRAN REAL *r is finite (not NaN or infinity).
+ * @param[in] r  Pointer to a REAL variable.
+ * @return Non-zero if finite, 0 if NaN or infinite.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn idisp0_(char *a, char *b)
+ * @brief Return byte displacement b - a as a uint64.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn idisp1_(char *a, char *b)
+ * @brief Return byte displacement (b - a) + 1 as a uint64.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn idisp2_(short *a, short *b)
+ * @brief Return short-element displacement (b - a) + 1 as a uint64.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn idisp4_(int *a, int *b)
+ * @brief Return int-element displacement (b - a) + 1 as a uint64.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn iponter_(int *a, int **b)
+ * @brief Return pointer displacement (*b - a) as a uint64.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpt0_(int *iadr)
+ * @brief Transfer control to the routine at address token iadr with 0 parameters.
+ * @param[in] iadr  Integer address token (from JUMPAD).
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpt1_(int *iadr, void *p1)
+ * @brief Transfer control to routine at iadr with 1 parameter.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpt2_(int *iadr, void *p1, void *p2)
+ * @brief Transfer control to routine at iadr with 2 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpt3_(int *iadr, void *p1, void *p2, void *p3)
+ * @brief Transfer control to routine at iadr with 3 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpt4_(int *iadr, void *p1, void *p2, void *p3, void *p4)
+ * @brief Transfer control to routine at iadr with 4 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpad_(unsigned long *fun)
+ * @brief Return the integer token for function pointer fun (KERNLIB JUMPAD equivalent).
+ * @param[in] fun  Pointer to a FORTRAN-external routine.
+ * @return 32-bit integer token.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpst_(int *iadr)
+ * @brief Set the jump-transfer address to iadr (first step of KERNLIB Z042 sequence).
+ * @param[in] iadr  Integer address token to set.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpx0_()
+ * @brief Jump to the address previously set by jumpst_ with 0 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpx1_(void *p1)
+ * @brief Jump to address set by jumpst_ with 1 parameter.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpx2_(void *p1, void *p2)
+ * @brief Jump to address set by jumpst_ with 2 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpx3_(void *p1, void *p2, void *p3)
+ * @brief Jump to address set by jumpst_ with 3 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn jumpx4_(void *p1, void *p2, void *p3, void *p4)
+ * @brief Jump to address set by jumpst_ with 4 parameters.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn acsjcal_(int *iadr, int *np, ...)
+ * @brief Assembly-level COMIS jump/call: invoke routine at address token iadr with np parameters.
+ * @param[in] iadr   Integer address token of the callee.
+ * @param[in] np     Number of parameters (up to 10).
+ * @param[in] p01..p10 Actual parameters.
+ * @return 0 on success; -1 if csToken lookup fails.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cscald_()
+ * @brief COMIS type-dispatch caller: invoke a routine whose return type is DOUBLE PRECISION.
+ * @details Handles platform ABI differences (WINNT, Linux/gcc, generic Unix).
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cscalr_()
+ * @brief COMIS type-dispatch caller: invoke a routine whose return type is REAL.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cscali_()
+ * @brief COMIS type-dispatch caller: invoke a routine whose return type is INTEGER.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cs_shl_load_(char *path, int n)
+ * @brief Load shared library at path (length n) via dlopen or shl_load; FORTRAN-callable.
+ * @param[in] path  Library file path (not NUL-terminated; length n).
+ * @param[in] n     Length of path.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cs_get_func_(char *sym, int n)
+ * @brief Look up symbol sym (length n) in the most recently loaded shared library.
+ * @param[in] sym  Symbol name.
+ * @param[in] n    Length of sym.
+ * @return Integer token for the symbol address, or 0 if not found.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cs_shl_unload_(char *path, int n)
+ * @brief Unload the shared library at path.
+ * @param[in] path  Library file path.
+ * @param[in] n     Length of path.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cs_shl_symbols_(char *path, int ns, char *symbol, int n)
+ * @brief List all exported symbols from shared library at path.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn cs_shl_get_(int ns, char *symbol, int n)
+ * @brief Retrieve the ns-th symbol name from the loaded library into symbol.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn csvptokn_(unsigned long addr)
+ * @brief Map 64-bit pointer addr to a unique 32-bit integer token; register if new.
+ * @param[in] addr  64-bit function or data pointer.
+ * @return 32-bit integer token (>0).
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn csvplong(int tokn)
+ * @brief Retrieve the 64-bit pointer corresponding to integer token tokn.
+ * @param[in] tokn  Token previously returned by csvptokn_.
+ * @return Original 64-bit pointer value.
+ * @ingroup DECCC
+ */
+
+/**
+ * @fn ccopys_(char *j1, char *j2, int *n)
+ * @brief Copy n characters from j1 to j2 with correct overlap handling; FORTRAN-callable.
+ * @param[in] j1  Source buffer.
+ * @param[in] j2  Destination buffer.
+ * @param[in] n   Number of characters.
+ * @ingroup DECCC
+ */

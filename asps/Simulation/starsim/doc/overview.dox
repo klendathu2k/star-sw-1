@@ -1,0 +1,66 @@
+/**
+ * @defgroup Starsim STARSIM Detector Simulation Framework
+ * @{
+ *
+ * @brief GEANT3-based Monte Carlo detector simulation for the STAR experiment.
+ *
+ * @details
+ * STARSIM (also called *atlsim*) is the full detector simulation of the STAR
+ * experiment at RHIC.  It is built on CERN's GEANT 3.21 particle-transport engine
+ * and augmented with:
+ *
+ * - The **AGE macro language** (preprocessed by `agetof`) which provides
+ *   structured programming extensions to FORTRAN 77 and high-level physics
+ *   abstractions.
+ * - An **AGE processor model** where code is decomposed into named modules
+ *   (GEOM, DIGI, RECO, …) dispatched by a KUIP command layer.
+ * - The **ReBANK** library for Unix-path-addressed ZEBRA bank access.
+ * - The **DZDOC** self-documenting bank system.
+ * - The **COMIS** runtime interpreter for user-defined code.
+ * - An optional **ROOT interface** for geometry display and event I/O.
+ *
+ * ## Entry point
+ *
+ * `main()` is in `acmain.cxx` and immediately calls the FORTRAN `AGMAIN`
+ * subroutine (in `atmain/agmain.age`) which drives the full simulation lifecycle:
+ * initialisation → KUIP loop → finalisation.
+ *
+ * ## Sub-packages
+ *
+ * | Module | Description |
+ * |--------|-------------|
+ * | @ref StarsimAtmain | Steering, GEANT hooks, KUIP interface |
+ * | @ref StarsimAtgeant | GEANT interface processors |
+ * | @ref StarsimAgzio | Event I/O (ZEBRA/GENZ, generators) |
+ * | @ref StarsimAtutil | Tracking utilities (helix, FUMILI) |
+ * | @ref StarsimRebank | ReBANK path-addressed bank access |
+ * | @ref StarsimGeant | GEANT321 extensions and modifications |
+ * | @ref StarsimDzdoc | ZEBRA DZDOC documentation system |
+ * | @ref StarsimComis | COMIS runtime interpreter |
+ * | @ref StarsimDeccc | C interface utilities |
+ * | @ref StarsimAtlroot | ROOT interface |
+ *
+ * @}
+ */
+
+/**
+ * @fn main(int argc, char* argv[])
+ * @brief C++ program entry point — sets up FORTRAN `argc`/`argv` and calls `agmain_()`.
+ * @param[in] argc Number of command-line arguments.
+ * @param[in] argv Command-line argument strings.
+ * @return 0 on normal exit (delegated to FORTRAN via `agmain_`).
+ * @details
+ * Sets up the argument arrays expected by several FORTRAN compiler runtimes
+ * (g77, gfortran, pgf77, ifort, MIPS Fortran).  Calls `k_setar()` to register
+ * arguments with KUIP, then invokes `agmain_()` to start the GEANT/KUIP loop.
+ * @ingroup Starsim
+ */
+
+/**
+ * @fn AVERSION()
+ * @brief Records the compile-time date, time, and version string in the GEANT title common.
+ * @details
+ * Reads from compiler-generated include files `dateqq.inc`, `timeqq.inc`, and
+ * `versqq.inc` and stores the result in `QFTITLCH` (the GEANT TITLE field).
+ * @ingroup Starsim
+ */
