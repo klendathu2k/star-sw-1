@@ -1,0 +1,48 @@
+/**
+ * @defgroup StarAgmlViewer StarAgmlViewer — AGML Interactive Geometry Viewer
+ * @brief Interactive EVE-based 3D visualisation of the AGML-assembled TGeo geometry.
+ * @ingroup StarAgmlLib
+ *
+ * `StarAgmlViewer` integrates with the ROOT EVE (Event Visualisation
+ * Environment) system to provide interactive 3D visualisation of the TGeo
+ * geometry produced by `StarTGeoStacker`.  It is implemented as a `StMaker`
+ * so that it can be embedded in the standard STAR maker chain.
+ *
+ * Key capabilities:
+ * - Opens an EVE/OpenGL viewer window and imports the current `TGeoManager`
+ *   tree on `Init()`.
+ * - `addGlobalElement(vol, node)` — adds a specific TGeo volume/node to the
+ *   EVE global scene for display in all viewer windows.
+ * - `applyTransparency(TOP, mode)` — recursively sets the transparency of all
+ *   volumes in the sub-tree rooted at `TOP`, making outer shells
+ *   semi-transparent to reveal inner detector components.
+ *
+ * @par Related modules
+ * - @ref StarAgmlLib    — core AGML geometry description library
+ * - @ref StarAgmlUtil   — coordinate transforms and parameter utilities
+ * - @ref StarAgmlChecker — material-budget analysis of the same geometry
+ *
+ * @{
+ */
+
+/**
+ * @class StarAgmlViewer
+ * @brief StMaker that opens an EVE geometry viewer for the assembled AGML/TGeo geometry.
+ * @ingroup StarAgmlViewer
+ *
+ * On `Init()` the viewer calls `LoadGeometry()` which wraps the current
+ * `gGeoManager` in a `TEveGeoTopNode` and registers it with the EVE manager,
+ * enabling interactive rotation, zooming, and per-volume selection via the
+ * ROOT GL viewer (`TGLViewer`).
+ *
+ * `addGlobalElement(vol, node)` locates a named volume in the TGeo hierarchy
+ * and adds the specified daughter node as an EVE global element.
+ *
+ * `applyTransparency(TOP, mode)` recursively adjusts volume transparency
+ * throughout the named sub-tree; `mode = -1` applies a default level suitable
+ * for inspecting nested structures.
+ */
+
+/**
+ * @}
+ */

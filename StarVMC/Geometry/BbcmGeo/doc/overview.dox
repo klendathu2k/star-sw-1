@@ -1,0 +1,65 @@
+/**
+ * @defgroup BbcmGeo BbcmGeo — Beam-Beam Counter Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Beam-Beam Counter (BBC/BBCM).
+ *
+ * @details
+ * The BBC provides minimum-bias triggering and relative luminosity monitoring for
+ * STAR.  Two identical modules sit on the east and west magnet poletips at
+ * |z| ≈ 374 cm, covering 3.3 < |η| < 5.0.  Each module comprises two concentric
+ * rings of hexagonal plastic-scintillator tiles:
+ *
+ * - **Inner ring** (small tiles, type 1): inscribed-circle radius 4.174 cm,
+ *   1 cm thick, z-offset +1.5 cm from module centre (version 1.0).
+ * - **Outer ring** (large tiles, type 2): inscribed-circle radius 16.697 cm
+ *   (4× small), 1 cm thick, z-offset −1.5 cm (version 1.0).
+ *
+ * The geometry is controlled by two structures: @c BBCG (module-level: position,
+ * on/off flags, version) and @c HEXG (per-tile-type: radii, thickness, offsets).
+ * Version 2.0 (setup @c BBCMin) activates only the inner small tiles, placed
+ * without z-offset.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup BbcmGeoV1 BbcmGeo — BBC full geometry (version 1.0)
+ * @ingroup BbcmGeo
+ * @brief Module @c BbcmGeo version 1.0: Full BBC with both inner small tiles
+ *        and outer large tiles on both east and west sides.
+ *
+ * @details
+ * Structures:
+ * - @c BBCG — version = 1.0; onoff = {3,3,3} (both east and west for BBC,
+ *   small, and large tiles); zdis = {374.24, −374.24} cm.
+ * - @c HEXG (×2) — small tiles (type=1, irad=4.174 cm, zoffset=+1.5 cm) and
+ *   large tiles (type=2, irad=16.697 cm, zoffset=−1.5 cm), both 1 cm thick
+ *   with 0.1 cm cladding.
+ *
+ * Volume hierarchy:
+ * @c BBCM (east or west module, placed 2×) →
+ * @c BBCA (annulus for inner or outer ring) →
+ * @c THXM (triple hex module) →
+ * @c SHXT (single hex tile) →
+ * @c CLAD (cladding) + @c BPOL (polystyrene scintillator).
+ *
+ * Controlled by setup: @c BBCMon.
+ */
+
+/**
+ * @defgroup BbcmGeoV2 BbcmGeo — BBC inner-tiles-only geometry (version 2.0)
+ * @ingroup BbcmGeo
+ * @brief Module @c BbcmGeo version 2.0: Inner small hexagonal tiles only;
+ *        z-offset removed; z position overridden to ±380.0 cm.
+ *
+ * @details
+ * BBCG.version = 2.0; onoff = {3,1,2} (BBC both sides, small tiles west only,
+ * large tiles east only — effectively inner ring selected); zdis overridden
+ * via @c <Init> to {−380.0, 380.0} cm.  HEXG entries have zoffset = 0.0 cm.
+ *
+ * Controlled by setup: @c BBCMin.
+ */
+
+/**
+ * @}
+ */

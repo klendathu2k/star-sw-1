@@ -1,0 +1,118 @@
+/**
+ * @defgroup IstdGeo IstdGeo — Intermediate Silicon Tracker Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry for the STAR Intermediate Silicon Tracker (IST).
+ *
+ * @details
+ * The Intermediate Silicon Tracker (IST) is a single-layer silicon pad detector at a nominal
+ * radius of 14 cm, forming the middle layer of STAR's Heavy Flavour Tracker (HFT). It
+ * bridges the PXL pixel detector (r ≈ 2.8 and 8 cm) and the SSD (r ≈ 23 cm), providing a
+ * space point that is critical for linking inner and outer track segments at low pT. The IST
+ * uses silicon pad sensors read out by APV25 chips, with 24 ladders each carrying 6 sensors
+ * (in the full geometry) arranged in 2 rows of 3. The IST operated during RHIC Runs 14–16
+ * (2014–2016) as part of the HFT.
+ *
+ * The AGML detector tag is @c ISTD. The master configuration structure @c ISTC controls the
+ * geometry version and the misalignment flag (@c misalign: 0 = ideal, 1 = misaligned). The
+ * simplified geometry (@c IstdGeo0) uses @c ISMG, @c ISBG, @c ISSS, and @c ISAN. The full
+ * geometry (@c IstdGeo1 / @c IstdGeo1a) uses over 60 @c varlist constants plus @c PARO
+ * (translational) and @c PARA (rotational) misalignment structures.
+ *
+ * The main mother volume is @c IBMO, shaped as a @c PCON (IstdGeo1a) or @c TUBE (IstdGeo0)
+ * spanning r ≈ 11–18.5 cm, placed inside @c IDSM. The active sensitive volumes are @c IBSS
+ * (Silicon, material tag @c ISTSSensitive), one per sensor.
+ *
+ * @par Key parameters (full geometry, IstdGeo1a)
+ * - Sensor active area: 3.80 × 7.53 cm² (half: 1.9008 × 3.765 cm), 300 μm thick
+ * - 24 ladders × 6 sensors each = 144 sensitive volumes
+ * - Ladder tilt: 19.10°; angular offset between ladders: 1.17°
+ * - Stave materials: carbon honeycomb, carbon foam, aluminium cooling tube,
+ *   CF skins, Kapton hybrid, APV chips, transit boards, DELRIN endcaps, screws
+ *
+ * @par AGML module files
+ * - IstdGeo0.xml  — @c IstdGeo0  (Dec 2014, J. Bouchet; simplified test geometry,
+ *                    24 ladders × 12 sensors, active Si tube + passive material annulus)
+ * - IstdGeo1.xml  — @c IstdGeo1  (Nov 2013, Y. Wang; full mechanical geometry with
+ *                    cooling loops, support ring, all stave sub-volumes)
+ * - IstdGeo1a.xml — @c IstdGeo1a (Nov 2013, Y. Wang; production geometry, IBMO as PCON,
+ *                    misalignment support; used for y2014/y2015)
+ * - IstdGeo1b.xml — @c IstdGeo1b (variant/intermediate of IstdGeo1a)
+ * - IstdGeo2.xml  — @c IstdGeo2  (second-generation full geometry, updated materials)
+ * - IstdGeo2a.xml — @c IstdGeo2a (second-generation production geometry with misalignment)
+ *
+ * @par Configuration setups (IstdConfig.xml)
+ * - @c ISTDof   — IST disabled
+ * - @c ISTD01   — simplified test geometry (IstdGeo0)
+ * - @c ISTD02   — IstdGeo1a, ideal alignment (misalign=0) — default y2014
+ * - @c ISTD02a  — IstdGeo1a, misaligned (misalign=1)
+ * - @c ISTD03   — IstdGeo2a, ideal alignment
+ * - @c ISTD03a  — IstdGeo2a, misaligned
+ *
+ * @{
+ */
+
+/**
+ * @defgroup IstdGeoV0 IstdGeo0 — Simplified IST test geometry
+ * @ingroup IstdGeo
+ * @brief Simplified IST geometry for validation and test (J. Bouchet, Dec 2014).
+ * @details Models the IST as 24 ladders × 12 sensors of active silicon at r = 14 cm
+ * plus a passive silicon annulus at r = 14.2 cm (1% radiation length equivalent) to
+ * approximate the total material budget. No mechanical support structure. Mother volume
+ * @c IBMO is a @c TUBE (r = 13.5–15.0 cm). Activated by setup @c ISTD01.
+ *
+ * @par Key structures
+ * - @c ISMG — mother volume dimensions (Rin, Rout)
+ * - @c ISBG — layer parameters (nLadder=24, nUnit=12, Radius=14 cm, Tilt=15°)
+ * - @c ISSS — sensor dimensions (ActiveW=3.68 cm, ActiveH=4.04 cm, ActiveThk=300 μm)
+ * - @c ISAN — passive annulus (Rmin=14.2 cm, Thk=0.0636 cm)
+ * - @c PARO / @c PARA — translational / rotational misalignment per ladder
+ */
+
+/**
+ * @defgroup IstdGeoV1 IstdGeo1 — Full mechanical geometry
+ * @ingroup IstdGeo
+ * @brief Full IST geometry with complete stave mechanics (Y. Wang, UIC, 27 Nov 2013).
+ * @details Implements all mechanical details of the 24-ladder IST: carbon honeycomb core
+ * (@c ICCU, @c ICCD), carbon foam (@c ICFC, @c ICFD), aluminium cooling tube (@c ICTC)
+ * with liquid (@c IBCW), CF top and bottom skins (@c ILST, @c ILSB), Kapton hybrid layers
+ * (@c IBHT, @c IBHB, @c IBHC), APV25 chips, transit boards (@c IBRB) with slots
+ * (@c IRSA–@c IRSC), west/east endcaps (@c IECW, @c IECE), screw assemblies (@c ISCM),
+ * support ring (@c IBSR), and external cooling loop hardware (@c IBCJ, @c ISCA–@c ISCM).
+ * Active sensor volumes: @c IBSS (Silicon, ISTSSensitive).
+ */
+
+/**
+ * @defgroup IstdGeoV1a IstdGeo1a — Production geometry with misalignment
+ * @ingroup IstdGeo
+ * @brief Production IST geometry, IBMO as PCON, with misalignment support (Y. Wang, Nov 2013).
+ * @details Based on IstdGeo1 with @c IBMO reshaped to @c PCON to avoid overlap with the
+ * MCS ring. The ladder mother @c IBAM is placed as a @c TUBS. Misalignment is controlled
+ * by @c ISTC.misalign (0 = ideal, 1 = real misalignment from @c PARO / @c PARA fills).
+ * Default geometry for y2014 RHIC run. Activated by @c ISTD02 (ideal) and @c ISTD02a
+ * (misaligned). Inner radius of @c IBMO reduced to 11.0 cm to coincide with the outer
+ * radius of @c PXMO.
+ */
+
+/**
+ * @defgroup IstdGeoV1b IstdGeo1b — Variant of IstdGeo1a
+ * @ingroup IstdGeo
+ * @brief Alternative or intermediate development variant of IstdGeo1a.
+ */
+
+/**
+ * @defgroup IstdGeoV2 IstdGeo2 — Second-generation full geometry
+ * @ingroup IstdGeo
+ * @brief Updated second-generation IST full geometry with revised material definitions.
+ */
+
+/**
+ * @defgroup IstdGeoV2a IstdGeo2a — Second-generation production geometry
+ * @ingroup IstdGeo
+ * @brief Second-generation IST production geometry with misalignment support.
+ * @details As IstdGeo1a but with updated stave dimensions, material compositions, and
+ * sensor placement. Activated by @c ISTD03 (ideal) and @c ISTD03a (misaligned).
+ */
+
+/**
+ * @}
+ */

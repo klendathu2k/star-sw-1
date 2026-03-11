@@ -1,0 +1,69 @@
+/**
+ * @defgroup PhmdGeo PhmdGeo — Photon Multiplicity Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Photon Multiplicity Detector
+ *        (PMD/PHMD).
+ *
+ * @details
+ * The PMD measures photon multiplicity and spatial distributions in the forward
+ * pseudorapidity range 2.3 < η < 3.7 (west side of STAR).  It consists of two
+ * planes of honeycomb proportional counters:
+ *
+ * - **CPV (Charged Particle Veto):** upstream plane at z = −539 cm; vetoes
+ *   charged particles before the converter.
+ * - **PMD (Preshower plane):** downstream plane at z = −550 cm, behind a
+ *   3 X₀ lead converter (PARPBz = 0.75 cm half-thickness).
+ *
+ * Each plane is subdivided into three 120° sectors (@c PHMS), each filled with
+ * rectangular supermodules of copper honeycomb cells.  The hexagonal cells have
+ * an inscribed radius of 0.5282 cm and a gas depth of 0.8 cm (Ar/CO₂).  Cells
+ * are grouped by the @c nx/@c ny (five module types) and @c mx/@c my (seven
+ * supermodule sizes) arrays in the @c PMDG structure.
+ *
+ * The @c pmvr.config parameter (1 or 2) selects between two alternate
+ * supermodule layout arrangements.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup PhmdGeoBase PhmdGeo — PMD geometry (configurations 1 and 2)
+ * @ingroup PhmdGeo
+ * @brief Module @c PHMDGEO: Honeycomb proportional counter array for photon
+ *        multiplicity measurement.
+ *
+ * @details
+ * Structures:
+ * - @c PMVR — version and config selector (config = 1 or 2).
+ * - @c PMDG — full geometry: mother-volume limits (m_min = 22 cm,
+ *   m_max = 135 cm), z positions of two planes (zdist = {−539, −550} cm),
+ *   box dimensions (DPMDx = DPMDy = 270 cm, DPMDz = 10 cm), layer
+ *   thicknesses (PARGCz = 0.40 cm gas CPV, PARSCz = 0.40 cm gas PMD,
+ *   PARFEz = 0.25 cm iron, PARPBz = 0.75 cm lead), cell dimensions
+ *   (cell_radius = 0.5282 cm, cell_depth = 0.8 cm, cell_wall = 0.2 cm),
+ *   passive layer thicknesses (th_lead = 1.5 cm, th_steel = 0.5 cm,
+ *   th_pcb = 0.16 cm, th_base = 0.3 cm), and module-size arrays
+ *   (nx/ny for 5 types; mx/my for 7 supermodule sizes).
+ *
+ * Volume hierarchy:
+ * @c PHMD (box envelope) →
+ * @c PHMS (sector, 3× at 120° steps) →
+ * @c PHSR (detector box, air) →
+ * @c PMDA (detector box, aluminium) →
+ * @c AIRA (air interior) + @c PPBA (lead plates) + @c PFEA (iron frames) +
+ * @c BASA (G10 base) + @c PCBA (PCB) →
+ * @c PHCA (honeycomb plane) →
+ * @c ASTR (cell row) →
+ * @c PDCU (copper cell wall) + @c PDGS (active gas cell)
+ * and @c PSTR (boundary pseudo-cell).
+ *
+ * Controlled by setups:
+ * - @c PHMDof — detector off.
+ * - @c PHMDon — default (config from Fill = 1).
+ * - @c PHMD01 — pmvr.config = 1.0 (explicit).
+ * - @c PHMD02 — pmvr.config = 2.0 (alternate layout).
+ */
+
+/**
+ * @}
+ */

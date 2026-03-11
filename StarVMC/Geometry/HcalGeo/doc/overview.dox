@@ -1,0 +1,86 @@
+/**
+ * @defgroup HcalGeo HcalGeo — Forward Hadronic Calorimeter Test Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definitions for the STAR forward hadronic calorimeter test detector (HCAL)
+ *
+ * @details
+ * The HcalGeo package contains three geometry modules for the forward sampling hadronic
+ * calorimeter test and prototype detector (detector tag **HCAL**, explicitly described in
+ * the config as "legacy HCAL test geometry").  These modules describe test-beam and
+ * proposed-production configurations of a Pb-fibre spaghetti calorimeter.
+ *
+ * The detector is not the FCS hadronic calorimeter (which is defined in `FcsmGeo/`).
+ *
+ * ### Detection principle
+ * Lead absorber blocks contain longitudinal scintillating polystyrene fibres.  Fibres are
+ * grouped into projective towers read out by PMTs.  Each 10 cm × 10 cm tower contains a
+ * 3×3 array of cells (~3.3 cm); each cell is further subdivided into 15×15 (short) or
+ * 16×16 (long) fibre channels.  The diagonal cells in each tower use the short-cell layout
+ * (HCES), and off-diagonal cells use the long-cell layout (HCEL).  Ionisation energy
+ * (deposited in the lead cell volumes) is attenuated as a function of depth with an
+ * exponential attenuation length of 220 cm before being recorded as a hit.
+ *
+ * ### Version overview
+ * | Module | Comment | Array | Position | Extra |
+ * |---|---|---|---|---|
+ * | HcalGeo0  | 2014 test-run geometry | 6×6 towers | z = 777.4 cm | pre-shower (HSWR), base plate (HSLD) |
+ * | HcalGeo0a | 2016 proposed full-scale | 20×18 towers | z = 777.4 cm | pre-shower, west-platform support |
+ * | HcalGeo0b | Fermilab test-beam | 3×3 towers | z = 750 cm | lead-glass block (LEDG), beam counters (BBCF/BBCB) |
+ *
+ * @{
+ */
+
+/**
+ * @file HcalGeo0.xml
+ * @brief Module HcalGeo0 — test-run hadronic calorimeter geometry (Prashanth S., KSU 2013).
+ *
+ * Defines a 6×6 tower array placed at (−69.8, 4.9, 777.4) cm in the STAR cave.
+ * Key structures: `mcdt` (mother volume position/size), `towr` (tower dimensions,
+ * nTowerX = nTowerY = 6), `cell` (cell grid, nCellX = nCellY = 3, 15/16 fibres per cell),
+ * `fibr` (fibre tube rmax = 0.055 cm, step = 0.213 cm), `shld` (iron base plate),
+ * `pres` (two pre-shower scintillator panels).
+ *
+ * The external routine `hcalhit` applies an exponential depth-attenuation correction
+ * (att = exp(−z_depth / 220)) to the step energy deposit before storing the hit.
+ */
+
+/**
+ * @file HcalGeo0a.xml
+ * @brief Module HcalGeo0a — proposed full-scale forward HCAL geometry (2016).
+ *
+ * Expands the tower array to 20 wide × 18 tall (360 towers).  Adds two new structures:
+ * - **PRSW** — pre-shower geometry with panel positions and scintillator parameters
+ * - **WPFM** — west platform structural steel dimensions and positions
+ *
+ * The overall volume dimensions are 200 × 180 × 117 cm.
+ */
+
+/**
+ * @file HcalGeo0b.xml
+ * @brief Module HcalGeo0b — Fermilab test-beam configuration.
+ *
+ * Reduces the array to 3×3 towers (30 × 30 × 117 cm mother volume) at z = 750 cm.
+ * Adds two auxiliary detector types:
+ * - **LEDG** — lead-glass Cherenkov block (F2 glass, ρ = 3.86 g/cm³, 14.5 × 14.5 × 35 cm)
+ *   placed at z = −600 cm for Cherenkov energy measurement
+ * - **BBCF / BBCB** — trapezoidal polystyrene beam counters (TRD1 shape) with TOF hit
+ *   measurement; placed upstream of the calorimeter
+ * - No pre-shower panels in this configuration
+ */
+
+/**
+ * @file HcalConfig.xml
+ * @brief Setup registry for detector HCAL.
+ *
+ * | Setup | Module | Description |
+ * |---|---|---|
+ * | HCALof | HcalGeo0 | disabled |
+ * | HCALon | HcalGeo0 | 6×6 tower test run |
+ * | HCAL00 | HcalGeo0 | same as HCALon |
+ * | HCAL01 | HcalGeo0a | 20×18 full proposed geometry |
+ * | HCAL0F | HcalGeo0b | Fermilab test-beam geometry |
+ */
+
+/**
+ * @}
+ */

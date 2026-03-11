@@ -1,0 +1,93 @@
+/**
+ * @defgroup IdsmGeo IdsmGeo — Inner Detector Support Module Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry for the STAR Inner Detector Support Module (IDSM).
+ *
+ * @details
+ * The Inner Detector Support Module (IDSM) is the mechanical backbone and TGeo mother
+ * volume for STAR's Heavy Flavour Tracker (HFT) system. It is a large cylindrical support
+ * structure fabricated primarily from carbon-fibre reinforced polymer (CFRP) and aluminium,
+ * enclosing the three HFT sub-detectors — the Pixel Detector (PXL, r ≈ 2.8 and 8 cm), the
+ * Intermediate Silicon Tracker (IST, r ≈ 14 cm), and the Silicon Strip Detector (SSD,
+ * r ≈ 23 cm) — within a single coherent mechanical frame. In geometry versions 1 and 2 it
+ * also provides mount points for FGT (Forward GEM Tracker) cable rails and disk cables.
+ *
+ * The AGML detector tag is @c IDSM. The control structure @c IDSC holds the geometry
+ * @c version number. Detailed structural parameters are in @c IDSG (radii, FGT layout,
+ * TPC resistor tube geometry) and alignment parameters in @c IDSA (Euler angles for
+ * placement in the cave frame, defaulting to identity).
+ *
+ * The IDSM mother volume @c IDSM is a @c TUBE (or zero-inner-radius envelope in v2+)
+ * placed in the cave with the rotation defined by @c IDSA. All HFT sub-detector volumes
+ * (PXMO, IBMO, SFMO) are placed as daughters inside @c IDSM by the geometry steering.
+ *
+ * @par Main structural elements
+ * - @c SUCA — central CF tube, r = 21.5–21.6 cm, dz = 56 cm
+ * - @c SUCB — small Al ring at central tube, r = 21.6–22.4 cm
+ * - @c SUCC — CF cone section connecting central tube to outer cylinders
+ * - @c SUCD — large Al ring at cone junction, r = 38.6–39.9 cm
+ * - @c SUCE — east/west CF outer cylinder, r = 39.8–39.9 cm, dz = 80.8 cm
+ * - @c SUCF — large Al ring at outer cylinder end, r = 40.0–40.5 cm
+ * - @c SUCG — large Al end disk, r = 10.3–40.5 cm
+ * - @c TPRR / @c TPRT — TPC resistor tubes and FR4 protection at r ≈ 43 cm
+ * - @c FGRL / @c FGHV — FGT rails and cable bundles (versions 1 and 2 only)
+ *
+ * @par AGML module files
+ * - IdsmGeo1.xml  — @c IDSMGEO1  (Apr 2011, Balewski/Leight; 2012 beam support cone,
+ *                    geometry versions 1.0 and 2.0; includes FGT rails/cables)
+ * - IdsmGeo2.xml  — @c IDSMGEO2  (Apr 2011/updated, Balewski/Leight/Videbaek; 2013 cone
+ *                    with ewcs parameters; inner radius = 0 in v2+; v14 strips FGT cables)
+ * - IdsmGeo2a.xml — @c IDSMGEO2A (as IdsmGeo2 with alignment rotation from @c IDSA;
+ *                    v14 = y2014 production geometry without FGT cables)
+ *
+ * @par Configuration setups (IdsmConfig.xml)
+ * - @c IDSMof   — IDSM disabled
+ * - @c IDSMon / @c IDSM01 — IdsmGeo1, version=1 (Run 12, 2012)
+ * - @c IDSM02   — IdsmGeo2, version=2 (Run 13, 2013)
+ * - @c IDSM14   — IdsmGeo2, version=14 (y2014, no FGT cables)
+ * - @c IDSM02a  — IdsmGeo2a, version=2 (Run 13 with alignment)
+ * - @c IDSM14a  — IdsmGeo2a, version=14 (y2014 production, no FGT cables)
+ *
+ * @{
+ */
+
+/**
+ * @defgroup IdsmGeoV1 IdsmGeo1 (IDSMGEO1) — 2012 beam support cone
+ * @ingroup IdsmGeo
+ * @brief Simplified IDSM geometry for Run 12 (J. Balewski / W. Leight, Apr 2011).
+ * @details Initial IDSM geometry defining the six primary structural volumes:
+ * central CF tube (SUCA), small Al ring (SUCB), CF cone (SUCC), large Al ring (SUCD),
+ * east/west CF cylinder (SUCE), and Al end ring (SUCF). Also includes the end Al disk
+ * (SUCG), TPC resistor tubes (TPRR/TPRT), FGT rails (FGRL, TUBE r = 0.9–1.0 cm,
+ * dz = 82.8 cm), and FGT cable bundles (FGHV, TUBE r = 0–0.43 cm) for 6 disk positions.
+ * The @c IDSG structure carries two fill versions: 1.0 (2012 geometry) and 2.0 (2013
+ * update with different FGT cable positions). Inner radius @c rF = 2.25 cm in both.
+ * Activated by @c IDSMon and @c IDSM01.
+ */
+
+/**
+ * @defgroup IdsmGeoV2 IdsmGeo2 (IDSMGEO2) — 2013 beam support cone
+ * @ingroup IdsmGeo
+ * @brief Updated IDSM geometry for Run 13+ (Balewski/Leight/Videbaek, updated 2013).
+ * @details Extends IdsmGeo1 by introducing @c IDSG.ewcsInnerRad and @c IDSG.ewcsOuterRad
+ * parameters for the east/west cone section. In geometry version 2 the inner radius is
+ * set to 0 (allowing the beam pipe to be placed inside IDSM as a daughter). Geometry
+ * version 14 (y2014) removes the FGT cable volumes to reflect the actual y2014 detector
+ * configuration. Activated by @c IDSM02 (v2) and @c IDSM14 (v14).
+ */
+
+/**
+ * @defgroup IdsmGeoV2a IdsmGeo2a (IDSMGEO2A) — 2013/y2014 geometry with alignment
+ * @ingroup IdsmGeo
+ * @brief IDSM geometry with @c IDSA alignment rotation (Balewski/Leight/Videbaek).
+ * @details Structurally identical to IdsmGeo2, but applies the full rotation matrix from
+ * the @c IDSA structure when placing @c IDSM in the cave. The default ideal alignment
+ * corresponds to identity (thetax=90°, phix=0°, thetay=90°, phiy=90°, thetaz=0°,
+ * phiz=0°). Non-trivial values of these angles encode a physical misalignment of the
+ * IDSM as built. Version 14 is the default y2014 production geometry (no FGT cables).
+ * Activated by @c IDSM02a (v2) and @c IDSM14a (v14, production).
+ */
+
+/**
+ * @}
+ */

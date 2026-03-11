@@ -1,0 +1,85 @@
+/**
+ * @defgroup StarVMCGeometry Geometry — AGML Detector Geometry Modules
+ * @brief STAR detector geometry definitions in AGML XML format.
+ *
+ * `StarVMC/Geometry/` contains the AGML (A Geometry Modelling Language) XML source for all
+ * STAR detector subsystems.  The AGML build system compiles each XML module into a C++ class
+ * that is dynamically loaded by `starsim` at run-time to build the GEANT3/ROOT simulation
+ * geometry.  The top-level geometry configuration is `StarGeo.xml`, which maps named geometry
+ * tags (e.g. `y2023b`) to per-subsystem setup identifiers defined in each subsystem's
+ * `*Config.xml` file.
+ *
+ * See `StarVMC/Geometry/doc/README.md` for a full description of the XML format, the
+ * configuration system, and the complete subdirectory reference table.
+ *
+ * ### Modules by detector system
+ *
+ * Each subdirectory contains `doc/README.md` and `doc/overview.dox` with full parameter tables,
+ * volume hierarchies, and setup configuration details.
+ *
+ * | Group               | Modules | Documentation scope |
+ * |---------------------|---------|---------------------|
+ * | **TPC**             | `TpceGeo` (6 versions, 15 setups), `TpcxGeo` (padrow upgrade), `FtpcGeo` (4 setups), `FtroGeo` (FTPC readout) | Structure parameters with units, full volume hierarchies, version differences |
+ * | **Silicon trackers**| `SisdGeo` (7 versions), `SvttGeo` (11 versions), `IstdGeo` (6 versions), `PixlGeo` (10 versions/sub-detectors), `IdsmGeo` (3 versions) | HFT evolution SVT→SSD→IST/PXL; radii, layer counts, sensor geometry |
+ * | **Forward trackers**| `FstmGeo` (full/simplified/misaligned), `FtsdGeo`, `StgmGeo` (sTGC), `FgtdGeo` (GEM), `EiddGeo`, `FsceGeo` | η coverage, z positions, active layers, era activation |
+ * | **Calorimeters**    | `CalbGeo` (BEMC), `EcalGeo` (EEMC), `HcalGeo` (test), `FpdmGeo` (FPD→FMS), `ZcalGeo` (ZDC), `FcsmGeo` (FCS: ECAL/HCAL/preshower) | Tower counts, absorber/sampling specs, η/φ segmentation |
+ * | **TOF / Trigger**   | `BtofGeo` (8 generations), `EtofGeo`, `VpddGeo` (pVPD→uVPD), `BbcmGeo`, `EpdmGeo` (EPD), `PhmdGeo` (PMD) | Detector technology, η coverage, run-era evolution |
+ * | **Support / Infra** | `CaveGeo`, `MagpGeo`, `ShldGeo`, `PipeGeo` (7 versions), `QuadGeo`, `SconGeo`, `SupoGeo`, `KludGeo`, `TutrGeo`, `UpstGeo` | Mechanical dimensions, material compositions, beam-pipe evolution |
+ * | **Muon / Special**  | `MutdGeo` (11 setups, v1→v4+), `TestGeo` (unit-test geometry), `Compat` (18 verbatim-import shims) | MTD version evolution; verbatim import mechanism; compat shim inventory |
+ *
+ * @{
+ */
+
+/**
+ * @defgroup StarVMCGeoTracking Tracking Detectors
+ * @ingroup StarVMCGeometry
+ * @brief TPC, forward TPC, silicon vertex and strip detectors, and intermediate silicon tracker.
+ *
+ * Covers TpceGeo (TPC, 6 geometry versions / 15 named setups), TpcxGeo (iTPC padrow upgrade),
+ * FtpcGeo (FTPC, 4 setups), FtroGeo (FTPC readout barrel), SvttGeo (SVT, 11 versions),
+ * SisdGeo (SSD, 7 versions), IdsmGeo (HFT inner support structure, 3 versions),
+ * IstdGeo (IST, 6 versions), PixlGeo (HFT pixel detector + DTUB + PSUP + PXST, 10 versions),
+ * FgtdGeo (forward GEM tracker), FstmGeo (forward silicon tracker, 3 size variants),
+ * StgmGeo (forward sTGC), FtsdGeo (forward silicon tracker disks), KludGeo (alignment test).
+ */
+
+/**
+ * @defgroup StarVMCGeoCalorimetry Calorimetry Detectors
+ * @ingroup StarVMCGeometry
+ * @brief Barrel and endcap electromagnetic calorimeters, forward calorimeter system,
+ *        hadronic calorimeters, and zero-degree calorimeter.
+ *
+ * Covers CalbGeo (BEMC, |η|<1, 120 modules, 21 Pb/scint layers),
+ * EcalGeo (EEMC, 1.09<η<2.0, 2 half-wheels), FcsmGeo (FCS: preshower/WCAL/HCAL/platform),
+ * HcalGeo (standalone HCAL test, 3 prototype variants), FpdmGeo (FMS/FPD, 4 versions),
+ * ZcalGeo (ZDC, η>6, spectator neutrons), PhmdGeo (PMD, 2.3<η<3.7),
+ * FsceGeo (forward spaghetti calorimeter prototype).
+ */
+
+/**
+ * @defgroup StarVMCGeoTOF Time-of-Flight and Trigger Detectors
+ * @ingroup StarVMCGeometry
+ * @brief Barrel and endcap time-of-flight, vertex-position, beam-beam, and event-plane detectors.
+ *
+ * Covers BtofGeo (BTOF MRPC barrel TOF, 8 generation variants), EtofGeo (CBM/STAR eTOF),
+ * VpddGeo (VPD Cerenkov and scintillator variants, ±550–571 cm),
+ * BbcmGeo (BBC, 3.3<|η|<5.0), EpdmGeo (EPD, 2.1<|η|<5.1, Run 18+),
+ * EiddGeo (east inner detector TRD+MRPC+preshower), MutdGeo (MTD, r~400 cm, 11 setups).
+ */
+
+/**
+ * @defgroup StarVMCGeoSupport Infrastructure and Support Structures
+ * @ingroup StarVMCGeometry
+ * @brief Experiment hall geometry, beam pipe, magnet yoke, shielding, and upstream infrastructure.
+ *
+ * Covers CaveGeo (experiment hall HALL volume, 4 versions), MagpGeo (STAR solenoidal yoke),
+ * PipeGeo (beam pipe, 7 versions including TargGeo fixed-target gold foil),
+ * ShldGeo (beam tunnel shielding wall), QuadGeo (DX/D0/Q1-Q3 magnets),
+ * SconGeo (SVT/SSD support cone with carbon/nomex/G10 mass), SupoGeo (FTPC support arms),
+ * KludGeo (runtime-configurable placeholder), TutrGeo (AGML tutorial modules),
+ * UpstGeo (upstream beam dump / Roman pots region), Compat (18 legacy AGE verbatim-import shims).
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,70 @@
+/**
+ * @defgroup StgmGeo StgmGeo — Small-strip Thin-Gap Chamber Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR small-strip Thin-Gap Chamber (sTGC),
+ *        detector tag STGM.
+ *
+ * @details
+ * The small-strip Thin-Gap Chamber (sTGC) is a four-station gaseous tracking detector
+ * designed for the STAR Forward Detector Upgrade (FWD), targeting the BES-II physics
+ * programme.  It provides charged-particle tracking at far-forward pseudorapidities in
+ * conjunction with the Forward Silicon Tracker (FST).
+ *
+ * **Physical layout:**
+ * The sTGC mother volume STGM is placed in the STAR cave at z = 338.84 cm (with a +5.9 cm
+ * y-offset for the STAR global tilt) and subtends a z half-length of 30 cm.  Four stations
+ * are located at z offsets −26.50, −8.89, +8.80, and +26.58 cm, placing them physically at
+ * z ≈ 312, 330, 348, and 365 cm from the IP.  Each station consists of four pentagon-shaped
+ * detector modules (STFM) arranged with 90° rotational symmetry, covering an acceptance from
+ * r ≈ 2.25 cm to r ≈ 32.5 cm.
+ *
+ * **Module structure:**
+ * Each STFM pentagon module is built from three sub-assemblies:
+ *   - STMP — G10 PCB layer (half-thickness 1.59 mm), decomposed into three sub-shapes
+ *     (polygon + two boxes: STPP, STPL, STPS).
+ *   - STMG — gas active volume (NPCO2, half-depth 3.19 mm); sensitive detector medium;
+ *     decomposed into STGP, STGL, STGS.
+ *   - STMH — aluminium honeycomb structural layer (half-depth 5.31 mm);
+ *     decomposed into STHP, STHL, STHS.
+ *
+ * Per-module misalignment corrections are read from the alignment tables
+ * @c Geometry/stgc/pentOnStation and @c Geometry/stgc/stationOnStgc.
+ *
+ * **Combined Si+sTGC mode:**
+ * The MAIN structure carries a `zsi(7)` array (93.3, 140.0, 186.6, 280.9, 303.7,
+ * 326.6, 349.4 cm) for placing additional silicon discs alongside the sTGC stations in the
+ * combined FWD configuration activated by setup tag @c STGCv1.
+ *
+ * @par Author
+ * Daniel Brandenburg
+ *
+ * @par Created
+ * 19 August 2021
+ *
+ * @{
+ */
+
+/**
+ * @defgroup StgmGeoDefault StgmGeo1 — Default sTGC Four-Station Geometry
+ * @ingroup StgmGeo
+ * @brief Four sTGC stations at z ≈ 312, 330, 348, 365 cm with full misalignment support.
+ *
+ * @details Activated by setup tag @c STGCon (MAIN.version = 3.0).  All four stations are
+ * enabled.  Front-end electronics (TFEE) and mechanical support brackets (BRAC: corner,
+ * middle, edge, and coax connector) are included in the volume description.
+ */
+
+/**
+ * @defgroup StgmGeoFWD StgmGeo1 — Combined Si+sTGC FWD Configuration
+ * @ingroup StgmGeo
+ * @brief sTGC stations plus seven silicon disc positions for the full Forward Detector system.
+ *
+ * @details Activated by setup tag @c STGCv1 (MAIN.version = 3.0, type = 1, useids = 0,
+ * active = {0,…,0}).  Silicon disc z-positions from MAIN.zsi = {93.3, 140.0, 186.6,
+ * 280.9, 303.7, 326.6, 349.4} cm, together with four sTGC stations, form the complete
+ * Forward Detector as envisioned for BES-II running.
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,59 @@
+/**
+ * @defgroup StVMCMaker StVMCMaker — STAR Chain Maker for VMC Simulation
+ * @brief StMaker that drives StarVMCApplication from within the STAR BFC.
+ *
+ * StVMCMaker integrates the VMC simulation into the standard STAR chain.
+ * It owns the StarVMCApplication singleton and the TGeant3TGeo engine,
+ * initialises the full simulation stack in Init(), and processes one
+ * event per Make() call.  TGeoDrawHelper provides the TGeo-to-TVolume
+ * conversion needed by the STAR event display.
+ * @{
+ */
+
+/**
+ * @class StVMCMaker
+ * @brief StMaker driving the STAR VMC simulation from the BFC.
+ *
+ * Init() creates StarVMCApplication, TGeant3TGeo, a primary generator
+ * (StarMCHBPrimaryGenerator if an input file is set, otherwise
+ * StarMCSimplePrimaryGenerator), and StarMCHits; then calls
+ * appl->InitMC() which invokes gMC->SetStack / Init / BuildPhysics and
+ * sets up all hit descriptors.
+ *
+ * InitRun() propagates the run number and date/time to GEANT3 and the
+ * event header.
+ *
+ * Make() calls appl->RunMC(1), which processes a single event through the
+ * full GEANT3 transport loop (GeneratePrimaries, Field, PreTrack,
+ * Stepping / hits->Step / FillG2Table, PostTrack, FinishEvent).
+ *
+ * Clear() resets per-event state.  Finish() finalises the MC run.
+ *
+ * SetDateTime(idat, itim) sets the GEANT3 date/time (YYYYMMDD, HHMMSS).
+ * SetRunNo(m) sets the run number (clamped to [1, 999999]).
+ * SetInputFile(fileName) enables StarMCHBPrimaryGenerator for HBT input.
+ * Skip(n) advances the input reader by n events without simulating.
+ *
+ * Static accessors: GetStarVMCApplication(), GetGeant3(), GetVolume().
+ */
+
+/**
+ * @class TGeoDrawHelper
+ * @brief Converts a TGeoVolume tree to the legacy TVolume/TShape tree.
+ *
+ * Used by StVMCMaker::InitRun() to build the TVolume representation of the
+ * STAR geometry for the TGeometry-based event display.
+ *
+ * MakeVolume(top, map) recursively converts a TGeoVolume subtree.
+ * MakeShape() dispatches on the concrete TGeo shape type and creates the
+ * corresponding legacy TShape: TGeoBBox→TBRIK, TGeoTube→TTUBE,
+ * TGeoTubeSeg→TTUBS, TGeoCone→TCONE, TGeoConeSeg→TCONS, TGeoPcon→TPCON,
+ * TGeoPgon→TPGON, TGeoEltu→TELTU, TGeoTrap→TTRAP, TGeoCtub→TCTUB,
+ * TGeoTrd1→TTRD1, TGeoTrd2→TTRD2, TGeoGtra→TGTRA, TGeoSphere→TSPHE,
+ * TGeoArb8→TARB8, TGeoPara→TPARA.
+ * Draw() and Paint() delegate to the constructed TVolume.
+ */
+
+/**
+ * @}
+ */

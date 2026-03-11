@@ -1,0 +1,13 @@
+/**
+ * @defgroup StarGeometryOutput StarGeometry — AgML Generated TGeo Output Directory
+ * @brief Build-output directory for assembled STAR detector geometry (TGeo format).
+ *
+ * @details
+ * `StarGeometry/` contains no source code. It is the output destination for
+ * `TGeoManager` files produced when the AGML geometry assembly step runs.
+ * The assembled geometry is written here by `StarTGeoStacker` (via `StVMCMaker`)
+ * and subsequently loaded by simulation and reconstruction jobs.
+ *
+ * @see StarVMCGeometry (source XML definitions in `Geometry/`)
+ * @see StarAgmlLib (AGML assembly framework)
+ */

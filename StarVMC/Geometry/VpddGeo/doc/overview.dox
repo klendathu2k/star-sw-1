@@ -1,0 +1,82 @@
+/**
+ * @defgroup VpddGeo VpddGeo — Vertex Position Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Vertex Position Detector (VPD/VPDD).
+ *
+ * @details
+ * The VPD provides the start-time signal for the BTOF system and an event-by-event
+ * measurement of the primary vertex z-position.  Two identical assemblies are
+ * placed symmetrically about the interaction region at large |z|, each consisting
+ * of an array of PMT tubes preceded by a lead converter and a radiator layer.
+ *
+ * Two generations of detector are modelled:
+ * - **pVPD** (VpddGeo / VpddGeo1, configurations 1–4): Cerenkov radiator geometry
+ *   at |z| = 550 cm with mother-volume radii 6.35–31.27 cm.
+ * - **upVPD** (VpddGeo2 / VpddGeo3, configuration 7): Upgraded design with
+ *   scintillator radiator at |z| = 571.45 cm, 19 tubes arranged in two rings
+ *   (10 in ring 1 at r = 10.16 cm, 9 in ring 2 at r = 14.29 cm).
+ *
+ * @{
+ */
+
+/**
+ * @defgroup VpddGeoBase VpddGeo / VpddGeo1 — pVPD (Cerenkov, configurations 1–4)
+ * @ingroup VpddGeo
+ * @brief Modules @c VPDDGEO and @c VPDDGEO1: Pseudo-VPD with Cerenkov radiator.
+ *
+ * @details
+ * Structures:
+ * - @c VPDV — version and vpdconfig selector integer.
+ * - @c VPDG — full pVPD geometry: zposEast/West (550 cm), rmin (6.35 cm),
+ *   rmax (31.27 cm), base-plate/front-plate/strut/FEE-box/pipe dimensions,
+ *   detector cylinder dimensions (DETlen, DETrad, DETfront), converter and
+ *   radiator thicknesses (ConvThk, RadiThk), PMT dimensions (PMTrad, PMTlen),
+ *   and inner beam-pipe bracket parameters (IBchoice, IBPosYc, IBPosZc, etc.).
+ *
+ * Volume hierarchy:
+ * @c VPDD → @c VPBP (base plate) + @c VPFP/A/B/C (front plate sections) +
+ * @c VPST (strut assembly) + @c VPBX/@c VPBI/@c VFEE/@c VLEM (FEE box) +
+ * @c VPIP (long pipe) + @c VRNG → @c VSEC → @c VDET →
+ * @c VDTI + @c VCNV + @c VRAD (Cerenkov) + @c VPMT + @c VXST + @c VPCL/@c VPCF.
+ *
+ * VpddGeo and VpddGeo1 are structurally identical; VpddGeo1 is a separate module
+ * instance introduced to allow parallel versioning in the setup registry.
+ *
+ * Controlled by setups: @c VPDDof (off), @c VPDDon (config 1),
+ * @c VPDD02 (config 2), @c VPDD03 (config 3), @c VPDD04 (config 4).
+ */
+
+/**
+ * @defgroup VpddGeo2 VpddGeo2 — upVPD (scintillator, configuration 7)
+ * @ingroup VpddGeo
+ * @brief Module @c VPDDGEO2: Upgraded VPD with scintillator radiator and
+ *        redesigned ring geometry; introduces @c VPDH structure.
+ *
+ * @details
+ * Adds the @c VPDH structure for the upVPD geometry at |z| = 571.45 cm:
+ * mother-volume rmin = 6.67 cm, rmax = 16.51 cm, length = 32 cm.  Two
+ * concentric rings of detectors: ring 1 with 10 tubes at r = 10.16 cm
+ * (φ₀ = −49°, Δφ = 31°) and ring 2 with 9 tubes at r = 14.29 cm
+ * (φ₀ = −33.5°, Δφ = 31°).  @c VRAD is now described as
+ * "light-producing layer (scintillator or quartz)".  Adds @c EWShift,
+ * @c UDShift, and @c BoltShift offsets to @c VPDG.
+ *
+ * Controlled by setup: @c VPDD07 (vpdconfig = 7).
+ */
+
+/**
+ * @defgroup VpddGeo3 VpddGeo3 — upVPD refined geometry
+ * @ingroup VpddGeo
+ * @brief Module @c VPDDGEO3: Refined upVPD geometry with updated dimensions
+ *        relative to VpddGeo2.
+ *
+ * @details
+ * Same structural schema and volume set as VpddGeo2.  Updated Fill values
+ * reflect refined as-built dimensions of the upgraded VPD assembly.
+ *
+ * Controlled by setup: @c VPDD08 (vpdconfig = 7).
+ */
+
+/**
+ * @}
+ */

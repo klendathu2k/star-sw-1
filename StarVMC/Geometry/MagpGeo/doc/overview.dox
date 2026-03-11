@@ -1,0 +1,78 @@
+/**
+ * @defgroup MagpGeo MagpGeo — STAR Solenoidal Magnet Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR main solenoidal magnet (MAGP)
+ *
+ * @details
+ * MagpGeo (module name MAGPGEO) describes the geometry of the STAR solenoidal
+ * magnet system.  The magnet provides the ~0.5 T longitudinal magnetic field
+ * needed for charged-particle momentum measurement.  The model covers:
+ *
+ * - **Barrel coil** (COIL / MCSE): twelve superconducting coil pairs symmetric
+ *   about z = 0.  In setup version 1 each coil is a simplified aluminium tube;
+ *   in version 2 a full pancake-by-pancake description is used with aluminium
+ *   conductors (5.39 cm × 4.75 cm per pancake), epoxy bonding, and
+ *   cylindrical water cooling channels (0.75 cm radius).
+ *
+ * - **Return yoke** (MRET / MSEC / MBAR): a cylindrical iron shell
+ *   (Rin = 303.29 cm, full length 684.40 cm) divided azimuthally into 30
+ *   sectors, each containing one trapezoidal iron bar.
+ *
+ * - **Return rings** (MRGV): two polycone iron rings at ± CoilLen/2 that
+ *   connect the barrel yoke to the pole-tip end caps.
+ *
+ * - **Pole-tip end caps** (MPTV): two polycone iron volumes at
+ *   z = ±310.007 cm (inner radius 90.028 cm, outer radius 252.882 cm)
+ *   containing the trim-coil cavity (MPCV) and trim coil (MTCL).
+ *
+ * The outermost mother volume MAGP is a polycone spanning
+ * ±357.5 cm in z with outer radius 364.20 cm; it is placed in CAVE inside the
+ * MagRefSys coordinate group.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | magg_version | Description |
+ * |------------|-------|--------------|-------------|
+ * | MAGPof     | off   | —            | Magnet disabled |
+ * | MAGPon     | on    | 1.0          | Simplified single-material coil |
+ * | MAGPv1     | on    | 2.0          | Detailed pancake coil with water cooling |
+ *
+ * ## Volume hierarchy
+ * @code
+ * MAGP  (PCON/TUBE Air)           — magnet mother, placed in CAVE/MagRefSys
+ * ├── COIL  (TUBE Air)            — barrel coil mother
+ * │   └── MCSE ×12               — single barrel coil
+ * │       └── [v2] PANC  (TUBE Al) — coil pancake conductor
+ * │                  └── PAWT  (TUBE Water) — cooling water
+ * ├── MRET  (TUBE Iron)           — return yoke cylinder
+ * │   └── MSEC ×30 (division)    — azimuthal sector
+ * │       └── MBAR  (TRD1 Iron)  — single return yoke bar
+ * ├── MPTV ×2  (PCON Iron)       — pole-tip end caps ±z
+ * │   └── MPCV  (TUBE Al)        — pole-tip cavity
+ * │       └── MTCL  (TUBE Al)    — trim coil
+ * └── MRGV ×2  (PCON Iron)       — return rings ±z
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file MagpGeo.xml
+ * @brief STAR solenoidal magnet geometry (MAGPGEO module).
+ * Barrel coil inner radius 264.90 cm, outer radius 299.30 cm,
+ * full length 627.40 cm; 12 coil positions mirrored about z = 0.
+ * Return yoke outer radius 364.20 cm.  Pole-tip end caps at z = ±310.007 cm.
+ * Version 2 adds detailed pancake conductors with water cooling.
+ * Author: Pavel Nevski (19 March 1996).
+ */
+
+/**
+ * @file MagpConfig.xml
+ * @brief Setup registry for the STAR magnet detector (MAGP).
+ * Defines MAGPof (disabled), MAGPon (version 1, simplified coil), and
+ * MAGPv1 (version 2, detailed pancake coil).
+ */
+
+/**
+ * @}
+ */

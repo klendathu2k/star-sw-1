@@ -1,0 +1,156 @@
+/**
+ * @defgroup BtofGeo BtofGeo — Barrel Time-of-Flight Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Barrel Time-of-Flight (BTOF) detector.
+ *
+ * @details
+ * The BTOF detector surrounds the STAR TPC at radii 207.8–221.0 cm and covers
+ * |η| < 0.9 over 2π in azimuth.  It provides particle identification via
+ * time-of-flight measurement, enabling π/K/p separation up to ~1.6 GeV/c
+ * (π/K) and ~3 GeV/c (K/p).  The final system consists of 120 trays (60 west,
+ * 60 east), each containing 32 MRPC strips.  Earlier configurations reused the
+ * same tray slots for the Central Trigger Barrel (CTB) plastic-scintillator slabs
+ * and for TOFp/TOFr prototype modules.  Run 13 introduced GEM-based trays at two
+ * positions per half.
+ *
+ * The geometry is selected via the `btog.choice` parameter and, for full-system
+ * runs, the `btog.posit5[120]` per-tray activation map.  The BtofConfig.xml
+ * registry provides 14 named setups spanning every experimental era.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup BtofGeo1 BtofGeo1 — CTB + 1-tray TOFp (legacy)
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO1: Central Trigger Barrel geometry with optional single
+ *        TOFp prototype tray.
+ *
+ * @details
+ * Implements the original CTB plastic-scintillator slabs (BXSA active slabs
+ * inside BMTC cavities) and the first TOFp prototype (BCSB slabs in BTTC
+ * cavities).  Tray positions for the TOFp tray are set by `btog.posit1`.
+ *
+ * Structures: BTOG (envelope), TRAY (tray dims), CTBB (CTB slab dims),
+ * TOFF (TOFp slat dims with individual per-slat z-positions Slat01z…Slat10z).
+ *
+ * Key volumes: BTOF → BTOH → BSEC → BTRA → BXTR → BMTC/BTTC → BMTD/BASS →
+ * BXSA/BCSB + BCPM + BCSK/BTSK.
+ *
+ * Used by setups: @c BTOFof (off), @c BTOF42 (choice=4, single TOFp tray).
+ */
+
+/**
+ * @defgroup BtofGeo2 BtofGeo2 — CTB + TOFp + TOFr prototypes (Run 2–4)
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO2: Adds Run-3/4 TOFr MRPC prototype (BRTC cavity).
+ *
+ * @details
+ * Extends BtofGeo1 with the TOFr prototype MRPC module geometry.  Adds
+ * structures MODR (Run-3 MRPC dims) and MOD4 (Run-4 MRPC dims).  The BGMT
+ * gas-box volume replaces the full honeycomb structure to model the slimmer
+ * MRPC tray.  The BRFE volume models the TOFr front-end electronics board.
+ *
+ * Structures: BTOG (+ posit2), TRAY, CTBB, TOFF (Slat01z…Slat10z), MODR, MOD4.
+ *
+ * Used by setups: @c BTOF42 (choice=4), @c BTOF52 (choice=5), @c BTOF72 (choice=7).
+ */
+
+/**
+ * @defgroup BtofGeo3 BtofGeo3 — CTB + multi-prototype refinement
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO3: Geometry refinements over BtofGeo2; same structural
+ *        schema and volume set.
+ *
+ * @details
+ * Structural layout is identical to BtofGeo2.  Updated numerical values in the
+ * Fill tables reflect measured as-built dimensions from early prototype runs.
+ * Still uses the TOFF slat-z array (Slat01z…Slat10z).
+ */
+
+/**
+ * @defgroup BtofGeo4 BtofGeo4 — Run-5/6/7 prototype configuration
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO4: Adds @c posit3 tray slot for Run-5/6/7 prototype.
+ *
+ * @details
+ * Adds `btog.posit3` (a single tray number) to select the Run-5/6/7 TOFr
+ * prototype position.  Otherwise structurally identical to BtofGeo2/3.
+ *
+ * Used by setup: @c BTOF84 (choice=8).
+ */
+
+/**
+ * @defgroup BtofGeo5 BtofGeo5 — Extended prototype with array MRPC dims
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO5: Replaces per-slat z-arrays with MODR containing
+ *        per-strip (mrpcX, mrpcZ, mrpcA) position arrays; adds backplane
+ *        geometry.
+ *
+ * @details
+ * The TOFF structure now holds `Slatz(10)`, `Slatx(10)`, `SlatAy(10)`, and
+ * `Elecz(10)` arrays.  The MODR structure provides `mrpcX(33)`, `mrpcZ(33)`,
+ * `mrpcA(33)` for 33 strip positions per tray.  Additional backplane connector
+ * volumes (BLEM) and cooling pipe (BPIP) are introduced.  Adds `posit4(5)` for
+ * five additional prototype tray positions.
+ *
+ * Used by setup: @c BTOFa5 (choice=10).
+ */
+
+/**
+ * @defgroup BtofGeo6 BtofGeo6 — Full MRPC system, Run 8 and later (v6)
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO6: Complete 120-tray MRPC system with per-tray
+ *        activation map @c posit5[120] and global offsets @c X0, @c Z0.
+ *
+ * @details
+ * Introduces the full Run-8 tray layout.  The BTOG structure gains `X0`
+ * (radial offset), `Z0` (z edge offset), `posit5(120)` (per-tray
+ * install/empty flag), and `dphi1(5)` (phi alignment corrections for five
+ * east/west boundary trays).  The TRAY structure gains top cover and FEE
+ * bracket dimensions (TopThk, TopH, CoverThk, CoverH, CoverL, FEEH1, FEEH2,
+ * FEEW, FEEL, FEEThk).  New blocks: BTFE (TINO/TDIG boards), BCON (generic
+ * connector/foam block), BFEE (FEE G10 board), BLEM (Lemo connector).
+ *
+ * Used by setups: @c BTOF16 (choice=1, z0=−0.50), @c BTOF66 (choice=6),
+ * @c BTOFb6 (choice=11, z0=−0.50), @c BTOFc6 (choice=12).
+ */
+
+/**
+ * @defgroup BtofGeo7 BtofGeo7 — Full MRPC system, Run 8 and later (v7)
+ * @ingroup BtofGeo
+ * @brief Module @c BTOFGEO7: Parallel full-system geometry identical to
+ *        BtofGeo6 with independent version bookkeeping.
+ *
+ * @details
+ * Structurally and volumetrically identical to BtofGeo6.  Maintained as a
+ * separate module to allow independent versioning in simulation production.
+ *
+ * Used by setups: @c BTOF67, @c BTOFb7, @c BTOFc7.
+ */
+
+/**
+ * @defgroup BtofGeo8 BtofGeo8 — Full MRPC + GEM trays (Run 13+)
+ * @ingroup BtofGeo
+ * @brief Module @c BtofGeo8: Adds @c posit13[120] tray-type map and the
+ *        @c GMTR structure for GEM-readout trays installed from Run 13.
+ *
+ * @details
+ * Extends BtofGeo6/7 with the GMTR parameter structure, which encodes all
+ * dimensions of the GEM-based tray inserts: inner frame (GINW, GINL, GINThk),
+ * NF foam pieces (GNFThk, GNFL, GNFW), support boards (GSB*), GEM foils
+ * (GEML, GEMW, GEMThk, GEMGThk and layer thicknesses GEMThka–d), APV
+ * front-end chips (APVL, APVW, APVThk), HV distribution boards (HVThk,
+ * HVW, HVL), vacuum connectors (GVI, GVO, GVL, GCL, GCI, GCO), and
+ * additional positional parameters (POS1[3], POS2[3]).
+ *
+ * The `posit13[120]` array assigns each tray a type: 7 = standard MRPC tray,
+ * 8 = GEM tray.  In Run 13 trays 8 and 23 (west) and 92 and 108 (east) are
+ * GEM trays.
+ *
+ * Used by setup: @c BTOFv8 (choice=13).
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,52 @@
+/**
+ * @defgroup EpdmGeo EpdmGeo — Event Plane Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Event Plane Detector (EPD/EPDM).
+ *
+ * @details
+ * The EPD consists of two scintillator wheels placed at z = ±374 cm on the STAR
+ * magnet poletips, covering 2.1 < |η| < 5.1.  Each wheel has 12 azimuthal sectors,
+ * and each sector carries 31 trapezoidal polystyrene scintillator tiles (1.2 cm
+ * thick) read out by wavelength-shifting fibres coupled to SiPMs.  The detector
+ * is used to measure the reaction-plane orientation and event centrality in
+ * heavy-ion collisions.
+ *
+ * The tile geometry is fully parameterised as TGeo @c TRAP volumes.  Four
+ * structures encode the tile positions:
+ * - @c cdta — 31-element arrays for the thick-part tiles (tiles 2–31).
+ * - @c cdtb — 31-element arrays for the thin tails of the outer tiles.
+ * - @c cdtc — scalar parameters for tile 1's upper triangular part.
+ * - @c cdtd — scalar parameters for tile 1's lower rectangular part.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup EpdmGeo0 EpdmGeo0 — EPD full geometry (version 1.0)
+ * @ingroup EpdmGeo
+ * @brief Module @c EpdmGeo0: Complete EPD wheel geometry for both east
+ *        (z = −374.0 cm) and west (z = +374.0 cm) installations.
+ *
+ * @details
+ * Structures:
+ * - @c mcdt — mother-volume parameters: onoff, z(2) = {−374, +374} cm,
+ *   half-thickness = 0.6 cm, inner radius srad = 3.0 cm, outer radius
+ *   lrad = 100 cm.
+ * - @c cdta — per-tile TRAP parameters for tiles 2–31 (arrays of 31 elements):
+ *   x, y, rot, dz (all 0.6 cm), h, bl, tl, alp.
+ * - @c cdtb — per-tile TRAP parameters for the thin outer sections of tiles 2–31.
+ * - @c cdtc — scalar TRAP parameters for tile 1 upper triangle.
+ * - @c cdtd — scalar TRAP parameters for tile 1 lower part.
+ *
+ * Volume hierarchy:
+ * @c EPDM (mother, placed 2×, east + west) →
+ * @c EPSS (sector, 12 per wheel, rotated in φ) →
+ * @c EPDT (individual trapezoidal tile, placed up to 31× per sector).
+ *
+ * Controlled by setups: @c EPDMof (off), @c EPDMon (on, default),
+ * @c EPDMv1 (on, version 1 label; identical defaults to EPDMon).
+ */
+
+/**
+ * @}
+ */

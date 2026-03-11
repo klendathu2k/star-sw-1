@@ -1,0 +1,75 @@
+/**
+ * @defgroup FtsdGeo FtsdGeo — Forward Tracking Silicon Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward Tracking Silicon Detector (FTS),
+ *        detector tag FTSD.
+ *
+ * @details
+ * The Forward Tracking Silicon Detector (FTS/FTSD) is an alternative, earlier design for a
+ * STAR forward silicon disk tracker, predating the installed FST (FstmGeo).  All disks are
+ * simple annular silicon wafers whose inner and outer radii are computed to maintain a fixed
+ * pseudorapidity acceptance of η = 2.5–4.0 at each z-position:
+ *   - rmin = z × tan(2 × atan(exp(−4.0))) − 1 cm
+ *   - rmax = z × tan(2 × atan(exp(−2.5))) + 1 cm
+ *
+ * A single AGML module, @c FtsdGeo, implements all layout variants.  The number of disks,
+ * their z-positions, and which disks are active are controlled at run time through the
+ * @c MAIN structure (version, useids, active array) initialised by the chosen setup tag.
+ *
+ * Five layout versions are provided:
+ *   - **v1.0** — 4 disks at z = 70, 93.3, 116.7, 140.0 cm (23.3 cm spacing).
+ *   - **v2.0** — 6 disks at z = 70–220 cm (30 cm spacing).
+ *   - **v3.0** — 6 disks at z = 70–187 cm (23.3 cm spacing); default.
+ *   - **v4.0** — 6 disks in three closely spaced pairs outside the STAR magnet
+ *                (z = 240/244, 400/404, 700/704 cm).
+ *   - **v5.0** — same disk positions as v3 but placed freely in the cave (useids=0).
+ *
+ * The reference setups @c FTSDr1 and @c FTSDr2 use v5.0 with the @c active array set to
+ * enable all or a selective subset of disks for acceptance studies.
+ *
+ * The volume hierarchy is minimal: FTSM (mother tube) → FTSD (per-disk tube) →
+ * FTSA (sensitive silicon, active) + FTSS (support material, two radial annuli).
+ *
+ * @par Author
+ * Jason Webb
+ *
+ * @par Created
+ * 7 October 2015
+ *
+ * @{
+ */
+
+/**
+ * @defgroup FtsdGeoV3 FtsdGeo v3.0 — Default Six-Disk Layout
+ * @ingroup FtsdGeo
+ * @brief Six disks at z = 70.0, 93.3, 116.7, 140.0, 163.3, 186.7 cm with 23.3 cm spacing.
+ *
+ * @details Activated by setup tags @c FTSDon and @c FTSDv0 (MAIN.version = 3.0).
+ * All six disks are enabled by default.  Each disk radius scales with z to preserve
+ * η = 2.5–4.0 acceptance.  Placement is inside the IDSM beam support cone (useids = 1).
+ */
+
+/**
+ * @defgroup FtsdGeoV4 FtsdGeo v4.0 — Magnet-Downstream Paired Disks
+ * @ingroup FtsdGeo
+ * @brief Six disks in closely spaced doublet pairs at z = 240/244, 400/404, and 700/704 cm,
+ *        placed outside the STAR solenoid for stand-alone tracking studies.
+ *
+ * @details Activated by setup tag @c FTSDv4 (MAIN.version = 4.0, useids = 0).
+ * The 4 cm intra-pair spacing provides a short lever arm for momentum measurement.
+ */
+
+/**
+ * @defgroup FtsdGeoRef FtsdGeo Reference Geometries (r1, r2)
+ * @ingroup FtsdGeo
+ * @brief Version 5.0 layouts with per-disk active flags for acceptance and efficiency studies.
+ *
+ * @details
+ * - @c FTSDr1: all twelve active slots enabled (@c active = {1,1,1,1,1,1,1,1,1,1,1,1}).
+ * - @c FTSDr2: alternating pattern (@c active = {1,0,1,0,0,0,1,1,1,1,1,1}) for studies
+ *   of hit-pattern dependencies.
+ */
+
+/**
+ * @}
+ */

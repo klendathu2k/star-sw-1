@@ -1,0 +1,595 @@
+/**
+ * @defgroup MiniCern minicern — Minimal CERN Library Subset for GEANT3
+ *
+ * @brief Self-contained extraction of CERNLIB routines required to build
+ *        GEANT3 without an external CERNLIB installation.
+ *
+ * @details
+ * `minicern` bundles the three CERNLIB packages that GEANT3 depends on:
+ *   - **ZEBRA** — dynamic memory manager (MZ/DZ subsystems) and I/O skeleton
+ *   - **MATHLIB** — special functions, numerical quadrature, and random-number generators
+ *   - **KERNLIB** — vector/matrix arithmetic, sorting, bit manipulation, and the
+ *                   platform-portability layer (KERNGEN/KERNNUM)
+ *
+ * Full CERNLIB (PAW, HBOOK, HIGZ, MINUIT, COMIS, …) is *not* required because the
+ * STAR experiment uses ROOT for histogramming and analysis.  GEANT3 FZ/RZ
+ * sequential and random-access I/O entry points are present as empty stubs.
+ *
+ * The library is compiled into `libminicern.so` and linked against
+ * `StarVMC/geant321/` (TGeant3).
+ *
+ * **Statistics:** ~580 files, ~24,200 lines of FORTRAN 77 / C / C++.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup MiniCernZebraMZ ZEBRA MZ — Dynamic Memory Manager
+ * @ingroup MiniCern
+ *
+ * @brief ZEBRA's heap manager for FORTRAN programs; the storage backbone of GEANT3.
+ *
+ * @details
+ * All GEANT3 geometry, tracking state, and hit data live as linked **banks** in
+ * one large FORTRAN COMMON array `Q` (equivalenced to `IQ` for integer access and
+ * `LQ` for link/address access, defined in `zebra/q.inc`).  An integer offset
+ * into `Q` is a **link** addressing a bank; a bank has downward links, a status
+ * word, structural words, and data words.
+ *
+ * A **store** is a contiguous region of `Q` managed as a heap.  **Divisions**
+ * sub-divide a store and can be garbage-collected independently.
+ *
+ * ### Initialisation
+ * - `MZEBRA(LIST)` — initialise the system store; must be called once at startup.
+ * - `MZWORK(IXSTOR, DFIRST, DLAST, IFLAG)` — register the `Q` array boundaries
+ *   with the memory manager (flags −1…4 select reset / create / resize modes).
+ * - `MZINCO` — initialise all passive COMMONs (called internally by `MZEBRA`).
+ * - `MZEND` — orderly termination of the memory manager.
+ * - `MZLOGL(IXSTOR, LEVP)` — set the logging/debug verbosity level for a store.
+ * - `MZVERS` — print ZEBRA version identification string.
+ *
+ * ### Division management
+ * - `MZDIV` — create a new division; `MZSDIV` — create a system division.
+ * - `MZFDIV` — find which division contains a given address.
+ * - `MZRESV` — reserve space in a division.
+ * - `MZNEED` — ensure a division has enough free space; triggers GC if not.
+ * - `MZMAPS` — print the store / division memory map.
+ * - `MZINQD` / `MZINQS` — inquire division / store parameters (fills `IQUEST` array).
+ * - `MZSTOR` — create a named store.
+ *
+ * ### Bank operations
+ * - `MZBOOK(IXP, LP, LSUPP, JBP, CHIDH, NL, NS, ND, NIOP, NZP)` — allocate a bank
+ *   with NL links, NS structural words, and ND data words; return start address in LP.
+ * - `MZLIFT` — book and prepend to a linear structure.
+ * - `MZLINK` — book and connect into an existing linear structure.
+ * - `MZPUSH` — push a bank onto a LIFO stack.
+ * - `MZLINT` — book and insert after a given position.
+ * - `MZDROP(IXSTOR, LHEAD)` — recursively free a data structure rooted at LHEAD.
+ * - `MZWIPE` — zero all banks in a division.
+ * - `MZMOVE` — relocate a bank to a different division.
+ * - `MZIXCO` — index-compress a bank.
+ * - `MZPUDX` — push a division index onto the system stack.
+ *
+ * ### Link management
+ * - `MZRELB` / `MZRELL` / `MZRELX` — release down link / linear link / any link.
+ * - `MZFLAG(IXSTOR, LHEAD, IFLAG)` — traverse a data structure and set/clear a status bit.
+ * - `MZFORM` — parse an I/O descriptor string into a division-format table entry.
+ * - `MZCHLN` / `MZCHLS` / `MZCHNB` — address-validity checks (bank start / status word / link).
+ *
+ * ### Garbage collection
+ * - `MZGARB(IXSTOR, IXDIV)` — compact a division by sliding live banks together.
+ * - `MZGAR1` — single-division GC (called by `MZNEED`).
+ * - `MZDVAC` — remove all free space from a division.
+ * - `MZGSTA` — update GC statistics counters.
+ * - `MZFGAP` — locate the four largest free gaps in the store.
+ *
+ * ### I/O helpers
+ * - `MZIOCF` / `MZIOCH` / `MZIOCR` — control I/O for bank data.
+ * - `MZXREF` / `MZXRUP` — cross-reference link repair and update after I/O.
+ * - `MZTABC` / `MZTABF` / `MZTABH` / `MZTABM` / `MZTABR` / `MZTABS` / `MZTABX`
+ *   — internal division-table accessors.
+ */
+
+/**
+ * @defgroup MiniCernZebraDZ ZEBRA DZ — Store Debugger / Diagnostics
+ * @ingroup MiniCern
+ *
+ * @brief Diagnostic and dump routines for inspecting ZEBRA banks and stores.
+ *
+ * @details
+ * - `DZDATA` — dump the data words of a bank.
+ * - `DZSNAP` — full snapshot dump of an entire store or division.
+ * - `DZMAP` — print the memory map of a store.
+ * - `DZOPT` — configure DZ display options (verbosity, format).
+ * - `DZTEXT` — attach a text label to a bank for diagnostic output.
+ * - `DZTYP` — print the type description of a bank.
+ * - `DZBKUP` — dump bank header plus all link words.
+ * - `DZBKHD` — dump bank header only (4-word block).
+ * - `DZBKDV` — dump bank header with division membership information.
+ * - `DZBKXR` — dump bank with cross-reference link table.
+ * - `DZSHPR` — short one-line print of a bank.
+ * - `DZSWAP` — byte-swap diagnostic for portability checking.
+ * - `DZARE1` — internal area-1 consistency check.
+ * - `DZIOPD` / `DZIOPH` / `DZIOPR` — DZ formatted I/O print helpers.
+ */
+
+/**
+ * @defgroup MiniCernZebraIncludes ZEBRA Include Files (`zebra/`)
+ * @ingroup MiniCern
+ *
+ * @brief 112 FORTRAN include files defining ZEBRA COMMON blocks and inline macros.
+ *
+ * @details
+ * ### Core COMMON block includes
+ * | Include        | COMMON / purpose |
+ * |----------------|-----------------|
+ * | `q.inc`        | Master: pulls in `zebq.inc`, `mzca.inc`, `mzcb.inc`; equivalences `Q`/`IQ`/`LQ` |
+ * | `zebq.inc`     | `COMMON /ZEBQ/` — ZEBRA system vectors |
+ * | `mzca.inc`     | `COMMON /MZCA/` — store-A control area |
+ * | `mzcb.inc`     | `COMMON /MZCB/` — store-B control area |
+ * | `mzcl.inc`     | `COMMON /MZCL/` — link area |
+ * | `mzct.inc`     | `COMMON /MZCT/` — division table |
+ * | `mzcn.inc`     | `COMMON /MZCN/` — named-store table |
+ * | `mzcwk.inc`    | `COMMON /MZCWK/` — working-space descriptor |
+ * | `zmach.inc`    | `COMMON /ZMACH/` — machine parameters: `NQBITW`, `NQBITC`, `NQCHAW`, `NQLNOR`, `NQLMAX`, `IQLPCT`, `IQNIL` |
+ * | `znatur.inc`   | `COMMON /ZNATUR/` — character-set and word-length parameters |
+ * | `zstate.inc`   | `COMMON /ZSTATE/` — ZEBRA run-time state flags |
+ * | `zunit.inc`    | `COMMON /ZUNIT/` — I/O unit numbers used by ZEBRA |
+ * | `mqsys.inc`    | `COMMON /MQSys/` — system-level MQ store descriptor |
+ * | `mqsysh.inc`   | System-store header parameters |
+ *
+ * ### I/O subsystem includes
+ * - `fzc*.inc` — FZ (sequential exchange) control areas and parameters.
+ * - `rzc*.inc` — RZ (random-access file) control areas: `rzbuff.inc`, `rzbmap.inc`,
+ *   `rzch.inc`, `rzckey.inc`, `rzcl.inc`, `rzclun.inc`, `rzclxx.inc`, `rzcount.inc`,
+ *   `rzcout.inc`, `rzcstr.inc`, `rzcycle.inc`, `rzdir.inc`, `rzk.inc`, `rzover.inc`.
+ * - `tzc*.inc` — TZ (tape-exchange) control areas.
+ * - `hzc.inc` — HZ (histogram) integration control area.
+ * - `jzc.inc` / `jzuc.inc` — JZ91 call-stack control areas.
+ * - `jztimed.inc` / `jztimin.inc` / `jztimout.inc` — timing control areas.
+ *
+ * ### Inline bit/byte operation macros (`q_*.inc`)
+ * These are `#define`-style FORTRAN include macros that expand to inlined bit/byte
+ * operations, avoiding function-call overhead in the innermost ZEBRA loops:
+ * `q_jbit.inc` (extract 1 bit), `q_jbyt.inc` (extract byte), `q_jbytet.inc`,
+ * `q_jbytor.inc`, `q_mbytet.inc`, `q_mbytor.inc`, `q_sbit0.inc` (clear bit),
+ * `q_sbit1.inc` (set bit), `q_sbyt.inc` (insert byte), `q_and.inc`, `q_or.inc`,
+ * `q_not.inc`, `q_xor.inc`, `q_shift.inc`, `q_shiftl.inc`, `q_shiftr.inc`,
+ * `q_locf.inc` (address-of), `q_andor.inc`.
+ *
+ * ### Equivalence and layout macros
+ * - `eqlq*.inc` — `EQUIVALENCE` statements for the `Q`/`IQ`/`LQ` triple array in
+ *   various precision and pointer-size configurations.
+ *
+ * ### BCD / Hollerith encoding tables
+ * - `zbcd.inc` / `zbcdch.inc` / `zbcdk.inc` — character-to-BCD and BCD-to-character
+ *   translation tables used by `MZBOOK`, `ZHTOI`, and `ZITOH`.
+ * - `zceta.inc` — `COMMON /ZCETA/` holding `IQCETA(256)` (ASCII→BCD) and
+ *   `IQTCET(64)` (BCD→ASCII).
+ *
+ * ### Bank layout parameters
+ * - `zheadp.inc` — named integer parameters for bank header word offsets
+ *   (e.g. `JQMAGIC`, `JQIDENT`, `JQNLINK`, `JQNDATA`).
+ * - `bankparq.inc` / `bkfoparq.inc` / `bknmparq.inc` / `divparq.inc` /
+ *   `questparq.inc` / `storparq.inc` — parameter sets for bank/division/store layout.
+ *
+ * ### C++ bridge
+ * - `Z.h` — declares `class Z_t` with static member `int *fgQ`; allows C++ code in
+ *   TGeant3 to access the ZEBRA `Q` array through a typed pointer.
+ *   `Z.cxx` (top-level) provides the definition of `Z_t::fgQ`.
+ */
+
+/**
+ * @defgroup MiniCernMathlib MATHLIB — Mathematical Functions
+ * @ingroup MiniCern
+ *
+ * @brief CERNLIB MATHLIB subset: special functions, quadrature, statistical
+ *        distributions, and random-number generators.
+ *
+ * @details
+ * ### Special functions
+ * - `GAMMA` / `GAMMA64` / `GAMMA128` — gamma function Γ(x) in single (32-bit),
+ *   double (64-bit), and extended (128-bit) precision.
+ * - `GAUSS(F, A, B, EPS)` / `GAUSS64` / `GAUSS128` — adaptive 8-point / 16-point
+ *   Gaussian quadrature of a user function `F(x)` over [A, B] to relative
+ *   precision `EPS`.  Used by GEANT3 for cross-section integrals.
+ * - `GAUSIN(P)` — inverse standard normal CDF (normal deviate from probability P);
+ *   Hill–Davis CACM Algorithm 442.
+ * - `CHISIN(Q, N)` — inverse chi-squared quantile for N degrees of freedom;
+ *   Goldstein CACM Algorithm 451.
+ * - `PROB(X, N)` — upper-tail chi-squared CDF P(χ²≥X, N).
+ * - `DISLAN(X)` — Landau distribution function, computed by rational approximations
+ *   in six contiguous regions of X.
+ * - `HBCDF(Y, N, IA)` — format a CDF value Y as a Hollerith string of N characters.
+ *
+ * ### Random number generators
+ * - `RANLUX(RVEC, LEN)` / `RLUXGO` / `RLUXAT` / `RLUXIN` / `RLUXUT` —
+ *   subtract-and-borrow luxury generator (Marsaglia–Zaman 1991, improved by
+ *   Luescher 1993).  Five luxury levels (0–4); default level 3 (p=223 skip).
+ *   `RLUXGO` initialises by seed; `RLUXIN`/`RLUXUT` save/restore state.
+ * - `RANMAR(RVEC, LEN)` / `RMARIN` / `RMARUT` — Marsaglia–Zaman lagged-Fibonacci
+ *   generator (97-element table, lags 97 and 33); period ~10⁴³.
+ * - `RANNOR(X, Y)` — generate a pair of independent N(0,1) deviates via Box–Muller.
+ * - `RNORML(RVEC, N)` / `RNORMX` — fill a vector with normal deviates.
+ * - `RNPSSN(MU, N, IERR)` — Poisson-distributed random integer with mean MU.
+ * - `CMRAN` / `RMRAN` — fill complex / real arrays with uniform random numbers.
+ * - `rndm_.cxx` — C++ shim bridging Fortran `RNDM(i)` and `RANF()` to ROOT's
+ *   `gRandom->Rndm()`; also provides `FREQ(x)` = `TMath::Freq(x)` and
+ *   degree-argument trigonometric wrappers (`DSIND`, `DCOSD`, `DTAND`,
+ *   `DASIND`, `DACOSD`, `DATAND`, `DATAN2D` and their single-precision counterparts).
+ *
+ * ### Sorting and search
+ * - `SORTZV(A, INDEX, N, MODE, NWAY, NSORT)` — sort real array A; return permutation
+ *   INDEX; MODE selects ascending/descending; partial sorts supported (CERN M101).
+ * - `SORTDQ(A, NC, NR, NS)` — in-place quicksort of a double-precision matrix on
+ *   column NS.
+ * - `SORTIQ(A, INDEX, N, MODE, NWAY, NSORT)` — sort integer array.
+ * - `SORTRQ(A, INDEX, N, MODE, NWAY, NSORT)` — sort real array (variant).
+ * - `FLPSOR` — floating-point in-place sort.
+ * - `ASSNDX(MODE, A, N, M, IDA, K, SUM, IW, IDW)` — solve the linear assignment
+ *   problem on cost matrix A; return optimal permutation K and total cost SUM.
+ * - `LOCATF(ARRAY, LENGTH, OBJECT)` / `LOCATR` — binary search for a real value in
+ *   a sorted array; return insertion index (KERNLIB F010).
+ *
+ * ### Fitting
+ * - `LFITW(X, Y, W, L, KEY, A, B, E)` — weighted least-squares linear fit y = Ax + B
+ *   with weights W; E is the S² estimator; KEY=0 ignores points with Y=0.
+ */
+
+/**
+ * @defgroup MiniCernKernlibVector KERNLIB Vector Operations (F1xx)
+ * @ingroup MiniCern
+ *
+ * @brief Element-wise array operations on vectors of length N.
+ *
+ * @details
+ * All routines follow the pattern `CALL Vxxx(B, [C,] A, N)` where A is the
+ * output array and B, C are inputs.
+ *
+ * | Routine | Operation |
+ * |---------|-----------|
+ * | `VADD(B,C,A,N)` | A(i) = B(i) + C(i) |
+ * | `VSUB(B,C,A,N)` | A(i) = B(i) − C(i) |
+ * | `VMUL(B,C,A,N)` | A(i) = B(i) × C(i) |
+ * | `VDOT(B,C,N)` | scalar = Σ B(i)×C(i) |
+ * | `VDOTN(B,C,A,N)` | A = B·C (normalised dot) |
+ * | `VDOTN2` | variant of VDOTN |
+ * | `VSCALE(B,S,A,N)` | A(i) = B(i) × S |
+ * | `VBIAS(B,S,A,N)` | A(i) = B(i) + S |
+ * | `VFILL(A,X,N)` | A(i) = X (constant fill) |
+ * | `VZERO(A,N)` | A(i) = 0 |
+ * | `VBLANK(A,N)` | fill with blank character code |
+ * | `VASUM(B,N)` | Σ |B(i)| |
+ * | `VSUM(B,N)` | Σ B(i) |
+ * | `VMAX(B,N)` / `VMAXA` | maximum value / absolute maximum |
+ * | `VMIN(B,N)` / `VMINA` | minimum value / absolute minimum |
+ * | `LVMAX(B,N)` / `LVMAXA` | index of maximum / absolute maximum |
+ * | `LVMIN(B,N)` / `LVMINA` | index of minimum / absolute minimum |
+ * | `VMOD(B,N)` | Euclidean norm √(Σ B(i)²) |
+ * | `VUNIT(B,A,N)` | A = B / |B| (unit vector) |
+ * | `VCOPYN(B,A,N)` | copy N elements |
+ * | `VEXCUM(B,A,N)` | exclusive cumulative sum |
+ * | `VLINE(B,C,A,N)` | linear interpolation array |
+ * | `VFIX(B,A,N)` | real → integer truncation |
+ * | `VFLOAT(B,A,N)` | integer → real conversion |
+ * | `VMATL(B,C,A,N)` | left matrix–vector product |
+ * | `VMATR(B,C,A,N)` | right matrix–vector product |
+ */
+
+/**
+ * @defgroup MiniCernKernlibMatrix KERNLIB Matrix / Linear Algebra (F2xx/F3xx/F0xx)
+ * @ingroup MiniCern
+ *
+ * @brief Matrix arithmetic and linear system solvers in four numeric types.
+ *
+ * @details
+ * KERNLIB provides each operation in four precision/type variants:
+ * single real (prefix `R`), double real (`D`), single complex (`C`),
+ * and double complex (`U`).
+ *
+ * ### Matrix arithmetic
+ * | Operation | R | D | C |
+ * |-----------|---|---|---|
+ * | Add | `RMADD` | `DMADD` | `CMADD` |
+ * | Copy | `RMCPY` | `DMCPY` | `CMCPY` |
+ * | Multiply | `RMMPY` | `DMMPY` | `CMMPY` |
+ * | Symmetric multiply | `RMMPYC` | — | `CMMPYC` |
+ * | Bilinear form | `RMBIL` | `DMBIL` | `CMBIL` |
+ * | Scale | `RMSCL` | `DMSCL` | — |
+ * | Real scale | `RRSCL` | `DRSCL` | `CRSCL` |
+ * | Set to value | `RMSET` | `DMSET` | — |
+ * | Subtract | `RMSUB` | `DMSUB` | `CMSUB` |
+ * | Utility transpose | `RMUTL` | `DMUTL` | `CMUTL` |
+ * | Max norm | `RMMNA` | `DMMNA` | `CMMNA` |
+ * | Sum norm | `RMMNS` | `DMMNS` | `CMMNS` |
+ * | Pack symmetric (row) | `RMMPA` | `DMMPA` | `CMMPA` |
+ * | Pack symmetric (col) | `RMMPS` | `DMMPS` | `CMMPS` |
+ * | Cumulative multiply | `CUMPY` / `CUMPYC` | `DUMPY` | `RUMPY` |
+ * | Cumulative sum (row/col) | `CUMNA`/`CUMNS`/`CUMPA`/`CUMPS` | `DUMNA` … | `RUMNA` … |
+ *
+ * ### Linear system solvers and factorisations
+ * | Operation | R/S | D | C | Description |
+ * |-----------|-----|---|---|-------------|
+ * | Solve A·x=b | `RFEQN`/`RSEQN` | `DFEQN`/`DSEQN`/`DSFEQN` | `CFEQN` | Gaussian elim. with partial pivoting |
+ * | Invert A | `RFINV`/`RSINV` | `DFINV`/`DSINV`/`DSFINV` | `CFINV` | General matrix inversion |
+ * | Factorise A | `RFACT`/`RSFACT` | `DFACT`/`DSFACT` | `CFACT` | LU factorisation |
+ * | In-place invert | `RINV` | `DFINV` | `CFINV` | — |
+ *
+ * ### Physics geometry
+ * - `CROSS(X, Y, Z)` — 3-vector cross product: Z = X × Y.
+ * - `LORENF(U, PS, PI, PF)` — Lorentz boost: transform 4-momentum `PI` to the frame
+ *   defined by boost vector `U` with invariant mass `PS`; result in `PF`.
+ */
+
+/**
+ * @defgroup MiniCernKernlibUtil KERNLIB Utility Routines
+ * @ingroup MiniCern
+ *
+ * @brief Bit/byte manipulation, string handling, memory copy, and system interface.
+ *
+ * @details
+ * ### Bit and byte extraction / insertion (KERNLIB M4xx)
+ * - `JBIT(IZW, IZP)` — extract bit IZP from word IZW (CERN M421).
+ * - `JBYT(IZW, IZP, NZB)` — extract NZB-bit field at position IZP.
+ * - `JBYTET(IZW, IZP, NZB)` — extract and test a byte field.
+ * - `JRSBYT(IZW, IZP, NZB)` — extract byte with right-shift.
+ * - `SBIT(IZW, IZP, IBV)` — set bit IZP of word IZW to value IBV.
+ * - `SBIT0(IZW, IZP)` / `SBIT1(IZW, IZP)` — clear / set a single bit.
+ * - `SBYT(IZW, IZP, NZB, IBV)` — insert NZB-bit field IBV at position IZP.
+ * - `SBYTPK(IZW, IZP, NZB, IBV)` — packed-array byte insert.
+ * - `SBYTOR(IZW, IZP, NZB, IBV)` — OR a byte field into a word.
+ * - `UBITS(I, N, K, M)` — find positions of all 1-bits in a N-bit string; return
+ *   positions in K(1:M) (CERN M503).
+ * - `UBLOW(IA, IB, N, NB)` — unpack N NB-bit fields from packed array IA into IB.
+ * - `UBUNCH(IA, IB, N, NB)` — pack N integers from IA into NB-bit fields in IB.
+ * - `PKBYT(A, IA, NB)` / `UPKBYT(A, IA, NB)` — pack / unpack byte arrays.
+ * - `PKCHAR(A, IA, NC)` / `UPKCH(A, IA, NC)` — pack / unpack character arrays.
+ * - `MCBYT` / `MBYTET` / `MBYTOR` — move / test / OR bytes via memory addresses.
+ * - `MSBIT` / `MSBIT0` / `MSBIT1` / `MSBYT` — set/clear/test bits via Hollerith addresses.
+ * - `CBYT` — copy a byte.
+ *
+ * ### String and character handling (KERNLIB M5xx)
+ * - `LENOCC(CHV)` — return the index of the last non-blank character in `CHV` (CERN M507).
+ * - `lnblnk(s)` (C) — C implementation of trailing-blank length.
+ * - `CLTOU(CHV)` — convert CHARACTER string to upper case in place.
+ * - `CLEFT(CHV)` — left-justify a character string.
+ * - `UCTOH(CHV, IHV, NC)` / `UCTOH1` — convert CHARACTER to packed Hollerith integers.
+ * - `UHTOC(IHV, CHV, NC)` / `UH1TOC` — convert packed Hollerith to CHARACTER.
+ * - `IUCOMH(IH1, IH2, N)` — compare two Hollerith strings.
+ * - `IUCOMP(CH1, CH2)` — compare two CHARACTER strings.
+ * - `IUFIND(CH, CHSUB)` — find substring position.
+ * - `IUHUNT(CH, C)` — locate a character within a string.
+ * - `IUSAME(CH1, CH2)` — test equality of two CHARACTER strings.
+ * - `ICLUNS(CHV, JL, JR)` — decode a numeric unit number from characters JL:JR of CHV.
+ *
+ * ### Memory and array utilities (KERNLIB V3xx)
+ * - `UCOPY(A, B, N)` — copy N words; handles overlapping regions (CERN V301).
+ * - `UCOPY2(A, B, N)` — copy N double-words.
+ * - `UCOPYN(A, B, N)` — copy N bytes.
+ * - `UZERO(A, N)` — zero N words.
+ * - `UFILL(A, X, N)` — fill N words with constant X.
+ * - `USWOP(A, B, N)` — swap arrays A and B element-by-element.
+ * - `UTRANS(A, B, TAB, N)` — translate N characters through look-up table TAB.
+ *
+ * ### Address utilities
+ * - `locf.c` — provides `locf_(void *p)`: return the integer address of a Fortran
+ *   variable (essential for ZEBRA link arithmetic on 32-bit and 64-bit platforms).
+ */
+
+/**
+ * @defgroup MiniCernKernlibIO KERNLIB I/O, System, and Error Handling
+ * @ingroup MiniCern
+ *
+ * @brief File I/O (CF package), date/time, environment, and error/abort routines.
+ *
+ * @details
+ * ### CF file I/O (KERNLIB Z310)
+ * The CF package wraps POSIX `fopen`/`fread`/`fwrite`/`fclose` for use from FORTRAN.
+ * - `CFOPEN(LUNDES, MEDIUM, NWREC, MODE, NBUF, NAME, ISTAT)` — open a file; supports
+ *   sequential and direct-access modes, optional buffering.
+ * - `cfget.c` / `cfput.c` — C-level record read / write.
+ * - `cfseek.c` — C-level record seek.
+ * - `cfclos.c` — C-level file close.
+ * - `cfstati.c` / `CFSTAT` — query file status.
+ * - `CFEQN` — parse a CF record-descriptor string.
+ * - `kerngen/cf_open.h` … `cf_xaft.h` — C macro definitions for the CF layer.
+ *
+ * ### FZ/RZ stub (no-op stubs for GEANT3 link compatibility)
+ * `fzdummies.F` provides empty stub bodies for all FZ sequential I/O entry points
+ * (`FZIN`, `FZOUT`, `FZFILE`, `FZENDO`, `FZENDI`) and RZ random-access entry points
+ * (`RZIN`, `RZOUT`, `RZFILE`, `RZMAKE`, `RZOPEN`, `RZCDIR`, `RZMDIR`, `RZINK`,
+ * `RZEND`).  GEANT3 in the STAR VMC framework writes to ROOT TTrees directly and
+ * never invokes these, but they must be present for the Fortran linker.
+ *
+ * ### Date / time / environment
+ * - `datime.c` — C function filling an integer array `[day, month, year, hour, min, sec]`.
+ * - `DATIMH` — Fortran wrapper returning date/time as a Hollerith string.
+ * - `geteni.c` — C function `geteni_()` wrapping `getenv(3)`.
+ * - `GETENVF` — Fortran wrapper for `getenv`.
+ * - `TIMEL(T)` / `TIMED(T)` — return elapsed CPU time in seconds.
+ * - `JOBNAM(CHJOB)` — return the executable name as a CHARACTER string.
+ * - `NOARG()` — return the count of command-line arguments.
+ * - `INTRAC(MODE)` — set/query whether the job is running interactively.
+ * - `IUMODE(LUN)` — return the I/O mode of logical unit LUN.
+ * - `KERNGT` / `kerngt.F` — get an environment variable from Fortran; dispatches to
+ *   `lnxgs/kerngt.F`, `sungs/kerngt.F`, etc. based on the platform.
+ *
+ * ### Error handling and abort
+ * - `abend.c` — flush stdout/stderr then call `exit(1)`.
+ * - `ZABEND` — Fortran wrapper for `abend`; called by ZEBRA fatal-error paths.
+ * - `ZFATAL(TEXT)` / `ZFATAM` — print an error message and call `ZABEND`.
+ * - `KERSET(NAME, IOPT, IRET, IFREQ)` — set KERNLIB error-recovery mode for routine NAME.
+ * - `MTLPRT(NAME, CODE, TEXT)` — print a MATHLIB diagnostic message.
+ * - `MTLSET(NAME, IOPT)` — set the MATHLIB message-level threshold.
+ * - `TRACEQ` / `traceq.F` — print a call-stack traceback (HP-UX variant uses
+ *   `U_STACK_TRACE`; generic variant uses ZEBRA's `GSHOWF`).
+ * - `GSHOWF` — show the FORTRAN call stack.
+ * - `TMPRNT` — print a formatted timing summary.
+ *
+ * ### ZEBRA BCD / Hollerith encoding
+ * - `ZHTOI(HOLL, INTV, NP)` — convert NP packed Hollerith words to 6-bit BCD integers
+ *   using `IQTCET` (BCD→ASCII inverse table from `zebra/zceta.inc`).
+ * - `ZITOH(INTV, HOLL, NP)` — convert NP BCD integers to packed Hollerith words.
+ * - `IZBCD(MCHAR)` — map one ASCII character to its 6-bit BCD code via `IQCETA`.
+ * - `IZBCDT(MCHAR)` — return `.TRUE.` if the character has a valid BCD code.
+ * - `IZHNUM(IHOLL)` — decode a Hollerith word to a decimal integer.
+ * - `ZHTOI` / `ZITOH` implementations in `qutyinv/` and `qutyz32/` provide
+ *   byte-order and character-map variants selected at build time by preprocessor flags.
+ * - `ZPAGE` / `ZPHASE` — print ZEBRA page / phase markers on the log unit.
+ * - `ZPOSTM` — post-mortem store dump.
+ * - `ZSHUNT(IUNIT)` — redirect ZEBRA diagnostic output to unit IUNIT.
+ * - `ZTELL(TEXT)` / `ZTELUS` — print ZEBRA status messages.
+ */
+
+/**
+ * @defgroup MiniCernKerngen KERNGEN — Platform Portability Headers (`kerngen/`)
+ * @ingroup MiniCern
+ *
+ * @brief 40 C and FORTRAN include files that abstract hardware and OS differences.
+ *
+ * @details
+ * `kerngen/pilot.h` is the master dispatcher included by all KERNLIB FORTRAN
+ * source files.  It selects the appropriate per-platform header via `#if defined`:
+ *
+ * | Header | Platform |
+ * |--------|----------|
+ * | `klnx.h` | Linux (all architectures) |
+ * | `khpx.h` | HP-UX |
+ * | `ksun.h` | Sun/Solaris |
+ * | `kvax.h` | VAX/VMS |
+ * | `kvmi.h` | VAX/Ultrix |
+ * | `kvaos.h` | VAX/AOS |
+ * | `kirt.h` | IBM RT / RS6000 |
+ * | `kirtd.h` | IBM RT debug |
+ * | `kmpw.h` | Macintosh/MPW |
+ * | `kwnt.h` | Windows NT |
+ * | `kdos.h` | MS-DOS |
+ * | `ksgi.h` | SGI IRIX |
+ *
+ * Each platform header defines `CERNLIB_*` flags that control conditional
+ * compilation in FORTRAN source files throughout minicern.
+ *
+ * Other important headers in `kerngen/`:
+ * - `fortranc.h` — defines `type_of_call` for Fortran-from-C calling convention
+ *   (empty on Unix, `_stdcall` on Windows).
+ * - `fortchar.h` — macros for passing Fortran CHARACTER arguments through C interfaces.
+ * - `qf_f2c.h` — f2c compatibility macros.
+ * - `q_cbyt.inc` / `q_jbit.inc` / `q_jbytet.inc` / `q_sbit.inc` / `q_sbyt.inc`
+ *   / `q_shift.inc` / `q_andor.inc` / `q_isabit.inc` — portable inline bit/byte
+ *   operation macros for KERNLIB source files.
+ * - `wordsize.inc` / `wordsizc.h` — word-size detection constants.
+ * - `qnatch.inc` / `qnatchdata.inc` — character-matching tables for Hollerith.
+ * - `iall1s.inc` / `iallbl.inc` — array-fill initialisation stubs.
+ * - `ublowx1.inc` / `ubnchx1.inc` — `UBLOW`/`UBUNCH` inner-loop expansion macros.
+ * - `kalph.h` — alphabetic-character test macro.
+ */
+
+/**
+ * @defgroup MiniCernKernnum KERNNUM — Numerical Portability Header (`kernnum/`)
+ * @ingroup MiniCern
+ *
+ * @brief Single `pilot.h` header defining floating-point and I/O model flags
+ *        for all KERNLIB numerical routines.
+ *
+ * @details
+ * `kernnum/pilot.h` sets the following preprocessor flags depending on the target:
+ *
+ * - `CERNLIB_DOUBLE` — use double precision throughout KERNLIB numerical code.
+ * - `CERNLIB_NUMIB2` — IBM-2 floating-point model.
+ * - `CERNLIB_NUMD38` / `CERNLIB_NUMD279` — `DOUBLE PRECISION` exponent range flags
+ *   (10³⁸ or 10²⁷⁹).
+ * - `CERNLIB_NUMAP` — use `APPEND` semantics for unformatted I/O.
+ * - `CERNLIB_NUMLOPRE` / `CERNLIB_NUMHIPRE` — low / high precision control.
+ * - `CERNLIB_NUMRDBLE` / `CERNLIB_NUMCDBLE` — real / complex double availability.
+ * - `CERNLIB_NUME38` / `CERNLIB_NUME75` — single-precision exponent range flags.
+ *
+ * These flags drive `#if` guards inside routines such as `LOCATF`, `RANLUX`,
+ * and the matrix solvers to select the correct floating-point arithmetic paths.
+ */
+
+/**
+ * @defgroup MiniCernGenIncludes MATHLIB Generic Precision Shims (`gen/`)
+ * @ingroup MiniCern
+ *
+ * @brief 7 FORTRAN include files that switch MATHLIB routines between
+ *        single-precision and double-precision builds at compile time.
+ *
+ * @details
+ * MATHLIB routines such as `GAUSS`, `GAMMA`, `PROB`, and `DISLAN` exist in
+ * a single source file that is compiled twice: once for the default precision
+ * and once for the alternate precision, yielding entry points such as
+ * `GAUSS` / `GAUSS64` or `GAMMA` / `GAMMA64`.  The precision switch is
+ * achieved by including one of these files at the top of each routine.
+ *
+ * | File | Purpose |
+ * |------|---------|
+ * | `gen/pilot.h` | Master dispatch: defines `CERNLIB_UNIX` when on Linux/Sun; enables `CERNLIB_DOUBLE` on all Unix platforms unless `CERNLIB_SINGLE` is set; enables quad-precision support where available |
+ * | `gen/def64.inc` | `REAL` and `DOUBLE PRECISION` type definition macros for 64-bit double |
+ * | `gen/def128.inc` | Type definitions for 128-bit extended precision (quad) |
+ * | `gen/defc64.inc` | `COMPLEX` and `DOUBLE COMPLEX` type definitions for 64-bit |
+ * | `gen/imp64.inc` | `IMPLICIT REAL (A-H,O-Z)` or `IMPLICIT DOUBLE PRECISION (A-H,O-Z)` depending on `CERNLIB_DOUBLE` |
+ * | `gen/imp128.inc` | `IMPLICIT` statement for 128-bit precision |
+ * | `gen/impc64.inc` | `IMPLICIT` statement for complex 64-bit routines |
+ */
+
+/**
+ * @defgroup MiniCernPlatformOverrides Platform-Specific Source Overrides
+ * @ingroup MiniCern
+ *
+ * @brief Subdirectories providing optimised or corrected implementations
+ *        of selected routines for specific operating systems / CPUs.
+ *
+ * @details
+ * The KERNLIB build system selects platform-specific source files by including
+ * them from the generic stub via `#if defined(CERNLIB_QMHPX) … #include
+ * "hpxgs/kerngt.F" … #endif` patterns.  The subdirectories are:
+ *
+ * ### `allgs/` — All-platform generic overrides
+ * Selected when no more specific platform is matched.
+ * - `kerngt.F` — retrieve an environment variable into a Fortran CHARACTER string.
+ * - `lnblnk.c` — C implementation of trailing-blank length (returns index of last
+ *   non-blank byte).
+ * - `ublow.F` / `ubunch.F` — portable (non-optimised) bit-field unpack/pack.
+ *
+ * ### `lnxgs/` — Linux overrides
+ * - `ibits.F` — `IBITS(IZW, IZP, NZB)`: extract NZB bits from position IZP of IZW
+ *   using the Linux-native `IBITS` intrinsic.
+ * - `kerngt.F` — Linux `getenv(3)` wrapper.
+ * - `rdmin.F` — read a single character from standard input (terminal).
+ * - `ublow.F` / `ubunch.F` — Linux x86 bit-field unpack/pack (word-aligned loops).
+ * - `utrans.F` — character-translation using the Linux character table.
+ *
+ * ### `lnxppcgs/` — Linux PowerPC overrides
+ * - `ublow.F` / `ubunch.F` — big-endian byte-order corrected bit-field unpack/pack
+ *   for 32-bit PowerPC Linux.
+ *
+ * ### `sungs/` — Sun/Solaris overrides
+ * - `datimh.F` — return date/time via `ctime(3)` / Sun FORTRAN intrinsic.
+ * - `intrac.F` — query `isatty(3)` to detect interactive mode.
+ * - `iumode.F` — query Solaris I/O unit mode via `INQUIRE`.
+ * - `jbit.F` / `jbyt.F` / `jrsbyt.F` — bit/byte extraction using SunOS `IBITS` and
+ *   `ISHFT` intrinsics (faster than the generic version).
+ * - `kerngt.F` — Solaris `getenv(3)` wrapper.
+ * - `qnexte.c` — C function returning the next environment-variable entry.
+ * - `sbit0.F` / `sbit1.F` / `sbyt.F` — bit/byte insertion using Sun intrinsics.
+ * - `ublow.F` / `ubunch.F` — Solaris SPARC optimised bit-field unpack/pack.
+ * - `upkbyt.F` — unpack byte array using Sun Fortran extensions.
+ *
+ * ### `hpxgs/` — HP-UX overrides
+ * - `kerngt.F` — HP-UX `getenv(3)` wrapper.
+ * - `lnblnk.c` — HP-UX C trailing-blank length.
+ * - `traceq.F` / `traceqc.c` — stack traceback using HP's `U_STACK_TRACE` API.
+ *
+ * ### `qutyinv/` — ZEBRA BCD encoding, inverted-byte variant
+ * Used on platforms where the `IQCETA` table is built with inverted byte order.
+ * Provides `IZBCD`, `IZBCDT`, `IZBCDV`, `IZHNUM`, `ZHTOI`, `ZITOH`.
+ *
+ * ### `qutyz32/` — ZEBRA BCD encoding, standard 32-bit variant
+ * Used on 32-bit IEEE platforms (Linux x86, etc.) with standard ASCII byte order.
+ * Provides the same six routines as `qutyinv/` plus `IZCHAV` (character
+ * availability test distinguishing ASCII from EBCDIC).
+ */
+
+/**
+ * @}
+ */

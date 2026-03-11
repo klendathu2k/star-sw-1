@@ -1,0 +1,122 @@
+/**
+ * @defgroup MutdGeo MutdGeo — Muon Telescope Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry modules for the STAR Muon Telescope Detector (MTD/MUTD).
+ *
+ * The Muon Telescope Detector is a Multi-gap Resistive Plate Chamber (MRPC)
+ * based detector mounted on the outside of the STAR solenoidal magnet at a
+ * radius of approximately 364–430 cm.  It covers the central rapidity region
+ * |η| < 0.5.  The detector is segmented into 30 azimuthal back-leg positions,
+ * each carrying a group of 3 or 5 WMRPC trays.
+ *
+ * This directory contains six AGML modules (plus the configuration file)
+ * that describe the evolution of the MTD geometry from Run 9/10 through
+ * Run 16 and beyond:
+ *
+ *   - **MUTDGEO** (`MutdGeo.xml`) — Original CTB/TOF-era geometry: 30 sectors,
+ *     each with two radial trays (aluminium boxes containing polystyrene
+ *     scintillator slabs), a PMT housing, and an MRPC box.  Author: M. Potekhin,
+ *     March 2006.
+ *
+ *   - **MUTDGEO2** (`MutdGeo2.xml`) — Simplified variant of v1: removes the
+ *     tray internal structure; loops over 60 individual sector placements.
+ *     Sensitive volume is the MRPC box (MMRP) only.
+ *
+ *   - **MUTDGEO3** (`MutdGeo3.xml`) — Single-sector variant that restores the
+ *     full tray mechanical hierarchy of v1 but places one MUSC at φ = 210°
+ *     with the MMRP and MTRA shifted to z = −128.81 cm.
+ *
+ *   - **MUTDGEO4** (`MutdGeo4.xml`) — Major redesign by W.J. Llope (July 2010)
+ *     introducing the WMRPC tray model: aluminium top/bottom plates (MTBP,
+ *     MTTP), U-channel structural members (MCHL/MCHS with air cores MCAL/
+ *     MCAS), and a 5- or 6-gap inner glass stack (MIGS containing MIGG gas
+ *     gaps).  Selects the partial or full MTD configuration via the integer
+ *     `config` parameter (4 = Run 11 single back-leg, 5 = Run 12 partial,
+ *     12 = Run 12 three back-legs, 13 = Run 13 outer back-legs only).
+ *
+ *   - **MUTDGEO5** (`MutdGeo5.xml`) — Extension by W.J. Llope (Dec 2013):
+ *     unifies 3-tray and 5-tray group volumes into one parameterized `MTTG`
+ *     volume; adds per-back-leg radii array `Ri(30)` from CADD engineering
+ *     drawings; places MUTD in the `MagRefSys` reference group.  Adds config
+ *     14 for the full 30 back-leg Run 14 system (cradle back-legs 12–20 get
+ *     3-tray groups; the rest get 5-tray groups) with azimuthal Y-shifts for
+ *     bus-cover back-legs 8 and 24.  Config 5 is marked obsolete.
+ *
+ *   - **MUTDGEO7** (`MutdGeo7.xml`) — Run 15+ revision (T. Todoroki,
+ *     Nov 2015): adds a second radii table `RiRun15(30)` with re-measured CADD
+ *     values; introduces a versioned second MTDD fill (version = 1.1) that
+ *     corrects the sign convention for the bus-cover Y-shifts; selects the fill
+ *     via `<Use select="version" value="MTDG_version">`.  Config ≥ 15 uses
+ *     `RiRun15`.  Setup MUTD16 initialises version = 1.1 to activate the
+ *     corrected Y-shifts.
+ *
+ * @par Setup configurations (MutdConfig.xml)
+ * | Setup   | Module     | config | Run era      |
+ * |---------|------------|:------:|--------------|
+ * | MUTDof  | MutdGeo    | —      | off          |
+ * | MUTD01  | MutdGeo    | —      | Run 9/10     |
+ * | MUTD02  | MutdGeo2   | —      | —            |
+ * | MUTD03  | MutdGeo3   | —      | —            |
+ * | MUTD04  | MutdGeo4   | 4      | Run 11       |
+ * | MUTD05  | MutdGeo4   | 5      | Run 12 early |
+ * | MUTD12  | MutdGeo4   | 12     | Run 12       |
+ * | MUTD13  | MutdGeo4   | 13     | Run 13       |
+ * | MUTD14  | MutdGeo5   | 14     | Run 14       |
+ * | MUTD15  | MutdGeo7   | 15     | Run 15       |
+ * | MUTD16  | MutdGeo7   | 16     | Run 16+      |
+ *
+ * @par Key dimensions (WMRPC tray, MutdGeo4+)
+ * - Tray half-height (radial): 2.496 cm
+ * - Tray half-width: 33.765 cm
+ * - Tray half-length: 54.005 cm
+ * - Gas gap thickness: 0.25 mm (5 gaps per tray)
+ * - Thin glass electrode: 0.7 mm
+ *
+ * @par Sensitive volumes
+ * - `MXSA` — polystyrene scintillator slab (MutdGeo v1/v3)
+ * - `MMRP` — RPCgas MRPC box (MutdGeo v1/v2/v3)
+ * - `MIGG` — RPCgas single WMRPC gas gap (MutdGeo v4/v5/v7)
+ *
+ * @see StMtdHit, StMtdCollection
+ * @{
+ */
+
+/**
+ * @var MUTDGEO
+ * @brief Original CTB/TOF-era scintillator + MRPC geometry (Run 9/10).
+ * Module defined in MutdGeo.xml.
+ */
+
+/**
+ * @var MUTDGEO2
+ * @brief Simplified loop-over-sectors variant (no internal tray structure).
+ * Module defined in MutdGeo2.xml.
+ */
+
+/**
+ * @var MUTDGEO3
+ * @brief Single-sector offset variant restoring tray mechanical structure.
+ * Module defined in MutdGeo3.xml.
+ */
+
+/**
+ * @var MUTDGEO4
+ * @brief WMRPC tray model with config-driven partial/full system placement.
+ * Module defined in MutdGeo4.xml.  Covers Run 11–13.
+ */
+
+/**
+ * @var MUTDGEO5
+ * @brief Full 30 back-leg system with per-back-leg CADD radii (Run 14).
+ * Module defined in MutdGeo5.xml.
+ */
+
+/**
+ * @var MUTDGEO7
+ * @brief Run 15+ revision with corrected radii and Y-shift sign convention.
+ * Module defined in MutdGeo7.xml.
+ */
+
+/**
+ * @}
+ */

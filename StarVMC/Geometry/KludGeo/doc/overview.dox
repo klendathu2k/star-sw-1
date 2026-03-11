@@ -1,0 +1,74 @@
+/**
+ * @defgroup KludGeo KludGeo — Kludge Effective-Material Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for configurable effective-material volumes
+ *        (KLUD)
+ *
+ * @details
+ * KludGeo (module name KludGeo) provides a generic mechanism for inserting
+ * user-specified effective material volumes into the STAR simulation without
+ * modifying any detector-specific geometry code.  It places up to ten
+ * cylindrical disk or tube volumes (KTUB) along the z-axis, each with fully
+ * configurable position, radii, half-length, and material properties (atomic
+ * mass, atomic number, density).  The default material is aluminium
+ * (A=27, Z=13, ρ=2.7 g/cm³).
+ *
+ * The module is intended for systematic studies, material scans of prototype
+ * detectors, or situations where a detector's material budget is known but its
+ * geometry is not yet implemented.  Its use in production simulation is
+ * strongly discouraged.
+ *
+ * ## Operation
+ *
+ * The `KCFG_ntube` parameter controls how many KTUB volumes are created; it
+ * defaults to 0 (no volumes placed).  When the KLUDon setup is active, the
+ * user may set `ntube` and the KTUB array parameters at runtime via the
+ * simulation job configuration.  The `runtime="True"` attribute on the KLUDon
+ * setup enables this runtime override.
+ *
+ * Each placed KTUB uses konly="MANY" so it can overlap with other volumes.
+ * The geometry and material are reported via AGML @c Info statements for
+ * each tube placed.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | ntube | Description |
+ * |------------|-------|-------|-------------|
+ * | KLUDof     | off   | —     | No kludge volumes (default off) |
+ * | KLUDon     | on    | 0     | Enabled; no volumes unless ntube set at runtime |
+ *
+ * ## KTUB parameter arrays (length 10)
+ *
+ * Default values (all aluminium, symmetric z):
+ * - z:   {±1000, ±900, ±800, ±700, ±600} cm
+ * - dz:  0.5 cm half-length each
+ * - rmn: 5.0 cm inner radius each
+ * - rmx: 255.0 cm outer radius each
+ * - AA:  27, ZZ: 13, DD: 2.7 g/cm³
+ *
+ * ## Volume hierarchy
+ * @code
+ * KTUB  (TUBE — up to 10 instances placed in CAVE with konly=MANY)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file KludGeo.xml
+ * @brief Kludge effective-material geometry (KludGeo module).
+ * Places up to 10 user-configured cylindrical material volumes in CAVE.
+ * Default ntube = 0; material defaults to aluminium.
+ * Author: Jason Webb (1 April 2018).
+ */
+
+/**
+ * @file KludConfig.xml
+ * @brief Setup registry for the STAR kludge volumes (KLUD).
+ * Defines KLUDof (disabled) and KLUDon (enabled, runtime-configurable).
+ * Provides example KTUB initialisation with five tubes at z = −1000 to −600 cm.
+ */
+
+/**
+ * @}
+ */

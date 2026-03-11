@@ -1,0 +1,70 @@
+/**
+ * @defgroup FgtdGeo FgtdGeo — Forward GEM Tracker Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward GEM Tracker (FGT),
+ *        detector tag FGTD.
+ *
+ * @details
+ * The Forward GEM Tracker (FGT) is a six-disk Gas Electron Multiplier detector providing
+ * charged-particle tracking in the forward pseudorapidity range approximately 1.3 < η < 2.6.
+ * It was the primary forward tracking detector for STAR during Run 12 and Run 13.
+ *
+ * Each disk spans r = 10.35–39.4 cm and is divided into four 90° quadrant modules, each
+ * assembled from five material layers along z (Nomex backing, triple-GEM sensitive gas
+ * volume, GEM foil stack, readout PCB, and electronics) supported by a spacer frame and
+ * internal spacer grid.  A carbon-fibre reinforced polymer (CFRP) cooling tube at r = 10.25 cm
+ * threads through all six disks over a half-length of 150 cm.
+ *
+ * Two production geometry modules are provided:
+ *   - **FGTDGEO3** (`FgtdGeo3.xml`) — the installed Run 12/13 geometry.  Supports two
+ *     configurations: config 1.0 (one full 4-quadrant disc + five half-discs, y2012) and
+ *     config 2.0 (all six discs fully instrumented, y2013).  Disc z-centres are taken from
+ *     survey measurements: {67.40, 77.88, 87.08, 97.48, 108.91, 118.99} cm.
+ *   - **FGTDGEOV** (`FgtdGeoV.xml`) — a very-forward extension for the eSTAR era supporting
+ *     up to 12 discs, extended z-position arrays, and a reduced inner bore option (7.0 cm).
+ *
+ * @par Authors
+ * Jan Balewski (MIT), Wei-Ming Zhang (KSU), Willie Leight (MIT)
+ *
+ * @par Created
+ * 20 December 2011
+ *
+ * @{
+ */
+
+/**
+ * @defgroup FgtdGeo3Run12 FGTDGEO3 config 1.0 — Run 12 (y2012) Geometry
+ * @ingroup FgtdGeo
+ * @brief Disc 1 fully instrumented (4 quadrants); discs 2–6 each have 2 quadrants.
+ *
+ * @details Activated by setup tags @c FGTDon and @c FGTD31 (FGGG.FgstConfig = 1.0).
+ * Uses as-measured survey z-positions {67.40, 77.88, 87.08, 97.48, 108.91, 118.99} cm.
+ * The half-disc volumes FGTH hold two quadrants each; FGTD holds four quadrants.
+ * The cooling ring first-shift correction is absent (cool1stShift = 0) in config 1.0;
+ * config 1.1 corrects for a measured 1 cm offset.
+ */
+
+/**
+ * @defgroup FgtdGeo3Run13 FGTDGEO3 config 2.0 — Run 13 (y2013) Geometry
+ * @ingroup FgtdGeo
+ * @brief All six discs fully instrumented with four quadrants each.
+ *
+ * @details Activated by setup tag @c FGTD32 (FGGG.FgstConfig = 2.0).
+ * Same disc z-positions as config 1.0; cooling ring shift correction applied
+ * (cool1stShift = 1.0 cm).  The half-disc volume FGTH is not used in this configuration.
+ */
+
+/**
+ * @defgroup FgtdGeoVESTAR FGTDGEOV — Very-Forward eSTAR Extension
+ * @ingroup FgtdGeo
+ * @brief Geometry variant supporting up to 12 discs for the eSTAR era.
+ *
+ * @details Not referenced by any active @c FgtdConfig.xml setup; present for future use.
+ * Introduces FGDB (additional disk volume), reduces inner bore to diskInRT = 7.0 cm for
+ * very-forward discs, and extends @c FGST.zDiscA to 12 entries.  Config 1.0 fills provide
+ * z-positions matching y2012; config 4.0 places six discs in doublet pairs at extended z.
+ */
+
+/**
+ * @}
+ */

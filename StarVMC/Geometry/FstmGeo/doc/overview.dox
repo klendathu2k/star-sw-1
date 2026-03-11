@@ -1,0 +1,87 @@
+/**
+ * @defgroup FstmGeo FstmGeo — Forward Silicon Tracker Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward Silicon Tracker (FST), detector tag FSTM.
+ *
+ * @details
+ * The Forward Silicon Tracker (FST) consists of three annular silicon-strip disk planes
+ * located at z = 151.750, 165.248, and 178.781 cm on the east (positive-z) side of STAR.
+ * Each disk spans radii from approximately 5 cm to 34 cm, providing track reconstruction in
+ * the pseudorapidity range 2.5 < η < 4.  The detector was commissioned as part of the STAR
+ * forward upgrade programme for the BES-II and FWD physics campaigns (ca. 2020–present).
+ *
+ * Each disk is segmented into twelve trapezoidal wedges arranged in two half-rings of six
+ * wedges each.  Every wedge carries a silicon strip sensor read out through APV25 hybrid
+ * circuits on T-boards, cooled via stainless-steel/Novec liquid-cooling loops embedded in a
+ * PEEK and CFRP mechanical structure.
+ *
+ * Four AGML module variants are provided:
+ *   - **FstmGeo** — full production geometry including all material detail (cooling, heat sinks,
+ *     hybrids, APV chips, T-boards, support rings, ribs).
+ *   - **FstmGeoS** — simplified geometry that merges fine detail into equivalent material
+ *     budget volumes; used for fast simulation.
+ *   - **FstmGeoM** — full geometry with per-half misalignment parameters read from an
+ *     alignment database; intended for systematic studies.
+ *   - **FstmGeoSM** — simplified geometry with per-half misalignment; combines the speed
+ *     of FstmGeoS with the alignment capability of FstmGeoM.
+ *
+ * The top-level mother volume FSTM is a tube (rmin = 4.1 cm, rmax = 34.0 cm, dz = 30.0 cm)
+ * placed at z = 165 cm.  Each disk container FSTD holds twelve FSTW wedge assemblies; the
+ * silicon sensitive layer is FTUS.
+ *
+ * @par Authors
+ * Te-Chuan Huang, Flemming Videbaek
+ *
+ * @par History
+ * - March 2020: Initial AGML module created.
+ * - December 2020: Disk z-positions updated to surveyed values from F. Videbaek.
+ * - January 2021: Symbolic parameter consolidation; inner support ring added.
+ * - June 2021: Middle-ring wedge rotation by 180° to avoid mechanical interference.
+ * - July 2021: Disks moved outward by ~5 cm (2 in); inner support tubes removed.
+ *
+ * @{
+ */
+
+/**
+ * @defgroup FstmGeoFull FstmGeo — Full Production Geometry
+ * @ingroup FstmGeo
+ * @brief Complete material description including cooling, heat sinks, APV chips, hybrids,
+ *        T-boards, ribs, and both inner and outer mechanical support structures.
+ *
+ * @details Activated by setup tags @c FSTMon and @c FSTMv1 in FstmConfig.xml.
+ * All per-wedge detail volumes (FSHA–FSHH, FHOA–FHOD, FHAE–FHBH heat sinks; FHTS/FCHT/FCHB
+ * cooling holders; FSBW ribs; FSWT connecting tubes) are instantiated in full.
+ */
+
+/**
+ * @defgroup FstmGeoSimplified FstmGeoS — Simplified Geometry
+ * @ingroup FstmGeo
+ * @brief Reduced-volume geometry preserving total material budget; for fast simulation.
+ *
+ * @details Activated by setup tag @c FSTMv1s.  Fine structural detail (individual heat sinks,
+ * rib sub-volumes, cooling holder tubes) is merged into aggregate material descriptions.
+ * Silicon disk z-positions are identical to FstmGeo.
+ */
+
+/**
+ * @defgroup FstmGeoMisaligned FstmGeoM — Misaligned Full Geometry
+ * @ingroup FstmGeo
+ * @brief Full geometry variant that applies per-half misalignment from an alignment database.
+ *
+ * @details Activated by setup tag @c FSTMv1m.  Reads misalignment offsets via the
+ * @c wholewedge.modulus2 index array, which maps each wedge to an alignment-database row.
+ * Intended for systematic studies of alignment effects on track reconstruction.
+ */
+
+/**
+ * @defgroup FstmGeoSM FstmGeoSM — Simplified Misaligned Geometry
+ * @ingroup FstmGeo
+ * @brief Combines the reduced volume set of FstmGeoS with per-half misalignment support.
+ *
+ * @details Activated by setup tag @c FSTMv1sm.  Provides the fastest simulation option
+ * while still accepting alignment corrections from the database.
+ */
+
+/**
+ * @}
+ */

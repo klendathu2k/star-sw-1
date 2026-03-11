@@ -1,0 +1,41 @@
+/**
+ * @defgroup StarSim StarSim — MC Hit Bridge for the STAR Chain
+ * @brief Lightweight MC hit classes intended as a future chain-level
+ *        bridge between the VMC simulation and STAR reconstruction.
+ *
+ * StarSim provides StMCHit and StMCHits, a compact hit representation
+ * designed to replace the heavier StarMCHit/StarMCHits infrastructure
+ * in StarVMCApplication for chain-level use.  The implementation is
+ * currently partial (guarded by #if 0 in StMCHits.cxx); the production
+ * hit collection remains in StarVMCApplication/StarMCHits.
+ * @{
+ */
+
+/**
+ * @class StMCHit
+ * @brief Compact TObject-derived MC hit record.
+ *
+ * Stores a TGeo path string (fPath), a 4-element position array
+ * fPos[4] = (x, y, z [cm], t [ns]) at the segment centre, a
+ * half-difference vector fDif[3] = (end-beg)/2 in cm, particle mass,
+ * total energy (fEnergy), and energy loss (fELoss).  Track ID is stored
+ * as the ROOT UniqueID; charge as a bit mask.
+ *
+ * GetStep() returns 2*|fDif|.  GetDir() returns the unit direction.
+ * GetBegEnd() reconstructs the segment endpoints from fPos and fDif.
+ * SetBegEnd(beg, end) computes fPos and fDif from endpoints.
+ */
+
+/**
+ * @class StMCHits
+ * @brief TNamed collection of StMCHit objects (work in progress).
+ *
+ * Intended as a chain-accessible TObjArray of StMCHit objects.  The
+ * constructor pre-allocates the array to 100 entries.  Currently the
+ * implementation is disabled (#if 0 in StMCHits.cxx); active hit
+ * collection is handled by StarVMCApplication::StarMCHits.
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,65 @@
+/**
+ * @defgroup QuadGeo QuadGeo — Quadrupole Magnet Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the RHIC D0 dipole and Q1–Q3
+ *        quadrupole focusing magnets (QUAD)
+ *
+ * @details
+ * QuadGeo (module name QUADGEO) models the iron yokes of the final-focus
+ * beam-line elements located in the east and west beam tunnels on either side
+ * of the STAR interaction point.  These elements are the D0 dipole, Q1, Q2,
+ * and Q3 quadrupole magnets of the RHIC beam optics.  Only the passive iron
+ * yoke material is represented; the purpose is to account for material budget
+ * effects on particles entering the ZDC and forward spectrometer regions.
+ *
+ * Four assemblies are placed symmetrically: east and west, each with two beam
+ * lines offset ±26 cm in x and angled ±0.3° relative to the nominal z-axis,
+ * reflecting the crossing geometry of the two RHIC rings at IR6.
+ *
+ * Each assembly is contained in a cylindrical air mother volume MGMT
+ * (radius 19 cm, length 1610 cm) centred at z ≈ ±2485.26 cm.  Inside MGMT,
+ * four iron tubes model the yokes:
+ * - **DZER**: D0 dipole, rmin = 4.775 cm, rmax = 15.995 cm, L = 385.26 cm.
+ * - **QONE**: Q1 quadrupole, rmin = ri1 = 6.355 cm, rmax = 18.28 cm, L = 170.92 cm.
+ * - **QTWO**: Q2 quadrupole, rmin = 6.355 cm, rmax = 18.28 cm, L = 444.02 cm.
+ * - **QTHR**: Q3 quadrupole, rmin = 6.355 cm, rmax = 18.28 cm, L = 399.55 cm.
+ *
+ * There is a single geometry configuration (SHLQ version 1).  The module is
+ * enabled via the QUADon setup and disabled via QUADof.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | Description |
+ * |------------|-------|-------------|
+ * | QUADof     | off   | Quadrupole magnets disabled |
+ * | QUADon     | on    | Default quadrupole configuration |
+ *
+ * ## Volume hierarchy
+ * @code
+ * MGMT  (TUBE Air — mother, placed ×4 in CAVE at ±x, ±z, ±angle)
+ * ├── DZER  (TUBE Iron — D0 dipole yoke)
+ * ├── QONE  (TUBE Iron — Q1 quadrupole yoke)
+ * ├── QTWO  (TUBE Iron — Q2 quadrupole yoke)
+ * └── QTHR  (TUBE Iron — Q3 quadrupole yoke)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file QuadGeo.xml
+ * @brief RHIC D0 + Q1–Q3 quadrupole magnet geometry (QUADGEO module).
+ * Four assemblies at ±z ≈ 2485 cm, ±x = 26 cm, ±0.3° crossing angle.
+ * SHLQ version 1 geometry parameters.
+ * Author: Maxim Potekhin (2 September 2005).
+ */
+
+/**
+ * @file QuadConfig.xml
+ * @brief Setup registry for the STAR quadrupole magnets (QUAD).
+ * Defines QUADof (disabled) and QUADon (default configuration).
+ */
+
+/**
+ * @}
+ */

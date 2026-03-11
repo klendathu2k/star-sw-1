@@ -1,0 +1,97 @@
+/**
+ * @defgroup CaveGeo CaveGeo — Experimental Hall Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR experimental hall (CAVE)
+ *
+ * @details
+ * CaveGeo defines the outermost containing volume for all STAR geometry,
+ * modelling the RHIC Interaction Region 6 Wide Angle Hall (WAH).  Every other
+ * sub-detector geometry module is placed inside the CAVE volume constructed
+ * here.
+ *
+ * Three module versions exist with increasing fidelity:
+ *
+ * - **CaveGeo** (configs 1–4): original GSTAR cave.  The hall body (HALL) is a
+ *   polycone (PCON) of concrete enclosing a polycone air volume (CAVE) that
+ *   spans the barrel region and the east/west beam tunnels.  Four geometry
+ *   parameter sets (versions 1–4) vary the barrel radius (400–450 cm) and
+ *   half-length (800–950 cm).
+ *
+ * - **CaveGeo2** (config 5): detailed Wide Angle Hall.  The hall and cave
+ *   volumes become 4-fold polygons (PGON), matching the approximate octagonal
+ *   profile of the WAH.  Concrete floor/ceiling slabs (WALL), iron shielding
+ *   plugs (SHLD), electronics crate stacks (CRAT), and magnet cooling-water
+ *   pipes (MGWP/MGWT) are placed explicitly.  Geometry version 5 reflects
+ *   as-measured WAH dimensions: barrel Rmax = 1575.02 cm, barrel half-length
+ *   = 807.72 cm, tunnel Rmax = 329.95 cm, tunnel depth = 2020.0 cm, concrete
+ *   wall thickness = 91.44 cm (36 inches).
+ *
+ * - **CaveGeo3** (config 6): identical to CaveGeo2 but adds named AGML
+ *   coordinate-reference-system groups inside CAVE: `TpcRefSys` (TPC and
+ *   attached detectors), `MagRefSys` (magnet reference frame), and
+ *   `CaveRefSys` (global cave frame).  All concrete wall and shielding
+ *   placements are associated with CaveRefSys.  This is the module used for
+ *   all modern simulation geometry tags (y2013 and later).
+ *
+ * ## Geometry configurations
+ *
+ * | Setup name | Module    | config | TPC ref sys | Era         |
+ * |------------|-----------|--------|-------------|-------------|
+ * | CAVEof     | CaveGeo   | —      | off         | disabled    |
+ * | CAVEon     | CaveGeo   | 1      | off         | y2000–y2007 |
+ * | CAVE03     | CaveGeo   | 3      | off         | y2008–y2009 |
+ * | CAVE04     | CaveGeo   | 4      | off         | y2010–y2011 |
+ * | CAVE05     | CaveGeo2  | 5      | on          | y2012       |
+ * | CAVE06     | CaveGeo3  | 6      | on          | y2013+      |
+ *
+ * ## Volume hierarchy (CaveGeo3 / config 6)
+ * @code
+ * HALL  (PGON, concrete 2.35 g/cm³)
+ * ├── HOLE  (BOX, Air — roof opening)
+ * └── CAVE  (PGON, Air)
+ *     ├── WALL  (BOX, concrete — floor, ceiling, north wall slabs)
+ *     ├── SHLD  (BOX, Iron — beam-line shielding blocks)
+ *     ├── CRAT  (BOX, Electronics 0.13 g/cm³ — electronics crates)
+ *     └── MGWP  (TUBE, Iron — magnet cooling-water pipe)
+ *         └── MGWT  (TUBE, Water — cooling water)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file CaveGeo.xml
+ * @brief Original STAR cave geometry (CAVEGEO module), configs 1–4.
+ * Defines CAVE (PCON Air) inside HALL (PCON Concrete) with four parameter
+ * sets for barrel radius (400–450 cm) and half-length (800–950 cm).
+ * Author: Peter Jacobs, LBL (March 1995).
+ */
+
+/**
+ * @file CaveGeo2.xml
+ * @brief Detailed Wide Angle Hall geometry (CaveGeo2 module), config 5.
+ * Uses PGON shapes for hall and cave; adds concrete walls, iron shielding,
+ * electronics crates, and magnet cooling-water pipes.
+ * Barrel Rmax = 1575.02 cm, half-length = 807.72 cm.
+ * Authors: Jason Webb, Yuri Fisyak (May 2013).
+ */
+
+/**
+ * @file CaveGeo3.xml
+ * @brief Wide Angle Hall geometry with reference systems (CaveGeo3 module),
+ * config 6.  Geometrically identical to CaveGeo2 but adds named AGML groups
+ * TpcRefSys, MagRefSys, and CaveRefSys inside the CAVE volume.
+ * Used for y2013 and all subsequent simulation geometry tags.
+ * Authors: Jason Webb, Yuri Fisyak (May 2013).
+ */
+
+/**
+ * @file CaveConfig.xml
+ * @brief Setup registry for the CAVE detector.
+ * Defines the CAVEof, CAVEon, CAVE03, CAVE04, CAVE05, and CAVE06 setup
+ * entries that select which CaveGeo module version and parameter set to use.
+ */
+
+/**
+ * @}
+ */

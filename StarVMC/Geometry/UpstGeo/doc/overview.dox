@@ -1,0 +1,74 @@
+/**
+ * @defgroup UpstGeo UpstGeo — Upstream Beam Line Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR upstream beam line elements
+ *        (UPST)
+ *
+ * @details
+ * UpstGeo (module name UPSTGEO) describes the beam-line hardware located
+ * between the downstream end of the main STAR beam pipe and the ZDC region
+ * at |z| ≈ 750–1520 cm.  Two identical assemblies are placed symmetrically
+ * at z = ±1131.83 cm (UPST mother, TUBE Air, rmax = 40 cm, half-length =
+ * 385.63 cm); the east (−z) copy is rotated 180° about z.  The assemblies
+ * are placed in the WestRefSys and EastRefSys coordinate groups.
+ *
+ * The assembly models the following hardware:
+ * - **PUPD**: iron beam pipe before the DX magnet (inner r = 6.08 cm,
+ *   outer r = 6.35 cm, L = 211 cm), with vacuum bore PVAD.
+ * - **PUPE**: iron beam pipe through the DX volume (inner r = 6.99 cm,
+ *   outer r = 7.14 cm, L = 415.84 cm), with vacuum bore PVAE.
+ * - **PUPF**: outer iron pipe through DX (r = 9.53/10.16 cm, same length).
+ * - **DXMG**: DX combined dipole return yoke (iron TUBE, inner r = 15.34 cm,
+ *   outer r = 37.0 cm, half-length = 207.92 cm).
+ * - **DCON**: conical iron bell section at the exit of DX (start
+ *   r = 7.14/7.77 cm, end r = 14.60/15.24 cm, half-length = 21.21 cm),
+ *   with vacuum cone DVAC.
+ * - **PUPG**: final iron pipe after DX leading toward the ZDC
+ *   (inner r = 14.60 cm, outer r = 15.24 cm, half-length = 51.0 cm),
+ *   with vacuum bore PVAG.
+ *
+ * There is a single geometry configuration (PIPU version 1).
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | Description |
+ * |------------|-------|-------------|
+ * | UPSTof     | off   | Upstream area disabled |
+ * | UPSTon     | on    | Default upstream geometry |
+ *
+ * ## Volume hierarchy
+ * @code
+ * UPST  (TUBE Air — mother, placed ±z=1131.83 cm in CAVE)
+ * ├── PUPD  (TUBE Iron — pipe before DX, rmin=6.08 cm)
+ * │   └── PVAD  (TUBE Vacuum)
+ * ├── PUPE  (TUBE Iron — pipe through DX, rmin=6.99 cm)
+ * │   └── PVAE  (TUBE Vacuum)
+ * ├── PUPF  (TUBE Iron — outer pipe through DX)
+ * ├── DXMG  (TUBE Iron — DX return yoke, r=15.34–37.0 cm)
+ * ├── DCON  (CONE Iron — DX exit bell)
+ * │   └── DVAC  (CONE Vacuum)
+ * └── PUPG  (TUBE Iron — pipe after DX, rmin=14.60 cm)
+ *     └── PVAG  (TUBE Vacuum)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file UpstGeo.xml
+ * @brief Upstream beam line geometry (UPSTGEO module).
+ * Pipe before DX (Fe, rmin=6.08 cm), pipe through DX (rmin=6.99 cm),
+ * DX return yoke (Fe, r=15.34–37.0 cm), exit cone, and final pipe
+ * (rmin=14.60 cm).  Two assemblies at z=±1131.83 cm.
+ * Author: W.B. Christie (27 December 1996).
+ */
+
+/**
+ * @file UpstConfig.xml
+ * @brief Setup registry for the STAR upstream area (UPST).
+ * Defines UPSTof (disabled) and UPSTon (default upstream geometry).
+ */
+
+/**
+ * @}
+ */

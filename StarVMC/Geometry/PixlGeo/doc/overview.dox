@@ -1,0 +1,176 @@
+/**
+ * @defgroup PixlGeo PixlGeo — Pixel Detector and Support Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry for the STAR Pixel Detector (PXL) and associated support structures.
+ *
+ * @details
+ * The Pixel Detector (PXL) is the innermost component of STAR's Heavy Flavour Tracker (HFT),
+ * consisting of two cylindrical layers of Monolithic Active Pixel Sensors (MAPS) based on
+ * the MIMOSA-28 chip, thinned to ≈ 50 μm. Layer 1 is at r ≈ 2.8 cm and layer 2 at r ≈ 8 cm.
+ * Ten sectors, each spanning 36° in azimuth, carry up to 10 sensors along z. The PXL provides
+ * ≈ 6 μm point resolution, enabling direct topological identification of charm and beauty
+ * hadron decays displaced from the primary vertex. The PXL was operational during RHIC Runs
+ * 14–16 (2014–2016) and is placed inside the IDSM support structure.
+ *
+ * The PixlGeo directory hosts four related sub-detectors:
+ * - @b PIXL — active MAPS pixel detector (PixlGeo3–6b)
+ * - @b DTUB — D-tube pixel support housing (DtubGeo1)
+ * - @b PSUP — pixel support and insertion mechanism (PsupGeo)
+ * - @b PXST — pixel support tube (PxstGeo1)
+ *
+ * The main PIXL mother volume @c PXMO is a @c TUBE spanning r = 2.1–11 cm and dz = 23.26 cm.
+ * Each azimuthal sector is a @c TUBS volume @c PXLA (φ = 72–132°) containing a carbon-fibre
+ * sector beam and the ladder-mounted MAPS sensors. The active sensitive volumes are @c PLAC
+ * (PixlGeo3) or silicon volumes in @c PXLA daughters (PixlGeo4–6b), marked @c Sensitive.
+ *
+ * @par Key parameters (production geometry, PixlGeo6b)
+ * - Active silicon half-thickness: 0.0025 cm (50 μm)
+ * - Sector beam half-length: 17.55 cm
+ * - Number of sectors: 10
+ * - Sensors per sector: 10 (z-direction)
+ * - Sector φ-span: 36° (positions tabulated in @c PIXL.phiNum)
+ * - Ladder configuration: 1 or 2 (selects which sectors are populated)
+ * - Z offset of PXL: sectorZOffset = −3.8 cm relative to PXMO centre
+ *
+ * @par AGML module files (PIXL)
+ * - PixlGeo3.xml  — @c PIXLGEO3  (Oct 2006, A. Rose; prototype, 11 individual PIXG ladders)
+ * - PixlGeo4.xml  — @c PixlGeo4  (Dec 2011, JB; 10-sector trapezoid beams, full sub-volumes)
+ * - PixlGeo5.xml  — @c PixlGeo5  (Feb 2013, JB/FV; engineering geometry, dovetail details)
+ * - PixlGeo6.xml  — @c PixlGeo6  (Nov 2013, JBouchet/FVidebaek; bull-horn and DTube cables)
+ * - PixlGeo6a.xml — @c PixlGeo6a (intermediate variant of PixlGeo6)
+ * - PixlGeo6b.xml — @c PixlGeo6b (Nov 2013, JBouchet/FVidebaek; production, misalignment)
+ *
+ * @par AGML module files (support)
+ * - DtubGeo1.xml  — @c DtubGeo1  (Jan 2013, JB; D-shaped pixel support housing)
+ * - PsupGeo.xml   — @c PsupGeo   (Nov 2013, F. Videbaek; pixel support and insertion mechanism)
+ * - PxstGeo1.xml  — @c PxstGeo1  (pixel support tube)
+ *
+ * @par Configuration setups (PixlConfig.xml)
+ * - @c PIXLof   — PXL disabled
+ * - @c PIXLon / @c PIXL00 / @c PIXL01 — PixlGeo3 (prototype)
+ * - @c PIXL02   — PixlGeo4
+ * - @c PIXL05   — PixlGeo5, secversion=7, ladrconfig=1 (Run 13 beam test)
+ * - @c PIXL06   — PixlGeo6b, secversion=1, ladrconfig=1, misalign=0 (y2014 ideal)
+ * - @c PIXL06b  — PixlGeo6b, secversion=1, ladrconfig=1, misalign=1 (y2014 misaligned)
+ * - @c PIXL62   — PixlGeo6b, secversion=1, ladrconfig=2, misalign=0
+ * - @c PIXL62b  — PixlGeo6b, secversion=1, ladrconfig=2, misalign=1
+ *
+ * @par Configuration setups (DtubConfig.xml)
+ * - @c DTUBof — D-tube disabled
+ * - @c DTUB01 — DtubGeo1 active
+ *
+ * @par Configuration setups (PsupConfig.xml)
+ * - @c PSUPof — pixel support mechanism disabled
+ * - @c PSUP01 — PsupGeo active
+ *
+ * @par Configuration setups (PxstConfig.xml)
+ * - @c PXSTof — pixel support tube disabled
+ * - @c PXST01 — PxstGeo1 active
+ *
+ * @{
+ */
+
+/**
+ * @defgroup PixlGeoV3 PixlGeo3 (PIXLGEO3) — Prototype pixel geometry
+ * @ingroup PixlGeo
+ * @brief Prototype MAPS pixel geometry (A. Rose, 10 Feb 2006).
+ * @details Eleven individual ladders positioned by @c PIXG fills (r = 2.5–7.5 cm), grouped
+ * into three azimuthal sections (PSEC, TUBS, φ = −11° to 122°). Each ladder has an active
+ * layer @c PLAC (Silicon, Sensitive) and passive layer @c PLPS. A beryllium beam-pipe
+ * exoskeleton @c PXBX (r = 8.5–8.6 cm, dz = 24 cm) is included. Activated by
+ * @c PIXLon, @c PIXL00, and @c PIXL01.
+ *
+ * @par Key structures
+ * - @c PXLV — ladder version and location (1 = CAVE, 2 = IDSM)
+ * - @c PXLD — ladder dimensions (Rin=2.4 cm, Rout=8.3 cm, TotalLength=20 cm, ActiveThk=20–120 μm)
+ * - @c PIXG — individual ladder position (r, azimuthal angle per ladder index)
+ * - @c PXBG — Be exoskeleton (Rin=8.5 cm, Thk=0.1 cm, Length=48 cm)
+ */
+
+/**
+ * @defgroup PixlGeoV4 PixlGeo4 (PixlGeo4) — Detailed 10-sector prototype
+ * @ingroup PixlGeo
+ * @brief Detailed 10-sector pixel geometry with full sub-volume suite (JB, Dec 2011).
+ * @details 10 sectors (PXLA, TUBS) at φ positions from @c PIXL.phiNum. Trapezoid-shaped
+ * carbon-fibre sector beams (CFRPMix, CBMix, AlCaMix). Inner pixel layer r ≈ 2.35 cm,
+ * outer r ≈ 9.5 cm. Sensor active half-thickness 0.0025 cm. Sub-volumes include glue layers
+ * (GLUA, GLUB, GLUC), aluminium cable (ALCB), carbon backing (CARB), and passive silicon
+ * (SIFR, SIFL). Full misalignment via @c PARO / @c PARA (sector-level translations and
+ * rotations). Multiple @c PIXL fills define prototype sector subsets (1-2-10, mercedes, etc.).
+ * Activated by @c PIXL02.
+ */
+
+/**
+ * @defgroup PixlGeoV5 PixlGeo5 (PixlGeo5) — Engineering geometry for beam test
+ * @ingroup PixlGeo
+ * @brief Engineering-level pixel geometry with dovetail features (JB/FV, Feb 2013).
+ * @details Adds dovetail extrusion and bull-horn details to the sector-beam ends. Sensor
+ * z-positions are tabulated in @c SENP (10 values, spanning −4.23 to +14.00 cm). Ladder
+ * configuration controlled by @c PXLW.LadrConfig; @c PXLW.SecVersion = 7 activates the
+ * Run-13 beam-test configuration (@c PIXL version 7.0: sectors 2, 4, 7 populated).
+ * Volume radii: rmin = 2.1 cm, rmax = 11 cm, half-length = 23.26 cm. Activated by @c PIXL05.
+ */
+
+/**
+ * @defgroup PixlGeoV6 PixlGeo6 (PixlGeo6) — Pre-production geometry
+ * @ingroup PixlGeo
+ * @brief Pre-production pixel geometry with bull-horn and DTube cable routing (JBouchet/FVidebaek, Nov 2013).
+ * @details Extends PixlGeo5 with bull-horn termination volumes at sector ends and explicit
+ * DTube cable routing volumes (@c LCSD / long-cable section D). Z offset of sector:
+ * sectorZOffset = −3.8 cm. Same sector-beam shape and MAPS sensor parameters as PixlGeo5.
+ */
+
+/**
+ * @defgroup PixlGeoV6a PixlGeo6a (PixlGeo6a) — Intermediate variant of PixlGeo6
+ * @ingroup PixlGeo
+ * @brief Intermediate variant of PixlGeo6; minor geometry or material updates.
+ */
+
+/**
+ * @defgroup PixlGeoV6b PixlGeo6b (PixlGeo6b) — Production geometry with misalignment
+ * @ingroup PixlGeo
+ * @brief Production pixel geometry supporting per-sector misalignment (JBouchet/FVidebaek, Nov 2013).
+ * @details The primary production geometry for RHIC y2014–y2016. When @c PIXL.misalign = 1
+ * sensors are placed using individual translations and rotations from @c PARO and @c PARA
+ * fills, enabling alignment studies and calibration of the as-built detector. When
+ * @c PIXL.misalign = 0 all sensors are placed at their ideal positions.
+ * @c PXLW.LadrConfig = 1 or 2 selects which of the 10 sector positions are physically
+ * populated. Activated by @c PIXL06, @c PIXL06b, @c PIXL62, and @c PIXL62b.
+ */
+
+/**
+ * @defgroup DtubGeoV1 DtubGeo1 — D-tube pixel support housing
+ * @ingroup PixlGeo
+ * @brief Carbon-fibre D-tube pixel support housing geometry (JB, Jan 2013).
+ * @details The D-tube is a D-shaped structural enclosure (half-tube TUBS, φ = −270° to −90°,
+ * r = 2.7–8.9 cm, dz = 33.95/2 cm) fabricated from carbon-fibre reinforced polymer that
+ * mounts to the IDSM structure and supports the pixel sector beams. It consists of flat top
+ * and bottom planes (APTO, APBM), inner and outer cylinder arcs (INCY, OUCY), and corner
+ * arc pieces (UCTO–DCTO series) joined at the straight ends by trapezoid transition sections.
+ * Cable routing volumes (SCAD, LCAD) carry the pixel readout cables from the sectors to the
+ * DTube plenum. Z offset: −40.25 cm from detector centre. AGML tag: @c DTUB.
+ * Activated by @c DTUB01.
+ */
+
+/**
+ * @defgroup PsupGeoV1 PsupGeo — Pixel support and insertion mechanism
+ * @ingroup PixlGeo
+ * @brief Pixel support carriage, hinge-release, and cable support geometry (F. Videbaek, Nov 2013).
+ * @details Models the mechanical insertion/retraction mechanism for the HFT pixel detector.
+ * The carriage base @c PSBA (TUBS, r = 18.5–21.2 cm, dz = 21 cm) supports hinge-release
+ * assemblies (PSHA–PSHG) that allow the pixel sectors to be swung out for access. Air ducts
+ * @c PSAL (TUBE, r = 3.7–3.8 cm, half-length = 86.1 cm) carry cooling air. Mass Termination
+ * Boards @c PSMB terminate the pixel readout cables. AGML tag: @c PSUP. Activated by @c PSUP01.
+ */
+
+/**
+ * @defgroup PxstGeoV1 PxstGeo1 — Pixel support tube
+ * @ingroup PixlGeo
+ * @brief Thin cylindrical support tube for the pixel detector assembly.
+ * @details Provides additional mechanical constraint for the pixel detector components.
+ * AGML tag: @c PXST. Activated by @c PXST01.
+ */
+
+/**
+ * @}
+ */

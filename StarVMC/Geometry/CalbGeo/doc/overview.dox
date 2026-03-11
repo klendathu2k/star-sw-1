@@ -1,0 +1,91 @@
+/**
+ * @defgroup CalbGeo CalbGeo — Barrel EMC Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Barrel Electromagnetic Calorimeter (BEMC)
+ *
+ * @details
+ * The BEMC (detector tag **CALB**) is a lead–polystyrene sampling calorimeter that
+ * surrounds the STAR TPC at a nominal inner radius of 223.5 cm.  It covers the full
+ * azimuth (φ = 0–360°) and |η| < 1.0, providing electromagnetic energy measurement
+ * for electrons, photons, and π⁰ reconstruction.
+ *
+ * ### Mechanical structure
+ * The calorimeter is divided into 60 projective wedge modules per hemisphere (120 total),
+ * each subtending 6° in azimuth.  Within each module, lead absorber plates (0.5 cm)
+ * alternate with polystyrene scintillator tiles (0.6 cm in superlayer 1, 0.5 cm in
+ * superlayer 2) for a total of 21 sampling layers (2 + 19).  Aluminium front and back
+ * structural plates and a spacer plate complete the module stack.
+ *
+ * ### Shower Maximum Detector (SMD)
+ * An Ar/CO₂ (90:10) wire-pad SMD is embedded after the 5th sampling layer at
+ * R ≈ 238 cm.  It comprises two orthogonal strip planes:
+ * - **η-plane:** 150 strips spanning |η| < 1.0, split into two half-widths
+ *   (0.7277 cm for |η| < 0.5; 0.9398 cm for 0.5 < |η| < 1.0)
+ * - **φ-plane:** 15 strips per module, half-width 0.6680 cm
+ *
+ * ### Simulation versions
+ * Three module implementations exist with increasing fidelity:
+ * - **CALBGEO** — original geometry (Shestermanov/Llope 1995); CPHI placed by φ-division
+ * - **CALBGEO1** — adds a 60-element `ModMap` array (Potekhin 2004) enabling selective
+ *   placement of individual modules in the south hemisphere without rebuilding the north
+ * - **CALBGEO2** — adds CCUT / CABS / CSEN structures for per-material EM transport cut
+ *   control; default production geometry since Run 9
+ *
+ * @{
+ */
+
+/**
+ * @file CalbGeo.xml
+ * @brief Module CALBGEO — baseline barrel EMC geometry (1995).
+ *
+ * Defines structures CALG (geometry parameters) and CALR (computed radii).
+ * Modules are placed by azimuthal φ-division (CPHI DIVISION block).
+ * Sensitive volumes: CSCI (tower scintillator, Birks correction), CSHI (SMD Ar/CO₂ gas).
+ */
+
+/**
+ * @file CalbGeo1.xml
+ * @brief Module CALBGEO1 — revised barrel EMC geometry with per-module population map (2004).
+ *
+ * Adds `ModMap(60)` to the CALG structure.  Each entry selects whether the corresponding
+ * south-hemisphere module is instantiated, allowing partial-detector configurations without
+ * duplicating the north-hemisphere loop.  CPHI volumes are placed with explicit rotation
+ * (`alphaz` = 3° + 6°×(imod−1)) rather than a generic DIVISION.
+ */
+
+/**
+ * @file CalbGeo2.xml
+ * @brief Module CALBGEO2 — barrel EMC geometry with configurable EM transport cuts (2004+).
+ *
+ * Introduces three additional structures:
+ * - **CCUT** — boolean switches `absorber` and `sensitive` that activate per-material cuts
+ * - **CABS** — tabulated GEANT3 transport thresholds (CUTGAM, CUTELE, CUTHAD, …)
+ *   for absorbing material; version 0 = legacy defaults, version 1 = 10 keV, version 2 = 30 keV
+ * - **CSEN** — corresponding thresholds for the sensitive scintillator volume
+ *
+ * Setup CALB02 enables cuts (absorber=1, sensitive=1); CALB02_cut00 disables both
+ * for systematic studies of transport-cut sensitivity.
+ */
+
+/**
+ * @file CalbConfig.xml
+ * @brief Setup registry for detector CALB.
+ *
+ * Declares ten named configurations:
+ * | Setup | Module | Nmodule (N,S) | Shift (N,S) | Notes |
+ * |---|---|---|---|---|
+ * | CALBof | CalbGeo | — | — | disabled |
+ * | CALB00 | CalbGeo | {12, 0} | {87, 0} | partial N |
+ * | CALBa0 | CalbGeo | {24, 0} | {21, 0} | partial N |
+ * | CALBb0 | CalbGeo | {60, 0} | {0, 0} | full N only |
+ * | CALBc0 | CalbGeo | {60, 60} | {75, 105} | full both |
+ * | CALBd0 | CalbGeo | {60, 75} | {75, 0} | — |
+ * | CALBe0 | CalbGeo | {60, 60} | {75, 105} | same as CALBc0 |
+ * | CALB01 | CalbGeo1 | {60, 60} | {75, 105} | uses module map |
+ * | CALB02 | CalbGeo2 | {60, 60} | {75, 105} | cuts on |
+ * | CALB02_cut00 | CalbGeo2 | {60, 60} | {75, 105} | cuts off |
+ */
+
+/**
+ * @}
+ */

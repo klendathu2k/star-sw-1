@@ -1,0 +1,167 @@
+/**
+ * @defgroup StarVMCApplication StarVMCApplication — STAR VMC Application Layer
+ * @brief Production TVirtualMCApplication with hit collection, particle
+ *        stack, primary generators, and g2t table infrastructure.
+ *
+ * StarVMCApplication provides the full VMC application stack used by STAR
+ * for GEANT3-based detector simulation:
+ * - StarVMCApplication: the TVirtualMCApplication singleton that drives
+ *   the simulation lifecycle and connects primary generation, field, and
+ *   stepping to the hit-collection machinery.
+ * - StarMCStack: particle-lineage stack implementing TVirtualMCStack.
+ * - StarMCHit / StarMCHits / StarMCHitCollection: per-step hit data
+ *   structures and the singleton manager that routes steps to g2t tables.
+ * - StarMCParticle: TObject wrapper adding mother-daughter references to
+ *   TParticle.
+ * - StarMCPrimaryGenerator hierarchy: abstract base plus four concrete
+ *   implementations (simple phase-space, ROOT file, HBOOK file).
+ * - St_g2t_Chair hierarchy: per-detector TChair subclasses that write
+ *   rows into the g2t hit tables (TPC, SVT, SSD, EMC, TOF, etc.).
+ * - StHitDescriptor: aggregate binding detector metadata to its chair.
+ * @{
+ */
+
+/**
+ * @class StarVMCApplication
+ * @brief Production STAR TVirtualMCApplication.
+ *
+ * Singleton (accessed via Instance()) that owns StarMCStack,
+ * StarMCPrimaryGenerator, StarMagField, and StarMCHits.  InitMC() loads an
+ * optional ROOT config macro then calls gMC->SetStack / Init /
+ * BuildPhysics.  RunMC(n) calls gMC->ProcessRun(n).  ConstructGeometry()
+ * calls gMC->SetRootGeometry().  InitGeometry() prints material/medium
+ * tables and initialises the hit descriptors.  Stepping() delegates to
+ * fMcHits->Step().  PostTrack() releases secondary StarMCParticle memory.
+ * FinishEvent() finalises g2t tables via fMcHits->FinishEvent().
+ * Field() delegates to StarMagField or falls back to a uniform 5 kG z-field.
+ */
+
+/**
+ * @class StarMCStack
+ * @brief STAR TVirtualMCStack with particle-lineage support.
+ *
+ * Dual-container design: a TObjArray of all StarMCParticle objects ever
+ * created in the event (for parent-daughter navigation), plus a
+ * std::stack<StarMCParticle*> for tracks pending transport.  PushTrack()
+ * builds the mother-daughter TRef chain and applies a rapidity cut
+ * |pz/e| < tanh(6.3).  Reset() clears the event.  SetNprimary() allows
+ * generators to set the primary count directly.  GetParticles() exposes
+ * the full TObjArray for PostTrack() cleanup.
+ */
+
+/**
+ * @class StarMCHit
+ * @brief Per-step MC hit record with full entry/exit geometry.
+ *
+ * TDataSet-derived.  Stores TLorentzVector positions at entry, current
+ * step, and exit in both global and local TGeo frames.  Tracks cumulative
+ * step length and energy deposition.  The volume-path array (TArrayS,
+ * depth 16) encodes the TGeo node-path indices for routing to the
+ * correct St_g2t_Chair.  setEntry()/setExit() snapshot positions.
+ * getLocal(TGeoHMatrix*) transforms the current global position to the
+ * local detector frame.
+ */
+
+/**
+ * @class StarMCHits
+ * @brief Singleton hit-collection manager and g2t table router.
+ *
+ * Created once via StarMCHits::instance().  Init() reads detector
+ * descriptors (St_det_user, St_det_path, St_det_hit tables) from the
+ * dataset tree and builds per-volume StHitDescriptor/St_g2t_Chair pairs.
+ * InitLegacy() uses a compiled-in Detector_G2T_t table instead.
+ * Step() is called at each VMC step: it identifies the current detector
+ * from the TGeo volume ID, fills the GHit_t accumulator, and calls
+ * FillG2Table() which dispatches to St_g2t_Chair::Fill().
+ * FinishEvent() writes the g2t_event, g2t_track, g2t_vertex, and
+ * g2t_gepart tables from the stack.  NewTable() and NewChair() are static
+ * factories for creating g2t table and chair objects by type name.
+ */
+
+/**
+ * @class StarMCHitCollection
+ * @brief TObjArray of StarMCHit objects with a Count() accessor.
+ */
+
+/**
+ * @class StarMCParticle
+ * @brief TObject wrapping TParticle with parent-daughter TRef links.
+ *
+ * Stores a stack index (fID), a generator-list index (fIdGen), an owned
+ * TParticle*, a TRef to the mother StarMCParticle, and a TRefArray of
+ * daughters.  Print() displays track ID, PDG identity, mother name, and
+ * daughter count.  PrintDaughters() recursively prints the daughter list.
+ */
+
+/**
+ * @class StarMCPrimaryGenerator
+ * @brief Abstract base class for STAR primary-particle generators.
+ *
+ * Holds TVirtualMCStack*, origin TVector3, primary count, particle ID,
+ * and an option string.  Subclasses override GeneratePrimaries() (no-arg
+ * form) and GeneratePrimaries(const TVector3&) to push particles onto the
+ * stack.  A static Instance() pointer is set in the constructor so any
+ * code can reach the active generator.
+ */
+
+/**
+ * @class StarMCSimplePrimaryGenerator
+ * @brief Uniform-phase-space primary generator.
+ *
+ * Generates fNofPrimaries particles per event uniformly sampled in pT,
+ * eta, phi, and z-vertex ranges.  Accepts parameters via a constructor,
+ * a text-file constructor (whitespace-delimited parameter file), or
+ * SetGenerator().  Particle species may be given as a GEANT3 code
+ * (option="G") or PDG code.  GeneratePrimaries(const TVector3&) pushes all
+ * primaries at the supplied vertex.
+ */
+
+/**
+ * @class StarMCRootPrimaryGenerator
+ * @brief Reads primary particles from a ROOT TTree in HEPEVT format.
+ *
+ * Opens a ROOT file, locates the tree named h<HbtId>, and reads one full
+ * HepEvent per GeneratePrimaries() call.  Reconstructs the mother-daughter
+ * topology.  Particles with known PDG codes are pushed onto the VMC stack;
+ * particles with daughters or status >= 2 are pushed with toBeDone=0.
+ * If a TDataSet was supplied, writes the HEPEVT header and per-particle
+ * rows into an St_particle table.
+ */
+
+/**
+ * @class StarMCHBPrimaryGenerator
+ * @brief Reads primaries from an HBOOK-converted ROOT TTree (HBT format).
+ *
+ * Identical logic to StarMCRootPrimaryGenerator but reads from an HBOOK-
+ * converted ROOT file.  Vertex coordinates are converted from mm to cm;
+ * time-of-flight is converted from mm/s to cm/s units.  Tree name is
+ * h<HbtId>.
+ */
+
+/**
+ * @class St_g2t_Chair
+ * @brief Abstract TChair base for all STAR g2t hit-table accessors.
+ *
+ * Declares the virtual interface Fill(GHit_t&) used by StarMCHits to
+ * write one hit row per simulation step, plus positional accessors
+ * (GetX/Y/Z, DetectorId, Sector, PadRow, TrackId, HitPosition).
+ * Concrete subclasses — St_g2t_ctf_hitC, St_g2t_emc_hitC,
+ * St_g2t_fgt_hitC, St_g2t_fst_hitC, St_g2t_ftp_hitC, St_g2t_ist_hitC,
+ * St_g2t_mwc_hitC, St_g2t_pix_hitC, St_g2t_pmd_hitC, St_g2t_rch_hitC,
+ * St_g2t_ssd_hitC, St_g2t_svt_hitC, St_g2t_tpc_hitC, St_g2t_vpd_hitC —
+ * implement Fill() for each STAR detector system.
+ */
+
+/**
+ * @class StHitDescriptor
+ * @brief Aggregate binding detector metadata to its g2t chair.
+ *
+ * TNamed subclass used by StarMCHits to route a VMC step to the correct
+ * g2t table.  Holds a TDataSet* detector node, St_det_user* user-parameter
+ * table, St_det_path* sensitive-volume path table, St_det_hit* hit-format
+ * descriptor, an St_g2t_Chair*, and a volume-level count fNVL.
+ */
+
+/**
+ * @}
+ */

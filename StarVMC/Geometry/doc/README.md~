@@ -1,0 +1,276 @@
+# StarVMC/Geometry — AGML XML Detector Geometry Module Library
+
+## Purpose
+
+`StarVMC/Geometry/` is the AGML (A Geometry Modelling Language) XML geometry library for the STAR
+experiment.  Each subdirectory holds the XML source for one detector subsystem.  The AGML build
+system (`AgML`) compiles these XML files into C++ classes that are dynamically loaded by `starsim`
+to construct the GEANT3/ROOT-based simulation geometry.
+
+AGML is the successor to the legacy AGE (A Geometry Engine) `.g` source files that live in
+`pams/geometry/`.  AGML reuses the same geometry descriptions but wraps them in structured XML and
+generates portable C++ output; new development targets AGML exclusively.
+
+---
+
+## XML File Structure
+
+### Top-level `<Document>` element
+
+Every XML file begins with a `<Document file="...">` element whose `file` attribute records the
+canonical path within the repository (used by the build system to locate the file).
+
+### Module definition
+
+Inside `<Document>` is a `<Module>` element that maps to a single FORTRAN/AGE module:
+
+```xml
+<Module name="TPCEGEO1" comment="is the TPC system in GSTAR">
+  <Author name="David Underwood and Maxim Potekhin"/>
+  <Created date="March 7, 2005"/>
+  <CDE>AGECOM GCUNIT GCONST</CDE>
+  <Content>TPCE,TOFC,TOFS,...</Content>
+  ...
+</Module>
+```
+
+| Element | Meaning |
+|---------|---------|
+| `name` | Uppercase FORTRAN module name (≤8 characters) |
+| `comment` | Free-text description |
+| `<CDE>` | STARSIM common-data-entry (CDE) blocks to include (analogous to `COMMON` or `#include`) |
+| `<Content>` | List of GEANT volumes declared in this module |
+
+### Structure definitions
+
+Geometry parameters are grouped into named structures that map to FORTRAN `COMMON` blocks:
+
+```xml
+<Structure name="TPCG">
+  <var name="version"  type="float"/>
+  <var name="rmin"     type="float"/>
+  <var name="rmax"     type="float"/>
+  ...
+</Structure>
+```
+
+These structures are populated through `<Fill>` elements in the same file or overridden at runtime
+by `<Init>` elements in the corresponding `*Config.xml`.
+
+### Block geometry
+
+Inside the module body, `<Block>` elements define GEANT volumes (shape, material, position,
+daughters).  The `AGML` language provides loop constructs, conditionals, and placement operations
+that are expanded by the compiler into C++.
+
+### Legacy verbatim import
+
+Some early modules use a verbatim-import shim rather than a native AGML translation:
+
+```xml
+<Export language="Mortran">
+  <Import file="pams/geometry/tpcegeo/tpcegeo.g" verbatim="true" />
+</Export>
+```
+
+These are wrapped by a thin `<Document>` so that the AGML loader can handle them, but the body is
+raw AGE FORTRAN.  The `Compat/` directory (see below) contains similar shims for modules that were
+never ported.
+
+---
+
+## Configuration System
+
+### `*Config.xml`
+
+Every detector subdirectory (except a few with no independent configuration, e.g. `TpcxGeo`,
+`TutrGeo`) contains a `*Config.xml` file.  This file lists:
+
+* **`<Detector>`** — the detector name and brief description.
+* **`<Modules>`** — the set of XML module files that implement this detector.
+* **`<Setup>`** — named configuration presets.
+
+Example from `TpceConfig.xml`:
+
+```xml
+<Detector name="TPCE" comment="STAR Time Projection Chamber">
+  <Modules>
+    TpceGeo2, TpceGeo3a, TpceGeo4, TpceGeo1, TpceGeo5, TpceGeo6
+  </Modules>
+
+  <Setup name="TPCE00" onoff="on" module="TpceGeo1" simu="2">
+  </Setup>
+
+  <Setup name="TPCE31" onoff="on" module="TpceGeo3a" simu="2">
+    <Init struct="tpcc" var="version" value="3.1"/>
+    <Init struct="tpcg" var="rmax"    value="207.77"/>
+  </Setup>
+  ...
+</Detector>
+```
+
+### `<Setup>` attributes
+
+| Attribute | Meaning |
+|-----------|---------|
+| `name` | Setup identifier used by geometry tags (e.g. `TPCE31`) |
+| `onoff` | Whether the detector is active (`on`) or omitted (`off`) |
+| `module` | The XML module file to load for this setup |
+| `simu` | Simulation mode flag (`1` = full GEANT tracking, `2` = fast mode) |
+| `top` | GEANT mother volume under which this detector is placed (if non-default) |
+
+### `<Init>` elements
+
+`<Init struct="..." var="..." value="..."/>` injects a parameter value into a named `<Structure>`
+variable before the module's geometry code runs.  This is how the same module source implements
+different detector configurations — the code branches on the structure value at runtime.
+
+For example, `TPCE31` and `TPCE32` both use `TpceGeo3a` but set `tpcc.version` to `3.1` and
+`3.2` respectively to enable different pad-row numbering.
+
+---
+
+## Geometry Tags and `StarGeo.xml`
+
+### `StarGeo.xml` (formerly `GeometryTags.xml`)
+
+The top-level file `StarVMC/Geometry/StarGeo.xml` defines all named geometry configurations
+(tags) that users pass to `starsim` via `DETP GEOM <tag>`.  Its default tag is `y2016`.
+
+Each `<Geometry>` element enumerates one `<Construct>` per subsystem, referencing the subsystem
+name (`sys=`) and the desired setup from its `*Config.xml` (`config=`):
+
+```xml
+<Geometry tag="y2025" comment="STAR initial production tag y2025">
+  <Construct sys="cave" config="CAVE06"  />
+  <Construct sys="tpce" config="TPCEv61" />
+  <Construct sys="btof" config="BTOFv8"  />
+  <Construct sys="epdm" config="EPDMv1"  />
+  ...
+</Geometry>
+```
+
+### Defined tags (y2003–y2025 + development)
+
+`StarGeo.xml` defines over 100 geometry tags.  Production tags follow the convention `y<YYYY>[a–z]`
+(e.g. `y2023b`).  Development tags use names like `dev2022`, `dev2022m`, `dev2022sm`.  Special-
+purpose tags include `ftsver1`–`ftsver4` (Forward Tracking System reference geometries) and
+`blackhole` (absorbs all particles for systematic studies).
+
+Tags accumulate detector changes incrementally: `y2023b` differs from `y2023a` only in the
+components where the detector configuration changed between those releases.
+
+### AGML 2 execution model
+
+In AGML 2 (used for tags y2014+), the tag is executed immediately as it is recognized in the
+`DETP GEOM` parameter loop.  The detector modules are then constructed in the order specified by
+the `<Construct>` elements.  Parameters can be overridden on the command line:
+
+```
+DETP GEOM y2023b field=-5.0
+```
+
+---
+
+## Subdirectory Reference
+
+The `FcsmGeo/` directory hosts four separate detector modules that form the Forward Calorimeter
+System (FCS).  `PixlGeo/` similarly hosts four sub-detectors of the Heavy Flavor Tracker (HFT).
+`Compat/` contains verbatim shims for modules not yet converted to native AGML.
+
+### Modules by Detector System
+
+Each subdirectory has its own `doc/README.md` and `doc/overview.dox` with full parameter tables,
+volume hierarchies, and setup configuration details.
+
+| Group | Modules | Documentation scope |
+|---|---|---|
+| **TPC** | `TpceGeo` (6 versions, 15 setups), `TpcxGeo` (padrow upgrade configs), `FtpcGeo` (4 setups), `FtroGeo` (FTPC readout) | Structure parameter tables with units, full volume hierarchies, version differences |
+| **Silicon trackers** | `SisdGeo` (7 versions), `SvttGeo` (11 versions), `IstdGeo` (6 versions), `PixlGeo` (10 versions/sub-detectors), `IdsmGeo` (3 versions) | Full HFT evolution from SVT → SSD → IST/PXL; radii, layer counts, sensor geometry |
+| **Forward trackers** | `FstmGeo` (full/simplified/misaligned variants), `FtsdGeo`, `StgmGeo` (sTGC), `FgtdGeo` (GEM), `EiddGeo`, `FsceGeo` | η coverage, z positions, active layer geometry, era activation |
+| **Calorimeters** | `CalbGeo` (BEMC), `EcalGeo` (EEMC), `HcalGeo` (test), `FpdmGeo` (FPD→FMS), `ZcalGeo` (ZDC), `FcsmGeo` (FCS: ECAL/HCAL/preshower) | Tower counts, absorber/sampling specs, η/φ segmentation |
+| **TOF / Trigger** | `BtofGeo` (8 generations), `EtofGeo`, `VpddGeo` (pVPD→uVPD), `BbcmGeo`, `EpdmGeo` (EPD), `PhmdGeo` (PMD) | Detector technology, η coverage, run-era evolution |
+| **Support / Infrastructure** | `CaveGeo`, `MagpGeo`, `ShldGeo`, `PipeGeo` (7 versions), `QuadGeo`, `SconGeo`, `SupoGeo`, `KludGeo`, `TutrGeo`, `UpstGeo` | Mechanical dimensions, material compositions, beam-pipe evolution |
+| **Muon / Special** | `MutdGeo` (11 setups, MRPC evolution v1→v4+), `TestGeo` (AGML unit-test geometry), `Compat` (18 verbatim-import shims) | MTD version evolution; verbatim import mechanism; compat shim inventory |
+
+| Subdirectory | Detector | Description | XML modules |
+|---|---|---|---|
+| `BbcmGeo` | BBCM | Beam-Beam Counter | `BbcmGeo` (1) |
+| `BtofGeo` | BTOF | Barrel Time-of-Flight (TOFr) | `BtofGeo1`–`BtofGeo8` (8) |
+| `CalbGeo` | CALB | Barrel Electromagnetic Calorimeter (BEMC) | `CalbGeo`, `CalbGeo1`, `CalbGeo2` (3) |
+| `CaveGeo` | CAVE | Experiment hall, concrete shielding wall, and upstream tunnel | `CaveGeo`, `CaveGeo2`, `CaveGeo3` (3) |
+| `Compat` | — | Verbatim shims for legacy AGE modules not converted to AGML | 19 shim files |
+| `EcalGeo` | ECAL | Endcap Electromagnetic Calorimeter (EEMC) | `EcalGeo`, `EcalGeo6` (2) |
+| `EiddGeo` | EIDD | East inner detector placeholder (eTOF/TRD/calo for eSTAR studies) | `EiddGeo` (1, no Config) |
+| `EpdmGeo` | EPDM | Event Plane Detector (EPD, Run 18+) | `EpdmGeo0` (1) |
+| `EtofGeo` | ETOF | Endcap Time-of-Flight (CBM/STAR eTOF, Run 18+) | `EtofGeo0` (1) |
+| `FcsmGeo` | PRES / WCAL / HCAL / PLAT | Forward Calorimeter System: preshower, EM calorimeter, hadronic calorimeter, platform | `PresGeo1`, `WcalGeo1`, `HcalGeo1`, `PlatGeo1` (4) |
+| `FgtdGeo` | FGTD | Forward GEM Tracker | `FgtdGeo3`, `FgtdGeoV` (2) |
+| `FpdmGeo` | FPDM | Forward Pion Detector / Forward Meson Spectrometer (FMS) | `FpdmGeo1`–`FpdmGeo4` (4) |
+| `FsceGeo` | FSCE | Forward Spaghetti Calorimeter (prototype) | `FsceGeo` (1, no Config) |
+| `FstmGeo` | FSTM | Forward Silicon Tracker (FST) | `FstmGeo`, `FstmGeoM`, `FstmGeoS`, `FstmGeoSM` (4) |
+| `FtpcGeo` | FTPC | Forward Time Projection Chamber | `FtpcGeo`, `FtpcGeo1` (2) |
+| `FtroGeo` | FTRO | FTPC Readout barrel | `FtroGeo` (1) |
+| `FtsdGeo` | FTSD | Forward Silicon Tracker Disks (prototype) | `FtsdGeo` (1) |
+| `HcalGeo` | HCAL | Standalone hadronic calorimeter test geometry (legacy) | `HcalGeo0`, `HcalGeo0a`, `HcalGeo0b` (3) |
+| `IdsmGeo` | IDSM | Inner Detector Support Module (HFT cage and services) | `IdsmGeo1`, `IdsmGeo2`, `IdsmGeo2a` (3) |
+| `IstdGeo` | ISTD | Intermediate Silicon Tracker (IST) | `IstdGeo0`, `IstdGeo1`, `IstdGeo1a`, `IstdGeo1b`, `IstdGeo2`, `IstdGeo2a` (6) |
+| `KludGeo` | KLUD | Kludge volume (alignment test placeholder) | `KludGeo` (1) |
+| `MagpGeo` | MAGP | STAR solenoidal magnet return yoke | `MagpGeo` (1) |
+| `MutdGeo` | MUTD | Muon Telescope Detector (MTD) | `MutdGeo`–`MutdGeo5`, `MutdGeo7` (7) |
+| `PhmdGeo` | PHMD | Photon Multiplicity Detector | `PhmdGeo` (1) |
+| `PipeGeo` | PIPE / TARG | Beam pipe and fixed-target assembly | `PipeGeo`, `PipeGeo00`, `PipeGeo1`–`PipeGeo3`, `TargGeo` (6) |
+| `PixlGeo` | PIXL / DTUB / PSUP / PXST | HFT Pixel detector (PXL), D-tube electronics, pixel support structure, PST | `PixlGeo3`–`PixlGeo6b`, `DtubGeo1`, `PsupGeo`, `PxstGeo1` (8) |
+| `QuadGeo` | QUAD | Quadrupole and steering magnets (DX, D0, and downstream) | `QuadGeo` (1) |
+| `SconGeo` | SCON | SVT/SSD support cone and cable mass estimate | `SconGeo` (1) |
+| `ShldGeo` | SHLD | Beam tunnel shielding wall | `ShldGeo` (1) |
+| `SisdGeo` | SISD | Silicon Strip Detector (SSD) | `SisdGeo`, `SisdGeo1`–`SisdGeo7`, `SisdGeo7a` (9) |
+| `StgmGeo` | STGM | Forward sTGC (small-strip Thin Gap Chambers) for the FTS | `StgmGeo1` (1) |
+| `SupoGeo` | SUPO | FTPC support structure | `SupoGeo`, `SupoGeo1` (2) |
+| `SvttGeo` | SVTT | Silicon Vertex Tracker (SVT + SSD combined assembly) | `SvttGeo`, `SvttGeo1`–`SvttGeo11` (12) |
+| `TestGeo` | — | Minimal test geometry used by the AGML unit tests | `TestGeo1` (1, no Config) |
+| `TpceGeo` | TPCE | Time Projection Chamber | `TpceGeo1`–`TpceGeo6`, `TpceGeo3a` (7) |
+| `TpcxGeo` | — | Experimental TPC upgrade geometry (iTPC studies) | `TpcxGeo1`, `TpcxGeo2` (2, no Config) |
+| `TutrGeo` | — | AGML tutorial/example modules | `TutrGeo1`–`TutrGeo4`, `ShapGeo` (5, no Config) |
+| `UpstGeo` | UPST | Upstream area (beam dump, Roman pots region) | `UpstGeo` (1) |
+| `VpddGeo` | VPDD | Vertex Position Detector (VPD) | `VpddGeo`, `VpddGeo1`–`VpddGeo3` (4) |
+| `ZcalGeo` | ZCAL | Zero Degree Calorimeter | `ZcalGeo` (1) |
+
+---
+
+## `Compat/` — Compatibility Layer
+
+`Compat/` holds a set of stub XML files that verbatim-import legacy AGE `.g` source from
+`pams/geometry/` for modules that have not been converted to native AGML.  Examples include
+`tpcegeo.xml` (the original GEANT3 TPC module), `richgeo.xml`, `gembgeo.xml`, and
+`pixlgeo.xml`.  A companion `tpcegeo3.xml` does the same for the Yuri Fisyak TPC model.
+
+These files exist purely so the AGML loader can manage legacy modules through the same
+`<Construct>` dispatch mechanism as fully-ported modules.
+
+---
+
+## Helper Files
+
+| File | Purpose |
+|------|---------|
+| `Helpers.h` | C++ helper macros and inline utilities shared across generated module code |
+| `StarGeoLinkDef.h` | ROOT `LinkDef` header for the `StarGeometry` shared library |
+| `dummy.cc` | Minimal C++ translation unit so the directory builds without modules |
+| `macros/` | ROOT macros and kumacs for loading and visualising geometries (`loadAgML.C`, `viewStarGeometry.C`, `testGeometry.csh`, etc.) |
+
+---
+
+## Relationship to `pams/geometry/`
+
+`pams/geometry/` contains the original AGE `.g` source files (FORTRAN-like AGE macro language)
+used by the GEANT3-based `starsim` since the late 1990s.  These are compiled by the AGE
+preprocessor (`mortran`) directly into FORTRAN subroutines.
+
+`StarVMC/Geometry/` provides the AGML XML equivalents.  For most detectors the XML is a native
+reimplementation in AGML syntax; for a handful of older modules the XML is a verbatim-import shim
+(see `Compat/`).  The AGML output (C++) is loaded at runtime by `AgML` and produces the same
+GEANT3 geometry tree as the `pams/geometry/` source.
+
+Development since ~2012 targets `StarVMC/Geometry/` exclusively; `pams/geometry/geometry.g` was
+frozen at revision 1.297 (July 2016) and no longer receives geometry-tag updates.

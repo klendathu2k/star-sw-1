@@ -1,0 +1,54 @@
+/**
+ * @defgroup TpcxGeo TpcxGeo — STAR TPC Inner Padrow Upgrade / Extended Pad Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry modules for the STAR TPC inner-padrow upgrade and
+ *        extended pad-configuration framework.
+ * @details
+ * The TpcxGeo modules provide alternative inner-sector and multi-configuration
+ * pad layouts for the STAR TPC.  They share the full support-wheel and FEE
+ * volume hierarchy with TpceGeo3a but differ in the @c TPRS padrow table
+ * (radii and pad counts) and in the @c TPCG.version tag (set to 10 in
+ * TpcxGeo1 to distinguish the new padrow line from the standard series).
+ *
+ * There is no standalone @c TpcxConfig.xml; activation is handled by
+ * composite geometry tags in the STAR configuration framework.
+ * @{
+ */
+
+/**
+ * @defgroup TpcxGeo_v1 TpcxGeo1 — TPC inner padrow upgrade module
+ * @ingroup TpcxGeo
+ * @brief Module @c TpcxGeo1: early iTPC inner-padrow upgrade geometry.
+ * @details
+ * Authored by Hao Qui (March 2012).  Sets @c TPCG.version = 10 as an offset
+ * to flag this as a new padrow configuration series.  Both the inner and outer
+ * sectors are given 32 padrows each at a uniform 2 cm radial spacing and
+ * 0.67 cm pad pitch:
+ *
+ *   - Inner sector (sec=1): R = 57.2 – 119.2 cm, 42–92 pads/row.
+ *   - Outer sector (sec=2): R = 127.195 – 189.195 cm, 98–144 pads/row.
+ *
+ * All structural volumes (field cages, support wheel, FEE, RDO) are identical
+ * to TpceGeo3a.  The @c TPCG parameter block uses the same default dimensions
+ * (Rmin=46.107 cm, LengthV=2×210 cm, SenGasOR=200 cm, DeadZone=12 cm).
+ */
+
+/**
+ * @defgroup TpcxGeo_v2 TpcxGeo2 — Extended pad-configuration TPC geometry
+ * @ingroup TpcxGeo
+ * @brief Module @c tpcxgeo2: multi-configuration TPC geometry with runtime
+ *        pad-layout selection.
+ * @details
+ * Based on the same authorship chain as TpceGeo3a.  Adds two new fields to
+ * @c TPCG: @c tpadconfig (integer selector for the active pad-plane layout)
+ * and @c tofmax (maximum drift time, defaulting to 1 μs, extended to 32 μs
+ * in sub-version 3.1).  The @c TPRS padrow fills are wrapped in
+ * @c \<If expr="TPCG_tpadConfig==N"\> guards so that the correct inner-sector
+ * layout (13-row standard at config=0, or iTPC at other values) is selected
+ * without changing the XML.  The @c TPCC structure tracks the sub-version
+ * (3.0 default; 3.1 adds rmax=207.77 cm and DeadZone=14 cm).
+ */
+
+/**
+ * @}
+ */

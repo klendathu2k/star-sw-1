@@ -1,0 +1,243 @@
+/**
+ * @defgroup StarAgmlLib StarAgmlLib — AGML Core Geometry Description Library
+ * @brief Core C++ library of the AGML (AGe Markup Language) framework.
+ *
+ * `StarAgmlLib` provides the base classes, stacker abstraction, and support
+ * utilities that together form the AGML geometry description system — the
+ * C++ successor to the legacy AGE/COMIS geometry system used in the STAR
+ * experiment.
+ *
+ * Detector geometry modules (e.g. `TpceGeo`, `CaveGeo`, `MagpGeo`) are C++
+ * classes that inherit from `AgModule` and override `ConstructGeometry()`.
+ * Inside that method they manipulate `AgShape`, `AgMaterial`, `AgMedium`, and
+ * `AgAttribute` objects and call `Create()` on registered `AgBlock` factories.
+ * A concrete `StarAgmlStacker` instance (set globally on `AgBlock` before
+ * construction begins) intercepts every `Build` and `Position` call and
+ * realises the geometry in the target back-end.
+ *
+ * @par Back-ends
+ * - `StarTGeoStacker` — builds a ROOT `TGeoManager` tree for simulation and
+ *   visualisation.
+ * - `StarNoStacker` — accepts all calls without side-effects; used for
+ *   dependency analysis and dry-run debugging.
+ *
+ * @par Related modules
+ * - @ref StarAgmlUtil  — geometry database, transforms, and parameter lists
+ * - @ref StarAgmlChecker — material-budget analysis of the assembled geometry
+ * - @ref StarAgmlViewer  — interactive TGeo geometry viewer
+ *
+ * @{
+ */
+
+/**
+ * @class AgModule
+ * @brief Abstract base class for every STAR detector geometry module.
+ * @ingroup StarAgmlLib
+ *
+ * Subclasses override `ConstructGeometry()` to define their volumes using AGML
+ * primitives.  Each module registers named `AgBlock` factories via `AddBlock()`
+ * and may register hit-scoring functors via `AddHitScoring()`.  A static
+ * `TDataSet` tree accumulates the geometry datasets produced by all modules.
+ */
+
+/**
+ * @class AgBlock
+ * @brief Base class for a family of geometry volumes (a volume prototype).
+ * @ingroup StarAgmlLib
+ *
+ * Each concrete subclass represents one family of related volumes sharing a
+ * prototype shape (`AgShape`), material (`AgMaterial`), medium (`AgMedium`),
+ * and attribute (`AgAttribute`).  When `Create("NAME")` is called by a parent
+ * block, the named block's virtual `Block(AgCreate)` method is invoked,
+ * allowing per-placement parameter overrides before the stacker's `Build` and
+ * `Position` calls are made.
+ *
+ * `AgBlock` maintains global static state:
+ * - A block registry (`mBlockTable`) mapping names to instances.
+ * - An instantiation stack (`mStack` / `mCurrent`) tracking the currently
+ *   executing block.
+ * - The active stacker pointer (`_stacker`).
+ */
+
+/**
+ * @class AgShape
+ * @brief Encapsulates a TGeo-compatible solid shape and its named parameters.
+ * @ingroup StarAgmlLib
+ *
+ * Inherits `AgParameterList<double>` to store named shape parameters.
+ * Supported shape types are enumerated as `kBbox`, `kTrd1`, `kTrd2`, `kTrap`,
+ * `kTube`, `kTubs`, `kCone`, `kCons`, `kSphe`, `kPara`, `kPgon`, `kPcon`,
+ * `kEltu`, `kHype`, `kGtra`, `kCtub`, `kTorus`, and `kDivision`.
+ * Polycone and polygon shapes use the `Z()`, `Rmin()`, `Rmax()` slice accessors.
+ * `Make()` constructs the `TGeoShape`; `MakeIfUnique()` avoids redundant
+ * allocations by detecting parameter changes via `morphed()`.
+ */
+
+/**
+ * @class AgMaterial
+ * @brief Describes a tracking material by atomic number, mass, and density.
+ * @ingroup StarAgmlLib
+ *
+ * Three operational modes are selected automatically from the supplied
+ * parameters: `kMaterial` (simple element or compound defined by A, Z,
+ * density), `kMixture` (fractional-weight mixture), and `kCompound`
+ * (mixture by atomic formula).  `AgMaterial::Get(name)` provides access to
+ * a global registry; `lock()` prevents accidental modification of centrally
+ * defined materials.
+ */
+
+/**
+ * @class AgMedium
+ * @brief Associates a material with GEANT transport parameters.
+ * @ingroup StarAgmlLib
+ *
+ * Links a named `AgMaterial` to tracking parameters such as magnetic field
+ * type, maximum step length, and energy-loss precision flags.  Parameters are
+ * accessed via the inherited `AgParameterList<double>::par(name)` interface.
+ * `AgMedium::Get(name)` maintains a global registry.
+ */
+
+/**
+ * @class AgAttribute
+ * @brief Holds GEANT-style volume attributes governing particle transport.
+ * @ingroup StarAgmlLib
+ *
+ * Stores named floating-point attributes (sensitivity, field flag,
+ * step-control parameters) via `AgParameterList<double>`.  Attributes
+ * propagate to daughter blocks through `AgBlock::Inherit(const AgAttribute&)`.
+ * The convenience `operator()(name)` is an alias for `par(name)`.
+ */
+
+/**
+ * @class AgPlacement
+ * @brief Records the positional placement of a daughter block in its mother.
+ * @ingroup StarAgmlLib
+ *
+ * A placement is built by sequentially calling `AlphaX/Y/Z(angle)` (rotations
+ * about each axis in degrees), `Ortho("+X+Y+Z")` (axis-permutation
+ * transformation), `Reference(thetax,phix,…)` (G3 six-angle rotation), and
+ * `TranslateX/Y/Z(delta)`.  `matrix()` returns the resulting
+ * `TGeoCombiTrans`.  The `kOnly` / `kMany` enum controls volume-overlap
+ * handling.
+ */
+
+/**
+ * @class AgPosition
+ * @brief Extended placement supporting run-time misalignment corrections.
+ * @ingroup StarAgmlLib
+ *
+ * Inherits coordinate-transformation arithmetic from `AgTransform` and adds:
+ * - `Misalign(tablename, row, options)` — fetches a misalignment matrix from
+ *   the STAR geometry DB and multiplies it into the current transformation.
+ *   Options `"+xyzr"` / `"-xyzr"` select which components to apply and their
+ *   sign convention.
+ * - `SetOrder(kGeneral|kRotTran|kTranRot)` — controls the composition order
+ *   of accumulated rotations and translations.
+ * - `SetReal()` / `SetIdeal()` — global switches between aligned and ideal
+ *   (survey) geometry.
+ */
+
+/**
+ * @class AgVolume
+ * @brief Registry of named logical geometry volumes.
+ * @ingroup StarAgmlLib
+ *
+ * `AgVolume::Make()` returns the singleton entry for the current block name,
+ * creating it if necessary.  Consumed internally by the stacker when
+ * registering newly built TGeo volumes.
+ */
+
+/**
+ * @class AgCreate
+ * @brief Carries per-invocation shape-parameter overrides for a Create call.
+ * @ingroup StarAgmlLib
+ *
+ * When a parent block calls `Create("CHILD", par1=v1, par2=v2, …)`, the
+ * key-value pairs are stored in an `AgCreate` object that is forwarded to the
+ * child's `Block()` method.  `SetParameters(shape)` applies each stored
+ * override to the child shape, skipping parameters that are invalid for the
+ * shape type or already set.
+ */
+
+/**
+ * @class AgMLExtension
+ * @brief TGeoRCExtension payload attached to every AGML-built TGeoVolume.
+ * @ingroup StarAgmlLib
+ *
+ * Records module ownership (`mModuleName`), block family (`mFamilyName`),
+ * TGeo volume name (`mVolumeName`), sensitivity flag (`mSensitive`), tracking
+ * type (`mTracking`: 0 = black-hole, 1 = calorimeter, 2 = tracking region),
+ * number of placed family members (`mBranchings`), per-volume GSTPAR cut map
+ * (`mGstpar`), and user hit-scoring functors (`mHitScoring`).
+ */
+
+/**
+ * @class StarAgmlStacker
+ * @brief Abstract back-end interface for geometry instantiation.
+ * @ingroup StarAgmlLib
+ *
+ * Decouples geometry description from geometry realisation.  `AgBlock` holds a
+ * static pointer to the active stacker; switching stackers changes the target
+ * geometry system without modifying any module code.
+ *
+ * Three pure-virtual operations must be implemented by each concrete stacker:
+ * - `Build(AgBlock*)` — invoked the first time a new volume family is built.
+ * - `Position(AgBlock*, AgPlacement)` — places a block using a legacy
+ *   `AgPlacement` record.
+ * - `Position(AgBlock*, AgPosition)` — places a block using a modern
+ *   `AgPosition` record (with optional misalignment support).
+ *
+ * The stacker also owns the nickname tables (`mNicknames`, `mRealnames`) that
+ * map four-character TGeo aliases to full AGML block names.
+ */
+
+/**
+ * @class StarTGeoStacker
+ * @brief Concrete stacker that builds a ROOT TGeoManager geometry tree.
+ * @ingroup StarAgmlLib
+ *
+ * `Build` maps the `AgShape` type to the appropriate `TGeoShape` subclass via
+ * `mClassMap`, creates the `TGeoVolume`, attaches an `AgMLExtension`, and
+ * registers the volume in `mVolumeTable`.  `Position` converts the
+ * `AgPlacement` or `AgPosition` record to a `TGeoMatrix` and calls
+ * `TGeoVolume::AddNode`.  `AddGroup` creates a virtual alignment-group volume.
+ *
+ * Named "dyson" internally, after the Dyson sphere — a structure that
+ * encloses everything.
+ */
+
+/**
+ * @class StarNoStacker
+ * @brief Null stacker; traverses the geometry tree without building anything.
+ * @ingroup StarAgmlLib
+ *
+ * All three virtual operations return `true` immediately.  Used for geometry
+ * dependency analysis, documentation generation, and testing module code
+ * without a live `TGeoManager`.
+ */
+
+/**
+ * @class AgDetp
+ * @brief Detector parameter tag used to activate a named geometry variant.
+ * @ingroup StarAgmlLib
+ *
+ * Called inside `AgModule::ConstructGeometry()` to select a parameter
+ * configuration tag (e.g. `TPC_v1`).  The actual parameter values are stored
+ * in the `StarAgmlUtil` database (`AgMLDb`); `AgDetp::operator()(tag)` provides
+ * the syntactic handle to select among them.
+ */
+
+/**
+ * @class Array_t
+ * @brief Dual-indexed array template supporting both C++ and Fortran indexing.
+ * @ingroup StarAgmlLib
+ *
+ * Defined in `Mortran.h`.  Supports 1D and 2D layouts.  C++ access uses
+ * zero-based `operator[]`; Fortran-style access uses `operator()` with a
+ * configurable base index set by `SetRange(min, max)`.  Out-of-bounds access
+ * is caught at run time with an assertion.
+ */
+
+/**
+ * @}
+ */

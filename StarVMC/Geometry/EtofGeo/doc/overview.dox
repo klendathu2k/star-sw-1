@@ -1,0 +1,52 @@
+/**
+ * @defgroup EtofGeo EtofGeo — Endcap Time-of-Flight Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR/CBM Endcap Time-of-Flight (ETOF)
+ *        detector.
+ *
+ * @details
+ * The ETOF detector is a CBM/STAR collaborative project that extends STAR's
+ * particle-identification capability into the forward region (η ≈ 1.5–2.0).
+ * It consists of MRPC modules arranged on three z-planes, mounted on the inner
+ * field cage of the STAR magnet poletip.  The geometry was imported from the
+ * CBM simulation file @c tof_v14s.root.
+ *
+ * Two ETOG fill entries are provided:
+ * - Version 14.0 (full, west endcap): all 12 sectors active on three planes
+ *   at z = −277.65, −290.52, −303.37 cm.
+ * - Version 14.1 (single sector, east side): only sector 18 active, used for
+ *   the 2018 commissioning run.
+ *
+ * Modules are placed directly into CAVE using the MagRefSys reference frame
+ * with ncopy values encoding plane (hundreds digit) and sector (units/tens).
+ *
+ * @{
+ */
+
+/**
+ * @defgroup EtofGeo0 EtofGeo0 — ETOF geometry v14 (imported from tof_v14s.root)
+ * @ingroup EtofGeo
+ * @brief Module @c EtofGeo0: Complete MRPC endcap time-of-flight geometry for
+ *        both the full west-endcap installation and the single-sector east
+ *        commissioning configuration.
+ *
+ * @details
+ * Structures:
+ * - @c ETOC — master configuration selector (version float).
+ * - @c ETOG — per-version geometry: @c zplane(3) (z of three planes, cm),
+ *   @c active(12) (sector activation flags), @c sector(12) (STAR sector numbers).
+ *
+ * Volume hierarchy:
+ * @c CAVE → @c ETOF (MRPC module, placed ≤36×) → @c EGAS → @c ECOU →
+ * @c EGLA (glass) + @c EGAP (gas gap) → @c ECEL (sensitive cell) + @c EPCB (PCB).
+ *
+ * Controlled by setups:
+ * - @c ETOFof — detector off.
+ * - @c ETOFv14s — ETOC.version = 14.1; single sector 18, east side (Run 18).
+ * - @c ETOFv14f — ETOC.version = 14.0 (default); full 12-sector west endcap
+ *   (Run 19+).
+ */
+
+/**
+ * @}
+ */

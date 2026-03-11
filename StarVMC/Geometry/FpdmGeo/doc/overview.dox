@@ -1,0 +1,110 @@
+/**
+ * @defgroup FpdmGeo FpdmGeo — Forward Pion Detector / FMS Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definitions for the STAR Forward Pion Detector (FPD) and
+ *        Forward Meson Spectrometer (FMS)
+ *
+ * @details
+ * The FpdmGeo package (detector tag **FPDM**) describes the evolution of the STAR
+ * forward lead-glass calorimeter system from the original eight-module Forward Pion
+ * Detector (FPD, Run 2003–2005) to the large-aperture Forward Meson Spectrometer
+ * (FMS, Run 2006+).  These detectors measure neutral pions, η mesons, and direct
+ * photons at forward rapidity (η ≈ 2.5–4) via the Cherenkov light they produce in
+ * lead-glass crystals.
+ *
+ * ### Lead-glass crystal properties
+ * All versions use Protovino-type (IHEP) lead-glass with composition Pb/K/Si/O/As,
+ * density 3.86 g/cm³, and radiation length 2.5 cm.  Crystals are 3.81 cm × 3.81 cm × 45 cm
+ * (~18 X₀ deep).  The FMS west large-cell array uses Fermilab Lab (FLab) type crystals
+ * at 5.812 cm × 5.812 cm × 45 cm.  Each crystal is wrapped in 10 μm of aluminium and
+ * read out via a photo-cathode tube (FPCT) behind a μ-metal shield (FUMT).
+ *
+ * ### FPD configuration (FpdmGeo1–2)
+ * Eight modules are distributed symmetrically around the interaction point: four on the
+ * east side (EN, ES, ET, EB) and four on the west (WN, WS, WT, WB).  North/south
+ * modules (type 1) are 7×7 crystal arrays with a preshower lead plate (PBPT) and a
+ * two-plane scintillator-strip shower-maximum detector (FSHM/FHMS, 50 strips per plane).
+ * Top/bottom modules (type 2) are bare 5×5 arrays.
+ *
+ * ### FMS configuration (FpdmGeo3–4)
+ * The west modules are replaced by two large half-wheel arrays (north and south) each
+ * containing a 17×34 large-cell + 12×24 small-cell sub-array arranged side-by-side in x.
+ * The default x-positions (`FmsNorthX`, `FmsSouthX`) are adjustable via the FMCG
+ * structure, enabling the "open position" survey configuration (FPDM13).
+ *
+ * FpdmGeo4 adds a forward pre-shower (FPS) comprising scintillator panels (PRSW, POST)
+ * upstream of the FMS, and a west-platform iron support structure (WPFM).
+ *
+ * ### Cherenkov simulation
+ * When `FMCG.ChkvSim = 1`, the GSCKOV optical-photon simulation is activated for the
+ * lead-glass (FLGR), aluminium wrapper (FWAL), photo-cathode (FPCT), silicon rubber
+ * (SiRub), and μ-metal (FUMT) media with tabulated refractive indices, absorption
+ * lengths, and photo-cathode efficiencies.  The default (`ChkvSim = 0`) records
+ * ionisation energy loss only.
+ *
+ * @{
+ */
+
+/**
+ * @file FpdmGeo1.xml
+ * @brief Module FPDMGEO1 — FPD version 6.0, symmetric 8-module layout (Ogawa 2003).
+ *
+ * Defines 8 FPOS entries (iMod = 1–8) for EN, ES, ET, EB (east, z ≈ −590/−752 cm) and
+ * WN, WS, WT, WB (west, z ≈ +590/+752 cm).  Module type 1 = 7×7 + SMD + preshower;
+ * type 2 = 5×5.  SMD strips defined by FMXG: 50 triangular strips, apex 0.7 cm, base
+ * 1.0 cm, G10 substrate 0.15 cm thick.
+ */
+
+/**
+ * @file FpdmGeo2.xml
+ * @brief Module FPDMGEO2 — FPD/FMS transition geometry version 7.0.
+ *
+ * Replaces west modules (WN, WS) with type-3 14×14+6×6 combined arrays at z = 700 cm.
+ * Adds `PbPlate` switch to FMCG to toggle the preshower lead plate.
+ * FBXD type 3 defines the combined west module geometry.
+ */
+
+/**
+ * @file FpdmGeo3.xml
+ * @brief Module FPDMGEO3 — FMS geometry version 8.0 (2006+).
+ *
+ * Consolidates to 4 modules: east EN/ES (7×7, iType=1), west WN/WS (17×34+14×28, iType=2).
+ * Introduces `INSE` structure for FMS insertion geometry, `FmsNorthX`/`FmsSouthX`
+ * parameters for x-positioning, and `atten` switch for light-attenuation correction.
+ * FPDM13 uses extreme x-offsets (±50.3 cm) to model the detector in the open position.
+ */
+
+/**
+ * @file FpdmGeo4.xml
+ * @brief Module FPDMGEO4 — FMS + Forward Pre-Shower geometry version 9.0.
+ *
+ * Adds three structures beyond FpdmGeo3:
+ * - **PRSW** — forward pre-shower panel geometry (scintillator strips before FMS)
+ * - **POST** — post-shower layer geometry
+ * - **WPFM** — iron west-platform support (pole, I-beam, U-beam structures)
+ *
+ * The `postshower` flag in FMCG (default 0) activates the POST layer when set to 1
+ * (FPDMv4, FPDMv4at setups).
+ */
+
+/**
+ * @file FpdmConfig.xml
+ * @brief Setup registry for detector FPDM.
+ *
+ * | Setup | Module | Notes |
+ * |---|---|---|
+ * | FPDMof | FpdmGeo1 | disabled |
+ * | FPDM00/01 | FpdmGeo1 | FPD 8-module |
+ * | FPDM02 | FpdmGeo2 | FPD+FMS transition |
+ * | FPDM03 | FpdmGeo3 | FMS default position |
+ * | FPDM03at | FpdmGeo3 | FMS + attenuation |
+ * | FPDM04 | FpdmGeo4 | FMS + FPS |
+ * | FPDM04at | FpdmGeo4 | FMS + FPS + attenuation |
+ * | FPDMv4 | FpdmGeo4 | FMS + FPS + post-shower |
+ * | FPDMv4at | FpdmGeo4 | FMS + FPS + post-shower + attenuation |
+ * | FPDM13 | FpdmGeo3 | FMS open-position survey |
+ */
+
+/**
+ * @}
+ */

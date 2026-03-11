@@ -1,0 +1,89 @@
+/**
+ * @defgroup EcalGeo EcalGeo — Endcap EMC Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Endcap Electromagnetic Calorimeter (EEMC)
+ *
+ * @details
+ * The EEMC (detector tag **ECAL**) is a lead–polystyrene sampling calorimeter mounted on
+ * the west pole-tip face of the STAR solenoidal magnet.  It covers 1.086 < η < 2.0 with
+ * full azimuth, extending the electromagnetic acceptance of the experiment beyond the
+ * barrel BEMC.  The detector is divided into two identical half-wheels, each spanning
+ * 180° in φ, assembled from 6 azimuthal supersectors of 5 slices each (30 sectors total).
+ *
+ * ### Longitudinal structure
+ * The calorimeter is segmented into five readout sections in z (total depth 41.244 cm):
+ * - **Sections 1, 2** — 1 scintillator layer each, cell width 1.505 cm
+ * - **Section 3** — 4 scintillator layers, cell width 1.405 cm
+ * - **Section 4** — 18 scintillator layers, cell width 1.405 cm (main shower sampling)
+ * - **Section 5** — 1 scintillator layer, cell width 1.505 cm (post-shower)
+ *
+ * Lead absorbers (0.457 cm) are clad on both sides with 0.05 cm stainless steel.
+ * A 0.953 cm aluminium front plate completes the support structure.
+ *
+ * ### Shower Maximum Detector (SMD)
+ * A scintillator-strip SMD is located at z = 279.542 cm within the 3.4 cm gap between
+ * sections 3 and 4.  Triangular strips (apex 0.7 cm, base 1.0 cm) are arranged in two
+ * orthogonal planes (U and V), spanning a radial range of 77.41–213.922 cm.  Three SMD
+ * section groups define the strip pattern across the azimuthal supersectors.
+ *
+ * ### Simulation versions
+ * - **ECALGEO (version 5.0)** — original production geometry by Mehdiyev (1996).
+ *   The `onoff` parameter controls which endcap(s) are instantiated (1=west, 2=east, 3=both).
+ *   The `fillmode` parameter controls whether both (3) or one (1) φ half-wheel is filled.
+ * - **ECALGEO6 (version 6.1)** — updated geometry adding ECUT / EABS / ESEN structures for
+ *   per-material configurable EM transport cuts; also adds EMCS geometry version 2 with a
+ *   tie-rod radius parameter (Rtie) and cell-size correction (Slop).  Production geometry for
+ *   Run 9 and beyond.
+ *
+ * @{
+ */
+
+/**
+ * @file EcalGeo.xml
+ * @brief Module ECALGEO — endcap EMC geometry version 5.0 (1996).
+ *
+ * Core structures:
+ * - **EMCG** — version, on/off, fillmode switches
+ * - **EMCS** — full calorimeter geometry (z positions, η/φ extents, plate thicknesses)
+ * - **EETR** — η binning: 12 η bins from 1.086 to 2.0
+ * - **ESEC** (×5) — per-section layer counts and cell widths
+ * - **EMXG** — SMD strip apex/base/radius parameters
+ * - **EXSE** (×3) — SMD section U/V/cut-strip assignments
+ *
+ * Sensitive volumes: ESCI (tower scintillator), EHMS (SMD triangular strip).
+ */
+
+/**
+ * @file EcalGeo6.xml
+ * @brief Module ECALGEO6 — endcap EMC geometry version 6.1 with configurable EM cuts.
+ *
+ * Extends ECALGEO by adding:
+ * - **ECUT** — boolean switches for absorber and sensitive volume cuts
+ * - **EABS** — GEANT3 transport thresholds for absorbing material (CutGAM, CutELE, …)
+ * - **ESEN** — corresponding thresholds for the sensitive scintillator
+ * - **EMCS version 2** — adds tie-rod radius (Rtie = 1.0425 cm) and cell-size
+ *   correction (Slop = 0.14 cm) parameters
+ * - Additional SMD structural blocks: EFLS, EBLS (front/back layer material slabs),
+ *   EXPS (plastic spacer between SMD planes)
+ *
+ * ECALv6 enables EM cuts (absorber=1, sensitive=1); ECALv6_cut00 disables both.
+ */
+
+/**
+ * @file EcalConfig.xml
+ * @brief Setup registry for detector ECAL.
+ *
+ * | Setup | Module | onoff | fillmode | Notes |
+ * |---|---|---|---|---|
+ * | ECALof | EcalGeo | — | — | disabled |
+ * | ECALon | EcalGeo | 1 | 3 | west, full φ |
+ * | ECAL31 | EcalGeo | 1 | 3 | same as ECALon |
+ * | ECAL11 | EcalGeo | 1 | 1 | west, one half |
+ * | ECAL33 | EcalGeo | 3 | 3 | both endcaps |
+ * | ECALv6 | EcalGeo6 | 1 | 3 | v6, cuts on |
+ * | ECALv6_cut00 | EcalGeo6 | 1 | 3 | v6, cuts off |
+ */
+
+/**
+ * @}
+ */

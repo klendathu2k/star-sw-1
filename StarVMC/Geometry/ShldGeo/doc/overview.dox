@@ -1,0 +1,68 @@
+/**
+ * @defgroup ShldGeo ShldGeo — Beam Shielding Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR beam-tunnel shielding (SHLD)
+ *
+ * @details
+ * ShldGeo (module name SHLDGEO) models the beam-shielding walls placed
+ * symmetrically at z = ±1750 cm in the east and west RHIC beam tunnels, and a
+ * concrete floor section at z = ±2800 cm.  The shielding attenuates
+ * secondary particles from the tunnel from entering the Wide Angle Hall.
+ *
+ * Each shield assembly (SHLX mother volume, BOX 170×150×100 cm) contains:
+ * - Two concrete base pedestals (SHBS, 60×30×100 cm half-dimensions)
+ *   supporting the structure from the tunnel floor.
+ * - A concrete lateral slab (SHLS, 170×30×30 cm half-dims) spanning the
+ *   full width.
+ * - A back iron plate (SHBI) filling the remainder of the slab height.
+ * - A forward iron plate (SHFI, half-thickness 47 cm, half-height 55 cm)
+ *   with a rectangular beam-pipe aperture hole (SHOL, 20×10 cm half-dims).
+ *
+ * A separate concrete floor volume (SFLR, 3900×340×70 cm full dimensions)
+ * is placed at z = ±2800 cm.
+ *
+ * Both the shield assemblies and the floor are placed in CAVE: the west
+ * (−z) shield is rotated 180° about z so that the forward-iron face points
+ * toward the interaction point.
+ *
+ * There is a single geometry configuration (version 1); the module is enabled
+ * via the SHLDon setup and disabled via SHLDof.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | Description |
+ * |------------|-------|-------------|
+ * | SHLDof     | off   | Shielding disabled |
+ * | SHLDon     | on    | Default beam-tunnel shielding |
+ *
+ * ## Volume hierarchy
+ * @code
+ * SHLX  (BOX Air — mother, placed ±1750 cm in CAVE)
+ * ├── SHBS ×2  (BOX Concrete — base pedestals)
+ * ├── SHLS     (BOX Concrete — lateral slab)
+ * ├── SHBI     (BOX Iron — back iron plate)
+ * └── SHFI     (BOX Iron — forward iron plate)
+ *     └── SHOL (BOX Air — beam aperture hole)
+ * SFLR  (BOX Concrete — tunnel floor, placed ±2800 cm in CAVE)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file ShldGeo.xml
+ * @brief STAR beam-tunnel shielding geometry (SHLDGEO module).
+ * Single configuration (SHLG version 1).  Shield walls at z = ±1750 cm;
+ * concrete floor at z = ±2800 cm.  Beam aperture hole 20×10 cm.
+ * Author: Maxim Potekhin (15 August 2005).
+ */
+
+/**
+ * @file ShldConfig.xml
+ * @brief Setup registry for the STAR shielding (SHLD).
+ * Defines SHLDof (disabled) and SHLDon (default shielding enabled).
+ */
+
+/**
+ * @}
+ */

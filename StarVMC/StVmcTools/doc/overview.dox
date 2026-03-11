@@ -1,0 +1,89 @@
+/**
+ * @defgroup StVmcTools StVmcTools — GEANT3 C/C++ Bridge Utilities
+ * @brief Low-level glue between FORTRAN GEANT3 and the C++ VMC layer.
+ *
+ * StVmcTools provides two components:
+ * - G3Bridge: a singleton that stores void* function pointers to all
+ *   GEANT3 FORTRAN user-hook entry points, enabling C++ code to call into
+ *   the GEANT3 runtime without directly linked FORTRAN symbols.
+ * - G3Z.h: C++ POD classes mirroring the GEANT3 ZEBRA bank layout
+ *   (materials, tracking media, volumes, positions, divisions) plus the
+ *   shapes_e enumeration of GEANT3 shape codes.
+ * @{
+ */
+
+/**
+ * @class G3Bridge
+ * @brief Singleton holding void* pointers to all GEANT3 FORTRAN hooks.
+ *
+ * The GEANT3 FORTRAN library exposes C-linkage user-hook entry points
+ * (GUDCAY, GUDIGI, GUFLD, GUKINE, GUSTEP, GUTRAK, etc.).  G3Bridge stores
+ * each as a void* field.  The GEANT3 initialisation layer populates these
+ * fields after the shared library is loaded.  The constructor zeroes all
+ * pointer fields via memset(fBeg, 0, fEnd-fBeg).  Instance() returns the
+ * single G3Bridge object.
+ *
+ * Key hook pointers:
+ *   m_gustep  — per-step user action (routes to StarVMCApplication::Stepping)
+ *   m_gutrak  — per-track user action (PreTrack / PostTrack)
+ *   m_gukine  — primary kinematics generator (GeneratePrimaries)
+ *   m_gufld   — magnetic-field lookup (StarVMCApplication::Field)
+ *   m_gudcay  — user-defined particle decay
+ *   m_gmedia  — medium identification at current position
+ *   m_gtnext  — next volume-boundary finder
+ *   m_grndm   — GEANT3 random-number generator
+ */
+
+/**
+ * @class JMate_t
+ * @brief C++ mirror of the GEANT3 ZEBRA material bank.
+ *
+ * Fields: Name[20], A (atomic mass), Z (atomic number), DENS (density),
+ * RADL (radiation length), ABSL (absorption length), NLMAT, User[20].
+ */
+
+/**
+ * @class JTmed_t
+ * @brief C++ mirror of the GEANT3 ZEBRA tracking-medium bank.
+ *
+ * Fields: Name[20], IMAT (material index), ISVOL (sensitive volume flag),
+ * IFIELD, FIELDM, TMAXFD, STEMAX, DEEMAX, EPSIL, STMIN.
+ */
+
+/**
+ * @class JVolu_t
+ * @brief C++ mirror of the GEANT3 ZEBRA volume bank.
+ *
+ * Fields: ISEARC, ISHAPE (shapes_e code), NIN (number of daughters or
+ * -1 for divisions), NUMED (medium index), NPAR, NATT, PARS[99].
+ * Navigation: GetJDiv(), GetJPos(in), SubVoluID(idx, copy).
+ */
+
+/**
+ * @class JPos_t
+ * @brief C++ mirror of the GEANT3 ZEBRA positioning bank.
+ *
+ * Fields: IVO (volume ID), NR (copy number), IROT (rotation index),
+ * X[3] (translation), NPAR / PARS[99] (local shape overrides).
+ */
+
+/**
+ * @class JDiv_t
+ * @brief C++ mirror of the GEANT3 ZEBRA division bank.
+ *
+ * Fields: IAXIS (division axis 1-3), IVO (volume ID), NDIV (number of
+ * divisions), C0 (start offset), STEP (division step size).
+ */
+
+/**
+ * @class JFan_t
+ * @brief ZEBRA fan/index bank for name-keyed lookup of daughter volumes.
+ *
+ * GetObj(idx) returns the idx-th linked object.  GetIdx(name) searches
+ * for a 4-character volume name and returns its index.  GetNam(idx)
+ * returns the 4-character name of the idx-th entry.
+ */
+
+/**
+ * @}
+ */

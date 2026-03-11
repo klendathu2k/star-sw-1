@@ -1,0 +1,134 @@
+/**
+ * @defgroup StarBASE StarBASE — Base VMC Application Classes
+ * @brief Foundational callback layer and geometry-QA maker for GEANT3/VMC simulation.
+ *
+ * StarBASE provides:
+ * - A generic VMC application (`StVMCApplication`) in which every lifecycle
+ *   callback is delegated to a swappable `GCall` functor.
+ * - A particle-transport stack (`StMCStack`) implementing `TVirtualMCStack`.
+ * - A full-featured stepping action (`StMCStepping`) that accumulates
+ *   radiation-length and absorption-length distributions per TGeo volume.
+ * - Geometry loading (`StMCConstructGeometry`), primary generation
+ *   (`StMCSimplePrimaryGenerator`), and application bootstrapping
+ *   (`StMCInitApp`) hooks.
+ * - The `StarBASE` StMaker that drives η-φ geometry-scan runs from the
+ *   STAR chain.
+ * @{
+ */
+
+/**
+ * @class GCall
+ * @brief Abstract base class for all VMC action hooks.
+ *
+ * GCall (derives from TNamed) is the universal callback type used by
+ * StVMCApplication.  Concrete subclasses override Fun(), FunDD(), or
+ * Field() and are invoked through operator()().  A GCall holds cached
+ * pointers to the TVirtualMC, TVirtualMCApplication, and TVirtualMCStack
+ * set via SetInterfaces(), making them available inside Fun() without
+ * relying on global state.
+ */
+
+/**
+ * @class StVMCApplication
+ * @brief Generic TVirtualMCApplication implemented via GCall callbacks.
+ *
+ * Each TVirtualMCApplication lifecycle method (ConstructGeometry,
+ * InitGeometry, GeneratePrimaries, BeginEvent, BeginPrimary, PreTrack,
+ * Stepping, PostTrack, FinishPrimary, FinishEvent, Field) is stored as a
+ * GCall* and invoked when the MC engine calls the corresponding virtual.
+ * Callbacks are registered with SetConstructGeometry(), SetStepping(), etc.
+ * Init() runs the mInit callback and propagates the debug level to
+ * TGeant3TGeo.  Trig(n) calls gMC->ProcessRun(n).  Field() falls back to
+ * a 5 kG uniform field along z when no field callback is registered.
+ */
+
+/**
+ * @class StMCStack
+ * @brief TVirtualMCStack implementation for StarBASE geometry scans.
+ *
+ * Uses a TObjArray (all tracks) plus a std::stack (tracks pending
+ * transport).  PushTrack() creates a StarMCParticle, links mother-daughter
+ * TRef chains, and applies a rapidity cut |pz/e| < tanh(6.3) to primaries.
+ * PopNextTrack() services the GEANT3 transport loop.
+ * PopPrimaryForTracking() gives primary tracks to GEANT3 by index.
+ * Clear() deletes all particles and resets counters.
+ */
+
+/**
+ * @class StMCStepping
+ * @brief Per-step material-budget accumulator and histogram filler.
+ *
+ * Derives from GCall; Fun() is registered as the Stepping callback of
+ * StVMCApplication.  At each simulation step, Fun() classifies the step
+ * using the SteppingCase and SteppingKaze enumerations, then:
+ * - On track entry: records the accumulated radiation length at the entry
+ *   point and fills hRadlenAccu1D for all ancestor volumes.
+ * - On track exit: accumulates the fractional radiation length for all
+ *   volumes in the current TGeo branch and fills per-volume z/r/phi
+ *   histograms.
+ * - Fills global 2D r-z histograms (h_radlen_rz, h_abslen_rz,
+ *   h_pathlen_rz, h_distance_rz, h_ncount_rz) at every step.
+ * postTrack() fills per-volume 1D eta histograms at end-of-track.
+ * BookHistograms() and bookVolume() allocate the histogram containers
+ * indexed by TGeo volume number.
+ */
+
+/**
+ * @class StMCConstructGeometry
+ * @brief GCall that loads and registers the STAR TGeo geometry.
+ *
+ * Fun() resolves the path ${STAR}/StarDb/VmcGeometry/Geometry.<tag>.C,
+ * loads it, calls CreateTable(), sets CAVE as the top volume, and calls
+ * gMC->SetRootGeometry().  If gGeoManager already exists the load step is
+ * skipped and the existing geometry is used.  The geometry tag (e.g.
+ * "y2023") is the GCall name, passed to the constructor.
+ */
+
+/**
+ * @class StMCPrimaryGenerator
+ * @brief Abstract GCall base for primary-particle generators.
+ *
+ * Stores track count (fNTrk), PDG code (fPDG), and vertex (fVtx[3]).
+ * Provides a PushTrack() helper that forwards to
+ * gMC->GetStack()->PushTrack() with the full GEANT3 signature.
+ * Subclasses override Fun() and call PushTrack() to populate the stack.
+ */
+
+/**
+ * @class StMCSimplePrimaryGenerator
+ * @brief Uniform-phase-space primary generator.
+ *
+ * Generates fNTrk particles per event drawn uniformly from configurable
+ * pT, eta, phi, and z-vertex windows.  The particle species is given as a
+ * Geant3 code (option="G") or a PDG code.  Fun() randomises the z-vertex
+ * and calls GenerateOnePrimary() repeatedly.  SetGenerator() and
+ * SetVertex() allow run-time reconfiguration without reconstructing the
+ * object, which is used by StarBASE::Make() to scan the eta-phi grid.
+ */
+
+/**
+ * @class StMCInitApp
+ * @brief GCall that bootstraps a complete standalone VMC application.
+ *
+ * When Fun() is invoked (as the mInit callback of StVMCApplication):
+ * creates TGeant3TGeo, StMCConstructGeometry, and StMCSimplePrimaryGenerator;
+ * registers them; assigns an StMCStack to gMC; calls gMC->Init() and
+ * BuildPhysics(); then configures all hadronic and electromagnetic processes
+ * to zero with continuous ionisation loss only — the standard geantino
+ * configuration for material-budget scanning.
+ */
+
+/**
+ * @class StarBASE
+ * @brief StMaker that orchestrates STAR detector geometry QA scans.
+ *
+ * Init() creates StVMCApplication, StMCInitApp, and StMCStepping.
+ * Make() reads the eta/phi scan grid from maker attributes and calls
+ * gMC->ProcessEvent() for each grid cell, reconfiguring the simple
+ * generator between calls.  Finish() registers all StMCStepping material-
+ * budget histograms into the maker's output dataset.
+ */
+
+/**
+ * @}
+ */

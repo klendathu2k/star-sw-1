@@ -1,0 +1,125 @@
+/**
+ * @defgroup FcsmGeo FcsmGeo — Forward Calorimeter System Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definitions for the STAR Forward Calorimeter System (FCS):
+ *        pre-shower (PRES), EM calorimeter (WCAL), hadronic calorimeter (HCAL),
+ *        and support platform (PLAT)
+ *
+ * @details
+ * The FcsmGeo package defines the full geometry of the STAR Forward Calorimeter System
+ * (FCS), introduced as part of the sPHENIX-era upgrade.  All four sub-detectors are
+ * placed exclusively in the **WestRefSys** reference frame at z ≈ 615–800 cm.
+ * The FCS provides complete electromagnetic and hadronic calorimetry coverage at
+ * η ≈ 2.5–4, replacing the legacy FPD/FMS detectors.
+ *
+ * `FcsmConfig.xml` registers four separate `<Detector>` blocks:
+ * - **PRES** — Forward Pre-Shower (module PresGeo1)
+ * - **WCAL** — Forward EM Calorimeter (module WcalGeo1)
+ * - **HCAL** — Forward Hadron Calorimeter (module HcalGeo1)
+ * - **PLAT** — Forward Calorimeter Platform / support structure (module PlatGeo1)
+ *
+ * All "on" setups carry `runtime="True"`, enabling detector toggling at instantiation
+ * time without rebuilding the simulation tag.
+ *
+ * @{
+ */
+
+/**
+ * @file PresGeo1.xml
+ * @brief Module PRESGEO1 — Forward Pre-Shower scintillator strip detector (Ogawa, 2019).
+ *
+ * The pre-shower detector (PRES) measures the early development of electromagnetic
+ * showers upstream of the FCS EM calorimeter, aiding γ/π⁰ separation.
+ *
+ * Structure PGEO defines the geometry of six scintillator strip layer groups, each
+ * at a different z position and orientation angle (0°, ±45°, 90°).  Strips are
+ * 1.0 cm thick × 5.0 cm wide polystyrene, wrapped in 0.025 cm of reflective material.
+ * Ten strip-length types (ScLth) handle the varying projective lengths near the
+ * central hole.  A G10 back-plane (PBKB, 0.635 cm) provides the circuit-board support.
+ *
+ * The mother volume (PMOD) is a 4-sided polygonal prism (PGON, 45°–405°) with a
+ * 42 cm central hole for the beam pipe.  Layers are placed at z = 615–668 cm
+ * (WestRefSys front face, depending on orientation).
+ *
+ * Sensitive volume: PSCI (Birks-corrected ionisation hit).
+ */
+
+/**
+ * @file WcalGeo1.xml
+ * @brief Module WCALGEO1 — Forward EM Calorimeter (Ogawa, 2018).
+ *
+ * Based on the PHENIX lead-scintillator calorimeter design (emc.f, Sasha).
+ * A sampling calorimeter of 66 lead + scintillator layers in a projective
+ * 22×34 tower array (per north/south module), tilted 1.73° to point at the
+ * interaction vertex.
+ *
+ * Structure WGEO defines:
+ * - Tower size: DX = DY = 5.542 cm, 0.03 cm clearance
+ * - Sampling: NLayer = 66, DZLead = 0.15 cm, DZScinti = 0.40 cm, DZPaper = 0.012 cm
+ * - Front space (FEE boards): 13.90 cm; back space (fibre loops): 18.37 cm
+ *
+ * Structure WOFF (×2 for north/south) provides x/y/z offsets and the 1.73° tilt angle.
+ * The north module is reflected in x relative to the south module.
+ *
+ * Tower hierarchy (WMOD → WTOW → WFST/WBPL/WSCI → WPAP/WPBP):
+ * EM cuts follow EcalGeo6 thresholds (CUTGAM = CUTELE = 10 keV, stored in WCUT).
+ * Sensitive volume: WSCI (Birks hit, isvol=1).
+ */
+
+/**
+ * @file HcalGeo1.xml
+ * @brief Module HCALGEO1 — Forward Hadron Calorimeter (Ogawa).
+ *
+ * A steel–scintillator sampling hadronic calorimeter with wavelength-shifting (WLS)
+ * plate readout.  Two modules (north and south) each comprising a 13×20 tower array
+ * of ~10 cm × 10 cm × 90 cm towers, tilted 1.73° toward the vertex.
+ *
+ * Structure HGEO (two fill versions, v1.0 and v2.0) defines:
+ * - NLayer = 36 steel+scinti layers; DZABS = 2.0 cm, DZSCI = 0.3 cm, DZLAY = 2.34 cm
+ * - WLS plate: DXWLS = 0.3 cm, DYWLS = 9.8 cm
+ * - Rear steel plate: DZRSP = 1.0 cm
+ *
+ * Parameters P1–P34 in the first HGEO fill describe the light-collection position
+ * dependence within a cell (not used as geometry dimensions; reserved for digitisation).
+ *
+ * Tower hierarchy: HMOD → HTOW → HRSP + [HABS / HSCI / HWSP / HGAP / HSPC] × 36.
+ * Sensitive volume: HSCI (Birks hit).
+ */
+
+/**
+ * @file PlatGeo1.xml
+ * @brief Module PlatGeo1 — Forward calorimeter iron support platform (Ogawa, 2018).
+ *
+ * Defines the structural steel support for the FCS west calorimeters.  No sensitive
+ * volumes; purely passive material for detector alignment and acceptance studies.
+ *
+ * Structure WPFM parameterises five steel structural elements:
+ * - **WPPL** — two vertical support poles (12×395×30 cm each)
+ * - **WPIS** — two horizontal I-beams (587×20×20 cm each)
+ * - **WPUF** — front U-channel (599×30×10 cm)
+ * - **WPUN** — north U-channel
+ * - **WPUS** — south U-channel
+ *
+ * Each hollow element has an air interior (WPAR) representing the open channel.
+ * All dimensions are given in inches in the source comments and converted to cm.
+ */
+
+/**
+ * @file FcsmConfig.xml
+ * @brief Setup registry for the four FCS sub-detectors.
+ *
+ * | Setup | Detector | on/off | Notes |
+ * |---|---|---|---|
+ * | PRESof | PRES | off | |
+ * | PRESv1 | PRES | on  | runtime |
+ * | WCALof | WCAL | off | |
+ * | WCALv1 | WCAL | on  | runtime |
+ * | HCALxx | HCAL | off | |
+ * | HCALv1 | HCAL | on  | runtime |
+ * | PLATof | PLAT | off | |
+ * | PLATon | PLAT | on  | runtime |
+ */
+
+/**
+ * @}
+ */

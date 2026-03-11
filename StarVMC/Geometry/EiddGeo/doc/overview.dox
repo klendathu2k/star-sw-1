@@ -1,0 +1,78 @@
+/**
+ * @defgroup EiddGeo EiddGeo — Endcap Inner Detector (ETTIE) Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR ETTIE combined endcap detector,
+ *        detector tag EIDD.
+ *
+ * @details
+ * The ETTIE (Endcap TRD-TOF for Identifying Electrons) detector is a proposed multi-subsystem
+ * endcap instrument for electron identification at the STAR west endcap, placed at z = −286 cm.
+ * It covers the full TPC radial aperture (r = 46.1–206.75 cm) in twelve 28°-wide azimuthal
+ * sectors.  Three sub-detectors are stacked along z within the single ETTV mother volume:
+ *
+ * **eTRD (Transition Radiation Detector)** — ETRV at z = 280 cm.
+ * Three TRD layers, each composed of a foam TR radiator (5.92 cm), a Xe+15% CO2
+ * absorber (TABS, 3.83 cm, sensitive), and a G10 readout motherboard (TBOD, 2.00 cm).
+ * Transition radiation from charged particles above threshold is detected in the xenon gas.
+ *
+ * **eMRPC TOF** — ETFV at z = 299 cm.
+ * One layer of Multi-gap Resistive Plate Chambers: aluminium gas box (TBOX) → Freon gas
+ * volume (TGAS) with two G10 PCB readout boards, seven glass plates, and six Freon-filled
+ * gas gaps (TGAP, 220 µm each, sensitive).  Provides time-of-flight measurement for
+ * particle identification.
+ *
+ * **Lead-Scintillator Preshower** — ECLV at z = 305 cm.
+ * Converter–scintillator sandwich per sector: 1st lead absorber (TEAA, 1.68 cm) →
+ * scintillator (SCIN, 3.00 cm, sensitive) → 2nd lead absorber (TEAB, 0.84 cm) →
+ * scintillator (SCIN, 3.00 cm, sensitive).  Designed to pre-shower electromagnetic
+ * particles before possible further measurement.
+ *
+ * There is no separate Config XML for this detector; the module @c EIDDGEO is loaded
+ * directly.  A single geometry version (eidConfig = 1) is implemented.
+ *
+ * @par Author
+ * Ming Shao
+ *
+ * @par Created
+ * 28 September 2011
+ *
+ * @{
+ */
+
+/**
+ * @defgroup EiddGeoETRD EIDDGEO — Endcap Transition Radiation Detector (eTRD)
+ * @ingroup EiddGeo
+ * @brief Three TRD layers at z = 280 cm covering r = 46.1–206.75 cm in 12 sectors.
+ *
+ * @details Each layer (ETRD) is a 28°-wide TUBS sector containing a foam TR radiator
+ * (TRAD, Radiator mix ρ = 0.104 g/cm³), a Xe+15% CO2 absorber (TABS, sensitive), and a
+ * G10 readout motherboard (TBOD).  The three layers are stacked along z at 12 cm intervals
+ * within the ETRV volume.  TABS is the sensitive medium; hits record position, direction
+ * cosines, momentum, path length, TOF, log(γ), step size, and energy loss.
+ */
+
+/**
+ * @defgroup EiddGeoTOF EIDDGEO — Endcap MRPC Time-of-Flight (eMRPC)
+ * @ingroup EiddGeo
+ * @brief Single MRPC TOF layer at z = 299 cm with 7 glass plates and 6 gas gaps per sector.
+ *
+ * @details Each of the twelve ETOF sectors is a 28°-wide TUBS containing an aluminium gas
+ * box (TBOX) and a Freon gas volume (TGAS).  Within TGAS: two G10 PCB readout boards (TPCB)
+ * flank a stack of 7 glass plates (TGLA, 0.5 mm each) and 6 Freon gas gaps (TGAP, 220 µm
+ * each, sensitive).  The multi-gap design provides improved time resolution.
+ */
+
+/**
+ * @defgroup EiddGeoPreShower EIDDGEO — Endcap Lead-Scintillator Preshower
+ * @ingroup EiddGeo
+ * @brief Pb+scintillator preshower at z = 305 cm for electromagnetic particle identification.
+ *
+ * @details Each of the twelve TECL sectors is a 28°-wide TUBS containing a sandwich of:
+ * TEAA (1.68 cm Pb), SCIN (3.00 cm polystyrene, sensitive), TEAB (0.84 cm Pb), and a
+ * second SCIN (3.00 cm, sensitive).  The two scintillator layers allow shower-depth
+ * estimation for electron/pion separation.
+ */
+
+/**
+ * @}
+ */

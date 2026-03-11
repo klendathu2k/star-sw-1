@@ -1,0 +1,60 @@
+/**
+ * @defgroup StarAgmlChecker StarAgmlChecker — AGML Geometry Material-Budget Checker
+ * @brief Analyses the assembled TGeo geometry for material budget and checksum consistency.
+ * @ingroup StarAgmlLib
+ *
+ * `StarAgmlChecker` operates on a fully assembled `TGeoManager` geometry
+ * produced by `StarTGeoStacker` and provides two services:
+ *
+ * 1. **Material-budget mapping** — fires rays from the origin through the
+ *    geometry and integrates the radiation length X/X₀ of traversed media as a
+ *    function of pseudorapidity η and azimuthal angle φ.  Results are returned
+ *    as a `TObjectSet` of 2D histograms, one for the requested top volume and
+ *    one per direct daughter.
+ *
+ * 2. **Geometry checksums** — computes deterministic MD5 digests of TGeo
+ *    volume sub-trees (shape parameters, material/medium properties, placement
+ *    matrices, node connectivity) for regression testing and change detection.
+ *
+ * @par Related modules
+ * - @ref StarAgmlLib   — core AGML geometry description library
+ * - @ref StarAgmlUtil  — coordinate transforms and parameter utilities
+ * - @ref StarAgmlViewer — interactive geometry visualisation
+ *
+ * @{
+ */
+
+/**
+ * @class StarAgmlChecker
+ * @brief Extends TGeoChecker with AGML-specific material-budget and checksum analysis.
+ * @ingroup StarAgmlChecker
+ *
+ * Constructed with a pointer to the active `TGeoManager` and an optional flag
+ * controlling whether air-equivalent media contribute to the material budget
+ * integrals (`scoreAir`, default true).
+ *
+ * Key methods:
+ * - `MaterialPlot(top, nEta, mnEta, mxEta, nPhi, mnPhi, mxPhi, rmin, rmax, zmin, zmax, opts)`
+ *   — integrate radiation lengths in (η,φ) bins within the specified cylindrical
+ *   and longitudinal bounds.  Returns a `TObjectSet` of `TH2` histograms.
+ * - `CheckSum(volume)` — MD5 digest of the named volume sub-tree.
+ * - `CheckSet(volume)` — `TDataSet` tree mirroring the TGeo hierarchy with each
+ *   node replaced by its checksum string.
+ * - `Skip(vol)` — exclude a named volume (and its descendants) from analysis.
+ */
+
+/**
+ * @class CheckSum_t
+ * @brief Typed MD5 accumulator for deterministic geometry checksums.
+ * @ingroup StarAgmlChecker
+ *
+ * Feeds typed values (Int_t, Float_t, Double_t, TString, etc.) into an
+ * incremental `TMD5` digest via `operator+=`.  Implicit conversion to `TMD5`,
+ * `TString`, or `const char*` finalises and returns the digest.  Used
+ * internally by `StarAgmlChecker` to hash each TGeo shape, material, medium,
+ * matrix, and node.
+ */
+
+/**
+ * @}
+ */

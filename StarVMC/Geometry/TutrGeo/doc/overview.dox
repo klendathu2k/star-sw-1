@@ -1,0 +1,83 @@
+/**
+ * @defgroup TutrGeo TutrGeo — Tutorial / Test Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML tutorial and shape-catalogue geometry modules (TUTR / ShapGeo)
+ *
+ * @details
+ * TutrGeo is a collection of example and developer-testing AGML geometry
+ * modules.  These modules do not describe physical STAR detectors; they are
+ * used to demonstrate AGML concepts to new developers and to verify that the
+ * geometry framework is functioning correctly.  There is no corresponding
+ * Config.xml; the modules are loaded explicitly for testing purposes.
+ *
+ * Five XML files are provided:
+ *
+ * - **TutrGeo1** — the minimal AGML module: a 500 cm box mother (TUTR) with
+ *   one 10 cm box child (ABOX).  Demonstrates the obligatory `<Module>`,
+ *   `<Author>`, `<Created>`, `<Content>`, and `<Volume>` elements.
+ *
+ * - **TutrGeo2** — extends TutrGeo1 with five additional shape volumes
+ *   (ATUB, ATBS, ACON, ACNS) demonstrating tube, tube-segment, cone, and
+ *   cone-segment shapes.
+ *
+ * - **TutrGeo3** — demonstrates structure-driven (parametric) geometry.
+ *   A `TUBG` structure with three fill entries defines three concentric tubes
+ *   (rmin/rmax: 0/5, 2.5/7.5, 5/10 cm; dz: 10, 10, 15 cm) that are
+ *   selected at run time by version number, showing how `<Structure>`,
+ *   `<Fill>`, and `<Use select=...>` work together.
+ *
+ * - **TutrGeo4** — the most complete tutorial module.  Adds PCON (polycone),
+ *   PGON (polygon), PARA (parallelepiped, dx=10/dy=8/dz=20 cm with Euler
+ *   angles), and ELTU (elliptical tube, p1=10/p2=15/dz=20 cm) to the shapes
+ *   demonstrated in TutrGeo2.
+ *
+ * - **ShapGeo** — a comprehensive catalogue of every AGML-supported TGeo
+ *   shape type: BOX, PARA, TRD1, TRD2, TRAP, GTRA, SPHE, TUBE, TUBS, CTUB,
+ *   ELTU, HYPE, CONE, CONS, PCON, PGON.  Each shape is placed in a 1000 cm
+ *   box mother with representative parameters.  This module serves as a
+ *   reference and regression test for the AGML shape-translation layer.
+ *   Author: Jason C. Webb (November 2011).
+ *
+ * @{
+ */
+
+/**
+ * @file TutrGeo1.xml
+ * @brief Minimal AGML tutorial geometry (TutrGeo1 module).
+ * TUTR box (500 cm) containing one ABOX child (10 cm).
+ * Demonstrates mandatory module elements.
+ */
+
+/**
+ * @file TutrGeo2.xml
+ * @brief Multi-shape AGML tutorial (TutrGeo2 module).
+ * Adds ATUB (tube), ATBS (tube segment), ACON (cone), ACNS (cone segment)
+ * to the basic box geometry.
+ */
+
+/**
+ * @file TutrGeo3.xml
+ * @brief Parametric geometry tutorial (TutrGeo3 module).
+ * Demonstrates Structure/Fill/Use: three ATUB volumes built from TUBG fills
+ * with different rmin/rmax/dz values selected by version number.
+ */
+
+/**
+ * @file TutrGeo4.xml
+ * @brief Extended shape tutorial (TutrGeo4 module).
+ * All shapes from TutrGeo2 plus APCN (polycone), APGN (polygon),
+ * APAR (parallelepiped), and AELT (elliptical tube).
+ */
+
+/**
+ * @file ShapGeo.xml
+ * @brief Exhaustive AGML shape catalogue (ShapGeo module).
+ * Demonstrates all supported TGeo shapes: BOX, PARA, TRD1, TRD2, TRAP,
+ * GTRA, SPHE, TUBE, TUBS, CTUB, ELTU, HYPE, CONE, CONS, PCON, PGON.
+ * Used as a regression test for the AGML-to-TGeo translation layer.
+ * Author: Jason C. Webb (November 2011).
+ */
+
+/**
+ * @}
+ */

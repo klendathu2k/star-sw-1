@@ -1,0 +1,56 @@
+/**
+ * @defgroup FtroGeo FtroGeo — STAR FTPC Readout Barrel Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward TPC readout barrel.
+ * @details
+ * The FTPC Readout (FTRO) module defines the mechanical and electronic
+ * structures mounted on the outer (downstream) face of each Forward TPC disk.
+ * Two identical readout barrels are placed at
+ *   @f$ z = \pm(150 + 119 + 40) = \pm309 @f$ cm from the interaction point
+ * (the −z instance is rotated 180° about the y-axis).
+ *
+ * Each barrel (@c FTMO) is a hollow annular cylinder (Rin = 15 cm,
+ * Rout = 30 cm, length = 80 cm, filled with Air) divided into five azimuthal
+ * sectors (@c FTCD).  Within each sector:
+ *   - One aluminium I-beam strut (@c FSMO: flanges @c FSTL × 2 + web @c FSTC
+ *     with 5 lightening holes @c FSHL).
+ *   - One aluminium cover plank (@c FTPL) over the strut.
+ *   - Two outer G10 PCB panels (@c FTPO) at radius 22 cm, one on each side of
+ *     the sector centre.
+ *   - Two inner G10 PCB panels (@c FTPI) at radius 20 cm.
+ *   - One aluminium protective shell sector (@c FTSH, TUBS shape).
+ * The barrel also carries an outer flange (@c FTOF, with 15 evenly spaced
+ * holes @c FTOH at R = 26 cm), an inner flange (@c FTIF), and a rim ring
+ * (@c FTRM).
+ *
+ * Key global parameters (structure @c FTRG):
+ *   - N = 5 sectors
+ *   - ftpcZ = 150 cm, ftpcLen = 119 cm, length = 80 cm
+ *   - Rin = 15 cm, Rout = 30 cm
+ *   - strutLen = 50 cm, strutHgt = 6.5 cm
+ *   - ftpoR = 22 cm (outer PCB), ftpiR = 20 cm (inner PCB)
+ *   - G10 (PCBs): inline mixture, density 1.7 g/cm³ (Si, O, C, H)
+ * @{
+ */
+
+/**
+ * @defgroup FtroGeo_v1 FtroGeo — FTPC readout barrel (single version)
+ * @ingroup FtroGeo
+ * @brief Module @c FTROGEO: the FTPC readout barrel geometry (Potekhin, 2004).
+ * @details
+ * Only one module version exists for detector FTRO.  The @c FTRG structure
+ * (Version=1) fully characterises the geometry; no sub-version selector is
+ * present.  The G10 mixture is defined inline within the module.
+ *
+ * Volume hierarchy:
+ *   @c CAVE → @c FTMO → @c FTCM → @c FTCD (DIVISION, 5 sectors) →
+ *   { @c FSMO (@c FSTL × 2, @c FSTC → @c FSHL × 5),
+ *     @c FTPL, @c FTPO × 2, @c FTPI × 2, @c FTSH }
+ *   and @c FTMO → { @c FTOF → @c FTOH × 15, @c FTIF, @c FTRM }.
+ *
+ * Activated by setups @c FTROon and @c FTRO01.
+ */
+
+/**
+ * @}
+ */

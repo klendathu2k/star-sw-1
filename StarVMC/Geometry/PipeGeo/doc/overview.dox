@@ -1,0 +1,153 @@
+/**
+ * @defgroup PipeGeo PipeGeo — Beam Pipe Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definitions for the STAR beam pipe (PIPE) and
+ *        fixed-target assembly (TARG)
+ *
+ * @details
+ * PipeGeo provides the STAR beam pipe geometry: a thin-walled vacuum tube
+ * running along the z-axis through the STAR interaction region.  Multiple
+ * module versions were developed over the years to reflect changes to the
+ * physical beam pipe, particularly reductions to the central beryllium section
+ * radius required for the Heavy Flavour Tracker (HFT) programme.
+ *
+ * ## Module versions
+ *
+ * - **PipeGeo** (PIPEGEO): primary module with multiple internal
+ *   configuration sub-versions (pipeconfig 1–6).  Builds a polycone mother
+ *   (PIPE) enclosing: a central beryllium section (PIPC), aluminium transition
+ *   tubes (PIPO, PIPI, PIPT), a bell-reducer cone (PIPB), a large-OD
+ *   aluminium section (PIPS), flanges (PFLO, PFLT), structural ribs (PRIS),
+ *   an optional multi-layer insulation wrap (PWRP, pipeflag bit 0), and an
+ *   optional SVT beam-pipe RF shield (PSLD, pipeflag bit 1).
+ *   Config 2 is the nominal pre-HFT geometry (Be rmin = 3.90 cm, rmax = 4.00 cm);
+ *   config 2.1 corrects the assembly position to 159 inches from the IP.
+ *   Configs 4 (1.374/1.450 cm) and 6 (2.0/2.076 cm) model reduced-radius
+ *   pipes used for the HFT programme.
+ *
+ * - **PipeGeo00** (PIPEGEO00): minimal single-tube model consisting solely
+ *   of a beryllium pipe shell (rmin = 1.962 cm, rmax = 2.038 cm,
+ *   half-length = 200 cm) with a vacuum bore, for use in simplified
+ *   simulation studies.  Author: Gerrit van Nieuwenhuizen (2008).
+ *
+ * - **PipeGeo1** (PipeGeo1): three-section aluminium–beryllium–aluminium
+ *   pipe model introduced for y2013 geometries.  Beryllium section offset
+ *   matches engineering drawing (zoffber = −15.75 in).
+ *   Authors: Amilkar Quintero, Jason Webb (June 2011).
+ *
+ * - **PipeGeo2** (PipeGeo2): five-section pipe model (east Al stub, east Al,
+ *   Be, west Al, west Al stub) with beryllium at zoffber = +7.875 in.
+ *   Author: Amilkar Quintero (January 2013).
+ *
+ * - **PipeGeo3** (PipeGeo3): three-section HFT beam-pipe model.  Uses
+ *   separate east (PIPA) and west (PIWA) parameter sets; the beryllium section
+ *   has small inner radius for minimal material in the HFT acceptance.
+ *   Authors: Amilkar Quintero, Fleming Videbaek (April 2013).
+ *
+ * - **TargGeo** (TargGeo): fixed-target assembly used for the STAR fixed-
+ *   target programme (~2018+).  Places a 0.25 mm gold foil on an aluminium
+ *   half-ring mount at z ≈ 201 cm, with a full support ring and aluminium
+ *   support rod.  Author: Samuel Heppelmann (September 2018).
+ *
+ * ## Setup configurations
+ *
+ * | Setup   | Module    | pipeconfig | pipeflag | Description |
+ * |---------|-----------|------------|----------|-------------|
+ * | PIPEof  | PipeGeo   | —          | —        | Disabled |
+ * | PIPEon  | PipeGeo   | 2          | 3        | Default pre-HFT pipe |
+ * | PIPE00  | PipeGeo00 | −1         | —        | Simplified single tube |
+ * | PIPE12  | PipeGeo   | 2          | 1        | Config 2 + MLI wrap |
+ * | PIPE12ft| PipeGeo   | 2          | 1        | Config 2 + MLI + fixed target |
+ * | PIPE04  | PipeGeo   | 4          | 0        | HFT-era small radius |
+ * | PIPE14  | PipeGeo   | 4          | 1        | HFT small radius + MLI |
+ * | PIPE06  | PipeGeo   | 6          | 0        | HFT 2.0 cm radius |
+ * | PIPEv1  | PipeGeo1  | 0          | —        | Al-Be-Al model |
+ * | PIPEv2  | PipeGeo2  | 0          | —        | Five-section Al-Be-Al |
+ * | PIPEv3  | PipeGeo3  | 30         | 1        | HFT three-section pipe |
+ *
+ * | Setup   | Description |
+ * |---------|-------------|
+ * | TARGof  | Fixed target disabled |
+ * | TARGon  | Fixed target in CAVE at z ≈ 201 cm |
+ * | TARGv1  | Fixed target placed inside beam pipe (PIPO) |
+ * | TARGv1a | Fixed target at z = 200.7 cm |
+ * | TARGv1b | Fixed target at z = 200.0 cm |
+ *
+ * ## Volume hierarchy (PipeGeo — primary module)
+ * @code
+ * PIPE  (PCON Air — mother, placed ±z in CAVE)
+ * ├── PIPC  (TUBE Beryllium — central Be section)
+ * │   └── PVAC  (TUBE vacuum)
+ * ├── PIPO  (TUBE Al/Fe — outer pipe, S1)
+ * │   └── PVAO  (TUBE vacuum)
+ * ├── PIPI  (TUBE Al/Fe — inter-flange section, S2)
+ * │   └── PVAI  (TUBE vacuum)
+ * ├── PIPT  (TUBE Al/Fe — transition stub, S3)
+ * │   └── PVAT  (TUBE vacuum)
+ * ├── PIPB  (CONE Al/Fe — bell reducer cone)
+ * ├── PIPS  (TUBE Al/Fe — large-OD section, S4)
+ * ├── PFLO / PFLT  (TUBE Al — flanges)
+ * ├── PRIS  (TUBE Al — rib set mother)
+ * │   └── PRID / PRIB / PIPI  (individual ribs)
+ * ├── PWRP  (TUBE — MLI wrap, optional)
+ * └── PSLD  (TUBE — SVT RF shield, optional)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file PipeGeo.xml
+ * @brief Primary STAR beam pipe geometry (PIPEGEO module), configs 1–6.
+ * Config 2 is the nominal pre-HFT pipe (Be rmin/rmax = 3.90/4.00 cm);
+ * config 2.1 corrects to engineering-drawing position.
+ * Configs 4 and 6 model reduced-radius HFT pipes.
+ * Authors: W.B. Christie (1999), Fleming Videbaek / Jason Webb (2013).
+ */
+
+/**
+ * @file PipeGeo00.xml
+ * @brief Simplified single-tube beam pipe (PIPEGEO00 module).
+ * Beryllium tube: rmin = 1.9619 cm, rmax = 2.0381 cm, half-length = 200 cm.
+ * Author: Gerrit van Nieuwenhuizen (March 2008).
+ */
+
+/**
+ * @file PipeGeo1.xml
+ * @brief Al-Be-Al three-section beam pipe model (PipeGeo1 module), y2013+.
+ * Authors: Amilkar Quintero, Jason Webb (June 2011).
+ */
+
+/**
+ * @file PipeGeo2.xml
+ * @brief Five-section Al-Be-Al beam pipe model (PipeGeo2 module), y2013+.
+ * Author: Amilkar Quintero (January 2013).
+ */
+
+/**
+ * @file PipeGeo3.xml
+ * @brief Three-section HFT beam pipe (PipeGeo3 module); separate east/west
+ * Al parameter sets around a small-radius Be central section.
+ * Authors: Amilkar Quintero, Fleming Videbaek (April 2013).
+ */
+
+/**
+ * @file TargGeo.xml
+ * @brief Fixed-target assembly (TargGeo module).
+ * Gold foil (0.25 mm thick) on Al half-ring mount at z ≈ 201 cm.
+ * Author: Samuel Heppelmann (September 2018).
+ */
+
+/**
+ * @file PipeConfig.xml
+ * @brief Setup registry for the STAR beam pipe (PIPE) detector.
+ */
+
+/**
+ * @file TargConfig.xml
+ * @brief Setup registry for the STAR fixed-target assembly (TARG).
+ */
+
+/**
+ * @}
+ */

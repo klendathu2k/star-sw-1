@@ -1,0 +1,50 @@
+/**
+ * @defgroup TestGeo TestGeo — Test and Tutorial Geometry Module
+ * @ingroup StarVMCGeometry
+ * @brief Minimal AGML geometry module for development, testing, and tutorial purposes.
+ *
+ * The `TestGeo` directory contains a single AGML module (`TestGeo1`) that
+ * demonstrates advanced placement features of the AGML XML language.  It has
+ * no correspondence to a real STAR detector and carries no sensitive volumes.
+ *
+ * @par Contents
+ * `TestGeo1.xml` defines module `TestGeo1` with the following volume hierarchy:
+ *
+ * @code
+ * Cave
+ * └── MAIN  [Box 200×200×200 cm, Air]         — master volume
+ *     └── TUBD  [Division along Y, 5 slices]  — replicated division
+ *         └── TUBP  [Box dz=50 cm, Air]        — division cell
+ *             └── TUBE  [Tube, Iron, parameterized=true]
+ *                        — 11 placements with rmax = 1..6..1 cm
+ * @endcode
+ *
+ * @par Features demonstrated
+ * - **Parameterized shapes**: the `TUBE` volume has `rmin`, `rmax`, and `dz`
+ *   set to zero in the volume definition and overridden individually at each
+ *   `<Placement>` call, exercising the AGML parameterized-placement mechanism.
+ * - **Volume division**: `TUBD` uses `<Shape type="Division" iaxis="2"
+ *   ndiv="5">` to divide the mother along the Y-axis into five equal slices
+ *   without explicit coordinate arithmetic.
+ *
+ * @par Intended use cases
+ * - Validating the AGML parameterized-placement code path.
+ * - Validating AGML volume division.
+ * - Minimal self-contained example for learning the AGML XML language.
+ * - Standalone regression test that requires no real detector configuration.
+ *
+ * @note No `TestGeoConfig.xml` exists; this module is loaded directly by name.
+ * @note No hit instrumentation is defined; this module produces no simulation hits.
+ *
+ * @{
+ */
+
+/**
+ * @var TestGeo1
+ * @brief Parameterized tube + division test module.
+ * Defined in TestGeo1.xml.  Author: JCW.
+ */
+
+/**
+ * @}
+ */

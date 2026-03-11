@@ -1,0 +1,126 @@
+/**
+ * @defgroup TpceGeo TpceGeo — STAR Time Projection Chamber Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Time Projection Chamber.
+ * @details
+ * The STAR TPC is the primary charged-particle tracking detector at RHIC.
+ * It provides full azimuthal coverage over |η| < 1.8 inside a 0.5 T solenoidal
+ * magnetic field.  Ionisation electrons produced in the P10 (Ar/CH₄) drift gas
+ * drift along the uniform electric field toward the two endcap Multi-Wire
+ * Proportional Chambers (MWPCs), where they are collected on segmented cathode
+ * pad planes.  The standard readout geometry comprises 45 padrows per sector
+ * (13 inner + 32 outer), arranged in 24 sectors (12 per endcap) for a total of
+ * 136,608 pads.
+ *
+ * Six AGML module versions are registered; the active version is selected at
+ * initialisation time by the setup tag in TpceConfig.xml.  Versions 1–2 use the
+ * classic @c \<Block\> description; versions 3a–6 progressively add detailed
+ * support-wheel rib structure, FEE assembly volumes, and (in version 6) the
+ * inner-TPC (iTPC) padrow layout introduced for Run 19 (2019).
+ *
+ * Key global parameters (structure @c TPCG):
+ *   - Rmin = 46.107 cm, Rmax ≈ 207.7 cm (envelope TUBE)
+ *   - LengthV = 2 × 210.00 cm (active gas volume)
+ *   - SenGasOR = 200 cm (sensitive gas outer radius)
+ *   - MembTHK = 0.00762 cm (central membrane)
+ *   - dZEnvelop = 268 cm (overall envelope half-length, v3+)
+ *
+ * Reference: NIM A499 (2003) 659–678.
+ * @{
+ */
+
+/**
+ * @defgroup TpceGeo_v1 TpceGeo1 — Original GSTAR TPC geometry
+ * @ingroup TpceGeo
+ * @brief Module @c TPCEGEO1: the original TPC geometry as translated from GSTAR.
+ * @details
+ * Authored by David Underwood.  Uses @c \<Block\> elements.  Structures:
+ * @c TPCG (basic dimensions including @c MWCread and @c gasCorr flags),
+ * @c TECW (per-sector endcap trapezoid), @c TROV (per-sector RDO routing),
+ * @c TPRS (padrow table), and @c TRDO (RDO board dimensions).
+ * The outer field cage uses a single @c TOST support layer.
+ * Activated by setups @c TPCE00, @c TPCE01, @c TPCE02.
+ *
+ * Notable volumes: @c TPCE (envelope), @c TPGV (gas), @c TPSS (supersector
+ * azimuthal division), @c TPAD (padrow), @c TIFC / @c TOFC (field cages),
+ * @c TPCM (central membrane), @c TPEA / @c TSEC (endcap supersectors),
+ * @c TMWC / @c TMEA / @c TMSE (wire chamber and sensitive layers),
+ * @c TPCW (endcap support wheel).
+ */
+
+/**
+ * @defgroup TpceGeo_v2 TpceGeo2 — Updated TPC backplane geometry
+ * @ingroup TpceGeo
+ * @brief Module @c TPCEGEO2: updated TPC geometry (Underwood / Potekhin, Dec 2005).
+ * @details
+ * Corrects the TPC backplane dimensions and adds an explicit @c TRDC (individual
+ * RDO card) block inside the @c TRDV / @c TRDS hierarchy.  Outer field cage
+ * layer ordering revised; @c TOST removed.  Gas-density correction enabled via
+ * the @c gasCorr flag in @c TPCG (override @c gascorr=2.0 in setup @c TPCE03).
+ * Activated by setup @c TPCE03.
+ */
+
+/**
+ * @defgroup TpceGeo_v3a TpceGeo3a — Detailed wheel and FEE geometry
+ * @ingroup TpceGeo
+ * @brief Module @c tpceGeo3a: fully detailed support-wheel and front-end
+ *        electronics assembly geometry.
+ * @details
+ * Introduces structure @c TPCC (version selector and misalignment flag) which
+ * gates sub-version behaviour without changing the XML file.  Adds extensive
+ * wheel rib detail (@c TWTR, @c TWMR, @c TWRB, @c TBRW), the FEE assembly
+ * hierarchy (@c FEEA / @c FEEP / @c FEER / @c FEEI), wire mount (@c TWIR),
+ * Al sector support (@c TALS), G10 sector plane (@c TSGT), cooling tubes
+ * (@c TCOO), cable volumes (@c TCAB), and RDO cards (@c TRDC).
+ * Inner field cage gains an adhesive layer (@c TIAD); outer field cage adds an
+ * explicit nitrogen insulating gas layer (@c TOIG).
+ * Outer envelope radius set to @c 207.77 cm in most production setups
+ * (@c TPCE04r, @c TPCE30–@c TPCE32a).
+ * Sub-versions (selected via @c TPCC.version): 3.0 (default), 3.1 (sector-20
+ * fix), 3.2 and 3.21 (iTPC outer padrow numbering).
+ */
+
+/**
+ * @defgroup TpceGeo_v4 TpceGeo4 — TpceGeo3a adaptation by Jason Webb
+ * @ingroup TpceGeo
+ * @brief Module @c tpcegeo4: standalone adaptation of TpceGeo3a (Webb, 2014).
+ * @details
+ * Functionally identical to @c tpceGeo3a with minor code cleanup; intended as
+ * a reference implementation and standalone test bed.  Carries the same volume
+ * inventory.  Listed in @c TpceConfig.xml only as the target of the @c TPCEof
+ * (off) sentinel setup.
+ */
+
+/**
+ * @defgroup TpceGeo_v5 TpceGeo5 — Full-sensitivity gas volume (experimental)
+ * @ingroup TpceGeo
+ * @brief Module @c tpceGeo5: experimental geometry replacing pseudo-padrow
+ *        cylindrical shells with a fully sensitive gas volume.
+ * @details
+ * Moves away from placing thin cylindrical @c TPAD padrow shells inside the gas
+ * volume.  Instead, the entire drift gas (@c TPGV) is made sensitive using
+ * @c KONLY='MANY', and padrows are represented by @c TPAD volumes with full
+ * projective segmentation controlled by the new @c NTPSSdiv parameter.  Uses
+ * @c \<Volume\> elements rather than @c \<Block\>.  Adds the @c tpadconfig integer
+ * to @c TPCG to select pad-plane configuration at runtime.
+ * Activated by setup @c TPCEv5 with @c misalign=0.
+ */
+
+/**
+ * @defgroup TpceGeo_v6 TpceGeo6 — Complete iTPC geometry (Run 19+)
+ * @ingroup TpceGeo
+ * @brief Module @c TpceGeo6: full inner-TPC (iTPC) geometry for Run 19 and later.
+ * @details
+ * Authored by Irakli Chakaberia (conversion of earlier work by Underwood,
+ * Potekhin, Fisyak, Perevotchikov, and Webb).  The padrow table (@c TPRS) is
+ * updated to reflect the iTPC inner-sector geometry introduced in 2019:
+ * 40 inner padrows (replacing the original 13) at smaller radial pitch.
+ * Adds @c IDeadZone to @c TPCG for an independent inner-sector dead zone, and
+ * sets @c tofmax = 32 μs to accommodate longer drift paths.  Sub-version 6.1
+ * (@c TPCC.version=6.1) zeroes both dead zones (@c DeadZone=0, @c IDeadZone=0).
+ * Activated by setups @c TPCEv6 (version 6.0) and @c TPCEv61 (version 6.1).
+ */
+
+/**
+ * @}
+ */

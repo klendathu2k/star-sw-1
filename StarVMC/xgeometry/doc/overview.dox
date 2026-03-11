@@ -1,0 +1,30 @@
+/**
+ * @defgroup StarVMCXGeometry xgeometry — Legacy AGE COMIS Geometry Assembler
+ * @brief COMIS-based steering module for the STAR simulation geometry.
+ *
+ * `StarVMC/xgeometry/xgeometry.age` (4 645 lines) is the AGE source file that implements the
+ * `geometry` steering module used by `starsim` when the AGML framework is active.  It is the
+ * AGML 2 successor to `pams/geometry/geometry/geometry.g`.
+ *
+ * The file defines:
+ * - A `CONSTRUCT` macro that dispatches to individual geometry modules at run-time using the
+ *   COMIS functions `CsADDR` (address lookup) and `CsJCAL` (indirect call).
+ * - A `replace [exe <NAME>;]` macro for every named detector configuration
+ *   (e.g. `TPCE31`, `BTOFv8`, `EPDMv1`) and for every geometry tag
+ *   (e.g. `y2023b`, `dev2022`), covering STAR running conditions from 2000 to 2025.
+ * - The `geometry` AGE module (author: Pavel Nevski, August 1998) that parses the
+ *   `DETP GEOM <tag>` command issued by `starsim`, executes the corresponding `exe` macro
+ *   to set detector flags and configuration integers, and then invokes each active detector's
+ *   constructor via `CsJCAL`.
+ * - A thin `xgeometry` wrapper module that calls `geometry` and serves as the AgML entry point
+ *   loaded into `xgeometry.so`.
+ *
+ * **Status:** Active for production tags y2016–y2025 and development tags (dev2022, ftsver*).
+ * New detector subsystems should also define their configurations in
+ * `StarVMC/Geometry/StarGeo.xml`; `xgeometry.age` is maintained for backward compatibility
+ * with the legacy `DETP GEOM` steering interface.
+ *
+ * See `StarVMC/xgeometry/doc/README.md` for a complete description of the CONSTRUCT macro
+ * mechanism, the REPLACE macro system, geometry tag definitions, and the relationship to
+ * `pams/geometry/geometry/geometry.g`.
+ */

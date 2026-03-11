@@ -1,0 +1,91 @@
+/**
+ * @defgroup SupoGeo SupoGeo — Forward TPC Support Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward TPC mechanical
+ *        support structures (SUPO)
+ *
+ * @details
+ * SupoGeo (module names SUPOGEO and SUPOGEO1) describes the mechanical support
+ * arms and fixtures that mount the STAR Forward TPC (FTPC) detectors to the
+ * inner field cage of the main TPC.  The FTPC was located at |z| ≈ 160–260 cm
+ * with a radial envelope between approximately 36.4 cm and 47.5 cm.
+ *
+ * Each support assembly consists of six lower support arms (SUPL) and six
+ * upper support arms (SUPH), placed at 60° azimuthal intervals.  The lower
+ * arm comprises a rail (SLRL), side walls (SLWL), a head plate bolted to the
+ * TPC inner field cage (SLHD), cross walls (SLXW), end blocks (SLEN), a
+ * fixture plate (SLFX), and bolts (SLBL).  The upper arm comprises a rail
+ * (SHRL), main plate (SHPT), top bar (SHBR), top block (SHBK), fixture
+ * plate (SHFX), and stabilisers (SHST).  All structural volumes are
+ * aluminium.
+ *
+ * Two module versions (SUPOGEO / SUPO00 and SUPOGEO1 / SUPO01) share
+ * identical structure definitions; they differ only in minor internal
+ * implementation details.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | Module    | Description |
+ * |------------|-------|-----------|-------------|
+ * | SUPOof     | off   | SupoGeo   | FTPC supports disabled |
+ * | SUPO00     | on    | SupoGeo   | Default FTPC supports |
+ * | SUPO01     | on    | SupoGeo1  | FTPC supports version 1 |
+ *
+ * ## Key dimensions
+ *
+ * | Parameter | Value |
+ * |-----------|-------|
+ * | Envelope inner radius (RInner) | 36.4 cm |
+ * | Envelope outer radius (ROuter) | 47.5 cm |
+ * | Envelope z range              | 230.69 – 259.7 cm |
+ * | Support arm angular period    | 60° (PhiMid = 30°) |
+ * | Lower rail length             | 24.5 cm |
+ * | Bolt radial position          | 44.9 cm |
+ *
+ * ## Volume hierarchy
+ * @code
+ * SUPO  (PCON Air — support mother, placed ±z in CAVE)
+ * ├── SUPL ×6  (lower support arm)
+ * │   ├── SLRL  (rail)
+ * │   ├── SLWL  (side wall)
+ * │   ├── SLHD  (head plate)
+ * │   ├── SLXW  (cross wall)
+ * │   ├── SLEN  (end block)
+ * │   ├── SLFX  (fixture plate)
+ * │   └── SLBL  (bolt)
+ * └── SUPH ×6  (upper support arm)
+ *     ├── SHRL  (rail)
+ *     ├── SHPT  (main plate)
+ *     ├── SHBR  (top bar)
+ *     ├── SHBK  (top block)
+ *     ├── SHFX  (fixture plate)
+ *     └── SHST  (stabilisers)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file SupoGeo.xml
+ * @brief FTPC support structure geometry, version 0 (SUPOGEO module).
+ * Six lower and six upper aluminium support arms in the radial range
+ * 36.4 – 47.5 cm, z range 230.69 – 259.7 cm.
+ * Author: Holm Huemmler (27 October 1999).
+ */
+
+/**
+ * @file SupoGeo1.xml
+ * @brief FTPC support structure geometry, version 1 (SUPOGEO1 module).
+ * Geometry identical to SupoGeo with minor internal revisions.
+ * Author: Holm Huemmler (27 October 1999).
+ */
+
+/**
+ * @file SupoConfig.xml
+ * @brief Setup registry for the STAR Forward TPC supports (SUPO).
+ * Defines SUPOof, SUPO00 (SupoGeo), and SUPO01 (SupoGeo1).
+ */
+
+/**
+ * @}
+ */

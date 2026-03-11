@@ -1,0 +1,75 @@
+/**
+ * @defgroup ZcalGeo ZcalGeo — Zero-Degree Calorimeter Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Zero-Degree Calorimeter (ZDC)
+ *
+ * @details
+ * The ZDC (detector tag **ZCAL**) is a quartz-scintillator-sampling calorimeter placed
+ * at very large pseudorapidity (η > 6) to detect forward spectator neutrons from
+ * nuclear collisions.  Two identical modules are placed symmetrically at z = ±1767.66 cm
+ * from the interaction point, beyond the DX dipole magnets where neutral particles
+ * separate from the beams.
+ *
+ * ### Physics role
+ * - **Centrality determination** — the spectator neutron multiplicity is anticorrelated
+ *   with the collision centrality in Au+Au and other heavy-ion collisions.
+ * - **Luminosity monitoring** — coincidence of the east and west ZDC signals provides
+ *   a minimum-bias trigger that is independent of detector acceptance.
+ *
+ * ### Detector structure
+ * The sensitive calorimeter element (QCAL) is a 10 cm × 10 cm × 130 cm lead block
+ * divided into 260 equal longitudinal slices (QDIV).  Each slice contains a 1 mm-thick
+ * polystyrene scintillator layer (QSCI) acting as a sampling medium.  The geometry
+ * also includes the beam-line hardware in that region:
+ * - **PIPH** — large-diameter iron beam pipe (r_out = 20.96 cm, half-length = 133.35 cm)
+ *   enclosing a vacuum bore (PVAH)
+ * - **PLAT** — iron end plate at the downstream end of PIPH, with two circular holes
+ *   (PLVA) for the diverging beam pipes
+ * - **PIPJ** — the two final beam pipes (r_out = 6.35 cm), angled at ±1.074° in y,
+ *   each containing a vacuum bore (PVAJ)
+ *
+ * Tight transport thresholds (CUTGAM = 0.5 MeV, CUTELE = 0.15 MeV) are applied within
+ * QCAL and QSCI to correctly simulate the electromagnetic shower in the narrow
+ * sampling layers.
+ *
+ * ### Placement
+ * The west module is placed at z = +1767.66 cm in the WestRefSys reference frame;
+ * the east module is placed at z = −1767.66 cm in EastRefSys with a 180° rotation
+ * about z to invert the beam direction.
+ *
+ * @{
+ */
+
+/**
+ * @file ZcalGeo.xml
+ * @brief Module ZCALGEO — zero-degree calorimeter geometry (Christie, 1997).
+ *
+ * Defines structure **CALP** containing all geometry parameters:
+ * - Mother tube: DROutR = 30 cm, DRdz = 250 cm
+ * - Beam-pipe geometry: PHLeng, PHInnR, PHOutR, Pltdz, PltOutR, HOutR
+ * - Final beam pipes: PJInnR = 6.07 cm, PJOutR = 6.35 cm, PJLeng = 91.5 cm
+ * - Calorimeter: QCdx = QCdy = 5 cm, QCdz = 65 cm, SCdz = 0.05 cm, Sdiv = 260
+ *
+ * Volumes:
+ * - ZCAL — Air mother tube placed at ±1767.66 cm
+ * - QCAL — Lead box with tight transport cuts
+ * - QDIV — division of QCAL into 260 layers
+ * - QSCI — polystyrene scintillator slice (sensitive, eloss hit)
+ * - PIPH/PVAH — large beam pipe and vacuum
+ * - PLAT/PLVA — end plate and beam holes
+ * - PIPJ/PVAJ — diverging final beam pipes and vacuum
+ */
+
+/**
+ * @file ZcalConfig.xml
+ * @brief Setup registry for detector ZCAL.
+ *
+ * | Setup | on/off | Notes |
+ * |---|---|---|
+ * | ZCALof | off | no ZDC |
+ * | ZCALon | on  | both east and west modules |
+ */
+
+/**
+ * @}
+ */

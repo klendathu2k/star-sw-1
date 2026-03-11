@@ -1,0 +1,83 @@
+/**
+ * @defgroup SconGeo SconGeo — SVT/SSD Support Cone Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR silicon tracker support cone
+ *        (SCON)
+ *
+ * @details
+ * SconGeo (module name SCONGEO) models the mechanical support structure that
+ * carries the STAR Silicon Vertex Tracker (SVT) and Silicon Strip Detector
+ * (SSD) detector elements.  The support cone is a carbon-fibre/epoxy
+ * composite structure located between the beam pipe and the inner field cage
+ * of the TPC.  It was separated from the SVT geometry module and moved to the
+ * CAVE level so that its material budget can be included independently of
+ * whether the SVT electronics simulation is active.
+ *
+ * The module builds a rich set of sub-volumes:
+ * - **SGRA**: the main graphite-epoxy cone body.
+ * - **SCMY**: a mylar foil wrapped around the outside of the cone.
+ * - **SBSP**: beam-pipe support assembly consisting of aluminium kinematic
+ *   mounts (SAKM/SCKM), ceramic rollers (SBRL), stainless steel roller axes
+ *   (SBRX), G10 support rings (SBSR/SBCR), and aluminium mounting blocks
+ *   (SBMO, SBMI) on support rods (SMRD).
+ * - **SROD**: carbon-composite support rods with a nomex-filled core (SRON),
+ *   inner carbon shell (SROI), and central air hole (SROH).
+ *
+ * Four cone geometry versions (SVTG_conever 1–4) are available.  Versions 2,
+ * 3, and 4 use progressively improved descriptions of the cable weight and
+ * the SROD (carbon support rod) cross-section.
+ *
+ * ## Setup configurations
+ *
+ * | Setup name | onoff | conever | Description |
+ * |------------|-------|---------|-------------|
+ * | SCONof     | off   | —       | Support cone disabled |
+ * | SCONon     | on    | default | Default support cone |
+ * | SCON02     | off   | —       | Dummy (cone built by SVT geo) |
+ * | SCON12     | on    | 2.0     | New cable weight estimate |
+ * | SCON13     | on    | 3.0     | Updated cable weight |
+ * | SCON14     | on    | 4.0     | Improved SROD description |
+ *
+ * ## Volume hierarchy
+ * @code
+ * SCON  (mother — placed in CAVE)
+ * ├── SGRA          (graphite-epoxy cone body)
+ * ├── SCMY          (mylar wrap)
+ * ├── SBSP          (beam-pipe support assembly)
+ * │   ├── SBMM      (mounting mother)
+ * │   │   ├── SBMO  (outer mounting block)
+ * │   │   ├── SBMI  (inner mounting block)
+ * │   │   └── SMRD  (Al support rod)
+ * │   ├── SAKM      (Al kinematic mount)
+ * │   │   └── SCKM  (cutout)
+ * │   ├── SBRL      (ceramic roller)
+ * │   ├── SBRX      (stainless roller axis)
+ * │   └── SBSR      (G10 support ring)
+ * │       └── SBCR  (ring cutout)
+ * └── SROD          (carbon composite rod)
+ *     ├── SROH      (air hole)
+ *     ├── SRON      (nomex core)
+ *     └── SROI      (inner carbon shell)
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @file SconGeo.xml
+ * @brief SVT/SSD support cone geometry (SCONGEO module).
+ * Carbon-fibre/epoxy cone with beam-pipe supports, kinematic mounts,
+ * ceramic rollers, G10 rings, mylar wrap, and carbon composite rods.
+ * Supports four cone versions (SVTG_conever 1–4).
+ * Author: Victor Perev (31 October 2007).
+ */
+
+/**
+ * @file SconConfig.xml
+ * @brief Setup registry for the STAR SVT support cone (SCON).
+ * Defines SCONof, SCONon, SCON02 (dummy), SCON12, SCON13, SCON14.
+ */
+
+/**
+ * @}
+ */

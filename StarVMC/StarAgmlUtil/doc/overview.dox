@@ -1,0 +1,105 @@
+/**
+ * @defgroup StarAgmlUtil StarAgmlUtil — AGML Geometry Utilities
+ * @brief Supporting infrastructure for the AGML geometry framework.
+ * @ingroup StarAgmlLib
+ *
+ * `StarAgmlUtil` provides four utilities consumed by `StarAgmlLib` and by
+ * geometry module code:
+ *
+ * - `AgParameterList<T>` — generic typed named-parameter store, used as a
+ *   mixin base by `AgShape`, `AgMaterial`, `AgMedium`, `AgAttribute`,
+ *   `AgPlacement`, `AgPosition`, and `AgCreate`.
+ * - `AgTransform` — 4×4 homogeneous-matrix arithmetic for coordinate
+ *   transformations (translations, axis rotations, G3 angle notation, ORT
+ *   permutations, matrix multiply, inversion).
+ * - `AgMLPosition` — a self-contained position/rotation record combining
+ *   `AgTransform` with `AgParameterList<double>` and run-time DB-misalignment
+ *   support.
+ * - `AgMLDb` / `AgMLDbFunctor` — singleton functor interface through which
+ *   misalignment matrices are fetched from the STAR geometry database.
+ *
+ * @par Related modules
+ * - @ref StarAgmlLib  — core AGML geometry description library
+ * - @ref StarAgmlChecker — material-budget analysis
+ * - @ref StarAgmlViewer  — interactive geometry viewer
+ *
+ * @{
+ */
+
+/**
+ * @class AgParameterList
+ * @brief Generic typed named-parameter store used throughout the AGML framework.
+ * @ingroup StarAgmlUtil
+ *
+ * `AgParameterList<T>` is a template mixin that provides `par(name)`,
+ * `isSet(name)`, `hasPar(name)`, and `unSet(name)` operations over a
+ * `std::map<string,T>`.  In addition to the parameter map it carries
+ * placement-context strings: block name, mother name, alignment group name,
+ * DB table name, chair name, and row number.  These context fields are
+ * propagated through the stacker to enable per-placement DB lookups.
+ *
+ * All concrete AGML parameter-bearing classes (`AgShape`, `AgMaterial`,
+ * `AgMedium`, `AgAttribute`, `AgPlacement`, `AgPosition`, `AgCreate`) inherit
+ * from `AgParameterList<double>`.
+ */
+
+/**
+ * @class AgTransform
+ * @brief 4×4 homogeneous-matrix arithmetic for coordinate transformations.
+ * @ingroup StarAgmlUtil
+ *
+ * Maintains an internal 4×4 matrix `mMatrix` and exposes the following
+ * operations:
+ * - `Translate(x,y,z)` / `TranslateX/Y/Z(delta)` — accumulate a translation.
+ * - `RotateX/Y/Z(alpha)` — rotate about a coordinate axis (degrees).
+ * - `Ortho("+X+Y+Z")` — apply an axis-permutation/sign transformation.
+ * - `Angles(θx,φx,θy,φy,θz,φz)` — set rotation from six G3 angles.
+ * - `Rotation(rotm[3][3])` — apply a 3×3 rotation matrix.
+ * - `Matrix(trm[4][4], lr)` — left- or right-multiply by a 4×4 matrix.
+ * - `Invert()` — replace the matrix with its inverse.
+ * - `Reset()` — reset to the identity matrix.
+ * - `IsIdentity()` — test whether the rotation part is identity (tol. 10⁻⁵).
+ *
+ * The `mIsMisaligned` flag is set by subclasses when a DB-misalignment
+ * correction has been applied.
+ */
+
+/**
+ * @class AgMLPosition
+ * @brief Combined position/rotation record with DB-misalignment support.
+ * @ingroup StarAgmlUtil
+ *
+ * Inherits `AgTransform` (4×4 matrix arithmetic) and `AgParameterList<double>`
+ * (named parameter store with placement context).  Adds:
+ * - `Misalign(tablename, row, options)` — multiplies the current matrix by a
+ *   misalignment delta fetched via `AgMLDbFunctor`.  The `"invert"` option
+ *   applies the inverse.
+ * - `SetOrder(kGeneral|kRotTran|kTranRot)` — controls the composition order of
+ *   rotations and translations.
+ * - `GetX/Y/Z()` — retrieve translation components.
+ * - `GetAngles(θx,φx,θy,φy,θz,φz)` — extract six G3 angles from the current
+ *   rotation state.
+ * - `Reference(…)` — reset and set rotation from G3 angles.
+ * - `AlphaX/Y/Z(alpha)` — axis rotations delegating to `RotateX/Y/Z`.
+ */
+
+/**
+ * @class AgMLDbFunctor
+ * @brief Singleton functor interface for fetching misalignment matrices from the geometry DB.
+ * @ingroup StarAgmlUtil
+ *
+ * The default implementation returns the identity matrix.  A real
+ * DB-connected implementation (`AgMLDbMatrix`, declared in
+ * `StarAgmlLib/AgPosition.h`) installs itself via `Register()` at program
+ * start.  `lock()` / `unlock()` prevent or allow replacement of the
+ * registered implementation.
+ *
+ * The functor signature is:
+ * @code
+ * void operator()(const char* tablename, const int row, double tr[4][4]);
+ * @endcode
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,345 @@
+/**
+ * @defgroup Geant3 geant3 — ROOT VMC GEANT3.21 Physics Engine
+ * @brief GEANT3.21 repackaged for the ROOT Virtual Monte Carlo (VMC) framework.
+ *
+ * The @c geant3 package contains approximately 1 200 FORTRAN 77 and C++ files
+ * (~173 000 lines) that implement the GEANT3.21 particle-transport simulation
+ * engine originally developed at CERN.  All GEANT3 user-callable FORTRAN
+ * routines have been renamed from the legacy @c Gxxxxx convention to
+ * @c G3xxxxx (e.g. @c GTRACK → @c G3TRACK, @c GSPOS → @c G3SPOS) to
+ * eliminate link-time symbol collisions when both GEANT3 and GEANT4 are
+ * present.
+ *
+ * The package is structured into the following major groups:
+ * - @ref Geant3_TGeant3   "TGeant3"   — C++ ROOT TVirtualMC wrapper
+ * - @ref Geant3_ggeom     "ggeom"     — CSG geometry definition and navigation
+ * - @ref Geant3_gphys     "gphys"     — Electromagnetic physics processes
+ * - @ref Geant3_gtrak     "gtrak"     — Particle tracking main loop
+ * - @ref Geant3_gheisha   "gheisha"   — GHEISHA hadronic shower model
+ * - @ref Geant3_fluka     "fluka"     — FLUKA hadronic shower model
+ * - @ref Geant3_geane     "geane"     — GEANE track error-propagation
+ *
+ * @par Build options (compile-time preprocessor flags)
+ * | Flag        | Effect                                                     |
+ * |-------------|------------------------------------------------------------|
+ * | @c WITHG3   | Use the internal GEANT3 geometry back-end (default)        |
+ * | @c WITHROOT | Use the ROOT TGeo geometry back-end for all navigation     |
+ * | @c WITHBOTH | Enable both geometry back-ends (comparison / debugging)    |
+ *
+ * @par References
+ * - R. Brun et al., <em>GEANT3 — Detector Description and Simulation Tool</em>,
+ *   CERN DD/EE/84-1 (1987).
+ * @{
+ */
+
+/**
+ * @defgroup Geant3_TGeant3 TGeant3 — C++ ROOT VMC Wrapper
+ * @ingroup Geant3
+ * @brief C++ classes that implement the ROOT @c TVirtualMC interface on top of
+ *        the GEANT3 FORTRAN physics core.
+ *
+ * The @c TGeant3/ subdirectory (13 files) contains the complete C++↔FORTRAN
+ * bridge layer.
+ *
+ * ### TGeant3
+ * @c TGeant3 is a concrete subclass of @c TVirtualMC.  It:
+ * - Exposes the full VMC interface for geometry definition (@c Material,
+ *   @c Mixture, @c Medium, @c Gsvolume, @c Gspos, @c Matrix), particle
+ *   management (@c DefineParticles, @c SetUserDecay), run control
+ *   (@c ProcessRun, @c ProcessEvent), and hit collection (@c CurrentMedium,
+ *   @c Edep, @c Etot, @c TrackPosition, @c TrackMomentum).
+ * - Maps each VMC call to the corresponding @c G3xxxxx FORTRAN routine via
+ *   the F77 bridge (@c TGeant3f77).
+ * - Provides typed C++ accessors for every GEANT3 COMMON block
+ *   (@c Quest_t, @c Gcbank_t, @c Gclink_t, @c Gccuts_t, @c Gcvolu_t,
+ *   @c Gctrak_t, @c Gcphys_t, @c Gcking_t, @c Gctmed_t, …).
+ * - Exposes the GEANE tracking entry points @c Ertrak, @c Eufill,
+ *   @c Eufilp, and @c Eufilv.
+ * - @c IsRootGeometrySupported() returns @c kFALSE in default (@c WITHG3)
+ *   mode.
+ *
+ * ### TGeant3TGeo
+ * @c TGeant3TGeo extends @c TGeant3 and overrides all geometry and navigation
+ * methods to delegate to the ROOT @c TGeo package rather than the GEANT3
+ * built-in CSG geometry engine.  It overrides @c Material, @c Mixture,
+ * @c Medium, @c Gsvolume, @c Gspos, and the full navigation suite
+ * (@c CurrentVolID, @c CurrentVolOffID, @c CurrentVolName, @c CurrentVolPath,
+ * @c VolId, @c VolName, @c NofVolumes, @c VolDaughterName,
+ * @c VolDaughterCopyNo, @c VolId2Mate, @c GeomIter, @c NextVolUp).
+ * @c IsRootGeometrySupported() returns @c kTRUE.
+ *
+ * ### Supporting files
+ * | File | Purpose |
+ * |------|---------|
+ * | @c TGeant3f77.h / @c .cxx | C↔FORTRAN bridge; C-linkage prototypes for every @c G3xxxxx entry point |
+ * | @c TGeant3gu.h / @c .cxx  | Geometry utility wrappers used by @c TGeant3TGeo |
+ * | @c TCallf77.h              | Platform-portable F77 symbol-mangling macros |
+ * | @c TG3Application.h / @c .cxx | Minimal @c TVirtualMCApplication example |
+ * | @c galicef.F               | FORTRAN stubs called during event initialisation |
+ * | @c geant3LinkDef.h         | ROOT dictionary @c LinkDef for @c TGeant3 |
+ */
+
+/**
+ * @defgroup Geant3_ggeom ggeom — Geometry Definition and Navigation
+ * @ingroup Geant3
+ * @brief Constructive Solid Geometry (CSG) volume model, material assignment,
+ *        rotation matrices, volume positioning, and geometry navigation
+ *        (122 files).
+ *
+ * @c ggeom implements the full GEANT3 CSG geometry system.  Every detector
+ * element is described as a named volume with a shape, a tracking medium, and
+ * one or more placements inside a mother volume, forming a containment tree
+ * rooted at the @c ALIC (or user-defined) world volume.
+ *
+ * Key routines:
+ * | Routine | Purpose |
+ * |---------|---------|
+ * | @c G3SVOLU | Define a new volume with a given CSG shape and tracking medium |
+ * | @c G3SPOS / @c G3SPOSP | Position a volume copy inside a mother with optional shape parameters |
+ * | @c G3SROTM | Define a rotation matrix by three Euler-angle pairs |
+ * | @c G3SDVN / @c G3SDVN2 | Divide a volume into N equal slices along a coordinate axis |
+ * | @c G3SDVS / @c G3SDVS2 | Divide a volume in slices of a given step size |
+ * | @c G3SDVT / @c G3SDVT2 | Divide a volume with specified step size and offset |
+ * | @c G3MEDIA | Determine the tracking medium at a given position |
+ * | @c G3DTOM / @c G3MTOD | Transform coordinates between detector and master frames |
+ * | @c G3LVOLU | Retrieve the current volume-level stack (ancestry chain) |
+ * | @c G3LMOTH | Find the mother volume of a detector element |
+ * | @c G3SATT | Set volume display/tracking attributes |
+ * | @c G3FPARA | Retrieve the shape parameters of a volume |
+ * | @c G3PVOLU / @c G3PVOLX | Print volume parameters |
+ * | @c G3PROTM / @c G3PROTX | Print rotation matrix |
+ * | @c G3GPERP | Compute perpendicular distance from a point to a volume boundary |
+ * | @c G3BSTAT / @c G3PSTAT | Print geometry statistics |
+ *
+ * The companion @c cgpack package (55 files) provides Combinatorial Geometry
+ * (CG) Boolean-body operations (@c CGBOX, @c CGBOOL, @c CGBSEC, @c CGBFIT,
+ * @c CGCEV, @c GBOSET) for complex composite volumes.
+ */
+
+/**
+ * @defgroup Geant3_gphys gphys — Electromagnetic Physics Processes
+ * @ingroup Geant3
+ * @brief All standard GEANT3 electromagnetic physics processes: bremsstrahlung,
+ *        pair production, Compton scattering, photoelectric effect, delta-ray
+ *        production, positron annihilation, particle decay, multiple Coulomb
+ *        scattering, Cherenkov radiation, synchrotron radiation, and
+ *        Landau–Vavilov energy-loss fluctuations (97 files).
+ *
+ * Cross-section tables for all processes are initialised by @c G3PHYSI at
+ * the start of a run.  The @c gstrag package (15 files) handles Landau/Vavilov
+ * stochastic fluctuations via @c G3ASHO, @c G3STINI, @c G3STTAB, and
+ * @c G3LANDO.
+ *
+ * Key routines:
+ * | Routine | Process |
+ * |---------|---------|
+ * | @c G3BREME | Electron bremsstrahlung (Seltzer–Berger, 1 keV–10 GeV, Migdal correction) |
+ * | @c G3BREMM | Muon bremsstrahlung |
+ * | @c G3PAIR / @c G3PAIRG / @c G3PAIRM | Photon and muon pair production |
+ * | @c G3COMP / @c G3COMPI | Compton scattering and cross-section initialisation |
+ * | @c G3PHOT / @c G3PHOTI | Photoelectric effect and cross-section initialisation |
+ * | @c G3DRAY / @c G3DRELE | Delta-ray production and restricted energy loss |
+ * | @c G3ANNI / @c G3ANNII / @c G3ANNIR | Positron annihilation (in-flight and at rest) |
+ * | @c G3DECAY / @c G3DECA2 / @c G3DECA3 | Particle decay (2-body and 3-body phase space) |
+ * | @c G3MOLS / @c G3MCOUL / @c G3MGAUS | Multiple Coulomb scattering (Molière, Gaussian) |
+ * | @c G3BIRK | Birks' law quenching for scintillator energy deposition |
+ * | @c G3LANDZ / @c G3LANDO | Landau energy-loss fluctuation sampling |
+ * | @c G3FLUCT | General energy-loss fluctuation |
+ * | @c G3SYNC / @c G3SYNGE / @c G3SYNIT | Synchrotron radiation |
+ * | @c G3RAYL / @c G3RAYLI | Rayleigh (coherent) scattering |
+ * | @c G3SHLIN | Shell ionisation (photo-absorption) |
+ * | @c G3LOREN | Lorentz boost utility |
+ */
+
+/**
+ * @defgroup Geant3_gtrak gtrak — Particle Tracking Main Loop
+ * @ingroup Geant3
+ * @brief Particle tracking master loop and per-species tracking drivers
+ *        (35 files).
+ *
+ * @c G3TRACK is the top-level entry point called for each particle in the
+ * secondary stack.  It dispatches to a species-specific driver, which calls
+ * the appropriate physics-process routines from @ref Geant3_gphys "gphys",
+ * @ref Geant3_gheisha "gheisha", or @ref Geant3_fluka "fluka" at each step,
+ * then calls the geometry navigation (@ref Geant3_ggeom "ggeom") to advance
+ * to the next boundary.
+ *
+ * Key routines:
+ * | Routine | Role |
+ * |---------|------|
+ * | @c G3TRACK | Top-level tracking loop; dispatches to per-species driver |
+ * | @c G3TELEC | Electron/positron driver (calls @c G3BREME, @c G3DRAY, @c G3MOLS, @c G3ANNI) |
+ * | @c G3TGAMA | Photon driver (calls @c G3COMP, @c G3PHOT, @c G3PAIR) |
+ * | @c G3THADR | Charged-hadron driver (calls GHEISHA or FLUKA hadronic model) |
+ * | @c G3TMUON | Muon driver (calls @c G3BREMM, @c G3DRAY) |
+ * | @c G3THION | Heavy-ion driver |
+ * | @c G3TNEUT | Neutral hadron driver |
+ * | @c G3TNINO | Neutral-ino driver |
+ * | @c G3TNEXT | Advance particle to the next volume boundary |
+ * | @c G3TMEDI | Determine the tracking medium at position @c X |
+ * | @c G3HELIX | Propagate along a helix in a uniform magnetic field |
+ * | @c G3HELX3 | Helix propagation with full 3-D field vector |
+ * | @c G3RKUTA | Runge–Kutta propagation in a non-uniform magnetic field |
+ * | @c G3GCKOV / @c G3NCKOV / @c G3TCKOV | Cherenkov photon generation and tracking |
+ * | @c G3SSTAK | Secondary-particle stack push/pop |
+ * | @c G3TREVE | Track-reversal utility (backward tracking) |
+ */
+
+/**
+ * @defgroup Geant3_gheisha gheisha — GHEISHA Hadronic Shower Model
+ * @ingroup Geant3
+ * @brief GHEISHA hadronic cascade model for inelastic nuclear interactions
+ *        of pions, kaons, protons, neutrons, and antiparticles from threshold
+ *        to ~10 GeV (76 files + 14-file interface in @c giface/).
+ *
+ * GHEISHA (H. Fesefeldt, RWTH Aachen, PITHA 85/02) implements an intranuclear
+ * cascade: the incoming hadron collides with individual nucleons inside the
+ * struck nucleus, producing secondary pions, kaons, and strange baryons
+ * according to parameterised multiplicity distributions.  The GEANT3
+ * interface layer in @c giface/ bridges GHEISHA to the GEANT3 tracking
+ * infrastructure; @c GHEISH is the top-level entry point called by
+ * @c G3THADR.
+ *
+ * Key routines in @c gheisha/:
+ * | Routine | Process |
+ * |---------|---------|
+ * | @c CASN | Neutron–nucleon cascade with pion/kaon/hyperon production |
+ * | @c CASP | Proton–nucleon cascade |
+ * | @c CASPI | Pion–nucleon cascade |
+ * | @c CASK0 / @c CASK0B / @c CASKM / @c CASKP | K⁰, K⁻, K⁺ nuclear cascades |
+ * | @c CASOM / @c CASAOM / @c CASL0 / @c CASNB | Omega, hyperon, Λ⁰ cascades |
+ * | @c TRAC | GHEISHA internal tracking loop |
+ * | @c STEER / @c STEES / @c STEEP / @c STEEQ | Secondary-particle steering |
+ * | @c TWOB / @c TWOCLU | Two-body and cluster decay kinematics |
+ * | @c NUCREC | Nuclear recoil calculation |
+ * | @c PHASP | Phase-space event generator |
+ * | @c RANRES | Random nuclear-resonance selection |
+ * | @c PHPNUC | Photonuclear reaction |
+ *
+ * Key routines in @c giface/:
+ * | Routine | Role |
+ * |---------|------|
+ * | @c GHEISH | Top-level entry point called by @c G3THADR |
+ * | @c GHEINI | Cross-section table initialisation |
+ * | @c GHESIG | Total hadronic cross-section for a given material |
+ * | @c GMUNU / @c GMUNUI | Muon nuclear interaction |
+ * | @c GMUSIG | Muon nuclear cross-section |
+ * | @c GPFIS / @c GPFISI | Photo-fission |
+ * | @c GNSLWD | Nuclear slow-down (stopping power) |
+ * | @c GHSTOP | Hadronic stopping and capture at rest |
+ *
+ * @par Reference
+ * H. Fesefeldt, <em>The Simulation of Hadronic Showers — Physics and
+ * Applications</em>, RWTH Aachen PITHA 85/02 (1985).
+ */
+
+/**
+ * @defgroup Geant3_fluka fluka — FLUKA Hadronic Shower Model
+ * @ingroup Geant3
+ * @brief FLUKA hadronic cascade model as an alternative to GHEISHA for
+ *        hadron–nucleus inelastic collisions (110 files).
+ *
+ * FLUKA is activated by calling @c TGeant3::SetHADR(4) before initialisation.
+ * It covers the full energy range relevant to STAR detector simulation and
+ * provides a more detailed nuclear-cascade model than GHEISHA for some
+ * projectile/target combinations.  Hadronic cross-section data are stored
+ * in @c data/flukaaf.dat (4 011 records of tabulated values read at startup).
+ *
+ * Key routines:
+ * | Routine | Role |
+ * |---------|------|
+ * | @c COREVT / @c CORRIN | Core hadronic event generation (nucleus–nucleus geometry) |
+ * | @c BAMJEV | Baryon and meson multiplicity sampling |
+ * | @c DECAY / @c DECAUX | Secondary-hadron decay chains |
+ * | @c DIFEVV | Diffractive event generation |
+ * | @c EEXLVL | Nuclear excitation level sampling |
+ * | @c EVDEEX | Nuclear de-excitation |
+ * | @c ALTRA / @c ALTRAF | Lorentz boost (full and approximate) |
+ * | @c ABBRCH | Absorption branching ratio |
+ * | @c BKLASS | Baryon-species classification |
+ * | @c CALUMO / @c CALUMV | Cumulative multiplicity tables |
+ * | @c CHANWT | Channel weight computation |
+ * | @c DRES / @c DRES_DUMMY | Resonance decay |
+ * | @c ERUP / @c ERUP_DUMMY | Energy release in nuclear rupture |
+ *
+ * The PEANUT pre-equilibrium model (@c peanut/, 23 files) is tightly coupled
+ * to FLUKA and handles intermediate-energy hadron–nucleus reactions using an
+ * exciton pre-equilibrium model followed by compound-nucleus evaporation.
+ * Its primary entry point is @c PEANUT(KPROJ, EKE, PPROJ, TXX, TYY, TZZ, WEE).
+ *
+ * @par Reference
+ * A. Fassò et al., <em>FLUKA: Present Status and Future Developments</em>,
+ * Proc. IV Int. Conf. on Calorimetry, La Biodola (1993).
+ */
+
+/**
+ * @defgroup Geant3_geane geane — GEANE Track Error-Propagation Package
+ * @ingroup Geant3
+ * @brief GEANE (GEant ANalytic Error propagation): transport of the mean
+ *        particle trajectory together with its 5×5 track-parameter covariance
+ *        matrix through the GEANT3 detector description (38 files across
+ *        @c erdecks/, @c erpremc/, and @c matx55/).
+ *
+ * GEANE was originally developed by the European Muon Collaboration (W. Wittek,
+ * EMC internal reports 1980–81) and integrated into GEANT3.  It propagates a
+ * 5-parameter track representation and its error matrix through magnetic fields
+ * and material, including energy-loss, multiple-scattering, and Landau
+ * corrections to the covariance.  The user interface is through @c ERTRAK
+ * (tracking) and one of @c EUFILL / @c EUFILP / @c EUFILV (prediction setup).
+ *
+ * ### Track parameter representations
+ * | Label | Variables | Typical use |
+ * |-------|-----------|-------------|
+ * | SC    | @c 1/p, λ, φ, y⊥, z⊥ | Global (streamer-chamber) frame |
+ * | SP    | @c 1/p, y', z', y, z   | Fixed-target / planar geometry |
+ * | SD    | @c 1/p, v', w', v, w   | Detector-plane frame (collider) |
+ *
+ * ### erdecks/ — Main GEANE tracking (18 files)
+ * | Routine | Purpose |
+ * |---------|---------|
+ * | @c ERTRAK | Propagate track from @c (x1,p1) to stopping criterion with full covariance transport.  Options: @c 'B' backward, @c 'E' exact helix, @c 'L' to length, @c 'P' to plane, @c 'V' to volume, @c 'X' to point, @c 'O' trajectory only |
+ * | @c EUSTEP | Single GEANE integration step: equations of motion + first-order covariance transport |
+ * | @c ERPROP | Propagation driver; orchestrates @c EUSTEP calls |
+ * | @c ERPINI | Initialise internal GEANE arrays and flags |
+ * | @c ERSTOR | Store current track state in GEANE output bank |
+ * | @c ERTRCH | Transform track state at a volume boundary |
+ * | @c ERTRGO | Geometry-driven tracking within current volume |
+ * | @c ERTRNT | Navigate to the next GEANT3 volume boundary |
+ * | @c ERLAND | Landau energy-loss correction during GEANE propagation |
+ * | @c ERBCER / @c ERBCTR | Bethe–Coulomb and Coulomb-scattering corrections to covariance |
+ * | @c ERMCSC | Multiple-scattering contribution to error matrix |
+ * | @c EVOLIO | Test volume entry/exit for @c chopt='V' mode |
+ * | @c GDEDXCALC | Compute @c dE/dx for a given material, particle, and mechanism |
+ * | @c TRPROP / @c TRPRFN | Full and finite-step propagation matrices |
+ *
+ * ### erpremc/ — Prediction setup and frame transforms (11 files)
+ * | Routine | Purpose |
+ * |---------|---------|
+ * | @c EUFILL | Fill input for length-based prediction: error matrix + track-length array |
+ * | @c EUFILP | Fill input for plane-based prediction: error matrix in SD frame + plane unit vectors |
+ * | @c EUFILV | Fill input for volume-based prediction: volume name, copy number, entry/exit flag |
+ * | @c TRSCSD / @c TRSDSC | Transform 5×5 error matrix SC ↔ SD |
+ * | @c TRSCSP / @c TRSPSC | Transform 5×5 error matrix SC ↔ SP |
+ * | @c TRS1S2 | Transform error matrix between two SD frames |
+ * | @c TRSCPT / @c TRPTSC | Transform error matrix SC ↔ PT (perigee) |
+ * | @c TRSDPT / @c TRPTSD | Transform error matrix SD ↔ PT |
+ *
+ * ### matx55/ — 5×5 symmetric-matrix arithmetic (9 files)
+ * All GEANE covariance matrices are 5×5 symmetric, stored as 15-element upper
+ * triangles.  @c matx55 provides optimised low-level primitives:
+ * | Routine | Operation |
+ * |---------|-----------|
+ * | @c RMM55 / @c XMM55 / @c DMM55 | Matrix multiply @c C = A×B (real, extended, double) |
+ * | @c RSMT5T / @c SSMT5T / @c DSMT5T | Similarity transform @c R = S×M×Sᵀ |
+ * | @c DNORM | Normalise a 5-vector by its diagonal element |
+ * | @c DCROSS | 3-vector cross product |
+ *
+ * @par References
+ * - W. Wittek, EMC Internal Reports EMC/80/15, EMCSW/80/39, EMCSW/81/13,
+ *   EMCSW/81/18; A. Haas, <em>The EMC Utility Package: UTIL42</em>.
+ * - R. Brun et al., CERN DD/EE/84-1 (1987), section on GEANE.
+ */
+
+/**
+ * @}
+ */

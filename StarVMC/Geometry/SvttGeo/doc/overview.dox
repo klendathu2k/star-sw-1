@@ -1,0 +1,171 @@
+/**
+ * @defgroup SvttGeo SvttGeo — Silicon Vertex Tracker Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry for the STAR Silicon Vertex Tracker (SVT).
+ *
+ * @details
+ * The Silicon Vertex Tracker (SVT) was STAR's primary inner silicon tracker from the start
+ * of RHIC operations (~2001) until 2013. It consists of three concentric barrels of silicon
+ * drift detectors (SDD), forming six active layers at radii of approximately 6.4, 7.4, 10.4,
+ * 11.3, 14.2, and 15.1 cm. The SVT provided precise three-dimensional space points for
+ * primary and secondary vertex reconstruction and low-pT particle tracking over |η| < 1.2.
+ *
+ * The AGML detector tag is @c SVTT. The primary configuration structure is @c SVTG, which
+ * controls the number of layers (@c Nlayer, typically 6), support version (@c SupportVer),
+ * and cone version (@c ConeVer). Per-layer parameters (radius, ladder count, wafer count)
+ * are stored in the @c SVTL structure. Wafer properties are in @c SWCA; support cone
+ * dimensions are in @c SSUP; beampipe support in @c SSUB; end-ring geometry in @c SERG;
+ * electronics carrier in @c SELC; water manifold in @c SWAM.
+ *
+ * The mother volume @c SVTT is a @c TUBE spanning r = 4.1–46.1 cm and dz = 270 cm.
+ * The support cone outer radius (≈ 46 cm) is computed from the shield version and cone
+ * parameters in @c SSUP.
+ *
+ * Active sensitive volumes are @c SVTD (Silicon SDD, isvol=1), one per wafer.
+ *
+ * @par Layer configuration
+ * | Layer | Nominal r | Nladder | Nwafer/ladder |
+ * |-------|-----------|---------|---------------|
+ * | 1     | 6.37 cm   | 4       | 4             |
+ * | 2     | 7.38 cm   | 4       | 4             |
+ * | 3     | 10.38 cm  | 6       | 6             |
+ * | 4     | 11.27 cm  | 6       | 6             |
+ * | 5     | 14.19 cm  | 8       | 7             |
+ * | 6     | 15.13 cm  | 8       | 7             |
+ *
+ * @par AGML module files
+ * - SvttGeo.xml   — @c SVTTGEO  (Apr 1996, Nevski/Wilson; original complete implementation)
+ * - SvttGeo1.xml  — @c SVTTGEO1 (Aug 2003, Potekhin; improved water and support)
+ * - SvttGeo2.xml  — @c SVTTGEO2 (Aug 2003, Potekhin; corrected and augmented; SERG, SELC added)
+ * - SvttGeo3.xml  — @c SVTTGEO3 (Nov 2003, Potekhin; without SSD co-placement)
+ * - SvttGeo4.xml  — @c SVTTGEO4 (Mar 2004, Potekhin; corrected electronics in SELC)
+ * - SvttGeo5.xml  — @c SVTTGEO5 (Oct 2005, Potekhin; without central barrel section)
+ * - SvttGeo6.xml  — @c SVTTGEO6 (Potekhin; evolved from Geo4, shield versions 2 and 3)
+ * - SvttGeo7.xml  — @c SVTTGEO7 (Potekhin; beampipe support detail and alignment)
+ * - SvttGeo9.xml  — @c SVTTGEO9 (Potekhin; shield and cone refinements)
+ * - SvttGeo10.xml — @c SVTTGEO10 (Aug 2007, Potekhin; carbon replaces Be in wafer rails)
+ * - SvttGeo11.xml — @c SVTTGEO11 (Potekhin; final production version, config 12)
+ *
+ * @par Configuration setups (SvttConfig.xml)
+ * - @c SVTTof  — SVT disabled
+ * - @c SVtton  — SVT on, SvttGeo, default parameters
+ * - @c SVTT00  — config 0, no water, nVafer=7 in layer 3
+ * - @c SVT100  — config 1, with water
+ * - @c SVT101  — config 1, SvttGeo1
+ * - @c SVT102  — config 2, no shield
+ * - @c SVT103  — config 3, no shield, nlayer=6
+ * - @c SVT106  — config 1, SvttGeo6, no shield
+ * - @c SVT203  — config 2, SvttGeo3, with shield
+ * - @c SVT204  — config 2, SvttGeo4, supportver=2, conever=2
+ * - @c SVT206  — SvttGeo6, nlayer=6, supportver=2, conever=2
+ * - @c SVT211  — SvttGeo11, supportver=2
+ * - @c SVT304  — SvttGeo4, supportver=3
+ * - @c SVT306  — SvttGeo6, nlayer=6, supportver=3, conever=2
+ * - @c SVT306x — SvttGeo6, nlayer=7, supportver=3, conever=2
+ * - @c SVT310x — SvttGeo10, supportver=3, conever=2
+ * - @c SVT311  — SvttGeo11, supportver=3
+ * - @c SVT312  — SvttGeo11, nlayer=6, config=12, supportver=3, conever=2
+ * - @c SVT312x — SvttGeo11, config=12, all layers, supportver=3, conever=2
+ *
+ * @{
+ */
+
+/**
+ * @defgroup SvttGeoV0 SvttGeo (SVTTGEO) — Original SVT geometry
+ * @ingroup SvttGeo
+ * @brief Original SVT geometry (P. Nevski / K. Wilson, 05 Apr 1996).
+ * @details The foundational SVT AGML implementation. Contains all major sub-volume
+ * definitions: wafer pack (STLI/STSI), active wafer (SVTD), Be wafer carrier rails (SBER),
+ * electronics carrier (SELE) with hybrid chip (SDYE), cable (SECA), Beryllia (SBOI),
+ * Ag-Pd (SAGP), glass (SGLA), water channel (SWCH/SWCS/SWCW), end rings (SIRT/SIRP/SOER),
+ * brackets (SBRG/SBRI), Be support rods (SROD), and graphite/epoxy support cone (SCON/SGRA)
+ * with cable layers, water hoses, and Mylar wrap.
+ */
+
+/**
+ * @defgroup SvttGeoV1 SvttGeo1 (SVTTGEO1) — Improved water and support
+ * @ingroup SvttGeo
+ * @brief Revised SVT geometry (M. Potekhin, 05 Aug 2003).
+ * @details First major revision: improved water cooling manifold (@c SWAM structure) and
+ * refined support cone geometry. Used by setup @c SVT101.
+ */
+
+/**
+ * @defgroup SvttGeoV2 SvttGeo2 (SVTTGEO2) — Corrected and augmented
+ * @ingroup SvttGeo
+ * @brief Corrected SVT geometry with end-ring and electronics detail (M. Potekhin, 21 Aug 2003).
+ * @details Adds end-ring geometry structure @c SERG, electronics carrier detail @c SELC,
+ * cable bundle per barrel (@c SCBP), electronics support per barrel (@c SFEP), and
+ * per-wafer-pack cross-section (@c SWCX). This geometry is parameterised by an array
+ * @c radii(6) for the six layer centre radii. Used by @c SVT102.
+ */
+
+/**
+ * @defgroup SvttGeoV3 SvttGeo3 (SVTTGEO3) — Without SSD
+ * @ingroup SvttGeo
+ * @brief SVT geometry without SSD co-placement (M. Potekhin, 18 Nov 2003).
+ * @details Structurally identical to SvttGeo2 but omits the SSD co-placement logic.
+ * Used for standalone SVT configurations @c SVT103 (no shield) and @c SVT203 (with shield).
+ */
+
+/**
+ * @defgroup SvttGeoV4 SvttGeo4 (SVTTGEO4) — Corrected electronics
+ * @ingroup SvttGeo
+ * @brief SVT geometry with corrected electronics volumes (M. Potekhin, 24 Mar 2004).
+ * @details Revises the @c SELC electronics carrier structure with improved material
+ * thicknesses and geometry. Used by @c SVT204 (supportver=2, conever=2) and
+ * @c SVT304 (supportver=3).
+ */
+
+/**
+ * @defgroup SvttGeoV5 SvttGeo5 (SVTTGEO5) — Without central section
+ * @ingroup SvttGeo
+ * @brief SVT geometry without the innermost central barrel (M. Potekhin, 04 Oct 2005).
+ * @details Intended for configurations where the two innermost layers are absent, removing
+ * the central barrel section of the support structure while retaining outer layers 3–6.
+ */
+
+/**
+ * @defgroup SvttGeoV6 SvttGeo6 (SVTTGEO6) — Shield versions 2 and 3
+ * @ingroup SvttGeo
+ * @brief SVT geometry supporting shield structures version 2 and 3 (M. Potekhin).
+ * @details Evolution of SvttGeo4. The @c SupportVer parameter (2 or 3) selects the
+ * shield geometry. @c ConeVer = 2 enables the support cone. Used by setups @c SVT106,
+ * @c SVT206, @c SVT306, and @c SVT306x.
+ */
+
+/**
+ * @defgroup SvttGeoV7 SvttGeo7 (SVTTGEO7) — Beampipe support and alignment
+ * @ingroup SvttGeo
+ * @brief SVT geometry with detailed beampipe support (@c SSUB) and alignment improvements.
+ * @details Introduces the @c SSUB structure describing the kinematic mount rings, support
+ * rollers, and mounting blocks that position the SVT on the beam pipe.
+ */
+
+/**
+ * @defgroup SvttGeoV9 SvttGeo9 (SVTTGEO9) — Shield and cone refinement
+ * @ingroup SvttGeo
+ * @brief Intermediate SVT geometry refining shield and cone parameters (M. Potekhin).
+ */
+
+/**
+ * @defgroup SvttGeoV10 SvttGeo10 (SVTTGEO10) — Carbon-for-beryllium wafer rails
+ * @ingroup SvttGeo
+ * @brief SVT geometry with carbon fibre replacing Be in wafer carrier rails (M. Potekhin, 15 Aug 2007).
+ * @details Replaces beryllium wafer carrier rails with carbon fibre per the Dave Lynn
+ * redesign, reducing activation concerns and cost. Also includes detailed @c SSUB
+ * beampipe support and the @c SOUP outer sub-volume. Used by @c SVT310x.
+ */
+
+/**
+ * @defgroup SvttGeoV11 SvttGeo11 (SVTTGEO11) — Final production geometry
+ * @ingroup SvttGeo
+ * @brief Final production SVT geometry (M. Potekhin), used for RHIC Runs 10–13.
+ * @details Complete geometry with config 12 (@c SVTG.config = 12), shield versions 2 and 3,
+ * and the @c SSLD sub-structure for the silicon shield layers. Used by setups @c SVT211,
+ * @c SVT311, @c SVT312, and @c SVT312x (the latter activates all layers).
+ */
+
+/**
+ * @}
+ */

@@ -1,0 +1,67 @@
+/**
+ * @defgroup CompatGeo Compat — Legacy AGE Geometry Compatibility Layer
+ * @ingroup StarVMCGeometry
+ * @brief Verbatim-import wrappers for legacy AGE `.g` geometry files not yet
+ *        ported to native AGML XML.
+ *
+ * The `Compat/` directory provides a compatibility shim that allows detector
+ * subsystems still described in the legacy AGE/Mortran `.g` format (located
+ * under `pams/geometry/`) to be loaded by the AGML-based simulation framework
+ * without any conversion.
+ *
+ * Each XML file uses the pattern:
+ * @code{.xml}
+ * <Document file="...">
+ *   <Export language="Mortran">
+ *     <Import file="pams/geometry/<subdir>/<name>.g" verbatim="true" />
+ *   </Export>
+ * </Document>
+ * @endcode
+ *
+ * The `<Export language="Mortran">` element instructs the AGML build system to
+ * pass the referenced content directly to the Mortran preprocessor, bypassing
+ * XML geometry parsing entirely.  The AGE source file is processed exactly as
+ * in the legacy `starsim` environment.
+ *
+ * @par Files and imported sources
+ *
+ * | XML file       | Imported source(s)                          | Subsystem |
+ * |----------------|---------------------------------------------|-----------|
+ * | calbpar.xml    | pams/geometry/calbgeo/calbpar.g             | BEMC parameter block |
+ * | dummgeo.xml    | *(none — empty placeholder module)*         | Dummy |
+ * | etsphit.xml    | pams/geometry/calbgeo/etsphit.g             | BEMC end-cap hit structures |
+ * | fgtdgeo.xml    | pams/geometry/fgtdgeo/fgtdgeo{,1,2}.g      | FGT Forward GEM Tracker |
+ * | ffpdstep.xml   | pams/geometry/fpdmgeo/ffpdstep.g            | FPD step definitions |
+ * | fhcmgeo.xml    | pams/geometry/fhcmgeo/fhcmgeo.g             | FHCM Forward Hadronic Calorimeter |
+ * | fpdmgeo.xml    | pams/geometry/fpdmgeo/fpdmgeo.g             | FPD Forward Pion Detector |
+ * | fstdgeo.xml    | pams/geometry/fstdgeo/fstdgeo.g             | FST Forward Silicon Tracker disk |
+ * | gembgeo.xml    | pams/geometry/gembgeo/gembgeo.g             | GEM Barrel |
+ * | hpdtgeo.xml    | pams/geometry/hpdtgeo/hpdtgeo.g             | HPDT High-pT Detector Tracker |
+ * | igtdgeo.xml    | pams/geometry/igtdgeo/igtdgeo.g             | IGTD Inner GEM Tracker Disk |
+ * | istbego.xml    | pams/geometry/istbgeo/istbgeo{,00,1-6}.g   | IST Intermediate Silicon Tracker |
+ * | itspgeo.xml    | pams/geometry/itspgeo/itspgeo.g             | ITSP Inner Tracker Support |
+ * | pixlgeo.xml    | pams/geometry/pixlgeo/pixlgeo{00,,1,2}.g   | PIXL Pixel Detector (HFT) |
+ * | richgeo.xml    | pams/geometry/richgeo/richgeo.g             | RICH Cherenkov Detector |
+ * | tpcegeo.xml    | pams/geometry/tpcegeo/tpcegeo.g             | TPC Time Projection Chamber |
+ * | tpcegeo3.xml   | *(none — calls TpceGeo3a routine)*          | TPC alternative v3 |
+ * | wallgeo.xml    | pams/geometry/wallgeo/wallgeo.g             | Beam pipe / inner wall |
+ *
+ * @par Maintenance
+ * Geometry changes for verbatim-imported detectors must be made in
+ * `pams/geometry/`, not in the XML wrappers here.  The Compat XML files are
+ * effectively frozen.  To migrate a subsystem to native AGML XML, replace the
+ * verbatim wrapper with a `<Module>` block and move the file to a dedicated
+ * subdirectory of `StarVMC/Geometry/`.
+ *
+ * @par Special cases
+ * - `dummgeo.xml` is a native AGML module with no volumes, used as a
+ *   no-op placeholder in geometry configurations.
+ * - `tpcegeo3.xml` is a native AGML module that emits a single Fortran
+ *   `Call TpceGeo3a` statement rather than importing a `.g` file.
+ *
+ * @{
+ */
+
+/**
+ * @}
+ */

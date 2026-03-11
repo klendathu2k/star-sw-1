@@ -1,0 +1,66 @@
+/**
+ * @defgroup FtpcGeo FtpcGeo — STAR Forward TPC and Supports Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry definition for the STAR Forward Time Projection Chamber.
+ * @details
+ * The STAR Forward TPC (FTPC) provides charged-particle tracking in the
+ * pseudorapidity range 2.5 < |η| < 4.0.  Two identical cylindrical radial-drift
+ * chambers are placed symmetrically at z = ±150 cm from the interaction point,
+ * each extending 119 cm along the beam axis.  Ionisation electrons in the
+ * Ne/CO₂ drift gas drift radially inward toward 10 concentric padrow layers
+ * (LayLen = 2 cm each) arranged in 6 azimuthal sectors of 6 readout modules.
+ *
+ * Key global parameters (structure @c FTPG):
+ *   - RinnerMs = 7.55 cm (original) / 7.40 cm (Geo1) — inner envelope radius
+ *   - RouterMs = 36.4 cm — outer envelope radius
+ *   - RGasOut  = 30.6 cm — outer radius of the active gas volume
+ *   - Zstart   = 150.0 cm — face position from IP
+ *   - totLen   = 119.0 cm — overall detector length
+ *   - GasVolDz = 59.5 cm  — half-length of active gas volume
+ *   - Hitlay   = 10       — number of padrows per disk
+ *
+ * Reference: NIM A522 (2004) 252–273.
+ * @{
+ */
+
+/**
+ * @defgroup FtpcGeo_v0 FtpcGeo — Original Forward TPC geometry
+ * @ingroup FtpcGeo
+ * @brief Module @c FTPCGEO: original FTPC geometry definition.
+ * @details
+ * Uses four structures: @c FTPG (basic FTPC dimensions), @c FFCC (field-cage
+ * end-cap ceramic holders and stabiliser bars), @c FRBD (readout barrel module
+ * positions and box dimensions), and @c FSSD (end-ring and support polygon
+ * geometry).
+ *
+ * Inner tube material: DrInAlL1 = DrInAlL2 = 0.05 cm (Al layers),
+ * DrInIsoL = 0.40 cm (insulating plastic).
+ *
+ * Volume tree top-level: @c FTPC (mother) → @c FGAS (gas volume) →
+ * @c FSEN / @c FSEC (sensitive volume / sector divisions), @c FROS (readout
+ * module ring, ×10 padrows) → @c FROM (readout module), @c FSER (support end
+ * rings), @c FSSM (main support module).
+ * Activated by setups @c FTPCon and @c FTPC00.
+ */
+
+/**
+ * @defgroup FtpcGeo_v1 FtpcGeo1 — Forward TPC with corrected gas material budget
+ * @ingroup FtpcGeo
+ * @brief Module @c FTPCGEO1: FTPC geometry with reduced inner-tube material budget.
+ * @details
+ * Functionally identical to @c FTPCGEO except for thinned inner-tube layers:
+ *   - RinnerMs reduced from 7.55 cm to 7.40 cm (slightly smaller inner bore).
+ *   - DrInAlL1 = DrInAlL2 = 0.01 cm (was 0.05 cm): thinner Al layers.
+ *   - DrInIsoL = 0.30 cm (was 0.40 cm): thinner insulating plastic.
+ *
+ * These changes reduce the material budget seen by forward tracks, improving
+ * simulation accuracy.  All 31 other volumes (@c FGAS, @c FSEN, @c FSEC,
+ * @c FIFR, @c FKWI, @c FFSL, @c FFCE, @c FROS, @c FROM, hole volumes,
+ * @c FREL, @c FRCC, @c FRCE, support rings, pad plane, outermost FC ring)
+ * are unchanged.
+ * Activated by setup @c FTPC01.
+ */
+
+/**
+ * @}
+ */

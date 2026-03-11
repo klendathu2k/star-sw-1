@@ -1,0 +1,133 @@
+/**
+ * @defgroup SisdGeo SisdGeo — Silicon Strip Detector Geometry
+ * @ingroup StarVMCGeometry
+ * @brief AGML geometry for the STAR Silicon Strip Detector (SSD).
+ *
+ * @details
+ * The Silicon Strip Detector (SSD) is the outermost silicon layer of STAR's inner tracker,
+ * located at a nominal radius of ≈ 23 cm. It is a single barrel of 20 double-sided silicon
+ * strip ladders (DSSD) providing two-dimensional hit positions in r–φ and z over full
+ * azimuth and |η| < 1.2. The SSD was operational from RHIC Run 2 (~2001) through Run 15
+ * (~2016). In geometries up to y2013 it was placed inside the SVT mother volume; from y2014
+ * onward it is placed inside the Inner Detector Support Module (IDSM) as part of the HFT.
+ *
+ * The AGML detector tag is @c SISD. The configuration structure @c SSDP controls the
+ * geometry version (field @c config) and placement (field @c placement: 0 = cave, 1 = SVT/IDSM).
+ * Ladder positions, radii, and tilts are encoded in the @c SFPA structure; support
+ * and mechanical dimensions are carried in @c SFJP.
+ *
+ * The mother volume @c SFMO is a @c TUBE spanning r = 21.8–29.5 cm and dz = 60 cm
+ * (half-length). Individual ladders are placed as @c SFLM daughters at radii of
+ * 22.5–24.6 cm with per-ladder azimuthal angles and tilts.
+ *
+ * The active sensitive volume is @c SFSD (Silicon, isvol=1), with strip length 4.2 cm
+ * and wafer pack length 68.8 cm per ladder.
+ *
+ * @par AGML module files
+ * - SisdGeo.xml   — @c SISDGEO  (legacy placeholder, config 0)
+ * - SisdGeo1.xml  — @c SISDGEO1 (Apr 2004; configs 1–3, test to full 20-ladder)
+ * - SisdGeo2.xml  — @c SISDGEO2 (Oct 2004; configs 2–4, revised dimensions)
+ * - SisdGeo3.xml  — @c SISDGEO3 (Mar 2006; configs 3–5, DELRIN cross brackets added)
+ * - SisdGeo4.xml  — @c SISDGEO4 (Mar 2006; config 4)
+ * - SisdGeo5.xml  — @c SISDGEO5 (intermediate; config 5)
+ * - SisdGeo6.xml  — @c SISDGEO6 (default for y2005–y2013; configs 5, 65, 75)
+ * - SisdGeo7.xml  — @c SISDGEO7 (Feb 2007; TUP-modified, IDSM placement)
+ * - SisdGeo7a.xml — @c SISDGEO7A (y2014 production; config 85; misalignment support)
+ *
+ * @par Configuration setups (SisdConfig.xml)
+ * - @c SISDof  — SSD disabled
+ * - @c SISD02  — version 0, config 2, inside SVT
+ * - @c SISD12  — version 1, config 2, inside SVT
+ * - @c SISD22  — version 2, config 2
+ * - @c SISD23  — version 2, config 3
+ * - @c SISD24  — version 2, config 4
+ * - @c SISD35  — version 3, config 5
+ * - @c SISD55  — version 6, config 5 (full 20-ladder, default for y2005+)
+ * - @c SISD65  — version 6, config 65
+ * - @c SISD75  — version 6, config 75
+ * - @c SISD85  — version 7a, config 85, ideal (y2014)
+ * - @c SISD85a — version 7a, config 85, misaligned (y2014)
+ *
+ * @{
+ */
+
+/**
+ * @defgroup SisdGeoV0 SisdGeo (SISDGEO) — Legacy placeholder
+ * @ingroup SisdGeo
+ * @brief Legacy geometry module; minimal content, no detailed volume implementation.
+ * @details Used only by the deprecated @c SISD02 setup with legacy steering.
+ */
+
+/**
+ * @defgroup SisdGeoV1 SisdGeo1 (SISDGEO1) — First full geometry
+ * @ingroup SisdGeo
+ * @brief First complete SSD geometry (Lilian Martin, 23 Apr 2004).
+ * @details Implements all SSD sub-volumes: active wafer (SFSD, Silicon), hybrid stiffener
+ * (SFRA, Carbon), flex circuit (SFFX, Copper), readout chip (SFAA, Silicon), bus cables
+ * (Mylar), ADC boards (G10), and sector support structure (Aluminium TUBS/BOX). Supports
+ * configurations 1 (single test ladder), 2 (10 ladders), and 3 (full 20-ladder barrel).
+ * Radii span 22.5–24.6 cm with individual tilts and azimuthal angles per ladder.
+ */
+
+/**
+ * @defgroup SisdGeoV2 SisdGeo2 (SISDGEO2) — Revised geometry
+ * @ingroup SisdGeo
+ * @brief Revised SSD geometry (Martin/Reinnarth/Potekhin, 27 Oct 2004).
+ * @details Introduces the @c SFJP structure carrying precise dimensional parameters for
+ * sector support plates, V-shape cone-mounting pieces, connection boards, and flex circuits.
+ * Supports configs 2–4 with incrementally adjusted ladder populations and positions.
+ */
+
+/**
+ * @defgroup SisdGeoV3 SisdGeo3 (SISDGEO3) — DELRIN cross bracket update
+ * @ingroup SisdGeo
+ * @brief SSD geometry with DELRIN cross brackets (Lilian Martin, 14 Mar 2006).
+ * @details Adds DELRIN (SBCH, SBCV) and Aluminium (SBFH, SBFV) cross-bracket volumes at
+ * ladder ends for improved mechanical attachment to the support cone. Used by setups
+ * @c SISD35 and @c SVT203.
+ */
+
+/**
+ * @defgroup SisdGeoV4 SisdGeo4 (SISDGEO4) — Further dimensional tuning
+ * @ingroup SisdGeo
+ * @brief SSD geometry with tuned dimensions (Lilian Martin, 14 Mar 2006).
+ * @details Incremental update over Geo3 with adjusted cross-bracket and sector dimensions
+ * for improved material budget accuracy. Config 4.
+ */
+
+/**
+ * @defgroup SisdGeoV5 SisdGeo5 (SISDGEO5) — Intermediate version
+ * @ingroup SisdGeo
+ * @brief Intermediate SSD geometry, config 5. Refinement of support and flex cable volumes.
+ */
+
+/**
+ * @defgroup SisdGeoV6 SisdGeo6 (SISDGEO6) — Default y2005–y2013 production geometry
+ * @ingroup SisdGeo
+ * @brief Default SSD geometry for RHIC Runs 4–13 (M. Potekhin / J. Bouchet).
+ * @details Fully parameterised, full 20-ladder barrel geometry. Activated by setups
+ * @c SISD55 (config 5), @c SISD65 (config 65), and @c SISD75 (config 75). Placed inside
+ * the SVT mother volume.
+ */
+
+/**
+ * @defgroup SisdGeoV7 SisdGeo7 (SISDGEO7) — TUP-modified geometry
+ * @ingroup SisdGeo
+ * @brief SSD geometry with TUP mechanical modifications (Bouchet/Potekhin, 1 Feb 2007).
+ * @details Updated @c SFJP dimensional set with revised sector, linking-cross, and
+ * cone-mounting hardware reflecting the TUP (Tracking Upgrade Project) design. Default
+ * placement is 1 (IDSM).
+ */
+
+/**
+ * @defgroup SisdGeoV7a SisdGeo7a (SISDGEO7A) — y2014 production geometry
+ * @ingroup SisdGeo
+ * @brief y2014 production SSD geometry with misalignment support (Bouchet/Potekhin).
+ * @details Final production geometry placed inside IDSM. The @c SSDP.misalign flag
+ * switches between ideal (0) and misaligned (1) sensor positions. Activated by setups
+ * @c SISD85 (ideal) and @c SISD85a (misaligned). Config value 85.
+ */
+
+/**
+ * @}
+ */
