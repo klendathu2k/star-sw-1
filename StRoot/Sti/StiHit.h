@@ -1,3 +1,7 @@
+/// @file StiHit.h
+/// @brief One measured space-point on a sensitive detector element.
+///
+/// @ingroup StiHitsAndTracks
 /*! \class StiHit
   StiHit is a simple class that encapsulates a three dimensional position
   measurement.  The measurement is represented in a frame
@@ -48,6 +52,11 @@
 #include "StMeasuredPoint.h"
 #include "StThreeVectorF.hh"
 #include "StMatrixF.hh"
+/// @class StiHit
+/// @brief One measured space-point on a sensitive detector element, stored in STI local coordinates.
+///
+/// Stores local position (y, z), measurement errors, associated StiDetector pointer, and usage flag.
+/// @ingroup StiHitsAndTracks
 class StiHit 
 {
 public: 

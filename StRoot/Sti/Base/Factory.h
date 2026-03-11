@@ -1,5 +1,10 @@
 #ifndef Factory_H
-#define Factory_H 
+#define Factory_H
+
+/// @file Factory.h
+/// @brief Abstract base classes defining the factory interface for object creation in STI.
+///
+/// @ingroup StiMemoryModel
 
 #include "Sti/Base/Named.h"
 #include <cassert>
@@ -13,6 +18,12 @@
   factory. Implementation (derived class) may serve objects from class derived
   based on the "Abstract" template class.
 */
+/// @class BFactory
+/// @brief Non-templated base for all STI factories, providing pool accounting and a static free helper.
+///
+/// Tracks current allocation counts and exposes setMaxIncrementCount() / getMaxIncrementCount()
+/// to bound pool growth. The static Free() helper resolves the owning factory from an object pointer.
+/// @ingroup StiMemoryModel
 class BFactory : public Named
 {
 protected:
@@ -50,6 +61,12 @@ protected:
 static double fgTotal;  
 };
 
+/// @class Factory
+/// @brief Templated abstract factory interface that serves and recycles instances of type @p Abstract.
+///
+/// Concrete implementations (e.g. StiFactory) override getInstance() and free() to allocate
+/// and recycle objects without heap fragmentation.
+/// @ingroup StiMemoryModel
 template <class Abstract>
 class Factory : public BFactory
 {

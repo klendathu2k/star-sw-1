@@ -1,3 +1,7 @@
+/// @file StiMasterHitLoader.h
+/// @brief Aggregates all sub-detector StiHitLoader instances and calls each in sequence per event.
+///
+/// @ingroup StiHitLoading
 #ifndef StiMasterHitLoader_H
 #define StiMasterHitLoader_H
 
@@ -28,6 +32,10 @@ diverse sources.
 \author Claude A Pruneau (Wayne)
 */
 template<class Source1, class Detector>
+/// @class StiMasterHitLoader
+/// @brief Aggregates all sub-detector StiHitLoader instances and calls each in sequence to populate StiHitContainer.
+///
+/// @ingroup StiHitLoading
 class StiMasterHitLoader : public StiHitLoader<Source1, Detector>,
 public vector< StiHitLoader<Source1, Detector> *>
 {

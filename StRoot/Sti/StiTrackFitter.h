@@ -1,3 +1,7 @@
+/// @file StiTrackFitter.h
+/// @brief Abstract interface for the STI track-fitting algorithm.
+///
+/// @ingroup StiTrackFitting
 #ifndef StiTrackFitter_H
 #define StiTrackFitter_H 1
 #include "Sti/Base/Named.h"

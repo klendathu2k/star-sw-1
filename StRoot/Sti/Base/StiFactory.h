@@ -1,5 +1,11 @@
 #ifndef StiFactory_H
-#define StiFactory_H 
+#define StiFactory_H
+
+/// @file StiFactory.h
+/// @brief Concrete growing-pool factory that recycles STI objects without heap fragmentation.
+///
+/// @ingroup StiMemoryModel
+
 #include <cassert>
 #include <stdexcept>
 #include <string.h>
@@ -17,6 +23,12 @@
 
 
 //______________________________________________________________________________
+/// @class StiHolder
+/// @brief Internal wrapper node that links a pooled object with the free-list pointer.
+///
+/// The union overlays the free-list next pointer, a factory back-reference word, and the
+/// first byte of the stored object, keeping per-object overhead to one pointer width.
+/// @ingroup StiMemoryModel
 template<class Object>
 class StiHolder  {
 public:
@@ -30,6 +42,11 @@ union {
 };
 
 //______________________________________________________________________________
+/// @class StiBlock
+/// @brief Fixed-size block of StiHolder nodes used as the allocation unit in StiFactory.
+///
+/// Each block holds kSize (100) holders; blocks are chained and can be bulk-reset.
+/// @ingroup StiMemoryModel
 template<class Object>
 class StiBlock {
 public:
@@ -45,6 +62,13 @@ StiHolder<Object> fArr[kSize];
 
 
 //______________________________________________________________________________
+/// @class StiFactory
+/// @brief Concrete growing-pool factory that serves recycled instances of @p Concrete as @p Abstract.
+///
+/// Objects are allocated in fixed-size StiBlock units and recycled via a free-list, eliminating
+/// per-object heap fragmentation. Used to allocate StiHit, StiKalmanTrackNode, and StiKalmanTrack
+/// objects. Obtain the singleton via myInstance().
+/// @ingroup StiMemoryModel
 template <class Concrete, class Abstract>
 class StiFactory : public Factory<Abstract>
 {

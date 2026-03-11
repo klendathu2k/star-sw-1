@@ -1,3 +1,7 @@
+/// @file StiFilter.h
+/// @brief Cut on reconstructed tracks before they are written to StEvent.
+///
+/// @ingroup StiUtilities
 #ifndef StiFilter_H
 #define StiFilter_H 1
 #include <string>
@@ -6,6 +10,10 @@ using std::string;
 #include <Stiostream.h>
 #include <stdlib.h>
 
+/// @class StiFilter
+/// @brief Cut applied to reconstructed tracks before they are written to StEvent.
+///
+/// @ingroup StiUtilities
 class StiFilter
 {
  public: 

@@ -1,3 +1,7 @@
+/// @file StiGenericDetectorGroup.h
+/// @brief Concrete template instantiation of StiDetectorGroup wiring a standard builder and loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STAR_StiGenericDetectorGroup_H_INCLUDED
 #define STAR_StiGenericDetectorGroup_H_INCLUDED
 // $Id: StiGenericDetectorGroup.h,v 2.2 2014/08/22 16:28:36 perev Exp $
@@ -8,6 +12,10 @@
 
 class StiDetectorBuilder;
 
+/// @class StiGenericDetectorGroup
+/// @brief Concrete StiDetectorGroup wiring a standard detector builder and hit loader for a sub-detector.
+///
+/// @ingroup StiDetectorGeometry
 class StiGenericDetectorGroup  : public Named
 {
    protected:

@@ -1,6 +1,11 @@
 #ifndef Filter_H
 #define Filter_H 1
 
+/// @file Filter.h
+/// @brief Abstract predicate interface used to accept or reject objects of a given type.
+///
+/// @ingroup StiUtilities
+
 /*!
   Abstract base class defining a  filtering mechanism
   <p>
@@ -13,6 +18,12 @@
   "accept( * )     overloaded to determine whether given
   filtered objet passes the filter requirements.
 */
+/// @class Filter
+/// @brief Abstract functor interface for accepting or rejecting objects of type @p Filtered.
+///
+/// Derived classes implement accept() to define the selection criterion.
+/// Used by StiHitContainer and similar components to filter STI objects.
+/// @ingroup StiUtilities
 template<class Filtered>
 class Filter 
 {

@@ -1,3 +1,7 @@
+/// @file StiCompositeLeafIterator.h
+/// @brief Iterator over all leaf nodes of a StiCompositeTreeNode tree.
+///
+/// @ingroup StiMemoryModel
 //StiCompositeLeafIterator.h
 //M.L. Miller (Yale Software)
 //07/01
@@ -42,6 +46,11 @@ using std::vector;
 #include "StlUtilities.h"
 
 template <class T>
+/// @class StiCompositeLeafIterator
+/// @brief Iterator over all leaf nodes of a StiCompositeTreeNode tree.
+///
+/// Used by StiDetectorTreeBuilder to enumerate all StiDetector leaves during geometry initialisation.
+/// @ingroup StiMemoryModel
 class StiCompositeLeafIterator
 {
 public:

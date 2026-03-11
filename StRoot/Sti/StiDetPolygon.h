@@ -1,3 +1,7 @@
+/// @file StiDetPolygon.h
+/// @brief Describes a detector element as a polygon in the transverse plane for overlap and acceptance checks.
+///
+/// @ingroup StiDetectorGeometry
 //StiDetPolygon.h
 //M.L. Miller (Yale Software)
 //06/01
@@ -27,6 +31,10 @@ using std::multimap;
 class StiDetector;
 class StiDetPolygonSide;
 
+/// @class StiDetPolygon
+/// @brief Describes a detector element as a polygon in the transverse plane for overlap and acceptance checks.
+///
+/// @ingroup StiDetectorGeometry
 class StiDetPolygon : public StiPolygon
 {
 public:

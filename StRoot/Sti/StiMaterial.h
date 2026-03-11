@@ -1,5 +1,8 @@
+/// @file StiMaterial.h
+/// @brief Material properties used for energy-loss and multiple-scattering calculations.
+///
+/// @ingroup StiDetectorGeometry
 /*
- * StiMaterial represents the physical characteristics of a material within
  * the ITTF geometry.
  */
 
@@ -12,6 +15,11 @@ using namespace std;
 #include "Sti/Base/Named.h"
 
 class StiElossCalculator;
+/// @class StiMaterial
+/// @brief Material properties (Z, A, density, X0) for energy-loss and multiple-scattering.
+///
+/// Each StiDetector references one StiMaterial for its active volume and one for the outer envelope.
+/// @ingroup StiDetectorGeometry
 class StiMaterial : public Named
 {    
 public:

@@ -1,3 +1,7 @@
+/// @file StiKalmanTrackNode.h
+/// @brief One node of the Kalman track helix storing parameters, hit, and propagation state.
+///
+/// @ingroup StiHitsAndTracks
 #ifndef StiKalmanTrackNode_H
 #define StiKalmanTrackNode_H 1
 #define STI_NODE_DEBUG
@@ -78,6 +82,11 @@ public:
   or decreasing.
   \author Claude A Pruneau
 */
+/// @class StiKalmanTrackNode
+/// @brief One node of the Kalman track helix with parameters, hit pointer, and propagation state.
+///
+/// propagate() extrapolates to the next detector surface; updateNode() applies the Kalman update.
+/// @ingroup StiHitsAndTracks
 class StiKalmanTrackNode : public StiTrackNode 
 {
 friend class StiTrackNodeHelper;

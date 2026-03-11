@@ -1,3 +1,7 @@
+/// @file StiDetectorGroup.h
+/// @brief Named unit grouping a StiDetectorBuilder, StiHitLoader, and hit Factory for one sub-detector.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiDetectorGroup_H_INCLUDED
 #define StiDetectorGroup_H_INCLUDED
 
@@ -8,6 +12,10 @@
 #include "Sti/StiToolkit.h"
 template<class Event,class Detector> class StiHitLoader;
 
+/// @class StiDetectorGroup
+/// @brief Named unit grouping a StiDetectorBuilder, StiHitLoader, and hit Factory for one sub-detector.
+///
+/// @ingroup StiDetectorGeometry
 template<class Event>
 class StiDetectorGroup : public StiGenericDetectorGroup
 {

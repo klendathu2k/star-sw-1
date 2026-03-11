@@ -1,3 +1,7 @@
+/// @file StiDetector.h
+/// @brief Central class representing one sensitive detector element.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STI_DETECTOR_H
 #define STI_DETECTOR_H
 #include <vector>
@@ -26,6 +30,11 @@ typedef std::vector<StiDetector*> StiDetVect;
    It contains all information about the geometry of the detector and
    the necessary physical properties for incorporating it in tracking.
  */
+/// @class StiDetector
+/// @brief Central class representing one sensitive detector element with full geometry and material.
+///
+/// Aggregates StiShape, StiPlacement, StiMaterial, StiIsActiveFunctor, and group/layer identifiers.
+/// @ingroup StiDetectorGeometry
 class StiDetector : public Named
 {
     

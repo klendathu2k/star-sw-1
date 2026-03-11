@@ -5,6 +5,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+/// @file Parameters.h
+/// @brief Named, described container of Parameter pointers with enabled and editable state.
+///
+/// @ingroup StiUtilities
+
 #include <vector>
 using namespace std;
 
@@ -17,6 +22,11 @@ typedef vector<Parameter*> ParameterVector;
 typedef ParameterVector::iterator ParameterIterator;
 typedef ParameterVector::const_iterator ParameterConstIterator;
 
+/// @class Parameters
+/// @brief Named, described container of Parameter pointers with enabled and editable state flags.
+///
+/// Subclasses must implement initialize() to populate the parameter vector.
+/// @ingroup StiUtilities
 class Parameters  : public Named, public Described
 {
  public:

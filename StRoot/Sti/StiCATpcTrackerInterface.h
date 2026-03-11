@@ -1,3 +1,7 @@
+/// @file StiCATpcTrackerInterface.h
+/// @brief Low-level bridge between the CA tracker data structures and the STI Kalman track representation.
+///
+/// @ingroup StiTrackFinding
 #ifndef __StiCATpcTrackerInterface_h__
 #define __StiCATpcTrackerInterface_h__
 #include "StiCATpcSeedFinder.h"
@@ -19,6 +23,10 @@
 
 #include "Sti/StiTrackContainer.h"
 
+/// @class StiCATpcTrackerInterface
+/// @brief Low-level bridge between the CA tracker data structures and the STI Kalman track representation.
+///
+/// @ingroup StiTrackFinding
 class StiCATpcTrackerInterface {
  public:
 

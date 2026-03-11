@@ -1,3 +1,7 @@
+/// @file StiHitLoader.h
+/// @brief Abstract base template for loading hits from a detector-specific source into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiHitLoader_H
 #define StiHitLoader_H
 
@@ -33,6 +37,11 @@ class StiTrackContainer;
 */
 
 template <class Source1, class Detector>
+/// @class StiHitLoader
+/// @brief Abstract base template for loading hits from a detector-specific source into StiHitContainer.
+///
+/// One concrete loader subclass per sub-detector.
+/// @ingroup StiHitLoading
 class StiHitLoader : public Named
 {
  public:

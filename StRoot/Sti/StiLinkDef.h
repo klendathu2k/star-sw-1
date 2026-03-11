@@ -1,3 +1,7 @@
+/// @file StiLinkDef.h
+/// @brief ROOT LinkDef for dictionary generation of STI classes.
+///
+/// @ingroup StiWorkflow
 #ifdef __CINT__
 #pragma link off all globals;
 #pragma link off all classes;

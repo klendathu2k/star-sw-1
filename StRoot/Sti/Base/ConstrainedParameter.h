@@ -6,8 +6,19 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+/// @file ConstrainedParameter.h
+/// @brief Parameter with enforced minimum, maximum, and default value constraints.
+///
+/// @ingroup StiUtilities
+
 #include "Parameter.h"
 
+/// @class ConstrainedParameter
+/// @brief Parameter with enforced minimum, maximum, and default value constraints.
+///
+/// setValue() silently clamps the new value to [minimum, maximum].
+/// Base class for EditableParameter.
+/// @ingroup StiUtilities
 class ConstrainedParameter : public Parameter  
 {
 public:

@@ -5,8 +5,19 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+/// @file EditableParameter.h
+/// @brief ConstrainedParameter extended with a step increment for GUI-driven editing.
+///
+/// @ingroup StiUtilities
+
 #include "ConstrainedParameter.h"
 
+/// @class EditableParameter
+/// @brief ConstrainedParameter extended with a step increment for GUI-driven editing.
+///
+/// Adds an increment value used by GUI sliders or steppers, and a reset() method that
+/// restores the parameter to its default value.
+/// @ingroup StiUtilities
 class EditableParameter : public ConstrainedParameter
 {
  public:

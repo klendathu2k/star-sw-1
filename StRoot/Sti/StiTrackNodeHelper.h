@@ -1,3 +1,7 @@
+/// @file StiTrackNodeHelper.h
+/// @brief Low-level Kalman gain, chi2, and state-update helper for track node propagation.
+///
+/// @ingroup StiTrackFitting
 #ifndef StiTrackNodeHelper_H
 #define StiTrackNodeHelper_H 1
 
@@ -41,6 +45,10 @@ int mTally;
 };
 
 
+/// @class StiTrackNodeHelper
+/// @brief Computes Kalman gain matrix, chi2 increment, and updated state when propagating a node to a hit.
+///
+/// @ingroup StiTrackFitting
 class StiTrackNodeHelper
 { 
 public:

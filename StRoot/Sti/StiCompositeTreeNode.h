@@ -1,3 +1,7 @@
+/// @file StiCompositeTreeNode.h
+/// @brief Template doubly-linked tree node with a data payload for the STI detector geometry tree.
+///
+/// @ingroup StiMemoryModel
 //StiCompositeTreeNode                        
 //M.L. Miller (Yale Software)
 //07/01
@@ -91,6 +95,11 @@ struct StiOrderKey
 };
 
 template <class T>
+/// @class StiCompositeTreeNode
+/// @brief Template doubly-linked tree node with a data payload; the detector geometry tree is StiCompositeTreeNode<StiDetector>.
+///
+/// Provides parent, firstChild, lastChild, prevSibling, nextSibling links. Inherits StiTreeNode.
+/// @ingroup StiMemoryModel
 class StiCompositeTreeNode
 {
 public:

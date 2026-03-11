@@ -2,6 +2,10 @@
 //M.L. Miller (Yale Software)
 //07/01
 
+/// @file StlUtilities.h
+/// @brief STL helper predicates and utilities used throughout STI.
+///
+/// @ingroup StiUtilities
 #ifndef StlUtilities_HH
 #define StlUtilities_HH
 

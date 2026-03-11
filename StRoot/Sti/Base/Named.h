@@ -1,5 +1,11 @@
 #ifndef NAMED_H
 #define NAMED_H
+
+/// @file Named.h
+/// @brief Mixin providing a string name to any STI class that inherits it.
+///
+/// @ingroup StiUtilities
+
 #include <string>
 
 using std::string;
@@ -12,7 +18,11 @@ use STD;
 
 \author Claude A Pruneau
 */
-
+/// @class Named
+/// @brief Mixin that provides a string name to any STI class that inherits it.
+///
+/// Mixed into nearly every STI class to support name-based lookup and identification.
+/// @ingroup StiUtilities
 class Named  
 {
 public:

@@ -1,3 +1,7 @@
+/// @file StiDetectorTreeBuilder.h
+/// @brief Assembles the StiDetector composite-tree hierarchy from all registered builders.
+///
+/// @ingroup StiDetectorGeometry
 //StiDetectorTreeBuilder.h
 //M.L. Miller (Yale Software)
 //07/01
@@ -54,6 +58,10 @@ using std::vector;
 #include "StiDetector.h"
 class StiDetectorBuilder;
 
+/// @class StiDetectorTreeBuilder
+/// @brief Assembles the StiCompositeTreeNode<StiDetector> hierarchy from all registered builders.
+///
+/// @ingroup StiDetectorGeometry
 class StiDetectorTreeBuilder
 {
 public:

@@ -1,3 +1,7 @@
+/// @file StiTrackFinderFilter.h
+/// @brief Track filter applied after finding to select tracks for storage.
+///
+/// @ingroup StiTrackFinding
 #ifndef StiTrackFinderFilter_H_INCLUDED
 #define StiTrackFinderFilter_H_INCLUDED
 #include <string>

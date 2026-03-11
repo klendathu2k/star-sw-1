@@ -1,3 +1,7 @@
+/// @file StiCylindricalShape.h
+/// @brief Annular-sector cylindrical shape: inner/outer radius, half-depth, opening angle.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STI_CYLINDRICAL_SHAPE_H
 #define STI_CYLINDRICAL_SHAPE_H
 
@@ -7,6 +11,11 @@
   Class to represent a shape within the STAR geometry
   \author Ben Norman, Kent State, 25 July 01
 */
+/// @class StiCylindricalShape
+/// @brief Annular-sector shape defined by inner/outer radius, half-depth, and opening angle.
+///
+/// Used for TPC pad rows and silicon barrel layers.
+/// @ingroup StiDetectorGeometry
 class StiCylindricalShape: public StiShape{
 public:
 

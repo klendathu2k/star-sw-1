@@ -1,3 +1,7 @@
+/// @file StiKTNIterator.h
+/// @brief STL-compatible iterator over the StiKalmanTrackNode chain of a StiKalmanTrack.
+///
+/// @ingroup StiHitsAndTracks
 //StiKTNIterator.h
 //M.L. Miller (Yale Software)
 //12/01
@@ -22,6 +26,10 @@ typedef StiKTNIterator StiKTNBidirectionalIterator;
 
 
 //This is a temp hack to get around old gcc ansi-non-compliant STL implementation
+/// @class StiKTNIterator
+/// @brief STL-compatible forward iterator that traverses StiKalmanTrackNode chains from leaf to root.
+///
+/// @ingroup StiHitsAndTracks
 class StiKTNIterator
 {
 public:

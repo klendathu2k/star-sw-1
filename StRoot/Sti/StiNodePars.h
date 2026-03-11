@@ -1,3 +1,8 @@
+/// @file StiNodePars.h
+/// @brief Kalman track-state parameter vector and covariance matrix for one track node.
+///
+/// @ingroup StiHitsAndTracks
+
 #ifndef __StiNodePars_h_
 #define __StiNodePars_h_
 #include "Rtypes.h"
@@ -10,6 +15,25 @@
 
 
 
+/// @class StiNodePars
+/// @brief Five-parameter Kalman track state at one detector surface.
+///
+/// Stores the track state in the local frame of the associated StiDetector, together
+/// with the 5×5 covariance matrix `G` (stored as a symmetric lower-triangle in the
+/// derived class StiNodeMatrix).
+///
+/// **Coordinate convention** (cm, GeV/c):
+/// - `P[kX]`    = X position in local detector frame (normal to surface; redundant — always zero at a plane)
+/// - `P[kY]`    = Y position in local frame (transverse, tangential)
+/// - `P[kZ]`    = Z position in local frame (beam-axis direction)
+/// - `P[kPhi]`  = η = sin(φ_local) — sine of local azimuthal crossing angle
+/// - `P[kPtin]` = q/p_t [GeV⁻¹] with sign = sign(−qB); reciprocal transverse momentum
+/// - `P[kTan]`  = tan λ — tangent of the dip angle (λ = polar angle from transverse plane)
+/// - `P[kCurv]` = signed curvature κ = Hz × (q/p_t)
+/// - `P[kHz]`   = B_z field component in special units: p_t [GeV/c] = Hz × R [cm]
+///
+/// The reset() member zeroes all parameters and sets `_cosCA = 1` (straight-line seed state).
+/// @ingroup StiHitsAndTracks
 class StiNodePars {
  public:	
   enum {kX=0,kY=1,kZ=2,kPhi=3,kPtin=4,kTan=5,kCurv=6,kHz=7};

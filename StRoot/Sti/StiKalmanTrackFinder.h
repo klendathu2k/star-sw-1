@@ -1,3 +1,8 @@
+/// @file StiKalmanTrackFinder.h
+/// @brief Combinatorial Kalman track finder for the STAR detector.
+///
+/// @ingroup StiTrackFinding
+
 ///\File StiKalmanTrackFinder.h
 ///\Author Claude A Pruneau (Wayne State U) 
 #ifndef StiKalmanTrackFinder_H_INCLUDED
@@ -19,6 +24,24 @@ class StiKalmanTrackNode;
 template<class Factorized>class Factory;
 
 
+/// @class StiKalmanTrackFinder
+/// @brief Combinatorial Kalman track finder.
+///
+/// Drives the full inward → outward track-finding loop:
+///
+/// **Algorithm sequence (called once per event by StiMaker::Make()):**
+/// 1. `findTracks()` — outer loop over CA seeds from StiCATpcSeedFinder.
+/// 2. For each seed: `extendSeeds()` propagates the Kalman node inward through
+///    the silicon layers (PXL, IST, SSD, SVT) using the Kalman update equation
+///    whenever a compatible StiHit is found within (ΔY, ΔZ) search windows.
+/// 3. `findNextTrack()` performs the outward refit to the TPC outer field cage.
+/// 4. Tracks are stored in the StiTrackContainer; hit-usage flags are set on
+///    each StiHit to prevent double-counting in subsequent passes.
+///
+/// All factories and containers are obtained from the `StiToolkit` service locator.
+///
+/// @note The Kalman filter code was originally contributed by Jouri Belikov (ALICE).
+/// @ingroup StiTrackFinding
 ///\class StiKalmanTrackFinder  
 ///
 ///\author  Claude Pruneau, Wayne State University                        

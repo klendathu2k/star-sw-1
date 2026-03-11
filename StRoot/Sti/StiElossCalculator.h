@@ -1,3 +1,7 @@
+/// @file StiElossCalculator.h
+/// @brief Bethe-Bloch energy-loss calculator for track propagation through material.
+///
+/// @ingroup StiDetectorGeometry
 
 #ifndef StiElossCalculator_H_INCLUDED
 #define StiElossCalculator_H_INCLUDED
@@ -25,6 +29,11 @@
 #include <string>
 using namespace std;
 
+/// @class StiElossCalculator
+/// @brief Bethe-Bloch energy-loss calculator; returns mean dE/dx and Landau fluctuation.
+///
+/// Used by StiKalmanTrackNode when propagating through material.
+/// @ingroup StiDetectorGeometry
 class StiElossCalculator
 {
  public:

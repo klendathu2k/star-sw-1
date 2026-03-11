@@ -1,3 +1,7 @@
+/// @file StiPlacement.h
+/// @brief Position and orientation of a StiDetector element in the STAR global frame.
+///
+/// @ingroup StiDetectorGeometry
 // Represents the position and orientation of a detector in STAR.
 // 
 // Ben Norman, Kent State
@@ -42,6 +46,11 @@
 #include "TVector3.h"
 
 
+/// @class StiPlacement
+/// @brief Position and orientation of a StiDetector in the STAR global frame (cm).
+///
+/// Stores nominal radius, reference angle, z position, and azimuthal offset in STI local coordinates.
+/// @ingroup StiDetectorGeometry
 class StiPlacement{
 
 public:

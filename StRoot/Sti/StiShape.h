@@ -1,3 +1,7 @@
+/// @file StiShape.h
+/// @brief Abstract base class for detector element shapes.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STI_SHAPE_H
 #define STI_SHAPE_H
 #include <math.h>
@@ -12,6 +16,11 @@ enum StiShapeCode {kPlanar = 1, kCylindrical, kSector, kConical, kDisk};
 \author Ben Norman, Kent State, 25 July 01
 \author Claude Pruneau, Wayne State, Oct 2002
 */
+/// @class StiShape
+/// @brief Abstract base class for detector element shapes.
+///
+/// Subclasses StiPlanarShape and StiCylindricalShape describe the geometry of sensitive volumes.
+/// @ingroup StiDetectorGeometry
 class StiShape : public Named
 {
 public:

@@ -1,3 +1,7 @@
+/// @file StiPlanarShape.h
+/// @brief Rectangular planar shape: half-widths in y and z, thickness.
+///
+/// @ingroup StiDetectorGeometry
 // Class to represent a shape within the STAR geometry
 // Ben Norman, Kent State
 // 25 July 01
@@ -7,6 +11,11 @@
 
 #include "StiShape.h"
 
+/// @class StiPlanarShape
+/// @brief Flat rectangular pad shape defined by half-widths in y and z and a thickness.
+///
+/// Used for silicon strip detectors and endcap detectors.
+/// @ingroup StiDetectorGeometry
 class StiPlanarShape: public StiShape
 {
  public:

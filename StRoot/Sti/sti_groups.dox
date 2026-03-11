@@ -1,0 +1,118 @@
+/// @file sti_groups.dox
+/// @brief Doxygen module group definitions for the STI track-finding infrastructure.
+///
+/// This file defines the nine functional module groups that organise the STI
+/// (STAR Track-finding Infrastructure) documentation.  It contains no code;
+/// it is parsed only by Doxygen.
+
+/// @defgroup StiMemoryModel Base Memory Model
+/// @brief Object factory and pooling infrastructure.
+///
+/// The memory model provides heap-efficient object allocation for the high-rate
+/// track-finding code.  Rather than calling `new`/`delete` for every hit,
+/// track, and track node in each event, STI uses a growing-pool factory
+/// (`StiFactory<T>`) that pre-allocates blocks of objects and recycles them
+/// between events.
+///
+/// **Key classes:**
+/// - `Factory<T>` — abstract factory interface (getInstance, reset).
+/// - `BFactory` — concrete factory that allocates individual objects with `new`.
+/// - `StiFactory<Abstract, Concrete>` — growing-pool factory; doubles the pool
+///   on overflow.  One instance per object type (hits, nodes, tracks).
+/// - `StiTreeNode` — raw tree-link base; parent/child/sibling navigation.
+/// - `StiCompositeTreeNode<T>` — typed tree node with data payload; used for
+///   both the detector tree and the track-node chain.
+
+/// @defgroup StiDetectorGeometry Detector Geometry
+/// @brief Representation of the physical structure of the STAR detector.
+///
+/// This group covers the geometry pipeline: shapes define sensitive volumes,
+/// materials carry energy-loss properties, placements locate elements in the
+/// STAR global frame, and detectors bundle all geometry information together.
+///
+/// **Key classes:**
+/// - `StiShape` → `StiPlanarShape`, `StiCylindricalShape` — shape abstractions.
+/// - `StiMaterial` — Z, A, density, radiation length X0 for a material.
+/// - `StiElossCalculator` — Bethe-Bloch energy-loss calculator.
+/// - `StiPlacement` — position and orientation in the global frame.
+/// - `StiIsActiveFunctor` — acceptance functor for sensitive regions.
+/// - `StiDetector` — one sensitive element aggregating shape/material/placement.
+/// - `StiDetectorBuilder` — abstract base; one concrete subclass per sub-detector.
+/// - `StiMasterDetectorBuilder` — aggregates all sub-detector builders.
+/// - `StiDetectorContainer` — ordered array for sequential propagation.
+/// - `StiDetectorTreeBuilder` — assembles the full detector tree.
+
+/// @defgroup StiHitsAndTracks Hits and Track Representation
+/// @brief Data classes for measured hits and reconstructed track candidates.
+///
+/// **Key classes:**
+/// - `StiHit` — one measured space point on a sensitive element.
+/// - `StiNodePars` — 5-parameter Kalman state (y, z, η, κ, tanλ) + covariance.
+/// - `StiKalmanTrackNode` — one node of the Kalman helix; aggregates state,
+///   hit, detector, and chi² contribution.
+/// - `StiKalmanTrack` — doubly-linked chain of nodes; provides track-level
+///   quality accessors (pt, eta, chi2, nHits).
+/// - `StiKTNIterator` — STL-compatible iterator over a track's nodes.
+
+/// @defgroup StiTrackFinding Track Finding
+/// @brief Combinatorial Kalman track-finding algorithms.
+///
+/// Seeds from the CA-TPC seeder are extended inward and outward through the
+/// full detector tree by `StiKalmanTrackFinder`.
+///
+/// **Key classes:**
+/// - `StiKalmanTrackFinder` — main finder; drives the inward → outward loop.
+/// - `StiCATpcSeedFinder` — converts CA seeds to initial Kalman states.
+/// - `StiCATpcTrackerInterface` — bridge between CA and Kalman data structures.
+/// - `StiLocalTrackSeedFinder` — local hit-triplet seeder for non-TPC detectors.
+
+/// @defgroup StiTrackFitting Track Fitting
+/// @brief Kalman smoother and track-fit quality utilities.
+///
+/// **Key classes:**
+/// - `StiKalmanTrackFitter` — full Kalman smoother refit of a found track.
+/// - `QaFit` — per-track fit quality accumulator (inner class of KTFitter).
+/// - `StiMcsErrs` — multiple-Coulomb-scattering error increments.
+/// - `StiTrackNodeHelper` — computes gain matrix and chi² for one measurement update.
+
+/// @defgroup StiHitLoading Hit Loading
+/// @brief Infrastructure for loading sub-detector hits into the STI hit container.
+///
+/// **Key classes:**
+/// - `StiHitLoader<Source,Builder>` — abstract template; one concrete subclass
+///   per sub-detector (TPC, IST, PXL, SSD, SVT).
+/// - `StiMasterHitLoader` — calls each loader in sequence.
+/// - `StiHitContainer` — indexed container of all hits for the current event;
+///   supports nearest-neighbour lookup keyed by (refAngle, position).
+
+/// @defgroup StiVertexFinding Vertex Finding
+/// @brief Abstract interface and implementations for primary-vertex finding.
+///
+/// **Key classes:**
+/// - `StiVertexFinder` — abstract interface: `fit(StEvent*)`, `getVertex(i)`,
+///   `size()`, `clear()`.  Implementations use different strategies
+///   (PPV, minuit minimiser, …).
+
+/// @defgroup StiWorkflow Workflow and Steering
+/// @brief Top-level STAR maker that orchestrates the full tracking chain.
+///
+/// **Key classes:**
+/// - `StiMaker` — inherits `StMaker`; `Init()` builds geometry and allocates
+///   factories; `Make()` loads hits, finds tracks, fits tracks, fills StEvent;
+///   `Finish()` writes debug output.
+/// - `StiToolkit` — service locator that vends factories, containers, and the
+///   detector/track containers to all clients.
+/// - `StiDetectorGroup` / `StiDetectorGroups` — registry of sub-detector units.
+
+/// @defgroup StiUtilities Utilities and Infrastructure
+/// @brief Shared utilities used across all STI categories.
+///
+/// **Key classes:**
+/// - `Named` — name-string mixin (nearly all STI classes inherit this).
+/// - `Described` — description-string mixin.
+/// - `Filter<T>` — abstract predicate functor.
+/// - `StiDebug` — static debug-level control and in-memory histogramming.
+/// - `StiPullEvent` — pull-distribution data class for fit-quality monitoring.
+/// - `Parameter`, `Parameters`, `EditableParameter`, `EditableParameters`,
+///   `ConstrainedParameter` — tunable-parameter infrastructure.
+/// - `SubjectObserver` — lightweight observer-pattern base classes.

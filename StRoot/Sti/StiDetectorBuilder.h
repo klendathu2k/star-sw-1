@@ -1,3 +1,7 @@
+/// @file StiDetectorBuilder.h
+/// @brief Abstract base class for building sub-detector geometry.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STI_DETECTOR_BUILDER_H
 #define STI_DETECTOR_BUILDER_H
 
@@ -39,6 +43,11 @@ typedef std::pair<NameMapKey, StiDetector*> DetectorMapPair;
   \author Ben Norman (Kent State University) Aug 1, 2001
   \author Claude Pruneau (Wayne State University) Oct 16, 2002
 */
+/// @class StiDetectorBuilder
+/// @brief Abstract base class for constructing sub-detector geometry via the Builder pattern.
+///
+/// Subclasses call add(detector) to register StiDetector objects into the geometry tree.
+/// @ingroup StiDetectorGeometry
 class StiDetectorBuilder : public Named
 {
 public:

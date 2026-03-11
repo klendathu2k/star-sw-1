@@ -5,6 +5,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+/// @file Parameter.h
+/// @brief Single named, described tunable parameter supporting bool, int, float, and double types.
+///
+/// @ingroup StiUtilities
+
 #include "Named.h"
 #include "Described.h"
 #include "Stiostream.h"
@@ -20,6 +25,12 @@ EditableParameter classes.
 \see ConstrainedParameter
 \see EditableParameter 
  */
+/// @class Parameter
+/// @brief A single named, described tunable parameter supporting bool, int, float, and double values.
+///
+/// Provides typed accessors and setters, an optional external value pointer, and an integer key.
+/// Base class for ConstrainedParameter and EditableParameter.
+/// @ingroup StiUtilities
 class Parameter : public Named, public Described
 {
  public:

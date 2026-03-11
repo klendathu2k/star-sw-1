@@ -1,3 +1,7 @@
+/// @file StiFtpcHitLoader.h
+/// @brief Loads FTPC (Forward TPC) hits into StiHitContainer (legacy; FTPC decommissioned after Run 9).
+///
+/// @ingroup StiHitLoading
 #ifndef StiFtpcHitLoader_H
 #define StiFtpcHitLoader_H
 
@@ -16,6 +20,10 @@ class StiGeometryTransform;
 
   \author Claude A Pruneau (Wayne State Univ) 
  */
+/// @class StiFtpcHitLoader
+/// @brief Loads FTPC hits from StEvent into StiHitContainer (legacy; FTPC decommissioned after Run 9).
+///
+/// @ingroup StiHitLoading
 class StiFtpcHitLoader : public StiHitLoader<StEvent,StiGeometryTransform>
 {
 public:

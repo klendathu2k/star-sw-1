@@ -1,3 +1,7 @@
+/// @file StiTreeNode.h
+/// @brief Non-template base for StiCompositeTreeNode providing raw tree-link operations and iteration support.
+///
+/// @ingroup StiMemoryModel
 #ifndef StiDefaultMutableTreeNode_H
 #define StiDefaultMutableTreeNode_H 1
 
@@ -44,6 +48,11 @@
 */
 
 
+/// @class StiTreeNode
+/// @brief Non-template base for StiCompositeTreeNode providing raw tree-link operations and iteration support.
+///
+/// Also the base for StiKalmanTrackNode, making track nodes first-class tree nodes.
+/// @ingroup StiMemoryModel
 class StiTreeNode 
 {
  public:

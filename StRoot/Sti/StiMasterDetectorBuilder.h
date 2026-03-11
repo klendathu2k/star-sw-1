@@ -1,8 +1,16 @@
+/// @file StiMasterDetectorBuilder.h
+/// @brief Aggregates all sub-detector StiDetectorBuilder instances and builds geometry in sequence.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiMasterDetectorBuilder_H
 #define StiMasterDetectorBuilder_H
 #include <vector>
 #include "StiDetectorBuilder.h"
 
+/// @class StiMasterDetectorBuilder
+/// @brief Aggregates all sub-detector StiDetectorBuilder instances; buildDetectors() calls each sub-builder in turn.
+///
+/// @ingroup StiDetectorGeometry
 class StiMasterDetectorBuilder : public StiDetectorBuilder, public vector<StiDetectorBuilder*>
 {
 public:

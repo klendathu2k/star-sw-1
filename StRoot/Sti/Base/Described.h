@@ -4,6 +4,12 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+/// @file Described.h
+/// @brief Mixin providing a free-text description string to Named subclasses.
+///
+/// @ingroup StiUtilities
+
 #include <string>
 using std::string;
 
@@ -14,7 +20,10 @@ base class to provide a "Described" property to objects.
 
 \author Claude A Pruneau
 */
-
+/// @class Described
+/// @brief Mixin that provides a free-text description string to Named subclasses.
+///
+/// @ingroup StiUtilities
 class Described  
 {
 public:

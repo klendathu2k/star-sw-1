@@ -1,3 +1,7 @@
+/// @file StiDetectorContainer.h
+/// @brief Ordered container of StiDetectors providing sequential traversal during track propagation.
+///
+/// @ingroup StiDetectorGeometry
 //StiDetectorContainer.h
 //M.L. Miller (Yale Software)
 //02/02/01
@@ -66,6 +70,11 @@ using std::vector;
 using std::map;
 template <class FILTERED> class Filter;
 
+/// @class StiDetectorContainer
+/// @brief 2D-array container of StiDetectors with moveIn/Out/PlusPhi/MinusPhi traversal.
+///
+/// Organised by (layer=refAngle, row=position) for sequential use during track propagation.
+/// @ingroup StiDetectorGeometry
 class StiDetectorContainer : public Named, public Described
 {
  public:

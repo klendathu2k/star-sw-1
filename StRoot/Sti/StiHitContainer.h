@@ -1,3 +1,7 @@
+/// @file StiHitContainer.h
+/// @brief Manages all STI hits for one event, indexed by (refAngle, position) for fast nearest-neighbour lookup.
+///
+/// @ingroup StiHitLoading
 //StiHitContainer.h
 //M.L. Miller (Yale Software)
 //03/01
@@ -148,6 +152,11 @@ typedef map<HitMapKey, VectorAndEnd, MapKeyLessThan> HitMapToVectorAndEndType;
 ///We define this globally for convenience of users.
 typedef HitMapToVectorAndEndType::value_type HitMapToVectorAndEndTypeValType;
 
+/// @class StiHitContainer
+/// @brief Manages all STI hits for one event, indexed by (refAngle, position) for fast nearest-neighbour lookup.
+///
+/// Key methods: add(), clear(), sortHits(), getHits(StiKalmanTrackNode&, dY, dZ), getNearestHit().
+/// @ingroup StiHitLoading
 class StiHitContainer : public Named, public Described
 {
 public:

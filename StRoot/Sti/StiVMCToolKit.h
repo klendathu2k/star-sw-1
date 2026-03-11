@@ -1,3 +1,7 @@
+/// @file StiVMCToolKit.h
+/// @brief Utilities for accessing the GEANT4/VMC geometry via TGeo from within STI.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiVMCToolKit_h
 #define StiVMCToolKit_h
 

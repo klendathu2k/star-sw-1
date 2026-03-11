@@ -2,6 +2,10 @@
 //M.L. Miller (Yale Software)
 //06/01
 
+/// @file StiPolygon.h
+/// @brief Polygon-shaped detector element for transverse-plane acceptance checks.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiPolygon_HH
 #define StiPolygon_HH
 

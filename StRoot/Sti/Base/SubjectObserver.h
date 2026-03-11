@@ -4,6 +4,12 @@
 
 #ifndef SubjectObserver_HH
 #define SubjectObserver_HH
+
+/// @file SubjectObserver.h
+/// @brief Observer pattern base classes used for parameter change notification in STI.
+///
+/// @ingroup StiUtilities
+
 #include "Stiostream.h"
 #include <vector>
 using std::vector;
@@ -14,6 +20,11 @@ using std::for_each;
 class Subject;
 class Observer;
 
+/// @class Subject
+/// @brief Observable base class that maintains a list of Observers and notifies them on changes.
+///
+/// Used for parameter change notification throughout the STI framework.
+/// @ingroup StiUtilities
 class Subject
 {
 public:
@@ -35,6 +46,12 @@ protected:
     ObserverVec mObservers;
 };
 
+/// @class Observer
+/// @brief Abstract observer that receives change notifications from a Subject.
+///
+/// Implement getNewState() to respond to subject changes. Used with EditableParameters
+/// to react when STI tunable parameters are modified.
+/// @ingroup StiUtilities
 class Observer
 {
 public:

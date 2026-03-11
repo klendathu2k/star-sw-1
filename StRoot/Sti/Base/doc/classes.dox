@@ -1,0 +1,166 @@
+/**
+ * @defgroup StiBase "Sti Base Infrastructure"
+ * @brief Reusable C++ infrastructure underpinning the entire STI tracking framework.
+ *
+ * @details
+ * The `Base/` subdirectory of the STI package provides five orthogonal subsystems that
+ * are used throughout the STAR Track Infrastructure (STI) package without introducing
+ * any dependency on ROOT, STAR offline, or Sti tracking classes themselves.
+ *
+ * The five subsystems are:
+ *  - **Identity**: @ref Named and @ref Described provide name and description mixins.
+ *  - **Memory Management**: @ref BFactory / @ref Factory / @ref StiFactory implement a
+ *    growing-pool allocator that recycles objects without heap fragmentation.
+ *  - **Filtering**: @ref Filter and @ref EditableFilter define accept/reject predicates
+ *    over any type with built-in efficiency counters.
+ *  - **Parameters**: @ref Parameter / @ref ConstrainedParameter / @ref EditableParameter /
+ *    @ref Parameters / @ref EditableParameters provide a hierarchy for tunable parameters
+ *    with optional GUI editing and observer notification.
+ *  - **Observer Pattern**: @ref Subject and @ref Observer deliver change notifications
+ *    when parameter values are updated.
+ *
+ * All classes comply with C++11.  Except for standard library headers (`<string>`,
+ * `<vector>`, etc.) and the `Stiostream.h` compatibility shim, no other headers are
+ * required.
+ *
+ * @see StiBase_page for full documentation.
+ */
+
+/**
+ * @page StiBasePage Sti Base Infrastructure — Overview
+ *
+ * @section StiBaseOverview Overview
+ *
+ * The STI `Base/` library is a collection of small, focused C++ classes that eliminate
+ * repetitive boilerplate across the STI tracking framework.  Each class targets one
+ * specific concern:
+ *
+ *  - Every STI object that needs a name inherits @ref Named.
+ *  - Every STI object that needs a description inherits @ref Described.
+ *  - High-volume objects (hits, track nodes, tracks) are managed by @ref StiFactory to
+ *    avoid per-object heap allocations during the event loop.
+ *  - Acceptance/rejection logic (track selection, hit selection) is expressed through
+ *    @ref Filter and @ref EditableFilter.
+ *  - Tunable constants (search windows, cut values, etc.) are wrapped in
+ *    @ref EditableParameter objects and grouped in @ref EditableParameters containers so
+ *    they can be adjusted without recompiling the library.
+ *  - When parameter values change, @ref Subject notifies all registered @ref Observer
+ *    instances so dependent algorithms can pick up new values automatically.
+ *
+ * @section StiBaseIdentity Identity: Named and Described
+ *
+ * @ref Named is the simplest mixin in the package.  It provides a `std::string _name`
+ * member and the methods `setName()`, `getName()`, and `isName()`.  It is inherited by
+ * virtually every class in the Sti package — detectors, hits, track nodes, factories,
+ * containers, builders, finders, fitters, and parameter sets.
+ *
+ * @ref Described adds a companion `std::string _description` with its own accessor and
+ * mutator methods.  It is typically used together with @ref Named in classes that are
+ * presented to users (e.g. parameter sets, track filters, detector builders).
+ *
+ * @par Usage example
+ * @code{.cpp}
+ * class MyObj : public Named, public Described {
+ * public:
+ *   MyObj() : Named("myObj"), Described("A short description") {}
+ * };
+ * MyObj o;
+ * std::cout << o.getName() << ": " << o.getDescription() << std::endl;
+ * @endcode
+ *
+ * @section StiBaseFactory Memory Management: Factory Hierarchy
+ *
+ * The STAR event loop constructs and destructs millions of small objects (hits, nodes)
+ * per event.  The factory hierarchy avoids heap fragmentation:
+ *
+ *  - @ref BFactory — non-template base; tracks statistics and provides static `Free()`.
+ *  - @ref Factory<A> — typed abstract interface; clients call `getInstance()` and `free()`.
+ *  - @ref StiHolder<O> — internal union wrapper linking the object to its free-list node.
+ *  - @ref StiBlock<O> — fixed-size (100 object) allocation block.
+ *  - @ref StiFactory<C,A> — concrete implementation; maintains block chain and free-list.
+ *
+ * At the end of each event, `reset()` returns all live objects to the free-list in O(blocks)
+ * time without touching the heap.  `clear()` releases all heap memory at job end.
+ *
+ * @par Usage example
+ * @code{.cpp}
+ * Factory<StiHit> *f = StiFactory<StiHit,StiHit>::myInstance();
+ * f->setMaxIncrementCount(200000);
+ * StiHit *h = f->getInstance();   // O(1)
+ * f->free(h);                      // O(1); object is reset before recycling
+ * f->reset();                      // recycle all; O(blocks)
+ * @endcode
+ *
+ * @section StiBaseFilter Filtering: Filter and EditableFilter
+ *
+ * @ref Filter<F> defines a single pure-virtual `accept(const F *)` method together with
+ * `_analyzedCount` and `_acceptedCount` statistics.  The non-virtual `filter()` method
+ * calls `accept()` and updates the counters; callers should use `filter()` rather than
+ * `accept()` directly to keep accurate efficiency numbers.
+ *
+ * @ref EditableFilter<F> multiply-inherits from @ref Filter<F> and @ref EditableParameters,
+ * so that filter thresholds are expressed as @ref EditableParameter objects that can be
+ * changed at runtime.  The standard implementation in the Sti package is
+ * `StiDefaultTrackFilter`.
+ *
+ * @par Implementing a custom filter
+ * @code{.cpp}
+ * class PtCut : public EditableFilter<StiTrack> {
+ * public:
+ *   PtCut() : EditableFilter<StiTrack>("PtCut","Minimum pT cut") {}
+ *   void initialize() override {
+ *     add(new EditableParameter("pTmin","Minimum pT",
+ *           0.2, 0.2, 0.0, 10.0, 0.01, Parameter::Double, 0));
+ *   }
+ *   bool accept(const StiTrack *t) const override {
+ *     Parameter *p = getParameter("pTmin");
+ *     return !p || t->getPt() >= p->getDoubleValue();
+ *   }
+ * };
+ * @endcode
+ *
+ * @section StiBaseParameters Parameters: The Parameter Hierarchy
+ *
+ * The parameter hierarchy provides a layered set of abstractions for tunable values:
+ *
+ *  - @ref Parameter — a single named/described value of type bool, int, float, or double.
+ *    Optionally holds an external pointer that is updated whenever `setValue()` is called.
+ *  - @ref ConstrainedParameter — adds `_minimum`, `_maximum`, `_default` fields;
+ *    `setValue()` silently clamps to `[min, max]`.
+ *  - @ref EditableParameter — adds `_increment` for GUI step controls; `reset()` restores
+ *    the default.
+ *  - @ref Parameters — a named/described `vector<Parameter*>` container with enable/edit
+ *    flags.  Subclasses populate the vector in the pure-virtual `initialize()` method.
+ *  - @ref EditableParameters — extends @ref Parameters with the @ref Subject observer
+ *    interface so that changes can be broadcast automatically.
+ *
+ * @section StiBaseObserver Observer Pattern: Subject and Observer
+ *
+ * @ref Subject maintains a `vector<Observer*>` (`mObservers`) and provides `attach()`,
+ * `detach()`, and `notify()`.  @ref Observer is an abstract base with the pure-virtual
+ * `getNewState()` that is called by `changed()`.
+ *
+ * The primary use in the STI framework is the connection between a GUI that edits
+ * @ref EditableParameters and the algorithm objects (finders, fitters, loaders) that
+ * depend on those parameters: the algorithm registers itself as an `Observer`; when the
+ * GUI commits changes it calls `notify()` on the `EditableParameters` (which is a
+ * `Subject`), which in turn calls each algorithm's `getNewState()`.
+ *
+ * @par Connecting an observer
+ * @code{.cpp}
+ * class AlgorithmAdaptor : public Observer {
+ * public:
+ *   AlgorithmAdaptor(Subject *s, MyAlgo *a) : Observer(s), mAlgo(a) {}
+ *   void getNewState() override { mAlgo->readParameters(); }
+ * private:
+ *   MyAlgo *mAlgo;
+ * };
+ *
+ * EditableParameters *params = ...;
+ * MyAlgo algo;
+ * AlgorithmAdaptor adaptor(params, &algo);
+ * params->attach(&adaptor);
+ * // Later:
+ * params->notify();  // triggers algo.readParameters()
+ * @endcode
+ */

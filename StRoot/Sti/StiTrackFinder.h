@@ -1,3 +1,7 @@
+/// @file StiTrackFinder.h
+/// @brief Abstract interface for the STI track-finding algorithm.
+///
+/// @ingroup StiTrackFinding
 #ifndef StiTrackFinder_H
 #define StiTrackFinder_H 1
 #include <vector>

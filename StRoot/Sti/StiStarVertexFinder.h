@@ -1,3 +1,7 @@
+/// @file StiStarVertexFinder.h
+/// @brief Adapter bridging StGenericVertexFinder implementations to the StiVertexFinder interface.
+///
+/// @ingroup StiVertexFinding
 #ifndef StiStarVertexFinder_H
 #define StiStarVertexFinder_H 1
 #include "Sti/StiVertexFinder.h"
