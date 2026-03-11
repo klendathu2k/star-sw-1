@@ -1,0 +1,44 @@
+# Doxyfile for StFtpcSlowSimMaker
+# Generated for STAR FTPC Slow Simulator documentation
+
+PROJECT_NAME           = "StFtpcSlowSimMaker"
+PROJECT_BRIEF          = "STAR Forward Time Projection Chamber — Full Detector Slow Simulator"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = .
+CREATE_SUBDIRS         = NO
+
+INPUT                  = ..
+RECURSIVE              = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_ANON_NSPACES   = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+FILE_PATTERNS          = *.cc *.cxx *.hh *.h *.dox
+EXTENSION_MAPPING      = cc=C++ cxx=C++ hh=C++ h=C++ dox=C++
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+
+HAVE_DOT               = NO
+
+# Pull the Doxygen comment blocks in from the .dox file
+INPUT                  = .. \
+                         StFtpcSlowSimMaker.dox
+
+RECURSIVE              = NO

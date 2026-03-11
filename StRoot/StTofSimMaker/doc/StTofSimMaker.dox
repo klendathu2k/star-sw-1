@@ -1,0 +1,419 @@
+/**
+ * @file StTofSimMaker.dox
+ * @brief Doxygen documentation for the StTofSimMaker package.
+ *
+ * This file provides the full narrative documentation for StTofSimMaker, the
+ * STAR fast simulator for the prototype Time-of-Flight (TOFp) scintillator-slat
+ * detector.  It is read by Doxygen when building the HTML reference manual.
+ */
+
+// ---------------------------------------------------------------------------
+// Defgroup
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StTofSimMaker StTofSimMaker — TOFp Fast Simulator
+ *
+ * @brief Fast Monte Carlo digitiser for the STAR prototype Time-of-Flight
+ *        (TOFp / early pTOF) scintillator-slat detector.
+ *
+ * @section tof_overview Physics Overview
+ *
+ * The STAR Time-of-Flight Prototype (TOFp) was a scintillator-based detector
+ * installed in the pseudo-rapidity region |η| < 1 at inner radii of the STAR
+ * barrel.  It comprised up to 41 plastic-scintillator slats read out by
+ * photomultiplier tubes (PMTs) at one end.  The primary physics goal was
+ * hadron identification via the measurement of the particle's flight time
+ * between the primary interaction vertex and the detector face, combined with
+ * the track momentum reconstructed by the STAR Time Projection Chamber (TPC).
+ *
+ * The detector's operating principle is:
+ *   -# A charged particle traverses a scintillator slat and deposits energy
+ *      \f$\Delta E\f$ over a track-segment length \f$\Delta s\f$.
+ *   -# Scintillation photons propagate along the slat to the PMT at one end.
+ *      The number of photo-electrons produced is:
+ *      \f[
+ *        N_\mathrm{phe} = \Delta E \times C_{\gamma/\mathrm{GeV}}
+ *                         \times \varepsilon_\mathrm{cath}
+ *                         \times A_\mathrm{cath}/A_\mathrm{slat}
+ *                         \times (1 - L_\mathrm{surf})
+ *      \f]
+ *      where \f$C_{\gamma/\mathrm{GeV}}\f$ is the photon yield per GeV,
+ *      \f$\varepsilon_\mathrm{cath}\f$ is the PMT cathode quantum efficiency,
+ *      \f$A_\mathrm{cath}/A_\mathrm{slat}\f$ is the cathode-to-slat surface
+ *      ratio, and \f$L_\mathrm{surf}\f$ accounts for coupling losses.
+ *      An optional attenuation-length model (currently disabled) gives
+ *      \f$N_\mathrm{phe} \propto e^{-\ell/\lambda}\f$ instead.
+ *   -# The propagation delay to the PMT introduces a position-dependent shift:
+ *      \f[
+ *        t_\mathrm{prop} = t_\mathrm{GEANT} + \ell \cdot v_\mathrm{delay}
+ *      \f]
+ *      where \f$\ell\f$ is the distance from the hit position to the
+ *      far (PMT) end and \f$v_\mathrm{delay}\f$ (ns/cm) is the inverse group
+ *      velocity of scintillation light in the material.
+ *   -# Timing resolution is dominated by photoelectron statistics at the PMT.
+ *      The single-hit resolution grows with propagation distance as
+ *      \f$\sigma_t = \sigma_0 \sqrt{\ell}\f$ (floor-limited to 50 ps).
+ *      An additional Gaussian smearing models the start-time resolution of the
+ *      pVPD or beam-beam counter.
+ *   -# Raw PMT signals are digitised:
+ *      \f{align*}{
+ *        \mathrm{TDC} &= t_\mathrm{hit} / c_\mathrm{TDC} + \delta_\mathrm{TDC}\\
+ *        \mathrm{ADC} &= N_\mathrm{phe} \times f_\mathrm{nphe\to ADC} + \delta_\mathrm{ADC}
+ *      \f}
+ *      where the offsets \f$\delta\f$ include a Gaussian noise term drawn from
+ *      per-slat calibration spreads stored in the STAR database.
+ *      Both ADC and TDC are clamped to their hardware ranges (1024 and 2048
+ *      counts, respectively).
+ *
+ * @section tof_arch Software Architecture
+ *
+ * StTofSimMaker is a standard STAR Maker (StMaker) that sits in the
+ * reconstruction chain.  The processing flow per event is:
+ *
+ * 1. **Init()** — Instantiate and initialise calibration (StTofCalibration)
+ *    and simulation-parameter (StTofSimParam) database objects.  Optionally
+ *    book diagnostic ROOT histograms when `m_Mode != 0`.
+ * 2. **InitRun()** — (Re-)initialise the geometry database (StTofGeometry) for
+ *    each new run, because the detector layout may change between runs.
+ * 3. **Make()** — Main per-event entry point:
+ *    - Retrieve the `g2t_tof_hit` GEANT table from the `"geant"` dataset.
+ *    - Call detectorResponse() for every GEANT hit to obtain a
+ *      per-hit StTofMCSlat with digitised ADC/TDC values.
+ *    - Merge all hits that landed on the same slat index: accumulate energy
+ *      deposit, photoelectron count, and step length; keep the fastest TDC.
+ *    - Call fillRaw(), electronicNoise(), fillEvent() (currently stubs for
+ *      future implementation).
+ *    - Populate an StTofSlatCollection and an StTofDataCollection (48 DAQ
+ *      channels via the geometry-based DAQ-to-slat-ID map).
+ *    - Attach both collections to the StTofCollection inside StEvent.
+ *    - Log a pVPD hit count from `g2t_vpd_hit` (not yet digitised).
+ * 4. **FinishRun()** — Delete the geometry object to free memory.
+ * 5. **Finish()** — Write diagnostic histograms to `tofsim.root` when
+ *    `m_Mode != 0`.
+ *
+ * @section tof_databases Database Dependencies
+ *
+ * | Class             | Purpose                                    |
+ * |-------------------|--------------------------------------------|
+ * | StTofCalibration  | Per-slat TDC/ADC offsets and noise widths  |
+ * | StTofSimParam     | Global physics and digitisation parameters |
+ * | StTofGeometry     | Slat geometry: η/φ bins, z extents, angles |
+ *
+ * @section tof_inputs GEANT Input Tables
+ *
+ * | Table name       | STAF type       | Content                             |
+ * |------------------|-----------------|-------------------------------------|
+ * | `g2t_tof_hit`    | St_g2t_ctf_hit  | TOFp scintillator-slat GEANT hits   |
+ * | `g2t_vpd_hit`    | St_g2t_vpd_hit  | pVPD GEANT hits (logged, not used)  |
+ *
+ * @section tof_output Output
+ *
+ * The maker stores an StTofCollection in the current StEvent containing:
+ * - An **StTofSlatCollection** of StTofMCSlat objects (one per fired slat).
+ * - An **StTofDataCollection** of StTofData objects (one per DAQ channel,
+ *   zero-filled for channels without a hit).
+ *
+ * @author Frank Geurts (original design and implementation)
+ * @author Various STAR collaborators (see CVS/RCS log in source files)
+ */
+
+// ---------------------------------------------------------------------------
+// File documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @file StTofSimMaker.h
+ * @ingroup StTofSimMaker
+ * @brief Header for the TOFp fast-simulator maker.
+ *
+ * Declares the StTofSimMaker class, its private data members (database
+ * interface pointers and diagnostic histograms) and its public interface
+ * (standard StMaker lifecycle methods plus the protected detector-response
+ * helpers).
+ *
+ * @author Frank Geurts
+ * $Id: StTofSimMaker.h,v 1.5 2014/08/06 11:43:49 jeromel Exp $
+ */
+
+/**
+ * @file StTofSimMaker.cxx
+ * @ingroup StTofSimMaker
+ * @brief Implementation of the TOFp fast-simulator maker.
+ *
+ * Contains all method bodies for StTofSimMaker, including the main per-event
+ * digitisation loop, detector-response modelling, and histogram output.
+ *
+ * @author Frank Geurts
+ * $Id: StTofSimMaker.cxx,v 1.13 2018/02/26 23:26:51 smirnovd Exp $
+ */
+
+// ---------------------------------------------------------------------------
+// Class documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StTofSimMaker
+ * @ingroup StTofSimMaker
+ * @brief Fast Monte Carlo digitiser for the STAR prototype TOFp detector.
+ *
+ * StTofSimMaker is a standard STAR Maker that converts raw GEANT-4 / GSTAR
+ * hits produced for the TOFp scintillator-slat system into the digitised ADC
+ * and TDC values expected by the offline reconstruction chain.
+ *
+ * The detector comprised up to 41 plastic-scintillator slats arranged in a
+ * tray at |η| < 1.  Each slat was read out by a single PMT at its far end.
+ * The simulator models:
+ *   - photon yield and PMT photo-electron statistics,
+ *   - scintillation light propagation delay,
+ *   - timing resolution (position-dependent Gaussian smearing),
+ *   - start-time resolution (pVPD/BBC smearing),
+ *   - per-slat TDC/ADC linearisation and noise from the calibration database.
+ *
+ * An optional exponential attenuation-length model (slatResponseExp()) is
+ * implemented but currently disabled in favour of a simpler uniform-yield
+ * parameterisation.
+ *
+ * ### Typical Usage in a STAR Analysis Chain
+ * @code
+ * StTofSimMaker* tofSim = new StTofSimMaker("TofSim");
+ * chain->AddMaker(tofSim);
+ * @endcode
+ * The maker will automatically locate GEANT data and StEvent in the chain
+ * datasets.
+ *
+ * ### Diagnostic Histograms
+ * When `m_Mode` is set to a non-zero value (e.g. via `maker->SetMode(1)`),
+ * the following ROOT histograms are booked and written to `tofsim.root` at
+ * the end of the job:
+ *
+ * | Histogram            | Axis                           | Description                          |
+ * |----------------------|--------------------------------|--------------------------------------|
+ * | `mdE`                | Energy deposit (GeV)           | GEANT energy deposit per hit         |
+ * | `mdS`                | Step length (cm)               | GEANT step length per hit            |
+ * | `mNumberOfPhotoelectrons` | N_phe count               | Photo-electrons at the PMT cathode   |
+ * | `mT`                 | Time (s)                       | Propagation-delay-corrected TOF      |
+ * | `mTime`              | Time (s)                       | TOF with hit-position smearing only  |
+ * | `mTime1`             | Time (s)                       | Fully smeared TOF (+ start-time res) |
+ * | `mPMlength`          | Distance (cm)                  | Light path from hit to PMT           |
+ * | `mAdc`               | ADC counts [0, 1024]           | Digitised ADC output                 |
+ * | `mTdc`               | TDC counts [0, 2048]           | Digitised TDC output                 |
+ *
+ * @see StTofCalibration, StTofSimParam, StTofGeometry, StTofMCSlat
+ */
+
+// ---------------------------------------------------------------------------
+// Constructor and destructor
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn StTofSimMaker::StTofSimMaker(const char *name)
+ * @brief Default constructor.
+ *
+ * Registers the maker with the STAR chain under the given name and zeroes all
+ * database interface pointers (mGeomDb, mCalibDb, mSimDb).  Histogram
+ * pointers are left uninitialised until Init() is called.
+ *
+ * @param name  Name used to identify this maker in the STAR chain.
+ *              Defaults to `"TofSim"`.
+ */
+
+/**
+ * @fn StTofSimMaker::~StTofSimMaker()
+ * @brief Destructor.
+ *
+ * No explicit cleanup is performed; database objects are allocated on the heap
+ * but their lifetimes are managed by InitRun()/FinishRun() and Init() calls.
+ * ROOT histogram ownership is transferred to ROOT's memory management once
+ * they are booked.
+ */
+
+// ---------------------------------------------------------------------------
+// StMaker lifecycle methods
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn Int_t StTofSimMaker::Init()
+ * @brief Initialise database interfaces and optionally book diagnostic
+ *        histograms.
+ *
+ * Performs the following in order:
+ * 1. Creates an StTofCalibration object and calls its `init()` method to
+ *    populate per-slat TDC/ADC calibration constants.
+ * 2. Creates an StTofSimParam object and calls its `init()` method to load
+ *    the global physics and digitisation parameters.
+ * 3. If `m_Mode != 0`, books nine TH1F diagnostic histograms (see class
+ *    documentation for the full list).
+ * 4. Calls `StMaker::Init()` to complete standard STAR initialisation.
+ *
+ * @note The geometry database (StTofGeometry) is intentionally **not**
+ *       initialised here; that is deferred to InitRun() so that it can be
+ *       re-read for every run.
+ *
+ * @return `kStOK` on success (propagated from StMaker::Init()).
+ */
+
+/**
+ * @fn Int_t StTofSimMaker::InitRun(int runnumber)
+ * @brief Per-run initialisation — (re-)initialise the TOFp geometry.
+ *
+ * Constructs a new StTofGeometry object and calls its `init()` method,
+ * passing `this` (the current maker) so that the geometry object can access
+ * the STAR database through the chain.  This is done once per run rather than
+ * once per job so that geometry changes between runs (e.g. detector
+ * commissioning stages) are correctly handled.
+ *
+ * @param runnumber  STAR run number for the new run (not used directly,
+ *                   provided by the StMaker framework).
+ * @return `kStOK` always.
+ */
+
+/**
+ * @fn Int_t StTofSimMaker::FinishRun(int runnumber)
+ * @brief Per-run cleanup — release the geometry database object.
+ *
+ * Deletes the StTofGeometry object allocated in InitRun() and sets
+ * the pointer to `nullptr` to guard against double-deletion.
+ *
+ * @param runnumber  STAR run number for the run that just finished
+ *                   (not used directly).
+ * @return 0 always.
+ */
+
+/**
+ * @fn Int_t StTofSimMaker::Make()
+ * @brief Main per-event entry point.  Digitise all TOFp GEANT hits and
+ *        attach results to StEvent.
+ *
+ * Processing steps:
+ * 1. **Retrieve GEANT data** — fetches the `"geant"` dataset from the chain.
+ * 2. **Process TOFp hits** — iterates over every row in the `g2t_tof_hit`
+ *    table, calling detectorResponse() for each hit to produce an
+ *    StTofMCSlat with simulated ADC/TDC values.
+ * 3. **Merge multi-hit slats** — slats struck by more than one GEANT hit are
+ *    reduced to a single entry by:
+ *      - accumulating \f$\Delta E\f$, \f$\Delta s\f$, and \f$N_\mathrm{phe}\f$,
+ *      - keeping the earliest time-of-flight and smallest TDC count.
+ * 4. **Stub calls** — calls fillRaw(), electronicNoise() (if enabled), and
+ *    fillEvent(); all three are currently empty stubs.
+ * 5. **Build StTofSlatCollection** — wraps merged StTofMCSlat objects in
+ *    heap-allocated pointers and inserts them into an StTofSlatCollection.
+ * 6. **Build StTofDataCollection** — iterates over all 48 DAQ channels,
+ *    creates an StTofData for each channel (zero-filled when no hit), and
+ *    appends to the collection.
+ * 7. **Populate StEvent** — attaches the StTofCollection (containing both
+ *    sub-collections) to the StEvent object obtained from the chain.
+ * 8. **Verification logging** — emits INFO-level messages confirming the
+ *    presence of the tofCollection, slatCollection, and hitCollection in
+ *    StEvent.
+ * 9. **pVPD** — logs the number of `g2t_vpd_hit` rows; digitisation is not
+ *    yet implemented.
+ *
+ * @return `kStOK` on success; `kStWarn` if StEvent cannot be found in the
+ *         chain (TOF data cannot be stored).
+ */
+
+/**
+ * @fn Int_t StTofSimMaker::Finish()
+ * @brief End-of-job cleanup and histogram output.
+ *
+ * When `m_Mode != 0`, opens (or recreates) `tofsim.root` in the current
+ * directory and writes all nine diagnostic histograms to it.  Returns
+ * `kStOK` in both the histogram and no-histogram cases.
+ *
+ * @return `kStOK` always.
+ */
+
+// ---------------------------------------------------------------------------
+// Protected helper methods
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn StTofMCSlat StTofSimMaker::detectorResponse(g2t_ctf_hit_st* tof_hit)
+ * @brief Model the full detector response for a single GEANT hit and return
+ *        a digitised StTofMCSlat.
+ *
+ * This is the core physics routine of the simulator.  Given one row of the
+ * `g2t_tof_hit` table, it:
+ *
+ * 1. **Geometry look-up** — determines the slat index from the 3-D hit
+ *    position via StTofGeometry::tofSlatCrossId().  Cross-checks against the
+ *    `volume_id` field and falls back to `volume_id` on mismatch (with a
+ *    warning).
+ * 2. **Path length to PMT** — using the slat geometry (z_min, z_max,
+ *    cos(angle)):
+ *    \f[
+ *      \ell = (z_\mathrm{max} - z_\mathrm{hit}) / \cos\theta
+ *    \f]
+ * 3. **Photo-electron yield** — computes \f$N_\mathrm{phe}\f$ (see class
+ *    description for formula).  Logs a warning if `slat_para` is set,
+ *    because the look-up-table model is not yet implemented.
+ * 4. **Timing** — uses a CLHEP RandGauss engine to apply:
+ *    - `tt`  = GEANT TOF + Gaussian(\f$\sigma_t = \max(\sigma_0\sqrt{\ell},
+ *      50\,\mathrm{ps})\f$) — hit-position resolution only.
+ *    - `tt1` = propagation-delay-corrected TOF + Gaussian(start_res) —
+ *      fully smeared time used for TDC digitisation.
+ * 5. **Digitisation** — converts `tt1` and \f$N_\mathrm{phe}\f$ to TDC and
+ *    ADC counts using per-slat calibration constants with added Gaussian
+ *    noise.  Both values are clamped to hardware limits (TDC ≤ 2048,
+ *    ADC ≤ 1024).
+ * 6. **Fill StTofMCSlat** — populates the MC-truth fields of an
+ *    StTofMCInfo struct and attaches it, together with the ADC/TDC values,
+ *    to a freshly constructed StTofMCSlat.
+ * 7. **Histogram filling** — if `m_Mode != 0`, fills the diagnostic
+ *    histograms.
+ *
+ * @param tof_hit  Pointer to one row of the `g2t_tof_hit` GEANT table.
+ *                 Must not be `nullptr`.
+ * @return A fully populated StTofMCSlat with slatIndex, ADC, TDC, and all
+ *         MC-truth fields set.
+ */
+
+/**
+ * @fn void StTofSimMaker::fillRaw()
+ * @brief Stub: digitise to raw ADC and TDC entries.
+ *
+ * Currently empty; reserved for a future implementation that would fill the
+ * raw data arrays independently of the per-hit detector response loop.
+ */
+
+/**
+ * @fn void StTofSimMaker::electronicNoise()
+ * @brief Stub: add electronic-noise hits.
+ *
+ * Currently empty; called from Make() only when
+ * `StTofSimParam::elec_noise() < 0`.  Reserved for a future implementation
+ * that would inject random noise hits into the data stream at the rate
+ * specified by the `elec_noise` parameter.
+ */
+
+/**
+ * @fn void StTofSimMaker::fillEvent()
+ * @brief Stub: fill StEvent with processed data.
+ *
+ * Currently empty; reserved for future use.  The actual StEvent population
+ * is performed directly inside Make().
+ */
+
+/**
+ * @fn float StTofSimMaker::slatResponseExp(float& dz)
+ * @brief Exponential attenuation model for scintillator slat light yield.
+ *
+ * Implements:
+ * \f[
+ *   R(\ell) = C_{\gamma/\mathrm{GeV}} \cdot \varepsilon_\mathrm{cath}
+ *             \cdot (A_\mathrm{cath}/A_\mathrm{slat})
+ *             \cdot (1 - L_\mathrm{surf})
+ *             \cdot e^{-\ell/\lambda}
+ * \f]
+ * where \f$\lambda\f$ is the attenuation length from StTofSimParam.
+ *
+ * @note This function is **not called** in the current implementation.
+ *       detectorResponse() uses the simpler position-independent formula.
+ *       The function is retained for reference and potential future use.
+ *
+ * @param dz  Distance from the hit position to the PMT end of the slat (cm).
+ *            Passed by reference for historical reasons; not modified.
+ * @return The light-yield response factor (photo-electrons per GeV of energy
+ *         deposit) including exponential attenuation.
+ */

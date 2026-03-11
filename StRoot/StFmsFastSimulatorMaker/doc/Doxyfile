@@ -1,0 +1,56 @@
+# Doxyfile for StFmsFastSimulatorMaker
+# Generated for STAR FMS fast simulator documentation.
+
+#---------------------------------------------------------------------------
+# Project identity
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "StFmsFastSimulatorMaker"
+PROJECT_BRIEF          = "STAR FMS/FPD Fast Digitisation Simulator"
+PROJECT_NUMBER         = "1.11"
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+# INPUT is set relative to the location of this Doxyfile (doc/).
+# ".." therefore refers to StRoot/StFmsFastSimulatorMaker/.
+INPUT                  = ..
+INPUT                  += .
+FILE_PATTERNS          = *.h *.cxx *.dox
+RECURSIVE              = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+#---------------------------------------------------------------------------
+# Output
+#---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+
+#---------------------------------------------------------------------------
+# Build options
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+PREDEFINED             = ClassDef(x,y)=
+
+#---------------------------------------------------------------------------
+# Appearance / verbosity
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+#---------------------------------------------------------------------------
+# Dot / graphs (disabled to keep the build self-contained)
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO

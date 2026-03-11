@@ -1,0 +1,811 @@
+/**
+ * @file StPxlSimMaker.dox
+ * @brief Doxygen documentation for the STAR PXL detector simulation package.
+ *
+ * This file contains narrative documentation, @defgroup, @class, @fn, and @file
+ * blocks for all classes and methods in StRoot/StPxlSimMaker/.
+ *
+ * References:
+ *  - PXL sensor specification: doc/PXL_ultimate_sensor.pdf
+ *  - DIGMAPS simulation tool: doc/Simulation_tool_sep2011_besson.pdf
+ *  - STAR note SN0600 (HFT technical design report)
+ */
+
+// ============================================================
+// Group definition
+// ============================================================
+
+/**
+ * @defgroup StPxlSimMaker StPxlSimMaker — PXL Detector Simulation
+ *
+ * @brief Monte Carlo simulation of the STAR Pixel (PXL) detector, the innermost
+ *        layer of the Heavy Flavour Tracker (HFT).
+ *
+ * @section pxl_overview Hardware Overview
+ *
+ * The STAR PXL detector is a Monolithic Active Pixel Sensor (MAPS) detector
+ * based on the ULTIMATE sensor chip (MIMOSA-28).  It was installed for
+ * RHIC Run 14 and Run 15 to provide the primary vertex resolution and heavy-flavour
+ * tracking capability required for D-meson reconstruction.
+ *
+ * Geometry summary:
+ * | Quantity                          | Value                    |
+ * |-----------------------------------|--------------------------|
+ * | Sectors                           | 10                       |
+ * | Ladders per sector (inner/outer)  | 1 inner + 3 outer = 4    |
+ * | Sensors per ladder                | 10                       |
+ * | Total sensors                     | 400                      |
+ * | Pixel pitch                       | 20.7 μm                  |
+ * | Rows × columns per sensor         | 928 × 960                |
+ * | Active area per sensor (X × Z)    | 19.21 mm × 19.87 mm      |
+ * | Epitaxial layer thickness         | ≈ 18 μm                  |
+ * | Inner-layer radius                | ≈ 2.8 cm                 |
+ *
+ * @section pxl_coordinates Coordinate Conventions
+ *
+ * The STAR global coordinate system has Z along the beam axis, X horizontal,
+ * and Y vertical.  Within a PXL sensor the local frame is:
+ *  - **local X**: along sensor rows (DIGMAPS X direction, 928 rows).
+ *  - **local Y**: normal to the sensor plane (depth, into epitaxial layer).
+ *  - **local Z**: along sensor columns (DIGMAPS Y direction, 960 columns).
+ *
+ * @warning The PXL sensor design documentation refers to the column direction as
+ * "local Y" and the row direction as "local X", which is the *opposite* of the
+ * STAR convention.  The code maps sensor-design Y → STAR local Z and
+ * sensor-design X → STAR local X.  The constants kPxlActiveLengthX (1.921 cm)
+ * and kPxlActiveLengthY (1.987 cm) are named from the sensor perspective.
+ *
+ * @section pxl_physics MAPS Physics
+ *
+ * MAPS devices differ from traditional strip or hybrid pixel sensors in that they
+ * use an unbiased (or lightly reverse-biased) epitaxial layer.  There is no
+ * significant electric drift field for signal electrons; charge collection is
+ * dominated by *thermal diffusion*.  The lateral spread of a charge cloud
+ * created at depth @f$z_0@f$ after diffusing to the surface follows:
+ *
+ * @f[
+ *   \sigma_{\rm diff}(z_0) = \sqrt{2 D \, t(z_0)}
+ * @f]
+ *
+ * where @f$D = \mu_e\,k_B T / q@f$ is the electron diffusion coefficient and
+ * @f$t(z_0)@f$ is the collection time for carriers generated at depth @f$z_0@f$.
+ * In practice the diffusion profile is well described by a mixture of a
+ * Gaussian and a Lorentzian (Voigt-like) function, which is the model
+ * implemented in the DIGMAPS package.
+ *
+ * The number of electron–hole pairs created in a path length @f$\delta x@f$ is:
+ *
+ * @f[
+ *   N_e = \frac{\Delta E_{\rm dep}}{\varepsilon_{\rm ion}}
+ * @f]
+ *
+ * where @f$\varepsilon_{\rm ion} \approx 3.6\ \mathrm{eV}@f$ is the mean
+ * ionization energy in silicon and @f$\Delta E_{\rm dep}@f$ is sampled from a
+ * Landau distribution whose most probable value scales with track length.
+ *
+ * The momentum (βγ) dependence of dE/dx is parametrized according to the
+ * Bethe–Bloch formula as implemented in dEdxvsBGNorm():
+ *
+ * @f[
+ * f(\beta\gamma) = \begin{cases}
+ *   \dfrac{p_0}{\beta^2}\left(\tfrac{1}{2}\ln(\beta^2\gamma^2\,p_1)
+ *     - \beta^2 - \tfrac{\delta}{2}\right), & \beta\gamma \le 10 \\[6pt]
+ *   p_3 + p_4\ln(\beta\gamma) + p_5\left[\ln(\beta\gamma)\right]^2, & \beta\gamma > 10
+ * \end{cases}
+ * @f]
+ *
+ * where @f$\delta = \ln(\beta\gamma) + p_2@f$ is the density correction and
+ * the six parameters @f$p_0 \ldots p_5@f$ are stored in the STAR calibration
+ * database table `pxlDigmapsSim`.  The function is normalized so that its
+ * value equals unity at the minimum-ionizing-particle (MIP) point.
+ *
+ * @section pxl_fast_sim Fast Simulation (StPxlFastSim)
+ *
+ * The fast simulator skips detailed charge transport and approximates the
+ * detector response by **Gaussian smearing** of the MC truth hit position in
+ * local sensor coordinates:
+ *
+ * @f[
+ *   x' = \mathcal{N}(x_{\rm MC},\; \sigma_x), \qquad
+ *   z' = \mathcal{N}(z_{\rm MC},\; \sigma_z)
+ * @f]
+ *
+ * where @f$\sigma_x = \sqrt{c_0}@f$ and @f$\sigma_z = \sqrt{c_3}@f$ are the
+ * RMS hit resolutions read from the DB table `PixelHitError` (array elements
+ * `coeff[0]` and `coeff[3]`).  The smeared position is accepted only if it
+ * remains within the active area half-lengths
+ * @f$|x'| < L_x/2 = 0.9605\ \mathrm{cm}@f$,
+ * @f$|z'| < L_z/2 = 0.9936\ \mathrm{cm}@f$;
+ * otherwise the smearing is repeated.
+ *
+ * The local position is then transformed to the STAR global frame through the
+ * sensor's TGeoHMatrix (from StPxlDb or TGeoManager), and an StPxlHit is
+ * created and added directly to StPxlHitCollection.
+ *
+ * **Output:** StPxlHitCollection (reconstructed hit points) in StEvent.
+ *
+ * @section pxl_digmaps_sim DIGMAPS Slow Simulation (StPxlDigmapsSim)
+ *
+ * The DIGMAPS-based simulator performs a step-by-step model of the physical
+ * processes in the MAPS sensor.  For each MC hit in a good sensor it:
+ *
+ *  1. **Applies hit efficiency** — optionally momentum-dependent or constant,
+ *     loaded from the `pxlSimPar` DB table.
+ *  2. **Applies alignment offset** — per-sensor Gaussian offset
+ *     @f$(N(0,\sigma_{\rm add,x}),\, N(0,\sigma_{\rm add,z}))@f$ to account
+ *     for residual misalignment and calibration uncertainty.
+ *  3. **Calculates incidence positions** — projects the hit along the track
+ *     direction to find the entry and exit points of the epitaxial layer.
+ *  4. **Re-samples energy loss** — draws from
+ *     @f$\mathrm{Landau}(\mathrm{MPV}, \sigma) \times f(\beta\gamma)@f$.
+ *  5. **DIGMAPS charge deposition** — segments the track, depositing charge
+ *     proportional to segment length × ionization yield.
+ *  6. **DIGMAPS charge transport** — diffuses each charge deposit to the
+ *     pixel array using the 1D Gauss+Lorentz model.
+ *  7. **Noise** — adds Gaussian random noise to each pixel.
+ *  8. **ADC** — applies a 1-bit threshold comparator (pixel fires if charge
+ *     exceeds the threshold stored in `pxlDigmapsSim.adcThreshold`).
+ *  9. **Masking** — rejects pixels that are flagged as hot or belonging to
+ *     masked rows/columns in the `pxlRowColumnStatus` and `pxlHotPixels` DB
+ *     tables.
+ *
+ * **Output:** StPxlRawHitCollection on the STAR whiteboard, keyed "pxlRawHit".
+ * The raw hits must subsequently be clustered by StPxlHitMaker to produce
+ * StPxlHitCollection.
+ *
+ * @section pxl_usage Usage
+ *
+ * @code
+ * // Default: fast simulator, DB geometry, fixed random seed
+ * StPxlSimMaker* pxlSim = new StPxlSimMaker();
+ * chain->AddMaker(pxlSim);
+ *
+ * // Switch to DIGMAPS slow simulator
+ * pxlSim->useDIGMAPSSim();
+ *
+ * // Use ideal (TGeo) geometry instead of DB alignment
+ * pxlSim->useIdealGeom();
+ *
+ * // Enable truly random seed for reproducibility studies
+ * pxlSim->useRandomSeed();
+ * @endcode
+ *
+ * @author M. Mustafa (primary), A. Rose, Y. Fisyak, M. Miller (fast sim),
+ *         X. Dong (DIGMAPS integration), D. Smironv (refactoring)
+ *
+ * @ingroup StPxlSimMaker
+ */
+
+// ============================================================
+// @file blocks
+// ============================================================
+
+/**
+ * @file StPxlISim.h
+ * @brief Abstract interface for all PXL simulation back-ends.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlSimMaker.h
+ * @brief Declaration of the STAR-framework Maker that drives PXL simulation.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlSimMaker.cxx
+ * @brief Implementation of StPxlSimMaker.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlFastSim.h
+ * @brief Declaration of the fast Gaussian-smearing PXL simulator.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlFastSim.cxx
+ * @brief Implementation of StPxlFastSim.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlDigmapsSim.h
+ * @brief Declaration of the DIGMAPS-based slow PXL simulator.
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @file StPxlDigmapsSim.cxx
+ * @brief Implementation of StPxlDigmapsSim.
+ * @ingroup StPxlSimMaker
+ */
+
+// ============================================================
+// StPxlISim
+// ============================================================
+
+/**
+ * @class StPxlISim
+ * @brief Abstract base class (interface) for all PXL simulation algorithms.
+ *
+ * @details
+ * StPxlISim defines the contract that every concrete simulator must fulfil.
+ * It inherits from ROOT's TNamed so that it can be registered by name in the
+ * STAR framework.
+ *
+ * Concrete implementations override one or both of addPxlHits() and
+ * addPxlRawHits() depending on whether they produce reconstructed hit points
+ * directly (fast simulation) or raw pixel-level hits that require subsequent
+ * clustering (DIGMAPS slow simulation).
+ *
+ * @par Data Members
+ * | Member        | Type    | Description                                        |
+ * |---------------|---------|----------------------------------------------------|
+ * | (inherited)   | TNamed  | Object name/title used by STAR framework registry  |
+ *
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @fn StPxlISim::StPxlISim(const Char_t *name)
+ * @brief Constructs a named simulator interface.
+ * @param name C-string name passed to TNamed; used by the STAR framework to
+ *             identify this object in the data store.
+ */
+
+/**
+ * @fn virtual Int_t StPxlISim::initRun(const TDataSet& calib_db, const TObjectSet* pxlDbDataSet, const Int_t run) = 0
+ * @brief Pure virtual run-initialisation hook.  Called once per run by
+ *        StPxlSimMaker::InitRun().
+ * @param calib_db     Reference to the calibration dataset from the STAR DB
+ *                     (contains the PixelHitError table and others).
+ * @param pxlDbDataSet Pointer to the TObjectSet wrapping an StPxlDb object;
+ *                     may be @c nullptr if ideal geometry is requested.
+ * @param run          STAR run number (unused in current implementations but
+ *                     provided for future run-dependent calibration).
+ * @return kStOk on success, kStErr or kStFatal on failure.
+ */
+
+/**
+ * @fn virtual Int_t StPxlISim::addPxlHits(const StMcPxlHitCollection& in, StPxlHitCollection& out)
+ * @brief Creates reconstructed StPxlHit objects from MC truth hits.
+ *
+ * @details The default implementation prints a warning and returns 1.
+ * Override this in simulators that produce reconstructed hit points directly
+ * (i.e. the fast simulator).
+ *
+ * @param in  Const reference to the Monte Carlo PXL hit collection
+ *            (StMcPxlHitCollection) from StMcEvent.
+ * @param out Reference to the reconstructed hit collection
+ *            (StPxlHitCollection) in StEvent that will be populated.
+ * @return 0 (kStOk) on success; non-zero on error.
+ */
+
+/**
+ * @fn virtual Int_t StPxlISim::addPxlRawHits(const StMcPxlHitCollection& in, StPxlRawHitCollection& out)
+ * @brief Creates pixel-level StPxlRawHit objects from MC truth hits.
+ *
+ * @details The default implementation prints a warning and returns 1.
+ * Override this in simulators that model individual pixel responses
+ * (i.e. the DIGMAPS slow simulator).
+ *
+ * @param in  Const reference to the Monte Carlo PXL hit collection.
+ * @param out Reference to the raw hit collection (StPxlRawHitCollection)
+ *            that will be populated and placed on the STAR whiteboard.
+ * @return 0 (kStOk) on success; non-zero on error.
+ */
+
+// ============================================================
+// StPxlSimMaker
+// ============================================================
+
+/**
+ * @class StPxlSimMaker
+ * @brief STAR Maker that drives PXL detector simulation.
+ *
+ * @details
+ * StPxlSimMaker is the single entry point for all PXL Monte Carlo simulation
+ * within the STAR reconstruction chain.  It follows the standard StMaker
+ * life-cycle (Init → InitRun → Make) and delegates the actual simulation work
+ * to the active StPxlISim back-end, which is selected at Init() time.
+ *
+ * **Back-end selection:**
+ * | Method call            | Back-end            | Output collection      |
+ * |------------------------|---------------------|------------------------|
+ * | (default)              | StPxlFastSim        | StPxlHitCollection     |
+ * | useDIGMAPSSim()        | StPxlDigmapsSim     | StPxlRawHitCollection  |
+ *
+ * **Geometry source:**
+ * | Method call            | Geometry            |
+ * |------------------------|---------------------|
+ * | (default)              | DB alignment (StPxlDb) |
+ * | useIdealGeom()         | TGeoManager (ideal) |
+ *
+ * @par Data Members
+ * | Member           | Type         | Description                                        |
+ * |------------------|--------------|----------------------------------------------------|
+ * | mPxlSimulator    | StPxlISim*   | Owned pointer to the active simulation back-end.   |
+ * | mUseFastSim      | bool         | True when StPxlFastSim is selected.                |
+ * | mUseDIGMAPSSim   | bool         | True when StPxlDigmapsSim is selected.             |
+ * | mUseDbGeom       | bool         | True (default) to load geometry from StPxlDb.      |
+ * | mUseRandomSeed   | bool         | True to use a time-based random seed.              |
+ *
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @fn StPxlSimMaker::StPxlSimMaker(const Char_t *name)
+ * @brief Default constructor.
+ * @details Initialises mPxlSimulator to nullptr, mUseFastSim and
+ *          mUseDIGMAPSSim to false, mUseDbGeom to true, and
+ *          mUseRandomSeed to true.
+ * @param name Maker name registered with the STAR chain.
+ *             Defaults to @c "pxlSimMaker".
+ */
+
+/**
+ * @fn StPxlSimMaker::~StPxlSimMaker()
+ * @brief Destructor.  Deletes the owned mPxlSimulator pointer.
+ * @note StEvent owns any hit objects created during Make(); this destructor
+ *       does *not* delete those.
+ */
+
+/**
+ * @fn virtual Int_t StPxlSimMaker::Init()
+ * @brief STAR-framework initialisation hook.
+ *
+ * @details Reads the "useDIGMAPSSim" attribute (set via SetAttr or
+ * useDIGMAPSSim()) and instantiates either StPxlDigmapsSim or StPxlFastSim
+ * accordingly.  The back-end choice is mutually exclusive.
+ *
+ * @return kStOk always.
+ */
+
+/**
+ * @fn virtual Int_t StPxlSimMaker::InitRun(Int_t RunNo)
+ * @brief STAR-framework per-run initialisation hook.
+ *
+ * @details Performs the following steps:
+ *  1. Fetches the `Calibrations/tracker/PixelHitError` dataset from the DB.
+ *  2. If mUseDbGeom is true, fetches the `pxl_db` TObjectSet that wraps an
+ *     StPxlDb object containing sensor alignment matrices, status tables,
+ *     masking tables, and DIGMAPS parameters.
+ *  3. Calls mPxlSimulator->initRun() with those datasets.
+ *
+ * @param RunNo STAR run number.
+ * @return kStOk on success, kStErr if any required dataset is missing.
+ */
+
+/**
+ * @fn virtual Int_t StPxlSimMaker::Make()
+ * @brief STAR-framework per-event processing hook.
+ *
+ * @details Retrieves StEvent and StMcEvent from the input dataset.  If
+ * mUseFastSim is active, obtains (or creates) StPxlHitCollection from StEvent
+ * and calls mPxlSimulator->addPxlHits().  If mUseDIGMAPSSim is active,
+ * obtains (or creates) an StPxlRawHitCollection on the whiteboard keyed
+ * "pxlRawHit" and calls mPxlSimulator->addPxlRawHits().
+ *
+ * @return kStOk on success, kStWarn if StEvent or StMcEvent are absent,
+ *         kStErr if the geometry or raw-hit collection cannot be obtained.
+ */
+
+/**
+ * @fn void StPxlSimMaker::useDIGMAPSSim()
+ * @brief Request the DIGMAPS slow simulator back-end.
+ *
+ * @details Sets the "useDIGMAPSSim" framework attribute via SetAttr().
+ *          Must be called before Init().  Mutually exclusive with the default
+ *          fast-simulator path.
+ */
+
+/**
+ * @fn void StPxlSimMaker::useIdealGeom(bool ideal)
+ * @brief Toggle between ideal and DB-based sensor geometry.
+ *
+ * @details When @p ideal is true (default argument), TGeoManager is used for
+ *          local→global coordinate transforms.  When false, StPxlDb alignment
+ *          matrices are used.  Calling useDbGeom(false) has the same effect.
+ *
+ * @param ideal true to use TGeo ideal geometry; false to use DB alignment.
+ *              Defaults to true.
+ */
+
+/**
+ * @fn void StPxlSimMaker::useDbGeom(bool db)
+ * @brief Directly set whether to use the database geometry.
+ * @param db true (default) to load geometry from StPxlDb.
+ */
+
+/**
+ * @fn void StPxlSimMaker::useRandomSeed(bool use)
+ * @brief Enable or disable a time-based random seed.
+ *
+ * @details When @p use is true the random number generator is seeded with
+ *          the current Unix timestamp at InitRun() time, giving statistically
+ *          independent samples across multiple production jobs.  When false
+ *          (default in older production campaigns) the generator uses a fixed
+ *          default seed for reproducibility.
+ *
+ * @param use true to seed the RNG from the system clock.  Defaults to true.
+ */
+
+// ============================================================
+// StPxlFastSim
+// ============================================================
+
+/**
+ * @class StPxlFastSim
+ * @brief Fast PXL simulator using Gaussian hit-position smearing.
+ *
+ * @details
+ * StPxlFastSim implements the StPxlISim interface using a parametric
+ * Gaussian smearing model.  For each StMcPxlHit, it:
+ *
+ *  1. Reads the hit position in *sensor local coordinates*
+ *     @f$(x_{\rm local},\,y_{\rm local},\,z_{\rm local})@f$.
+ *  2. Smears @f$x@f$ and @f$z@f$ independently with Gaussians of widths
+ *     @f$\sigma_x@f$ and @f$\sigma_z@f$ loaded from the DB.
+ *  3. Transforms the smeared local position to the STAR global frame.
+ *  4. Creates an StPxlDigiHit and appends it to StPxlHitCollection.
+ *
+ * The smearing loop rejects and resamples any position that falls outside
+ * the sensor active area to avoid unphysical boundary effects.
+ *
+ * The local @f$y@f$ coordinate (sensor depth) is currently not smeared
+ * because the resolution in this direction is dominated by the epitaxial
+ * thickness (~18 μm) and is not separately constrained in the DB.
+ *
+ * @par Data Members
+ * | Member         | Type       | Description                                              |
+ * |----------------|------------|----------------------------------------------------------|
+ * | mPxlDb         | StPxlDb*   | Owned pointer to DB alignment object; nullptr if ideal. |
+ * | mRandom        | StRandom*  | Owned pointer to the Gaussian random number generator.  |
+ * | mResXPix       | double     | RMS smearing in local X [cm]; @f$= \sqrt{c_0}@f$.       |
+ * | mResYPix       | double     | RMS smearing in local Y [cm]; currently 0.               |
+ * | mResZPix       | double     | RMS smearing in local Z [cm]; @f$= \sqrt{c_3}@f$.       |
+ * | mUseRandomSeed | bool       | If true, seed mRandom from the system clock.            |
+ *
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @fn StPxlFastSim::StPxlFastSim(const Char_t *name, Bool_t randomSeed)
+ * @brief Constructor.  All pointers are initialised to nullptr / zero.
+ * @param name       TNamed name of this simulator.  Defaults to @c "pxlFastSim".
+ * @param randomSeed If kTRUE, use a time-based seed for the RNG.
+ *                   Defaults to kFALSE (fixed seed).
+ */
+
+/**
+ * @fn StPxlFastSim::~StPxlFastSim()
+ * @brief Destructor.  Deletes mRandom and mPxlDb.
+ */
+
+/**
+ * @fn Int_t StPxlFastSim::initRun(const TDataSet& calib_db, const TObjectSet* pxlDbDataSet, const Int_t run)
+ * @brief Initialises the fast simulator for a new run.
+ *
+ * @details Steps performed:
+ *  1. Extracts StPxlDb from @p pxlDbDataSet (if non-null).
+ *  2. Creates StRandom; seeds it from time() if mUseRandomSeed is set.
+ *  3. Reads `PixelHitError` from @p calib_db:
+ *     - @f$\sigma_x = \sqrt{\texttt{coeff}[0]}@f$ (local X resolution, cm)
+ *     - @f$\sigma_z = \sqrt{\texttt{coeff}[3]}@f$ (local Z resolution, cm)
+ *
+ * @param calib_db       Calibration dataset from DB (must contain PixelHitError).
+ * @param pxlDbDataSet   TObjectSet containing StPxlDb; nullptr for ideal geometry.
+ * @param run            Run number (reserved for future use).
+ * @return kStOk on success, kStErr if PixelHitError is absent or invalid.
+ */
+
+/**
+ * @fn Int_t StPxlFastSim::addPxlHits(const StMcPxlHitCollection& mcPxlHitCol, StPxlHitCollection& pxlHitCol)
+ * @brief Creates Gaussian-smeared StPxlHit objects from MC truth.
+ *
+ * @details Iterates over all sectors, ladders, sensors, and hits in the
+ * MC collection.  For each hit:
+ *  - Calls distortHit() to smear @f$x@f$ and @f$z@f$.
+ *  - Calls localToMatser() to obtain the global position.
+ *  - Creates an StPxlDigiHit with the smeared global position, idTruth, and
+ *    quality (100 if parentTrack exists, 0 otherwise).
+ *  - Adds the hit to @p pxlHitCol via addHit().
+ *
+ * @param mcPxlHitCol  Input MC hit collection (read-only).
+ * @param pxlHitCol    Output reconstructed hit collection (modified).
+ * @return kStOk (0) always.
+ */
+
+/**
+ * @fn double StPxlFastSim::distortHit(const double x, const double res, const double detLength) const
+ * @brief Smears a single coordinate with a Gaussian, constrained to [−detLength, +detLength].
+ *
+ * @details Samples @f$x' \sim \mathcal{N}(x, \texttt{res})@f$ repeatedly
+ * until @f$|x'| \le \texttt{detLength}@f$.  If @f$|x| > \texttt{detLength}@f$
+ * the original value is returned with a warning (the hit is already outside
+ * the active area).
+ *
+ * @param x          True hit coordinate [cm] (local X or Z).
+ * @param res        Gaussian sigma (hit resolution) [cm].
+ * @param detLength  Half-length of the active sensor in this direction [cm].
+ * @return Smeared coordinate [cm] within [−detLength, +detLength].
+ */
+
+/**
+ * @fn void StPxlFastSim::localToMatser(Double_t* local, Double_t* master, Int_t sector, Int_t ladder, Int_t sensor)
+ * @brief Transforms a local hit position to the STAR global (master) frame.
+ *
+ * @details If mPxlDb is available, uses the pre-computed TGeoHMatrix from
+ * StPxlDb::geoHMatrixSensorOnGlobal().  Otherwise navigates the TGeoManager
+ * volume hierarchy via the path
+ * @c /HALL_1/CAVE_1/TpcRefSys_1/IDSM_1/PXMO_1/PXLA_<sector>/LADR_<ladder>/PXSI_<sensor>/PLAC_1
+ * and calls TGeoMatrix::LocalToMaster().
+ *
+ * @note The function name contains a typo ("Matser" instead of "Master")
+ *       preserved from the original code for backward compatibility.
+ *
+ * @param local   Input: 3-element array (x, y, z) in sensor local frame [cm].
+ * @param master  Output: 3-element array (x, y, z) in STAR global frame [cm].
+ * @param sector  PXL sector number (1-based, range 1–10).
+ * @param ladder  PXL ladder number within sector (1-based, range 1–4).
+ * @param sensor  PXL sensor number within ladder (1-based, range 1–10).
+ */
+
+// ============================================================
+// StPxlDigmapsSim
+// ============================================================
+
+/**
+ * @class StPxlDigmapsSim
+ * @brief STAR wrapper for the DIGMAPS pixel-simulation package.
+ *
+ * @details
+ * StPxlDigmapsSim implements the StPxlISim interface using the DIGMAPS
+ * (DIGital MAPS Simulation) library, originally developed at IPHC Strasbourg.
+ * It produces pixel-granularity StPxlRawHit objects that are subsequently
+ * clustered by StPxlHitMaker.
+ *
+ * All simulation parameters — ADC threshold, charge-transport model
+ * coefficients, Landau dE/dx parameters, epitaxial thickness, noise, and
+ * hit efficiency — are loaded from the STAR offline database at InitRun()
+ * time via the StPxlDb facility.
+ *
+ * @par Data Members
+ * | Member                     | Type           | Description                                                            |
+ * |----------------------------|----------------|------------------------------------------------------------------------|
+ * | mRndGen                    | TRandom3*      | Random generator (shared gRandom or own); used for Landau sampling.   |
+ * | mOwnRndSeed                | unsigned int   | If > 0, construct a private TRandom3 with this seed.                   |
+ * | mDigPlane                  | DIGPlane*      | DIGMAPS plane geometry and material parameters.                        |
+ * | mDigAdc                    | DIGADC*        | DIGMAPS ADC model (1-bit threshold comparator).                        |
+ * | mDigTransport              | DIGTransport*  | DIGMAPS charge-transport model (Gauss+Lorentz).                        |
+ * | mPxlDb                     | StPxlDb*       | DB object with alignment and status tables.                            |
+ * | mSensorGoodStatusMin       | short          | Lower bound of the sensor good-status range [DB].                     |
+ * | mSensorGoodStatusMax       | short          | Upper bound of the sensor good-status range [DB].                     |
+ * | mRowColumnGoodStatus       | short          | Expected status code for a good row or column [DB].                   |
+ * | mEnergyLandauMean          | float          | Landau MPV coefficient [electrons/μm]; MPV = mean × trackLength.       |
+ * | mEnergyLandauSigma         | float          | Landau width coefficient [electrons/μm]; σ = sigma × trackLength.     |
+ * | mScalePar[10]              | double[10]     | Parameters for the dE/dx vs. βγ parametrization (Bethe–Bloch).       |
+ * | mResAddX                   | float          | Additional hit-position resolution (alignment+calibration) in X [cm]. |
+ * | mResAddZ                   | float          | Additional hit-position resolution in Z [cm].                         |
+ * | mOffsetX[10][4][10]        | float[][][]    | Per-sensor Gaussian offset in X, drawn once per run [cm].             |
+ * | mOffsetZ[10][4][10]        | float[][][]    | Per-sensor Gaussian offset in Z, drawn once per run [cm].             |
+ * | mdEdxvsBGNorm              | TF1*           | ROOT function implementing dEdxvsBGNorm().                            |
+ * | mHitEffMode                | short          | Hit-efficiency mode: 0=ideal, 1=momentum-dep., 2=constant.            |
+ * | mMomCut                    | float          | Momentum above which efficiency saturates at mHitEffInner/Outer [GeV/c]. |
+ * | mHitEffInner               | float          | Single-hit efficiency for the inner ladder (ladder index 0).          |
+ * | mHitEffOuter               | float          | Single-hit efficiency for the three outer ladders.                    |
+ *
+ * @ingroup StPxlSimMaker
+ */
+
+/**
+ * @fn StPxlDigmapsSim::StPxlDigmapsSim(const Char_t *name)
+ * @brief Constructor.
+ *
+ * @details Allocates DIGPlane, DIGADC, and DIGTransport objects.  All other
+ * pointers are set to nullptr and numeric members to zero / unity.
+ *
+ * @param name TNamed name of this simulator.  Defaults to @c "pxlDigmapsSim".
+ */
+
+/**
+ * @fn StPxlDigmapsSim::~StPxlDigmapsSim()
+ * @brief Destructor.  Deletes mRndGen, mDigAdc, mDigPlane, mDigTransport,
+ *        mPxlDb, and mdEdxvsBGNorm.
+ */
+
+/**
+ * @fn virtual int StPxlDigmapsSim::initRun(TDataSet const& calib_db, TObjectSet const* pxlDbDataSet, Int_t run)
+ * @brief Initialises the DIGMAPS simulator for a new run.
+ *
+ * @details Loads all simulation parameters from the STAR DB:
+ *  1. Random generator — uses gRandom or creates TRandom3(mOwnRndSeed).
+ *  2. StPxlDb pointer from @p pxlDbDataSet (mandatory; returns kStFatal if absent).
+ *  3. Sensor good-status range from `pxlControl`.
+ *  4. ADC parameters from `pxlDigmapsSim`:
+ *     - 1-bit ADC, single threshold = adcThreshold [electrons].
+ *  5. Charge-transport model from `pxlDigmapsSim`:
+ *     - 1D Gauss+Lorentz model with two-component (1st + 2nd) parameters.
+ *  6. Plane parameters from `pxlDigmapsSim`:
+ *     - Pitch = kPixelSize × 10⁴ μm, epitaxial thickness, noise, temperature, etc.
+ *  7. Landau parameters: mean and sigma (electrons per μm of track).
+ *  8. dE/dx Bethe–Bloch function from `pxlDigmapsSim.par[0..5]`.
+ *  9. Additional residual resolutions mResAddX, mResAddZ; draws per-sensor
+ *     Gaussian offsets into mOffsetX[][][] and mOffsetZ[][][].
+ *  10. Hit efficiency parameters from `pxlSimPar`.
+ *
+ * @param calib_db       Calibration dataset (provides PixelHitError; not used
+ *                       by DIGMAPS path but kept for interface conformance).
+ * @param pxlDbDataSet   Mandatory TObjectSet wrapping StPxlDb.
+ * @param run            Run number (reserved).
+ * @return kStOk on success, kStFatal if StPxlDb is unavailable.
+ */
+
+/**
+ * @fn virtual int StPxlDigmapsSim::addPxlRawHits(StMcPxlHitCollection const& in, StPxlRawHitCollection& out)
+ * @brief Main per-event method: runs DIGMAPS for every MC hit and populates
+ *        the raw-hit collection.
+ *
+ * @details The nested loop iterates over sectors → ladders → sensors → hits.
+ * For each sensor, goodSensor() is called first; bad sensors are skipped
+ * entirely.  For each MC hit within a good sensor:
+ *  1. A random number determines whether the hit survives the single-hit
+ *     efficiency cut (see mHitEffMode).
+ *  2. fillDigmapsEvent() is called to run the full DIGMAPS chain.
+ *  3. The DIGMAPS readout map is iterated; for each fired pixel
+ *     (DigitalCharge > 0) goodPixel() is checked against the masking tables.
+ *  4. Surviving pixels are stored as StPxlRawHit(sector, ladder, sensor, ix, iy, idTruth).
+ *
+ * The pixel row index @c ix runs from the highest row number down to 0,
+ * reflecting the DIGMAPS convention that the local-X axis points from
+ * row MAX toward row 0.
+ *
+ * @param in   Input MC hit collection (read-only).
+ * @param out  Output raw hit collection (modified).
+ * @return kStOk (0) always.
+ */
+
+/**
+ * @fn void StPxlDigmapsSim::fillDigmapsEvent(int sensorId, StMcPxlHit const* mcPix, DIGEvent& fdigevent) const
+ * @brief Runs the full DIGMAPS simulation chain for a single MC hit.
+ *
+ * @details Steps:
+ *  1. calculateIncidencePositions() — project hit to epitaxial-layer in/out points.
+ *  2. betaGamma() — compute βγ of the parent track.
+ *  3. calculateDepositedEnergy() — sample Landau-distributed energy × f(βγ).
+ *  4. DIGParticle::ComputeChargeDeposition() — segment and deposit charge.
+ *  5. DIGParticle::ComputeChargeTransport() — diffuse to pixels.
+ *  6. DIGParticle::AddRandomNoise() — add Gaussian noise per pixel.
+ *  7. DIGParticle::AnalogToDigitalconversion() — apply ADC threshold.
+ *  8. Update the DIGEvent readout map; perform final ADC on combined charge.
+ *
+ * @param sensorId   Linear sensor index:
+ *                   @f$(i_{\rm sec} \times N_{\rm lad} + i_{\rm lad})
+ *                   \times N_{\rm sen} + i_{\rm sen} + 1@f$
+ * @param mcPix      Pointer to the MC hit (read-only).
+ * @param fdigevent  Reference to the DIGMAPS event object to be filled.
+ */
+
+/**
+ * @fn void StPxlDigmapsSim::calculateIncidencePositions(int sensorId, StMcPxlHit const* mcPix, TVector3& inPos, TVector3& outPos) const
+ * @brief Computes the entry and exit positions of a particle track in the
+ *        epitaxial layer, in DIGMAPS coordinates (μm).
+ *
+ * @details The MC hit position is given at the mid-plane of the epitaxial
+ * layer.  The track direction (local momentum unit vector) is used to
+ * extrapolate to the top face (@f$z = +t/2@f$) and bottom face
+ * (@f$z = -t/2@f$) of the epitaxial volume, where @f$t@f$ is the epitaxial
+ * thickness from mDigPlane.  An additional per-sensor Gaussian offset
+ * (mOffsetX, mOffsetZ) is applied to the local hit coordinates before the
+ * projection, representing residual misalignment.
+ *
+ * The DIGMAPS frame origin is at the corner of the sensor (not the centre),
+ * so half the sensor dimensions are added:
+ * @f[
+ *   X_{\rm in} = x_{\rm local} + \tfrac{W_x}{2}
+ *     + \frac{(\tfrac{t}{2} - y_{\rm local})\,p_x}{p_y}
+ * @f]
+ * and similarly for @f$Y_{\rm in}@f$ and the exit point.
+ *
+ * @param sensorId  Linear sensor index (same convention as fillDigmapsEvent()).
+ * @param mcPix     Pointer to the MC hit (read-only); provides local position
+ *                  [cm] and local momentum direction.
+ * @param inPos     Output: entry point at top of epitaxial layer [μm].
+ * @param outPos    Output: exit point at bottom of epitaxial layer [μm].
+ */
+
+/**
+ * @fn float StPxlDigmapsSim::calculateDepositedEnergy(float totalLength, float betagamma) const
+ * @brief Samples the deposited energy for a track of given path length and βγ.
+ *
+ * @details Draws from a Landau distribution:
+ * @f[
+ *   E_{\rm dep} = \mathrm{Landau}\!\left(\mu \cdot L,\;\sigma \cdot L\right)
+ *                 \times f_{\rm norm}(\beta\gamma)
+ * @f]
+ * where @f$\mu@f$ = mEnergyLandauMean [electrons/μm],
+ * @f$\sigma@f$ = mEnergyLandauSigma [electrons/μm], @f$L@f$ = @p totalLength
+ * [μm], and @f$f_{\rm norm}(\beta\gamma)@f$ is evaluated from mdEdxvsBGNorm.
+ * If the sampled energy exceeds 50 000 electrons (unphysically large for the
+ * 18 μm epitaxial layer) the sample is re-drawn up to 50 times.
+ *
+ * @param totalLength  Track path length through the epitaxial layer [μm].
+ * @param betagamma    Lorentz factor @f$\beta\gamma@f$ of the incident particle.
+ * @return Sampled deposited energy [electrons].
+ */
+
+/**
+ * @fn float StPxlDigmapsSim::betaGamma(StMcTrack const* mcTrk) const
+ * @brief Returns @f$\beta\gamma = p / m@f$ for the parent MC track.
+ *
+ * @details Returns 1.0 if @p mcTrk is nullptr or the mass is zero.
+ * Logs a debug message for heavy particles (mass > 1 GeV/c²).
+ *
+ * @param mcTrk  Pointer to the parent MC track; may be nullptr.
+ * @return @f$\beta\gamma@f$ (dimensionless); 1.0 if unknown.
+ */
+
+/**
+ * @fn double StPxlDigmapsSim::dEdxvsBGNorm(double* x, double* par)
+ * @brief ROOT TF1 callback: Bethe–Bloch dE/dx normalized to the MIP value.
+ *
+ * @details Evaluates:
+ * @f[
+ * f(\beta\gamma) = \begin{cases}
+ *   \dfrac{p_0}{\beta^2}\!\left(\tfrac{1}{2}\ln(\beta^2\gamma^2 p_1)
+ *     - \beta^2 - \tfrac{\delta}{2}\right), & \beta\gamma \le 10 \\[6pt]
+ *   p_3 + p_4\ln(\beta\gamma) + p_5\left[\ln(\beta\gamma)\right]^2,
+ *     & \beta\gamma > 10
+ * \end{cases}
+ * @f]
+ * with @f$\delta = \ln(\beta\gamma) + p_2@f$.
+ *
+ * @param x    One-element array: x[0] = βγ (range 0.1 to 10⁵).
+ * @param par  Six-element parameter array @f$[p_0, p_1, p_2, p_3, p_4, p_5]@f$
+ *             stored in mScalePar[0..5] and loaded from the DB.
+ * @return Normalized dE/dx correction factor (dimensionless, unity at MIP).
+ */
+
+/**
+ * @fn bool StPxlDigmapsSim::goodPixel(int sec, int lad, int sen, int ix, int iy) const
+ * @brief Returns true if a pixel passes all masking checks.
+ *
+ * @details A pixel is "good" if all three conditions hold:
+ *  - Row @p ix has status == mRowColumnGoodStatus in pxlRowStatus.
+ *  - Column @p iy has status == mRowColumnGoodStatus in pxlColumnStatus.
+ *  - The pixel is not flagged as hot in pxlHotPixels.
+ *
+ * @param sec  Sector number (1-based).
+ * @param lad  Ladder number within sector (1-based).
+ * @param sen  Sensor number within ladder (1-based).
+ * @param ix   Pixel row index (0-based, range 0–927).
+ * @param iy   Pixel column index (0-based, range 0–959).
+ * @return true if the pixel should be recorded; false if masked.
+ */
+
+/**
+ * @fn bool StPxlDigmapsSim::goodSensor(int sec, int lad, int sen) const
+ * @brief Returns true if the sensor status code is within the good range.
+ *
+ * @details Queries StPxlDb::sensorStatus() and compares the result to
+ * [mSensorGoodStatusMin, mSensorGoodStatusMax].
+ *
+ * @param sec  Sector number (1-based).
+ * @param lad  Ladder number within sector (1-based).
+ * @param sen  Sensor number within ladder (1-based).
+ * @return true if the sensor is usable; false if dead/bad.
+ */
+
+/**
+ * @fn void StPxlDigmapsSim::setSeed(unsigned int seed)
+ * @brief Override the random seed used for the Landau energy-loss sampler.
+ *
+ * @details When called with a non-zero value before initRun(), a private
+ * TRandom3(@p seed) is constructed instead of sharing gRandom.  Useful for
+ * embedding or pileup studies where reproducibility of individual sub-events
+ * is required.
+ *
+ * @param seed  Seed value for TRandom3; 0 means use gRandom (default).
+ */

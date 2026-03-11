@@ -1,0 +1,39 @@
+# Doxyfile for StTpcRSMaker
+# Run from StRoot/StTpcRSMaker/:  doxygen doc/Doxyfile
+
+PROJECT_NAME           = "StTpcRSMaker – STAR TPC Response Simulator"
+PROJECT_BRIEF          = "Slow simulator (digitizer) for the STAR Time Projection Chamber"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = doc/html
+
+# Input: source files in the parent directory plus the narrative .dox file
+INPUT                  = . doc/StTpcRSMaker.dox
+FILE_PATTERNS          = *.h *.cxx *.dox
+RECURSIVE              = NO
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = .
+GENERATE_LATEX         = NO
+
+HAVE_DOT               = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+
+# Enable Doxygen @defgroup / @ingroup grouping
+DISTRIBUTE_GROUP_DOC   = YES
+
+# Math rendering via MathJax (no LaTeX needed)
+USE_MATHJAX            = YES
+MATHJAX_FORMAT         = HTML-CSS
+
+SOURCE_BROWSER         = YES
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES

@@ -1,0 +1,414 @@
+/**
+ * @defgroup StPicoEventLib StPicoEvent — PicoDST Data Classes
+ * @brief Data classes for the STAR PicoDST event format; compilable as a
+ *        standalone ROOT shared library without any STAR framework dependency.
+ * @details
+ * The `StPicoEvent/` library contains all data-holding classes, navigation
+ * utilities, helix mathematics, and a standalone file reader for the STAR
+ * PicoDST format.
+ *
+ * There are 24 `TClonesArray` branches in total, enumerated by
+ * `StPicoArrays::TypeIndex`.  Two compilation modes are supported:
+ * - **STAR framework** (`StMaker` chain): link against the full STAR libraries.
+ * - **Standalone** (`_VANILLA_ROOT_`): build with the provided `Makefile`
+ *   (`make`) which produces `libStPicoDst.so`.
+ *
+ * See `doc/README.md` for a full description, branch table, and usage examples.
+ *
+ * @see StPicoDstMaker (writer), StPicoDstReader (standalone reader)
+ * @{
+ */
+
+// ---------------------------------------------------------------------------
+// Navigation
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoDst
+ * @brief Static navigation hub for all PicoDST data arrays.
+ * @ingroup StPicoEventLib
+ *
+ * Holds a single `static TClonesArray** picoArrays` pointer set by
+ * `StPicoDstMaker` or `StPicoDstReader`.  All element and count accessors are
+ * `static`, so they can be called on the class rather than an instance.
+ *
+ * @fn static void StPicoDst::set(TClonesArray**)
+ * @brief Attach the 24-element array of `TClonesArray*` pointers.
+ *
+ * @fn static void StPicoDst::unset()
+ * @brief Reset all pointers to `nullptr`.
+ *
+ * @fn static StPicoEvent* StPicoDst::event()
+ * @brief Return the current `StPicoEvent` (index 0 of the Event array).
+ *
+ * @fn static StPicoTrack* StPicoDst::track(Int_t i)
+ * @brief Return the i-th `StPicoTrack`.
+ *
+ * @fn static UInt_t StPicoDst::numberOfTracks()
+ * @brief Return number of tracks in the current event.
+ *
+ * @fn static StPicoBTofPidTraits* StPicoDst::btofPidTraits(Int_t i)
+ * @brief Return BTOF PID traits at index `i`.
+ *
+ * @fn static StPicoBEmcPidTraits* StPicoDst::bemcPidTraits(Int_t i)
+ * @brief Return BEMC PID traits at index `i`.
+ *
+ * @fn static StPicoMtdPidTraits* StPicoDst::mtdPidTraits(Int_t i)
+ * @brief Return MTD PID traits at index `i`.
+ *
+ * @fn static StPicoETofPidTraits* StPicoDst::etofPidTraits(Int_t i)
+ * @brief Return eTOF PID traits at index `i`.
+ *
+ * @fn static StPicoMcVertex* StPicoDst::mcVertex(Int_t i)
+ * @brief Return MC vertex at index `i`.
+ *
+ * @fn static StPicoMcTrack* StPicoDst::mcTrack(Int_t i)
+ * @brief Return MC track at index `i`.
+ *
+ * @fn static StPicoFwdTrack* StPicoDst::fwdTrack(Int_t i)
+ * @brief Return forward track at index `i`.
+ *
+ * @fn static StPicoFwdVertex* StPicoDst::fwdVertex(Int_t i)
+ * @brief Return forward vertex at index `i`.
+ */
+
+// ---------------------------------------------------------------------------
+// StPicoArrays
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoArrays
+ * @brief Stores the names, class types, and initial sizes of all 24 PicoDST
+ *        `TClonesArray` branches.
+ * @ingroup StPicoEventLib
+ *
+ * The enum `TypeIndex` provides symbolic indices into the three static arrays
+ * `picoArrayNames`, `picoArrayTypes`, and `picoArraySizes`.
+ * `NAllPicoArrays = 24`.
+ */
+
+// ---------------------------------------------------------------------------
+// Event data
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoEvent
+ * @brief Per-event data: run/event identifiers, magnetic field, primary
+ *        vertex, trigger IDs, all reference multiplicity variants, and raw
+ *        ZDC/BBC/VPD/ETof scalar quantities.
+ * @ingroup StPicoEventLib
+ *
+ * Exactly one `StPicoEvent` is stored at index 0 of the `Event` branch per
+ * TTree entry.  The primary vertex stored is the one selected by
+ * `StPicoDstMaker::PicoVtxMode`.
+ *
+ * Reference multiplicities are stored as pairs of `UShort_t` (positive/negative
+ * charge) split by η half and multiplicity definition:
+ * - `refMult*` (|η| < 0.5): read directly from `StMuEvent`.
+ * - `refMult2*`, `refMult3*`, `refMult4*`, `refMultHalf*`: computed by
+ *   `StPicoUtilities::calculateRefMult()`.
+ *
+ * VPD timing quantities (tStart, tCanFirst, tCanLast, earliestVpdEHit, etc.)
+ * are stored internally in picoseconds as `Int_t` and returned as `Double_t`
+ * in nanoseconds via division by 1000.
+ *
+ * @fn Int_t StPicoEvent::runId() const
+ * @fn Int_t StPicoEvent::eventId() const
+ * @fn Float_t StPicoEvent::bField() const
+ * @brief Magnetic field in kG.
+ * @fn TVector3 StPicoEvent::primaryVertex() const
+ * @fn TVector3 StPicoEvent::primaryVertexError() const
+ * @fn std::vector<unsigned int> StPicoEvent::triggerIds() const
+ * @fn bool StPicoEvent::isTrigger(unsigned int id) const
+ * @fn Int_t StPicoEvent::refMult() const
+ * @fn Int_t StPicoEvent::refMult2() const
+ * @fn Int_t StPicoEvent::refMult3() const
+ * @fn Int_t StPicoEvent::refMult4() const
+ * @fn Int_t StPicoEvent::grefMult() const
+ * @fn Float_t StPicoEvent::vzVpd() const
+ * @brief VPD z-vertex estimate (cm).
+ * @fn Float_t StPicoEvent::ZDCx() const
+ * @fn Float_t StPicoEvent::BBCx() const
+ * @fn Double_t StPicoEvent::tStart() const
+ * @brief Event start time (ns).
+ */
+
+// ---------------------------------------------------------------------------
+// Track data
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoTrack
+ * @brief Reconstructed charged TPC track.
+ * @ingroup StPicoEventLib
+ *
+ * Each `StPicoTrack` represents one global TPC track.  It also carries the
+ * corresponding primary-track momentum if the track was associated with the
+ * selected primary vertex.
+ *
+ * **Encoding conventions:**
+ * - `mNHitsFit` (`Char_t`) = charge × nHitsFit (sign encodes charge).
+ * - `mNSigma*` (`Short_t`) = nσ × 1000 (allows ±32 σ at 0.001 resolution).
+ * - `mChi2` (`UShort_t`) = chi² × 1000.
+ * - `mDedx` (`Float16_t`) in keV/cm.
+ *
+ * PID detector association is by index: `bTofPidTraitsIndex()`,
+ * `bemcPidTraitsIndex()`, `mtdPidTraitsIndex()`, `eTofPidTraitsIndex()` are
+ * all `Short_t` and return −1 when the detector did not match this track.
+ *
+ * @fn TVector3 StPicoTrack::pMom() const
+ * @brief Primary momentum; (0,0,0) if not a primary track.
+ * @fn TVector3 StPicoTrack::gMom() const
+ * @brief Global momentum at DCA point.
+ * @fn TVector3 StPicoTrack::origin() const
+ * @brief DCA point coordinates (cm).
+ * @fn Bool_t StPicoTrack::isPrimary() const
+ * @fn Short_t StPicoTrack::charge() const
+ * @fn Int_t StPicoTrack::nHitsFit() const
+ * @fn Int_t StPicoTrack::nHitsPoss() const
+ * @fn Float_t StPicoTrack::nSigmaPion() const
+ * @fn Float_t StPicoTrack::nSigmaKaon() const
+ * @fn Float_t StPicoTrack::nSigmaProton() const
+ * @fn Float_t StPicoTrack::nSigmaElectron() const
+ * @fn Float_t StPicoTrack::dEdx() const
+ * @fn Float_t StPicoTrack::dNdx() const
+ * @fn StPicoPhysicalHelix StPicoTrack::helix(Float_t B) const
+ * @brief Construct the global helix for this track given B in kG.
+ * @fn Float_t StPicoTrack::gDCA(Float_t x, Float_t y, Float_t z) const
+ * @fn TVector3 StPicoTrack::gDCA(TVector3 pVtx) const
+ * @fn Int_t StPicoTrack::bTofPidTraitsIndex() const
+ * @fn Int_t StPicoTrack::bemcPidTraitsIndex() const
+ * @fn Int_t StPicoTrack::mtdPidTraitsIndex() const
+ * @fn Int_t StPicoTrack::eTofPidTraitsIndex() const
+ * @fn Int_t StPicoTrack::bemcTowerIndex() const
+ * @brief 0-based index into the BTowHit array; −1 if no BEMC match.
+ * @fn Int_t StPicoTrack::idTruth() const
+ * @fn Int_t StPicoTrack::qaTruth() const
+ */
+
+// ---------------------------------------------------------------------------
+// Helix utilities
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoHelix
+ * @brief Pure-ROOT helix parametrisation; port of StHelix using TVector3.
+ * @ingroup StPicoEventLib
+ *
+ * Parameters: curvature (1/R, cm⁻¹), dip angle (rad), phase (rad),
+ * origin (`TVector3`, cm), and helicity h = −sign(q·B) = ±1.
+ *
+ * Handles the degenerate case of zero curvature (straight line, B = 0) via
+ * the `mSingularity` flag.
+ *
+ * @fn Double_t StPicoHelix::curvature() const
+ * @fn Double_t StPicoHelix::dipAngle() const
+ * @fn Double_t StPicoHelix::phase() const
+ * @fn Int_t StPicoHelix::h() const
+ * @fn TVector3 StPicoHelix::at(Double_t s) const
+ * @brief 3D position at arc length s.
+ * @fn TVector3 StPicoHelix::cat(Double_t s) const
+ * @brief Unit tangent vector at arc length s.
+ * @fn pair<Double_t,Double_t> StPicoHelix::pathLength(Double_t r) const
+ * @brief Arc lengths of intersections with cylinder of radius r.
+ * @fn Double_t StPicoHelix::pathLength(const TVector3& p, Bool_t) const
+ * @brief Arc length at closest approach to point p.
+ * @fn Double_t StPicoHelix::distance(const TVector3& p, Bool_t) const
+ * @brief Minimum distance from helix to point p.
+ * @fn pair<Double_t,Double_t> StPicoHelix::pathLengths(const StPicoHelix&, ...) const
+ * @brief Arc lengths at point of closest approach between two helices.
+ */
+
+/**
+ * @class StPicoPhysicalHelix
+ * @brief Physical helix — extends StPicoHelix with B-field-dependent quantities.
+ * @ingroup StPicoEventLib
+ *
+ * Can be constructed directly from momentum, origin, signed B-field (kG),
+ * and charge, or from helix parameters.
+ *
+ * @fn TVector3 StPicoPhysicalHelix::momentum(Double_t B) const
+ * @brief Track momentum at origin (GeV/c).
+ * @fn TVector3 StPicoPhysicalHelix::momentumAt(Double_t s, Double_t B) const
+ * @brief Momentum at arc length s.
+ * @fn Int_t StPicoPhysicalHelix::charge(Double_t B) const
+ * @brief Particle charge derived from helicity and B sign.
+ * @fn Double_t StPicoPhysicalHelix::geometricSignedDistance(Double_t x, Double_t y)
+ * @brief 2D signed DCA (rotation-direction sign convention).
+ * @fn Double_t StPicoPhysicalHelix::curvatureSignedDistance(Double_t x, Double_t y)
+ * @brief 2D signed DCA (curvature sign convention).
+ */
+
+// ---------------------------------------------------------------------------
+// Covariance matrix
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoTrackCovMatrix
+ * @brief Compact 5 × 5 DCA-geometry covariance matrix for a global track.
+ * @ingroup StPicoEventLib
+ *
+ * Written to the `TrackCovMatrix` branch only when
+ * `StPicoDstMaker::PicoCovMtxMode::Write` is selected.
+ *
+ * The five DCA geometry parameters are: impact parameter (imp), z at DCA (z),
+ * azimuthal angle ψ (psi), 1/pT (pti), tan(λ) (tan).
+ *
+ * Storage: 6 `Float16_t` parameter values (`mImp`, `mZ`, `mPsi`, `mPti`,
+ * `mTan`, `mCurv`), 5 `Float16_t` diagonal standard deviations (`mSigma[5]`),
+ * and 10 `Float16_t` off-diagonal correlation coefficients (`mCorr[10]`).
+ *
+ * @fn Float_t StPicoTrackCovMatrix::imp() const
+ * @fn Float_t StPicoTrackCovMatrix::z() const
+ * @fn Float_t StPicoTrackCovMatrix::psi() const
+ * @fn Float_t StPicoTrackCovMatrix::pti() const
+ * @brief 1/pT (GeV/c)⁻¹.
+ * @fn Float_t StPicoTrackCovMatrix::tan() const
+ * @brief Tangent of dip angle.
+ * @fn const Float_t* StPicoTrackCovMatrix::sigmas() const
+ * @brief Pointer to 5 diagonal standard deviations.
+ * @fn const Float_t* StPicoTrackCovMatrix::correlations() const
+ * @brief Pointer to 10 off-diagonal correlation coefficients.
+ * @fn Bool_t StPicoTrackCovMatrix::isBadCovMatrix()
+ * @brief True if all stored values are zero (no covariance available).
+ */
+
+// ---------------------------------------------------------------------------
+// Monte Carlo classes
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoMcTrack
+ * @brief Monte Carlo truth track copied from `StMuMcTrack`.
+ * @ingroup StPicoEventLib
+ *
+ * Populated only for simulation or embedding data.  The GEANT particle ID
+ * follows the GPART + STAR embedding numbering scheme.
+ *
+ * @fn Int_t StPicoMcTrack::id() const
+ * @brief GEANT track ID (1-based).
+ * @fn Int_t StPicoMcTrack::geantId() const
+ * @fn Int_t StPicoMcTrack::pdgId() const
+ * @fn TVector3 StPicoMcTrack::p() const
+ * @fn Float_t StPicoMcTrack::pt() const
+ * @fn Float_t StPicoMcTrack::energy() const
+ * @fn Bool_t StPicoMcTrack::isFromShower() const
+ * @fn Int_t StPicoMcTrack::idVtxStart() const
+ * @brief 1-based index into the McVertex array for the production vertex.
+ * @fn Int_t StPicoMcTrack::idVtxStop() const
+ * @brief 1-based index into the McVertex array for the decay vertex.
+ * @fn UChar_t StPicoMcTrack::nHitsTpc() const
+ * @fn UChar_t StPicoMcTrack::nHitsBEmc() const
+ * @fn UChar_t StPicoMcTrack::nHitsTof() const
+ */
+
+/**
+ * @class StPicoMcVertex
+ * @brief Monte Carlo truth vertex copied from `StMuMcVertex`.
+ * @ingroup StPicoEventLib
+ *
+ * @fn Int_t StPicoMcVertex::id() const
+ * @brief Unique GEANT vertex ID (1-based).
+ * @fn TVector3 StPicoMcVertex::position() const
+ * @fn Int_t StPicoMcVertex::idOfParentTrack() const
+ * @brief GEANT ID of the track that decayed or interacted at this vertex.
+ * @fn Int_t StPicoMcVertex::numberOfDaughters() const
+ * @fn Int_t StPicoMcVertex::isIntermediate() const
+ * @fn Float_t StPicoMcVertex::time() const
+ * @brief GEANT production time (ns).
+ */
+
+// ---------------------------------------------------------------------------
+// Forward tracking
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoFwdTrack
+ * @brief Forward track reconstructed from FST + FTT using GenFit.
+ * @ingroup StPicoEventLib
+ *
+ * Each track has a type (`StPicoFwdTrackType`):
+ * - `kGlobal` (0): standalone global track.
+ * - `kBeamlineConstrained` (1): refitted with beamline constraint.
+ * - `kPrimaryVertexConstrained` (2): refitted with primary vertex constraint.
+ * - `kForwardVertexConstrained` (3): refitted with forward vertex constraint.
+ *
+ * The vertex index and track type are packed into a single `UChar_t`
+ * (`mVtxIndex`): bits 7–2 hold the vertex index (6 bits, 0–62; 63 = no
+ * vertex), bits 1–0 hold the track type.
+ *
+ * @fn TVector3 StPicoFwdTrack::momentum() const
+ * @fn Short_t StPicoFwdTrack::charge() const
+ * @fn Float_t StPicoFwdTrack::chi2() const
+ * @fn Float_t StPicoFwdTrack::pVal() const
+ * @fn bool StPicoFwdTrack::didFitConverge() const
+ * @fn bool StPicoFwdTrack::didFitConvergeFully() const
+ * @fn UChar_t StPicoFwdTrack::trackType() const
+ * @fn UChar_t StPicoFwdTrack::vertexIndex() const
+ * @fn UShort_t StPicoFwdTrack::globalTrackIndex() const
+ * @fn TVector3 StPicoFwdTrack::ecalProjection() const
+ * @fn TVector3 StPicoFwdTrack::hcalProjection() const
+ * @fn Float_t StPicoFwdTrack::dcaXY() const
+ * @fn Float_t StPicoFwdTrack::dcaZ() const
+ * @fn Int_t StPicoFwdTrack::idTruth() const
+ */
+
+/**
+ * @class StPicoFwdVertex
+ * @brief Forward vertex reconstructed from forward tracks.
+ * @ingroup StPicoEventLib
+ *
+ * @fn Int_t StPicoFwdVertex::id() const
+ * @fn TVector3 StPicoFwdVertex::position() const
+ * @fn Float_t StPicoFwdVertex::chi2() const
+ * @fn UChar_t StPicoFwdVertex::mNumberOfTracks
+ * @brief Number of tracks associated with the vertex.
+ */
+
+// ---------------------------------------------------------------------------
+// Standalone reader
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoDstReader
+ * @brief Standalone reader for `.picoDst.root` files; does not require StMaker.
+ * @ingroup StPicoEventLib
+ *
+ * Accepts a single `.picoDst.root` file or a `.list` / `.lis` file containing
+ * one file path per line.  Internally creates a `TChain "PicoDst"` and exposes
+ * the loaded event via `picoDst()`.
+ *
+ * @fn StPicoDstReader::StPicoDstReader(const Char_t* inFileName)
+ * @fn void StPicoDstReader::Init()
+ * @brief Open chain, set branch addresses, configure 50 MB cache.
+ * @fn Bool_t StPicoDstReader::readPicoEvent(Long64_t iEvent)
+ * @brief Load event `iEvent` from the chain; returns `false` on error.
+ * @fn void StPicoDstReader::SetStatus(const Char_t* regex, Int_t enable)
+ * @brief Enable (1) or disable (0) branches matching `regex`.
+ * @fn StPicoDst* StPicoDstReader::picoDst()
+ * @fn TChain* StPicoDstReader::chain()
+ * @fn TTree* StPicoDstReader::tree()
+ * @fn void StPicoDstReader::Finish()
+ * @brief Release the chain.
+ */
+
+// ---------------------------------------------------------------------------
+// Common definitions
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoMessMgr (header-only)
+ * @brief Logging shim: maps LOG_INFO, LOG_WARN, LOG_ERROR, endm to
+ *        `std::cout` / `std::endl` under `_VANILLA_ROOT_`, or to the STAR
+ *        `StMessMgr` otherwise.
+ * @ingroup StPicoEventLib
+ */
+
+/**
+ * @namespace StarPicoDst
+ * @brief Common enumerations: `DetectorSide` (East/West/Undefined) and
+ *        `Charge` (Negative/Positive).
+ * @ingroup StPicoEventLib
+ */
+
+/** @} */ // end of StPicoEventLib group

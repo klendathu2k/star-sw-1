@@ -1,0 +1,65 @@
+# Doxyfile for StFttSimMaker
+# Generated documentation configuration for the STAR Forward sTGC Tracker fast simulator.
+
+#---------------------------------------------------------------------------
+# Project identity
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "StFttSimMaker"
+PROJECT_BRIEF          = "STAR Forward sTGC Tracker (FTT) fast simulator"
+PROJECT_NUMBER         = ""
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+# Point INPUT one level up so Doxygen sees both the .h/.cxx sources and
+# the .dox narrative file in this doc/ subdirectory.
+INPUT                  = ..
+RECURSIVE              = NO
+
+# Pick up .dox narrative files in this directory as well.
+INPUT                 += .
+FILE_PATTERNS          = *.h *.cxx *.dox
+
+#---------------------------------------------------------------------------
+# Extraction
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+#---------------------------------------------------------------------------
+# Output
+#---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+
+#---------------------------------------------------------------------------
+# Build options
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+#---------------------------------------------------------------------------
+# Preprocessor
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+
+#---------------------------------------------------------------------------
+# Dot / graphs (disable if graphviz unavailable)
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES

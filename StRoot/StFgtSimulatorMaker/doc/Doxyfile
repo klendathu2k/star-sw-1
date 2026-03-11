@@ -1,0 +1,56 @@
+PROJECT_NAME           = "StFgtSimulatorMaker"
+PROJECT_BRIEF          = "STAR Forward GEM Tracker (FGT) slow detector-response simulator"
+PROJECT_NUMBER         = "1.0"
+
+# Input
+INPUT                  = ..
+RECURSIVE              = NO
+FILE_PATTERNS          = *.h *.cxx *.dox
+
+# Extraction
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+# Output
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+
+# Verbosity
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+# Source browsing
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# Preprocessing
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+PREDEFINED             =
+
+# Dot / graphs (disable to avoid Graphviz dependency)
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES
+
+# Doxygen behaviour
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+USE_MDFILE_AS_MAINPAGE =
+
+# Include path (for ROOT and STAR headers — adjust as needed)
+INCLUDE_PATH           =
+
+# Strip the long path prefix from file names in output
+STRIP_FROM_PATH        = ..
+STRIP_FROM_INC_PATH    =

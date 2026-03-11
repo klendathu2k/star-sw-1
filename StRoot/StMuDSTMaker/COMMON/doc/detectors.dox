@@ -1,0 +1,479 @@
+/**
+ * @defgroup StMuDSTDetectors StMuDSTMaker — Detector Subsystem Data Classes
+ * @brief Per-detector hit, collection, PID traits, and utility classes in the MuDST.
+ * @details
+ * Every STAR detector subsystem represented in the MuDST follows a four-class pattern:
+ *   - **StMu\<Det\>Hit** — stores one calibrated hardware measurement (hardware address
+ *     fields such as tray/module/cell, plus physics quantities such as time, charge,
+ *     and local position).
+ *   - **StMu\<Det\>Collection** — event-level container (TClonesArray or std::vector
+ *     wrapper), sometimes augmented with a header or digi sub-array.
+ *   - **StMu\<Det\>PidTraits** — quantities resulting from matching a reconstructed
+ *     track to a hit: local impact coordinates, measured TOF, path length, β, Nσ,
+ *     and PID probabilities.  Stored *inside* StMuTrack, not in a separate branch.
+ *   - **StMu\<Det\>Util** — bidirectional converter between StEvent's
+ *     St\<Det\>Collection and the MuDST TClonesArrays; called by StMuDSTMaker during
+ *     writing and by StMuDst during reading.
+ *
+ * Branch names used in the MuDST TTree are registered in StMuArrays.
+ *
+ * @see DETECTORS.md for the full reference including field tables, accessors,
+ *      branch names, and PID traits usage examples.
+ * @{
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTBTOF Barrel Time-of-Flight (BTOF)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Barrel Time-of-Flight detector.
+ * @details
+ * The BTOF identifies charged hadrons (π/K/p) via time-of-flight measurement in
+ * |η| < 0.9 using 120 trays of Multi-gap Resistive Plate Chambers (MRPCs),
+ * each tray containing 32 modules of 6 cells.
+ *
+ * **Classes:**
+ *   - StMuBTofHit — one calibrated MRPC cell hit.  Hardware address: tray [1,120],
+ *     module [1,32], cell [1,6].  Physics: leading-edge time (ns), trailing-edge time
+ *     (ns), tot() = trailing − leading.  Also stores indices into the primary and
+ *     global track arrays (index2Primary, index2Global) and MC truth fields
+ *     (idTruth, qaTruth).
+ *   - StMuBTofHitCollection — std::vector<StMuBTofHit*> wrapper.
+ *   - StMuBTofPidTraits — embedded in StMuTrack::mBTofPidTraits.  Fields:
+ *     matchFlag, yLocal/zLocal (cm), thetaLocal (rad), position (StThreeVectorF),
+ *     timeOfFlight (ns), pathLength (cm), beta, sigmaElectron/Pion/Kaon/Proton (Nσ),
+ *     probElectron/Pion/Kaon/Proton.  Retrieved via StMuTrack::btofPidTraits().
+ *   - StMuBTofUtil — converts StBTofCollection ↔ StMuBTofHitCollection via
+ *     getMuBTofHit() and fillMuBTofHit().
+ *
+ * **MuDST branches:** BTofHit, BTofRawHit, BTofHeader
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTETOF Endcap Time-of-Flight (ETOF)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Endcap Time-of-Flight detector.
+ * @details
+ * The ETOF extends TOF PID into the forward pseudorapidity range 1.6 < η < 2.2
+ * using MRPC counters arranged in 3 z-planes × 3 counters × 12 sectors.
+ *
+ * **Classes:**
+ *   - StMuETofDigi — one electronic channel (one MRPC strip side) readout.
+ *     Hardware address: rocId, get4Id, elChan (electronics); or sector [7–18],
+ *     zPlane [1–3], counter [1–3], strip, side (geometry).  Physics: rawTime,
+ *     calibTime, rawTot, calibTot (all in ns).  Links to parent StMuETofHit via
+ *     associatedHitId.
+ *   - StMuETofHit — one reconstructed MRPC hit from ≥ 2 digis on opposite sides.
+ *     Hardware address: sector, zPlane, counter.  Physics: time (ns), totalTot (ns),
+ *     clusterSize, localX/localY (cm).  Track links: associatedTrackId,
+ *     index2Primary, index2Global.  MC truth: idTruth, qaTruth.
+ *   - StMuETofHeader — event-level trigger/timing: trgGdpbFullTime and
+ *     trgStarFullTime (ns), per-ROC timestamp maps (rocGdpbTs, rocStarTs),
+ *     STAR token/DAQ/TRG command words, eventStatusFlag, per-Get4 mismatch flags
+ *     (missMatchFlagVec), and per-counter good-event flags (goodEventFlagVec).
+ *   - StMuETofCollection — event-level container holding one StMuETofHeader plus
+ *     std::vector containers of StMuETofDigi and StMuETofHit.  Accessors:
+ *     etofHeader(), etofDigi(i), etofHit(i), digisPresent(), hitsPresent().
+ *   - StMuETofPidTraits — embedded in StMuTrack::mETofPidTraits.  Fields:
+ *     matchFlag, localX/localY (cm), deltaX/deltaY (cm, residuals), thetaLocal
+ *     (rad), position, timeOfFlight (ns), pathLength (cm), beta.
+ *     Retrieved via StMuTrack::etofPidTraits().
+ *
+ * **MuDST branches:** ETofDigi, ETofHit, ETofHeader
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTLegacyTOF Legacy TOF
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the legacy STAR scintillator TOF system.
+ * @details
+ * The legacy TOF preceded the BTOF.  These classes are retained for backward
+ * compatibility with Run-5 and earlier data.
+ *
+ * **Classes:**
+ *   - StMuTofHit — one scintillator hit with embedded PID.  Hardware address:
+ *     trayIndex, moduleIndex, cellIndex, daqIndex.  Raw data: adc.  Physics:
+ *     timeOfFlight (ns), pathLength (cm), beta, projectedPoint (StThreeVectorF).
+ *     PID: tofExpectedAs{Electron,Pion,Kaon,Proton} (ns), sigma{...} (Nσ),
+ *     particleHypothesis.
+ *   - StMuTofHitCollection — std::vector<StMuTofHit*> wrapper.
+ *   - StMuTofUtil — converts StTofCollection ↔ StMuTofHitCollection via
+ *     getMuTofHit() and fillMuTofHit().
+ *
+ * **MuDST branches:** TofHit, TofData, TofRawData
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTMTD Muon Telescope Detector (MTD)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Muon Telescope Detector.
+ * @details
+ * The MTD identifies muons using MRPCs mounted on the outer steel of the STAR
+ * magnet, covering |η| < 0.5 across 30 backlegs × 5 modules × 12 cells.
+ *
+ * **Classes:**
+ *   - StMuMtdHit — one calibrated MRPC hit.  Hardware address: backleg [1,30],
+ *     module [1,5], cell [0,11].  Physics: leadingEdgeTime and trailingEdgeTime
+ *     as pair<Double_t,Double_t> (ns, one per readout end), tof().  Track links:
+ *     associatedTrackKey, index2Primary, index2Global.  MC: idTruth, qaTruth.
+ *   - StMuMtdRawHit — one raw TDC edge before hit reconstruction.  Fields:
+ *     flag (leading/trailing), backleg, channel, tdc.
+ *   - StMuMtdHeader — event-level trigger header.  Stores two fiber headers,
+ *     trigger words, trigger times, shouldHaveRejectEvent (0/1/2), and
+ *     tpcSectorMask.
+ *   - StMuMtdCollection — wraps StMuMtdHeader, StMuMtdHit, and StMuMtdRawHit
+ *     in std::vector containers.  Accessors: mtdHeader(), MtdHit(i), RawMtdHit(i).
+ *   - StMuMtdPidTraits — embedded in StMuTrack::mMtdPidTraits.  Fields:
+ *     matchFlag, yLocal/zLocal (cm), deltaY/deltaZ (cm, residuals), thetaLocal
+ *     (rad), position, timeOfFlight (ns), expTimeOfFlight (ns), pathLength (cm),
+ *     beta, sigmaMuon (Nσ), probMuon.  Retrieved via StMuTrack::mtdPidTraits().
+ *
+ * **MuDST branches:** MTDHit, MTDRawHit, MTDHeader
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTEPD Event Plane Detector (EPD)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Event Plane Detector.
+ * @details
+ * The EPD measures charged-particle multiplicity in 2.1 < |η| < 5.1 using two
+ * scintillator tile wheels (East/West), each with 12 supersectors × 31 tiles.
+ * Total object size is 10 bytes per hit.
+ *
+ * **Classes:**
+ *   - StMuEpdHit — one tile signal.  mId (Short_t): sign = ±1 (West/East),
+ *     |abs| = 100 × position + tile.  mQTdata (Int_t): packed bits 0–11 = ADC
+ *     [0,4095], 12–23 = TAC [0,4095], 24–28 = TDC [0,31], 29 = hasTAC,
+ *     30 = isGood (database status).  mnMIP (Float_t): gain-calibrated energy
+ *     loss in units of Landau MPV for one MIP.  mTruthId: MC particle id.
+ *     Accessors: id(), side(), position() [1,12], tile() [1,31], adc(), tac(),
+ *     tdc(), hasTac(), isGood(), nMIP(), idTruth().
+ *   - StMuEpdHitCollection — std::vector<StMuEpdHit*> wrapper.
+ *   - StMuEpdUtil — converts StEpdCollection ↔ StMuEpdHitCollection via
+ *     getMuEpdHit() and fillMuEpdHit().
+ *
+ * **MuDST branch:** EpdHit
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTEMC Electromagnetic Calorimeters (EMC)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Barrel and Endcap Electromagnetic Calorimeters.
+ * @details
+ * The BEMC (|η| < 1, 4800 Pb-scintillator towers) and EEMC (1.08 < η < 2.0,
+ * 720 towers) each have pre-shower (PRS) and shower-maximum detector (SMD) layers.
+ *
+ * **Classes:**
+ *   - StMuEmcHit — one PRS or SMD strip hit.  Fields: id, adc, calType, energy (GeV).
+ *   - StMuEmcTowerData — packed tower ADC arrays.  Stores 4800 BEMC tower ADCs and
+ *     720 EEMC tower ADCs (UShort_t each), plus crate status bytes (30 BEMC tower
+ *     crates, 8 BEMC SMD crates, etc.).  Accessor: towerADC(id, detector).
+ *   - StMuEmcCluster — one shower cluster.  Fields: eta, phi, sigmaEta, sigmaPhi,
+ *     energy (GeV), nHits, TArrayS of hit indices.
+ *   - StMuEmcPoint — one reconstructed photon/electron position.  Fields: eta, phi,
+ *     radius (cm), deltaEta, deltaPhi, energy (GeV), chiSquare.  Holds pointers to
+ *     associated clusters for each of the 8 sub-detectors.
+ *   - StMuEmcCollection — top-level container.  Provides getTowerADC(id, detector),
+ *     getPrsHit/getSmdHit/getCluster/getPoint and EEMC-specific accessors.
+ *     Sub-detector codes: bemc=1, bprs=2, bsmde=3, bsmdp=4, eemc=5, eprs=6,
+ *     esmdu=7, esmdv=8.
+ *   - StMuEmcUtil — converts StEmcCollection ↔ StMuEmcCollection via getMuEmc(),
+ *     getEmc(), fillMuEmc(), fillEmc().  Uses StEmcGeom for geometry.
+ *
+ * **MuDST branches:** EmcTow, EmcPrs, EmcSmde, EmcSmdp
+ * (EEMC data is in the same StMuEmcCollection object via EEMC-specific accessors.)
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFMS Forward Meson Spectrometer (FMS)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Forward Meson Spectrometer.
+ * @details
+ * The FMS measures photons and neutral mesons (π⁰, η) at forward rapidity
+ * 2.6 < η < 4.0 using lead-glass cells read out by QT boards.
+ *
+ * **Classes:**
+ *   - StMuFmsHit — one cell signal.  Fields: detectorId, channel, qtCrate, qtSlot,
+ *     qtChannel (packed into mQTCrtSlotCh), adc, tdc, energy (GeV).
+ *   - StMuFmsCluster — a contiguous group of towers.  Fields: detectorId, category
+ *     (EFmsClusterCategory), energy (GeV), x/y (cm, center-of-gravity), sigmaMin,
+ *     sigmaMax (2nd moments), chi2Ndf1Photon, chi2Ndf2Photon, id.  TRefArrays:
+ *     mHits (member cells), mPhotons (fitted StMuFmsPoint objects).
+ *   - StMuFmsPoint — energy from one photon.  Fields: detectorId, energy (GeV),
+ *     x/y (cm, local), id, mXYZ (StThreeVectorF, STAR global), mCluster (TRef).
+ *     Methods: momentum(m, zvertex) → StThreeVectorF;
+ *     fourMomentum(m, zvertex) → StLorentzVectorF.
+ *   - StMuFmsCollection — holds TClonesArrays for hits, clusters, points, and one
+ *     StMuFmsInfo entry.  Also stores fmsReconstructionFlag.
+ *   - StMuFmsUtil — converts StFmsCollection ↔ StMuFmsCollection.  Static method
+ *     fillMuFmsHits(StMuFmsCollection&, StTriggerData&) allows recovery of FMS hits
+ *     from the trigger data block.
+ *
+ * **MuDST branches:** FmsHit, FmsCluster, FmsPoint, FmsInfo
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFCS Forward Calorimeter System (FCS)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Forward Calorimeter System.
+ * @details
+ * The FCS consists of an ECAL arm (W-Pb Shashlik, 4.0 < η < 5.1) and an HCAL arm
+ * (Pb-scintillator, 2.3 < η < 4.5).  Replaces and extends the FMS for BES-II era.
+ *
+ * **Classes:**
+ *   - StMuFcsHit — one calorimeter cell with full timebin waveform.  mDetId
+ *     (UShort_t): bit 15 = ZS flag, bits 12–14 = detector id, bits 0–11 = cell id.
+ *     mDepCh (UShort_t): packed NS/EHP/DEP/channel.  mAdcSum, mFitPeak, mFitSigma,
+ *     mFitChi2, mNPeak, mEnergy (GeV).  mData (TArrayS): 16-bit packed ADC+flag per
+ *     timebin.  mCluster (TRef): parent cluster.
+ *   - StMuFcsCluster — shower cluster.  Fields: id, detectorId, category, nTowers,
+ *     energy (GeV), x/y (local grid, 1st moment), sigmaMin/sigmaMax/theta (2nd
+ *     moments and orientation), chi2Ndf1Photon, chi2Ndf2Photon, mFourMomentum
+ *     (TLorentzVector).  TRefArrays: mHits, mNeighbor, mPoints.
+ *   - StMuFcsPoint — one fitted particle in a cluster.  Fields: detectorId, energy
+ *     (GeV), x/y (local cell units), nParentClusterPhotons, mXYZ (TVector3),
+ *     mFourMomentum (TLorentzVector), mCluster (TRef).
+ *   - StMuFcsInfo — event-level bookkeeping: fcsReconstructionFlag and
+ *     per-detector first-hit/cluster/point index arrays (mHitIndex[kFcsNDet+2],
+ *     mClusterIndex[kFcsNDet+1], mPointIndex[kFcsNDet+1]) for O(1) per-detector
+ *     lookup.
+ *   - StMuFcsCollection — holds TClonesArrays for hits, clusters, points, info.
+ *     Provides indexOfFirstHit(idet), numberOfHits(idet), etc.
+ *   - StMuFcsUtil — converts StFcsCollection ↔ StMuFcsCollection.  Maintains
+ *     in-memory maps (mMapHits, mMapClusters, mMapPoints) to rebuild cross-
+ *     references during the fill.
+ *
+ * **MuDST branches:** FcsHit, FcsCluster, FcsPoint, FcsInfo
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFGT Forward GEM Tracker (FGT)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Forward GEM Tracker.
+ * @details
+ * The FGT tracks charged particles at 1 < η < 2 using six GEM discs, each divided
+ * into four quadrants with two strip planes (r and φ) × 720 strips.
+ *
+ * **Classes:**
+ *   - StMuFgtStrip — one calibrated strip.  Fields: mGeoId (Int_t, encodes
+ *     6 disc × 4 quad × 2 plane × 720 strip), mAdcStartIdx (index into the FgtAdc
+ *     TClonesArray), mNumSavedTimeBins, mClusterSeedType (StEvent enumeration),
+ *     mCharge (Float_t, C; ADC = ped + charge × gain), mChargeUncert.
+ *   - StMuFgtAdc — one ADC sample for one strip at one timebin.  Fields: mAdc
+ *     (Short_t), mTimeBin (Short_t).  Negative values indicate uninitialised.
+ *   - StMuFgtCluster — one 1-D cluster.  Fields: mCentralStripGeoId (cluster key),
+ *     mFirstStripAssociationIdx (start of this cluster's entries in the
+ *     FgtStripAssociation array), mNumStrips, mMaxTimeBin, mMaxAdc, mCharge,
+ *     mChargeUncert, mR/mErrR/mPhi/mErrPhi (position and error), mEvenOddChargeAsy
+ *     ((even − odd) / sum charge asymmetry for φ layer).
+ *   - StMuFgtStripAssociation — membership record linking one strip to one cluster.
+ *     Fields: mClusIdx (cluster index), mStripIdx (strip index), mWeight (membership
+ *     weight).
+ *
+ * **MuDST branches:** FgtStrip, FgtCluster, FgtStripAssociation, FgtAdc
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTPMD Photon Multiplicity Detector (PMD)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Photon Multiplicity Detector.
+ * @details
+ * The PMD measures photon multiplicity at 2.3 < η < 3.5 using gas-detector cells in
+ * two planes: the PMD (photon detector) and the CPV (charged-particle veto).
+ *
+ * **Classes:**
+ *   - StMuPmdHit — one cell signal.  Fields: superModule (Short_t), subDetector,
+ *     row, col, energy (Float_t, MeV), adc (Int_t).
+ *   - StMuPmdCluster — one reconstructed cluster.  Fields: superModule, ncell,
+ *     eta, phi, sigma (cluster spread), energy (MeV), energyPID (PID from energy
+ *     threshold), PID (alternate method, e.g. neural network), mcPID (GEANT truth,
+ *     0 for data).
+ *   - StMuPmdCollection — holds TClonesArrays for hits and clusters separately for
+ *     PMD (pmd=1) and CPV (cpv=2).  Accessors: getCluster(id, detector),
+ *     getHit(id, detector), getNClusters(detector), getNHits(detector).
+ *   - StMuPmdUtil — converts StPhmdCollection ↔ StMuPmdCollection via getMuPmd(),
+ *     getPmd(), fillMuPmd(), fillPmd().
+ *
+ * **MuDST branches:** PmdHit, CpvHit, PmdCluster, CpvCluster
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTRPS Roman Pot Spectrometer (RPS)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Roman Pot Spectrometer.
+ * @details
+ * The RPS detects very-forward elastically and diffractively scattered protons
+ * using eight Roman Pot stations (EU, ED, WU, WD on each side of STAR), each with
+ * four silicon-strip planes.
+ *
+ * **Classes:**
+ *   - StMuRpsTrackPoint — a local straight-line track in one Roman Pot.  Fields:
+ *     mPosition (TVector3, cm), mRpId, mClusterId[4] (per-plane cluster ids),
+ *     mQuality (rpsNormal/rpsGolden/rpsNotSet), mTime[2] (ns, per PMT).
+ *     Accessors: x(), y(), z(), positionVec(), rpId(), clusterId(plane), quality(),
+ *     time(pmtId), planesUsed().
+ *   - StMuRpsTrack — global track spanning two stations in one branch.  Fields:
+ *     mTrackPoints[2] (TRef to StMuRpsTrackPoint), mP (TVector3, GeV/c),
+ *     mBranch (EU=0, ED=1, WU=2, WD=3), mType (rpsLocal/rpsGlobal/rpsUndefined).
+ *     Kinematic accessors: theta(), thetaRp(), phi(), phiRp(), t(beamMomentum),
+ *     xi(beamMomentum), p(), pt(), eta(), time().
+ *   - StMuRpsCollection — top-level container.  Stores per-RP ADC/TAC/status (8
+ *     pots), per-plane geometry (offset, z, angle, orientation, status, 4 per pot),
+ *     per-cluster position/energy/quality data, and vectors of StMuRpsTrackPoint*
+ *     and StMuRpsTrack*.  Conversion from StRpsCollection is done in the collection
+ *     constructor; no separate Util class exists.
+ *
+ * **MuDST storage:** Roman Pot data is embedded within a single StMuRpsCollection
+ * object stored as a branch in the MuDST (accessed via StMuDst::RpsCollection()).
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTRHICf RHICf
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the RHICf very-forward calorimeter.
+ * @details
+ * RHICf is a small calorimeter placed at the STAR zero-degree location to measure
+ * very-forward (η > 6) neutral particles (photons, neutrons, π⁰).  It consists of
+ * two GSO-crystal towers (2 × 2 cm² small arm, 4 × 4 cm² large arm), each with
+ * 16 scintillator plates and a GSO-bar position-sensitive layer.
+ *
+ * **Classes:**
+ *   - StMuRHICfRawHit — raw ADC data for one event.  Stores RHICf-internal run and
+ *     event numbers (distinct from STAR numbers), runType, bunchNumber, trigger,
+ *     run timestamps, TRGM word, and ADC arrays: mPlateADC[tower][plate][range]
+ *     (and mPlateADCDelay for pedestal), mGSOSmallADC/mGSOLargeADC[layer][xy][bar],
+ *     plus TDC, CAD0, GPI0, GPI1 words.
+ *   - StMuRHICfHit — reconstructed shower information.  Provides plate energies
+ *     (getPlateEnergy(tower, plate)), GSO bar energies (getGSOBarEnergy(tower,
+ *     layer, xy, bar)), longitudinal shower depth at 20%/90% (getL20/getL90),
+ *     number of points per tower (getPointNum), and single/multi-hit position and
+ *     peak-fit arrays.  Optional analysis arrays are allocated on demand;
+ *     isSaveDataArray() indicates their presence.
+ *   - StMuRHICfPoint — one reconstructed particle position.  Fields: mTowerIdx
+ *     (0 = small, 1 = large), mParticleID, mPointPos[2] (x/y, cm), mPointEnergy[2]
+ *     (GeV), mTowerSumEnergy[2] (GeV, all / partial).
+ *   - StMuRHICfCollection — holds TClonesArrays for raw hit (single entry), hit
+ *     (single entry), and points.  Accessors: getRawHit(), getHit(),
+ *     getPoint(index), numberOfPoints().
+ *   - StMuRHICfUtil — converts StRHICfCollection ↔ StMuRHICfCollection via
+ *     fillMuRHICf() / fillRHICf().
+ *
+ * **MuDST branches:** RHICfRawHit, RHICfHit, RHICfPoint
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFTT sTGC Forward Tracker (FTT)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR sTGC Forward Tracker.
+ * @details
+ * The FTT tracks charged particles at forward rapidity (1 < η < 4) using four planes
+ * of small-strip Thin Gap Chambers (sTGCs), each plane divided into four quadrants.
+ *
+ * **Classes:**
+ *   - StMuFttRawHit — one VMM chip channel readout.  Hardware address: sector,
+ *     RDO (Readout Data Object), FEB (Front-End Board), VMM chip, channel.  Raw
+ *     data: ADC amplitude, BCID, time-bin (TB), BCID delta.  Mapped geometry:
+ *     plane, quadrant, row, strip, orientation.  MC: idTruth, qaTruth.
+ *   - StMuFttCluster — a 1-D strip cluster on one plane.  Fields: id, plane,
+ *     quadrant, orientation, nStrips, sumAdc (0th moment), x (1st moment, local
+ *     grid), sigma (2nd moment).  TRefArrays: mRawHits, mNeighbors, mPoints.
+ *     MC: idTruth.
+ *   - StMuFttPoint — intersection of two orthogonal clusters giving a 2-D position.
+ *     Fields: plane, quadrant, x/y (local cm), mXYZ (TVector3, global STAR coords),
+ *     mClusters (TRefArray of parent clusters).  MC: idTruth, qaTruth.
+ *   - StMuFttCollection — holds TClonesArrays for raw hits, clusters, and points.
+ *   - StMuFttUtil — converts StFttCollection ↔ StMuFttCollection.  Rebuilds
+ *     hit↔cluster↔point cross-references after filling via rebuildRelationships().
+ *
+ * **MuDST branches:** FttRawHit, FttCluster, FttPoint
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFST Forward Silicon Tracker (FST)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for the STAR Forward Silicon Tracker.
+ * @details
+ * The FST provides silicon tracking at 1 < η < 4 using three detector discs.
+ * Each disc has 12 wedges × 3 sensors per wedge read out by APV25 chips.
+ *
+ * **Classes:**
+ *   - StMuFstRawHit — one APV channel with per-timebin ADC values.  Fields:
+ *     channelId and geoId [0,36863], seedhitflag, mCharge[kFstNumTimeBins] and
+ *     mChargeErr[kFstNumTimeBins] (pedestal/CMN-subtracted in physics mode),
+ *     mMaxTimeBin, mIdTruth.  Geometry decoded from geoId: getDisk() [1–3],
+ *     getWedge() [1–36], getPhiStrip() [0–127], getRStrip() [0–7], getRdo(),
+ *     getArm(), getApv(), getSensor(), getChannel().
+ *   - StMuFstHit — one reconstructed cluster hit.  Fields: id, idTruth,
+ *     mHardwarePosition (encodes disk/wedge/sensor), apv, maxTimeBin, meanRStrip,
+ *     meanPhiStrip, charge, chargeErr, nRawHits/nRawHitsR/nRawHitsPhi, localPosition
+ *     [3], mXYZ (TVector3, global STAR coords).  Geometry: getDisk() [1–3],
+ *     getWedge() [1–36], getSensor() [0–2].
+ *   - StMuFstCollection — holds TClonesArrays for raw hits and hits.
+ *   - StMuFstUtil — converts StFstHitCollection + StFstEvtCollection →
+ *     StMuFstCollection via fillMuFst(), and back via fillFst().
+ *
+ * **MuDST branches:** FstRawHit, FstHit
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StMuDSTFWD Forward Tracks (FWD)
+ * @ingroup StMuDSTDetectors
+ * @brief MuDST classes for STAR forward reconstructed tracks.
+ * @details
+ * Forward tracks are reconstructed using the GenFit framework, combining hits from
+ * FST, FTT, and FCS to cover 1 < η < 4.
+ *
+ * **Classes:**
+ *   - StMuFwdTrackProjection — track state at one detector plane.  Fields: mDetId
+ *     (UChar_t), mXYZ (TVector3, position), mMom (TVector3, momentum), mCov[9]
+ *     (Float_t, 3×3 position covariance).  Methods: dx(), dy(), dz() = √(diag cov).
+ *   - StMuFwdTrackSeedPoint — seed-step hit used in track finding.  Fields: mXYZ
+ *     (TVector3), mSector (Short_t), mTrackId (UShort_t), mCov[9].
+ *   - StMuFwdTrack — one reconstructed forward track.  Quality: mDidFitConverge,
+ *     mDidFitConvergeFully, mNumberOfFailedPoints, mNumberOfSeedPoints,
+ *     mNumberOfFitPoints, mChi2, mNDF, mPval.  Kinematics: mPrimaryMomentum
+ *     (TVector3, GeV/c), mCharge.  Detector information: mProjections (std::vector
+ *     of StMuFwdTrackProjection, one per plane), mFTTPoints and mFSTPoints
+ *     (std::vector of StMuFwdTrackSeedPoint), mEcalClusters and mHcalClusters
+ *     (TRefArray to matched StMuFcsCluster objects).  Track origin: mDCA[3] (cm),
+ *     mVtxIndex (UCHAR_MAX = global).  MC truth: mIdTruth, mQATruth.
+ *     isPrimary() returns true when mVtxIndex != UCHAR_MAX.
+ *   - StMuFwdTrackCollection — TClonesArray of StMuFwdTrack.
+ *   - StMuFwdTrackUtil — converts StFwdTrackCollection ↔ StMuFwdTrackCollection.
+ *     fillMuFwdTrack() takes an StMuFcsUtil* to resolve FCS cluster references.
+ *
+ * **MuDST branch:** FwdTrack
+ */
+
+/**
+ * @}
+ */

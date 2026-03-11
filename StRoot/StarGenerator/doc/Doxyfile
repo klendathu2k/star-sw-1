@@ -1,0 +1,28 @@
+# Doxyfile for StarGenerator subsystem
+# Generated for use with Doxygen 1.8+
+
+PROJECT_NAME           = "StarGenerator"
+PROJECT_BRIEF          = "STAR event-generator integration framework"
+
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx *.C
+
+OUTPUT_DIRECTORY       = doc/doxygen
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+HAVE_DOT               = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+
+QUIET                  = NO
+WARNINGS               = YES

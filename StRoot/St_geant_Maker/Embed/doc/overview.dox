@@ -1,0 +1,230 @@
+/**
+ * @defgroup StPrepEmbedMaker StPrepEmbedMaker — Monte Carlo Embedding Preparation
+ * @brief STAR chain maker that configures GEANT3 to embed simulated particles
+ *        into real collision events on an event-by-event basis.
+ *
+ * @details
+ * `StPrepEmbedMaker` reads a **tags file** (a ROOT TTree produced by
+ * `StTagsMaker`) to retrieve the primary vertex position and event
+ * multiplicity for each real data event.  It then issues GEANT3 KUIP
+ * commands to:
+ *
+ * - set the simulation vertex to match the reconstructed real-data vertex,
+ * - generate the kinematics of the embedded Monte Carlo particles using one
+ *   of three spectrum modes (flat pT, flat p, or thermal/strangeness),
+ * - optionally apply event-selection cuts (vertex range, trigger ID, VPD
+ *   vertex, primary vertex ranking).
+ *
+ * The maker must appear **before** `St_geant_Maker` in the chain.
+ *
+ * ### Kinematic generation modes
+ * | Mode | Commands | Description |
+ * |------|----------|-------------|
+ * | `FlatPt` *(default)* | `gkine` + `phasespace` | Flat in (p_T, rapidity) |
+ * | `FlatP` | `gkine` | Flat in (p, rapidity or η) |
+ * | `Strange` | `gkine` + `phasespace` + `gspread` | Thermal distribution, vertex-smeared; uses moretags.root |
+ * | `Spectrum` | `gkine` + `detp mick miky` | Sloped spectrum via gstar_micky; rapidity forced to ±10 |
+ *
+ * @{
+ */
+
+/**
+ * @class StPrepEmbedMaker
+ * @brief Per-event configurator of the GEANT3 embedding environment.
+ *
+ * @details
+ * Stores embedding parameters in a file-static `embedSettings` struct.
+ * In `InitRun()` it opens the tags file, seeds the random number
+ * generator, and loads `libgstar`.  In `Make()` it looks up the current
+ * event in the tags tree, applies all enabled cuts, computes the particle
+ * multiplicity, and issues the GEANT3 vertex and kinematic commands.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::StPrepEmbedMaker(const char* name)
+ * @brief Constructor.
+ * @param[in] name  Maker name in the chain (default: `"PrepEmbed"`).
+ * @details
+ * Allocates the static `embedSettings` struct on first construction,
+ * with defaults: mode=`"flatpt"`, vzlow=−200, vzhigh=+200, T=0.3 GeV,
+ * mSkipMode=kFALSE, mSpreadMode=kFALSE, mOpenFzFile=kFALSE,
+ * mPrimeMode=kFALSE, mRapidityMode=kTRUE, mVpdVzCutMode=kFALSE,
+ * mPVRankCutMode=kFALSE.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::Init()
+ * @brief Seeds the random number generator and sets SpreadMode for Strange mode.
+ * @return kStOK.
+ * @details
+ * Random seeds are set from `clock() + getpid()`.  When the environment
+ * variable `SUMS_name` contains `"FixRandomSeeds"`, `"DevTest"`,
+ * `"EvalTest"`, or `"NewTest"`, fixed seeds 12345/67890 are used for
+ * reproducible nightly tests.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::InitRun(int runnum)
+ * @brief Opens the tags file; obtains TGiant3 pointer; loads gstar.
+ * @param[in] runnum  Run number.
+ * @return kStOK on success, kStErr if tags file not set or cannot be opened.
+ * @details
+ * If `mOpenFzFile` is set, opens a ZEBRA `.fz` output file named after
+ * the DAQ input file.  Always calls `detp hadr_on` to enable hadronic
+ * physics in GSTAR.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::Make()
+ * @brief Per-event embedding setup: vertex extraction, cuts, kinematic generation.
+ * @return kStOK if event is accepted and GEANT3 is configured; kStSKIP if
+ *         the event fails a selection cut; kStErr on lookup failure.
+ * @details
+ * Sequence:
+ * -# Look up run+event in tags TTree; reject if not found exactly once.
+ * -# Reject events with zero primary tracks or bad vertex flag.
+ * -# If SpreadMode: cross-check multiplicity with moretags.root.
+ * -# Compute embedded multiplicity via `getMultiplicity()`.
+ * -# If SkipMode enabled: apply Vz, Vr, trigger, VpdVz, and PVRank cuts.
+ * -# Retrieve vertex (x,y,z) and vertex errors.
+ * -# Set fixed vertex in `StGenericVertexFinder`.
+ * -# Handle PrimeMode: replace pid with deuteron (45) for the first event.
+ * -# Issue `gkine` to set z-vertex and kinematic range.
+ * -# Issue `phasespace` (FlatPt/Strange) or skip (FlatP).
+ * -# Issue `gvertex x y z`.
+ * -# Issue `gspread` (Strange) or `vsig 0 0` (all other modes).
+ * -# Issue `detp mick miky` (Spectrum mode).
+ * -# Issue `trig 1` to transport the embedded event.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::Finish()
+ * @brief Closes the .fz output file if enabled.
+ * @return 0.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetPartOpt(Int_t pid, Double_t mult)
+ * @brief Sets the GEANT3 particle ID and multiplicity.
+ * @param[in] pid   GEANT3 particle ID (e.g. 8 = π⁺, 9 = π⁻, 45 = deuteron).
+ * @param[in] mult  Number of particles per event (≥ 1 = exact integer count;
+ *                  < 1 = fraction of uncorrectedNumberOfPrimaries, minimum 5).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetOpt(Double_t ptlow, Double_t pthigh, Double_t etalow, Double_t etahigh, Double_t philow, Double_t phihigh, TString type)
+ * @brief Sets kinematic window and generation mode.
+ * @param[in] ptlow, pthigh    Transverse-momentum range (GeV/c).
+ * @param[in] etalow, etahigh  Rapidity (or η) range.
+ * @param[in] philow, phihigh  Azimuthal range (radians).
+ * @param[in] type             Mode: `"FlatPt"`, `"FlatP"`, `"Strange"`, or `"Spectrum"` (case-insensitive).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetTemp(double t)
+ * @brief Sets the inverse-slope temperature for thermal spectrum modes.
+ * @param[in] t  Temperature in GeV (default: 0.3 GeV).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetTagFile(const char* file)
+ * @brief Sets the path to the tags.root file.
+ * @param[in] file  Full path to the tags ROOT file (required; no default).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetSkipMode(Bool_t flag)
+ * @brief Enables or disables event-selection cuts.
+ * @param[in] flag  kTRUE = reject events failing cuts with kStSKIP.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetSpreadMode(Bool_t flag)
+ * @brief Enables vertex-smearing mode (requires moretags.root alongside tags.root).
+ * @param[in] flag  kTRUE = read vertex from moretags.root; apply gspread.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetZVertexCut(Double_t vzlow, Double_t vzhigh)
+ * @brief Accepts events with vzlow < V_z < vzhigh (SkipMode must be on).
+ * @param[in] vzlow   Lower z-vertex bound (cm; default −200).
+ * @param[in] vzhigh  Upper z-vertex bound (cm; default +200).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetVrCut(Double_t vr)
+ * @brief Accepts events with √(Vx²+Vy²) < vr (SkipMode must be on).
+ * @param[in] vr  Maximum transverse vertex radius (cm).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetVpdVzCut(Double_t vpdvz)
+ * @brief Accepts events with |V_z − VpdV_z| < vpdvz (SkipMode + VpdVzCutMode must be on).
+ * @param[in] vpdvz  Maximum |V_z − VpdV_z| (cm).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetVpdVzCutMode(Bool_t flag)
+ * @brief Enables the VPD Vz matching cut.  Automatically enables SpreadMode.
+ * @param[in] flag  kTRUE = apply VpdVz cut.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetPVRankCut(Double_t pvrank)
+ * @brief Accepts events with primary-vertex rank > pvrank (SkipMode + PVRankCutMode must be on).
+ * @param[in] pvrank  Minimum primary vertex ranking score.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetPVRankCutMode(Bool_t flag)
+ * @brief Enables the primary vertex ranking cut.  Automatically enables SpreadMode.
+ * @param[in] flag  kTRUE = apply PVRank cut.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetTrgOpt(Int_t TrgId)
+ * @brief Registers a required trigger ID (up to 32; SkipMode must be on).
+ * @param[in] TrgId  STAR trigger ID that must have fired for the event to be accepted.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetRapidityMode(Bool_t flag)
+ * @brief Selects whether etalow/etahigh are interpreted as rapidity or pseudo-rapidity.
+ * @param[in] flag  kTRUE = rapidity (default); kFALSE = pseudo-rapidity.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::SetPrimeMode(Bool_t flag)
+ * @brief Enables nucleus priming for heavy-nucleus embedding.
+ * @param[in] flag  kTRUE = generate one deuteron (GEANT ID 45) in the first event
+ *                  to initialise GEANT3 nucleus cross-section tables before injecting
+ *                  the target nucleus (GEANT ID > 10000).
+ */
+
+/**
+ * @fn StPrepEmbedMaker::OpenFzFile()
+ * @brief Enables writing a ZEBRA .fz output file.
+ * @details
+ * The output filename is derived from the DAQ input file basename with
+ * the `.daq` suffix replaced by `.fz`.  The file is closed in `Finish()`.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::phasespace(Int_t mult)
+ * @brief Issues the GEANT3 `phasespace` command for flat (p_T, y) generation.
+ * @param[in] mult  Number of particles to generate.
+ * @details
+ * In Spectrum mode, the rapidity range is widened to ±10 to avoid
+ * acceptance cuts; the actual spectrum shape is controlled by `detp mick miky`.
+ */
+
+/**
+ * @fn StPrepEmbedMaker::gkine(Int_t mult, Double_t vzmin, Double_t vzmax)
+ * @brief Issues the GEANT3 `gkine` command.
+ * @param[in] mult          Number of particles.
+ * @param[in] vzmin, vzmax  Z-vertex range passed to gkine (both set to event vertex Z).
+ */
+
+/**
+ * @}
+ */

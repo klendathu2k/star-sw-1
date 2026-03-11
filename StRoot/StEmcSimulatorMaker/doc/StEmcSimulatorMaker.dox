@@ -1,0 +1,893 @@
+/**
+ * @defgroup StEmcSimulatorMaker StEmcSimulatorMaker — BEMC Slow Simulator
+ * @{
+ *
+ * @brief Translates GEANT energy depositions into simulated raw ADC hits for
+ *        all four sub-detectors of the STAR Barrel Electromagnetic Calorimeter
+ *        (BEMC): towers (BTOW), pre-shower (BPRS), and both SMD planes
+ *        (BSMDE, BSMDP).
+ *
+ * @section overview Physics Overview
+ *
+ * The STAR Barrel EMC is a lead-scintillator sampling calorimeter covering
+ * |η| < 1 and the full azimuth (0–2π).  It consists of four instrumented
+ * layers read out by photo-detectors:
+ *
+ * | Sub-detector | Acronym | Channels | Photo-detector | ADC range |
+ * |---|---|---|---|---|
+ * | Barrel EMC Tower         | BTOW  | 4 800  | PMT | 0–4095 |
+ * | Barrel Pre-Shower        | BPRS  | 4 800  | PMT | 0–1023 |
+ * | Barrel SMD Eta strips    | BSMDE | 18 000 | wire (MAPD/APD-like) | 0–1023 |
+ * | Barrel SMD Phi strips    | BSMDP | 18 000 | wire | 0–1023 |
+ *
+ * @subsection sampling_fraction Sampling Fraction
+ *
+ * The sampling fraction SF(η) converts the raw GEANT energy deposit dE (in
+ * GeV) in the active scintillator into the energy that would be measured in an
+ * ideal, perfectly calibrated detector.  It is parameterised as a quadratic
+ * function of pseudo-rapidity |η|:
+ *
+ *   SF(η) = c₀ + c₁·|η| + c₂·η²
+ *
+ * Default coefficients by sub-detector:
+ *
+ * | Detector | c₀       | c₁        | c₂       | Notes |
+ * |---|---|---|---|---|
+ * | BTOW  | 14.365   | −0.512    | 0.668    | dimensionless (×10⁻³ relative to 1 GeV) |
+ * | BPRS  | 1.0      | 0.0       | 0.0      | energy in scintillator only |
+ * | BSMDE | 118 500  | −32 920   | 31 130   | large coefficients: energy scale in strip units |
+ * | BSMDP | 126 000  | −13 950   | 19 710   | |
+ *
+ * @subsection adc_conversion ADC Conversion (Simple Mode)
+ *
+ * For the simple (non-PMT) path:
+ *
+ * @code
+ *   ADC_ideal = dE · SF(η) / calib
+ *   ADC_noisy = ADC_ideal + Gaus(pedMean, pedRMS)      [non-embedding only]
+ *   ADC_final = pedMean + (ADC_noisy − pedMean) · Gaus(calibScale, calibSpread)
+ *   ADC_final = clamp(ADC_final, 0, Gaus(maxADC, maxADCSpread))
+ * @endcode
+ *
+ * where `calib` [GeV/ADC] is the per-channel gain constant from the database,
+ * `pedMean` [ADC] is the channel pedestal, and `pedRMS` [ADC] is the pedestal
+ * noise sigma.
+ *
+ * After digitisation the reconstructed energy is:
+ * @code
+ *   energy = (ADC − pedMean) · calib
+ * @endcode
+ *
+ * @subsection pmt_mode PMT Photostatistics Mode
+ *
+ * For BTOW and BPRS a more detailed simulation converts the energy deposit
+ * into a number of photo-electrons and then propagates them through the PMT
+ * dynode chain.
+ *
+ * **Step 1 — Photo-electron yield:**
+ * @code
+ *   nPhe_mean = dE · mMipPhotoElectrons / mMipEnergyDeposit
+ *   nPhe      = Poisson( nPhe_mean )
+ * @endcode
+ *
+ * MIP references used:
+ * | Detector | mMipPhotoElectrons | mMipEnergyDeposit |
+ * |---|---|---|
+ * | BTOW | 63 phe/MIP | 19.8 MeV |
+ * | BPRS |  6 phe/MIP |  2.0 MeV |
+ *
+ * **Step 2 — Total gain:**
+ * @code
+ *   totalGain = SF(η) · (mMipEnergyDeposit / mMipPhotoElectrons) / calib
+ * @endcode
+ * This is the ADC-counts-per-incident-photoelectron.
+ *
+ * **Step 3 — Dynode cascade (kPrimarySecondaryFullMode / kPrimarySecondaryFastMode):**
+ * Handled by StPmtSignal::getAdc().
+ *
+ * **Step 4 — Calibration smear and clamping:**
+ * Same as Simple Mode above.
+ *
+ * @subsection pmt_dynode PMT Dynode Model (StPmtSignal)
+ *
+ * Models the HAMAMATSU R6427 PMT with 11 dynodes.  The relative inter-dynode
+ * voltage distribution is:
+ * @code
+ *   mNodeVoltage[] = { 2, 2, 1, 1, 1, 1, 1, 1, 2, 3, 4 }
+ * @endcode
+ *
+ * The secondary-emission coefficients are derived so that the product of all
+ * per-dynode gains equals the approximate PMT gain mPmtGain:
+ * @code
+ *   voltageProduct = ∏ mNodeVoltage[i]
+ *   globalCoeff    = (mPmtGain / voltageProduct)^(1/nDynodes)
+ *   mSecondaryCoeff[i] = globalCoeff · mNodeVoltage[i]
+ * @endcode
+ *
+ * Inverted partial gains (used for normalisation):
+ * @code
+ *   mDynodeGain[0] = 1
+ *   mDynodeGain[i] = mDynodeGain[i−1] / mSecondaryCoeff[i−1]
+ * @endcode
+ *
+ * **Full Simulator** — propagates a Poisson cascade through every dynode:
+ * @code
+ *   for i in 0..10:
+ *       nElectrons = Poisson( mSecondaryCoeff[i]·nElectrons + mDynodeNoise )
+ *   ADC = mTotalGain · nElectrons · mDynodeGain[11]
+ *       + Gaus(mPedestalMean, mPedestalRMS)
+ * @endcode
+ *
+ * **Fast Simulator** — switches to a Gaussian approximation once nElectrons ≥ 100,
+ * computing the remaining amplification analytically using pre-computed
+ * `mG1[]` and `mDNW[]` arrays.  Statistically consistent with the full
+ * simulator up to ~10⁵ photo-electrons.
+ *
+ * @subsection crosstalk Optical Cross-Talk (BSMDE only)
+ *
+ * The SMD eta strips exhibit capacitive cross-talk.  The simulation leaks a
+ * fraction of the energy of the highest-energy strip in a track into its
+ * ±5 neighbours:
+ * @code
+ *   crossTalk = mCrossTalk · (1 − |etaHigh|)
+ *   leakE     = crossTalk · (energy_i − energy_{i+1})
+ * @endcode
+ * The factor (1 − |η|) ensures zero cross-talk at the barrel edge.  Energy is
+ * conserved within the 11-strip window examined per track.
+ *
+ * @}
+ */
+
+// ============================================================
+//  File documentation blocks
+// ============================================================
+
+/**
+ * @file StEmcVirtualSimulator.h
+ * @ingroup StEmcSimulatorMaker
+ * @brief Abstract interface that every BEMC channel simulator must implement.
+ *
+ * Defines the pure-virtual API (setters and makeRawHit()) that both concrete
+ * simulator classes — StEmcSimpleSimulator and StEmcPmtSimulator — must
+ * satisfy, as well as the shared StEmcSimulatorMode enumeration.
+ *
+ * @author A. Pavlinov, A. Suaide, A. Kocoloski
+ */
+
+/**
+ * @file StEmcVirtualSimulator.cxx
+ * @ingroup StEmcSimulatorMaker
+ * @brief Trivial implementation of the StEmcVirtualSimulator ctor/dtor and
+ *        ROOT ClassImp registration.
+ */
+
+/**
+ * @file StEmcSimpleSimulator.h
+ * @ingroup StEmcSimulatorMaker
+ * @brief Header for the simple energy-to-ADC BEMC channel simulator.
+ *
+ * Declares StEmcSimpleSimulator: data members for the sampling fraction,
+ * database pointer, ADC limits, embedding flag, and calibration smearing
+ * parameters.
+ *
+ * @author A. Pavlinov, A. Suaide, A. Kocoloski
+ */
+
+/**
+ * @file StEmcSimpleSimulator.cxx
+ * @ingroup StEmcSimulatorMaker
+ * @brief Implementation of StEmcSimpleSimulator.
+ *
+ * Contains the constructor (which sets per-detector default sampling-fraction
+ * coefficients and ADC ceilings) and the makeRawHit() workhorse that performs
+ * the energy → ADC conversion for kTestMode and kSimpleMode.
+ */
+
+/**
+ * @file StEmcPmtSimulator.h
+ * @ingroup StEmcSimulatorMaker
+ * @brief Header for the PMT-statistics BEMC channel simulator.
+ *
+ * Extends StEmcSimpleSimulator with MIP photo-electron references and
+ * a StPmtSignal member to model primary and secondary dynode statistics.
+ *
+ * @author A. Pavlinov, A. Suaide, A. Kocoloski
+ */
+
+/**
+ * @file StEmcPmtSimulator.cxx
+ * @ingroup StEmcSimulatorMaker
+ * @brief Implementation of StEmcPmtSimulator.
+ *
+ * Constructs the PMT simulator, wires up the StPmtSignal helper, and
+ * implements makeRawHit() for the three PMT-specific simulation modes in
+ * addition to delegating kTestMode and kSimpleMode back to the base class.
+ */
+
+/**
+ * @file StPmtSignal.h
+ * @ingroup StEmcSimulatorMaker
+ * @brief Header for the PMT dynode-chain signal model.
+ *
+ * Declares StPmtSignal with the 11-dynode HAMAMATSU R6427 model, internal
+ * pre-computed gain arrays, and the getAdc() interface.
+ *
+ * @author V. Rykov, A. Pavlinov, A. Suaide, A. Kocoloski
+ */
+
+/**
+ * @file StPmtSignal.cxx
+ * @ingroup StEmcSimulatorMaker
+ * @brief Implementation of StPmtSignal.
+ *
+ * Constructor pre-computes secondary-emission coefficients, inverted partial
+ * dynode gains, and fast-simulator auxiliary arrays.  getAdc() implements
+ * both the full Poisson-cascade and the fast Gaussian-approximation paths.
+ */
+
+/**
+ * @file StEmcSimulatorMaker.h
+ * @ingroup StEmcSimulatorMaker
+ * @brief Header for the top-level BEMC slow-simulator STAR Maker.
+ *
+ * Declares StEmcSimulatorMaker: arrays of per-detector control flags,
+ * simulator objects, geometry, and database pointers, plus the public
+ * configuration API.
+ *
+ * @author A. Pavlinov, A. Suaide, A. Kocoloski
+ */
+
+/**
+ * @file StEmcSimulatorMaker.cxx
+ * @ingroup StEmcSimulatorMaker
+ * @brief Implementation of StEmcSimulatorMaker.
+ *
+ * Contains the constructor (which auto-detects embedding chains and sets
+ * per-detector defaults), Init() (creates simulator objects), Make()
+ * (drives the full simulation pipeline including cross-talk), makeRawHits()
+ * (converts MC hits to raw hits and stores them in StEmcCollection), and
+ * makeCrossTalk() (simulates optical cross-talk in BSMDE).
+ */
+
+// ============================================================
+//  Class documentation
+// ============================================================
+
+/**
+ * @class StEmcVirtualSimulator
+ * @ingroup StEmcSimulatorMaker
+ * @brief Abstract base class defining the interface for BEMC channel simulators.
+ *
+ * StEmcVirtualSimulator is a pure-abstract ROOT class that establishes the
+ * contract satisfied by every concrete BEMC detector simulator.  It provides:
+ *
+ * - A shared @ref StEmcSimulatorMode enumeration that governs the
+ *   physics fidelity of the simulation.
+ * - Pure-virtual setter methods that configure calibration scale/spread,
+ *   embedding behaviour, and ADC ceiling values.
+ * - The pure-virtual makeRawHit() factory that converts a single MC hit
+ *   into an StEmcRawHit.
+ *
+ * @section class_hierarchy Class Hierarchy
+ * @code
+ *   StEmcVirtualSimulator         (abstract, ROOT ClassDef v1)
+ *     └── StEmcSimpleSimulator    (kTestMode, kSimpleMode)
+ *           └── StEmcPmtSimulator (+ kPrimaryOnlyMode,
+ *                                    kPrimarySecondaryFullMode,
+ *                                    kPrimarySecondaryFastMode)
+ * @endcode
+ *
+ * @section modes Simulator Modes
+ * | Enumerator | Value | Description |
+ * |---|---|---|
+ * | kTestMode                   | 0 | ADC = 0; energy = dE·SF(η).  Diagnostic use only. |
+ * | kSimpleMode                 | 1 | ADC from calibration DB; pedestal noise added. |
+ * | kPrimaryOnlyMode            | 2 | Poisson photo-electron yield; no dynode cascade. |
+ * | kPrimarySecondaryFullMode   | 3 | Full Poisson dynode cascade (StPmtSignal). |
+ * | kPrimarySecondaryFastMode   | 4 | Fast Gaussian approximation (StPmtSignal). |
+ *
+ * @note Only kTestMode and kSimpleMode are available in StEmcSimpleSimulator.
+ *       StEmcPmtSimulator supports all five modes.
+ */
+
+/**
+ * @fn StEmcVirtualSimulator::StEmcVirtualSimulator()
+ * @brief Default constructor.  No-op; ROOT ClassDef requires a public ctor.
+ */
+
+/**
+ * @fn StEmcVirtualSimulator::~StEmcVirtualSimulator()
+ * @brief Virtual destructor.  No-op in the base; subclasses own no heap data
+ *        that the base needs to release.
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setTables(const StBemcTables *tables) = 0
+ * @brief Supply the database table accessor used to obtain per-channel
+ *        pedestals, pedestal widths, calibration constants, and channel status.
+ * @param[in] tables  Pointer to a fully-initialised StBemcTables object.
+ *                    Ownership is NOT transferred; the caller retains it.
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setCalibScale(float scale) = 0
+ * @brief Set the mean of the Gaussian distribution used to smear the
+ *        calibration coefficient.  A value of 1.0 applies no scale shift.
+ * @param[in] scale  Dimensionless scale factor (mean of smearing Gaussian).
+ *                   Default: 1.0.
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setCalibSpread(float spread) = 0
+ * @brief Set the width (sigma) of the Gaussian used to smear the calibration
+ *        coefficient channel-by-channel.
+ * @param[in] spread  Dimensionless RMS of the smearing Gaussian.
+ *                    Default: 0.0 (no spread).
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setEmbeddingMode(bool flag) = 0
+ * @brief Toggle embedding mode.  When true, pedestal noise is NOT added to
+ *        simulated ADCs because real detector noise already exists in the data
+ *        being embedded into.
+ * @param[in] flag  true = embedding; false = standalone simulation.
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setMaximumAdc(double adc) = 0
+ * @brief Set the mean value of the channel ADC ceiling (saturation value).
+ *        The actual ceiling per event is sampled from a Gaussian centred here.
+ * @param[in] adc  Mean maximum ADC [ADC counts].
+ *                 Typical defaults: 4095 (BTOW), 1023 (BPRS, BSMDE, BSMDP).
+ */
+
+/**
+ * @fn virtual void StEmcVirtualSimulator::setMaximumAdcSpread(double spread) = 0
+ * @brief Set the sigma of the Gaussian from which the per-event ADC ceiling
+ *        is sampled.  A non-zero spread models channel-to-channel variation
+ *        in the ADC range and is important for the BSMD.
+ * @param[in] spread  Sigma of the ADC ceiling Gaussian [ADC counts].
+ *                    Default: 0.0.
+ */
+
+/**
+ * @fn virtual StEmcRawHit* StEmcVirtualSimulator::makeRawHit(const StMcCalorimeterHit *mcHit) = 0
+ * @brief Convert a single MC calorimeter hit into a simulated raw detector hit.
+ * @param[in] mcHit  Monte-Carlo hit containing module, eta-bin, sub-bin, and
+ *                   deposited energy dE [GeV].
+ * @return  Heap-allocated StEmcRawHit with adc and energy set according to
+ *          the active simulation mode.  Returns nullptr if the hit coordinates
+ *          are invalid or the mode is not supported.
+ * @note Caller takes ownership of the returned object.
+ */
+
+// ------------------------------------------------------------
+
+/**
+ * @class StEmcSimpleSimulator
+ * @ingroup StEmcSimulatorMaker
+ * @brief Simple energy-to-ADC BEMC channel simulator.
+ *
+ * StEmcSimpleSimulator implements a two-step conversion:
+ *
+ * 1. **Sampling fraction** — maps raw GEANT dE to a detector-level
+ *    energy via a quadratic η-polynomial:
+ *    @code
+ *       E_det = dE · SF(η)   with SF(η) = c₀ + c₁·|η| + c₂·η²
+ *    @endcode
+ *
+ * 2. **Digitisation** — divides by the per-channel calibration constant to
+ *    produce an ADC value, optionally adding pedestal noise and calibration
+ *    jitter.
+ *
+ * Concrete instances are created for each of the four BEMC sub-detectors.
+ * Default sampling-fraction coefficients and ADC ceilings are set in the
+ * constructor according to the supplied `StDetectorId`.
+ *
+ * @section simple_members Data Members
+ *
+ * | Member | Type | Description |
+ * |---|---|---|
+ * | mDetectorId   | StDetectorId   | Which sub-detector this instance simulates |
+ * | mMode         | StEmcSimulatorMode | Active simulation mode |
+ * | mTables       | const StBemcTables* | Database accessor (not owned) |
+ * | mGeom         | const StEmcGeom*    | Geometry accessor (not owned, singleton) |
+ * | mSF[3]        | double[3]      | Sampling-fraction polynomial coefficients c₀, c₁, c₂ |
+ * | mMaxADC       | double         | Mean ADC ceiling [ADC counts] |
+ * | mMaxADCSpread | double         | Sigma of ADC ceiling Gaussian [ADC counts] |
+ * | mEmbeddingMode| bool           | If true, suppress pedestal noise |
+ * | mCalibScale   | double         | Mean of per-channel calibration scale Gaussian |
+ * | mCalibSpread  | double         | Sigma of per-channel calibration scale Gaussian |
+ * | mRandom       | TRandom3       | Mersenne-Twister random generator |
+ */
+
+/**
+ * @fn StEmcSimpleSimulator::StEmcSimpleSimulator(StDetectorId det, StEmcSimulatorMode mode)
+ * @brief Construct a simple simulator for a given BEMC sub-detector.
+ *
+ * Sets default sampling-fraction coefficients, ADC ceilings, and initialises
+ * all numeric members to their canonical values.  The geometry singleton for
+ * `det` is retrieved here.
+ *
+ * @param[in] det   One of kBarrelEmcTowerId, kBarrelEmcPreShowerId,
+ *                  kBarrelSmdEtaStripId, kBarrelSmdPhiStripId.
+ * @param[in] mode  One of kTestMode or kSimpleMode (the only modes supported
+ *                  by this class directly).
+ */
+
+/**
+ * @fn virtual StEmcRawHit* StEmcSimpleSimulator::makeRawHit(const StMcCalorimeterHit *mcHit)
+ * @brief Translate one MC calorimeter hit into a simulated raw hit.
+ *
+ * **kTestMode path:**
+ * @code
+ *   rawHit.energy = mcHit.dE * SF(η)
+ *   rawHit.adc    = 0
+ * @endcode
+ *
+ * **kSimpleMode path:**
+ * @code
+ *   calib   = DB.calib(det, softId)                    [GeV/ADC]
+ *   ADC     = mcHit.dE * SF(η) / calib
+ *   ADC    += Gaus(pedMean, pedRMS)                    [non-embedding only]
+ *   ADC     = pedMean + (ADC-pedMean)*Gaus(calibScale, calibSpread)
+ *   ADC     = clamp(ADC, 0, Gaus(mMaxADC, mMaxADCSpread))
+ *   rawHit.adc    = (unsigned int) ADC
+ *   rawHit.energy = (rawHit.adc - pedMean) * calib
+ * @endcode
+ *
+ * @param[in] mcHit  MC hit; must have module > 0, eta > 0, sub > 0.
+ * @return  Heap-allocated StEmcRawHit, or nullptr on invalid coordinates or
+ *          unsupported mode.
+ */
+
+/**
+ * @fn double StEmcSimpleSimulator::samplingFraction(double eta)
+ * @brief Evaluate the detector sampling fraction at pseudo-rapidity η.
+ * @param[in] eta  Pseudo-rapidity (signed; absolute value taken internally).
+ * @return  SF(η) = mSF[0] + mSF[1]·|η| + mSF[2]·η²   [dimensionless or
+ *          in the scale appropriate to the detector, see table in @ref sampling_fraction].
+ */
+
+// ------------------------------------------------------------
+
+/**
+ * @class StEmcPmtSimulator
+ * @ingroup StEmcSimulatorMaker
+ * @brief BEMC channel simulator with full PMT photo-statistics modelling.
+ *
+ * StEmcPmtSimulator extends StEmcSimpleSimulator by converting GEANT energy
+ * deposits into photo-electrons via a MIP-normalised yield, and then
+ * propagating those photo-electrons through the PMT dynode chain modelled by
+ * StPmtSignal.  Three simulation fidelity levels are supported in addition to
+ * the two inherited from StEmcSimpleSimulator.
+ *
+ * @section pmt_members Data Members
+ *
+ * | Member             | Type                        | Description |
+ * |---|---|---|
+ * | mPmtSignal         | StPmtSignal                 | Encapsulated dynode-chain simulator |
+ * | mVer               | StPmtSignal::simulatorVersion | kFullSimulator or kFastSimulator |
+ * | mMipPhotoElectrons | double                      | Photo-electrons produced by a MIP [phe/MIP] |
+ * | mMipEnergyDeposit  | double                      | Energy deposited by a MIP in scintillator [GeV] |
+ *
+ * Default MIP references (set in constructor by detector):
+ * | Detector | mMipPhotoElectrons | mMipEnergyDeposit |
+ * |---|---|---|
+ * | BTOW | 63 | 0.0198 GeV |
+ * | BPRS |  6 | 0.002  GeV |
+ */
+
+/**
+ * @fn StEmcPmtSimulator::StEmcPmtSimulator(StDetectorId det, StEmcSimulatorMode mode)
+ * @brief Construct a PMT-statistics simulator for BTOW or BPRS.
+ *
+ * Calls the StEmcSimpleSimulator base constructor and then sets
+ * mMipPhotoElectrons and mMipEnergyDeposit from compile-time constants,
+ * and selects the StPmtSignal version matching `mode`.
+ *
+ * @param[in] det   kBarrelEmcTowerId or kBarrelEmcPreShowerId.
+ * @param[in] mode  One of the five StEmcSimulatorMode values.
+ */
+
+/**
+ * @fn StEmcRawHit* StEmcPmtSimulator::makeRawHit(const StMcCalorimeterHit *mcHit)
+ * @brief Translate one MC hit into a simulated raw hit with PMT photo-statistics.
+ *
+ * **Modes kTestMode / kSimpleMode:** delegates immediately to
+ * StEmcSimpleSimulator::makeRawHit().
+ *
+ * **kPrimaryOnlyMode path:**
+ * @code
+ *   nPhe_mean  = mcHit.dE * mMipPhotoElectrons / mMipEnergyDeposit
+ *   nPhe       = Poisson(nPhe_mean)
+ *   totalGain  = SF(η) · (mMipEnergyDeposit / mMipPhotoElectrons) / calib
+ *   ADC        = totalGain · nPhe + Gaus(pedMean, pedRMS)
+ * @endcode
+ *
+ * **kPrimarySecondaryFullMode / kPrimarySecondaryFastMode path:**
+ * @code
+ *   nPhe_mean  = mcHit.dE * mMipPhotoElectrons / mMipEnergyDeposit
+ *   nPhe       = Poisson(nPhe_mean)
+ *   mPmtSignal.setTotalGain(totalGain)
+ *   mPmtSignal.setPedestalMean(pedMean)
+ *   mPmtSignal.setPedestalRMS(pedRMS)
+ *   ADC        = mPmtSignal.getAdc(nPhe, mVer)
+ * @endcode
+ *
+ * All modes then apply calibration smear and ADC clamping identically to
+ * StEmcSimpleSimulator::makeRawHit().
+ *
+ * @param[in] mcHit  MC hit; must have module > 0, eta > 0, sub > 0.
+ * @return  Heap-allocated StEmcRawHit, or nullptr on invalid input.
+ */
+
+// ------------------------------------------------------------
+
+/**
+ * @class StPmtSignal
+ * @ingroup StEmcSimulatorMaker
+ * @brief Models the digitised output of a PMT dynode chain for a given number
+ *        of photo-electrons emerging from the photocathode.
+ *
+ * Default model is the HAMAMATSU R6427 11-dynode tube used in beam-test 1998
+ * studies.  The class pre-computes secondary-emission coefficients, inverted
+ * partial gains, and fast-simulator auxiliary arrays in the constructor so
+ * that getAdc() is fast at run time.
+ *
+ * @note The approximate PMT gain `mPmtGain` affects only the *shape* (width)
+ *       of the charge-response distribution, not the overall ADC scale, which
+ *       is fully determined by `mTotalGain` supplied from outside.  Varying
+ *       `mPmtGain` by a factor of 2 changes distribution widths by only ~6–7%.
+ *
+ * @section pmt_signal_members Data Members
+ *
+ * | Member             | Type           | Description |
+ * |---|---|---|
+ * | mNumDynodes        | static const int = 11 | Number of PMT amplification stages |
+ * | mPmtGain           | float          | Approximate total PMT gain (shape only; default 1.5×10⁶) |
+ * | mCathodeNoise      | float          | Mean thermal dark-current from photocathode [phe/gate] |
+ * | mDynodeNoise       | float          | Mean thermal dark-current per dynode [electrons/gate] |
+ * | mTotalGain         | float          | ADC counts per photo-electron from cathode (must be set by user) |
+ * | mPedestalMean      | float          | Pedestal offset [ADC counts] (must be set by user) |
+ * | mPedestalRMS       | float          | Pedestal noise sigma [ADC counts] (must be set by user) |
+ * | mNodeVoltage[11]   | float[11]      | Relative inter-dynode voltage ratios {2,2,1,1,1,1,1,1,2,3,4} |
+ * | mSecondaryCoeff[11]| float[11]      | Secondary-emission coefficient per dynode stage |
+ * | mDynodeGain[12]    | float[12]      | Inverted cumulative dynode gain after each stage |
+ * | mG1[12]            | float[12]      | Auxiliary constants for fast simulator (SN301 notation) |
+ * | mDNW[12]           | float[12]      | Dynode-noise weight array for fast simulator |
+ * | mRandom            | TRandom3       | Internal Mersenne-Twister random generator |
+ */
+
+/**
+ * @fn StPmtSignal::StPmtSignal(float pmtGain, float cathodeNoise, float dynodeNoise)
+ * @brief Construct and fully initialise the PMT signal model.
+ *
+ * Pre-computes all internal arrays (mSecondaryCoeff, mDynodeGain, mG1, mDNW)
+ * from the three input parameters and the hard-coded HAMAMATSU R6427 voltage
+ * distribution.
+ *
+ * @param[in] pmtGain       Approximate total PMT gain.  Default: 1.5×10⁶.
+ * @param[in] cathodeNoise  Mean thermal dark electrons from photocathode per
+ *                          ADC gate [electrons/gate].  Default: 0.0.
+ * @param[in] dynodeNoise   Mean thermal dark electrons per dynode per gate
+ *                          [electrons/gate].  Default: 0.0.
+ */
+
+/**
+ * @fn void StPmtSignal::setTotalGain(float val)
+ * @brief Set the overall chain gain in ADC counts per photo-electron.
+ * @param[in] val  Gain [ADC/phe].
+ */
+
+/**
+ * @fn void StPmtSignal::setPedestalMean(float val)
+ * @brief Set the pedestal offset added to the simulated ADC output.
+ * @param[in] val  Pedestal mean [ADC counts].
+ */
+
+/**
+ * @fn void StPmtSignal::setPedestalRMS(float val)
+ * @brief Set the Gaussian sigma of the pedestal noise.
+ * @param[in] val  Pedestal RMS [ADC counts].
+ */
+
+/**
+ * @fn int StPmtSignal::getAdc(int nPhotoElectrons, simulatorVersion version)
+ * @brief Return the simulated ADC count for `nPhotoElectrons` entering the
+ *        first dynode.
+ *
+ * Adds Poisson-distributed cathode dark noise, then runs the dynode cascade
+ * according to `version`:
+ *
+ * - **kFullSimulator** — Poisson at every dynode; final ADC includes a
+ *   Gaussian pedestal term with the supplied mPedestalMean and mPedestalRMS.
+ * - **kFastSimulator** — Poisson at each dynode until nElectrons ≥ 100, then
+ *   switches to a Gaussian approximation using the pre-computed mG1[] and
+ *   mDNW[] arrays.  Statistically consistent with kFullSimulator up to ~10⁵
+ *   photo-electrons; acceptable agreement up to ~10⁶.
+ *
+ * The result is floor'd to an integer ADC value.
+ *
+ * @param[in] nPhotoElectrons  Number of photo-electrons arriving at the first
+ *                             dynode from the photocathode.
+ * @param[in] version          kFastSimulator or kFullSimulator.
+ * @return  Integer ADC counts, including pedestal.
+ */
+
+// ------------------------------------------------------------
+
+/**
+ * @class StEmcSimulatorMaker
+ * @ingroup StEmcSimulatorMaker
+ * @brief Top-level STAR Maker that orchestrates the slow BEMC simulation.
+ *
+ * StEmcSimulatorMaker is a StMaker-derived class that:
+ * -# Reads StMcEmcHitCollections from StMcEvent (GEANT energy depositions).
+ * -# Optionally simulates optical cross-talk in BSMDE strips.
+ * -# Optionally fills empty channels with pedestal-only MC hits
+ *    (makeFullDetector mode).
+ * -# Passes each MC hit through the appropriate per-detector simulator
+ *    (StEmcPmtSimulator for BTOW/BPRS; StEmcSimpleSimulator for BSMDE/BSMDP).
+ * -# Applies optional zero-suppression (pedestal cut).
+ * -# Stores resulting StEmcRawHits in the StEmcCollection attached to StEvent
+ *    (or a standalone collection in embedding mode).
+ *
+ * The class auto-detects embedding chains by looking for StEmcRawMaker
+ * ("emcRaw") or StEmcADCtoEMaker ("Eread") in the STAR chain.
+ *
+ * @section maker_members Data Members
+ *
+ * | Member                       | Type                            | Description |
+ * |---|---|---|
+ * | mTables                      | StBemcTables*                   | DB accessor for peds, calibs, status |
+ * | mPosition                    | StEmcPosition*                  | Utility for spatial queries |
+ * | mGeom[MAXDETBARREL]          | StEmcGeom*[4]                   | Geometry singletons for each sub-detector |
+ * | mSimulator[MAXDETBARREL]     | StEmcVirtualSimulator*[4]       | Per-sub-detector simulator objects |
+ * | mSimulatorMode[MAXDETBARREL] | StEmcSimulatorMode[4]           | Mode selection per sub-detector |
+ * | mEmcMcHits[MAXDETBARREL]     | StMcEmcHitCollection*[4]        | Convenience pointers to MC hit collections |
+ * | mMcEvent                     | StMcEvent*                      | Current event's MC data (reset each event) |
+ * | mEmcCollection               | StEmcCollection*                | Output collection of raw hits |
+ * | mMakeFullDetector[4]         | bool[4]                         | Fill empty channels with pedestal hits |
+ * | mCheckStatus[4]              | bool[4]                         | Skip channels with DB status ≠ 1 |
+ * | mDoZeroSuppression[4]        | bool[4]                         | Apply pedestal cut to output hits |
+ * | mPedestalCut[4]              | float[4]                        | Zero-suppression threshold [× pedRMS] |
+ * | mCalibOffset[4]              | float[4]                        | Uniform calibration offset (→ calibScale = 1+offset) |
+ * | mCalibSpread[4]              | float[4]                        | Per-channel calibration smearing sigma |
+ * | mMaxAdc[4]                   | float[4]                        | ADC ceiling mean per sub-detector |
+ * | mMaxAdcSpread[4]             | float[4]                        | ADC ceiling sigma per sub-detector |
+ * | mCrossTalk[4]                | float[4]                        | Cross-talk fraction for BSMDE (fraction, not %) |
+ * | mEmbeddingMode               | bool                            | Auto-detected; suppresses pedestal noise |
+ * | mIsBFC                       | bool                            | True if running inside StBFChain |
+ *
+ * @section maker_defaults Default Configuration
+ *
+ * | Parameter         | BTOW   | BPRS   | BSMDE  | BSMDP  |
+ * |---|---|---|---|---|
+ * | Simulator class   | StEmcPmtSimulator | StEmcPmtSimulator | StEmcSimpleSimulator | StEmcSimpleSimulator |
+ * | Default mode      | kPrimarySecondaryFullMode | kPrimarySecondaryFullMode | kSimpleMode | kSimpleMode |
+ * | maxADC            | 4095   | 1023   | 1023   | 1023   |
+ * | mMakeFullDetector | true   | false  | false  | false  |
+ * | mDoZeroSuppression| false  | true*  | true*  | true*  |
+ * | mPedestalCut      | 1.5 σ  | 1.5 σ  | 1.5 σ  | 1.5 σ  |
+ * | mCheckStatus      | true   | true   | true   | true   |
+ *
+ * *Flipped to false automatically in embedding mode.
+ */
+
+/**
+ * @fn StEmcSimulatorMaker::StEmcSimulatorMaker(const char *name)
+ * @brief Construct the maker, auto-detect embedding mode, and initialise
+ *        control flags, geometry, and database objects.
+ *
+ * Embedding mode is set when either "emcRaw" (StEmcRawMaker) or "Eread"
+ * (StEmcADCtoEMaker) is present in the chain.  Geometry singletons are
+ * retrieved here; a fatal error is raised if any is unavailable.
+ *
+ * @param[in] name  Maker name registered with the STAR chain.
+ *                  Default: "EmcSimulator".
+ */
+
+/**
+ * @fn virtual StEmcSimulatorMaker::~StEmcSimulatorMaker()
+ * @brief Destructor.
+ * @note  Deletion of owned objects (simulators, mTables, mPosition) is
+ *        currently disabled (guarded by `#if 0`) to avoid crashes inside BFC.
+ */
+
+/**
+ * @fn virtual Int_t StEmcSimulatorMaker::Init()
+ * @brief Create per-detector simulator objects and configure them with the
+ *        parameters set before Init() was called.
+ *
+ * Instantiates StEmcPmtSimulator for BTOW and BPRS, and StEmcSimpleSimulator
+ * for BSMDE and BSMDP, using the mode stored in mSimulatorMode[].  Then
+ * propagates all control parameters (embedding mode, calibration scale/spread,
+ * ADC limits) to each simulator.
+ *
+ * @return kStOk on success.
+ */
+
+/**
+ * @fn virtual void StEmcSimulatorMaker::Clear(const char*)
+ * @brief Reset the per-event StMcEvent pointer to nullptr.
+ * @param[in] opt  Option string (unused; required by StMaker interface).
+ */
+
+/**
+ * @fn virtual Int_t StEmcSimulatorMaker::Make()
+ * @brief Execute one event: retrieve MC hits, run cross-talk, fill pedestals,
+ *        and convert all MC hits to raw hits stored in StEmcCollection.
+ *
+ * Sequence:
+ * 1. Retrieve StMcEvent from the data set.
+ * 2. Cache pointers to BTOW/BPRS/BSMDE/BSMDP hit collections.
+ * 3. For each MC track (final-state only), call makeCrossTalk().
+ * 4. If mMakeFullDetector[det] is set, inject zero-energy hits for all empty
+ *    channels so that pedestals are simulated across the full detector.
+ * 5. Call makeRawHits() to perform the actual simulation and storage.
+ *
+ * @return kStOk on success; kStErr if StMcEvent is absent.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::makeRawHits()
+ * @brief (private) Convert all MC calorimeter hits to StEmcRawHits and
+ *        populate the StEmcCollection.
+ *
+ * For each sub-detector and each MC hit:
+ * - Loads DB tables via StBemcTables::loadTables().
+ * - Skips channels with DB status ≠ 1 (when mCheckStatus is true).
+ * - Calls mSimulator[det]->makeRawHit().
+ * - Applies zero suppression: discards hits with (ADC − pedMean) < mPedestalCut·pedRMS.
+ * - In BFC non-embedding mode, stores GEANT dE in the raw hit energy field.
+ * - Adds surviving hits to the StEmcDetector in the StEmcCollection.
+ *
+ * In embedding mode a fresh StEmcCollection is created; otherwise the existing
+ * one is retrieved from StEvent (creating it if absent).
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::makeCrossTalk(StMcTrack *track)
+ * @brief (private) Simulate BSMDE optical cross-talk for one MC track.
+ *
+ * For the BSMDE only, finds the strip with the highest energy deposit
+ * associated with `track`, then re-distributes energy to the ±5 neighbouring
+ * strips according to a cross-talk model that falls linearly to zero as the
+ * strip approaches |η| = 1:
+ * @code
+ *   crossTalk = mCrossTalk[BSMDE−1] · (1 − |η_highStrip|)
+ *   leakE_i   = crossTalk · (energy_i − energy_{i+1})
+ * @endcode
+ * Empty strips that receive leaked energy are created as new StMcCalorimeterHit
+ * objects and added to the MC hit collection.  Energy is conserved within the
+ * 11-strip window.
+ *
+ * @param[in] track  Final-state MC track (must have stopVertex == nullptr).
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setCheckStatus(StDetectorId det, bool flag)
+ * @brief Require channels to have DB status == 1 before saving hits.
+ * @param[in] det   BEMC sub-detector identifier.
+ * @param[in] flag  true (default) = enforce status check; false = accept all.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setMakeFullDetector(StDetectorId det, bool flag)
+ * @brief Enable simulation of pedestal hits in channels with no MC energy deposit.
+ * @param[in] det   BEMC sub-detector identifier.
+ * @param[in] flag  true = fill all channels; false (default for non-BTOW) = only hits.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setDoZeroSuppression(StDetectorId det, bool flag)
+ * @brief Enable or disable zero suppression (pedestal cut) on output hits.
+ * @param[in] det   BEMC sub-detector identifier.
+ * @param[in] flag  true = suppress hits below threshold; false = keep all.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setPedestalCut(StDetectorId det, float nRMS)
+ * @brief Set the zero-suppression threshold as a multiple of the pedestal RMS.
+ *        A hit survives if (ADC − pedMean) > nRMS · pedRMS.
+ * @param[in] det   BEMC sub-detector identifier.
+ * @param[in] nRMS  Threshold multiplier [dimensionless].  Default: 1.5.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setCalibOffset(StDetectorId det, float offset)
+ * @brief Apply a uniform fractional offset to all calibration constants.
+ *        Internally sets calibScale = 1.0 + offset.
+ * @param[in] det     BEMC sub-detector identifier.
+ * @param[in] offset  Fractional offset, e.g. 0.05 for a +5 % shift.  Default: 0.0.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setCalibSpread(StDetectorId det, float spread)
+ * @brief Smear calibration constants channel-by-channel with a Gaussian of
+ *        this width.
+ * @param[in] det    BEMC sub-detector identifier.
+ * @param[in] spread  Sigma of the smearing Gaussian [dimensionless].  Default: 0.0.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setSimulatorMode(StDetectorId det, StEmcVirtualSimulator::StEmcSimulatorMode mode)
+ * @brief Choose the simulation fidelity level for a sub-detector.
+ *
+ * Must be called before Init().  Changing the mode after Init() has no effect.
+ *
+ * @param[in] det   BEMC sub-detector identifier.
+ * @param[in] mode  One of the five StEmcSimulatorMode enumerators.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setMaximumAdc(StDetectorId det, float adc)
+ * @brief Set the mean ADC saturation value for a sub-detector.
+ * @param[in] det  BEMC sub-detector identifier.
+ * @param[in] adc  Mean maximum ADC [counts].
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setMaximumAdcSpread(StDetectorId det, float spread)
+ * @brief Set the channel-to-channel spread (sigma) of the ADC saturation value.
+ * @param[in] det    BEMC sub-detector identifier.
+ * @param[in] spread  Sigma [ADC counts].  Default: 0.0.
+ */
+
+/**
+ * @fn void StEmcSimulatorMaker::setMaxCrossTalkPercentage(StDetectorId det, float percentage)
+ * @brief Set the maximum optical cross-talk for BSMDE strips.
+ *        Only effective when det == kBarrelSmdEtaStripId.
+ * @param[in] det        Must be kBarrelSmdEtaStripId for any effect.
+ * @param[in] percentage Cross-talk fraction as a percentage, e.g. 5.0 for 5 %.
+ *                       Stored internally as a fraction (divided by 100).
+ */
+
+/**
+ * @fn StMcEmcHitCollection* StEmcSimulatorMaker::getEmcMcHits(Int_t det)
+ * @brief Return the cached StMcEmcHitCollection for detector index `det`.
+ * @param[in] det  1-based detector index (BTOW=1, BPRS=2, BSMDE=3, BSMDP=4).
+ * @return  Pointer to the collection (valid after Make() has been called for the event).
+ */
+
+/**
+ * @fn StMcEmcHitCollection* StEmcSimulatorMaker::getBemcMcHits()
+ * @brief Convenience accessor: BTOW MC hit collection.
+ * @return StMcEmcHitCollection for the barrel EMC tower layer.
+ */
+
+/**
+ * @fn StMcEmcHitCollection* StEmcSimulatorMaker::getBprsMcHits()
+ * @brief Convenience accessor: BPRS MC hit collection.
+ * @return StMcEmcHitCollection for the barrel pre-shower layer.
+ */
+
+/**
+ * @fn StMcEmcHitCollection* StEmcSimulatorMaker::getBsmdeMcHits()
+ * @brief Convenience accessor: BSMDE MC hit collection.
+ * @return StMcEmcHitCollection for the barrel SMD eta-strip plane.
+ */
+
+/**
+ * @fn StMcEmcHitCollection* StEmcSimulatorMaker::getBsmdpMcHits()
+ * @brief Convenience accessor: BSMDP MC hit collection.
+ * @return StMcEmcHitCollection for the barrel SMD phi-strip plane.
+ */
+
+/**
+ * @fn StEmcCollection* StEmcSimulatorMaker::getEmcCollection()
+ * @brief Return the simulated StEmcCollection produced in the last Make() call.
+ *
+ * In embedding mode the caller (StEmcMixerMaker) is responsible for placing
+ * this collection into a new StEvent and for memory management.  In normal
+ * mode the collection belongs to StEvent.
+ *
+ * @return Pointer to the simulated StEmcCollection.
+ */
+
+/**
+ * @fn StBemcTables* StEmcSimulatorMaker::getTables()
+ * @brief Return the StBemcTables database accessor used by this maker.
+ * @return Pointer to the internal StBemcTables instance.
+ */

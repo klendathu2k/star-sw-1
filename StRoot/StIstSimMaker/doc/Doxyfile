@@ -1,0 +1,38 @@
+# Doxyfile for StIstSimMaker documentation
+# Run from the doc/ directory: doxygen Doxyfile
+
+PROJECT_NAME           = "StIstSimMaker"
+PROJECT_BRIEF          = "STAR IST fast and slow Monte Carlo simulation makers"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = .
+
+INPUT                  = ..
+RECURSIVE              = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+FILE_PATTERNS          = *.h *.cxx *.dox
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+GENERATE_LATEX         = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+
+BUILTIN_STL_SUPPORT    = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+
+HAVE_DOT               = NO
+
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO

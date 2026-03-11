@@ -1,0 +1,493 @@
+/*!
+ * \file StSsdFastSimMaker.dox
+ * \brief Doxygen documentation for the SSD Fast Simulator maker.
+ *
+ * This file contains the full Doxygen narrative, group definitions, class
+ * documentation, and per-method documentation for StSsdFastSimMaker.
+ *
+ * Authors: J. Bouchet (Subatech), Y. Fisyak (BNL), J. Vanfossen (Kent State)
+ */
+
+// ---------------------------------------------------------------------------
+// Group definition
+// ---------------------------------------------------------------------------
+
+/*!
+ * \defgroup StSsdFastSim SSD Fast Simulator
+ * \ingroup StarSimulators
+ *
+ * \brief Fast Monte-Carlo simulation of the STAR Silicon Strip Detector (SSD).
+ *
+ * \section ssd_physics Physics Background
+ *
+ * The Silicon Strip Detector (SSD) is the outermost layer (layer 7) of the
+ * STAR inner tracking system.  It is a double-sided silicon strip detector
+ * (DSSSD): the p-side strips run along the wafer's long axis, while the
+ * n-side strips are tilted by a stereo angle \f$\theta\f$ with respect to
+ * the p-side strips.  The two-coordinate hit position is reconstructed by
+ * finding the intersection of a p-side and an n-side strip cluster.
+ *
+ * The SSD barrel consists of 20 ladders, each carrying 16 wafers, giving
+ * 320 wafers in total.  Each wafer has an active area of roughly 4 cm (along
+ * the beam direction, local \e z) × 4 cm (along the r-φ direction, local
+ * \e x).  The wafer corners are trimmed into a trapezoidal shape by the
+ * physical layout of the double-sided strip routing: triangular dead zones
+ * appear at all four corners.
+ *
+ * \section ssd_fastsim Fast Simulation Strategy
+ *
+ * In the fast simulation the full strip-level digitisation and cluster
+ * reconstruction chain is bypassed.  Instead:
+ *
+ * 1. **GEANT hits** are read from the \c g2t_ssd_hit table.  Each row
+ *    stores the hit position in the \e local frame of the wafer together
+ *    with the deposited energy and the parent track index.
+ *
+ * 2. **Hit smearing** is applied independently in local \e x and local \e z
+ *    by adding a zero-mean Gaussian offset whose width is taken from the
+ *    calibration database entry \c Calibrations/tracker/ssdHitError:
+ *    \f[
+ *        x_{\rm smear} = x + \mathcal{N}(0,\,\sigma_x), \quad
+ *        z_{\rm smear} = z + \mathcal{N}(0,\,\sigma_z)
+ *    \f]
+ *    with \f$\sigma_x = \sqrt{c_0}\f$ and \f$\sigma_z = \sqrt{c_3}\f$
+ *    taken from the \c coeff array of the \c HitError_st structure.
+ *    The local \e y coordinate (normal to the wafer) is left unchanged.
+ *
+ * 3. **Active-area acceptance** is checked with a rectangular bounding box
+ *    test (StSsdFastSimMaker::IsOnWafer()).  Hits that fall outside the
+ *    nominal \f$[-L/2, +L/2] \times [-W/2, +W/2]\f$ rectangle
+ *    (where \f$L\f$ is the large edge and \f$W\f$ the small edge of the
+ *    active area) are discarded.
+ *
+ * 4. **Corner triangle rejection** (StSsdFastSimMaker::RemoveTriangle())
+ *    removes hits from the four trapezoidal dead corners.  The corner
+ *    geometry is derived from the stereo angle \f$\theta\f$:
+ *    \f[
+ *        X_{\rm corner} = \tfrac{W}{2}\,\tan\!\tfrac{\theta}{2}, \qquad
+ *        l = \tfrac{L}{2} - X_{\rm corner}
+ *    \f]
+ *    A hit at \f$(x, z)\f$ is rejected when \f$|x| > l\f$ and the point
+ *    lies inside the triangular wedge defined by the corner slope
+ *    \f$\arctan\beta\f$ where \f$\beta = \pi/2 - \theta/2\f$.
+ *
+ * 5. **Coordinate transform**: the smeared local-frame position is converted
+ *    to global (lab) coordinates via the ROOT TGeoManager transformation
+ *    stored in StSsdBarrel / StSsdWafer (\c LocalToMaster()).
+ *
+ * 6. **StSsdHit creation**: an StSsdHit object is created with the global
+ *    smeared position, the wafer hardware address, the deposited energy, and
+ *    the truth-track link.  The hardware position word is encoded as
+ *    \f$\text{hw} = 8 + 16 \times \text{waferNumb}\f$.
+ *
+ * 7. **Histogram monitoring** (optional, controlled by the \c .histos
+ *    attribute): residual distributions \f$\Delta x\f$, \f$\Delta y\f$,
+ *    \f$\Delta z\f$, a 2-D hit map (ladder vs. wafer), and the
+ *    acceptance ratio are filled.
+ *
+ * \section ssd_waferid Wafer Identifier Encoding
+ *
+ * The integer wafer identifier used throughout the SSD code is:
+ * \f[
+ *     \text{idWafer} = \text{layer} \times 1000 + \text{waf} \times 100 + \text{ladder}
+ * \f]
+ * with \c layer = 7, \c waf = wafer-within-ladder (1-based),
+ * \c ladder = ladder number (1-based).
+ *
+ * The flat sequential wafer number (0-based) used to index arrays is:
+ * \f[
+ *     \text{waferNumb} = (\text{ladder}-1) \times N_{\rm waf/lad} + (\text{waf}-1)
+ * \f]
+ */
+
+// ---------------------------------------------------------------------------
+// File documentation
+// ---------------------------------------------------------------------------
+
+/*!
+ * \file StSsdFastSimMaker.h
+ * \ingroup StSsdFastSim
+ * \brief Declaration of StSsdFastSimMaker.
+ *
+ * Declares the StSsdFastSimMaker class together with all its public interface,
+ * private data members, and protected histogram members.
+ */
+
+/*!
+ * \file StSsdFastSimMaker.cxx
+ * \ingroup StSsdFastSim
+ * \brief Implementation of StSsdFastSimMaker.
+ *
+ * Contains the complete implementation of the SSD fast simulator, including
+ * geometry loading, hit smearing, acceptance cuts, coordinate transformations,
+ * and StSsdHit container population.
+ */
+
+// ---------------------------------------------------------------------------
+// Class documentation
+// ---------------------------------------------------------------------------
+
+/*!
+ * \class StSsdFastSimMaker
+ * \ingroup StSsdFastSim
+ * \brief STAR Maker that fast-simulates the Silicon Strip Detector (SSD).
+ *
+ * StSsdFastSimMaker is a concrete StMaker that reads Monte-Carlo hit
+ * information from the GEANT \c g2t_ssd_hit table and produces a set of
+ * StSsdHit objects placed in the StEvent::ssdHitCollection().  It replaces
+ * the full strip digitisation and cluster reconstruction chain with a simple
+ * Gaussian smearing model, allowing fast turn-around in embedding and
+ * efficiency studies.
+ *
+ * \section ssd_maker_usage Usage
+ *
+ * \code{.cpp}
+ * // Typical usage inside a STAR chain macro:
+ * StSsdFastSimMaker *ssdSim = new StSsdFastSimMaker("SsdFastSim");
+ * chain->AddMaker(ssdSim);
+ * \endcode
+ *
+ * The maker requires the following upstream datasets to be available at
+ * each event:
+ *  - \c StEvent (via GetInputDS("StEvent"))
+ *  - \c geant/g2t_ssd_hit (via GetInputDS("geant"))
+ *
+ * and these database entries to be loaded at \c InitRun() time:
+ *  - \c Calibrations/tracker/ssdHitError (hit position resolutions)
+ *  - \c Geometry/ssd/slsCtrl             (SSD control parameters)
+ *  - \c Geometry/ssd/ssdDimensions       (wafer geometry)
+ *  - \c Geometry/ssd/ssdWafersPosition   (wafer positions)
+ *  - \c Geometry/ssd/ssdConfiguration    (active-ladder map)
+ *
+ * \section ssd_maker_smearing Smearing Parameters
+ *
+ * The resolutions \f$\sigma_x\f$ and \f$\sigma_z\f$ are read from the
+ * calibration database in InitRun() and stored in \c mResXSsd and
+ * \c mResZSsd respectively.  Smearing can be globally disabled at run time
+ * by setting \c mSmear = 0 (default is 1, i.e. smearing enabled).
+ *
+ * \section ssd_maker_histos Diagnostic Histograms
+ *
+ * When the attribute \c .histos is set in the chain, the following ROOT
+ * histograms are created in Init() and filled in Make():
+ *
+ * | Histogram | Type  | Axes                               | Description                         |
+ * |-----------|-------|------------------------------------|-------------------------------------|
+ * | WaferNumb | TH1S  | wafer ID (7000–8620)               | GEANT hits per wafer identifier     |
+ * | HitsMap   | TH2S  | ladder (1–20) × wafer (1–16)       | 2-D hit occupancy map               |
+ * | dX        | TH1F  | Δx [cm] (±0.02 cm)                 | Smearing residual along local x     |
+ * | dY        | TH1F  | Δy [cm] (±0.02 cm)                 | Smearing residual along local y     |
+ * | dZ        | TH1F  | Δz [cm] (±2 cm)                    | Smearing residual along local z     |
+ * | Local     | TH2F  | x_l [cm] × y_l [cm]               | Local hit position before smearing  |
+ * | Ratio     | TH1F  | ratio (0–1.2)                      | Accepted / total GEANT hits         |
+ *
+ * \section ssd_maker_inheritance Inheritance
+ *
+ * \code
+ * TObject → TNamed → TDataSet → StMaker → StSsdFastSimMaker
+ * \endcode
+ */
+
+// ---------------------------------------------------------------------------
+// Constructor / Destructor
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn StSsdFastSimMaker::StSsdFastSimMaker(const char *name)
+ * \brief Construct the SSD fast simulator maker.
+ *
+ * Allocates a single reusable StSsdHit object and zeroes all histogram
+ * pointers.  Histogram objects themselves are created lazily in Init().
+ *
+ * \param name  Name string passed to the parent StMaker; defaults to
+ *              \c "SsdFastSim".
+ */
+
+/*!
+ * \fn StSsdFastSimMaker::~StSsdFastSimMaker()
+ * \brief Destroy the maker and release owned objects.
+ *
+ * Deletes the preallocated StSsdHit object and all histogram objects created
+ * in Init().  StSsdHit objects that are \e added to StEvent's hit collection
+ * in Make() are \b not deleted here because StEvent assumes ownership of
+ * those hits.
+ */
+
+// ---------------------------------------------------------------------------
+// StMaker life-cycle overrides
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::Init()
+ * \brief One-time initialisation: random-number generator and histograms.
+ *
+ * Performs the following steps:
+ *  -# Seeds a new StRandom instance with the current wall-clock time.
+ *  -# Sets \c mResXSsd and \c mResZSsd to 0 (overwritten in InitRun()).
+ *  -# Sets \c mSmear = 1 (smearing enabled by default).
+ *  -# If the \c .histos attribute is set in the chain, allocates the
+ *     diagnostic histogram objects (WaferNumb, HitsMap, dX, dY, dZ,
+ *     Local, Ratio) with axis titles and label sizes.
+ *
+ * \return \c kStOk always.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::InitRun(int RunNo)
+ * \brief Per-run initialisation: load calibration and geometry from the database.
+ *
+ * Called once per run (run number \p RunNo).  Performs:
+ *  -# Reads \c Calibrations/tracker/ssdHitError and extracts
+ *     \f$\sigma_x = \sqrt{c_0}\f$, \f$\sigma_z = \sqrt{c_3}\f$.
+ *  -# Reads \c Geometry/ssd and obtains pointers to
+ *     \c slsCtrl, \c ssdDimensions, \c ssdWafersPosition, and
+ *     \c ssdConfiguration tables.
+ *
+ * \param RunNo  STAR run number (used only as an argument; not stored).
+ *
+ * \return \c kStOk on success, \c kStFatal if any required database table
+ *         is unavailable.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::Make()
+ * \brief Event loop: smear GEANT hits and populate StEvent SSD hit collection.
+ *
+ * This is the principal method called once per event.  The processing
+ * pipeline for each row of the \c g2t_ssd_hit table is:
+ *
+ *  -# Retrieve StEvent and its StSsdHitCollection; create the collection
+ *     if it does not yet exist.
+ *  -# Retrieve the GEANT dataset and the \c g2t_ssd_hit table.
+ *  -# Obtain the StSsdBarrel singleton and call setSsdParameters().
+ *  -# Iterate over all GEANT hits.  For each hit:
+ *     -# Decode the volume ID to extract the wafer identifier.
+ *     -# Construct a preliminary StSsdHit in the local frame.
+ *     -# Apply Gaussian smearing to local \e x and local \e z via
+ *        distortHit().
+ *     -# Transform the smeared local position to global coordinates using
+ *        StSsdWafer::LocalToMaster().
+ *     -# Reject hits outside the rectangular active area (IsOnWafer()).
+ *     -# Reject hits in the trapezoidal corner dead zones (RemoveTriangle()).
+ *     -# Create a final StSsdHit at the global smeared position; set the
+ *        hardware address, local position, and truth-track link.
+ *     -# Add the hit to the StSsdHitCollection.
+ *  -# Fill diagnostic histograms if \c .histos is set.
+ *  -# Log a summary count of accepted hits.
+ *
+ * \return \c kStOk on success, \c kStWarn if StEvent or the GEANT hit table
+ *         is absent.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::Finish()
+ * \brief End-of-job hook (currently a no-op).
+ *
+ * \return \c kStOk always.
+ */
+
+/*!
+ * \fn void StSsdFastSimMaker::Clear(Option_t *option)
+ * \brief Per-event cleanup hook (currently a no-op).
+ *
+ * The SSD fast simulator creates new hit objects each event and does not
+ * cache any per-event state that would need resetting.
+ *
+ * \param option  Option string forwarded from the StMaker framework; unused.
+ */
+
+// ---------------------------------------------------------------------------
+// Acceptance
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn Bool_t StSsdFastSimMaker::accept(StEvent *event)
+ * \brief Trivial event-acceptance filter.
+ *
+ * Returns \c true for any non-null StEvent pointer and \c false for a null
+ * pointer.  No physics-level selection is applied.
+ *
+ * \param event  Pointer to the current StEvent object.
+ *
+ * \return \c true if \p event is non-null, \c false otherwise.
+ */
+
+// ---------------------------------------------------------------------------
+// Hit smearing
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn Float_t StSsdFastSimMaker::distortHit(Float_t x, double res)
+ * \brief Apply Gaussian smearing to a single position coordinate.
+ *
+ * If smearing is enabled (\c mSmear != 0), adds a zero-mean Gaussian deviate
+ * with standard deviation \p res to the input coordinate \p x:
+ * \f[
+ *     x_{\rm out} = x + \mathcal{N}(0,\,\text{res})
+ * \f]
+ * If smearing is disabled, returns \p x unchanged.
+ *
+ * The Gaussian deviate is drawn from the maker's StRandom instance
+ * (\c myRandom) which was seeded in Init().
+ *
+ * \param x    Input coordinate value (cm), typically local \e x or local \e z.
+ * \param res  Gaussian width (cm), i.e. the position resolution σ.
+ *             Pass \c mResXSsd for the local-x direction and
+ *             \c mResZSsd for the local-z direction.
+ *
+ * \return Smeared coordinate (cm).
+ */
+
+// ---------------------------------------------------------------------------
+// Geometry / parameter helpers
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn void StSsdFastSimMaker::setSsdParameters(ssdDimensions_st *geom_par)
+ * \brief Load SSD geometry parameters from the database-table structure.
+ *
+ * Fills the private geometry data members from the first entry of the
+ * \c ssdDimensions_st table obtained from the \c Geometry/ssd database:
+ *
+ * | Member               | Source field                        |
+ * |----------------------|-------------------------------------|
+ * | \c mDimensions       | pointer to \p geom_par              |
+ * | \c mSsdLayer         | hard-coded to 7                     |
+ * | \c mDetectorLargeEdge | 2 × waferHalfActLength             |
+ * | \c mDetectorSmallEdge | 2 × waferHalfActWidth              |
+ * | \c mNLadder          | hard-coded to 20                    |
+ * | \c mNWaferPerLadder  | wafersPerLadder                     |
+ * | \c mNStripPerSide    | stripPerSide                        |
+ * | \c mStripPitch       | stripPitch                          |
+ * | \c mTheta            | stereoAngle                         |
+ *
+ * \param geom_par  Pointer to the first row of the \c ssdDimensions_st table.
+ */
+
+/*!
+ * \fn void StSsdFastSimMaker::printSsdParameters()
+ * \brief Log the current SSD geometry parameters at INFO level.
+ *
+ * Prints \c mNLadder and \c mNWaferPerLadder using LOG_INFO.  Called in
+ * Make() when the debug level is > 1.
+ */
+
+// ---------------------------------------------------------------------------
+// Wafer identifier conversions
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::idWaferToWaferNumb(Int_t idWafer)
+ * \brief Convert an SSD wafer identifier to a sequential (0-based) wafer number.
+ *
+ * The wafer identifier is encoded as:
+ * \f[
+ *     \text{idWafer} = \text{layer} \times 1000 + \text{waf} \times 100 + \text{ladder}
+ * \f]
+ * This method inverts the encoding and returns the flat sequential index:
+ * \f[
+ *     \text{waferNumb} = (\text{ladder}-1) \times N_{\rm waf/lad} + (\text{waf}-1)
+ * \f]
+ *
+ * \param idWafer  Integer wafer identifier
+ *                 (format: \c layer*1000 + \c waf*100 + \c ladder).
+ *
+ * \return 0-based sequential wafer number in the range
+ *         \f$[0,\; N_{\rm ladder} \times N_{\rm waf/lad} - 1]\f$.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::idWaferToLadderNumb(Int_t idWafer)
+ * \brief Extract the 0-based ladder number from a wafer identifier.
+ *
+ * \param idWafer  Integer wafer identifier
+ *                 (format: \c layer*1000 + \c waf*100 + \c ladder).
+ *
+ * \return 0-based ladder index (\c ladder - 1).
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::waferNumbToIdWafer(Int_t waferNumb)
+ * \brief Convert a sequential wafer number back to an SSD wafer identifier.
+ *
+ * The inverse of idWaferToWaferNumb().  Given the flat 0-based index, the
+ * ladder and within-ladder wafer indices are recovered and packed:
+ * \f[
+ *     \text{idWafer} = \text{layer} \times 1000 + \text{waf} \times 100 + \text{ladder}
+ * \f]
+ *
+ * \param waferNumb  0-based sequential wafer number.
+ *
+ * \return Integer wafer identifier.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::idWaferToWafer(Int_t idWafer)
+ * \brief Extract the 0-based within-ladder wafer index from a wafer identifier.
+ *
+ * Inline convenience method.  Computes:
+ * \f[
+ *     \text{wafer index} = \frac{\text{idWafer} - 7000}{100} - 1
+ * \f]
+ *
+ * \param idWafer  Integer wafer identifier.
+ *
+ * \return 0-based within-ladder wafer index (i.e. \c waf - 1).
+ */
+
+// ---------------------------------------------------------------------------
+// Active-area acceptance
+// ---------------------------------------------------------------------------
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::IsOnWafer(Float_t x, Float_t y)
+ * \brief Test whether a local-frame hit position lies within the rectangular
+ *        active area of the wafer.
+ *
+ * The active area is the rectangle
+ * \f$x \in [-L/2,\, L/2]\f$,  \f$y \in [-W/2,\, W/2]\f$,
+ * where \f$L\f$ = \c mDetectorLargeEdge and \f$W\f$ = \c mDetectorSmallEdge.
+ * This check does not account for the triangular corner dead zones; those are
+ * handled separately by RemoveTriangle().
+ *
+ * \note In the calling code the second argument passed here is actually the
+ *       local-\e z coordinate (transverse direction); the parameter name \e y
+ *       is a historical artefact.
+ *
+ * \param x  Local x coordinate (cm), along the strip direction (large edge).
+ * \param y  Local z coordinate (cm), transverse to strips (small edge).
+ *
+ * \return 1 if the hit is inside the bounding box, 0 otherwise.
+ */
+
+/*!
+ * \fn Int_t StSsdFastSimMaker::RemoveTriangle(Float_t x, Float_t y)
+ * \brief Reject hits in the trapezoidal corner dead zones of the SSD wafer.
+ *
+ * Double-sided strip detectors with a non-zero stereo angle have physical
+ * dead zones in all four corners of the sensitive area because the strip
+ * fanout requires additional routing area there.  The dead-zone geometry
+ * is derived from the stereo angle \f$\theta\f$ stored in \c mTheta:
+ *
+ * \f[
+ *     X_{\rm c} = \frac{W}{2}\,\tan\!\frac{\theta}{2}, \qquad
+ *     l = \frac{L}{2} - X_{\rm c}, \qquad
+ *     \beta = \frac{\pi}{2} - \frac{\theta}{2}
+ * \f]
+ *
+ * A hit at \f$(x, y)\f$ is rejected (returns 0) when it lies in one of the
+ * four corner triangles.  The right-side rejection conditions are:
+ * \f[
+ *     x > l \;\text{ and }\; y < \arctan(\beta)\,(x - l)   \quad\text{(upper right)}, \\
+ *     x > l \;\text{ and }\; y > -\arctan(\beta)\,(x - l)  \quad\text{(lower right)},
+ * \f]
+ * with symmetric conditions for the left side.
+ *
+ * \note In the calling code \p y carries the smeared local-\e z coordinate.
+ *
+ * \param x  Local x coordinate (cm).
+ * \param y  Local z coordinate (cm).
+ *
+ * \return 1 if the hit survives the corner cut (good hit), 0 if it falls
+ *         inside a dead corner (rejected).
+ */

@@ -1,0 +1,10 @@
+# Doxyfile for StRoot/StGammaMaker
+PROJECT_NAME           = "StGammaMaker"
+PROJECT_BRIEF          = "STAR gamma/photon candidate reconstruction and tree production"
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx *.C
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+OUTPUT_DIRECTORY       = doc/doxygen
+EXTRACT_ALL            = YES

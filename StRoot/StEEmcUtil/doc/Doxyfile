@@ -1,0 +1,13 @@
+PROJECT_NAME           = "StEEmcUtil"
+PROJECT_BRIEF          = "STAR Endcap Electromagnetic Calorimeter Utility Library"
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx *.C
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+OUTPUT_DIRECTORY       = doc/doxygen
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+HAVE_DOT               = NO
+QUIET                  = YES

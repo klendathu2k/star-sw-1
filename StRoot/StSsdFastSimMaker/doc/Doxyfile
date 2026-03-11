@@ -1,0 +1,41 @@
+# Doxyfile for StSsdFastSimMaker
+# Run: doxygen Doxyfile   (from the doc/ directory)
+
+PROJECT_NAME           = "StSsdFastSimMaker"
+PROJECT_BRIEF          = "Fast Monte-Carlo simulator for the STAR Silicon Strip Detector (SSD)"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = .
+
+INPUT                  = ..
+RECURSIVE              = NO
+FILE_PATTERNS          = *.cxx *.h *.dox
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+
+GENERATE_LATEX         = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+
+HAVE_DOT               = NO
+
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+
+STRIP_FROM_PATH        = ..
+FULL_PATH_NAMES        = YES
+
+JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+# Pull in the hand-written narrative and per-function docs
+INPUT                 += StSsdFastSimMaker.dox

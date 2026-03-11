@@ -1,0 +1,520 @@
+/*!
+ * \file StPmdSimulatorMaker.dox
+ * \brief Doxygen documentation for the StPmdSimulatorMaker package.
+ *
+ * This file contains all narrative, group, class, and member-function
+ * documentation for the PMD slow simulator.  It is intended to be
+ * processed together with the source tree by Doxygen.
+ */
+
+// ============================================================
+//  D E F G R O U P
+// ============================================================
+
+/*!
+ * \defgroup pmd_simulator StPmdSimulatorMaker — PMD Slow Simulator
+ * \brief GEANT-to-StEvent slow simulation for the STAR Photon Multiplicity
+ *        Detector (PMD) and its Charged-Particle Veto (CPV) layer.
+ *
+ * \section pmd_sim_physics Physics and Detector Overview
+ *
+ * The **Photon Multiplicity Detector (PMD)** is a forward detector in the
+ * STAR experiment at RHIC.  It is located at \f$z \approx +270\,\text{cm}\f$
+ * from the interaction point, covering the pseudo-rapidity range
+ * \f$2.3 \leq \eta \leq 3.9\f$.  Its principal physics goal is to measure
+ * the multiplicity and spatial distribution of photons produced in
+ * heavy-ion and proton-proton collisions, providing event-by-event
+ * observables sensitive to collective phenomena, chiral symmetry
+ * restoration, and initial-state geometry.
+ *
+ * \subsection pmd_sim_geometry Detector Geometry
+ *
+ * The PMD uses a **honeycomb scintillator pad** architecture arranged in
+ * 12 supermodules (SM), each subdivided into rows and columns of
+ * individual cells.  A single cell has a cross-sectional area of
+ * approximately \f$1\,\text{cm}^2\f$.  The full detector face provides
+ * ~41,000 active channels, giving fine-grained photon-position information.
+ *
+ * Immediately upstream (at smaller \f$|z|\f$) sits the **Charged-Particle
+ * Veto (CPV)** layer — a Multi-Wire Proportional Chamber (MWPC) with the
+ * same cellular geometry.  A charged particle (pion, proton, …) traversing
+ * the CPV deposits ionisation energy there, allowing the offline analysis
+ * to veto that cell in the downstream PMD, thereby enriching the photon
+ * sample.
+ *
+ * \subsection pmd_sim_numbering Supermodule Numbering Conventions
+ *
+ * Two numbering schemes coexist in the simulation chain:
+ *
+ *  - **17-SM convention** (`gsuper` before \c Sim2Detmap): the raw
+ *    GEANT mapping uses up to 17 supermodule slots to cover both the
+ *    positive-\f$z\f$ and negative-\f$z\f$ detector planes.
+ *  - **12-SM convention** (`gsuper` after \c Sim2Detmap, range 1–12):
+ *    the canonical detector convention used in all downstream makers and
+ *    in StEvent.  StEvent stores supermodule indices in the range 0–11
+ *    (i.e.\ \c gsuper&nbsp;−&nbsp;1).
+ *
+ * The translation is performed by \c StPmdGeom::Sim2Detmap().
+ *
+ * \subsection pmd_sim_volid GEANT Volume-ID Encoding
+ *
+ * Each GEANT hit carries a packed integer \c volume_id whose decimal
+ * digits encode the full cell address:
+ *
+ * \code
+ *   volume_id = sector * 1000000
+ *             + super  * 100000
+ *             + subdet * 10000
+ *             + row    * 100
+ *             + col
+ * \endcode
+ *
+ * Field ranges:
+ * | Field   | Symbol  | Range  | Meaning                         |
+ * |---------|---------|--------|---------------------------------|
+ * | sector  | sector  | 1–2    | STAR sector (+z / −z half)      |
+ * | super   | super   | 1–17   | Supermodule (GEANT convention)  |
+ * | subdet  | subdet  | 1–2    | 1 = PMD scintillator, 2 = CPV   |
+ * | row     | row     | 1–72   | Row within supermodule          |
+ * | col     | col     | 1–96   | Column within supermodule       |
+ *
+ * \subsection pmd_sim_calib Energy–ADC Calibration
+ *
+ * Simulated energy depositions are stored in GeV by GEANT and immediately
+ * converted to keV (\f$\times 10^6\f$) for all internal bookkeeping.
+ * The keV → ADC transfer function is a quadratic polynomial fit to
+ * bench-top calibration data for the scintillator-WLS-MAPMT readout chain:
+ *
+ * \f[
+ *   \text{ADC} = c_0 + c_1 \cdot E_{\text{keV}}
+ *                     + c_2 \cdot E_{\text{keV}}^2
+ * \f]
+ *
+ * with constants \f$c_0 = 14.01\f$, \f$c_1 = 9.015\f$,
+ * \f$c_2 = 0.08203\f$.
+ *
+ * \subsection pmd_sim_resolution ADC Readout Resolution
+ *
+ * When the resolution flag is enabled (via \c SetResFlag(true)), a
+ * Gaussian smearing is applied to simulate the finite ADC resolution of
+ * the FPGA-based front-end electronics.  The resolution width (in ADC
+ * counts) is itself a quadratic function of the raw ADC value:
+ *
+ * \f[
+ *   \sigma_{\%} = p_0 + p_1 \cdot \text{ADC} + p_2 \cdot \text{ADC}^2
+ * \f]
+ *
+ * \f[
+ *   \sigma = \frac{\sigma_{\%} \times 100}{\text{ADC}}
+ * \f]
+ *
+ * with constants \f$p_0 = 127.13\f$, \f$p_1 = -0.2182\f$,
+ * \f$p_2 = 1.159 \times 10^{-4}\f$.  The smeared value is drawn from
+ * \f$\mathcal{N}(\text{ADC},\,\sigma)\f$ and clamped to zero from below.
+ *
+ * \subsection pmd_sim_flow Data Flow
+ *
+ * \code
+ *  GEANT fzin / xdf
+ *       │
+ *       ▼
+ *  g2t_pmd_hit table   (one row per GEANT step inside a PMD cell)
+ *       │
+ *       ▼  Make() → GetPmd() → makePmdHits()
+ *       │
+ *       ├─ Decode_VolId()          unpack volume_id → (sector,super,subdet,row,col)
+ *       ├─ StPmdGeom::NModule()    17-SM → global SM number
+ *       ├─ StPmdGeom::Sim2Detmap() global SM → 12-SM convention
+ *       ├─ Exist()                 merge energy of multi-step hits in the same pad
+ *       │
+ *       ▼
+ *  StPmdCollection  (internal, added to maker dataset)
+ *       │
+ *       ├─ FinalEdep()   keV → raw ADC  (keV_ADC + optional ADC_Readout smearing)
+ *       ├─ FillHistograms()  diagnostic ROOT histograms
+ *       └─ fillStEvent()     populate StPhmdCollection inside StEvent
+ * \endcode
+ *
+ * \author  Subhasis Chattopadhyay (primary author)
+ * \author  Dipak Mishra (GeV→keV conversion, calibration constants)
+ * \author  Victor Perev (StBFChain removal, memory-leak fixes)
+ * \date    2002–2017
+ * \ingroup pmd_simulator
+ */
+
+// ============================================================
+//  F I L E   D O C U M E N T A T I O N
+// ============================================================
+
+/*!
+ * \file StPmdSimulatorMaker.h
+ * \brief Class declaration for StPmdSimulatorMaker.
+ * \ingroup pmd_simulator
+ */
+
+/*!
+ * \file StPmdSimulatorMaker.cxx
+ * \brief Class implementation for StPmdSimulatorMaker.
+ * \ingroup pmd_simulator
+ */
+
+// ============================================================
+//  C L A S S
+// ============================================================
+
+/*!
+ * \class StPmdSimulatorMaker
+ * \ingroup pmd_simulator
+ * \brief STAR maker that converts GEANT PMD hits into calibrated,
+ *        digitised hits stored in both \c StPmdCollection and
+ *        \c StPhmdCollection (StEvent).
+ *
+ * StPmdSimulatorMaker sits in the standard STAR Maker chain between the
+ * GEANT Monte-Carlo producer and the reconstruction makers.  For each
+ * event it:
+ *
+ *  1. Retrieves the \c g2t_pmd_hit GEANT table from the dataset tree.
+ *  2. Decodes each hit's packed \c volume_id into supermodule, row,
+ *     column, and sub-detector (PMD vs.\ CPV) addresses.
+ *  3. Merges energy deposits from multiple GEANT steps that fall in the
+ *     same scintillator pad.
+ *  4. Converts deposited energy (keV) to ADC counts using a quadratic
+ *     calibration polynomial.
+ *  5. Optionally smears ADC counts with a resolution model.
+ *  6. Writes the result to \c StPmdCollection (added to the maker dataset)
+ *     and to \c StPhmdCollection inside the current \c StEvent.
+ *  7. Fills diagnostic ROOT histograms.
+ *
+ * \par Calibration constants
+ * The keV→ADC polynomial coefficients (\c mlcon0, \c mlcon1, \c mlcon2)
+ * and the resolution polynomial coefficients (\c mpcon0, \c mpcon1,
+ * \c mpcon2) are set in the inline helper \c adcconstants() and reflect
+ * values measured in Run-4 bench tests.
+ *
+ * \par Detector-index convention
+ * Within \c StPmdCollection the sub-detectors are accessed as:
+ *  - \c detector(1) — PMD scintillator (\c subdet == 1)
+ *  - \c detector(0) — CPV MWPC (\c subdet == 2)
+ *
+ * Within \c StPhmdCollection (StEvent) the standard detector IDs are used:
+ *  - \c kPhmdId   (26) — PMD
+ *  - \c kPhmdCpvId (25) — CPV
+ *
+ * \par Usage
+ * \code
+ *   StPmdSimulatorMaker* pmdSim = new StPmdSimulatorMaker("PmdSimulator");
+ *   pmdSim->SetResFlag(true);   // enable ADC resolution smearing
+ *   chain->AddMaker(pmdSim);
+ * \endcode
+ *
+ * \par Histograms produced
+ * All histograms are owned by the maker and become visible in the ROOT
+ * browser via \c Browse().
+ *
+ * | Histogram name      | Type  | Content                                   |
+ * |---------------------|-------|-------------------------------------------|
+ * | PMDEdep2D           | TH2F  | PMD energy deposit map in x–y (cm)        |
+ * | CPVEdep2D           | TH2F  | CPV energy deposit map in x–y (cm)        |
+ * | PmdEdep             | TH1F  | Per-cell energy deposit in PMD (keV)      |
+ * | PmdEdep_part        | TH1F  | Per-SM summed energy deposit in PMD (keV) |
+ * | pmdadc              | TH1F  | Per-cell ADC value in PMD                 |
+ * | PMDHit              | TH1F  | Hit multiplicity per SM in PMD            |
+ * | CpvEdep             | TH1F  | Per-cell energy deposit in CPV (keV)      |
+ * | CpvEdep_part        | TH1F  | Per-SM summed energy deposit in CPV (keV) |
+ * | cpvadc              | TH1F  | Per-cell ADC value in CPV                 |
+ * | CpvHit              | TH1F  | Hit multiplicity per SM in CPV            |
+ * | PmdSuper            | TH1F  | Fired supermodule distribution (PMD)      |
+ * | CpvSuper            | TH1F  | Fired supermodule distribution (CPV)      |
+ * | PMD_SupervsRow      | TH2F  | Supermodule vs.\ row occupancy (PMD)      |
+ * | CPV_SupervsRow      | TH2F  | Supermodule vs.\ row occupancy (CPV)      |
+ * | PMD_SupervsCol      | TH2F  | Supermodule vs.\ column occupancy (PMD)   |
+ * | CPV_SupervsCol      | TH2F  | Supermodule vs.\ column occupancy (CPV)   |
+ *
+ * \see StPmdCollection, StPmdDetector, StPmdHit, StPmdGeom, StPmdMapUtil
+ * \see StPhmdCollection, StPhmdDetector, StPhmdHit
+ */
+
+// ============================================================
+//  M E M B E R   F U N C T I O N S
+// ============================================================
+
+/*!
+ * \fn StPmdSimulatorMaker::StPmdSimulatorMaker(const char* name)
+ * \brief Constructor.
+ *
+ * Initialises calibration constants via \c adcconstants(), creates the
+ * geometry helper (\c StPmdGeom) and channel-mapping utility
+ * (\c StPmdMapUtil), and nullifies the collection pointer.  The message
+ * manager rate limit for \c "StPmdSimulator" is set to 100 messages.
+ *
+ * \param name  Maker name registered with the STAR chain framework.
+ *              Defaults to \c "PmdSimulator".
+ */
+
+/*!
+ * \fn StPmdSimulatorMaker::~StPmdSimulatorMaker()
+ * \brief Destructor.
+ *
+ * Deletes the \c StPmdGeom and \c StPmdMapUtil objects allocated in the
+ * constructor.  The \c StPmdCollection and histogram objects are owned by
+ * the framework dataset / ROOT file and are not deleted here.
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::Init()
+ * \brief Maker initialisation — called once before the event loop.
+ *
+ * Calls \c bookHistograms() to allocate all diagnostic ROOT histograms,
+ * then delegates to the base-class \c StMaker::Init().
+ *
+ * \return The return code from \c StMaker::Init() (normally \c kStOK).
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::Make()
+ * \brief Main per-event method — entry point called by the STAR chain.
+ *
+ * Attempts to locate the GEANT dataset first under the key \c "geant"
+ * (FZIO input), then under \c "event/geant/Event" (XDF input).  If
+ * neither is found, logs an error and returns \c kStWarn.  On success,
+ * delegates to \c GetPmd().
+ *
+ * \return \c kStOK on success; \c kStWarn if the GEANT dataset is absent.
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::GetPmd()
+ * \brief Retrieves the \c g2t_pmd_hit GEANT table and triggers hit making.
+ *
+ * Looks up the \c g2t_pmd_hit table in the active GEANT dataset.  If the
+ * table is missing or empty, a warning is logged and \c kStOK is returned
+ * (empty-event case is not an error).  Otherwise calls \c makePmdHits().
+ *
+ * \return \c kStOK always (a missing table is treated as a no-op);
+ *         \c kStWarn if \c makePmdHits() reports a problem.
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::makePmdHits()
+ * \brief Core simulation routine: builds the full \c StPmdCollection for
+ *        one event.
+ *
+ * Allocates a new \c StPmdCollection ("PmdCollection") and registers it
+ * with the maker's dataset tree so that downstream makers can retrieve it.
+ * For each row in the GEANT \c g2t_pmd_hit table the method:
+ *
+ *  1. Calls \c Decode_VolId() to extract cell coordinates.
+ *  2. Calls \c StPmdGeom::NModule() to map (sector, super) → global SM.
+ *  3. Calls \c StPmdGeom::Sim2Detmap() to map global SM → 12-SM convention.
+ *  4. Creates a \c StPmdHit and attempts to add it to the appropriate
+ *     \c StPmdDetector.  If a hit already occupies the same pad
+ *     (checked via \c Exist()), its energy is accumulated rather than
+ *     creating a duplicate.
+ *  5. Fills occupancy histograms for PMD (\c subdet == 1) and CPV
+ *     (\c subdet == 2) separately.
+ *
+ * After all hits are loaded, iterates over all 12 supermodules and calls
+ * \c FinalEdep() to perform the keV → ADC conversion, then calls
+ * \c FillHistograms() and finally \c fillStEvent().
+ *
+ * \note Energy is stored in keV throughout: the raw GEANT value in GeV is
+ *       multiplied by \f$10^6\f$ at ingestion.
+ *
+ * \return \c kStOK on success; \c kStWarn if \c nhits ≤ 0.
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::Decode_VolId(Int_t& vol, Int_t& sector,
+ *         Int_t& super, Int_t& subdet, Int_t& row, Int_t& col)
+ * \brief Decodes a packed GEANT PMD volume identifier into its component
+ *        address fields.
+ *
+ * The encoding is:
+ * \f[
+ *   \text{vol} = \text{sector} \times 10^6
+ *              + \text{super}  \times 10^5
+ *              + \text{subdet} \times 10^4
+ *              + \text{row}    \times 10^2
+ *              + \text{col}
+ * \f]
+ *
+ * Extraction uses integer arithmetic (modulo / integer division) and
+ * carries no floating-point rounding risk.
+ *
+ * \param[in,out]  vol     Packed volume identifier from \c g2t_pmd_hit_st.
+ * \param[out]     sector  STAR sector index (1 = +z, 2 = −z side).
+ * \param[out]     super   Supermodule index in GEANT convention (1–17).
+ * \param[out]     subdet  Sub-detector flag: 1 = PMD scintillator, 2 = CPV.
+ * \param[out]     row     Row index within the supermodule (1–72).
+ * \param[out]     col     Column index within the supermodule (1–96).
+ * \return \c kStOK unconditionally.
+ */
+
+/*!
+ * \fn StPmdHit* StPmdSimulatorMaker::Exist(StPmdHit* phit,
+ *         StPmdDetector* pdet, Int_t id)
+ * \brief Searches for an existing hit at the same pad location as \a phit.
+ *
+ * Iterates over all hits already registered in supermodule \a id of
+ * detector \a pdet.  A hit is considered a match if its (Gsuper, Row,
+ * Column) triple equals that of \a phit.  Used to implement energy
+ * accumulation when GEANT produces multiple steps inside a single pad.
+ *
+ * \param phit  Candidate hit whose coordinates are used as the search key.
+ * \param pdet  Detector object (PMD or CPV) to search within.
+ * \param id    Supermodule number (1–12) to restrict the search.
+ * \return Pointer to the matching \c StPmdHit if found; \c nullptr otherwise.
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::FinalEdep(StPmdDetector* pdet, Int_t id)
+ * \brief Converts keV energy deposits to ADC counts for all hits in one
+ *        supermodule.
+ *
+ * Iterates over all hits in supermodule \a id of \a pdet.  For each hit:
+ *  - Retrieves the raw energy deposit (keV) stored by \c makePmdHits().
+ *  - Calls \c keV_ADC() to obtain the floating-point raw ADC value.
+ *  - If the resolution flag (\c mResFlag) is set, calls \c ADC_Readout()
+ *    to apply Gaussian smearing; otherwise truncates to integer.
+ *  - Stores the final integer ADC via \c StPmdHit::setAdc().
+ *
+ * \param pdet  Detector (PMD or CPV) containing the hits to process.
+ * \param id    Supermodule number (1–12).
+ */
+
+/*!
+ * \fn Float_t StPmdSimulatorMaker::keV_ADC(Float_t edep, Float_t& adc)
+ * \brief Converts a cell energy deposit in keV to a raw (un-smeared) ADC
+ *        value using a quadratic calibration polynomial.
+ *
+ * \f[
+ *   \text{adc} = c_0 + c_1 E + c_2 E^2,
+ *   \quad E \text{ in keV}
+ * \f]
+ *
+ * Polynomial coefficients (set by \c adcconstants()):
+ *  - \f$c_0 = 14.01\f$  (pedestal offset)
+ *  - \f$c_1 = 9.015\f$  (linear gain)
+ *  - \f$c_2 = 0.08203\f$ (non-linearity)
+ *
+ * \param[in]  edep  Energy deposit in keV.
+ * \param[out] adc   Computed raw ADC value (floating-point, pre-smearing).
+ * \return \c kStOK (the return value is unused in practice; the result is
+ *         delivered through the output parameter \a adc).
+ */
+
+/*!
+ * \fn Float_t StPmdSimulatorMaker::ADC_Readout(Float_t adc, Int_t& ADC)
+ * \brief Applies Gaussian ADC-resolution smearing to simulate real
+ *        front-end electronics.
+ *
+ * The fractional resolution (%) is modelled as a quadratic function of
+ * the raw ADC:
+ *
+ * \f[
+ *   \sigma_{\%} = p_0 + p_1 \cdot \text{adc} + p_2 \cdot \text{adc}^2
+ * \f]
+ *
+ * The absolute width used for the Gaussian is then
+ * \f$\sigma = \sigma_{\%} \times 100 / \text{adc}\f$.
+ * A random deviate is drawn from \f$\mathcal{N}(\text{adc},\,\sigma)\f$
+ * via ROOT's \c gRandom->Gaus().  Values below zero are clamped to zero
+ * before truncation to integer.
+ *
+ * Resolution polynomial coefficients (set by \c adcconstants()):
+ *  - \f$p_0 = 127.13\f$
+ *  - \f$p_1 = -0.2182\f$
+ *  - \f$p_2 = 1.159 \times 10^{-4}\f$
+ *
+ * \param[in]  adc  Raw (unsmeared) ADC value from \c keV_ADC().
+ * \param[out] ADC  Final integer ADC count after smearing.
+ * \return \c kStOK (return value unused; result delivered via \a ADC).
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::bookHistograms()
+ * \brief Allocates and configures all diagnostic ROOT histograms.
+ *
+ * Creates the full set of TH1F and TH2F objects listed in the class
+ * documentation table.  Called once from \c Init().  All histogram
+ * objects are owned by the ROOT file/memory and visible via \c Browse().
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::FillHistograms(StPmdDetector* pmd_det,
+ *         StPmdDetector* cpv_det, Int_t id)
+ * \brief Fills diagnostic histograms for one supermodule after
+ *        \c FinalEdep() has been applied.
+ *
+ * Iterates separately over PMD hits (via \a pmd_det) and CPV hits (via
+ * \a cpv_det) in supermodule \a id.  For each hit it fills:
+ *  - Energy-deposit 1-D and 2-D histograms (converting SM+row+col to
+ *    detector x,y via \c StPmdGeom::DetCell_xy()).
+ *  - ADC histograms.
+ *  - Occupancy histograms (supermodule, supermodule-vs-row,
+ *    supermodule-vs-column).
+ * Partial-energy (sum over a supermodule) histograms are also updated.
+ *
+ * \param pmd_det  PMD detector object.
+ * \param cpv_det  CPV detector object.
+ * \param id       Supermodule number (1–12).
+ */
+
+/*!
+ * \fn Int_t StPmdSimulatorMaker::fillStEvent(StPmdDetector* pmd_det,
+ *         StPmdDetector* cpv_det)
+ * \brief Copies simulated hits from the internal \c StPmdCollection into
+ *        the current event's \c StPhmdCollection (StEvent format).
+ *
+ * Retrieves the current \c StEvent via \c GetInputDS("StEvent"), creates
+ * a new \c StPhmdCollection, and attaches it to the event via
+ * \c StEvent::setPhmdCollection().  Then loops over all 12 supermodules:
+ *
+ *  - PMD hits are converted to \c StPhmdHit objects and added to the
+ *    detector retrieved by \c kPhmdId (26).
+ *  - CPV hits are added to the detector retrieved by \c kPhmdCpvId (25).
+ *
+ * The supermodule index is shifted from the internal 1-based range (1–12)
+ * to the StEvent 0-based range (0–11).
+ *
+ * \param pmd_det  Internal PMD detector object (source of hits).
+ * \param cpv_det  Internal CPV detector object (source of hits).
+ * \return \c kStOK.
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::SetResFlag(Bool_t val)
+ * \brief Enables or disables ADC readout-resolution smearing.
+ *
+ * When \a val is \c true, \c FinalEdep() will call \c ADC_Readout() to
+ * apply Gaussian smearing to each cell's ADC value, simulating the finite
+ * resolution of the real PMD front-end electronics.  When \a val is
+ * \c false (default), the raw ADC from \c keV_ADC() is simply truncated
+ * to integer.
+ *
+ * \param val  \c true to enable resolution smearing; \c false to disable.
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::Browse(TBrowser* b)
+ * \brief ROOT browser integration — delegates to \c TDataSet::Browse().
+ *
+ * Makes the maker's dataset subtree (including the \c StPmdCollection)
+ * visible when the object is browsed in a ROOT \c TBrowser.
+ *
+ * \param b  Pointer to the ROOT browser instance.
+ */
+
+/*!
+ * \fn void StPmdSimulatorMaker::adcconstants()
+ * \brief (Private inline) Sets the polynomial coefficients used by
+ *        \c keV_ADC() and \c ADC_Readout().
+ *
+ * Populates the six private data members:
+ *  - \c mlcon0, \c mlcon1, \c mlcon2 — keV→ADC polynomial (14.01, 9.015, 0.08203).
+ *  - \c mpcon0, \c mpcon1, \c mpcon2 — resolution polynomial
+ *    (127.13, −0.2182, 1.159×10⁻⁴).
+ *
+ * Called once from the constructor.  The commented-out block preserves an
+ * earlier set of constants (\f$c_0 = 7.12\f$, etc.) for reference.
+ */

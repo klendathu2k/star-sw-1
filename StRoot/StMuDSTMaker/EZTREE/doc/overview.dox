@@ -1,0 +1,111 @@
+/**
+ * @defgroup StMuDSTEZTREE StMuDSTMaker/EZTREE — Raw Data Blobs
+ * @brief Lightweight raw-data format stored alongside the MuDST for trigger and EMC monitoring.
+ * @details
+ * The EZTREE package provides a set of compact "blob" classes that preserve
+ * the unprocessed trigger structure and EEMC (Endcap EMC) ADC crate buffers
+ * verbatim inside the MuDST ROOT file.  Each blob is registered as a separate
+ * TTree branch alongside the standard MuDST branches.
+ *
+ * The bridge class StMuEzTree is called once per event by StMuDstMaker.  It
+ * copies data from StEvent into heap-allocated Ezt* objects:
+ *
+ *   - EztEventHeader  — run/event number, trigger token, timestamps
+ *   - EztTrigBlob     — full raw trigger C-struct plus a version byte
+ *   - EztFpdBlob      — raw Forward Pion Detector SMD data
+ *   - EztEmcRawData   — raw EEMC tower crate buffers (crates 0–5)
+ *   - EztEmcRawData   — raw EEMC SMD crate buffers   (crates 6–N)
+ *
+ * When reading back, StTriggerDataMother inspects the version byte in
+ * EztTrigBlob and instantiates the appropriate year-specific StTriggerData20xx
+ * object, providing a single year-transparent interface for trigger decoding.
+ *
+ * EZT branches may be enabled or disabled individually at read time via
+ * StMuDstMaker::SetStatus("Ezt*", 0/1).
+ * @{
+ */
+
+/**
+ * @class StMuEzTree
+ * @brief Bridge class that copies raw data from StEvent into Ezt* blob objects.
+ *
+ * StMuEzTree is instantiated by StMuDstMaker and its copy methods are called
+ * once per event.  The returned objects are stored as MuDST TTree branches.
+ *
+ * The constant mxETowCrate = 6 defines the boundary between the EEMC tower
+ * crate range (indices 0–5) and the EEMC SMD crate range (indices 6–N) within
+ * the source StEmcRawData object.
+ */
+
+/**
+ * @class EztEventHeader
+ * @brief Minimal event header stored in the EZT branch.
+ *
+ * Holds the run number, event number, trigger token (from StL0Trigger), the
+ * event Unix timestamp, the DST-production Unix timestamp, a status word, and
+ * a variable-length comment string.  The token must match the token embedded
+ * inside the trigger and EMC crate headers; a mismatch indicates data
+ * corruption.
+ */
+
+/**
+ * @class EztTrigBlob
+ * @brief Container for the full raw STAR trigger data structure.
+ *
+ * Stores the raw trigger C-struct as a TArrayC (trgd), an auxiliary trigger-ID
+ * bank (trgid, reserved for future use), and a one-byte version code that
+ * identifies the year-specific layout of the C-struct.  The version byte is
+ * used by StTriggerDataMother to select the correct StTriggerData20xx decoder.
+ */
+
+/**
+ * @class EztFpdBlob
+ * @brief Container for raw Forward Pion Detector data.
+ *
+ * Stores raw FPD SMD words in a TArrayS (smd).  At the time of initial
+ * development, only placeholder data was written; a production-quality
+ * implementation reading from StEvent::fpdCollection() was planned.
+ */
+
+/**
+ * @class EztEmcRawData
+ * @brief Raw EEMC ADC crate buffers for one group of crates (ETOW or ESMD).
+ *
+ * Holds up to MAXEMCDATABANK = 60 crate blocks.  Each block contains a
+ * 4-word header (TArrayS mHeader) and a variable-length payload (TArrayS
+ * mData).  A per-block corruption status word (mCorrupt, default 0xffff) is
+ * set to 0 only after a successful header-validation call.
+ *
+ * Header word layout (indices WRDCNT=0, ERRFLG=1, TOKEN=2, CRATE=3):
+ *   - bits [11:0] of word 0: length count
+ *   - bits [11:0] of word 1: error flags
+ *   - bits [11:0] of word 2: trigger token
+ *   - bits  [7:0] of word 3: crate ID
+ *   - bits [11:8] of word 3: trigger command
+ *
+ * Static accessor methods (getToken, getCrateID, etc.) operate on a raw
+ * header pointer and can be called without a class instance.
+ *
+ * Two separate EztEmcRawData objects are stored per event: one for the six
+ * ETOW crates (produced by StMuEzTree::copyETow) and one for the ESMD crates
+ * (produced by StMuEzTree::copyESmd).
+ */
+
+/**
+ * @class StTriggerDataMother
+ * @brief Year-transparent wrapper for decoding a persisted EztTrigBlob.
+ *
+ * Inherits from StTriggerData and delegates all virtual calls to an internal
+ * fCurrent pointer.  The constructor reads the version byte from the supplied
+ * EztTrigBlob and constructs the matching year-specific decoder:
+ *   - 0x20 → StTriggerData2003
+ *   - 0x21 → StTriggerData2004
+ *   - 0x22 → StTriggerData2005
+ *
+ * Exposes DSM intermediate-level accessors: getDsm0_EEMC, getDsm1_EEMC,
+ * getDsm2_EMC, getDsm3.  The destructor deletes fCurrent.
+ */
+
+/**
+ * @}
+ */

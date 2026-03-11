@@ -1,0 +1,1231 @@
+/**
+ * @defgroup StMuDSTCommon StMuDSTMaker/COMMON — MuDST Core Library
+ * @brief Core classes implementing the STAR Micro-DST format.
+ *
+ * @details
+ * The `StRoot/StMuDSTMaker/COMMON/` directory contains the complete
+ * implementation of the STAR **Micro-DST (MuDST)** format — the standard
+ * compact event format for STAR offline physics analysis.
+ *
+ * A MuDST file is a ROOT file containing a single `TTree` named `MuDst`.
+ * Each entry of that tree represents one physics event.  All event data —
+ * reconstructed tracks, primary vertices, calorimeter hits, time-of-flight
+ * hits, trigger information, and Monte Carlo truth — are stored as named
+ * `TClonesArray` branches.  The MuDST is produced from the transient
+ * `StEvent` representation by discarding raw detector hits and retaining
+ * only the reconstructed quantities required for most analyses.
+ *
+ * ### Library organisation
+ *
+ * | Sub-group | Classes |
+ * |-----------|---------|
+ * | @ref StMuDSTMakers | StMuDstMaker, StMuIOMaker, StMuDstFilterMaker, StMuDst2StEventMaker, StAddRunInfoMaker, StMuMomentumShiftMaker |
+ * | @ref StMuDSTPhysicsObjects | StMuEvent, StMuTrack, StMuPrimaryVertex, StMuHelix, StMuPrimaryTrackCovariance, StMuProbPidTraits, StMuMcTrack, StMuMcVertex, StMuTriggerIdCollection, StMuL3EventSummary |
+ * | @ref StMuDSTUtilities | StMuArrays, StMuFilter, StMuL3Filter, StMuCut, StMuDbReader, StMuDebug, StMuTimer, StMuException, StuDraw3DMuEvent, SchedulerExample |
+ *
+ * ### Read workflow (typical analysis)
+ * @code
+ * StMuDstMaker* maker = new StMuDstMaker(0, 0, "", "runs.list", "MuDst.root", 100);
+ * maker->SetStatus("*", 0);
+ * maker->SetStatus("MuEventAll", 1);
+ * maker->SetStatus("PrimaryTracks", 1);
+ * maker->Init();
+ * while (maker->Make() == 0) {
+ *     StMuEvent* ev = StMuDst::event();
+ *     unsigned int n = StMuDst::numberOfPrimaryTracks();
+ *     for (unsigned int i = 0; i < n; ++i) {
+ *         StMuTrack* t = StMuDst::primaryTracks(i);
+ *     }
+ * }
+ * maker->Finish();
+ * @endcode
+ *
+ * @{
+ */
+
+/**
+ * @defgroup StMuDSTMakers Maker Classes
+ * @ingroup StMuDSTCommon
+ * @brief StMaker-derived classes for reading, writing, and filtering MuDST files.
+ *
+ * @details
+ * All classes in this group derive from `StMaker` (via `StIOInterFace`) and
+ * participate in the STAR framework `StChain` execution model.  Each class
+ * implements `Init()`, `Make()`, and `Finish()` and is registered with the
+ * chain by constructing it.
+ */
+
+/**
+ * @defgroup StMuDSTPhysicsObjects Physics Objects
+ * @ingroup StMuDSTCommon
+ * @brief Per-event and per-track data containers stored as TClonesArray entries.
+ *
+ * @details
+ * These `TObject`-derived classes are the objects that fill the `TClonesArray`
+ * branches of the MuDST `TTree`.  They are never constructed directly by
+ * analysis code; instead they are accessed through the static methods of
+ * `StMuDst`.
+ */
+
+/**
+ * @defgroup StMuDSTUtilities Utility Classes
+ * @ingroup StMuDSTCommon
+ * @brief Filters, branch metadata, debug tools, timers, and display utilities.
+ */
+
+/* =========================================================================
+ * Maker classes
+ * ========================================================================= */
+
+/**
+ * @class StMuDstMaker
+ * @ingroup StMuDSTMakers
+ * @brief Primary STAR maker for reading and writing MuDST files.
+ *
+ * @details
+ * `StMuDstMaker` derives from `StIOInterFace` and operates in two modes
+ * selected at construction time:
+ *
+ * - **Write mode** (`ioWrite`): Copies data from a populated `StEvent` into
+ *   `TClonesArray` branches and writes them to a `.MuDst.root` file on each
+ *   `Make()` call.  Track and L3 track filters can be attached via
+ *   `setTrackFilter()` and `setL3TrackFilter()` to reduce output size.
+ *
+ * - **Read mode** (`ioRead`): Opens an existing MuDST file or `TChain` of
+ *   files, reads one TTree entry per `Make()` call, and populates the static
+ *   pointers of `StMuDst` so that all event data are accessible through
+ *   `StMuDst::event()`, `StMuDst::primaryTracks(i)`, etc.
+ *
+ * Branches can be selectively enabled or disabled with `SetStatus()` to speed
+ * up reading:
+ * @code
+ * maker->SetStatus("*", 0);           // disable all branches
+ * maker->SetStatus("MuEventAll", 1);  // re-enable event-level branches
+ * maker->SetStatus("PrimaryTracks", 1);
+ * @endcode
+ *
+ * @fn StMuDstMaker::StMuDstMaker(const char* name)
+ * @brief Default constructor (read mode, no files assigned).
+ * @param[in] name Maker name registered with the STAR framework (default "MuDst").
+ *
+ * @fn StMuDstMaker::StMuDstMaker(int mode, int nameMode, const char* dirName, const char* fileName, const char* filter, int maxfiles, const char* name)
+ * @brief Full constructor.
+ * @param[in] mode       I/O direction: `ioRead` (0) or `ioWrite` (1).
+ * @param[in] nameMode   Output filename strategy: `ioFix` (0), `ioIOMaker` (1), `ioTreeMaker` (2).
+ * @param[in] dirName    Directory to scan for input files (read) or output directory (write).
+ * @param[in] fileName   Single filename, a `.lis`/`.list` file, or output file prefix.
+ * @param[in] filter     Substring filter(s) for filenames; multiple filters separated by `:`.
+ * @param[in] maxfiles   Maximum number of files to chain (read mode).
+ * @param[in] name       Maker name for the STAR framework.
+ *
+ * @fn int StMuDstMaker::Init()
+ * @brief Opens I/O resources, creates TClonesArrays, sets TTree branch addresses.
+ * @return `kStOk` on success.
+ *
+ * @fn void StMuDstMaker::Clear(Option_t* option)
+ * @brief Clears all TClonesArrays for the next event.
+ * @param[in] option Passed through to ROOT (ignored).
+ *
+ * @fn int StMuDstMaker::Make()
+ * @brief Reads or writes one event.  Dispatches to `MakeRead()` or `MakeWrite()`.
+ * @return 0 on success; non-zero (e.g. `kStEOF`) at end of input chain.
+ *
+ * @fn Int_t StMuDstMaker::MakeRead()
+ * @brief Reads the next TTree entry and populates StMuDst.
+ * @return 0 on success; `kStEOF` at end of chain.
+ *
+ * @fn Int_t StMuDstMaker::MakeWrite()
+ * @brief Fills TClonesArrays from the current StEvent and calls `TTree::Fill()`.
+ * @return `kStOk` on success.
+ *
+ * @fn int StMuDstMaker::Finish()
+ * @brief Flushes and closes the output file (write mode only).
+ * @return `kStOk`.
+ *
+ * @fn void StMuDstMaker::SetStatus(const char* arrType, int status)
+ * @brief Enables or disables one or more TTree branches by name.
+ * @param[in] arrType Branch name, exact class name, or group keyword
+ *                    (`"*"`, `"MuEventAll"`, `"StrangeAll"`, `"EmcAll"`,
+ *                    `"PmdAll"`, `"TofAll"`).
+ * @param[in] status  1 to activate the branch, 0 to deactivate.
+ *
+ * @fn void StMuDstMaker::SetEventList(TEventList* e)
+ * @brief Restricts reading to events in the provided `TEventList`.
+ * @param[in] e Pointer to a `TEventList` built from `chain()->Draw()`.
+ *
+ * @fn void StMuDstMaker::setTrackFilter(StMuCut* c)
+ * @brief Attaches a track filter applied to non-L3 tracks during write.
+ * @param[in] c Pointer to a `StMuCut`-derived filter object (not owned).
+ *
+ * @fn void StMuDstMaker::setL3TrackFilter(StMuCut* c)
+ * @brief Attaches a track filter applied to Level-3 tracks during write.
+ * @param[in] c Pointer to a `StMuCut`-derived filter object (not owned).
+ *
+ * @fn void StMuDstMaker::setProbabilityPidFile(const char* file)
+ * @brief Sets the ROOT file containing dE/dx PID probability tables.
+ * @param[in] file Path to the PID table file.  Pass `nullptr` to use the
+ *                 compile-time default (`$STAR/StarDb/dEdxModel/PIDTableP01gl.root`).
+ *
+ * @fn StMuDst* StMuDstMaker::muDst()
+ * @brief Returns the in-memory MuDST navigation object, updated each Make().
+ * @return Pointer to the current `StMuDst`, or `nullptr` before `Init()`.
+ *
+ * @fn TChain* StMuDstMaker::chain()
+ * @brief Returns the input `TChain` (read mode only).
+ * @return Pointer to the `TChain`, or `nullptr` in write mode.
+ *
+ * @fn TTree* StMuDstMaker::tree()
+ * @brief Returns the current `TTree` (the top-level MuDST I/O structure).
+ * @return Pointer to the `TTree`.
+ *
+ * @fn void StMuDstMaker::setSplit(int split)
+ * @brief Sets the ROOT TTree branch split level.
+ * @param[in] split Split level (default 99; see ROOT manual).
+ *
+ * @fn void StMuDstMaker::setCompression(int comp)
+ * @brief Sets the ROOT file compression level.
+ * @param[in] comp Compression level 0 (none) through 9 (maximum); default 9.
+ *
+ * @fn void StMuDstMaker::setBufferSize(int buf)
+ * @brief Sets the TTree branch I/O buffer size.
+ * @param[in] buf Buffer size in bytes (default 262144).
+ *
+ * @fn void StMuDstMaker::printArrays()
+ * @brief Prints the name, type, and size of every registered TClonesArray branch to stdout.
+ */
+
+/**
+ * @class StMuIOMaker
+ * @ingroup StMuDSTMakers
+ * @brief Alternative MuDST I/O maker for Grid Collector / StIOMaker workflows.
+ *
+ * @details
+ * `StMuIOMaker` inherits from `StMuDstMaker` and adds random-access by event
+ * index or run/event number, integration with `StIOMaker` as the top-level I/O
+ * driver, and an optional pass-through write of a second MuDST file.
+ *
+ * @fn StMuIOMaker::StMuIOMaker(const char* name, const char* ioFile)
+ * @brief Constructor.
+ * @param[in] name   Maker name (default "").
+ * @param[in] ioFile Path to the input MuDST file (default "").
+ *
+ * @fn int StMuIOMaker::Make(int index)
+ * @brief Reads the event at absolute index `index` in the chain.
+ * @param[in] index Zero-based event index.
+ * @return 0 on success; non-zero on error or end-of-input.
+ *
+ * @fn int StMuIOMaker::Make(int major, int minor)
+ * @brief Reads the event identified by run number `major` and event number `minor`.
+ * @param[in] major Run number.
+ * @param[in] minor Event number within the run.
+ * @return 0 on success.
+ *
+ * @fn int StMuIOMaker::Skip(int nskip)
+ * @brief Skips `nskip` events relative to the current position.
+ * @param[in] nskip Number of events to skip (positive = forward).
+ * @return Return code from the underlying `Make(index)` call.
+ *
+ * @fn Int_t StMuIOMaker::Open(const Char_t* ioFile)
+ * @brief Opens a new input file (called by `StIOMaker` when switching files).
+ * @param[in] ioFile Path to the new MuDST file.
+ * @return `kStOk` on success.
+ *
+ * @fn void StMuIOMaker::Close(Option_t* opt)
+ * @brief Closes the current input and output files.
+ * @param[in] opt Option string (ignored).
+ *
+ * @fn int StMuIOMaker::numberOfEvents()
+ * @brief Returns the total number of events in the currently open file/chain.
+ * @return Event count.
+ *
+ * @fn int StMuIOMaker::currentIndex()
+ * @brief Returns the zero-based index of the last event read.
+ * @return Current event index.
+ *
+ * @fn int StMuIOMaker::eventCounter()
+ * @brief Returns the cumulative count of events processed since `Init()`.
+ * @return Event counter.
+ */
+
+/**
+ * @class StMuDstFilterMaker
+ * @ingroup StMuDSTMakers
+ * @brief Filtered MuDST writer: reads from an upstream StMuDstMaker and writes selected events.
+ *
+ * @details
+ * `StMuDstFilterMaker` is intended as a template for writing customised MuDST
+ * skimming programs.  Users subclass it and override the protected `filter()`
+ * methods to implement their selection logic.
+ *
+ * The default event-level filter retains events whose best primary vertex has
+ * `|z| < 100` cm.  All other `filter()` overloads default to keeping the object.
+ *
+ * @fn int StMuDstFilterMaker::Make()
+ * @brief Applies filters and copies the accepted data to the output file.
+ * @return `kStOk` always (failed events are silently skipped).
+ *
+ * @fn int StMuDstFilterMaker::Finish()
+ * @brief Writes the TTree and closes the output file.
+ * @return `kStOk`.
+ *
+ * @fn void StMuDstFilterMaker::setMuDstMaker(StMuDstMaker* maker)
+ * @brief Connects this filter maker to its input source.
+ * @param[in] maker Pointer to the upstream `StMuDstMaker` running in read mode.
+ *
+ * @fn void StMuDstFilterMaker::setOutputFileName(const char* name)
+ * @brief Sets the output MuDST filename.
+ * @param[in] name Output file path (e.g. `"filtered.MuDst.root"`).
+ *
+ * @fn void StMuDstFilterMaker::setOutputDirName(const char* name)
+ * @brief Sets the output directory (used when the output filename is derived automatically).
+ * @param[in] name Directory path.
+ *
+ * @fn void StMuDstFilterMaker::setFilterGlobals(int filterGlobals)
+ * @brief Controls whether global tracks whose primary partner fails the cut are kept.
+ * @param[in] filterGlobals 1 (default) = also keep globals that pass the cut even if
+ *                          their primary track partner does not; 0 = only keep globals
+ *                          whose primary partner is kept.
+ *
+ * @fn void StMuDstFilterMaker::setDoBemc(int doBemc)
+ * @brief Enables or disables copying of BEMC calorimeter data.
+ * @param[in] doBemc 1 (default) to copy, 0 to suppress.
+ *
+ * @fn void StMuDstFilterMaker::setDoEemc(int doEemc)
+ * @brief Enables or disables copying of EEMC calorimeter data.
+ * @param[in] doEemc 1 (default) to copy, 0 to suppress.
+ */
+
+/**
+ * @class StMuDst2StEventMaker
+ * @ingroup StMuDSTMakers
+ * @brief Converts the current MuDST event to a transient StEvent for downstream makers.
+ *
+ * @details
+ * Places the newly created `StEvent` in the STAR framework `.data` dataset tree
+ * and writes the event timestamp into `StEvtHddr` so that database lookups work
+ * correctly for downstream makers.
+ *
+ * @fn int StMuDst2StEventMaker::Make()
+ * @brief Calls `StMuDst::createStEvent()` and registers the result.
+ * @return `kStOk` on success.
+ *
+ * @fn StEvent* StMuDst2StEventMaker::event()
+ * @brief Returns the `StEvent` created by the last `Make()` call.
+ * @return Pointer to the current `StEvent`, or `nullptr` if not yet created.
+ */
+
+/**
+ * @class StAddRunInfoMaker
+ * @ingroup StMuDSTMakers
+ * @brief Injects StRunInfo into StEvent for early Year-1 STAR data.
+ *
+ * @details
+ * Year-1 Au+Au 130 GeV data was reconstructed before `StRunInfo` was added to
+ * `StEvent`.  This thin maker retrieves the missing run-level information from
+ * the STAR database and inserts it, enabling uniform downstream processing.
+ *
+ * @fn int StAddRunInfoMaker::Make()
+ * @brief Queries the database and adds `StRunInfo` to the current `StEvent`.
+ * @return `kStOk` on success.
+ */
+
+/**
+ * @class StMuMomentumShiftMaker
+ * @ingroup StMuDSTMakers
+ * @brief Applies a uniform momentum scale factor to all tracks in the MuDST.
+ *
+ * @details
+ * Used to estimate systematic uncertainties from magnetic field calibration.
+ * Modifies both the inner and outer `StMuHelix` objects and the cached
+ * momentum vector of each `StMuTrack` in place.
+ *
+ * @fn void StMuMomentumShiftMaker::setScaleFactor(Float_t scale)
+ * @brief Sets the multiplicative scale factor applied to track momenta.
+ * @param[in] scale Scale factor (1.0 = no change).
+ *
+ * @fn void StMuMomentumShiftMaker::setWriteMuDst(Bool_t writeFlag)
+ * @brief If `true`, writes the momentum-shifted event to a new MuDST file.
+ * @param[in] writeFlag `kTRUE` to write output, `kFALSE` for in-memory only.
+ *
+ * @fn void StMuMomentumShiftMaker::ScaleMomentum(StMuTrack* track)
+ * @brief Applies the momentum scale to a single track.
+ * @param[in,out] track Track whose helix and momentum vector are modified.
+ *
+ * @fn int StMuMomentumShiftMaker::Make()
+ * @brief Iterates over all global and primary tracks and applies `ScaleMomentum()`.
+ * @return `kStOk`.
+ */
+
+/* =========================================================================
+ * Physics Object classes
+ * ========================================================================= */
+
+/**
+ * @class StMuDst
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief In-memory navigation object for one MuDST event; all accessors are static.
+ *
+ * @details
+ * `StMuDst` holds static pointers to all `TClonesArray`s that back the MuDST
+ * `TTree` branches.  `StMuDstMaker` calls `StMuDst::set()` after each
+ * `TTree::GetEntry()` to point these pointers at the current event's data.
+ *
+ * All accessor methods are `static`, so they can be called without an instance
+ * pointer — e.g. `StMuDst::event()`, `StMuDst::primaryTracks(i)`.
+ *
+ * Multiple primary vertices are supported.  Call `setVertexIndex(n)` to select
+ * which vertex is used by `primaryTracks()` and `StMuEvent::refMult()`.
+ *
+ * @fn static void StMuDst::setVertexIndex(Int_t vtx_id)
+ * @brief Selects the active primary vertex.
+ * @param[in] vtx_id Zero-based index into the primaryVertices() array.
+ *                   Index 0 is the highest-ranked vertex.
+ *
+ * @fn static Int_t StMuDst::currentVertexIndex()
+ * @brief Returns the index of the currently selected primary vertex.
+ * @return Current vertex index.
+ *
+ * @fn static StMuEvent* StMuDst::event()
+ * @brief Returns event-level data for the current TTree entry.
+ * @return Pointer to the single `StMuEvent` for this event.
+ *
+ * @fn static StMuPrimaryVertex* StMuDst::primaryVertex()
+ * @brief Returns the currently selected primary vertex.
+ * @return Pointer to the vertex at index `currentVertexIndex()`, or `nullptr`.
+ *
+ * @fn static StMuPrimaryVertex* StMuDst::primaryVertex(int i)
+ * @brief Returns the i-th primary vertex candidate.
+ * @param[in] i Zero-based vertex index.
+ * @return Pointer to the i-th `StMuPrimaryVertex`, or `nullptr` if out of range.
+ *
+ * @fn static TObjArray* StMuDst::primaryTracks()
+ * @brief Returns the list of primary tracks associated with the selected vertex.
+ * @return `TObjArray*` of `StMuTrack` pointers; entries change when `setVertexIndex()` is called.
+ *
+ * @fn static StMuTrack* StMuDst::primaryTracks(int i)
+ * @brief Returns the i-th primary track from the selected vertex.
+ * @param[in] i Zero-based track index.
+ * @return Pointer to the i-th primary `StMuTrack`.
+ *
+ * @fn static TObjArray* StMuDst::globalTracks()
+ * @brief Returns the array of all global (unconstrained) tracks.
+ * @return `TObjArray*` of `StMuTrack` pointers.
+ *
+ * @fn static StMuTrack* StMuDst::globalTracks(int i)
+ * @brief Returns the i-th global track.
+ * @param[in] i Zero-based index into the global tracks array.
+ * @return Pointer to the i-th global `StMuTrack`.
+ *
+ * @fn static TClonesArray* StMuDst::primaryVertices()
+ * @brief Returns the raw TClonesArray of all primary vertex candidates.
+ * @return Pointer to the `TClonesArray` backed by the `PrimaryVertices` branch.
+ *
+ * @fn static TClonesArray* StMuDst::l3Tracks()
+ * @brief Returns the Level-3 online trigger track array.
+ * @return Pointer to the `L3Tracks` TClonesArray.
+ *
+ * @fn static StMuTrack* StMuDst::l3Tracks(int i)
+ * @brief Returns the i-th Level-3 track.
+ * @param[in] i Zero-based index.
+ * @return Pointer to the i-th L3 `StMuTrack`.
+ *
+ * @fn static TClonesArray* StMuDst::epdHits()
+ * @brief Returns the EPD hit collection array.
+ * @return Pointer to the `EpdHit` TClonesArray.
+ *
+ * @fn static StMuRpsCollection* StMuDst::RpsCollection()
+ * @brief Returns the Roman Pot spectrometer (pp2pp) collection.
+ * @return Pointer to `StMuRpsCollection`, or `nullptr`.
+ *
+ * @fn static StMuMtdCollection* StMuDst::MtdCollection()
+ * @brief Returns the Muon Telescope Detector collection.
+ * @return Pointer to `StMuMtdCollection`, or `nullptr`.
+ *
+ * @fn static TClonesArray* StMuDst::covGlobTrack()
+ * @brief Returns the covariance geometry array for global tracks.
+ * @return Pointer to the `CovGlobTrack` TClonesArray of `StDcaGeometry`.
+ *
+ * @fn static TClonesArray* StMuDst::covPrimTrack()
+ * @brief Returns the covariance matrix array for primary tracks.
+ * @return Pointer to the `CovPrimTrack` TClonesArray of `StMuPrimaryTrackCovariance`.
+ *
+ * @fn static StDcaGeometry* StMuDst::covGlobTracks(int i)
+ * @brief Returns the DCA geometry for the i-th global track.
+ * @param[in] i Global track index.
+ * @return Pointer to the `StDcaGeometry`, or `nullptr`.
+ *
+ * @fn static StMuPrimaryTrackCovariance* StMuDst::covPrimTracks(int i)
+ * @brief Returns the covariance matrix for the i-th primary track.
+ * @param[in] i Primary track index.
+ * @return Pointer to the `StMuPrimaryTrackCovariance`, or `nullptr`.
+ *
+ * @fn static TClonesArray* StMuDst::mcArray(int type)
+ * @brief Returns a Monte Carlo TClonesArray by enum index.
+ * @param[in] type `MCVertex` or `MCTrack` from the `MCTypes` enum.
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::btofArray(int type)
+ * @brief Returns a BTOF TClonesArray by enum index.
+ * @param[in] type Enumerator from `btofTypes` (e.g. `muBTofHit`).
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::etofArray(int type)
+ * @brief Returns an ETOF TClonesArray by enum index.
+ * @param[in] type Enumerator from `etofTypes` (e.g. `muETofHit`).
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::mtdArray(int type)
+ * @brief Returns an MTD TClonesArray by enum index.
+ * @param[in] type Enumerator from `mtdTypes` (e.g. `muMTDHit`).
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::fcsArray(int type)
+ * @brief Returns an FCS TClonesArray by enum index.
+ * @param[in] type Enumerator from `fcsTypes`.
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::fttArray(int type)
+ * @brief Returns an FTT TClonesArray by enum index.
+ * @param[in] type Enumerator from `fttTypes`.
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::fstArray(int type)
+ * @brief Returns an FST TClonesArray by enum index.
+ * @param[in] type Enumerator from `fstTypes`.
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::fwdTrackArray(int type)
+ * @brief Returns the Forward Track TClonesArray.
+ * @param[in] type Enumerator from `fwdTrackTypes`.
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn static TClonesArray* StMuDst::emcArray(int type)
+ * @brief Returns an EMC TClonesArray by enum index.
+ * @param[in] type Enumerator from `emcTypes` (e.g. `muEmcTow`).
+ * @return Pointer to the requested TClonesArray.
+ *
+ * @fn StEvent* StMuDst::createStEvent()
+ * @brief Constructs a transient `StEvent` from the current MuDST event.
+ * @return Pointer to a newly heap-allocated `StEvent`.  Caller takes ownership.
+ *
+ * @fn static void StMuDst::fixTrackIndices()
+ * @brief Validates and corrects `mIndex2Global` cross-links between primary and global tracks.
+ */
+
+/**
+ * @class StMuArrays
+ * @ingroup StMuDSTUtilities
+ * @brief Holds static metadata (names, types, sizes) for all MuDST TClonesArrays.
+ *
+ * @details
+ * Three parallel static arrays indexed by the enumerations defined in
+ * `StMuArrays.h`:
+ *
+ * - `arrayNames[]`   — TBranch names as stored in the ROOT file.
+ * - `arrayTypes[]`   — ROOT class names of the stored objects.
+ * - `arraySizes[]`   — Default initial capacity of each TClonesArray.
+ *
+ * The total number of arrays is `__NALLARRAYS__`, which is the sum of all
+ * `__N*ARRAYS__` constants.  When a new detector subsystem is added, a new
+ * enum must be defined here, `__NALLARRAYS__` must be incremented accordingly,
+ * and the three metadata arrays in `StMuArrays.cxx` must be extended.
+ */
+
+/**
+ * @class StMuEvent
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Per-event data container for the MuDST: run/event IDs, triggers, refMult, B-field.
+ *
+ * @details
+ * `StMuEvent` stores all event-level quantities written into each TTree entry.
+ * Data members are largely copied from the corresponding `StEvent` structures.
+ * There is exactly one `StMuEvent` per TTree entry, accessible via
+ * `StMuDst::event()`.
+ *
+ * @fn int StMuEvent::eventId()
+ * @brief Returns the event identifier (unique within a run).
+ * @return Event number.
+ *
+ * @fn int StMuEvent::runId()
+ * @brief Returns the run number.
+ * @return Run number.
+ *
+ * @fn double StMuEvent::magneticField()
+ * @brief Returns the STAR solenoidal magnetic field strength.
+ * @return Field strength in kGauss (signed; negative = reversed polarity).
+ *
+ * @fn unsigned short StMuEvent::refMult(int vtx_id)
+ * @brief Returns the reference multiplicity of charged particles.
+ * @param[in] vtx_id Vertex index for the multiplicity calculation
+ *                   (-1 = use the current `StMuDst` vertex, see `StMuDst::setVertexIndex()`).
+ * @return Reference multiplicity count.
+ *
+ * @fn unsigned short StMuEvent::refMultPos(int vtx_id)
+ * @brief Returns the reference multiplicity of positive particles.
+ * @param[in] vtx_id Vertex index (-1 = current).
+ * @return Positive-particle reference multiplicity.
+ *
+ * @fn unsigned short StMuEvent::refMultNeg(int vtx_id)
+ * @brief Returns the reference multiplicity of negative particles.
+ * @param[in] vtx_id Vertex index (-1 = current).
+ * @return Negative-particle reference multiplicity.
+ *
+ * @fn unsigned short StMuEvent::refMultFtpcEast(int vtx_id)
+ * @brief Returns the FTPC east reference multiplicity.
+ * @param[in] vtx_id Vertex index (-1 = current).
+ * @return FTPC east reference multiplicity.
+ *
+ * @fn unsigned short StMuEvent::refMultFtpcWest(int vtx_id)
+ * @brief Returns the FTPC west reference multiplicity.
+ * @param[in] vtx_id Vertex index (-1 = current).
+ * @return FTPC west reference multiplicity.
+ *
+ * @fn StMuTriggerIdCollection& StMuEvent::triggerIdCollection()
+ * @brief Returns the collection of trigger IDs that fired for this event.
+ * @return Reference to `StMuTriggerIdCollection`.
+ *
+ * @fn const StTriggerData* StMuEvent::triggerData() const
+ * @brief Returns raw trigger data (may be null for files predating this feature).
+ * @return Const pointer to `StTriggerData`, or `nullptr`.
+ *
+ * @fn StMuL3EventSummary& StMuEvent::l3EventSummary()
+ * @brief Returns the Level-3 online trigger event summary.
+ * @return Reference to `StMuL3EventSummary`.
+ *
+ * @fn StThreeVectorF StMuEvent::primaryVertexPosition(int vtx_id) const
+ * @brief Returns the primary vertex position for backward compatibility.
+ * @param[in] vtx_id Vertex index (-1 = current vertex).
+ * @return Vertex position in cm as `StThreeVectorF`.
+ *
+ * @fn double StMuEvent::magneticField()
+ * @brief Returns the solenoidal magnetic field in kGauss.
+ * @return Field value in kGauss.
+ *
+ * @fn float StMuEvent::vpdVz()
+ * @brief Returns the VPD-measured primary vertex z position.
+ * @return VPD z-vertex in cm.
+ *
+ * @fn TArrayI& StMuEvent::L2Result()
+ * @brief Returns the raw L2 result array.
+ * @return Reference to `TArrayI` containing raw Level-2 algorithm output.
+ */
+
+/**
+ * @class StMuTrack
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Reconstructed charged-particle track stored in MuDST format.
+ *
+ * @details
+ * Each `StMuTrack` object represents one reconstructed track.  Two types
+ * coexist in each event:
+ *
+ * - **Global tracks** (`muGlobal` branch): unconstrained helix fit to all
+ *   assigned TPC (and other) hits.
+ * - **Primary tracks** (`muPrimary` branch): refitted with a vertex constraint;
+ *   associated with a specific `StMuPrimaryVertex`.
+ *
+ * Global and primary tracks are linked: `primaryTrack()` returns the
+ * primary-vertex refit of a global track, and `globalTrack()` returns the
+ * global counterpart of a primary track.
+ *
+ * @fn short StMuTrack::id() const
+ * @brief Returns the track node key, shared by the global/primary pair.
+ * @return Track ID.
+ *
+ * @fn short StMuTrack::type() const
+ * @brief Returns track type: 0 = global, 1 = primary, etc.
+ * @return Track type code.
+ *
+ * @fn short StMuTrack::flag() const
+ * @brief Returns the track quality flag (bit field; see StEvent manual).
+ * @return Flag value.
+ *
+ * @fn Short_t StMuTrack::charge() const
+ * @brief Returns the track charge sign.
+ * @return +1 or -1.
+ *
+ * @fn const StThreeVectorF& StMuTrack::p() const
+ * @brief Returns the 3-momentum at the point of closest approach to the primary vertex.
+ * @return Momentum vector in GeV/c.
+ *
+ * @fn Double_t StMuTrack::pt() const
+ * @brief Returns pT at the DCA to the primary vertex.
+ * @return Transverse momentum in GeV/c.
+ *
+ * @fn Double_t StMuTrack::eta() const
+ * @brief Returns pseudorapidity at the DCA to the primary vertex.
+ * @return Pseudorapidity.
+ *
+ * @fn Double_t StMuTrack::phi() const
+ * @brief Returns azimuthal angle at the DCA to the primary vertex.
+ * @return φ in radians.
+ *
+ * @fn StThreeVectorF StMuTrack::dca(Int_t vtx_id) const
+ * @brief Returns the 3D distance of closest approach to the primary vertex.
+ * @param[in] vtx_id Vertex index (-1 = current vertex).
+ * @return DCA 3-vector in cm.
+ *
+ * @fn Float_t StMuTrack::dcaD(Int_t vtx_id) const
+ * @brief Returns the signed radial (transverse) DCA component.
+ * @param[in] vtx_id Vertex index (-1 = current vertex).
+ * @return Radial DCA in cm (signed by track curvature convention).
+ *
+ * @fn Float_t StMuTrack::dcaZ(Int_t vtx_id) const
+ * @brief Returns the z component of the DCA.
+ * @param[in] vtx_id Vertex index (-1 = current vertex).
+ * @return z-DCA in cm.
+ *
+ * @fn UShort_t StMuTrack::nHits() const
+ * @brief Returns the total number of hits on the track.
+ * @return Hit count.
+ *
+ * @fn UShort_t StMuTrack::nHitsFit() const
+ * @brief Returns the number of hits actually used in the track fit.
+ * @return Fitted hit count.
+ *
+ * @fn UShort_t StMuTrack::nHitsPoss() const
+ * @brief Returns the maximum possible number of hits for this track.
+ * @return Possible hit count.
+ *
+ * @fn UShort_t StMuTrack::nHitsDedx() const
+ * @brief Returns the number of hits used in the dE/dx calculation.
+ * @return dE/dx hit count.
+ *
+ * @fn Double_t StMuTrack::dEdx() const
+ * @brief Returns the measured dE/dx value.
+ * @return dE/dx in keV/cm (or implementation units).
+ *
+ * @fn Double_t StMuTrack::nSigmaElectron() const
+ * @brief Returns n-sigma distance from the electron dE/dx band.
+ * @return nσ_e (negative means below the band).
+ *
+ * @fn Double_t StMuTrack::nSigmaPion() const
+ * @brief Returns n-sigma distance from the pion dE/dx band.
+ * @return nσ_π.
+ *
+ * @fn Double_t StMuTrack::nSigmaKaon() const
+ * @brief Returns n-sigma distance from the kaon dE/dx band.
+ * @return nσ_K.
+ *
+ * @fn Double_t StMuTrack::nSigmaProton() const
+ * @brief Returns n-sigma distance from the proton dE/dx band.
+ * @return nσ_p.
+ *
+ * @fn Double_t StMuTrack::pidProbElectron() const
+ * @brief Returns Aihong's Bayesian probability for the electron hypothesis.
+ * @return Probability in [0, 1].
+ *
+ * @fn Double_t StMuTrack::pidProbPion() const
+ * @brief Returns Aihong's Bayesian probability for the pion hypothesis.
+ * @return Probability in [0, 1].
+ *
+ * @fn Double_t StMuTrack::pidProbKaon() const
+ * @brief Returns Aihong's Bayesian probability for the kaon hypothesis.
+ * @return Probability in [0, 1].
+ *
+ * @fn Double_t StMuTrack::pidProbProton() const
+ * @brief Returns Aihong's Bayesian probability for the proton hypothesis.
+ * @return Probability in [0, 1].
+ *
+ * @fn const StMuProbPidTraits& StMuTrack::probPidTraits() const
+ * @brief Returns Yuri Fisyak's Bichsel-model PID probabilities.
+ * @return Const reference to `StMuProbPidTraits`.
+ *
+ * @fn const StMuBTofPidTraits& StMuTrack::btofPidTraits() const
+ * @brief Returns the BTOF PID traits associated with this track.
+ * @return Const reference to `StMuBTofPidTraits`.
+ *
+ * @fn const StMuETofPidTraits& StMuTrack::etofPidTraits() const
+ * @brief Returns the ETOF PID traits associated with this track.
+ * @return Const reference to `StMuETofPidTraits`.
+ *
+ * @fn const StMuMtdPidTraits& StMuTrack::mtdPidTraits() const
+ * @brief Returns the MTD PID traits associated with this track.
+ * @return Const reference to `StMuMtdPidTraits`.
+ *
+ * @fn StPhysicalHelixD StMuTrack::helix() const
+ * @brief Returns the inner helix (at the first measured point).
+ * @return `StPhysicalHelixD` parametrised at the innermost hit.
+ *
+ * @fn StPhysicalHelixD StMuTrack::outerHelix() const
+ * @brief Returns the outer helix (at the last measured point).
+ * @return `StPhysicalHelixD` parametrised at the outermost hit.
+ *
+ * @fn const StThreeVectorF& StMuTrack::firstPoint() const
+ * @brief Returns the position of the first (innermost) measured hit.
+ * @return Position in cm as `StThreeVectorF`.
+ *
+ * @fn const StThreeVectorF& StMuTrack::lastPoint() const
+ * @brief Returns the position of the last (outermost) measured hit.
+ * @return Position in cm as `StThreeVectorF`.
+ *
+ * @fn Double_t StMuTrack::length() const
+ * @brief Returns the track arc length from the primary vertex to the last measured point.
+ * @return Length in cm.
+ *
+ * @fn Double_t StMuTrack::lengthMeasured() const
+ * @brief Returns the track arc length from the first to the last measured point.
+ * @return Length in cm.
+ *
+ * @fn StTrackTopologyMap StMuTrack::topologyMap() const
+ * @brief Returns the hit topology map encoding which detector layers fired.
+ * @return `StTrackTopologyMap` bit pattern.
+ *
+ * @fn const StMuTrack* StMuTrack::globalTrack() const
+ * @brief Returns the global counterpart of this primary track.
+ * @return Pointer to the global `StMuTrack`, or `nullptr` if not linked.
+ *
+ * @fn const StMuTrack* StMuTrack::primaryTrack() const
+ * @brief Returns the primary-vertex refit of this global track.
+ * @return Pointer to the primary `StMuTrack`, or `nullptr` if not linked.
+ *
+ * @fn Int_t StMuTrack::vertexIndex() const
+ * @brief Returns the index of the primary vertex to which this track's DCA refers.
+ * @return Vertex index.
+ *
+ * @fn Int_t StMuTrack::idTruth() const
+ * @brief Returns the Monte Carlo track ID (simulation only).
+ * @return MC track ID, or 0 if not available.
+ *
+ * @fn Int_t StMuTrack::qaTruth() const
+ * @brief Returns the MC matching quality (percentage of hits from `idTruth()` track).
+ * @return Quality value 0–100.
+ */
+
+/**
+ * @class StMuPrimaryVertex
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Reconstructed primary interaction vertex stored in the MuDST.
+ *
+ * @details
+ * Multiple vertex candidates are stored per event, ordered by ranking score
+ * (index 0 = best).  Use `StMuDst::setVertexIndex(n)` to switch the active
+ * vertex used by `primaryTracks()` and `StMuEvent::refMult()`.
+ *
+ * @fn StThreeVectorF StMuPrimaryVertex::position() const
+ * @brief Returns the 3D vertex position.
+ * @return Position in cm as `StThreeVectorF`.
+ *
+ * @fn StThreeVectorF StMuPrimaryVertex::posError() const
+ * @brief Returns the 1-σ uncertainty on the vertex position.
+ * @return Position uncertainty in cm as `StThreeVectorF`.
+ *
+ * @fn Float_t StMuPrimaryVertex::ranking() const
+ * @brief Returns the vertex quality ranking score.
+ * @return Ranking (higher = better quality).
+ *
+ * @fn UShort_t StMuPrimaryVertex::nTracksUsed() const
+ * @brief Returns the number of tracks used in the vertex fit.
+ * @return Track count.
+ *
+ * @fn Float_t StMuPrimaryVertex::chiSquared() const
+ * @brief Returns the chi-squared of the vertex fit.
+ * @return χ².
+ *
+ * @fn UShort_t StMuPrimaryVertex::refMult() const
+ * @brief Returns total reference multiplicity for this vertex.
+ * @return refMultPos() + refMultNeg().
+ *
+ * @fn Bool_t StMuPrimaryVertex::isBeamConstrained() const
+ * @brief Returns true if a beam-line constraint was used in the vertex fit.
+ * @return `kTRUE` if beam-constrained.
+ */
+
+/**
+ * @class StMuHelix
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Compact helix parametrisation stored in the MuDST for each track.
+ *
+ * @details
+ * Stores (momentum at origin, origin point, charge sign, B-field) and
+ * reconstructs a `StPhysicalHelix` on demand via `helix()`.
+ *
+ * @fn const StThreeVectorF& StMuHelix::p() const
+ * @brief Returns the momentum 3-vector at the helix origin.
+ * @return Momentum in GeV/c as `StThreeVectorF`.
+ *
+ * @fn const StThreeVectorF& StMuHelix::origin() const
+ * @brief Returns the helix origin (pivot point).
+ * @return Position in cm as `StThreeVectorF`.
+ *
+ * @fn short StMuHelix::q() const
+ * @brief Returns the charge sign.
+ * @return +1 or -1.
+ *
+ * @fn float StMuHelix::b() const
+ * @brief Returns the magnetic field used when constructing the helix.
+ * @return Field in kGauss.
+ *
+ * @fn StPhysicalHelix StMuHelix::helix() const
+ * @brief Reconstructs and returns the full helix object.
+ * @return `StPhysicalHelix` built from the stored parameters.
+ *
+ * @fn int StMuHelix::bad() const
+ * @brief Returns non-zero if the stored helix parameters are flagged as invalid.
+ * @return 0 if valid; non-zero if bad.
+ */
+
+/**
+ * @class StMuPrimaryTrackCovariance
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief 5×5 covariance matrix (upper triangle) for primary-track parameters.
+ *
+ * @details
+ * Parameters are (tan λ, Ψ, 1/pT) where λ is the dip angle and Ψ is the
+ * azimuthal angle of the momentum vector.  The six independent elements stored
+ * are: TanTan, PsiTan, PsiPsi, PtiTan, PtiPsi, PtiPti.
+ *
+ * @fn const Float_t* StMuPrimaryTrackCovariance::errMatrix() const
+ * @brief Returns pointer to the six covariance matrix elements.
+ * @return Pointer to array of 6 `Float_t` values in the order
+ *         {TanTan, PsiTan, PsiPsi, PtiTan, PtiPsi, PtiPti}.
+ */
+
+/**
+ * @class StMuProbPidTraits
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Bichsel-model dE/dx values and Bayesian PID probabilities for 9 particle species.
+ *
+ * @details
+ * Particle species indices: 0=electron, 1=proton, 2=K⁻, 3=π⁻, 4=μ⁻,
+ * 5=deuteron, 6=triton, 7=³He, 8=α.
+ *
+ * @fn double StMuProbPidTraits::probability(unsigned int i) const
+ * @brief Returns the Bayesian probability for species `i`.
+ * @param[in] i Species index (0–8).
+ * @return Probability value in [0, 1]; returns 0 if `i >= 9`.
+ *
+ * @fn double StMuProbPidTraits::sum() const
+ * @brief Returns the sum of all nine probabilities.
+ * @return Sum (should be ≈ 1.0 when PID tables were applied).
+ *
+ * @fn double StMuProbPidTraits::dEdxFit() const
+ * @brief Returns the Bichsel-fit dE/dx value.
+ * @return dE/dx in keV/cm.
+ *
+ * @fn double StMuProbPidTraits::dEdxTruncated() const
+ * @brief Returns the truncated-mean (70%) dE/dx value.
+ * @return dE/dx in keV/cm.
+ *
+ * @fn double StMuProbPidTraits::dEdxTrackLength() const
+ * @brief Returns the TPC track length used in the dE/dx calculation.
+ * @return Track length in cm.
+ *
+ * @fn int StMuProbPidTraits::numberOfParticles() const
+ * @brief Returns the number of particle species for which probabilities are stored.
+ * @return 9.
+ */
+
+/**
+ * @class StMuMcTrack
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Monte Carlo truth track (from GEANT g2t_track table) stored in the MuDST.
+ *
+ * @fn Int_t StMuMcTrack::GePid() const
+ * @brief Returns the GEANT particle ID.
+ * @return GEANT PID code.
+ *
+ * @fn Int_t StMuMcTrack::Id() const
+ * @brief Returns the unique MC track ID (primary key in g2t_track).
+ * @return Track ID.
+ *
+ * @fn const StThreeVectorF& StMuMcTrack::Pxyz() const
+ * @brief Returns the Monte Carlo momentum 3-vector.
+ * @return Momentum in GeV/c as `StThreeVectorF`.
+ *
+ * @fn UChar_t StMuMcTrack::NoHits(Int_t k) const
+ * @brief Returns the number of MC hits in sub-detector `k`.
+ * @param[in] k Detector index from the `EHIT` enum (e.g. `ktpc`, `ksvt`).
+ * @return Hit count (0–255).
+ *
+ * @fn Int_t StMuMcTrack::IdVx() const
+ * @brief Returns the ID of the start vertex of this MC track.
+ * @return Vertex ID in the `g2t_vertex` table.
+ *
+ * @fn Int_t StMuMcTrack::IdVxEnd() const
+ * @brief Returns the ID of the stop (decay/interaction) vertex.
+ * @return Vertex ID in the `g2t_vertex` table.
+ */
+
+/**
+ * @class StMuMcVertex
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Monte Carlo truth vertex (from GEANT g2t_vertex table) stored in the MuDST.
+ *
+ * @fn Int_t StMuMcVertex::Id() const
+ * @brief Returns the unique MC vertex ID.
+ * @return Vertex ID.
+ *
+ * @fn const StThreeVectorF& StMuMcVertex::XyzV() const
+ * @brief Returns the GEANT vertex 3D position.
+ * @return Position in cm as `StThreeVectorF`.
+ *
+ * @fn Int_t StMuMcVertex::NoDaughters() const
+ * @brief Returns the number of daughter tracks originating from this vertex.
+ * @return Daughter count.
+ *
+ * @fn Float_t StMuMcVertex::Time() const
+ * @brief Returns the GEANT vertex production time.
+ * @return Time in nanoseconds.
+ */
+
+/**
+ * @class StMuTriggerIdCollection
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Collection of trigger IDs (L1–L3, nominal) stored in the MuDST.
+ *
+ * @fn const StTriggerId& StMuTriggerIdCollection::nominal() const
+ * @brief Returns the nominal trigger ID (most commonly used for analysis cuts).
+ * @return Const reference to the nominal `StTriggerId`.
+ *
+ * @fn const StTriggerId& StMuTriggerIdCollection::l1() const
+ * @brief Returns the Level-1 trigger ID.
+ * @return Const reference to the L1 `StTriggerId`.
+ *
+ * @fn const StTriggerId& StMuTriggerIdCollection::l2() const
+ * @brief Returns the Level-2 trigger ID.
+ * @return Const reference to the L2 `StTriggerId`.
+ *
+ * @fn const StTriggerId& StMuTriggerIdCollection::l3() const
+ * @brief Returns the Level-3 trigger ID.
+ * @return Const reference to the L3 `StTriggerId`.
+ *
+ * @fn const StTriggerId& StMuTriggerIdCollection::l3Expanded() const
+ * @brief Returns the expanded Level-3 trigger ID.
+ * @return Const reference to the expanded L3 `StTriggerId`.
+ */
+
+/**
+ * @class StMuL3EventSummary
+ * @ingroup StMuDSTPhysicsObjects
+ * @brief Level-3 online trigger event summary stored inside StMuEvent.
+ *
+ * @fn int StMuL3EventSummary::numberOfProcessedEvents() const
+ * @brief Returns the number of events processed by the L3 trigger system.
+ * @return Processed event count.
+ *
+ * @fn int StMuL3EventSummary::numberOfReconstructedEvents() const
+ * @brief Returns the number of events reconstructed online by L3.
+ * @return Reconstructed event count.
+ *
+ * @fn unsigned int StMuL3EventSummary::numberOfTracks() const
+ * @brief Returns the number of tracks found by the L3 online reconstruction.
+ * @return L3 track count.
+ *
+ * @fn bool StMuL3EventSummary::unbiasedTrigger() const
+ * @brief Returns true if this event was accepted by the L3 unbiased trigger.
+ * @return `true` if unbiased trigger fired.
+ *
+ * @fn bool StMuL3EventSummary::zVertexTrigger() const
+ * @brief Returns true if the L3 z-vertex trigger condition was satisfied.
+ * @return `true` if z-vertex trigger fired.
+ *
+ * @fn unsigned int StMuL3EventSummary::l0TriggerWord() const
+ * @brief Returns the Level-0 (hardware) trigger word.
+ * @return L0 trigger word.
+ *
+ * @fn StThreeVectorF StMuL3EventSummary::primaryVertex() const
+ * @brief Returns the L3 online estimate of the primary vertex position.
+ * @return Vertex position in cm as `StThreeVectorF`.
+ */
+
+/* =========================================================================
+ * Utility classes
+ * ========================================================================= */
+
+/**
+ * @class StMuCut
+ * @ingroup StMuDSTUtilities
+ * @brief Abstract base class for all MuDST track and event selection cuts.
+ *
+ * @details
+ * Subclasses must override all eight protected `accept()` methods.  User code
+ * calls the corresponding `pass()` methods, which invoke `accept()` and
+ * increment internal pass/fail counters.
+ *
+ * @fn bool StMuCut::pass(const StEvent* ev)
+ * @brief Tests an `StEvent` against the cut.
+ * @param[in] ev Event to test.
+ * @return `true` if the event passes the cut.
+ *
+ * @fn bool StMuCut::pass(const StTrack* t)
+ * @brief Tests a reconstructed track against the cut.
+ * @param[in] t Track to test.
+ * @return `true` if the track passes the cut.
+ */
+
+/**
+ * @class StMuFilter
+ * @ingroup StMuDSTUtilities
+ * @brief Standard write-mode track filter: tests track finder, fitter, and hit requirements.
+ *
+ * @details
+ * Inherits from `StMuCut`.  The `accept(StTrack*)` implementation checks that
+ * the track was found/fitted by one of the methods registered with
+ * `addEncodedMethod()` and satisfies the minimum hit counts.
+ *
+ * @fn void StMuFilter::addEncodedMethod(unsigned short method)
+ * @brief Registers an encoded finder+fitter combination that is accepted.
+ * @param[in] method Encoded method word (see `StTrackMethod.h`).
+ *
+ * @fn void StMuFilter::addEncodedMethod(StTrackFinderMethod find, StTrackFittingMethod fit)
+ * @brief Registers a finder+fitter combination by separate enumerators.
+ * @param[in] find Track finder method enumerator.
+ * @param[in] fit  Track fitting method enumerator.
+ */
+
+/**
+ * @class StMuL3Filter
+ * @ingroup StMuDSTUtilities
+ * @brief Track filter for Level-3 online tracks, using BetheBloch dE/dx cuts.
+ *
+ * @details
+ * Inherits from `StMuCut`.  The `accept(StTrack*)` implementation applies
+ * dE/dx-based PID conditions via a `BetheBloch` calculator.
+ */
+
+/**
+ * @class StMuDbReader
+ * @ingroup StMuDSTUtilities
+ * @brief Singleton that maps MuDST filenames to event counts for fast chain building.
+ *
+ * @fn static StMuDbReader* StMuDbReader::instance()
+ * @brief Returns the singleton instance (creates it on first call).
+ * @return Pointer to the single `StMuDbReader` instance.
+ *
+ * @fn int StMuDbReader::addDb(const char* dbFile)
+ * @brief Loads an event-count database file and merges it into the internal map.
+ * @param[in] dbFile Path to a pre-built database file.
+ * @return Number of entries added.
+ *
+ * @fn int StMuDbReader::entries(const char* file)
+ * @brief Returns the stored event count for a given MuDST filename.
+ * @param[in] file Filename key to look up.
+ * @return Event count, or -1 if not found.
+ */
+
+/**
+ * @class StMuDebug
+ * @ingroup StMuDSTUtilities
+ * @brief Global debug-level controller for the MuDST library.
+ *
+ * @details
+ * All debug output in the library is gated by `StMuDebug::level()`.
+ * Level 0 = silent; 1 = initialisation messages; 2 = per-event messages;
+ * 3 = per-track / per-hit messages.
+ *
+ * @fn static void StMuDebug::setLevel(unsigned int level)
+ * @brief Sets the active debug verbosity level.
+ * @param[in] level New debug level (0 = off, 3 = most verbose).
+ *
+ * @fn static int StMuDebug::level()
+ * @brief Returns the current debug level.
+ * @return Current level (negative means suppressed via `off()`).
+ *
+ * @fn static void StMuDebug::on()
+ * @brief Restores output at the last known positive debug level.
+ *
+ * @fn static void StMuDebug::off()
+ * @brief Suppresses all debug output without forgetting the current level.
+ */
+
+/**
+ * @class StMuTimer
+ * @ingroup StMuDSTUtilities
+ * @brief Wall-clock timer for measuring I/O and processing performance.
+ *
+ * @fn void StMuTimer::start()
+ * @brief Starts (or restarts) the timer.
+ *
+ * @fn void StMuTimer::stop()
+ * @brief Stops the timer.
+ *
+ * @fn double StMuTimer::elapsedTime() const
+ * @brief Returns the elapsed wall-clock time.
+ * @return Time in seconds since the last `start()` call.
+ *
+ * @fn void StMuTimer::reset()
+ * @brief Resets elapsed time to zero.
+ */
+
+/**
+ * @class StMuException
+ * @ingroup StMuDSTUtilities
+ * @brief Base class for exceptions thrown within the MuDST library.
+ *
+ * @details
+ * Derived types (`StMuExceptionNullPointer`, `StMuExceptionBadValue`,
+ * `StMuExceptionBadFlag`, `StMuExceptionEOF`, `StMuExceptionUnknown`) are
+ * generated by the `EXE()` macro and carry a message string and the name of
+ * the throwing scope.
+ *
+ * @fn virtual void StMuException::print()
+ * @brief Prints the exception type, scope name, and message to stdout.
+ *
+ * @fn virtual StMuExceptionTypes StMuException::type()
+ * @brief Returns the exception type enumerator.
+ * @return One of `kUnknown`, `kNullPointer`, `kBadFlag`, `kBadValue`, `kEOF`.
+ *
+ * @fn virtual string StMuException::message()
+ * @brief Returns the human-readable exception message.
+ * @return Message string.
+ */
+
+/**
+ * @class StuDraw3DMuEvent
+ * @ingroup StMuDSTUtilities
+ * @brief 3D event display for MuDST events using the STAR StDraw3D framework.
+ *
+ * @details
+ * Extends `StDraw3D` with methods that render `StMuTrack` objects as helix
+ * arcs and EMC tower hits as coloured boxes against the STAR detector geometry.
+ *
+ * @fn virtual void StuDraw3DMuEvent::Tracks(StTrackType type)
+ * @brief Draws all tracks of the given type using the current primary vertex.
+ * @param[in] type Track type (`global` or `primary`; default `global`).
+ *
+ * @fn virtual TObject* StuDraw3DMuEvent::Track(const StMuTrack& track, Color_t col, Style_t sty, Size_t siz)
+ * @brief Draws a single track as a helix arc.
+ * @param[in] track Reference to the track to draw.
+ * @param[in] col   ROOT colour index.
+ * @param[in] sty   ROOT line style (−1 = default).
+ * @param[in] siz   ROOT line size (−1 = default).
+ * @return Pointer to the ROOT `TObject` added to the display.
+ *
+ * @fn virtual TObject* StuDraw3DMuEvent::EmcHit(Int_t emcHitsSoftId, float energy, const char* detIdt)
+ * @brief Draws an EMC hit tower, coloured by energy.
+ * @param[in] emcHitsSoftId  Software ID of the EMC tower.
+ * @param[in] energy         Tower energy (used to determine colour).
+ * @param[in] detIdt         Detector identifier string (default `"bemc"`).
+ * @return Pointer to the ROOT `TObject` added to the display.
+ *
+ * @fn static StuDraw3DMuEvent* StuDraw3DMuEvent::Display()
+ * @brief Returns the global `StuDraw3DMuEvent` singleton.
+ * @return Pointer to the shared display instance.
+ */
+
+/**
+ * @class SchedulerExample
+ * @ingroup StMuDSTUtilities
+ * @brief Example StMaker demonstrating MuDST analysis with the STAR batch scheduler.
+ *
+ * @details
+ * Fills histograms of primary track pT, η, positive/negative refMult, and
+ * primary vertex position.  Intended as a starting-point template.
+ * Run `star-submit StRoot/StMuDSTMaker/COMMON/macros/SchedulerExample.xml`
+ * from the working directory to submit to the batch queue.
+ *
+ * @fn Int_t SchedulerExample::Init()
+ * @brief Initialises histograms and retrieves the pointer to `StMuDstMaker`.
+ * @return `kStOk`.
+ *
+ * @fn Int_t SchedulerExample::Make()
+ * @brief Analysis code executed once per event.
+ * @return `kStOk`.
+ *
+ * @fn Int_t SchedulerExample::Finish()
+ * @brief Writes output histograms to file and closes.
+ * @return `kStOk`.
+ */
+
+/** @} */ /* end of StMuDSTCommon group */

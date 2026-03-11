@@ -1,0 +1,660 @@
+/**
+ * @defgroup StIstSimMaker IST Simulation Makers
+ *
+ * @brief Fast and slow Monte Carlo simulation of the STAR Intermediate Silicon
+ *        Tracker (IST) silicon strip detector.
+ *
+ * @section ist_overview Overview
+ *
+ * The IST is a single-layer silicon strip detector positioned between the
+ * Heavy Flavour Tracker (HFT) pixel detector and the Time Projection Chamber
+ * (TPC).  It provides track-seeding and linking for charm-hadron reconstruction
+ * by constraining track trajectories in the radial gap between those two
+ * sub-detectors.
+ *
+ * @subsection ist_geometry Detector Geometry
+ *
+ * | Quantity                      | Value                    |
+ * |-------------------------------|--------------------------|
+ * | Ladders                       | 24                       |
+ * | Sensors per ladder            | 6                        |
+ * | Total sensors                 | 144                      |
+ * | Rows per sensor (r-phi)       | 64                       |
+ * | Columns per sensor (z)        | 12                       |
+ * | Pads per sensor               | 768                      |
+ * | Pad pitch (r-phi)             | 595.4 µm                 |
+ * | Pad pitch (z)                 | 6275 µm                  |
+ * | Active area (r-phi)           | 38.016 mm                |
+ * | Active area (z)               | 75.30 mm                 |
+ * | Sensor thickness              | 300 µm                   |
+ * | Position resolution (r-phi)   | 163 µm (cluster size 1)  |
+ * | Position resolution (z)       | 2325 µm                  |
+ *
+ * @subsection ist_electronics Electronics Chain
+ *
+ * Each sensor is read out by APV25 analogue pipeline chips (one chip per
+ * 64 strips).  The analogue pipeline samples at the LHC bunch-crossing clock
+ * frequency and stores up to 9 time-bin samples.  The stored samples are
+ * multiplexed onto a 40 MHz output bus, digitised by a 12-bit ADC
+ * (maximum value 4 096 counts), and zero-suppressed before being sent to the
+ * data acquisition system via ARM-boards and RDOs.
+ *
+ * | Electronics level | Count per unit            | Total    |
+ * |-------------------|---------------------------|----------|
+ * | RDOs              | —                         | 6        |
+ * | ARMs per RDO      | 6                         | 36       |
+ * | APV25 per ARM     | 24                        | 864      |
+ * | Channels per APV  | 128                       | 110 592  |
+ * | APV25 per ladder  | 36 (12 per section × 3)   | 864      |
+ *
+ * @section ist_sim_comparison Fast vs. Slow Simulation
+ *
+ * Two makers are provided, trading physics fidelity against speed:
+ *
+ * @subsection ist_fast_sim Fast Simulation (StIstFastSimMaker)
+ *
+ * The fast simulator is designed for high-statistics productions where CPU
+ * time is the dominant constraint.  It processes a single GEANT hit per
+ * sensor crossing, applying one of two hit-position models:
+ *
+ * 1. **Gaussian smearing** (default): the GEANT hit position @f$ x_0 @f$ is
+ *    replaced by a sample drawn from
+ *    @f[
+ *      x' \sim \mathcal{N}(x_0,\,\sigma)
+ *    @f]
+ *    where @f$\sigma@f$ is the position resolution loaded from the
+ *    calibration database (@c ist1HitError table).  The sample is
+ *    redrawn while @f$|x'| > L/2@f$ to stay within the active sensor
+ *    half-length @f$L@f$.
+ *
+ * 2. **Pixelisation** (smearing disabled): the hit is snapped to the centre
+ *    of the nearest pad.  Row and column indices are computed as
+ *    @f[
+ *      n_\text{row}    = \bigl\lfloor r_\phi / p_r \bigr\rfloor + 1, \qquad
+ *      n_\text{col}    = \bigl\lfloor z    / p_z \bigr\rfloor + 1
+ *    @f]
+ *    where @f$p_r = 595.4\,\mu\text{m}@f$ and
+ *    @f$p_z = 6275\,\mu\text{m}@f$ are the pad pitches.
+ *
+ * The local position (smeared or pixelised) is transformed to global
+ * coordinates with a TGeoHMatrix taken from either the ideal VMC geometry or
+ * the mis-alignment DB tables.  The energy deposit @f$\mathrm{d}E@f$ is
+ * passed through unchanged (in GeV), and an StIstHit is added to
+ * StIstHitCollection.
+ *
+ * @subsection ist_slow_sim Slow Simulation (StIstSlowSimMaker)
+ *
+ * The slow simulator models the full analogue signal chain and produces
+ * @em raw ADC data in StIstCollection, which can be fed into the same
+ * reconstruction chain as real detector data.  The main steps are:
+ *
+ * 1. **Hit-efficiency filtering** — Each MC hit is accepted with probability
+ *    @f$\epsilon(p)@f$ according to the selected mode (see §@ref ist_hiteff).
+ *
+ * 2. **Track-segment reconstruction** — The GEANT mid-point position and local
+ *    momentum direction are used to reconstruct the entry (@f$\mathbf{r}_\text{in}@f$)
+ *    and exit (@f$\mathbf{r}_\text{out}@f$) points of the sensor crossing:
+ *    @f[
+ *      \mathbf{r}_\text{in}  = \mathbf{r}_\text{mid} - \hat{p}\,\Delta s/2, \qquad
+ *      \mathbf{r}_\text{out} = \mathbf{r}_\text{mid} + \hat{p}\,\Delta s/2
+ *    @f]
+ *    where @f$\Delta s@f$ is the path length stored in the GEANT hit.
+ *
+ * 3. **Pad-crossing scan** — The track segment is walked pad-by-pad (in both
+ *    r-phi and z simultaneously) using distanceToBorder() to locate each
+ *    pad-edge crossing point.  This yields a list of boundary points
+ *    @f$\{\mathbf{c}_0, \mathbf{c}_1, \ldots, \mathbf{c}_n\}@f$ with
+ *    @f$\mathbf{c}_0 = \mathbf{r}_\text{in}@f$ and
+ *    @f$\mathbf{c}_n = \mathbf{r}_\text{out}@f$.
+ *
+ * 4. **Charge deposition** — For each pad segment @f$i@f$ the charge deposited
+ *    is proportional to the path-length fraction:
+ *    @f[
+ *      q_i = \mathrm{d}E \times \frac{|\mathbf{c}_{i+1}-\mathbf{c}_i|}{|\mathbf{r}_\text{out}-\mathbf{r}_\text{in}|}
+ *    @f]
+ *
+ * 5. **Energy-to-ADC conversion** — The energy deposit is converted to ADC
+ *    counts using a MIP-normalised scale factor:
+ *    @f[
+ *      k_\text{MPV} = \frac{A_\text{MIP}}{(dE/dx)_\text{Si} \cdot t}
+ *                   = \frac{441}{3.87 \times 10^{-3}\,\text{GeV/cm}
+ *                              \times 0.03\,\text{cm}}
+ *                   \approx 3.80 \times 10^6\;\text{ADC counts/GeV}
+ *    @f]
+ *    where @f$A_\text{MIP} = 441@f$ ADC counts is the most-probable ADC
+ *    value for a MIP, @f$(dE/dx)_\text{Si} = 3.87\,\text{MeV/cm}@f$, and
+ *    @f$t = 300\,\mu\text{m}@f$ is the sensor thickness.
+ *
+ * 6. **APV25 time-bin response** — The ADC charge is distributed across the
+ *    @f$N_\text{TB}@f$ time bins following a Landau-shaped pulse profile:
+ *    @f[
+ *      f_t = \frac{\int_{t-1/2}^{t+1/2} \mathcal{L}(u;\,\mu,\,\sigma)\,\mathrm{d}u}
+ *                {\int_0^{N_\text{TB}} \mathcal{L}(u;\,\mu,\,\sigma)\,\mathrm{d}u}
+ *    @f]
+ *    with Landau peak @f$\mu = 3.8@f$ and width @f$\sigma = 1.168@f$ (in
+ *    arbitrary time-bin units).  The ADC value in time bin @f$t@f$ is then
+ *    @f[
+ *      \mathrm{ADC}(t) = q_i \times k_\text{MPV} \times
+ *                        \frac{f_t}{f_{t_\text{peak}}}
+ *    @f]
+ *
+ * @subsection ist_hiteff Hit-Efficiency Modes
+ *
+ * Three efficiency modes are available (selected via the @c istSimPar DB table):
+ *
+ * | Mode | Description                                          |
+ * |------|------------------------------------------------------|
+ * | 0    | 100 % efficiency (ideal)                             |
+ * | 1    | Linear momentum dependence: @f$\epsilon(p) = \max\!\bigl[\epsilon_0,\,1-(1-\epsilon_0)p/p_\text{cut}\bigr]@f$ |
+ * | 2    | Flat efficiency @f$\epsilon_0@f$ for all tracks       |
+ *
+ * @section ist_coordinate_systems Coordinate Systems
+ *
+ * | Frame           | Origin                     | x-axis        | z-axis  |
+ * |-----------------|----------------------------|---------------|---------|
+ * | STAR global     | Interaction vertex         | towards east  | beam    |
+ * | Sensor local    | Centre of sensor           | r-phi         | beam    |
+ * | Sensor-frame    | Active-area corner (0,0)   | r-phi from 0  | z from 0|
+ *
+ * The transformation between sensor-local and sensor-frame coordinates used
+ * internally by the slow simulator is:
+ * @f[
+ *   x_\text{sf} = L_{r\phi}/2 - x_\text{local}, \qquad
+ *   z_\text{sf} = z_\text{local} + L_z/2
+ * @f]
+ *
+ * @{
+ */
+
+// ============================================================
+// File documentation blocks
+// ============================================================
+
+/**
+ * @file StIstFastSimMaker.h
+ * @brief Declaration of StIstFastSimMaker — fast IST hit simulator.
+ *
+ * Transforms GEANT Monte Carlo hits (StMcIstHit) into reconstructed IST hits
+ * (StIstHit) via Gaussian position smearing or pad-centre pixelisation.
+ * The energy deposit is passed through unchanged.
+ *
+ * @ingroup StIstSimMaker
+ */
+
+/**
+ * @file StIstFastSimMaker.cxx
+ * @brief Implementation of StIstFastSimMaker.
+ *
+ * Reads StMcIstHitCollection from StMcEvent, applies optional smearing, and
+ * fills StIstHitCollection in StEvent.  Geometry is obtained from either
+ * the TGeoManager ideal geometry (VMC) or the IST mis-alignment DB tables.
+ *
+ * @ingroup StIstSimMaker
+ */
+
+/**
+ * @file StIstSlowSimMaker.h
+ * @brief Declaration of StIstSlowSimMaker — slow IST raw-ADC simulator.
+ *
+ * Models the full analogue signal chain: track-segment tracing through the
+ * silicon pad structure, charge-sharing between pads, energy-to-ADC
+ * conversion with a Landau-shaped time-bin profile, and output as raw ADC
+ * data in StIstCollection ready for standard reconstruction.
+ *
+ * @ingroup StIstSimMaker
+ */
+
+/**
+ * @file StIstSlowSimMaker.cxx
+ * @brief Implementation of StIstSlowSimMaker.
+ *
+ * Core algorithms: pad-boundary walking (checkPadCrossing, distanceToBorder),
+ * pad identification in sensor-frame coordinates (findPad,
+ * getMCHitRowAndColumn), and raw-ADC generation with APV25 time-bin
+ * response (generateRawHits).
+ *
+ * @ingroup StIstSimMaker
+ */
+
+
+// ============================================================
+// StIstFastSimMaker
+// ============================================================
+
+/**
+ * @class StIstFastSimMaker
+ * @ingroup StIstSimMaker
+ *
+ * @brief Fast IST hit simulator.
+ *
+ * Converts GEANT Monte Carlo hits (StMcIstHit, stored in local sensor
+ * coordinates) into reconstructed IST hits (StIstHit in global coordinates)
+ * suitable for tracking in StEvent.
+ *
+ * The simulator supports two position-response models:
+ *
+ * - **Gaussian smearing** (mSmear = true, default): each hit coordinate is
+ *   independently smeared by a Gaussian with mean zero and sigma read from
+ *   the calibration database (@c ist1HitError table).  Samples outside the
+ *   physical sensor boundary are discarded and redrawn.
+ *
+ * - **Pixelisation** (mSmear = false): the hit is snapped to the geometric
+ *   centre of the containing pad.
+ *
+ * The transformed local position is mapped to global coordinates with a
+ * TGeoHMatrix provided by either the ideal VMC geometry (mBuildIdealGeom =
+ * true) or the IST DB mis-alignment tables (default).
+ *
+ * ### Data members
+ *
+ * | Member             | Type        | Default       | Description                                             |
+ * |--------------------|-------------|---------------|---------------------------------------------------------|
+ * | mIstRot            | THashList*  | nullptr       | Hash list of per-module geometry rotation matrices      |
+ * | mIstDb             | StIstDb*    | nullptr       | Handle to the IST conditions database object            |
+ * | mBuildIdealGeom    | Bool_t      | kFALSE        | Use ideal VMC geometry when true; DB tables when false  |
+ * | mRandom            | TRandom1    | seed 65539    | Random number generator for Gaussian smearing           |
+ * | mResXIst1          | Double_t    | from DB       | Hit position resolution in r-phi direction (cm)         |
+ * | mResZIst1          | Double_t    | from DB       | Hit position resolution in z direction (cm)             |
+ * | mSmear             | Bool_t      | kTRUE         | Enable Gaussian smearing of hit positions               |
+ */
+
+/**
+ * @fn StIstFastSimMaker::StIstFastSimMaker(const Char_t *name, bool useRandomSeed)
+ * @brief Constructor.
+ * @param name       %Maker name passed to StMaker base class (default: @c "istFastSim").
+ * @param useRandomSeed If true, seeds TRandom1 from the system clock so each
+ *                      job produces independent statistics.  If false (default),
+ *                      uses fixed seed 65539 for reproducibility.
+ */
+
+/**
+ * @fn Int_t StIstFastSimMaker::Init()
+ * @brief STAR framework Init hook — no-op beyond logging.
+ * @return kStOk always.
+ */
+
+/**
+ * @fn Int_t StIstFastSimMaker::InitRun(Int_t runNo)
+ * @brief Loads run-dependent calibration and geometry for a new run.
+ *
+ * Performs the following steps in order:
+ * 1. If ideal geometry is requested, ensures TGeoManager is loaded
+ *    (via @c GetDataBase("VmcGeometry")).
+ * 2. Reads the @c ist1HitError calibration table and extracts the r-phi
+ *    and z position resolutions as
+ *    @f$ \sigma_{r\phi} = \sqrt{c_0} @f$,
+ *    @f$ \sigma_z = \sqrt{c_3} @f$
+ *    where @f$c_i@f$ are the elements of the @c coeff[] array.
+ * 3. Retrieves the StIstDb pointer from the @c "ist_db" dataset.
+ * 4. Reads the per-module rotation matrices into mIstRot.
+ *
+ * @param runNo  Run number (not used directly; passed by the STAR framework).
+ * @return kStOk on success; kStErr if the DB is unavailable;
+ *         kFatal / kStFatal if geometry or rotation matrices are missing.
+ */
+
+/**
+ * @fn Int_t StIstFastSimMaker::Make()
+ * @brief Main event-processing method.
+ *
+ * Algorithm:
+ * 1. Retrieves StEvent and StMcEvent from the input dataset chain.
+ * 2. Obtains (or creates) an StIstHitCollection in StEvent.
+ * 3. Loops over all StMcIstHit objects in the first IST layer.
+ * 4. For each MC hit, computes the sensor module index
+ *    @f$ m = 1000 + (\text{ladder}-1) \times N_\text{sensor} + \text{wafer} @f$
+ *    and retrieves the corresponding TGeoHMatrix.
+ * 5. Applies Gaussian smearing or pixelisation to the local position.
+ * 6. Transforms the local position to global coordinates via
+ *    @c TGeoHMatrix::LocalToMaster().
+ * 7. Constructs an StIstHit and adds it to the collection.
+ *
+ * @return kStOK on success; kStWarn if input data structures are absent;
+ *         kStFatal if the MC hit collection is null.
+ */
+
+/**
+ * @fn void StIstFastSimMaker::buildIdealGeom(Bool_t isIdealGeom)
+ * @brief Selects the geometry source used for local-to-global transformation.
+ * @param isIdealGeom  kTRUE to use the ideal VMC TGeoManager geometry;
+ *                     kFALSE (default) to use the mis-alignment DB tables.
+ */
+
+/**
+ * @fn Double_t StIstFastSimMaker::distortHit(const Double_t x, const Double_t res, const Double_t detLength)
+ * @brief Smears a hit coordinate with a Gaussian and constrains it within the sensor.
+ *
+ * Draws a sample @f$x' \sim \mathcal{N}(x, \sigma)@f$ until
+ * @f$|x'| \leq L@f$, where @f$\sigma@f$ = @p res and @f$L@f$ = @p detLength.
+ * If the input @p x already lies outside the sensor, no smearing is applied
+ * and a warning is issued.
+ *
+ * @param x          True hit coordinate in the local sensor frame (cm).
+ * @param res        Gaussian sigma — position resolution (cm).
+ * @param detLength  Half-length of the active sensor dimension (cm).
+ * @return Smeared hit coordinate within @f$[-L, +L]@f$ (cm).
+ */
+
+
+// ============================================================
+// StIstSlowSimMaker
+// ============================================================
+
+/**
+ * @class StIstSlowSimMaker
+ * @ingroup StIstSimMaker
+ *
+ * @brief Slow IST raw-ADC simulator.
+ *
+ * Models the complete signal chain from a GEANT energy deposit to APV25
+ * analogue output sampled in up to 9 time bins.  Output is a set of raw ADC
+ * values in StIstCollection (key @c "istRawAdcSimu"), which is consumed by
+ * the same reconstruction chain (StIstRawHitMaker → StIstClusterMaker →
+ * StIstHitMaker) as real detector data.
+ *
+ * ### Processing pipeline per MC hit
+ *
+ * ```
+ * StMcIstHit
+ *    │
+ *    ├─ Hit-efficiency filter (mHitEffMode)
+ *    │
+ *    ├─ Reconstruct entry/exit points from mid-point + momentum direction
+ *    │
+ *    ├─ checkPadCrossing() — walk track segment through pad grid
+ *    │       ├─ transformToSensor()
+ *    │       ├─ findPad()
+ *    │       └─ distanceToBorder()
+ *    │
+ *    └─ generateRawHits() — for each sub-segment in a pad:
+ *            ├─ Charge proportional to path-length fraction
+ *            ├─ × kIstMPV  (energy → ADC scale)
+ *            └─ × f_t / f_peak  (Landau time-bin profile)
+ *                 → StIstRawHit::setCharge(adc, timeBin)
+ * ```
+ *
+ * ### Data members
+ *
+ * | Member                | Type                | Default       | Description                                                      |
+ * |-----------------------|---------------------|---------------|------------------------------------------------------------------|
+ * | mIstDb                | StIstDb*            | nullptr       | Handle to the IST conditions database                            |
+ * | mBuildIdealGeom       | Bool_t              | kFALSE        | Request ideal VMC geometry                                       |
+ * | mIstCollectionPtr     | StIstCollection*    | nullptr       | Output raw-hit collection (owned by white board)                 |
+ * | fAdc                  | TF1*                | Landau(µ=3.8,σ=1.168) | APV25 analogue pulse-shape function (time-bin response)  |
+ * | mDefaultTimeBin       | UChar_t             | 9             | Default number of time bins (from istControl DB table)           |
+ * | mCurrentTimeBinNum    | UChar_t             | 9             | Active number of time bins for the current run                   |
+ * | mMappingGeomVec       | vector<int>         | size 110592   | Geometry-ID to electronics-ID lookup table                       |
+ * | mHitEffMode           | short               | 0             | Hit-efficiency mode (0 = ideal, 1 = p-dependent, 2 = flat)       |
+ * | mMomCut               | float               | 0.0 (GeV/c)   | Momentum threshold for mode-1 efficiency rolloff                 |
+ * | mHitEff               | float               | 1.0           | Asymptotic single-hit efficiency (mode 1) or flat value (mode 2) |
+ * | mRndGen               | TRandom3*           | gRandom       | Random number generator (shared with ROOT)                       |
+ */
+
+/**
+ * @fn StIstSlowSimMaker::StIstSlowSimMaker(const char *name)
+ * @brief Constructor.
+ *
+ * Initialises all data members and creates the APV25 pulse-shape TF1:
+ * @verbatim
+ *   fAdc = new TF1("fAdc","landau",0,9)
+ *   fAdc->SetParameters(1.14288, 3.8, 1.168)
+ * @endverbatim
+ * The parameters represent (amplitude, most-probable value in time-bin units,
+ * Landau width).  The mapping geometry vector is resized to kIstNumElecIds
+ * (110 592).
+ *
+ * @param name  %Maker name passed to StMaker (default: @c "istSlowSim").
+ */
+
+/**
+ * @fn Int_t StIstSlowSimMaker::Init()
+ * @brief Allocates and registers the output StIstCollection.
+ *
+ * Creates an StIstCollection and registers it on the STAR white board under
+ * the key @c "istRawAdcSimu".  This collection is accessed by downstream
+ * reconstruction makers.
+ *
+ * @return kStOk on success; kStErr if allocation fails.
+ */
+
+/**
+ * @fn Int_t StIstSlowSimMaker::InitRun(Int_t runNumber)
+ * @brief Loads run-dependent conditions: control parameters, channel mapping, and efficiency.
+ *
+ * Performs these steps:
+ * 1. Retrieves the StIstDb pointer from @c "ist_db".
+ * 2. Reads @c istControl table: sets mDefaultTimeBin and mCurrentTimeBinNum.
+ * 3. Reads @c istMapping table: fills mMappingGeomVec with the geometry-ID
+ *    to electronics-ID correspondence for all 110 592 channels.
+ * 4. Reads @c istSimPar table: sets mHitEffMode, mMomCut, mHitEff.
+ *
+ * @param runNumber  Run number (used by the STAR framework for DB query).
+ * @return kStOk on success; kStErr if any DB table is unavailable.
+ */
+
+/**
+ * @fn Int_t StIstSlowSimMaker::Make()
+ * @brief Main event-processing method.
+ *
+ * For each event:
+ * 1. Resets the time-bin count in mIstCollectionPtr.
+ * 2. Loops over all MC IST hits in the first layer.
+ * 3. Applies hit-efficiency filtering (see §@ref ist_hiteff).
+ * 4. Calls getMCHitRowAndColumn() to find the primary pad.
+ * 5. Calls generateRawHits() to distribute charge across pads and time bins.
+ *
+ * @return kStOK on success; kStWarn if StMcEvent is absent.
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::Clear(Option_t *opts)
+ * @brief Per-event cleanup — clears the raw-hit collection for each ladder.
+ *
+ * Called automatically by the STAR framework between events.  Iterates over
+ * all kIstNumLadders (24) raw-hit collections and calls Clear() on each,
+ * then delegates to StMaker::Clear().
+ *
+ * @param opts  Option string forwarded to TObject::Clear() (may be empty).
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::buildIdealGeom(const Bool_t isIdealGeom)
+ * @brief Selects ideal VMC geometry instead of DB mis-alignment tables.
+ * @param isIdealGeom kTRUE for ideal geometry; kFALSE (default) for DB tables.
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::getMCHitRowAndColumn(const StMcIstHit *istMChit, UShort_t &meanColumn, UShort_t &meanRow) const
+ * @brief Converts a GEANT hit local position to the pad row and column indices.
+ *
+ * Uses the sensor-local coordinate system where the origin is at the sensor
+ * centre.  The r-phi and z coordinates are shifted to place the corner at
+ * the origin before dividing by the pad pitches:
+ * @f[
+ *   r_\phi = L_{r\phi}/2 - x_\text{local}, \qquad
+ *   z      = z_\text{local} + L_z/2
+ * @f]
+ * @f[
+ *   n_\text{row} = \bigl\lfloor r_\phi / p_r \bigr\rfloor + 1, \qquad
+ *   n_\text{col} = \bigl\lfloor z / p_z \bigr\rfloor + 1
+ * @f]
+ * Row numbering: 1–64 in r-phi direction.
+ * Column numbering: 1–12 in z direction.
+ *
+ * @param istMChit    Pointer to the GEANT IST hit (not null).
+ * @param[out] meanColumn  Column index of the containing pad (1–12).
+ * @param[out] meanRow     Row index of the containing pad (1–64).
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::generateRawHits(const StMcIstHit *istMChit) const
+ * @brief Core method: distributes charge from one GEANT hit across pads and time bins.
+ *
+ * **Step 1 — Track segment reconstruction.**
+ * Entry and exit points are computed from the GEANT mid-point and momentum
+ * direction, using the path-length @f$\Delta s@f$:
+ * @f[
+ *   \mathbf{r}_\text{in}  = \mathbf{r}_\text{mid} - \hat{p}\,\Delta s/2, \qquad
+ *   \mathbf{r}_\text{out} = \mathbf{r}_\text{mid} + \hat{p}\,\Delta s/2
+ * @f]
+ * Both are transformed to sensor-frame coordinates via transformToSensor().
+ *
+ * **Step 2 — Pad crossing.**
+ * checkPadCrossing() walks the segment from @f$\mathbf{r}_\text{in}@f$ to
+ * @f$\mathbf{r}_\text{out}@f$, building a list of pad-boundary crossings.
+ *
+ * **Step 3 — Geometry-to-electronics ID mapping.**
+ * For each pad segment, the geometry ID is computed as:
+ * @f[
+ *   \text{geoId} = (\ell-1) \times 128 \times 36
+ *                 + (s-1) \times 12 \times 64
+ *                 + (c-1) \times 64 + r
+ * @f]
+ * where @f$\ell@f$, @f$s@f$, @f$c@f$, @f$r@f$ are the ladder, sensor,
+ * column, and row indices.  The electronics ID is looked up in
+ * mMappingGeomVec.
+ *
+ * **Step 4 — Charge and ADC calculation.**
+ * The energy deposited in each pad segment is:
+ * @f[
+ *   q_i = \mathrm{d}E \times \frac{\ell_i}{\ell_\text{tot}}
+ * @f]
+ * where @f$\ell_i@f$ is the path length through pad @f$i@f$ and
+ * @f$\ell_\text{tot}@f$ is the total path length.
+ * The ADC in time bin @f$t@f$ is:
+ * @f[
+ *   \text{ADC}_t = q_i \times k_\text{MPV} \times f_t / f_\text{peak}
+ * @f]
+ * where @f$k_\text{MPV} \approx 3.80 \times 10^6\,\text{ADC/GeV}@f$ is the
+ * MIP normalisation factor, and @f$f_t@f$ is the Landau time-bin fraction.
+ *
+ * Accumulated ADC values are added to any existing charge on the channel
+ * (to handle overlapping hits from multiple tracks).  The IdTruth is set to
+ * the track that deposited the majority of the charge.
+ *
+ * @param istMChit  Pointer to the GEANT IST hit (not null).
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::checkPadCrossing(const StThreeVectorD inPos, const StThreeVectorD outPos, StThreeVectorD mcLocalDir, Double_t dS, vector<StThreeVectorD> &cross_vec) const
+ * @brief Builds a list of points where the particle track crosses pad boundaries.
+ *
+ * Starting from @p inPos, the method advances along the track direction one
+ * pad edge at a time (using distanceToBorder()) until reaching the pad that
+ * contains @p outPos.  At each step, findPad() determines which pad the next
+ * point is in.
+ *
+ * If either @p inPos or @p outPos maps to column 65535 (invalid / outside
+ * sensor), the method returns a list containing only the entry point.
+ *
+ * The sign of the x-component of @p mcLocalDir is flipped on entry because
+ * the sensor-frame x-axis runs opposite to the sensor-local x-axis.
+ *
+ * @param inPos       Entry point in sensor-frame coordinates (cm).
+ * @param outPos      Exit point in sensor-frame coordinates (cm).
+ * @param mcLocalDir  Unit direction vector of the track in sensor-local frame.
+ * @param dS          Path length through the sensitive volume (cm, unused
+ *                    directly but preserved for context).
+ * @param[out] cross_vec  Ordered list of pad-boundary crossing points, including
+ *                        @p inPos as first element and @p outPos as last.
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::transformToSensor(StThreeVectorD &hitPos) const
+ * @brief Transforms a point from sensor-local to sensor-frame coordinates.
+ *
+ * The sensor-local frame has its origin at the sensor centre, with the x-axis
+ * in the r-phi direction and z-axis along the beam.  The sensor-frame has its
+ * origin at the corner of the active area, with x increasing from 0 to
+ * @f$L_{r\phi}@f$ and z increasing from 0 to @f$L_z@f$:
+ * @f[
+ *   x_\text{sf} = L_{r\phi}/2 - x_\text{local}, \qquad
+ *   z_\text{sf} = z_\text{local} + L_z/2
+ * @f]
+ *
+ * @param[in,out] hitPos  Position vector modified in-place.
+ *                        On entry: sensor-local (cm, origin at centre).
+ *                        On exit: sensor-frame (cm, origin at corner).
+ */
+
+/**
+ * @fn Double_t StIstSlowSimMaker::distanceToBorder(const StThreeVectorD hitPos, const StThreeVectorD dir, const StThreeVectorD mean, StThreeVectorD &dist) const
+ * @brief Computes the 3-D displacement from a point to the nearest pad boundary.
+ *
+ * Each pad is treated as a rectangular box with half-widths
+ * @f$(p_r/2,\,0.015\,\text{cm},\,p_z/2)@f$ in sensor-frame coordinates
+ * (@f$p_r@f$ = r-phi pitch, @f$p_z@f$ = z pitch).  The method finds the
+ * boundary plane (yz-plane at @f$x_\text{border}@f$ or xy-plane at
+ * @f$z_\text{border}@f$) that is first intersected along @p dir, and returns
+ * the 3-D displacement to that intersection.
+ *
+ * If @f$|d_x| < 10^{-6}@f$, only the z-border is considered; if
+ * @f$|d_z| < 10^{-6}@f$, only the x-border is considered.
+ *
+ * @param hitPos  Current position in sensor-frame coordinates (cm).
+ * @param dir     Unit direction vector of the track.
+ * @param mean    Centre of the current pad in sensor-frame coordinates (cm).
+ * @param[out] dist  3-D displacement vector to the pad boundary (cm).
+ * @return Magnitude of @p dist (cm).
+ */
+
+/**
+ * @fn void StIstSlowSimMaker::findPad(const StThreeVectorD hitPos, UShort_t &column, UShort_t &row, Double_t &rPhiPos_mean, Double_t &zPos_mean) const
+ * @brief Identifies the pad containing a given sensor-frame position.
+ *
+ * Divides the sensor-frame coordinates by the pad pitches and rounds down:
+ * @f[
+ *   n_\text{row}  = \bigl\lfloor x_\text{sf} / p_r \bigr\rfloor + 1
+ *                   \quad \text{clamped to } [1,\,64], \\
+ *   n_\text{col}  = \bigl\lfloor z_\text{sf} / p_z \bigr\rfloor + 1
+ *                   \quad \text{clamped to } [1,\,12]
+ * @f]
+ * Positions outside the active area by more than half a pad pitch return
+ * sentinel value 65535 in all output arguments.
+ *
+ * The pad-centre positions are returned for use as the @c mean argument of
+ * distanceToBorder():
+ * @f[
+ *   \bar{x} = (n_\text{row}-1)\,p_r + p_r/2, \qquad
+ *   \bar{z} = (n_\text{col}-1)\,p_z + p_z/2
+ * @f]
+ *
+ * @param hitPos         Position in sensor-frame coordinates (cm, origin at corner).
+ * @param[out] column    Column index (1–12); 65535 if out-of-bounds.
+ * @param[out] row       Row index (1–64); 65535 if out-of-bounds.
+ * @param[out] rPhiPos_mean  r-phi coordinate of pad centre (cm).
+ * @param[out] zPos_mean     z coordinate of pad centre (cm).
+ */
+
+/**
+ * @fn Double_t StIstSlowSimMaker::direction(const Double_t x) const
+ * @brief Returns the sign of a scalar: +1, 0, or −1.
+ * @param x  Input scalar.
+ * @return @f$\text{sgn}(x) \in \{-1,\,0,\,+1\}@f$.
+ */
+
+/**
+ * @fn Double_t StIstSlowSimMaker::scaleFromYvsX(const StThreeVectorD vec, const Double_t a) const
+ * @brief Scales a displacement @p a in x to the corresponding y displacement.
+ *
+ * Given a direction vector @p vec, returns @f$a \cdot v_y / v_x@f$.
+ * Issues a warning and returns 0 if @f$|v_x| < 10^{-6}@f$.
+ *
+ * @param vec  Direction vector (dimensionless or any consistent units).
+ * @param a    Displacement in x (cm).
+ * @return Corresponding displacement in y (cm).
+ */
+
+/**
+ * @fn Double_t StIstSlowSimMaker::scaleFromYvsZ(const StThreeVectorD vec, const Double_t a) const
+ * @brief Scales a displacement @p a in z to the corresponding y displacement.
+ *
+ * Returns @f$a \cdot v_y / v_z@f$.
+ * Issues a warning and returns 0 if @f$|v_z| < 10^{-6}@f$.
+ *
+ * @param vec  Direction vector.
+ * @param a    Displacement in z (cm).
+ * @return Corresponding displacement in y (cm).
+ */
+
+/** @} */ // end defgroup StIstSimMaker

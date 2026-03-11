@@ -1,0 +1,171 @@
+/**
+ * @defgroup StGeantMaker St_geant_Maker — GEANT3 Simulation Interface
+ * @brief STAR chain maker that drives the GEANT3 Monte Carlo transport engine
+ *        and harvests Monte Carlo hits into STAR data tables.
+ *
+ * @details
+ * `St_geant_Maker` bridges the STAR software framework (StMaker / StChain)
+ * to the GEANT3 physics simulation engine wrapped by `TGiant3`.  Its
+ * responsibilities are:
+ *
+ * 1. **Initialisation** — allocate ZEBRA dynamic memory; create `TGiant3`;
+ *    open kinematics input (.fz, .nt, .tx, MuDst, or default `gkine`).
+ * 2. **Geometry loading** — defer the `detp geometry <tag>` KUIP command
+ *    to `InitRun()` so that the magnetic field is set before volumes are
+ *    defined.  Call `geometry()` (FORTRAN) and `Agstroot()` (AGE) to
+ *    initialise GEANT3 detector structures.
+ * 3. **Event simulation** — execute one event with the KUIP `trig` command.
+ * 4. **Hit collection** — use the templated `AddHits<T,F>()` method to loop
+ *    over each detector's sensitive GEANT3 volumes and fill the corresponding
+ *    `g2t_*` STAR tables.
+ * 5. **Geometry export** — translate the GEANT3 volume tree into ROOT
+ *    `TVolume` / `TGeoVolume` objects on demand.
+ * 6. **QA reporting** — accumulate total hit counts and energy depositions
+ *    per container and report at `Finish()`.
+ *
+ * @{
+ */
+
+/**
+ * @class St_geant_Maker
+ * @brief STAR chain maker for GEANT3-based Monte Carlo simulation.
+ *
+ * @details
+ * Inherits from `StMaker`.  Wraps the `TGiant3` (C++/ROOT interface to
+ * GEANT3.21) and manages the full simulation lifecycle.
+ *
+ * ## Physics option attributes (set via StMaker::SetAttr / IAttr)
+ *
+ * | Attribute        | Effect |
+ * |------------------|--------|
+ * | `phys_off`       | All physics processes disabled; energy cuts = 1 MeV |
+ * | `hadr_off`       | Only hadronic interactions disabled |
+ * | `flux`           | Flux monitoring: GCALOR (HADR 6), low-energy cuts, `agustep` hook |
+ * | `Pythia`         | bPythia generator with standard STAR tune 329 |
+ * | `Wenu`           | Restrict Pythia to W→eν production |
+ * | `RunG`           | Set GEANT run number and random seed |
+ * | `Don'tTouchTimeStamp` | Prevent StEvtHddr run/event modification |
+ * | `beamLine`       | Shift vertex along beam line from DB |
+ * | `KeepRunNumber`  | Do not update run number from event record |
+ */
+
+/**
+ * @fn St_geant_Maker::St_geant_Maker(const char* name, Int_t nwgeant, Int_t nwpaw, Int_t iwtype)
+ * @brief Constructor.
+ * @param[in] name     Maker name in the chain (default: "geant")
+ * @param[in] nwgeant  ZEBRA GCBANK words in units of 10⁶ (default: 20)
+ * @param[in] nwpaw    PAWC words (default: 0)
+ * @param[in] iwtype   HIGZ window type (0 = no graphics window)
+ */
+
+/**
+ * @fn St_geant_Maker::Init()
+ * @brief Creates TGiant3, initialises common-block pointers, opens input file.
+ * @return kStOK on success, kStErr on failure.
+ * @details
+ * Opens kinematics input according to the file extension set by
+ * `SetInputFile()`:
+ * - `.fz` → `gfile p <file>`
+ * - `.nt` → `user/input user <file>`
+ * - `.tx` → `user/input tx <file>`
+ * - `.MuDst` → `user/input please MuDst.Dst`
+ * - (none, active) → `gkine 80 6 ...` or Pythia mode
+ */
+
+/**
+ * @fn St_geant_Maker::InitRun(Int_t run)
+ * @brief Loads detector geometry and magnetic field; calls Agstroot().
+ * @param[in] run  Run number (used for DB lookup).
+ * @return kStOK on success.
+ * @details
+ * Executes the deferred geometry string (from `LoadGeometry()`), calls
+ * `geometry()` and `Agstroot()`.  Applies physics flag attributes.
+ * Reads or creates a `StarMagField` from the .fz-file header or the
+ * STAR conditions database.
+ */
+
+/**
+ * @fn St_geant_Maker::Make()
+ * @brief Simulates one event and fills all g2t_* Monte Carlo hit tables.
+ * @return kStOK on success, kStEOF at end of input, kStErr on error.
+ * @details
+ * Issues the KUIP `trig` command to transport one event through GEANT3.
+ * Fills `g2t_event`, `g2t_vertex`, `g2t_track`, `g2t_particle` tables,
+ * then calls `AddHits<T,F>()` for every detector subsystem.
+ */
+
+/**
+ * @fn St_geant_Maker::Finish()
+ * @brief Prints QA summary of total hit counts and energy depositions.
+ * @return kStOK.
+ */
+
+/**
+ * @fn St_geant_Maker::LoadGeometry(const char* option)
+ * @brief Stores geometry KUIP command for deferred execution at InitRun().
+ * @param[in] option  KUIP command string (e.g. `"detp geometry y2023b"`).
+ * @details
+ * Deferral is required so that StMagFMaker::InitRun() can set the
+ * magnetic field *before* the GEANT3 geometry is built.
+ */
+
+/**
+ * @fn St_geant_Maker::Do(const char* option)
+ * @brief Passes a KUIP command string directly to TGiant3::Kuexel().
+ * @param[in] option  KUIP command string.
+ */
+
+/**
+ * @fn St_geant_Maker::SetInputFile(const char* file)
+ * @brief Sets the kinematics input file path.
+ * @param[in] file  Path to .fz, .nt, .tx, or .MuDst file.
+ * @return 0 on success.
+ */
+
+/**
+ * @fn St_geant_Maker::SetFieldOpt(const char* opt)
+ * @brief Sets the magnetic field option string forwarded to StBFChain.
+ * @param[in] opt  Field option (e.g. `"FullMagFPositive"`).
+ */
+
+/**
+ * @fn St_geant_Maker::Geant3()
+ * @brief Returns a pointer to the TGiant3 VMC instance.
+ * @return Pointer to the singleton `TGiant3` object.
+ */
+
+/**
+ * @fn St_geant_Maker::GetTopGeoVolume()
+ * @brief Returns the top-level TGeoVolume after geometry translation.
+ * @return Pointer to `fTopGeoVolume`, or null before `Work()` is called.
+ */
+
+/**
+ * @fn St_geant_Maker::AddHits(string container, vector<string> volumes, string tablename, F g2t, bool verbose)
+ * @brief Template method that collects hits from a GEANT3 hit container.
+ * @tparam T   STAR table type (e.g. `St_g2t_tpc_hit`)
+ * @tparam F   Functor type implementing the FORTRAN g2t fill call
+ * @param[in] container   GEANT3 hit container name (e.g. `"TPCH"`)
+ * @param[in] volumes     List of sensitive GEANT3 volume names (e.g. `{"TPAD"}`)
+ * @param[in] tablename   Name for the created STAR table
+ * @param[in] g2t         Functor that fills the table from GEANT3 banks
+ * @param[in] verbose     If true, print first 10 hits (default: false)
+ * @return Total number of hits collected; 0 if no hits found.
+ * @details
+ * For each volume name, calls `TGiant3::Gfnhit()` to count hits, sums
+ * the total, allocates a table of type `T`, invokes `g2t(g2t_track, table)`,
+ * adds the table to the maker's output, and accumulates the energy sum in
+ * `mHitSum[container]`.
+ */
+
+/**
+ * @class GtHash
+ * @brief Hash table mapping GEANT3 integer volume IDs to ROOT TShape objects.
+ * @details
+ * Used during `Work()` / `Agvolume()` to detect previously created shapes
+ * and avoid duplicate ROOT objects during geometry translation.
+ */
+
+/**
+ * @}
+ */

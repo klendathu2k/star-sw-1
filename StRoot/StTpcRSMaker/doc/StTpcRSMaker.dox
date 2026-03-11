@@ -1,0 +1,1008 @@
+/**
+ * @file StTpcRSMaker.dox
+ * @brief Doxygen documentation for the StTpcRSMaker package.
+ *
+ * This file contains the narrative documentation for the STAR TPC Response
+ * Simulator (TpcRS).  It is intended to be processed by Doxygen together
+ * with the source files in the parent directory.
+ */
+
+/**
+ * @defgroup StTpcRSMaker STAR TPC Response Simulator (TpcRS)
+ * @brief Slow simulator (digitizer) for the STAR Time Projection Chamber.
+ *
+ * @section tpcrs_overview Overview
+ *
+ * The STAR Time Projection Chamber (TPC) Response Simulator — commonly called
+ * <em>TpcRS</em> or the <em>slow simulator</em> — converts Monte Carlo truth
+ * information produced by GEANT3/GEANT4 into realistic digital detector
+ * signals.  Its output is indistinguishable in format from real TPC data and
+ * can therefore be fed directly into the standard reconstruction chain.
+ *
+ * The code lives in <tt>StRoot/StTpcRSMaker/</tt> and consists of three
+ * classes:
+ *
+ * | Class            | Purpose |
+ * |------------------|---------|
+ * | StTpcRSMaker     | Main maker; orchestrates the full simulation chain |
+ * | AliTPCRF1D       | One-dimensional pad response function calculator (ported from ALICE) |
+ * | Altro            | Software emulation of the ALTRO ASIC (ALICE TPC Read-Out chip) |
+ *
+ * @section tpcrs_physics Physics and algorithms
+ *
+ * The physical processes modelled follow, in order, the chain that a real
+ * ionising particle and its liberated electrons undergo as they travel from
+ * the TPC gas to the readout electronics.
+ *
+ * ### Step 1 – Primary ionisation
+ *
+ * The number of primary ion clusters per unit length (dN/dx) and the number
+ * of electrons per cluster (dE) are sampled from one of three models,
+ * selectable at run time via the EMode flags:
+ *
+ * - **Bichsel** (default, @c kBICHSEL): Uses the StBichsel/StdEdxModel
+ *   tables derived from Hans Bichsel's photo-absorption ionisation (PAI)
+ *   calculation for the P10 (Ar+CH4) TPC gas mixture.
+ * - **HEED** (@c kHEED): Uses the HEED photon-absorption cross-section model
+ *   (I.B. Smirnov, NIM A 55 (2005) 747) implemented via the @c mHeed TF1
+ *   object (see Ec() and fEc()).
+ * - **GEANT** (legacy): Takes @c tpc_hit->de and @c tpc_hit->ds directly
+ *   from the GEANT output without re-sampling.
+ *
+ * The minimum energy to create an ion pair (@c W ≈ 26.2 eV) is taken from
+ * the database table @c TpcResponseSimulator.W.
+ *
+ * Delta electrons (knock-on electrons above the production threshold
+ * @c mCutEle) are generated with a range correction that displaces their
+ * endpoint away from the primary track, using the empirical range–energy
+ * relation:
+ * @f[
+ *   x_\mathrm{range} = R_0 \left(\frac{E_e}{E_0}\right)^{p}
+ * @f]
+ * with @f$ R_0 = 0.0055\,\mathrm{cm} @f$, @f$ E_0 = 3\,\mathrm{keV} @f$,
+ * @f$ p = 1.78 @f$.
+ *
+ * ### Step 2 – Electron transport: diffusion and drift
+ *
+ * Each primary electron drifts from its creation point toward the anode wires.
+ * Transverse and longitudinal diffusion broaden the charge cloud:
+ * @f[
+ *   \sigma_T = D_T \sqrt{L/D}, \qquad \sigma_L = D_L \sqrt{L}
+ * @f]
+ * where @f$ L @f$ is the drift distance, @f$ D_T @f$ and @f$ D_L @f$ are the
+ * transverse and longitudinal diffusion coefficients from the database, and
+ * @f$ D = 1 + (\omega\tau)^2 @f$ accounts for the ExB (Lorentz) effect.
+ *
+ * ### Step 3 – Gating grid transparency
+ *
+ * Electrons that arrive near the cathode wire plane (@f$ z > -0.6\,\mathrm{cm} @f$)
+ * are subject to the gating grid efficiency, computed from the database table
+ * @c GatingGridB as a function of drift time relative to the trigger.
+ *
+ * ### Step 4 – Gas amplification (Polya fluctuations)
+ *
+ * The gas gain for each electron avalanche near the anode wire is sampled from
+ * a Polya (Gamma) distribution:
+ * @f[
+ *   P(G) = \frac{m^m G^{m-1} e^{-mG}}{\Gamma(m)}
+ * @f]
+ * with @f$ m @f$ (= PolyaInner or PolyaOuter ≈ 1.38) from the database.
+ * A correction for the variation of gain with the azimuthal angle of approach
+ * to the wire is applied via InducedCharge(), which computes the coefficient
+ * @f$ \alpha @f$ from Mathieson's analytical treatment of the wire geometry.
+ *
+ * ### Step 5 – Charge induction and pad response
+ *
+ * The induced charge on the cathode pads is described by the Gatti function
+ * (E. Gatti, A. Longoni, NIM 163 (1979) 82):
+ * @f[
+ *   G(\lambda) = K_1 \frac{1 - \tanh^2(K_2\lambda)}{1 + K_3\tanh^2(K_2\lambda)}
+ * @f]
+ * where @f$ \lambda = x/h @f$, @f$ h @f$ is the anode–cathode separation,
+ * and @f$ K_1, K_2, K_3 @f$ are geometry-dependent parameters from the
+ * database (K3IP, K3IR, K3OP, K3OR).
+ *
+ * The charge fraction seen by the row in the pad-row direction is computed by
+ * the charge-fraction function @c mChargeFraction, which integrates the Gatti
+ * profile over the pad length.
+ *
+ * The charge fraction in the azimuthal (pad) direction is the pad response
+ * function @c mPadResponseFunction (also based on the Gatti formula integrated
+ * over the pad width).
+ *
+ * ### Step 6 – Shaper and electronics response
+ *
+ * The electronics response converts the induced charge pulse into a shaped
+ * voltage signal.  Two shapes are supported:
+ *
+ * - **Old TPC electronics** (N < 0): Combined integration + CR-RC^3 shaper,
+ *   implemented as @c shapeEI3 / @c shapeEI3_I.  Parameters: tauF, tauP,
+ *   tauI, tauC.
+ * - **New TPX / iTPC electronics** (ALTRO/SAMPA, N ≥ 0): Pure RC integration,
+ *   implemented as @c shapeEI / @c shapeEI_I.  Parameters: tauI (= tauX),
+ *   tauC.
+ *
+ * The shaper response functions are stored as pre-computed, sampled TF1F
+ * objects in @c mShaperResponses[io][sector-1].  At digitisation time the
+ * signal in each time bin is obtained by evaluating the look-up table via
+ * @c TF1F::GetSaveL().
+ *
+ * ### Step 7 – Digitisation and ALTRO emulation
+ *
+ * DigitizeSector() performs the final conversion to digital ADC values:
+ *
+ * 1. For each pad, the accumulated floating-point signal @c SignalSum[].Sum is
+ *    divided by the pad gain and Gaussian noise (@c pedRMS) is added.
+ * 2. The result is clamped to the 10-bit ADC range [0, 1023].
+ * 3. For sectors equipped with the ALTRO or SAMPA chip, the Altro emulator
+ *    is run.  It applies (in order): optional baseline correction (BSL1),
+ *    tail cancellation filter (TCF), optional moving-average filter (BSL2),
+ *    clipping, and zero suppression (ZSU).
+ * 4. For old ASIC sectors, a simpler two-threshold zero suppression
+ *    (AsicThresholds()) is applied.
+ * 5. Surviving time bins are stored into the @c StTpcDigitalSector container.
+ *
+ * @section tpcrs_coordinate_flow Coordinate transformations
+ *
+ * GEANT hits are provided in the global STAR coordinate system.
+ * TrackSegment2Propagate() converts each hit through the following chain:
+ *
+ * @verbatim
+ * Global (x,y,z)
+ *   -> TPC local (sector coordinates, distortions optionally applied)
+ *   -> Local sector (x, y_row, z_drift including time-of-flight)
+ *   -> Pad coordinates (sector, row, pad, time bucket)
+ * @endverbatim
+ *
+ * Magnetic-field distortions are applied if the @c kDistortion mode bit is
+ * set and StMagUtilities is available.
+ *
+ * @section tpcrs_db Database tables used
+ *
+ * | Table | Quantity |
+ * |-------|----------|
+ * | TpcResponseSimulator | W, Cluster, diffusion coefficients, Polya m, K3, shaper times, noise, gain corrections |
+ * | tpcAltroParams | ALTRO/SAMPA filter coefficients K1-K3, L1-L3, zero-suppression threshold |
+ * | tpcPadGainT0B  | Per-pad gain and T0 offsets |
+ * | tpcAnodeHVavg  | Per-padrow anode high voltage (used for gain calculation) |
+ * | asic_thresholds | ASIC (old electronics) zero-suppression thresholds |
+ * | tpcPadConfig   | Sector/row/pad geometry |
+ * | GatingGridB    | Gating grid transparency vs. drift time |
+ * | starTriggerDelay | Trigger T0 and gating grid cable delays |
+ * | tss_tsspar     | Legacy gain table |
+ *
+ * @section tpcrs_references References
+ *
+ * - E. Mathieson, "Induced Charge Distributions in Proportional Detectors",
+ *   BNL report, http://www.inst.bnl.gov/programs/gasnobledet/publications/Mathieson's_Book.pdf
+ * - H. Bichsel, "A method to improve tracking and particle identification in
+ *   TPC's and silicon detectors", NIM A 562 (2006) 154.
+ * - V.M. Grishin, V.K. Ermilova, S.K. Kotelnikov, "Ionization energy loss in
+ *   very thin absorbers", NIM A 309 (1991) 476.
+ * - I.B. Smirnov, "Modeling of ionization produced by fast charged particles
+ *   in gases", NIM A 554 (2005) 474 (HEED).
+ * - E. Gatti, A. Longoni, NIM 163 (1979) 82 (Gatti pad response function).
+ * - R. Bellazzini, M.A. Spezziga, INFN PI/AE-94/02 (Polya distribution).
+ * - ALTRO chip: http://ep-ed-alice-tpc.web.cern.ch/ep-ed-alice-tpc/altro_chip.htm
+ */
+
+// ============================================================================
+//  StTpcRSMaker
+// ============================================================================
+
+/**
+ * @class StTpcRSMaker
+ * @ingroup StTpcRSMaker
+ * @brief Main maker class for the STAR TPC slow simulator.
+ *
+ * StTpcRSMaker inherits from StMaker and is invoked once per event via the
+ * standard STAR BFC (Big Full Chain).  It reads the GEANT hit table
+ * @c g2t_tpc_hit and writes digitised TPC data into @c StTpcRawData /
+ * @c StTpcDigitalSector containers.
+ *
+ * ### Operational mode bits (EMode)
+ *
+ * | Bit constant    | Value | Effect |
+ * |-----------------|-------|--------|
+ * | kPAI            | 0     | (Obsolete) use PAI model instead of GEANT |
+ * | kBICHSEL        | 1     | Use Bichsel dN/dx model (default) |
+ * | kGAINOAtALL     | 2     | Skip per-pad gain application |
+ * | kdEdxCorr       | 3     | Apply dE/dx calibration corrections |
+ * | kDistortion     | 4     | Apply magnetic-field distortions |
+ * | kNoToflight     | 5     | Ignore particle time-of-flight |
+ * | kHEED           | 6     | Use HEED ionisation model |
+ *
+ * ### Data members
+ *
+ * Key internal data members and their roles:
+ *
+ * | Member | Description |
+ * |--------|-------------|
+ * | @c mShaperResponses[2][24] | Pre-computed shaper response (inner/outer × 24 sectors) |
+ * | @c mChargeFraction[2][24]  | Charge fraction in the row direction (Gatti, integrated over pad length) |
+ * | @c mPadResponseFunction[2][24] | Pad response function (Gatti, integrated over pad width) |
+ * | @c mPolya[2]               | Polya gain-fluctuation distribution (inner/outer) |
+ * | @c mHeed                   | HEED ionisation energy spectrum (TF1) |
+ * | @c mAltro[2][24]           | ALTRO chip emulator instances |
+ * | @c m_SignalSum              | Flat array [row][pad][timebin] of accumulated signal |
+ * | @c m_TpcdEdxCorrection     | dE/dx correction object (active when @c kdEdxCorr is set) |
+ * | @c mCutEle                 | Kinetic energy threshold for delta electron production (GeV) |
+ * | @c mLaserScale             | Scale factor applied to laser pseudo-track signals |
+ * | @c InnerAlphaVariation[24] | Per-sector induced-charge gain variation for inner wires |
+ * | @c OuterAlphaVariation[24] | Per-sector induced-charge gain variation for outer wires |
+ */
+
+/**
+ * @fn StTpcRSMaker::StTpcRSMaker(const char *name)
+ * @brief Constructor.
+ *
+ * Initialises all data members and sets the default simulation mode:
+ * Bichsel ionisation model (@c kBICHSEL), dE/dx calibration (@c kdEdxCorr),
+ * and magnetic-field distortions (@c kDistortion).
+ *
+ * @param name Maker name used by the STAR chain (default: @c "TpcRS").
+ */
+
+/**
+ * @fn StTpcRSMaker::~StTpcRSMaker()
+ * @brief Destructor. Calls Finish() to release all heap-allocated objects.
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::InitRun(int runnumber)
+ * @brief Run-level initialisation; called once per run before the first event.
+ *
+ * Performs the following tasks:
+ * -# Reads run-geometry parameters from the STAR database (wire plane
+ *    positions and pitches, anode voltages, electronics parameters).
+ * -# Constructs per-sector per-electronics-region (inner/outer) objects:
+ *    - Polya distributions (mPolya).
+ *    - Time-shape functions (fgTimeShape0, fgTimeShape3).
+ *    - Pad response functions (mPadResponseFunction).
+ *    - Charge-fraction functions (mChargeFraction).
+ *    - Shaper response look-up tables (mShaperResponses).
+ *    - ALTRO emulator instances (mAltro).
+ * -# Computes the voltage-dependent induced-charge gain variation
+ *    (InnerAlphaVariation, OuterAlphaVariation) by calling InducedCharge().
+ * -# Reads @c CUTELE from the GEANT3 medium definition for the TPC sensitive
+ *    gas and stores it as @c mCutEle.
+ * -# Optionally creates cluster-profile diagnostic histograms.
+ *
+ * @param runnumber STAR run number (unused internally; kept for StMaker API
+ *        compatibility).
+ * @return @c kStOK on success, @c kStFatal if the TPC database is absent.
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::Make()
+ * @brief Event-level method; executes the full digitisation chain.
+ *
+ * This is the central method of the simulator.  For each event it:
+ *
+ * -# Retrieves the GEANT hit table @c g2t_tpc_hit, track table @c g2t_track,
+ *    and vertex table @c g2t_vertex.
+ * -# Optionally determines the trigger T0 offset from the EPD timing or the
+ *    StEbyET0 service.
+ * -# Sorts hits by (sector, track_p, track_length) using TTableSorter with
+ *    SearchT() and CompareT() as comparison functions.
+ * -# Iterates sector by sector (1–24).  Within each sector:
+ *    -# Calls ResetSignalSum() to zero the signal accumulation buffer.
+ *    -# Groups consecutive hits belonging to the same track and sector into
+ *       a <em>track segment</em> (up to 100 hits), applying selection cuts
+ *       to reject loopers and large momentum-change kinks (delta electrons
+ *       that start a new sub-track in GEANT).
+ *    -# Calls TrackSegment2Propagate() for each hit in the segment to
+ *       transform coordinates and compute drift parameters.
+ *    -# Walks along the track segment step by step, generating primary
+ *       ionisation clusters using the Bichsel or HEED model.
+ *    -# For each cluster, generates individual electron–ion pairs with the
+ *       HEED energy spectrum.  Applies:
+ *       - Transverse and longitudinal diffusion.
+ *       - Delta-electron range displacement.
+ *       - Gating grid transparency.
+ *       - Gas amplification (Polya fluctuation via mPolya).
+ *       - Lorentz (ExB) angle deflection near the wires.
+ *       - Anode wire boundary checks (fat wire removal).
+ *    -# Calls GenerateSignal() for each surviving electron to distribute its
+ *       charge onto the SignalSum buffer.
+ *    -# After processing all hits in the sector, calls DigitizeSector() to
+ *       convert the accumulated signal to ADC values and run the ALTRO
+ *       emulation.
+ * -# Updates @c g2t_track::n_tpc_hit with the real and total hit counts.
+ *
+ * @return @c kStOK on success; @c kStWarn if the hit table is missing.
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::Finish()
+ * @brief Cleanup; frees all dynamically allocated objects.
+ *
+ * Deletes shaper responses, pad response functions, charge fractions, Polya
+ * distributions, Altro instances, the dE/dx correction object, and the
+ * signal-sum buffer.
+ *
+ * @return StMaker::Finish().
+ */
+
+/**
+ * @fn Bool_t StTpcRSMaker::TrackSegment2Propagate(g2t_tpc_hit_st *tpc_hitC, g2t_vertex_st *gver, HitPoint_t &TrackSegmentHits)
+ * @brief Transforms a single GEANT hit into TPC pad coordinates.
+ *
+ * For the hit @p tpc_hitC originating from vertex @p gver, this method:
+ * -# Records the hit and track pointers in @p TrackSegmentHits.
+ * -# Converts the GEANT global position to a TPC local sector coordinate
+ *    using StTpcCoordinateTransform.
+ * -# Identifies the pad row and determines whether the hit is in the inner
+ *    or outer sector.
+ * -# Retrieves the magnetic field vector at the hit position.
+ * -# Optionally applies space-charge and ExB distortions via
+ *    StMagUtilities::DoDistortion() (if @c kDistortion is set).
+ * -# Adds the particle time-of-flight and the event trigger T0 offset to
+ *    the z (drift) coordinate to obtain the effective drift length.
+ * -# Transforms the result to pad/time-bucket coordinates
+ *    (@c TrackSegmentHits.Pad).
+ *
+ * @param tpc_hitC Pointer to the GEANT TPC hit record.
+ * @param gver     Pointer to the production vertex of the parent track.
+ * @param TrackSegmentHits Output structure that receives the transformed
+ *        coordinates, the track direction, and the magnetic field at the
+ *        hit position.
+ * @return @c kTRUE always (reserved for error expansion).
+ */
+
+/**
+ * @fn void StTpcRSMaker::GenerateSignal(HitPoint_t &TrackSegmentHits, Int_t sector, Int_t rowMin, Int_t rowMax, Double_t sigmaJitterT, Double_t sigmaJitterX)
+ * @brief Distributes the charge of one electron avalanche onto the signal buffer.
+ *
+ * Given the wire-plane coordinates of a single electron avalanche
+ * (@c xOnWire, @c yOnWire, @c zOnWire from the enclosing Make() scope),
+ * this method:
+ *
+ * -# Loops over pad rows from @p rowMin to @p rowMax that are within the
+ *    charge-fraction range.
+ * -# Converts the wire position to a pad-time coordinate for each row.
+ * -# Evaluates the row-direction coupling (charge fraction in y,
+ *    @c mChargeFraction) and skips rows below @c minSignal.
+ * -# Evaluates the pad-direction response (@c mPadResponseFunction) for all
+ *    pads within @c DeltaPad of the central pad using @c TF1F::GetSaveL()
+ *    (vectorised look-up table).
+ * -# Evaluates the time-direction shaper response (@c mShaperResponses) for
+ *    the active time bins using @c TF1F::GetSaveL().
+ * -# Applies per-pad gain and T0 offsets from @c tpcPadGainT0B.
+ * -# Adds optional timing jitter (@p sigmaJitterT, @p sigmaJitterX).
+ * -# Accumulates the 3D signal @f$ Q \cdot f_y \cdot f_x \cdot f_t @f$ into
+ *    @c m_SignalSum[row][pad][timebin].Sum, and records the dominant track ID.
+ *
+ * @param TrackSegmentHits  Hit-point structure providing the global z position
+ *        for diagnostic histograms and the track ID.
+ * @param sector            TPC sector number (1–24).
+ * @param rowMin            First pad row to consider.
+ * @param rowMax            Last pad row to consider.
+ * @param sigmaJitterT      RMS timing jitter to add to the time coordinate (time bins).
+ * @param sigmaJitterX      RMS spatial jitter already folded into SigmaT upstream.
+ */
+
+/**
+ * @fn StTpcDigitalSector *StTpcRSMaker::DigitizeSector(Int_t sector)
+ * @brief Converts accumulated floating-point signals to digital ADC values.
+ *
+ * For sector @p sector:
+ * -# Retrieves or creates the @c StTpcDigitalSector container and the
+ *    @c StTpcRawData event container.
+ * -# For each (row, pad) pair with non-zero pad gain:
+ *    - Computes pedestal RMS from the database (or a per-pad parameterisation
+ *      for iTPC).
+ *    - Converts @c SignalSum.Sum → ADC: divides by pad gain, adds Gaussian
+ *      pedestal noise, and subtracts the mean pedestal.
+ *    - Clamps the 10-bit ADC value to [0, 1023].
+ *    - For ALTRO/SAMPA sectors: runs the Altro emulator (RunEmulation()),
+ *      then retains only time bins where @c ADCkeep[bin] is set.
+ *    - For old ASIC sectors: applies AsicThresholds().
+ *    - Stores surviving (ADC, trackID) pairs into the digital sector via
+ *      @c putTimeAdc().
+ *
+ * @param sector TPC sector number (1–24).
+ * @return Pointer to the populated @c StTpcDigitalSector; the object is owned
+ *         by the @c StTpcRawData event container.
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::dEdxCorrection(HitPoint_t &TrackSegmentHits)
+ * @brief Computes a multiplicative dE/dx calibration correction factor.
+ *
+ * Delegates to @c StTpcdEdxCorrection::dEdxCorrection() after filling a
+ * @c dEdxY2_t structure with the hit position, sector/row/pad coordinates,
+ * drift distance, and gas parameters.  This correction absorbs detector
+ * non-uniformities and is the same correction applied to real data during
+ * reconstruction, ensuring self-consistent simulation.
+ *
+ * @param TrackSegmentHits Hit-point structure carrying all coordinate and
+ *        geometry information needed for the correction.
+ * @return The multiplicative correction factor to apply to the local gas gain.
+ *         Returns 1.0 if the dE/dx correction module is disabled.  Returns 0
+ *         if the correction evaluator indicates an invalid region (causing the
+ *         hit to be discarded).
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::InducedCharge(Double_t s, Double_t h, Double_t ra, Double_t Va, Double_t &t0)
+ * @brief Computes the relative gain variation due to wire geometry.
+ *
+ * Uses Mathieson's analytical treatment to compute the fractional change in
+ * induced charge as a function of the wire spacing @p s, cathode–anode gap
+ * @p h, wire radius @p ra, and anode voltage @p Va.  The result is the
+ * logarithm of the gain ratio between tracks arriving at @f$\alpha = -26°@f$
+ * and @f$\alpha = -70°@f$ relative to the mean gain.
+ *
+ * Also computes the ion-transit time constant @p t0 = ra² / (4 μ C Va),
+ * where @f$\mu = 2.26\,\mathrm{cm}^2/\mathrm{V/s}@f$ is the CH4+ mobility.
+ *
+ * @param s  Anode wire pitch (cm).
+ * @param h  Anode–cathode gap (cm).
+ * @param ra Anode wire radius (cm).
+ * @param Va Anode wire voltage (V).
+ * @param t0 [output] Ion-transit time constant (seconds).
+ * @return Log of the relative gain variation (dimensionless).
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::Gatti(Double_t *x, Double_t *par)
+ * @brief Evaluates the Gatti single-parameter cathode charge distribution.
+ *
+ * Implements the formula:
+ * @f[
+ *   G(\lambda) = K_1 \frac{1 - \tanh^2(K_2\lambda)}{1 + K_3\tanh^2(K_2\lambda)}
+ * @f]
+ * integrated analytically over a pad of width @c par[0] centred at @c x[0]:
+ * @f[
+ *   Q(x) = \int_{x-w/2}^{x+w/2} G(\lambda)\,d\lambda
+ *         = \frac{\sqrt{K_3}}{2\arctan(\sqrt{K_3})}
+ *             \left[\arctan\left(\sqrt{K_3}\tanh(K_2 Y_2)\right)
+ *                 - \arctan\left(\sqrt{K_3}\tanh(K_2 Y_1)\right)\right]
+ * @f]
+ *
+ * @param x   x[0] = distance from the pad centre to the avalanche (cm).
+ * @param par par[0] = pad width (cm); par[1] = anode–cathode gap (cm);
+ *            par[3] = K3 geometry parameter.
+ * @return Fractional charge collected by the pad.
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::PadResponseFunc(Double_t *x, Double_t *par)
+ * @brief Pad response function with optional cross-talk.
+ *
+ * Calls Gatti() with the pad-pitch–scaled coordinate.  If @c par[4]
+ * (CrossTalk) is non-zero, it adds contributions from the two neighbouring
+ * pads weighted by the cross-talk fraction.
+ *
+ * @param x   x[0] = distance in pad-pitch units.
+ * @param par par[0..3] as for Gatti(); par[4] = cross-talk fraction;
+ *            par[5] = pad pitch (cm).
+ * @return Pad response value (fractional charge).
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::shapeEI(Double_t *x, Double_t *par)
+ * @brief Electronics time-response for new (ALTRO/SAMPA) electronics.
+ *
+ * Computes the RC integration shaper response as a function of time @f$ t @f$:
+ * @f[
+ *   S(t) = \frac{\tau_I}{\tau_I - \tau_C}
+ *          \left[\mathrm{Ei}\!\left(\frac{t+t_0}{\tau_I}\right)
+ *               - \mathrm{Ei}\!\left(\frac{t+t_0}{\tau_C}\right)\right]
+ *          \cdot e^{-(t+t_0)/\tau_I}
+ * @f]
+ * where @f$\mathrm{Ei}@f$ is the exponential integral (implemented as fei()).
+ *
+ * @param x   x[0] = time (seconds).
+ * @param par par[0]=t0, par[1]=tauX (integration time), par[2]=time bin width,
+ *            par[3]=tauC, par[4]=io flag, par[5]=normalisation, par[6]=tmax.
+ * @return Shaper amplitude at time x[0].
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::shapeEI3(Double_t *x, Double_t *par)
+ * @brief Electronics time-response for old TPC electronics (CR-RC^3 + integration).
+ *
+ * Implements a sum of three exponential-integral terms corresponding to a
+ * CR-RC^3 shaper with an additional integration stage:
+ * @f[
+ *   S(t) = \sum_{i=0}^{N-1} A_i \, e^{a_i(t+t_0)}
+ *          \left[\mathrm{Ei}(-a_i(t+t_0)) - \mathrm{Ei}(-a_i t_0)\right]
+ * @f]
+ *
+ * @param x   x[0] = time (seconds).
+ * @param par par[0]=t0, par[1]=tauF, par[2]=tauP, par[3]=tauI, par[4]=unused
+ *            (time bin width), par[5]=tauC.
+ * @return Shaper amplitude at time x[0].
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::shapeEI_I(Double_t *x, Double_t *par)
+ * @brief Time-bin–integrated shaper response (new electronics).
+ *
+ * Returns the average of shapeEI() over a time bin centred at @c x[0]:
+ * @f[
+ *   S_I[n] = \frac{\sqrt{2}}{\mathcal{N}}
+ *             \int_{(n-0.5)w}^{(n+0.5)w} S(t)\,dt
+ * @f]
+ * where @f$w@f$ is the time bin width and @f$\mathcal{N}@f$ is the overall
+ * normalisation integral.  The integral is evaluated numerically using
+ * @c TF1::Integral().
+ *
+ * @param x   x[0] = time bin index (floating point).
+ * @param par Same parameters as shapeEI(); par[2] = time bin width (seconds).
+ * @return Normalised integrated shaper response for time bin x[0].
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::shapeEI3_I(Double_t *x, Double_t *par)
+ * @brief Time-bin–integrated shaper response (old electronics).
+ *
+ * Analogous to shapeEI_I() but for the shapeEI3() model.
+ *
+ * @param x   x[0] = time bin index (floating point).
+ * @param par Same parameters as shapeEI3(); par[4] = time bin width (seconds).
+ * @return Normalised integrated shaper response for time bin x[0].
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::polya(Double_t *x, Double_t *par)
+ * @brief Polya (Gamma) distribution for gas-gain fluctuations.
+ *
+ * Wraps @c TMath::GammaDist(x[0], par[0], par[1], par[2]).
+ * par[0] = shape parameter m (≈ 1.38); par[1] = location (0); par[2] = 1/m.
+ *
+ * @param x   x[0] = normalised gain G/G₀.
+ * @param par Parameters {m, location, 1/m}.
+ * @return Probability density at x[0].
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::Ec(Double_t *x, Double_t *p)
+ * @brief HEED ionisation energy spectrum for primary clusters.
+ *
+ * Describes the probability density of the energy @f$ E @f$ deposited in a
+ * single primary cluster:
+ * @f[
+ *   f(E) = \begin{cases} 0 & E < W/2 \text{ or } E > 3.064\,W \\ 1 & W/2 \le E \le W \\ (W/E)^4 & E > W \end{cases}
+ * @f]
+ * where @f$W@f$ is the mean ionisation energy (p[0], typically 26.2 eV).
+ * The TF1 constructed from this function is used to draw random cluster
+ * energies via @c GetRandom().
+ *
+ * @param x   x[0] = cluster energy (eV).
+ * @param p   p[0] = mean ionisation energy W (eV).
+ * @return Unnormalised probability density.
+ */
+
+/**
+ * @fn TF1 *StTpcRSMaker::fEc(Double_t w)
+ * @brief Factory method that creates the HEED energy spectrum TF1.
+ *
+ * @param w Mean ionisation energy W (eV); default 26.2 eV.
+ * @return Newly allocated TF1 owned by the caller.
+ */
+
+/**
+ * @fn Double_t StTpcRSMaker::fei(Double_t t, Double_t t0, Double_t T)
+ * @brief Exponential-integral combination used in the shaper model.
+ *
+ * Computes:
+ * @f[
+ *   f(t, t_0, T) = e^{-(t+t_0)/T}\bigl[\mathrm{Ei}((t+t_0)/T) - \mathrm{Ei}(t_0/T)\bigr]
+ * @f]
+ * using @c ROOT::Math::expint().  Returns 0 for @f$ t < t_0 @f$ or when the
+ * exponential arguments exceed the overflow guard @c xmaxD = 100.
+ *
+ * @param t   Current time (s).
+ * @param t0  Ion-transit start time (s).
+ * @param T   Time constant (s).
+ * @return Value of the exponential integral combination.
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::AsicThresholds()
+ * @brief Zero-suppression for old ASIC electronics.
+ *
+ * Implements the two-threshold algorithm of the legacy STAR TPC ASIC:
+ * a sequence of time bins is kept if it contains at least @c n_seq_hi bins
+ * above the high threshold and at least @c n_seq_lo bins above the low
+ * threshold.  Bins outside a qualifying sequence are zeroed in @c mADCs.
+ *
+ * @return Number of time bins surviving zero suppression.
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::SearchT(const void *elem1, const void **elem2)
+ * @brief Key function for sorting / searching the GEANT hit table.
+ *
+ * Defines the sort order: first by TPC sector, then by track ID, then by
+ * cumulative track length.  Used by @c TTableSorter in Make().
+ */
+
+/**
+ * @fn Int_t StTpcRSMaker::CompareT(const void **elem1, const void **elem2)
+ * @brief Comparator wrapper calling SearchT() for two dereferenced pointers.
+ */
+
+/**
+ * @fn SignalSum_t *StTpcRSMaker::GetSignalSum(Int_t sector)
+ * @brief Returns (and lazily allocates) the signal accumulation array.
+ *
+ * The array is indexed as @c [row-1][pad-1][timebin] with strides
+ * @c NoOfPads and @c NoOfTimeBins.
+ *
+ * @param sector TPC sector number; used only to determine the row count.
+ * @return Pointer to the flat @c SignalSum_t array.
+ */
+
+/**
+ * @fn SignalSum_t *StTpcRSMaker::ResetSignalSum(Int_t sector)
+ * @brief Zeroes the signal accumulation array for the given sector.
+ *
+ * Calls GetSignalSum() (allocating if necessary) and memsets to zero.
+ *
+ * @param sector TPC sector number.
+ * @return Pointer to the zeroed array.
+ */
+
+/**
+ * @fn Float_t StTpcRSMaker::GetCutEle()
+ * @brief Retrieves the delta-electron kinetic energy threshold from GEANT3.
+ *
+ * Navigates the GEANT3 ZEBRA memory bank structure
+ * (GCBANK → GCLINK → JTMED) to find the tracking medium named
+ * @c TPCE_SENSITIVE_GAS and returns its @c CUTELE parameter.  Falls back to
+ * the global GCCUTS.cutele if the named medium is not found.
+ *
+ * @return Delta-electron threshold in GeV.
+ */
+
+// ============================================================================
+//  AliTPCRF1D
+// ============================================================================
+
+/**
+ * @class AliTPCRF1D
+ * @ingroup StTpcRSMaker
+ * @brief One-dimensional pad response function for a TPC cathode pad.
+ *
+ * Originally from the ALICE Off-line project (M. Ivanov, Univ. of Bratislava).
+ * Used by StTpcRSMaker to evaluate the fraction of charge collected by a pad
+ * as a function of the lateral distance between the pad centre and the
+ * electron avalanche position.
+ *
+ * The pad response function (PRF) @f$ R(x) @f$ is the convolution of a
+ * generic charge distribution (GRF) @f$ g(x) @f$ with a rectangular pad of
+ * width @f$ w @f$:
+ * @f[
+ *   R(x) = k_\mathrm{norm} \int_{x-w/2}^{x+w/2} g(x')\,dx' \bigg/ \int_{-\infty}^{\infty} g(x')\,dx'
+ * @f]
+ * Three built-in GRFs are provided (Gauss, Cosh, Gati), plus a user-supplied
+ * TF1.  The resulting PRF is pre-sampled on a uniform grid and stored in
+ * @c fcharge[] for fast run-time evaluation via GetRF() (linear interpolation).
+ *
+ * ### Data members
+ *
+ * | Member | Description |
+ * |--------|-------------|
+ * | @c fcharge[]   | Pre-sampled PRF values |
+ * | @c fNRF        | Number of sample points |
+ * | @c fDSTEPM1    | Inverse step size (cm⁻¹) |
+ * | @c forigsigma  | Sigma of the original GRF |
+ * | @c fpadWidth   | Pad width (cm) |
+ * | @c fkNorm      | Normalisation factor |
+ * | @c fInteg      | Integral of GRF over ±5σ |
+ * | @c fGRF        | Pointer to the generic charge distribution TF1 |
+ * | @c fSigma      | Effective sigma of the resulting PRF |
+ * | @c fOffset     | Position offset (useful for shifted response functions) |
+ * | @c fDirect     | If kTRUE, evaluate GRF directly without convolution |
+ * | @c fPadDistance| Pad-to-wire separation (cm) |
+ */
+
+/**
+ * @fn AliTPCRF1D::AliTPCRF1D(Bool_t direct, Int_t np, Float_t step)
+ * @brief Constructor.
+ *
+ * Allocates the sample array @c fcharge[].  If @p np is zero the default
+ * @c fgNRF (100) points are used; if @p step is zero the default step
+ * @c fgRFDSTEP (0.01 cm) is used.
+ *
+ * @param direct If @c kTRUE, the GRF is sampled directly (no integration over
+ *               the pad width).
+ * @param np     Number of interpolation points (0 → use default).
+ * @param step   Step size in cm (0 → use default).
+ */
+
+/**
+ * @fn Float_t AliTPCRF1D::GetRF(Float_t xin)
+ * @brief Returns the pad response at lateral position @p xin (cm).
+ *
+ * Performs linear interpolation between adjacent samples in @c fcharge[].
+ *
+ * @param xin Distance from the pad centre (cm).
+ * @return Fractional charge collected at position @p xin.
+ */
+
+/**
+ * @fn Float_t AliTPCRF1D::GetGRF(Float_t xin)
+ * @brief Returns the normalised value of the underlying GRF at @p xin.
+ *
+ * Evaluates @f$ k_\mathrm{norm} \cdot g(x_\mathrm{in}) / \mathcal{I} @f$.
+ *
+ * @param xin Position (cm).
+ * @return Normalised GRF value.
+ */
+
+/**
+ * @fn void AliTPCRF1D::SetGauss(Float_t sigma, Float_t padWidth, Float_t kNorm)
+ * @brief Configures a Gaussian generic charge distribution.
+ *
+ * @param sigma    Width (σ) of the Gaussian (cm).
+ * @param padWidth Pad width (cm).
+ * @param kNorm    Normalisation factor.
+ */
+
+/**
+ * @fn void AliTPCRF1D::SetCosh(Float_t sigma, Float_t padWidth, Float_t kNorm)
+ * @brief Configures a 1/cosh generic charge distribution.
+ *
+ * @param sigma    Width parameter (cm).
+ * @param padWidth Pad width (cm).
+ * @param kNorm    Normalisation factor.
+ */
+
+/**
+ * @fn void AliTPCRF1D::SetGati(Float_t K3, Float_t padDistance, Float_t padWidth, Float_t kNorm)
+ * @brief Configures the Gati (single-parameter) generic charge distribution.
+ *
+ * @param K3          Gati K3 parameter.
+ * @param padDistance Anode–cathode gap (cm).
+ * @param padWidth    Pad width (cm).
+ * @param kNorm       Normalisation factor.
+ */
+
+/**
+ * @fn void AliTPCRF1D::SetParam(TF1 *GRF, Float_t padwidth, Float_t kNorm, Float_t sigma)
+ * @brief Configures a user-supplied generic charge distribution.
+ *
+ * @param GRF      Pointer to a TF1 defining the distribution (not owned by
+ *                 this object after the call; the caller must manage lifetime).
+ * @param padwidth Pad width (cm).
+ * @param kNorm    Normalisation factor.
+ * @param sigma    Estimated sigma of the GRF (0 → derived from padwidth).
+ */
+
+/**
+ * @fn void AliTPCRF1D::Update()
+ * @brief Pre-computes the PRF sample array from the current GRF and geometry.
+ *
+ * Integrates the GRF over each pad position, stores the results in
+ * @c fcharge[], and computes @c fSigma as the RMS of the resulting PRF.
+ * Must be called after changing any GRF parameters.
+ */
+
+/**
+ * @fn Double_t AliTPCRF1D::Gamma4(Double_t x, Double_t p0, Double_t p1)
+ * @brief Gamma-4 time response function (alternative shaper model, unused in TpcRS).
+ *
+ * @f[
+ *   \Gamma_4(x) = p_0 \left(\frac{x}{p_1}\right)^4 e^{-4x/p_1}
+ * @f]
+ *
+ * @param x  Time in time bins.
+ * @param p0 Amplitude scale.
+ * @param p1 Peaking time (time bins).
+ * @return Function value.
+ */
+
+// ============================================================================
+//  Altro
+// ============================================================================
+
+/**
+ * @class Altro
+ * @ingroup StTpcRSMaker
+ * @brief Software emulation of the ALICE ALTRO (ALice Tpc ReadOut) ASIC.
+ *
+ * The ALTRO chip processes TPC pad signals in real time before digitisation.
+ * This class provides a bit-accurate C++ emulation for use in simulation.
+ * The full hardware documentation is available at:
+ * http://ep-ed-alice-tpc.web.cern.ch/ep-ed-alice-tpc/altro_chip.htm
+ *
+ * The emulated pipeline consists of (in order):
+ * -# **BSL1** – Baseline correction stage 1: subtracts a fixed pedestal or
+ *    a time-varying pedestal stored in memory.
+ * -# **TCF**  – Tail cancellation filter: an IIR filter that removes the
+ *    exponential tail left by the shaper circuit, parameterised by
+ *    coefficients K1–K3 (feed-forward) and L1–L3 (feedback).
+ * -# **BSL2** – Baseline correction stage 2 (moving-average filter):
+ *    estimates and subtracts the residual baseline using a sliding window.
+ * -# **Clipping** – Limits the signal to the ADC range [0, 1023].
+ * -# **ZSU**  – Zero suppression: retains only sequences of samples that
+ *    exceed a threshold, with configurable pre- and post-samples.
+ *
+ * @note Because the real ALTRO samples continuously, its memory state
+ * between readout cycles is unavailable to the emulation.  The BSL1
+ * slow-drift tracking, the TCF IIR memory, and the BSL2 8-step pipeline
+ * are therefore initialised to zero at the start of each emulation call,
+ * which may cause minor differences at the beginning of a readout frame.
+ *
+ * ### Key data members
+ *
+ * | Member              | Description |
+ * |---------------------|-------------|
+ * | @c channelShort     | Pointer to the input/output ADC array (modified in place) |
+ * | @c ADCkeep          | Boolean mask: 1 for time bins that survive zero suppression |
+ * | @c ftimebins        | Length of the ADC array |
+ * | @c fOnBSL1/TCF/BSL2/Clip/ZSU | Module enable flags |
+ * | @c fTCFK1–K3, fTCFL1–L3 | TCF filter coefficients (floating point) |
+ * | @c fZSUThreshold    | Zero-suppression threshold (ADC counts) |
+ */
+
+/**
+ * @fn Altro::Altro(int timebins, short *Channel)
+ * @brief Constructor.
+ *
+ * Stores the ADC array pointer and initialises all module-enable and
+ * configuration flags to zero.  No modules are active until ConfigAltro() is
+ * called.
+ *
+ * @param timebins Length of the ADC array @p Channel.
+ * @param Channel  Pointer to the input ADC data.  The array is modified
+ *                 in-place by RunEmulation().
+ */
+
+/**
+ * @fn void Altro::ConfigAltro(int ONBaselineCorrection1, int ONTailcancellation, int ONBaselineCorrection2, int ONClipping, int ONZerosuppression)
+ * @brief Selects which ALTRO processing modules are active.
+ *
+ * Each argument is a switch (0 = off, 1 = on).  All modules that are switched
+ * on must be individually configured before RunEmulation() is called.
+ *
+ * @param ONBaselineCorrection1 Enable BSL1 (baseline correction 1).
+ * @param ONTailcancellation    Enable TCF (tail cancellation filter).
+ * @param ONBaselineCorrection2 Enable BSL2 (moving-average filter).
+ * @param ONClipping            Enable clipping to [0, 1023].
+ * @param ONZerosuppression     Enable ZSU (zero suppression).
+ */
+
+/**
+ * @fn void Altro::ConfigBaselineCorrection_1(int mode, int ValuePeDestal, int *PedestalMem, int polarity)
+ * @brief Configures the BSL1 module.
+ *
+ * @param mode         BSL1 operating mode (0–10); see ALTRO manual.
+ * @param ValuePeDestal Fixed pedestal value (0–1023 ADC counts).
+ * @param PedestalMem  Pointer to a time-indexed pedestal memory array (used
+ *                     for modes that require it; may be null otherwise).
+ * @param polarity     Signal polarity (0 = positive, 1 = negative).
+ */
+
+/**
+ * @fn void Altro::ConfigTailCancellationFilter(int K1, int K2, int K3, int L1, int L2, int L3)
+ * @brief Configures the TCF (tail cancellation filter) coefficients.
+ *
+ * The TCF is an IIR filter designed to remove the exponential ion-tail from
+ * the shaper output.  The transfer function is:
+ * @f[
+ *   H(z) = \frac{1 - K_1 z^{-1} - K_2 z^{-2} - K_3 z^{-3}}
+ *               {1 - L_1 z^{-1} - L_2 z^{-2} - L_3 z^{-3}}
+ * @f]
+ * Coefficients are supplied as integers in the ALTRO fixed-point format and
+ * are internally converted to floating-point values for the emulation.
+ *
+ * @param K1,K2,K3 Feed-forward (zero) coefficients.
+ * @param L1,L2,L3 Feedback (pole) coefficients.
+ */
+
+/**
+ * @fn void Altro::ConfigBaselineCorrection_2(int HighThreshold, int LowThreshold, int Offset, int Presamples, int Postsamples)
+ * @brief Configures the BSL2 (moving-average) module.
+ *
+ * @param HighThreshold  Upper threshold for the baseline estimation window.
+ * @param LowThreshold   Lower threshold for the baseline estimation window.
+ * @param Offset         Baseline offset to subtract.
+ * @param Presamples     Number of samples before a signal cluster to include.
+ * @param Postsamples    Number of samples after a signal cluster to include.
+ */
+
+/**
+ * @fn void Altro::ConfigZerosuppression(int Threshold, int MinSamplesaboveThreshold, int Presamples, int Postsamples)
+ * @brief Configures the ZSU (zero suppression) module.
+ *
+ * Allocates and initialises the @c ADCkeep array.  After RunEmulation(), time
+ * bins with @c ADCkeep[i] == 0 should be discarded.
+ *
+ * @param Threshold               Minimum ADC value for a sample to be above
+ *                                threshold.
+ * @param MinSamplesaboveThreshold Minimum number of above-threshold samples
+ *                                required to keep a sequence.
+ * @param Presamples              Number of samples before the above-threshold
+ *                                region to retain.
+ * @param Postsamples             Number of samples after the above-threshold
+ *                                region to retain.
+ */
+
+/**
+ * @fn void Altro::RunEmulation()
+ * @brief Executes the configured ALTRO processing pipeline on @c channelShort.
+ *
+ * Applies the enabled modules in order: BSL1 → TCF → BSL2 → Clipping → ZSU.
+ * After this call, @c channelShort contains the processed ADC values and
+ * @c ADCkeep (if ZSU was enabled) marks the surviving time bins.
+ */
+
+/**
+ * @fn float Altro::calculatecompression()
+ * @brief Estimates the data compression achieved by zero suppression.
+ *
+ * @return Fraction of time bins that were suppressed (0.0–1.0).
+ */
+
+// ============================================================================
+//  HitPoint_t structure
+// ============================================================================
+
+/**
+ * @struct HitPoint_t
+ * @ingroup StTpcRSMaker
+ * @brief Transient per-hit workspace filled by TrackSegment2Propagate().
+ *
+ * Carries the transformed coordinates and auxiliary quantities for a single
+ * GEANT TPC hit through the signal-generation pipeline.
+ *
+ * | Field    | Description |
+ * |----------|-------------|
+ * | @c indx  | Index into the @c g2t_tpc_hit table |
+ * | @c TrackId | GEANT track ID |
+ * | @c s     | Cumulative track arc-length at this hit (cm) |
+ * | @c sMin, sMax | Range of track lengths represented by this hit step |
+ * | @c tpc_hitC | Pointer to the raw GEANT hit record |
+ * | @c xyzG  | Global STAR coordinates of the hit |
+ * | @c coorLS | TPC local sector coordinates (after optional distortion) |
+ * | @c dirLS | Track direction in local sector coordinates |
+ * | @c BLS   | Magnetic field vector in local sector coordinates |
+ * | @c Pad   | Pad coordinate (sector, row, pad, time bucket) |
+ */
+
+// ============================================================================
+//  SignalSum_t structure
+// ============================================================================
+
+/**
+ * @struct SignalSum_t
+ * @ingroup StTpcRSMaker
+ * @brief One element of the signal accumulation buffer.
+ *
+ * The buffer @c m_SignalSum is a flat array indexed as
+ * @f$ [\text{row}-1][\text{pad}-1][\text{timebin}] @f$.
+ *
+ * | Field     | Description |
+ * |-----------|-------------|
+ * | @c Sum    | Accumulated floating-point signal (arbitrary units proportional to number of electrons) |
+ * | @c Adc    | Final digitised ADC value after gain and noise (0–1023) |
+ * | @c TrackId | Track ID of the dominant contributing track |
+ */
+
+/**
+ * @file TpcRS.C
+ * @ingroup StTpcRSMaker
+ * @brief ROOT macro for running StTpcRSMaker within the STAR BFC.
+ *
+ * Provides the @c TpcRS() convenience function that constructs the
+ * appropriate BFC chain string for a given run year and options, then
+ * initialises and runs the event loop.  Supports both GEANT3 (TGiant3) and
+ * VMC (StarVMCApplication) backends.
+ *
+ * Key parameters of @c TpcRS():
+ * @param First     First event to process.
+ * @param Last      Last event to process (negative → initialise only).
+ * @param Run       Comma-separated run-year and chain options
+ *                  (e.g. @c "y2011,TpcRS").
+ * @param fileIn    Input file path (@c 0 → run GEANT interactively).
+ * @param opt       Physics options: @c "Bichsel" (default), @c "heed",
+ *                  @c "muon", @c "pion", @c "proton", @c "MIP", etc.
+ * @param kuip      Optional KUIP command string passed directly to GEANT3.
+ * @param fileOut   Output ROOT file name (@c 0 → auto-generated).
+ */

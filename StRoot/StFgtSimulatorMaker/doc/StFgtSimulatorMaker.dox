@@ -1,0 +1,640 @@
+/**
+ * @file StFgtSimulatorMaker.dox
+ * @brief Doxygen documentation for the STAR Forward GEM Tracker (FGT) slow simulator.
+ *
+ * This file contains the complete Doxygen narrative, group definitions, class
+ * documentation, and per-method documentation for the FGT slow simulation
+ * package located in StRoot/StFgtSimulatorMaker/.
+ *
+ * Authors: Jan Balewski, Wei-Ming Zang
+ * Date:    2011–2014
+ */
+
+//=============================================================================
+/**
+ * @defgroup StFgtSlowSimu FGT Slow Simulator
+ *
+ * @brief Semi-realistic detector-response simulation for the STAR Forward GEM
+ *        Tracker (FGT).
+ *
+ * @section fgt_overview Overview
+ *
+ * The Forward GEM Tracker (FGT) was a STAR sub-detector designed to extend
+ * charged-particle tracking into the forward pseudorapidity region
+ * (1.0 < |η| < 2.0), primarily to reconstruct the forward electron from
+ * W-boson production in polarised p+p collisions at √s = 500 GeV.
+ *
+ * The FGT consists of six disc-shaped Gas Electron Multiplier (GEM) detectors
+ * arranged along the beam axis.  Each disc is divided into four 90° quadrants
+ * (A, B, C, D), giving 6 × 4 = 24 independent readout sectors.  Each sector
+ * carries two independent orthogonal strip planes:
+ *
+ *  - **R-plane** (radial strips): measure the radial coordinate _r_.
+ *  - **P-plane** (phi strips):    measure the azimuthal coordinate _φ_.
+ *
+ * Both planes share the same gas volume; the charge fraction delivered to each
+ * plane is controlled by the DB parameter `par_PplaneChargeFraction` (≈ 0.45
+ * for the P-plane, 0.55 for the R-plane).
+ *
+ * @section fgt_gem_physics GEM Detector Physics
+ *
+ * @subsection fgt_ionisation Primary Ionisation
+ *
+ * A charged particle traversing the 3-mm drift gap of the GEM produces
+ * *primary ionisation clusters* at a mean rate of
+ *
+ * @f[
+ *   \langle N_{\rm prim} \rangle = \lambda \cdot \ell
+ * @f]
+ *
+ * where \f$\lambda\f$ is the primary pair production rate (default
+ * \f$\lambda = 40\ \text{ion pairs/cm}\f$, stored in `par_pairsPerCm`)
+ * and \f$\ell\f$ is the path length through the gas.  The position of each
+ * primary cluster along the track is sampled from an exponential distribution:
+ *
+ * @f[
+ *   \Delta s = -\frac{1}{\lambda}\,\ln(\xi),\quad \xi \sim \mathrm{Uniform}(0,1).
+ * @f]
+ *
+ * @subsection fgt_eloss Energy Loss per Cluster (Bichsel Table)
+ *
+ * The energy deposited in each primary ionisation cluster is drawn from the
+ * Bichsel restricted-energy-loss probability distribution (NIM A 562, 154
+ * (2006), Figure 9).  A look-up table with 10 000 entries (indexed by a
+ * uniform random integer in [0, 10 000)) is stored in the STAR DB as the
+ * `getEloss(rndBin)` array.  Entries above index `par_cutoffOfBichel` (default
+ * 9992) are clamped to avoid unphysically large single-collision energy losses
+ * (> 4.78 keV).
+ *
+ * From the deposited energy \f$E_{\rm dep}\f$ (in eV), the number of secondary
+ * electron-ion pairs liberated in that cluster is estimated as
+ *
+ * @f[
+ *   n_{\rm sec} = 1 + \left\lfloor \frac{E_{\rm dep} - 15.4\,\text{eV}}{26\,\text{eV}} \right\rfloor,
+ * @f]
+ *
+ * where 15.4 eV is the first ionisation potential of Ar and 26 eV is the mean
+ * energy required to create one additional pair in the Ar/CO₂ mixture.
+ *
+ * @subsection fgt_diffusion Transverse Diffusion
+ *
+ * Freed electrons drift a distance \f$z_{\rm drift}\f$ toward the first GEM
+ * foil.  Transverse diffusion broadens the charge cloud according to
+ *
+ * @f[
+ *   \sigma_{\perp} = D_T \sqrt{z_{\rm drift}},
+ * @f]
+ *
+ * where \f$D_T\f$ is the transverse diffusion coefficient per unit
+ * path (default \f$D_T = 0.017\ \text{cm}/\sqrt{\text{cm}}\f$, stored in
+ * `par_transDiffusionPerPath`).  The transverse displacement is sampled
+ * isotropically in the plane perpendicular to the drift direction.
+ *
+ * @subsection fgt_gem_ampl GEM Amplification and Charge Spreading
+ *
+ * After traversing the GEM foils the amplified charge cloud is modelled as a
+ * 2-D Gaussian on the readout plane with width σ given by `par_XYamplSigma`
+ * (default 0.035 cm, motivated by FNAL test-beam measurements that give an
+ * RMS cluster size of ~ 0.5–0.6 strips = ~ 350 μm):
+ *
+ * @f[
+ *   A(x,y) = A_0 \exp\!\left(-\frac{(x-x_0)^2 + (y-y_0)^2}{2\,\sigma^2}\right).
+ * @f]
+ *
+ * The function is evaluated in a `2×par_binStep + 1` window of 2-D histogram
+ * bins (default ±6 bins at 0.02 cm/bin resolution) and accumulated into
+ * `quadDigitizationXY`.
+ *
+ * @subsection fgt_charge_sharing Charge Sharing Between Planes
+ *
+ * A fixed fraction `par_PplaneChargeFraction` ≈ 0.45 of the total charge
+ * goes to the φ (P) strip plane; the remainder \f$(1 - f_P) \approx 0.55\f$
+ * goes to the R strip plane.  This ratio is derived from the overlapping strip
+ * geometry and spacer-grid effects, and is set via the DB.
+ *
+ * @subsection fgt_apv25 APV25 Shaper and Pulse Shape
+ *
+ * The APV25 ASIC samples the shaped analogue signal in 7 consecutive 25-ns
+ * time bins.  The normalised pulse shape used in the simulation is
+ *
+ * @f[
+ *   w_k = \{0.0,\,0.1,\,0.3,\,0.4,\,0.2,\,0.0,\,0.0\},\quad k = 0,\ldots,6,
+ * @f]
+ *
+ * (peak at bin 3).  The simulated ADC value in each time bin is
+ *
+ * @f[
+ *   A_k = G \cdot q \cdot w_k + \mathcal{N}(\mu_{\rm ped},\,\sigma_{\rm ped}),
+ * @f]
+ *
+ * where \f$G\f$ is the overall gain factor `par_overalGain` (≈ 20 ADC/a.u.),
+ * \f$q\f$ is the strip charge in internal units, and the Gaussian noise term
+ * uses the real per-channel pedestal mean \f$\mu_{\rm ped}\f$ and sigma
+ * \f$\sigma_{\rm ped}\f$ read from the STAR DB (enabled when
+ * `switch_addPeds = 1`).  ADC values are clamped to the 12-bit range [0, 4095].
+ *
+ * @section fgt_pipeline Processing Pipeline
+ *
+ * The full event processing chain inside `StFgtSlowSimuMaker::Make()` is:
+ *
+ * -# **unpack_g2t_hits()** — Read GEANT hits from the `g2t_fgt_hit` table.
+ *    Decode the GEANT volume ID into (disc, quadrant) indices.  Apply fiducial
+ *    cuts: detector acceptance (`StFgtGeom::inDisc()`), dead-edge rejection
+ *    (`StFgtGeom::deadQuadEdge()`), flat-region cut (`StFgtGeom::belowFlat()`),
+ *    TOF cut (`tof < par_trackTOFcutoff`), and momentum cut
+ *    (`|p| > par_trackPcutoff`).  Transform the hit position and track
+ *    direction to the local quadrant coordinate frame by rotating about the
+ *    beam axis by `−φ_quad`.  Accepted hits are stored in
+ *    `mG2tHitList[iDisc][iQuad]`.
+ *
+ * -# **responseMipModel()** (called once per accepted hit) — Simulate primary
+ *    ionisation using the Bichsel table; apply transverse diffusion; accumulate
+ *    charge into `quadDigitizationXY` via `addHit()`.
+ *
+ * -# **addHit()** — Stamp a 2-D Gaussian amplitude pattern centred on the
+ *    hit position into the `quadDigitizationXY` TH2F working histogram.
+ *
+ * -# **projectQuad2strips()** — Loop over all 2-D histogram bins above the
+ *    amplitude cut `maxAmp / par_2DampCutoffScale`.  For each bin, call
+ *    `StFgtGeom::rad2LocalStripId()` and `StFgtGeom::phi2LocalStripId()` to
+ *    find the corresponding R and φ strip IDs and accumulate charge into
+ *    `quadDigitizationRad` and `quadDigitizationPhi` (1-D strip histograms).
+ *
+ * -# **exportStripPlane2StEvent()** — Apply the strip threshold
+ *    `par_stripThreshAdc`.  For each fired strip (and up to 3 strips beyond
+ *    it for cluster continuity), fetch the electronics coordinates from the DB,
+ *    apply the APV25 pulse shape over 7 time bins, add pedestal noise, and
+ *    store the result as an `StFgtStrip` object in the `StFgtCollection`.
+ *
+ * @section fgt_db Database Parameters
+ *
+ * All physics parameters are loaded from the STAR DB table
+ * `Calibrations/fgt/fgtSimuParams` in `InitRun()`.
+ *
+ * | DB index | Variable                    | Default  | Units              | Description                                         |
+ * |----------|-----------------------------|----------|--------------------|-----------------------------------------------------|
+ * | 0        | —                           | 102      | —                  | Setup version number                                |
+ * | 1        | `par_cutoffOfBichel`        | 9992     | —                  | Clamp index for Bichsel energy-loss table           |
+ * | 2        | `par_pairsPerCm`            | 40       | pairs/cm           | Primary ionisation rate                             |
+ * | 3        | `par_trackTOFcutoff`        | 80 ns    | s                  | Maximum time-of-flight accepted                     |
+ * | 4        | `par_XYamplSigma`           | 0.035    | cm                 | Gaussian width of charge cloud on readout plane     |
+ * | 5        | `par_trackPcutoff`          | 0.005    | GeV/c              | Minimum track momentum accepted                     |
+ * | 6        | `par_transDiffusionPerPath` | 0.017    | cm/√cm             | Transverse diffusion coefficient                    |
+ * | 7        | `par_binStep`               | 6        | bins               | Half-width of 2-D Gaussian window                   |
+ * | 10       | `par_stripThreshAdc`        | 5.0      | ADC counts         | Minimum strip ADC to export                         |
+ * | 11       | `par_2DampCutoffScale`      | 1000     | a.u.               | Denominator of 2-D amplitude cut                   |
+ * | 12       | `par_overalGain`            | 2→20     | ADC/a.u.           | Overall gain (DB value overridden to 20)            |
+ * | 13       | `par_PplaneChargeFraction`  | 0.45     | —                  | Fraction of charge to the φ (P) strip plane        |
+ *
+ * @section fgt_known_limitations Known Limitations
+ *
+ * - All particles are treated as Minimum Ionising Particles (MIPs).  Soft
+ *   tracks in jets may have their signal underestimated by a large factor.
+ * - The time structure of the GEM signal (7 time bins) is applied only as a
+ *   static pulse shape; no time-walk or threshold effects are simulated.
+ * - The spacer grid in GEANT absorbs less charge than in the real detector,
+ *   leading to an overestimate of the strip occupancy.
+ * - The overall gain (`par_overalGain`) is hard-coded to 20 as a temporary
+ *   fix pending a DB correction.
+ *
+ * @see StFgtSlowSimuMaker
+ * @see fgt_g2t_auxil
+ */
+
+//=============================================================================
+/**
+ * @struct fgt_g2t_auxil
+ * @ingroup StFgtSlowSimu
+ *
+ * @brief Auxiliary data container for a single accepted GEANT FGT hit.
+ *
+ * This plain-old-data struct caches the pre-computed coordinate
+ * transformations needed by `responseMipModel()` so that the
+ * `unpack_g2t_hits()` loop and the per-quadrant simulation loop are
+ * separated.
+ *
+ * @var fgt_g2t_auxil::Rlab
+ *   Hit entrance point in the STAR laboratory frame (cm).  Set to the
+ *   midpoint of the track segment for QA histogram filling.
+ *
+ * @var fgt_g2t_auxil::Rloc
+ *   Hit entrance point in the local quadrant frame (cm).  Obtained from
+ *   `Rlab` by rotating about the beam axis by \f$-\phi_{\rm quad}\f$.
+ *
+ * @var fgt_g2t_auxil::Dloc
+ *   Track segment direction vector in the local quadrant frame (cm).
+ *   Its magnitude equals the GEANT step length `ds`.
+ *
+ * @var fgt_g2t_auxil::hitPtr
+ *   Non-owning raw pointer to the original `g2t_fgt_hit_st` struct in the
+ *   GEANT table.  Valid only within the scope of `Make()`.
+ *
+ * @var fgt_g2t_auxil::iQuad
+ *   Quadrant index in [0, 3] decoded from the GEANT volume ID.
+ */
+
+//=============================================================================
+/**
+ * @class StFgtSlowSimuMaker
+ * @ingroup StFgtSlowSimu
+ * @inherits StMaker
+ *
+ * @brief STAR Maker implementing the FGT slow detector-response simulation.
+ *
+ * `StFgtSlowSimuMaker` reads GEANT hits from the `g2t_fgt_hit` dataset,
+ * simulates the detector response of the Forward GEM Tracker, and writes
+ * `StFgtStrip` objects into the `StFgtCollection` stored in `StEvent`.
+ *
+ * The simulation chain is:
+ *  1. Unpack and filter GEANT hits (`unpack_g2t_hits()`).
+ *  2. Simulate GEM charge production (`responseMipModel()` + `addHit()`).
+ *  3. Project 2-D charge map to 1-D strip planes (`projectQuad2strips()`).
+ *  4. Export strips with noise and pedestal into `StEvent`
+ *     (`exportStripPlane2StEvent()`).
+ *
+ * @section usage Usage Example
+ *
+ * In a BFC steering macro:
+ * @code
+ * StFgtSlowSimuMaker *fgtSim = new StFgtSlowSimuMaker("FgtSlowSimu");
+ * fgtSim->enableAddPeds();          // add real pedestals from DB
+ * fgtSim->setRndSeed(12345);        // reproducible results for unit tests
+ * TObjArray *hList = new TObjArray;
+ * fgtSim->setHList(hList);          // optional QA histograms
+ * @endcode
+ *
+ * The maker obtains `StFgtDb` automatically via `GetMaker("fgtDb")`.
+ * Alternatively, call `setFgtDb()` before the run begins.
+ */
+
+//-----------------------------------------------------------------------------
+/// @name Constructors and Destructor
+/// @{
+
+/**
+ * @fn StFgtSlowSimuMaker::StFgtSlowSimuMaker(const char *name)
+ * @brief Constructs the FGT slow simulator maker.
+ *
+ * Initialises all data members to safe defaults, allocates the
+ * `TRandom3` generator (seeded from the system clock so every run is
+ * different unless overridden with `setRndSeed()`), and enables pedestal
+ * addition by default.
+ *
+ * @param name  STAR maker name string (default: `"FgtSlowSimu"`).
+ */
+
+/**
+ * @fn StFgtSlowSimuMaker::~StFgtSlowSimuMaker()
+ * @brief Destructor.
+ *
+ * ROOT manages histogram ownership through `TObjArray`/`TDirectory`.
+ * No explicit heap clean-up is required beyond what ROOT performs.
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name StMaker lifecycle overrides
+/// @{
+
+/**
+ * @fn Int_t StFgtSlowSimuMaker::Init()
+ * @brief One-time initialisation called before the first event.
+ *
+ * Allocates the working histograms (`quadDigitizationXY`,
+ * `quadDigitizationRad`, `quadDigitizationPhi`) via `InitHisto1()`.
+ * When compiled with `__FGT_QA_HISTO__`, also creates the full suite of
+ * QA histograms via `InitHisto2()` and registers them with `HList`.
+ *
+ * @return `kStOK` on success.
+ */
+
+/**
+ * @fn Int_t StFgtSlowSimuMaker::InitRun(Int_t runNumber)
+ * @brief Per-run initialisation: loads simulation parameters from the DB.
+ *
+ * Retrieves the `StFgtDb` pointer (either injected via `setFgtDb()` or
+ * found automatically from the maker chain), then reads the 14-entry
+ * `fgtSimuParams` DB table and maps each entry to the corresponding
+ * `par_*` member variable.  Performs basic sanity checks (`par_XYamplSigma > 0`,
+ * `par_pairsPerCm > 0`) and sets `par_badSetup` on failure.
+ *
+ * @note As a temporary workaround, `par_overalGain` is hard-coded to 20
+ *       regardless of the DB value, pending a DB correction.
+ *
+ * @param runNumber  STAR run number (unused internally, forwarded to log).
+ * @return `kStOK` on success, `kStWarn` if the DB or its table is absent.
+ */
+
+/**
+ * @fn Int_t StFgtSlowSimuMaker::Make()
+ * @brief Main per-event processing method.
+ *
+ * Executes the full FGT slow simulation pipeline for one event:
+ *
+ * -# Skips the event if `par_badSetup != 0` (DB mis-configuration).
+ * -# Retrieves `StEvent` from the input chain; creates or fetches the
+ *    `StFgtCollection`.
+ * -# Reads the `g2t_fgt_hit` table and calls `unpack_g2t_hits()`.
+ * -# Loops over all 24 (disc × quadrant) sectors; for each non-empty sector:
+ *    - Calls `responseMipModel()` for each accepted hit.
+ *    - Calls `projectQuad2strips()` to map 2-D charge to strip IDs.
+ *    - Calls `exportStripPlane2StEvent()` twice (R- and P-planes).
+ *
+ * @return `kStOK` in all cases except a missing `StEvent` (returns
+ *         `kStWarn`) or missing `g2t_fgt_hit` table (returns `kStOK` with
+ *         a FATAL log message).
+ */
+
+/**
+ * @fn Int_t StFgtSlowSimuMaker::Finish()
+ * @brief End-of-job cleanup.
+ *
+ * When compiled with `__FGT_QA_HISTO__`, calls `saveHisto()` to write the
+ * QA histogram file; otherwise delegates to `StMaker::Finish()`.
+ *
+ * @return Return value of `StMaker::Finish()`.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::Clear(Option_t *option)
+ * @brief Per-event reset.
+ *
+ * Clears all 24 `mG2tHitList[iDisc][iQuad]` vectors and delegates to
+ * `StMaker::Clear()`.  The working histograms are reset inside `Make()`
+ * rather than here because they are quad-scoped, not event-scoped.
+ *
+ * @param option  Passed through to `StMaker::Clear()` (normally `""`).
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name Public Configuration Methods
+/// @{
+
+/**
+ * @fn void StFgtSlowSimuMaker::setHList(TObjArray *x)
+ * @brief Provides an external `TObjArray` for QA histogram export.
+ *
+ * When called before `Init()`, all QA histograms created by `InitHisto2()`
+ * (compiled in with `__FGT_QA_HISTO__`) are added to this array and can
+ * be saved by `saveHisto()`.
+ *
+ * @param x  Pointer to a caller-owned `TObjArray`.  May be `nullptr` to
+ *           disable QA output.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::setFgtDb(StFgtDb *x)
+ * @brief Injects the FGT database handle directly.
+ *
+ * Optional; if not called, `InitRun()` will search the maker chain for a
+ * `StFgtDbMaker` named `"fgtDb"`.
+ *
+ * @param x  Pointer to a valid `StFgtDb` instance.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::enableAddPeds()
+ * @brief Enables addition of real pedestal values to simulated strip ADCs.
+ *
+ * Sets `switch_addPeds = 1`.  When active, the per-channel pedestal mean
+ * and sigma are fetched from the DB for every strip, Gaussian noise is added
+ * to each of the 7 time-bin samples, and the pedestal mean is subtracted
+ * before storage.  Enabled by default in the constructor.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::setRndSeed(int x)
+ * @brief Sets a fixed seed for the internal `TRandom3` generator.
+ *
+ * Useful for reproducible Monte Carlo tests.  By default the seed is taken
+ * from the system clock (seed = 0 in ROOT convention).
+ *
+ * @param x  Desired seed value.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::saveHisto(TString fname)
+ * @brief Writes QA histograms to a ROOT file (requires `__FGT_QA_HISTO__`).
+ *
+ * Creates `<fname>.hist.root` and writes all entries of `HList` to it.
+ * Does nothing unless the code was compiled with the `__FGT_QA_HISTO__`
+ * preprocessor symbol defined.
+ *
+ * @param fname  Base name for the output file (`.hist.root` is appended).
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name Private Simulation Methods
+/// @{
+
+/**
+ * @fn void StFgtSlowSimuMaker::unpack_g2t_hits(St_g2t_fgt_hit *fgt_hitT)
+ * @brief Decodes and filters GEANT FGT hits; populates `mG2tHitList`.
+ *
+ * Iterates over every row of the `g2t_fgt_hit` GEANT table.  For each hit:
+ *
+ * -# Decodes the GEANT volume ID: `disc = (volume_id / 100) - 1`,
+ *    `quad = (volume_id % 100) - 1`.
+ * -# Applies five sequential fiducial filters:
+ *    - `StFgtGeom::inDisc()` — within detector radial acceptance.
+ *    - `|Rloc.x| > StFgtGeom::deadQuadEdge()` — not in x dead zone.
+ *    - `|Rloc.y| > StFgtGeom::deadQuadEdge()` — not in y dead zone.
+ *    - `StFgtGeom::belowFlat()` — inside the flat fiducial region.
+ *    - `tof < par_trackTOFcutoff` — within the in-time window.
+ *    - `|p| > par_trackPcutoff` — above minimum momentum.
+ * -# Rotates the lab-frame entrance point and track direction to the
+ *    local quadrant frame by applying `RotateZ(-phiQuadXaxis(iQuad))`.
+ * -# Stores the processed hit as a `fgt_g2t_auxil` struct in
+ *    `mG2tHitList[iDisc][iQuad]`.
+ *
+ * @param fgt_hitT  Pointer to the ROOT table wrapper containing all GEANT
+ *                  FGT hits for this event.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::responseMipModel(TVector3 Rloc, TVector3 Dloc)
+ * @brief Simulates primary ionisation and transverse diffusion for one track
+ *        segment.
+ *
+ * Implements the MIP ionisation model documented in Frank Simon's diploma
+ * thesis (BNL, 2001, §3 "The GEM Concept").
+ *
+ * Algorithm:
+ * -# Sample primary cluster positions along the path using an exponential
+ *    free-path distribution with mean \f$1/\lambda\f$.
+ * -# For each cluster, draw an energy loss from the Bichsel table and compute
+ *    the secondary pair multiplicity \f$n_{\rm sec}\f$.
+ * -# Apply transverse diffusion:
+ *    \f$\sigma_\perp = D_T \sqrt{z_{\rm drift}}\f$ where
+ *    \f$z_{\rm drift} = z_{\rm end} - z_{\rm cluster}\f$.
+ * -# Call `addHit(r, nAnyPair)` to accumulate charge into
+ *    `quadDigitizationXY`.
+ *
+ * @param Rloc  Entrance point of the track segment in local quadrant
+ *              coordinates (cm).
+ * @param Dloc  Track segment vector in local quadrant coordinates (cm);
+ *              its magnitude equals the step length in gas.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::addHit(TVector3 rLocal, Double_t ampl)
+ * @brief Deposits a 2-D Gaussian charge distribution into `quadDigitizationXY`.
+ *
+ * Evaluates the Gaussian kernel `amplFunc()` in a
+ * `(2*par_binStep + 1) × (2*par_binStep + 1)` window of histogram bins
+ * centred on the absolute-value position `(|rLocal.x()|, |rLocal.y()|)` in
+ * the local quadrant frame, and accumulates the weighted amplitude into the
+ * 2-D working histogram `quadDigitizationXY`.
+ *
+ * The Gaussian is separable:
+ * @f[
+ *   A(x, y) = \text{ampl} \cdot
+ *     e^{-\frac{(x-x_0)^2}{2\sigma^2}} \cdot
+ *     e^{-\frac{(y-y_0)^2}{2\sigma^2}}
+ * @f]
+ *
+ * @param rLocal  Hit centroid in local quadrant coordinates (cm).  Absolute
+ *                values are taken so all quadrants map onto the positive
+ *                first quadrant of the working histogram.
+ * @param ampl    Amplitude weight (total number of secondary pairs from this
+ *                primary cluster).  Default: 1.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::projectQuad2strips(Int_t iDisc, Int_t iQuad)
+ * @brief Projects the 2-D charge map onto the 1-D R and φ strip planes.
+ *
+ * Loops over all bins of `quadDigitizationXY` whose content exceeds
+ * \f$A_{\rm max} / \texttt{par\_2DampCutoffScale}\f$.  For each qualifying
+ * pixel:
+ *
+ * -# Converts the (x, y) bin centre to polar coordinates (r, φ).
+ * -# Calls `StFgtGeom::rad2LocalStripId(r, φ)` to get the radial strip ID.
+ * -# Calls `StFgtGeom::phi2LocalStripId(r, φ)` to get the phi strip ID.
+ * -# Applies the overall gain `par_overalGain` and splits the charge:
+ *    - \f$q_P = f_P \cdot G \cdot A_{\rm pixel}\f$ → `quadDigitizationPhi[iPhiID]`
+ *    - \f$q_R = (1-f_P) \cdot G \cdot A_{\rm pixel}\f$ → `quadDigitizationRad[iRadID]`
+ *
+ * @param iDisc  Disc index [0, 5].
+ * @param iQuad  Quadrant index [0, 3].
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::exportStripPlane2StEvent(TH1F *hInp, Int_t stripIdOffset, StFgtStripCollection *out)
+ * @brief Converts a 1-D strip charge histogram to `StFgtStrip` objects and
+ *        adds them to the event.
+ *
+ * Scans the input histogram `hInp` (720 bins = one strip plane of one
+ * quadrant).  A *continuity counter* `nSeq` ensures that up to 3 additional
+ * strips beyond each fired strip are also stored, preserving cluster shape
+ * information even if intermediate strips fall below threshold.
+ *
+ * For each included strip:
+ * -# Converts the geometry ID to electronics coordinates (rdo, arm, apv, chan)
+ *    via `StFgtDb::getElecCoordFromGeoId()`.
+ * -# Constructs the electronics ID via `StFgtGeom::getElectIdFromElecCoord()`.
+ * -# Fetches or creates the `StFgtStrip` in the collection.
+ * -# Optionally (if `switch_addPeds`): fetches pedestal mean and sigma from
+ *    the DB.
+ * -# Folds the strip charge through the 7-timebin APV25 pulse shape, adds
+ *    Gaussian pedestal noise per timebin, clamps to [0, 4095], and calls
+ *    `StFgtStrip::setAdc()` for each timebin.
+ * -# Sets geometry and electronics metadata on the strip.
+ *
+ * @param hInp           1-D histogram of strip charges (one strip plane of
+ *                       one quadrant).
+ * @param stripIdOffset  Global geometry ID offset for this (disc, quadrant,
+ *                       plane) combination.
+ * @param out            Pointer to the target `StFgtStripCollection` for this
+ *                       disc.
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name Private Histogram Methods
+/// @{
+
+/**
+ * @fn void StFgtSlowSimuMaker::InitHisto1()
+ * @brief Creates the mandatory working histograms used during simulation.
+ *
+ * Creates three objects:
+ * - `quadDigitizationXY` — TH2F(2000×2000) covering [0, 40 cm]², used as a
+ *   high-resolution charge map for one quadrant at a time.
+ * - `quadDigitizationRad` — TH1F(720 bins) accumulating R-strip ADC values.
+ * - `quadDigitizationPhi` — TH1F(720 bins) accumulating φ-strip ADC values.
+ *
+ * When `__FGT_QA_HISTO__` is defined, the same histograms are registered
+ * with `HList` and persistent monitor copies (`digXYAll`, `digRAll`,
+ * `digPAll`, `digPadcAll`, `digRadcAll`) are created.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::InitHisto2()
+ * @brief Creates the optional QA histogram suite (requires `__FGT_QA_HISTO__`).
+ *
+ * Populates the `hA[]` array with diagnostic histograms covering:
+ * - GEANT input hit properties (ΔE, Δs, Z, TOF, momentum, XY distributions).
+ * - Hit acceptance statistics (`hA[3]`, per-cut flow).
+ * - Ionisation model diagnostics (cluster energy, pair counts, path lengths,
+ *   transverse diffusion).
+ * - Digitisation output (ADC sums per plane per event).
+ *
+ * All histograms are registered with `HList`.
+ */
+
+/**
+ * @fn void StFgtSlowSimuMaker::CloseHisto()
+ * @brief Annotates the QA 2-D histograms with geometric overlay objects.
+ *
+ * Adds `TCrown` arcs and `TLine` objects to `quadDigitizationXY`,
+ * `digXYAll`, and `digPadcAll` to indicate the inner/mid/outer strip
+ * boundaries (`StFgtGeom::rIn()`, `rMid()`, `rOut()`) and the 45° quadrant
+ * diagonal.
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name Private Inline Methods
+/// @{
+
+/**
+ * @fn Double_t StFgtSlowSimuMaker::amplFunc(Double_t del_cm)
+ * @brief Evaluates the 1-D Gaussian amplitude kernel.
+ *
+ * @f[
+ *   f(\Delta) = \exp\!\left(-\frac{\Delta^2}{2\,\sigma^2}\right),
+ *   \quad \sigma = \texttt{par\_XYamplSigma}
+ * @f]
+ *
+ * This function is called separately for x and y displacements in `addHit()`;
+ * the 2-D response is the product of two 1-D kernels.
+ *
+ * @param del_cm  Displacement from the hit centroid in cm.
+ * @return        Gaussian weight in [0, 1].
+ */
+
+/// @}
+
+//-----------------------------------------------------------------------------
+/// @name Static Data
+/// @{
+
+/**
+ * @var StFgtSlowSimuMaker::pulseShape
+ * @brief Normalised APV25 shaper pulse sampled at 25-ns intervals.
+ *
+ * A 20-element array with non-zero values in bins 1–4:
+ * @f[ \{0.0,\,0.1,\,0.3,\,0.4,\,0.2,\,0.0,\ldots\} @f]
+ * (sum = 1.0).  Only the first 7 elements are used; the remainder are zero.
+ */
+
+/// @}
+*/

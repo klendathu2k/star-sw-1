@@ -1,0 +1,28 @@
+# Doxyfile for StDetectorDbMaker
+# Run from the StRoot/StDetectorDbMaker/ directory:
+#   doxygen doc/Doxyfile
+
+PROJECT_NAME           = "StDetectorDbMaker"
+PROJECT_BRIEF          = "STAR detector calibration and geometry database access layer"
+
+OUTPUT_DIRECTORY       = doc/doxygen
+
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+HTML_OUTPUT            = html
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES

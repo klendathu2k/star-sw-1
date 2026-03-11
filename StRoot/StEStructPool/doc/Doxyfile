@@ -1,0 +1,31 @@
+# Doxyfile for StEStructPool
+# Run from StRoot/StEStructPool/:  doxygen doc/Doxyfile
+
+PROJECT_NAME           = "StEStructPool"
+PROJECT_BRIEF          = "STAR Event-by-Event analysis: two-particle correlations and fluctuations"
+
+OUTPUT_DIRECTORY       = doc/doxygen
+
+INPUT                  = ..
+RECURSIVE              = YES
+
+FILE_PATTERNS          = *.h *.cxx *.C
+
+EXCLUDE_PATTERNS       = */doc/*
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+HTML_OUTPUT            = html
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+HAVE_DOT               = NO
+
+QUIET                  = NO
+WARNINGS               = YES

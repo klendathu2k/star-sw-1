@@ -1,0 +1,545 @@
+/**
+ * @file StMtdSimMaker.dox
+ * @brief Doxygen documentation for the STAR MTD Simulation Maker.
+ *
+ * This file contains the full Doxygen narrative, group definition, and
+ * per-method documentation for StMtdSimMaker.  It is intended to be
+ * picked up by the Doxyfile in the same directory; no changes to the
+ * source headers are required.
+ */
+
+// ---------------------------------------------------------------------------
+/**
+ * @defgroup StMtdSim MTD Simulation (StMtdSimMaker)
+ * @brief Monte-Carlo simulation of the STAR Muon Telescope Detector (MTD).
+ *
+ * @section mtdsim_overview Overview
+ *
+ * The Muon Telescope Detector (MTD) is an MRPC (Multi-gap Resistive Plate
+ * Chamber) based detector installed on the outer face of the STAR magnet
+ * return yoke at a radius of approximately 403 cm.  Its primary physics goal
+ * is the identification of muons produced in heavy-ion and p+p collisions,
+ * enabling studies of charmonium (J/ψ, ψ') and upsilon (Υ) production via
+ * their di-muon decay channels, as well as direct muon measurements.
+ *
+ * @section mtdsim_geometry Detector Geometry
+ *
+ * The MTD is organised hierarchically:
+ *
+ * | Level      | Name      | Count (typical) | Description                          |
+ * |------------|-----------|-----------------|--------------------------------------|
+ * | Backleg    | backleg   | up to 30        | Large structural unit on yoke sector |
+ * | Module     | module    | 1–5 per backleg | Individual MRPC tray                 |
+ * | Cell       | cell      | 12 per module   | Single strip/pad (read-out channel)  |
+ *
+ * Each module houses 12 readout cells (strips) of width
+ * @f$ w_{\rm pad} = 38\,\mathrm{mm} + 6\,\mathrm{mm} = 44\,\mathrm{mm} @f$
+ * (active pad plus inner dead zone).
+ *
+ * Because physical backleg numbering does not match the GEANT volume numbering,
+ * a database-resident mapping table (@c mtdGeant2BacklegIDMap) is loaded at
+ * the start of each run and used to translate GEANT backleg indices to the
+ * hardware backleg IDs stored in reconstructed hits.
+ *
+ * @section mtdsim_readout Readout and Channel Mapping
+ *
+ * Each cell is read out from @e both ends of the strip (West and East),
+ * providing two TDC leading-edge times, @f$ t_W @f$ and @f$ t_E @f$, and
+ * two trailing-edge times separated by a fixed time-over-threshold (TOT) of
+ * 15 ns.  The signal propagation velocity along the strip is
+ * @f$ v = 56\,\mathrm{ps/cm} @f$.  For a hit at local longitudinal coordinate
+ * @f$ z @f$ (in cm) and true time of flight @f$ t_{\rm TOF} @f$:
+ *
+ * @f[
+ *   t_W = t_{\rm TOF} - z \cdot v, \qquad
+ *   t_E = t_{\rm TOF} + z \cdot v
+ * @f]
+ *
+ * The channel number on the RDO (Readout Data Object) is derived from a
+ * 5-module × 24-cell lookup table @c mModuleChannel.  Two consecutive RDO
+ * channel numbers are assigned per cell: @c channel1 (West/leading) and
+ * @c channel2 = @c channel1 + 12 (East/leading).
+ *
+ * @section mtdsim_timing Timing Resolution
+ *
+ * The intrinsic time resolution of the MTD MRPC is modelled as a Gaussian
+ * smear with @f$ \sigma_t = 99\,\mathrm{ps} @f$ applied to the GEANT
+ * time-of-flight:
+ *
+ * @f[
+ *   t_{\rm sim} = t_{\rm GEANT} + \mathcal{N}(0,\,\sigma_t)
+ * @f]
+ *
+ * The smeared time is stored in the @c StMtdHit via the leading-edge pair.
+ *
+ * @section mtdsim_cellid Cell-ID Encoding
+ *
+ * A unique integer cell ID encodes the full detector address as
+ * @f[
+ *   \mathrm{cellId} = \mathrm{icell} + 100\cdot(\mathrm{imodule} + 100\cdot\mathrm{ibackleg})
+ * @f]
+ * This encoding is used as the key in the per-event @c std::map that
+ * accumulates hits and resolves multiple GEANT steps in the same cell (only
+ * the latest step by time-of-flight is retained).
+ *
+ * @section mtdsim_workflow Processing Workflow
+ *
+ * @code{.unparsed}
+ *   InitRun()
+ *     └─ load mtdGeant2BacklegIDMap from STAR database
+ *     └─ initialise mModuleChannel[5][24] sequential channel map
+ *
+ *   Make()  [called once per event]
+ *     └─ retrieve g2t_mtd_hit table from GEANT dataset
+ *     └─ call FastCellResponse()
+ *           └─ for each GEANT step:
+ *                 CalcCellId()  →  ibackleg, imodule, icell, cellId
+ *                 apply 99 ps Gaussian timing smear
+ *                 compute leadingW, leadingE, trailingW, trailingE
+ *                 fill QA histograms
+ *                 store StMtdHit in std::map (latest tof wins)
+ *           └─ add all StMtdHit objects to StMtdCollection in StEvent
+ * @endcode
+ *
+ * @section mtdsim_qa Quality-Assurance Histograms
+ *
+ * When @c mBookHisto is @c kTRUE (default), the following ROOT histograms
+ * are booked in @c bookHistograms() and may be written to @c mtdsim.root
+ * when @c mWriteHisto is @c kTRUE:
+ *
+ * | Histogram         | Type  | Description                                      |
+ * |-------------------|-------|--------------------------------------------------|
+ * | @c QABacklegChannel | TH2I | MTD hit distribution: backleg vs RDO channel    |
+ * | @c DeGeant        | TH1F  | Deposited energy from GEANT step (keV)           |
+ * | @c TofGeant       | TH1F  | True time of flight from GEANT (ns)              |
+ * | @c DeSeen         | TH1F  | Deposited energy after cell response             |
+ * | @c TofSeen        | TH1F  | Smeared time of flight after cell response (ns)  |
+ * | @c TofResSeen     | TH1F  | Timing residual after detector response (ps)     |
+ * | @c TofResReco     | TH1F  | Timing residual after reconstruction (ps)        |
+ * | @c ADCReco        | TH1F  | ADC spectrum (currently unfilled placeholder)    |
+ * | @c TDCReco        | TH1F  | TDC spectrum                                     |
+ * | @c TACorr         | TH2F  | Time–amplitude slewing correlation               |
+ * | @c ModuleHist     | TH1F  | Module index distribution                        |
+ * | @c mBetaHist      | TH1F  | Particle velocity β                              |
+ * | @c mPathLHist     | TH1F  | Track path length (cm)                           |
+ * | @c mTofHist       | TH1F  | Total time of flight (ns)                        |
+ * | @c mRecMass       | TH1F  | Reconstructed particle mass (GeV/c²)             |
+ *
+ * @section mtdsim_references References
+ *
+ * - L. Ruan et al., "Perspectives for the study of J/ψ via dimuon channel at
+ *   RHIC", J. Phys. G 36 (2009) 025001.
+ * - STAR MTD Technical Design Report (BNL internal, 2012).
+ * - B. Bonner et al., "A single-gap resistive-plate-chamber time-of-flight
+ *   detector for STAR", Nucl. Instrum. Meth. A 508 (2003) 181.
+ *
+ * @author Frank Geurts
+ * @author Yi Yang (yiyang@bnl.gov) — 2014 updates
+ * @author Alex Jentsch — geometry mapping corrections (2013–2014)
+ * @author Bill LLope — name-clash fix (2014)
+ */
+
+// ---------------------------------------------------------------------------
+/**
+ * @class StMtdSimMaker
+ * @ingroup StMtdSim
+ * @brief STAR maker that converts GEANT MTD hits into reconstructed-level
+ *        @c StMtdHit objects stored in an @c StMtdCollection.
+ *
+ * StMtdSimMaker sits in the standard STAR BFC (Big Full Chain) maker sequence
+ * between the GEANT simulation step and the reconstruction makers.  It reads
+ * the @c g2t_mtd_hit table produced by GEANT and, for each valid hit:
+ *
+ * -# decodes the GEANT volume identifier into a physical (backleg, module,
+ *    cell) address via CalcCellId();
+ * -# applies a 99 ps Gaussian timing smear;
+ * -# computes dual-end leading and trailing TDC times using the known signal
+ *    propagation velocity along the strip;
+ * -# packages the result as an @c StMtdHit and appends it to the
+ *    @c StMtdCollection attached to the current @c StEvent.
+ *
+ * @note Only one GEANT step per cell is retained per event.  If multiple
+ *       steps deposit energy in the same cell, the step with the
+ *       @e largest time of flight is kept (last step wins).
+ *
+ * @note Hit association to the Monte-Carlo track (@c idTruth) is set with
+ *       100 % quality; track association to reconstructed tracks is deferred
+ *       to @c StMtdMatchMaker.
+ *
+ * @par Typical usage in a BFC macro:
+ * @code
+ *   StMtdSimMaker *mtdSim = new StMtdSimMaker("MtdSim");
+ *   chain->AddMaker(mtdSim);
+ * @endcode
+ *
+ * @par Controlling output:
+ * @code
+ *   mtdSim->mBookHisto  = kTRUE;   // book QA histograms (default: true)
+ *   mtdSim->mWriteHisto = kTRUE;   // write mtdsim.root at end of job
+ * @endcode
+ */
+
+// ---------------------------------------------------------------------------
+// Constructor
+// ---------------------------------------------------------------------------
+/**
+ * @fn StMtdSimMaker::StMtdSimMaker(const char *name)
+ * @ingroup StMtdSim
+ * @brief Constructs the maker and initialises all data members to safe defaults.
+ *
+ * All ROOT histogram pointers and GEANT data pointers are set to @c nullptr.
+ * The @c mModuleChannel lookup table is zeroed via @c memset.  Default
+ * control flags are:
+ *   - @c mBookHisto  = @c kTRUE  — QA histograms are booked in Init().
+ *   - @c mWriteHisto = @c kFALSE — histograms are @e not written at Finish().
+ *   - @c mWriteStEvent = @c kTRUE — simulated hits are written into @c StEvent.
+ *   - @c mHistFile  = @c "mtdsim.root".
+ *
+ * @c Reset() is called at the end of construction to zero event-level pointers.
+ *
+ * @param[in] name  Maker name registered with the STAR framework.
+ *                  Defaults to @c "MtdSim".  Must differ from the BTof
+ *                  maker name (@c "TofSim") to avoid chain name clashes.
+ */
+
+// ---------------------------------------------------------------------------
+// Destructor
+// ---------------------------------------------------------------------------
+/**
+ * @fn StMtdSimMaker::~StMtdSimMaker()
+ * @ingroup StMtdSim
+ * @brief Destructor.  No heap resources are owned by this class; ROOT manages
+ *        histogram lifetime via gDirectory/TFile ownership.
+ */
+
+// ---------------------------------------------------------------------------
+// Reset
+// ---------------------------------------------------------------------------
+/**
+ * @fn void StMtdSimMaker::Reset()
+ * @ingroup StMtdSim
+ * @brief Resets event-level pointers in preparation for the next event.
+ *
+ * Sets @c mGeantData and @c mEvent to @c nullptr.  If @c mWriteStEvent is
+ * @c kTRUE, also deletes the current @c StMtdCollection (the collection
+ * will be re-created and attached to the new @c StEvent in
+ * @c FastCellResponse()).
+ *
+ * This method is called automatically from the constructor and may be called
+ * explicitly between events if needed.
+ */
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+/**
+ * @fn virtual Int_t StMtdSimMaker::Init()
+ * @ingroup StMtdSim
+ * @brief Framework initialisation called once before the first event.
+ *
+ * If @c mBookHisto is @c kTRUE, calls @c bookHistograms() to allocate all
+ * QA ROOT histograms.  Then delegates to @c StMaker::Init() which handles
+ * registration with the chain.
+ *
+ * @return @c kStOK on success; propagates any error from @c StMaker::Init().
+ */
+
+// ---------------------------------------------------------------------------
+// InitRun
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::InitRun(Int_t runnumber)
+ * @ingroup StMtdSim
+ * @brief Run-level initialisation called once per run number.
+ *
+ * Performs two initialisation tasks:
+ *
+ * **1. GEANT-to-hardware backleg ID map (database)**
+ *
+ * Queries the STAR offline database path
+ * @c Geometry/mtd/mtdGeant2BacklegIDMap for the @c mtdGeant2BacklegIDMap
+ * table, which contains 30 integer entries mapping GEANT backleg indices
+ * (1–30) to physical hardware backleg IDs.  The result is stored in the
+ * module-level array @c geant2backlegIDMap[30].
+ *
+ * If the table is not found in the database the method returns @c kStErr
+ * and logs an error via @c LOG_ERROR.
+ *
+ * **2. RDO channel map**
+ *
+ * Fills @c mModuleChannel[5][24] with sequential channel numbers 1–120,
+ * where @c mModuleChannel[module][cell] gives the first (West) RDO channel
+ * for that module/cell pair.  The East channel is always
+ * @c mModuleChannel[module][cell] + 12.
+ *
+ * @param[in] runnumber  STAR run number (used implicitly by @c GetDataBase
+ *                       to select the correct database snapshot).
+ * @return @c kStOK on success, @c kStErr if the database table is missing.
+ */
+
+// ---------------------------------------------------------------------------
+// FinishRun
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::FinishRun(Int_t runnumber)
+ * @ingroup StMtdSim
+ * @brief Run-level teardown called once per run.  Currently a no-op.
+ *
+ * @param[in] runnumber  STAR run number (unused).
+ * @return @c kStOk.
+ */
+
+// ---------------------------------------------------------------------------
+// Make
+// ---------------------------------------------------------------------------
+/**
+ * @fn virtual Int_t StMtdSimMaker::Make()
+ * @ingroup StMtdSim
+ * @brief Main per-event processing method called by the STAR framework.
+ *
+ * Execution sequence:
+ *
+ * -# Retrieve the GEANT dataset from the input chain, trying both the
+ *    @c "geant" branch (BFC chain) and the @c "geantBranch" branch
+ *    (standalone GEANT file reading).  If neither is present, returns
+ *    @c kStWarn.
+ * -# Find the @c g2t_mtd_hit table in the GEANT dataset.  Returns
+ *    @c kStWarn if the table is absent or empty.
+ * -# Cache the pointer to the @c StEvent currently in the chain
+ *    (may be @c nullptr for GEANT-only running).
+ * -# Call @c FastCellResponse() to convert GEANT steps to @c StMtdHit
+ *    objects and populate @c StMtdCollection.
+ *
+ * @return @c kStOK on success, @c kStWarn if no GEANT data or MTD hits
+ *         are found.
+ */
+
+// ---------------------------------------------------------------------------
+// Finish
+// ---------------------------------------------------------------------------
+/**
+ * @fn virtual Int_t StMtdSimMaker::Finish()
+ * @ingroup StMtdSim
+ * @brief End-of-job cleanup called by the framework after all events.
+ *
+ * If @c mWriteHisto is @c kTRUE, opens the ROOT file named by @c mHistFile
+ * (default @c "mtdsim.root") in RECREATE mode, calls @c writeHistograms()
+ * to flush all QA histograms, then closes the file.
+ *
+ * @return @c kStOK.
+ */
+
+// ---------------------------------------------------------------------------
+// FastCellResponse
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::FastCellResponse()
+ * @ingroup StMtdSim
+ * @brief Core simulation routine: converts GEANT MTD hits to @c StMtdHit
+ *        objects with realistic timing and stores them in @c StMtdCollection.
+ *
+ * This is the heart of the MTD simulation.  It iterates over all GEANT steps
+ * cached in @c mMtdHitsFromGeant and, for each step with positive track length
+ * (@c s_track > 0) and positive energy deposit (@c de > 0):
+ *
+ * **Step 1 — Geometry decoding**
+ *
+ * Calls CalcCellId() with the GEANT @c volume_id and the local Y coordinate
+ * @c ghit.x[1] to obtain @c ibackleg, @c imodule, @c icell, and the
+ * packed @c cellId integer.  Hits with invalid cell IDs (@c cellId < 0) are
+ * skipped.
+ *
+ * **Step 2 — Hit deduplication**
+ *
+ * A @c std::map<int,StMtdHit*> keyed by @c cellId accumulates hits.  If a
+ * hit already exists for that cell, the @e later GEANT step (larger
+ * @c ghit.tof) is kept and the earlier is discarded.  This models the
+ * last-step-wins behaviour of a triggered detector.
+ *
+ * **Step 3 — Timing simulation**
+ *
+ * The true time of flight @c ghit.tof (in GEANT time units, converted to
+ * nanoseconds) is smeared by a Gaussian random deviate with
+ * @f$ \sigma = 99\,\mathrm{ps} @f$ drawn from a Ranlux-engine-based
+ * generator:
+ * @f[
+ *   t_{\rm sim} = t_{\rm GEANT} + \mathcal{N}(0,\,99\,\mathrm{ps})
+ * @f]
+ *
+ * **Step 4 — Leading/trailing edge calculation**
+ *
+ * The signal propagation velocity along the strip is
+ * @f$ v = 56\times10^{-3}\,\mathrm{ns/cm} @f$.
+ * Using the longitudinal local coordinate @c ghit.x[2] (in cm):
+ * @f{align}{
+ *   t_{W,\rm lead}  &= t_{\rm GEANT} - z \cdot v \\
+ *   t_{E,\rm lead}  &= t_{\rm GEANT} + z \cdot v \\
+ *   t_{W,\rm trail} &= t_{W,\rm lead} + 15\,\mathrm{ns} \\
+ *   t_{E,\rm trail} &= t_{E,\rm lead} + 15\,\mathrm{ns}
+ * @f}
+ *
+ * The 15 ns trailing offset corresponds to a fixed time-over-threshold.
+ *
+ * **Step 5 — StMtdHit population**
+ *
+ * The following fields of @c StMtdHit are set:
+ *   - @c backleg (hardware backleg ID)
+ *   - @c module  (module index within backleg)
+ *   - @c cell    (cell index, 0–11)
+ *   - @c leadingEdgeTime  = @f$(t_{W,\rm lead},\, t_{E,\rm lead})@f$
+ *   - @c trailingEdgeTime = @f$(t_{W,\rm trail},\, t_{E,\rm trail})@f$
+ *   - @c associatedTrack = @c NULL (assigned later by StMtdMatchMaker)
+ *   - @c idTruth (GEANT track index @c ghit.track_p, quality = 100 %)
+ *
+ * **Step 6 — StMtdCollection**
+ *
+ * After all GEANT steps are processed, the unique @c StMtdHit objects from
+ * the map are added to the @c StMtdCollection of the current @c StEvent
+ * (creating a new collection if none exists).  If no @c StEvent is available,
+ * a standalone @c StMtdCollection is created.
+ *
+ * @return @c kStOK.
+ */
+
+// ---------------------------------------------------------------------------
+// CalcCellId
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::CalcCellId(Int_t volume_id, Float_t ylocal, Int_t &ibackleg, Int_t &imodule, Int_t &icell)
+ * @ingroup StMtdSim
+ * @brief Decodes a GEANT volume identifier and local Y coordinate into a
+ *        physical MTD detector address.
+ *
+ * The GEANT volume ID encodes geometry hierarchically.  The decoding scheme
+ * is:
+ * @code
+ *   ires        = volume_id / 100
+ *   backlegTemp = ires / 10           // GEANT backleg index (1-based)
+ *   imodule     = ires % 10           // module within backleg (1-based)
+ * @endcode
+ *
+ * The physical hardware backleg ID is obtained by looking up @c backlegTemp
+ * (decremented by 1 for 0-based indexing) in @c geant2backlegIDMap[]:
+ * @code
+ *   ibackleg = geant2backlegIDMap[backlegTemp - 1]
+ * @endcode
+ *
+ * **Module number correction for backlegs 12–20:**
+ * Backlegs 12–20 are on a sector of the magnet yoke where the module
+ * enumeration starts at 2 rather than 1.  For these backlegs, @c imodule
+ * is incremented by 1.
+ *
+ * **Cell index from local Y:**
+ * The local Y coordinate of the hit (in cm) is converted to a cell index
+ * using the pad pitch:
+ * @f[
+ *   \mathrm{icell} = \left\lfloor
+ *     \frac{y_{\rm local} + w_{\rm pad}\cdot N_{\rm cell}/2}{w_{\rm pad}}
+ *   \right\rfloor
+ * @f]
+ * where @f$ w_{\rm pad} = 4.4\,\mathrm{cm} @f$ and @f$ N_{\rm cell} = 12 @f$.
+ *
+ * **Cell orientation flip for modules > 3:**
+ * For modules with index > 3 the cell numbering runs in the opposite
+ * direction, so the index is mirrored:
+ * @code
+ *   if (imodule > 3) icell = 11 - icell;
+ * @endcode
+ *
+ * **Range validation:**
+ * | Condition                              | Return value |
+ * |----------------------------------------|--------------|
+ * | @c ibackleg < 0 or > @c kNBackleg (99) | -3           |
+ * | @c imodule  < 0 or > @c kNModule  (99) | -2           |
+ * | @c icell    < 0 or ≥ @c kNCell    (12) | -1           |
+ * | All valid                              | encoded cell ID ≥ 0 |
+ *
+ * **Packed cell ID encoding:**
+ * @f[
+ *   \mathrm{cellId} = \mathrm{icell} + 100\cdot(\mathrm{imodule}
+ *                     + 100\cdot\mathrm{ibackleg})
+ * @f]
+ *
+ * @param[in]  volume_id  GEANT volume identifier from @c g2t_mtd_hit_st.
+ * @param[in]  ylocal     Local Y coordinate of the hit in cm
+ *                        (@c ghit.x[1] in the GEANT hit structure).
+ * @param[out] ibackleg   Hardware backleg ID (1-based) after database mapping.
+ * @param[out] imodule    Module index within the backleg (1-based).
+ * @param[out] icell      Cell index within the module (0-based, 0–11).
+ * @return Packed cell ID ≥ 0 on success; negative error code on failure
+ *         (-1: bad cell, -2: bad module, -3: bad backleg).
+ */
+
+// ---------------------------------------------------------------------------
+// bookHistograms
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::bookHistograms()
+ * @ingroup StMtdSim
+ * @brief Allocates all QA ROOT histograms used by the simulation.
+ *
+ * Called from Init() when @c mBookHisto is @c kTRUE.  All histograms are
+ * owned by the current ROOT directory (typically the framework's in-memory
+ * file).  The following histograms are created:
+ *
+ * **Kinematic / tracking QA**
+ * | Name           | Bins / Range            | Description                  |
+ * |----------------|-------------------------|------------------------------|
+ * | @c mBetaHist   | 100 bins, [−2, 2]       | Particle velocity β          |
+ * | @c mPathLHist  | 100 bins, [−2, 500] cm  | Track path length            |
+ * | @c mTofHist    | 1000 bins, [−10, 10000] ns | Total time of flight      |
+ * | @c mRecMass    | 1000 bins, [−2, 4] GeV  | Reconstructed mass           |
+ *
+ * **GEANT-level MTD**
+ * | Name           | Bins / Range            | Description                  |
+ * |----------------|-------------------------|------------------------------|
+ * | @c mCellGeant  | 2-D, cell vs module     | Cell ID of GEANT hit         |
+ * | @c mNCellGeant | 2-D, cell vs module     | Number of cells per GEANT hit|
+ * | @c mDeGeant    | 1000 bins, [0, 10] keV  | Energy deposit               |
+ * | @c mTofGeant   | 1000 bins, [0, 20] ns   | True time of flight          |
+ *
+ * **After detector response**
+ * | Name            | Bins / Range             | Description                 |
+ * |-----------------|--------------------------|------------------------------|
+ * | @c mCellSeen    | 2-D, cell vs module      | Cell ID after response       |
+ * | @c mNCellSeen   | 2-D                      | Cell multiplicity            |
+ * | @c mDeSeen      | 1000 bins, [0, 10] keV   | Energy deposit               |
+ * | @c mT0Seen      | 1000 bins, [0, 20] ns    | Start-time estimate          |
+ * | @c mTofSeen     | 1000 bins, [0, 20] ns    | Smeared time of flight       |
+ * | @c mTofResSeen  | 1001 bins, [−500, 500] ps| Timing residual (detector)   |
+ *
+ * **After reconstruction**
+ * | Name             | Bins / Range             | Description                 |
+ * |------------------|--------------------------|------------------------------|
+ * | @c mCellReco     | 2-D, cell vs module      | Cell ID after reconstruction |
+ * | @c mNCellReco    | 2-D                      | Cell multiplicity            |
+ * | @c mADCReco      | 4096 bins, [0, 4096]     | ADC spectrum (placeholder)   |
+ * | @c mTDCReco      | 4096 bins, [0, 4096]     | TDC spectrum                 |
+ * | @c mT0Reco       | 1000 bins, [0, 20] ns    | Reconstructed start time     |
+ * | @c mTofResReco   | 1000 bins, [−300, 300] ps| Timing residual (reco)       |
+ * | @c mTACorr       | 512×512, TDC vs ADC      | Time-amplitude slewing       |
+ *
+ * **Occupancy**
+ * | Name               | Bins / Range                 | Description              |
+ * |--------------------|------------------------------|--------------------------|
+ * | @c mModHist        | 201 bins, [−100, 100]        | Module index             |
+ * | @c QABacklegChannel | 30×120 (backleg × channel)  | Hit occupancy map        |
+ *
+ * @return @c kStOk.
+ */
+
+// ---------------------------------------------------------------------------
+// writeHistograms
+// ---------------------------------------------------------------------------
+/**
+ * @fn Int_t StMtdSimMaker::writeHistograms()
+ * @ingroup StMtdSim
+ * @brief Writes all booked QA histograms to the currently open ROOT file.
+ *
+ * Called from Finish() when @c mWriteHisto is @c kTRUE, after the output
+ * file has been opened and @c cd()'d into.  Calls @c TH1::Write() /
+ * @c TH2::Write() on every histogram pointer.  No null-pointer checks are
+ * performed; the caller must ensure @c bookHistograms() was called first.
+ *
+ * @return @c kStOk.
+ */

@@ -1,0 +1,551 @@
+/*!
+
+@defgroup StBbcSimulationMaker StBbcSimulationMaker
+@brief STAR Beam-Beam Counter (BBC) detector response simulation maker.
+
+@details
+
+## Overview
+
+The Beam-Beam Counter (BBC) is a scintillator-based trigger and luminosity detector
+installed at small polar angles on both the East and West sides of the STAR interaction
+point at RHIC. It provides minimum-bias triggering and collision-vertex estimation for
+Au+Au, p+p, and other colliding-beam configurations. This package, `StBbcSimulationMaker`,
+implements the digitized detector response simulation within the STAR BFC (Big Full Chain)
+framework, converting GEANT hit-level truth information into the ADC and TDC values that
+would be recorded by the BBC front-end electronics.
+
+## Detector Geometry
+
+Each BBC arm (East, West) consists of two concentric annular rings of hexagonal polystyrene
+scintillator tiles, read out individually by photomultiplier tubes (PMTs):
+
+- **Inner (small) ring**: 18 hexagonal tiles arranged into 6 triplets of 3 tiles each.
+  Each tile has its own PMT, giving 16 distinct PMT channels per side after accounting for
+  the fact that two tiles at opposite azimuthal positions (tiles 9 and 15 in the outer
+  row of small tiles) share a single PMT with an adjacent tile.
+- **Outer (large) ring**: 18 larger hexagonal tiles also arranged into 6 triplets of 3 tiles.
+  Groups of two or three adjacent large tiles share a single PMT, giving 8 distinct PMT
+  channels per side.
+
+Each side therefore has @f$ N_{PMT,1} = N_{small} + N_{large} = 16 + 8 = 24 @f$ channels,
+and the full detector has @f$ N_{PMT,2} = 48 @f$ channels in total.
+
+The GEANT geometry is defined in `pams/geometry/bbcmgeo/bbcmgeo.g` (Yiqun Wang).
+The tile-to-PMT correspondence follows the numbering scheme of Les Bland.
+
+## GEANT Volume-ID Convention
+
+GEANT sensitive-volume IDs are four-digit integers encoding the side, ring, triplet, and
+tile indices:
+
+@f[
+  \text{VID} = E_W \times 1000 + R \times 100 + T \times 10 + t
+@f]
+
+where:
+- @f$E_W@f$ = 1 (West) or 2 (East)
+- @f$R@f$ = 1 (inner/small ring) or 2 (outer/large ring)
+- @f$T@f$ = 1–6 (triplet index, counted counter-clockwise in azimuth as seen from
+  outside the STAR magnet for the West side)
+- @f$t@f$ = 1–3 (tile index within the triplet, starting from the right tile when
+  looking from outside)
+
+East is rotated 180° around the vertical axis relative to West, so the same counter-clockwise
+azimuthal ordering is preserved when viewed from outside both arms.
+
+## PMT Channel-Number Convention
+
+PMT channel numbers follow the Akio Ogawa convention used in `StBbcTriggerDetector`:
+East channels come first (0-indexed channels 0–23), then West (channels 24–47).
+Within each side, small-tile PMTs occupy channels 0–15 (1-indexed 1–16) and large-tile
+PMTs occupy channels 16–23 (1-indexed 17–24).
+
+In `StBbcSimulationMaker::Init()` the `Geant2PMT` map is built so that
+@f[
+  \texttt{PMT\_0indexed} = \texttt{Geant2PMT[VID]} - 1
+@f]
+
+## Simulation Pipeline
+
+The simulation runs per-event in `StBbcSimulationMaker::Make()`:
+
+1. **Input**: The `g2t_bbc_hit` table (type `g2t_ctf_hit_st`) is retrieved from the
+   `geant` dataset. Each row records the integrated energy deposition `de` (GeV) and
+   minimum time-of-flight `tof` (s) accumulated over all charged-particle tracks passing
+   through one GEANT sensitive volume in the event (the "calorimetric" integration mode
+   set in `bbcmgeo.g`).
+
+2. **Volume-to-PMT mapping**: For each hit, the `volume_id` field is looked up in the
+   `Geant2PMT` map to obtain the 1-indexed PMT number, which is then converted to a
+   0-indexed PMT channel.
+
+3. **Accumulation**: The `BbcDE` helper accumulates energy deposits into a per-PMT sum,
+   scaling by the per-PMT `LightFactor`. The `BbcTOF` helper records the minimum TOF
+   seen by each PMT channel.
+
+4. **Signal generation** (once all hits have been processed):
+   - **Amplitude** (`BbcDE::GetDE`): The total energy deposit is expressed as a number
+     of MIPs, converted to a mean photoelectron count, Poisson-sampled, then converted
+     to charge with a per-photoelectron Gaussian smearing.
+   - **ADC digitization** (`BbcDE::GetADC`): The charge is divided by the per-PMT ADC
+     conversion gain and offset by the per-PMT pedestal shift, clipped to [0, 4095].
+   - **Timing** (`BbcTOF::GetTOF`): A Gaussian random offset with RMS 900 ps is added
+     to the minimum TOF. TDC values are written only for small-tile PMTs.
+   - **TDC digitization** (`BbcTOF::GetTDC`): The time is divided by 0.1 ns/bin and
+     clipped to [0, 255].
+
+5. **Output**: ADC and TDC values are written into the `StBbcTriggerDetector` object
+   inside the `StTriggerDetectorCollection` of the current `StEvent`.
+
+## Amplitude Simulation Detail
+
+The relationship between GEANT energy deposition @f$\Delta E@f$ (GeV) and PMT signal
+charge @f$Q@f$ (pC) is modelled as:
+
+@f[
+  \Delta E_{1\text{MIP}} = \left(\frac{dE}{d(\rho x)}\right)_{\text{poly}}
+                           \times \rho_{\text{poly}} \times d_{\text{tile}}
+                         = 1.95\times10^{-3}\ \frac{\text{GeV}}{\text{g/cm}^2}
+                           \times 1.032\ \frac{\text{g}}{\text{cm}^3}
+                           \times 1.0\ \text{cm}
+                         \approx 2.012\times10^{-3}\ \text{GeV}
+@f]
+
+@f[
+  \bar{n}_{pe} = \frac{\Delta E \times f_L}{\Delta E_{1\text{MIP}}} \times N_{pe,1\text{MIP}}
+@f]
+
+where @f$f_L@f$ is the per-PMT light factor (`LightFactor[iPMT]`),
+@f$N_{pe,1\text{MIP}} = 15@f$ is the mean photoelectron yield per MIP, and @f$\Delta E@f$
+is the light-factor-weighted accumulated energy deposit.  The actual photoelectron count
+@f$n_{pe}@f$ is sampled from a Poisson distribution with mean @f$\bar{n}_{pe}@f$:
+
+@f[
+  n_{pe} \sim \text{Poisson}(\bar{n}_{pe})
+@f]
+
+The PMT charge is then:
+
+@f[
+  Q = q_{pe} \times n_{pe} \times \left(1 + \mathcal{N}(0,\, \sigma_{tile})\right)
+    \qquad q_{pe} = 0.3\ \text{pC},\quad \sigma_{tile} = \texttt{TileResolution[iPMT]}
+@f]
+
+The ADC value is:
+
+@f[
+  \text{ADC} = \text{clip}\!\left(
+    \left\lfloor \frac{Q}{g_{ADC}} \right\rfloor + \delta_{ADC},\; 0,\; 4095
+  \right)
+@f]
+
+where @f$g_{ADC}@f$ = `pC_per_ADCBins[iPMT]` (pC/bin) and
+@f$\delta_{ADC}@f$ = `shift_ADC0[iPMT]` (bins).
+
+## Timing Simulation Detail
+
+For each PMT the smallest TOF among all GEANT hits is retained.  A Gaussian timing
+resolution of @f$\sigma_t = 900@f$ ps (single-MIP value from the BBC proposal) is added:
+
+@f[
+  t_{meas} = t_{min} + \mathcal{N}(0,\, \sigma_t), \qquad \sigma_t = 900\ \text{ps}
+@f]
+
+The TDC value is (for small-tile PMTs only):
+
+@f[
+  \text{TDC} = \text{clip}\!\left(
+    \left\lfloor \frac{t_{meas} - T_0}{\delta_t} \right\rfloor,\; 0,\; 255
+  \right),
+  \qquad T_0 = 0,\quad \delta_t = 0.1\ \text{ns/bin}
+@f]
+
+This gives a full TDC range of @f$256 \times 0.1\ \text{ns} = 25.6\ \text{ns}@f$.
+
+## Quality-Assurance Mode
+
+When compiled with the preprocessor flag `BbcSimQa` (e.g.
+`cons EXTRA_CPPFLAGS="-DBbcSimQa"`), the maker books six ROOT TH1F histograms saved to
+`StBbcSimQa.root`:
+
+| Histogram name    | Content                                        |
+|-------------------|------------------------------------------------|
+| `QaBbcPmtdE`      | Energy deposit (pC) vs. PMT index              |
+| `QaBbcPmtTime`    | Minimum TOF (s) vs. PMT index                  |
+| `QaBbcEastVid`    | ADC distribution for East hits (by VID)        |
+| `QaBbcWestVid`    | ADC distribution for West hits (by VID)        |
+| `QaBbcEastPmt`    | ADC distribution for East PMTs (by PMT number) |
+| `QaBbcWestPmt`    | ADC distribution for West PMTs (by PMT number) |
+
+A reverse `PMT2Geant` map is also constructed in QA mode to allow VID look-up by PMT index.
+
+## External Dependencies
+
+| Component                        | Purpose                                         |
+|----------------------------------|-------------------------------------------------|
+| `StMaker` (StChain)              | Base class; provides BFC lifecycle hooks        |
+| `g2t/St_g2t_bbc_Module.h`        | Access to `g2t_bbc_hit` GEANT table             |
+| `g2t_ctf_hit_st`                 | Row structure for BBC/CTF GEANT hits            |
+| `StEvent`                        | Top-level event container                       |
+| `StTriggerDetectorCollection`    | Container for trigger-detector objects          |
+| `StBbcTriggerDetector`           | BBC ADC/TDC data storage class (in StEvent)     |
+| `TDataSetIter`, `TDataSet`       | STAR dataset navigation                         |
+| `TRandom`                        | ROOT random-number generator (Poisson, Gauss)   |
+| `StMessMgr`                      | STAR message-logging facility                   |
+
+---
+
+@file StBbcSimulationMaker.h
+@brief Declaration of StBbcSimulationMaker and its private helper types.
+@details
+Declares the `StBbcSimulationMaker` class, which inherits from `StMaker` and implements
+the standard `Init()`, `Make()`, and `Finish()` BFC callbacks. Conditional compilation
+under `BbcSimQa` enables extra private ROOT histogram members for quality-assurance studies.
+
+---
+
+@file StBbcSimulationMaker.cxx
+@brief Implementation of StBbcSimulationMaker and its local helper classes BbcTOF and BbcDE.
+@details
+Contains:
+- Module-level physics constants (MIP energy, photoelectron yield, ADC/TDC parameters).
+- Per-PMT calibration arrays: `LightFactor`, `TileResolution`, `pC_per_ADCBins`,
+  `shift_ADC0`.
+- File-scope helper function `IsSmall()`.
+- Full implementation of `BbcTOF` and `BbcDE` helper classes.
+- Full implementation of `StBbcSimulationMaker` constructor, destructor, `Init()`,
+  `Make()`, and `Finish()`.
+
+---
+
+@class StBbcSimulationMaker
+@brief STAR BFC maker that converts GEANT BBC hits into digitized ADC/TDC detector response.
+
+@details
+`StBbcSimulationMaker` is a standard STAR BFC maker (inheriting from `StMaker`) that
+simulates the response of the Beam-Beam Counter (BBC) trigger detector. It reads
+GEANT Monte Carlo hits from the `g2t_bbc_hit` table, applies realistic smearing of
+energy deposition and time-of-flight, digitizes the results to ADC and TDC values,
+and writes them into the `StBbcTriggerDetector` object within `StEvent`.
+
+The maker should be added to the BFC chain after the GEANT simulation module (GSTAR)
+and after the `StEvent` maker, so that both input datasets are available during `Make()`.
+
+### Data Members
+
+| Member           | Type                  | Access    | Description                                                         |
+|------------------|-----------------------|-----------|---------------------------------------------------------------------|
+| `Geant2PMT`      | `map<short,short>`    | private   | Maps GEANT volume ID (VID) to 1-indexed PMT number.                 |
+| `DeadTiles`      | `list<short>`         | private   | VIDs of tiles to be ignored (reserved; not currently populated).    |
+| `PMT2Geant`      | `map<short,short>`    | private   | Reverse map: 1-indexed PMT number → VID (QA mode only).            |
+| `QaFile`         | `TFile*`              | private   | Output file for QA histograms (QA mode only).                       |
+| `QaBbcPmtdE`     | `TH1F*`               | private   | QA: energy deposit vs. PMT index (QA mode only).                    |
+| `QaBbcPmtTime`   | `TH1F*`               | private   | QA: time-of-flight vs. PMT index (QA mode only).                    |
+| `QaBbcEastVid`   | `TH1F*`               | private   | QA: ADC distribution keyed by East VID (QA mode only).             |
+| `QaBbcWestVid`   | `TH1F*`               | private   | QA: ADC distribution keyed by West VID (QA mode only).             |
+| `QaBbcEastPmt`   | `TH1F*`               | private   | QA: ADC distribution keyed by East PMT number (QA mode only).      |
+| `QaBbcWestPmt`   | `TH1F*`               | private   | QA: ADC distribution keyed by West PMT number (QA mode only).      |
+
+---
+
+@fn StBbcSimulationMaker::StBbcSimulationMaker(const char *name)
+@brief Constructor.
+@param name Name of the maker within the BFC chain. Defaults to `"BbcSimulation"`.
+@details
+Calls the `StMaker` base-class constructor with `name`. No BBC-specific initialisation
+is performed here; all BBC setup is deferred to `Init()`.
+
+---
+
+@fn StBbcSimulationMaker::~StBbcSimulationMaker()
+@brief Destructor.
+@details
+Trivial destructor. Dynamically allocated QA ROOT objects (`QaFile`, histograms) are
+owned by the ROOT I/O system and are written/closed in `Finish()`.
+
+---
+
+@fn StBbcSimulationMaker::Init()
+@brief Initialises the GEANT volume-ID to PMT-channel mapping.
+@return `kStOK` (via `StMaker::Init()`) on success.
+@details
+Builds the `Geant2PMT` map by iterating over both sides (West = 1, East = 2) and
+assigning each of the 36 GEANT sensitive volumes per side to its corresponding 1-indexed
+PMT number. The mapping encodes:
+
+- **Small-tile inner triplets** (VID pattern `EW + 1T3`, T=1–6): one PMT per tile,
+  channels 1–6 per side (Akio channels 1–6 for East, 25–30 for West).
+- **Small-tile outer triplets** (VID pattern `EW + 1T{1,2}`, T=1–6): two tiles per
+  triplet, yielding channels 7–16 per side, with tiles 9 and 15 (at 60° and −120°)
+  sharing a single PMT with their triplet neighbour.
+- **Large-tile inner triplets** (VID pattern `EW + 2T3`, T=1–6): adjacent pairs share
+  a PMT, giving channels 17–20 per side.
+- **Large-tile outer triplets** (VID pattern `EW + 2T{1,2}`, T=1–6): three adjacent
+  tiles share a PMT, giving channels 21–24 per side.
+
+East PMTs occupy 0-indexed channels 0–23; West PMTs occupy channels 24–47 (the `EWshift`
+calculation places East at `(2-iew)*NPMT1 = 1*24 = 24` offset for `iew=1` [West] and
+`0*24 = 0` for `iew=2` [East], because Akio numbers starting from East).
+
+When compiled with `BbcSimQa`, QA histograms are booked and the reverse `PMT2Geant` map
+is also populated.
+
+---
+
+@fn StBbcSimulationMaker::Make()
+@brief Per-event BBC response simulation.
+@return `kStOK` on success (always, even when no BBC hits are present).
+@details
+1. Retrieves the `"geant"` `TDataSet` and the `StEvent` object from the input datasets.
+2. Searches for the `g2t_bbc_hit` table (`St_g2t_ctf_hit`) in the GEANT dataset.
+3. If the table is found, iterates over all hit rows:
+   - Extracts `de` (GeV), `tof` (s), and `volume_id` for each hit.
+   - Looks up the 1-indexed PMT number via `Geant2PMT[volume_id]`; logs an error and
+     skips the hit if no mapping exists.
+   - Converts to 0-indexed and calls `BbcDE::AddDE()` and `BbcTOF::AddTOF()`.
+4. Ensures a `StTriggerDetectorCollection` exists in `StEvent`, creating one if absent.
+5. Loops over all 48 PMT channels:
+   - Calls `BbcDE::GetADC()` to compute and digitize the amplitude; stores via
+     `StBbcTriggerDetector::setAdc()`.
+   - For small-tile PMTs only (determined by `IsSmall()`), calls `BbcTOF::GetTDC()` to
+     compute and digitize the timing; stores via `StBbcTriggerDetector::setTdc()`.
+6. If no `g2t_bbc_hit` table is found, logs an informational message and returns `kStOK`.
+
+---
+
+@fn StBbcSimulationMaker::Finish()
+@brief End-of-run cleanup.
+@return `kStOK` (via `StMaker::Finish()`).
+@details
+In QA mode (`BbcSimQa`), writes and closes the `StBbcSimQa.root` QA file. Otherwise
+a no-op beyond the base-class call.
+
+---
+
+@fn StBbcSimulationMaker::GetCVS() const
+@brief Returns the CVS/RCS version tag string embedded at build time.
+@return Pointer to a static string containing the CVS tag, file ID, build date, and time.
+
+---
+
+@class BbcTOF
+@brief Per-event per-PMT time-of-flight accumulator and digitizer (local to .cxx).
+@details
+A lightweight helper class, local to `StBbcSimulationMaker.cxx` and with no separate
+header, that accumulates the minimum time-of-flight for each BBC PMT channel across all
+GEANT hits in an event.  At readout, it adds a Gaussian timing resolution and returns
+either the physical time (s) or a digitized TDC value.
+
+### Data Members
+
+| Member  | Type            | Description                                                       |
+|---------|-----------------|-------------------------------------------------------------------|
+| `Times` | `vector<float>` | Per-PMT minimum time-of-flight (s). Size = `NPMT2` = 48. Zero-initialized. |
+
+---
+
+@fn BbcTOF::BbcTOF()
+@brief Default constructor. Initialises `Times` to a vector of `NPMT2` zeros.
+
+---
+
+@fn BbcTOF::~BbcTOF()
+@brief Trivial destructor.
+
+---
+
+@fn BbcTOF::AddTOF(uint16_t ipmt, float time)
+@brief Record a GEANT hit TOF for PMT @p ipmt, keeping only the minimum.
+@param ipmt  0-indexed PMT channel number (0 ≤ ipmt < NPMT2 = 48).
+@param time  Time-of-flight from the GEANT `g2t_ctf_hit_st::tof` field (seconds).
+@details
+If `Times[ipmt]` is still zero (uninitialised) or is larger than `time`, the stored
+value is replaced with `time`.  This models the physical behaviour of a discriminator
+that fires on the earliest photon.
+
+---
+
+@fn BbcTOF::GetTOF(uint16_t ipmt)
+@brief Return the measured TOF (s) for PMT @p ipmt, with timing-resolution smearing.
+@param ipmt  0-indexed PMT channel number.
+@return Smeared time-of-flight in seconds. Returns 0 if no hit was recorded.
+@details
+If a hit was recorded (i.e. `Times[ipmt] != 0`), adds a Gaussian random offset with
+mean 0 and standard deviation `BbcTimingRMS` = 900 ps using the module-level
+`BbcRndm` TRandom instance:
+@f[
+  t_{meas} = t_{min} + \mathcal{N}(0,\; 900\ \text{ps})
+@f]
+
+---
+
+@fn BbcTOF::GetTDC(uint16_t ipmt)
+@brief Return the digitized TDC value (0–255) for PMT @p ipmt.
+@param ipmt  0-indexed PMT channel number.
+@return TDC bin number in [0, NTDCbins−1] = [0, 255]. Returns 0 if no hit was recorded.
+@details
+Calls `GetTOF()` and converts:
+@f[
+  \text{TDC} = \text{clip}\!\left(
+    \left\lfloor \frac{t_{meas} - T_0}{\delta_t} \right\rfloor,\; 0,\; 255
+  \right),
+  \qquad T_0 = 0,\quad \delta_t = 0.1\ \text{ns/bin},\quad \text{range} = 25.6\ \text{ns}
+@f]
+
+---
+
+@class BbcDE
+@brief Per-event per-PMT energy-deposition accumulator and ADC digitizer (local to .cxx).
+@details
+A lightweight helper class, local to `StBbcSimulationMaker.cxx` and with no separate
+header, that accumulates the light-factor-weighted energy deposit for each BBC PMT
+channel across all GEANT hits in an event.  At readout it applies photoelectron-counting
+statistics and per-PMT resolution smearing, then digitizes to an ADC value.
+
+### Data Members
+
+| Member | Type            | Description                                                                           |
+|--------|-----------------|---------------------------------------------------------------------------------------|
+| `dE`   | `vector<float>` | Accumulated light-factor-weighted energy deposit (GeV) per PMT. Size = `NPMT2` = 48. |
+
+---
+
+@fn BbcDE::BbcDE()
+@brief Default constructor. Initialises `dE` to a vector of `NPMT2` zeros.
+
+---
+
+@fn BbcDE::~BbcDE()
+@brief Trivial destructor.
+
+---
+
+@fn BbcDE::AddDE(uint16_t ipmt, float de)
+@brief Add a GEANT energy deposit to the running sum for PMT @p ipmt.
+@param ipmt  0-indexed PMT channel number (0 ≤ ipmt < NPMT2 = 48).
+@param de    Energy deposited in this GEANT hit (GeV), from `g2t_ctf_hit_st::de`.
+@details
+Scales `de` by `LightFactor[ipmt]` before adding to `dE[ipmt]`:
+@f[
+  \Delta E_{\text{acc}}[\text{ipmt}] \mathrel{+}= \Delta E_{\text{GEANT}} \times f_L[\text{ipmt}]
+@f]
+The `LightFactor` accounts for the reduced light output of the larger outer tiles
+relative to the inner tiles (the bulk factor is ~0.8 for outer tiles) and for
+individual PMT-by-PMT calibration differences measured in 2017 p+p runs.
+
+---
+
+@fn BbcDE::GetDE(uint16_t ipmt)
+@brief Return the simulated PMT charge (pC) for PMT @p ipmt with full statistical smearing.
+@param ipmt  0-indexed PMT channel number.
+@return Simulated PMT signal charge in picoCoulombs (pC).
+@details
+Converts the accumulated energy deposit to charge via:
+@f[
+  \bar{n}_{pe} = \frac{\Delta E_{\text{acc}}}{\Delta E_{1\text{MIP}}} \times N_{pe,1\text{MIP}}
+               = \frac{\Delta E_{\text{acc}}}{2.012 \times 10^{-3}\ \text{GeV}} \times 15
+@f]
+@f[
+  n_{pe} \sim \text{Poisson}(\bar{n}_{pe})
+@f]
+@f[
+  Q = q_{pe} \times \left(1 + \mathcal{N}(0,\, \sigma_{\text{tile}})\right) \times n_{pe},
+  \qquad q_{pe} = 0.3\ \text{pC},\quad \sigma_{\text{tile}} = \texttt{TileResolution[ipmt]}
+@f]
+The Poissonian fluctuation models photon-counting statistics; the Gaussian factor
+@f$(1 + \mathcal{N}(0,\sigma_{\text{tile}}))@f$ models single-photoelectron resolution of the PMT.
+
+---
+
+@fn BbcDE::GetADC(uint16_t ipmt)
+@brief Return the digitized ADC value (0–4095) for PMT @p ipmt.
+@param ipmt  0-indexed PMT channel number.
+@return ADC bin number in [0, ADCBin−1] = [0, 4095].
+@details
+Calls `GetDE()` and converts using the per-PMT gain and offset:
+@f[
+  \text{ADC} = \text{clip}\!\left(
+    \left\lfloor \frac{Q}{g_{\text{ADC}}[\text{ipmt}]} \right\rfloor
+    + \delta_{\text{ADC}}[\text{ipmt}],\;
+    0,\; 4095
+  \right)
+@f]
+where @f$g_{\text{ADC}}@f$ = `pC_per_ADCBins[ipmt]` (pC/bin) and
+@f$\delta_{\text{ADC}}@f$ = `shift_ADC0[ipmt]` (bins).
+
+---
+
+@fn IsSmall(short iPMT)
+@brief Return true if PMT channel @p iPMT belongs to the inner (small-tile) annulus.
+@param iPMT  0-indexed PMT channel number (0 ≤ iPMT < NPMT2 = 48).
+@return `true` if the channel is a small-tile PMT (channels 0–15 on East or 24–39 on West),
+        `false` for large-tile PMTs (channels 16–23 on East or 40–47 on West).
+@details
+The test is:
+- @f$0 \le \text{iPMT} < N_{small} = 16@f$ (East small)
+- @f$N_{PMT,1} \le \text{iPMT} < N_{PMT,1} + N_{small} = 40@f$ (West small)
+
+TDC values are only written for small-tile PMTs because the outer large tiles do not
+have individual TDC readout in the BBC electronics.
+
+---
+
+@section bbcsim_constants Module-Level Constants
+
+All constants are defined at file scope in `StBbcSimulationMaker.cxx`.
+
+### PMT Count Constants
+
+| Constant       | Type       | Value | Description                                       |
+|----------------|------------|-------|---------------------------------------------------|
+| `NPMTsmall1`   | `uint16_t` | 16    | Number of small-tile PMTs per side.               |
+| `NPMTlarge1`   | `uint16_t` | 8     | Number of large-tile PMTs per side.               |
+| `NPMT1`        | `uint16_t` | 24    | Total PMT channels per side (East or West).       |
+| `NPMT2`        | `uint16_t` | 48    | Total PMT channels for the full BBC detector.     |
+
+### Physics Constants
+
+| Constant                  | Type    | Value              | Units        | Description                                                    |
+|---------------------------|---------|--------------------|--------------|----------------------------------------------------------------|
+| `BbcTimingRMS`            | `float` | 900×10⁻¹² | s            | Gaussian RMS timing resolution for a single MIP.              |
+| `dE1MIPper_gcm2`          | `float` | 1.95×10⁻³  | GeV/(g/cm²) | Bethe-Bloch mean energy loss in polystyrene for a MIP.        |
+| `PolystereneDensity`      | `float` | 1.032              | g/cm³        | Density of polystyrene scintillator.                           |
+| `TyleThickness`           | `float` | 1.0                | cm           | Scintillator tile thickness.                                   |
+| `dE_1MIP`                 | `float` | ≈2.012×10⁻³| GeV          | Energy deposit of 1 MIP traversing one tile.                  |
+| `NPhotoelectrons_1MIP`    | `float` | 15                 | —            | Mean photoelectron yield per MIP.                              |
+| `pC_per_Photoelectron`    | `float` | 0.3                | pC           | Mean charge per photoelectron at the PMT anode.               |
+| `OuterFactor`             | `float` | 0.8                | —            | Light-yield reduction factor for the outer (large) tiles.     |
+| `SinglePhotoElectronResolution` | `float` | 0.3          | —            | Fractional single-PE resolution (30%); used in `TileResolution`. |
+
+### ADC/TDC Digitization Constants
+
+| Constant        | Type    | Value   | Units    | Description                                                     |
+|-----------------|---------|---------|----------|-----------------------------------------------------------------|
+| `NADCbins`      | `short` | 256     | —        | Legacy ADC range (256 bins); retained for reference.            |
+| `NTDCbins`      | `short` | 256     | —        | TDC range (256 bins; full range = 25.6 ns).                     |
+| `pC_perADCbin`  | `float` | 0.25    | pC/bin   | Legacy CTB ADC conversion gain; superseded by `pC_per_ADCBins`.|
+| `ADC0`          | `float` | 0.0     | pC       | Start of the ADC charge range.                                  |
+| `s_perTDCbin`   | `float` | 0.1×10⁻⁹| s/bin  | TDC bin width (0.1 ns/bin).                                     |
+| `TDC0`          | `float` | 0.0     | s        | Start of the TDC time range.                                    |
+| `ADCBin`        | `short` | 4096    | —        | Current ADC range (12-bit; 4096 bins).                          |
+
+### Per-PMT Calibration Arrays (size 48)
+
+Indices 0–15: East small tiles; 16–23: East large tiles;
+24–39: West small tiles; 40–47: West large tiles.
+
+| Array             | Type           | Description                                                         |
+|-------------------|----------------|---------------------------------------------------------------------|
+| `LightFactor`     | `float[48]`    | Relative light-collection efficiency per PMT, calibrated from 2017 p+p data. Values ~1 for most small tiles; ~0.25–0.4 for large tiles; 0 for dead channels. |
+| `TileResolution`  | `float[48]`    | Per-PMT single-photoelectron resolution (@f$\sigma@f$). Typically 0.3 (30%) for small tiles, 0.4–0.65 for large tiles, 0 for dead channels. |
+| `pC_per_ADCBins`  | `float[48]`    | ADC conversion gain per PMT (pC/bin). Typically 0.02–0.033 pC/bin for small tiles. |
+| `shift_ADC0`      | `int[48]`      | Per-PMT ADC pedestal offset (bins). Zero for most channels; negative for channels with below-zero pedestals. |
+
+### Global Random-Number Generator
+
+| Symbol     | Type      | Description                                                      |
+|------------|-----------|------------------------------------------------------------------|
+| `BbcRndm`  | `TRandom` | Module-level ROOT random-number generator, seeded from clock (seed 0). Shared by both `BbcTOF` and `BbcDE`. |
+
+*/

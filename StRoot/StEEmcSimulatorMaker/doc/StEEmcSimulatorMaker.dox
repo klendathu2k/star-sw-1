@@ -1,0 +1,899 @@
+/**
+ * @defgroup StEEmcSimulatorMaker EEMC Simulator Makers
+ *
+ * @brief GEANT-to-ADC simulation chain for the STAR Endcap Electromagnetic Calorimeter.
+ *
+ * @details
+ * The STAR Endcap Electromagnetic Calorimeter (EEMC) subtends pseudorapidity
+ * 1.08 ≤ η ≤ 2.0 and the full azimuth.  It is divided into 12 azimuthal
+ * sectors.  Each sector contains:
+ *   - **Towers**: 5 subsectors (A–E) × 12 η bins = 60 towers per sector,
+ *     720 towers total.  Each tower is a stack of 24 scintillator/lead
+ *     sampling layers with total depth ≈ 20 X₀.
+ *   - **Preshower-1 (Pre1)**: scintillator layer at depth ~1 X₀ (4.75 mm).
+ *   - **Preshower-2 (Pre2)**: scintillator layer at depth ~2 X₀ (4.75 mm).
+ *   - **Postshower (Post)**: scintillator layer after all absorber (5 mm).
+ *   - **Shower Maximum Detector (SMD)**: two orthogonal strip planes (U, V)
+ *     at depth ~5 X₀, each plane with 288 strips per sector.
+ *
+ * This package provides four STAR maker classes that together form the full
+ * simulation/embedding pipeline:
+ *
+ * | Class                  | Role                                           |
+ * |------------------------|------------------------------------------------|
+ * | StEEmcFastMaker        | Fast GEANT→ADC conversion (ideal gains)        |
+ * | StEEmcSlowMaker        | Realistic PMT/MAPMT statistics + DB pedestals  |
+ * | StEEmcMixerMaker       | ADC-level embedding (data + MC)                |
+ * | StEEmcTrigSimuMaker    | Trigger emulation from StEvent hits            |
+ *
+ * ### Coordinate / Indexing conventions
+ *
+ * | Quantity      | GEANT / internal | StEvent stored |
+ * |---------------|-----------------|----------------|
+ * | Sector        | 1–12            | module 0–11    |
+ * | Subsector     | A–E (0–4)       | submodule 0–4  |
+ * | η bin         | 1–12            | eta 0–11       |
+ * | Pre1 submod   | sub A–E         | submodule 0–4  |
+ * | Pre2 submod   | sub A–E (+5)    | submodule 5–9  |
+ * | Post submod   | sub A–E (+10)   | submodule 10–14|
+ * | SMD strip     | 1–288           | eta 0–287      |
+ *
+ * ### Fast simulation tower ADC formula
+ *
+ * For a tower at pseudorapidity η (centre):
+ * @f[
+ *   \text{gain}(\eta_i) = \frac{\text{ADC}_\text{max}}{E_{T,\text{max}} \cdot \cosh(\eta_i) \cdot f_s}
+ * @f]
+ * @f[
+ *   \text{ADC} = \text{clamp}\!\left(\lfloor E_\text{dep} \cdot \text{gain}(\eta) \rfloor,\; 0,\; 4095\right)
+ * @f]
+ * with @f$\text{ADC}_\text{max} = 4095@f$, @f$E_{T,\text{max}} = 60\;\text{GeV}@f$,
+ * sampling fraction @f$f_s = 0.048@f$, and the twelve η centres:
+ * @verbatim
+ *   η = {1.950, 1.855, 1.765, 1.675, 1.590, 1.510,
+ *         1.435, 1.365, 1.300, 1.235, 1.170, 1.115}
+ * @endverbatim
+ *
+ * For Pre/Post and SMD layers a single fixed gain of 23 000 ADC/GeV is used.
+ *
+ * ### Slow simulation photostatistics model
+ *
+ * For Pre/Postshower and SMD strips the fast-simulator ADC is replaced by a
+ * physically motivated model:
+ * -# Recover GEANT energy deposit @f$E@f$ stored in StEmcHit::energy().
+ * -# Convert to mean number of MIPs: @f$\mu_\text{MIP} = E / \Delta E_\text{MIP}@f$.
+ * -# Convert to mean photoelectrons: @f$\bar{N}_\text{pe} = \mu_\text{MIP} \cdot \langle N_\text{pe}/\text{MIP}\rangle@f$.
+ * -# Draw @f$N_\text{pe} \sim \text{Poisson}(\bar{N}_\text{pe})@f$.
+ * -# Smear with single-p.e. resolution:
+ *    @f$N_\text{pe}' \sim \mathcal{N}(N_\text{pe},\; \sqrt{N_\text{pe}}\,\sigma_{1\text{pe}})@f$.
+ * -# Compute new ADC: @f$\text{ADC} = \lfloor N_\text{pe}' \cdot \Delta E_\text{MIP} \cdot G / \langle N_\text{pe}/\text{MIP}\rangle + \text{ped} + 0.5 \rfloor@f$.
+ *
+ * MIP energy loss values (from the PDG, 1.998 MeV/cm × thickness):
+ *   - SMD (7 mm polystyrene):    @f$\Delta E_\text{MIP} = 1.399\;\text{MeV}@f$
+ *   - Pre1 / Pre2 (4.75 mm):    @f$\Delta E_\text{MIP} = 0.949\;\text{MeV}@f$
+ *   - Post (5 mm):               @f$\Delta E_\text{MIP} = 0.999\;\text{MeV}@f$
+ *
+ * ### Tower brightness correction
+ *
+ * The fast simulator sums GEANT energy over all 24 layers identically.
+ * In reality, the Pre1 and Pre2 scintillator is brighter (1.68× measured
+ * @f$\langle N_\text{pe}/\text{MIP}\rangle@f$ relative to normal layers)
+ * and the Post layer is dimmer (0.94×).  The GEANT model already accounts
+ * for the different thickness, so the brightness correction multipliers are:
+ * @f[
+ *   f = g = \frac{4.0}{4.75} \times 1.68 \approx 1.415, \qquad
+ *   h = \frac{4.0}{5.0}  \times 0.94 = 0.752
+ * @f]
+ * The corrected tower ADC is:
+ * @f[
+ *   \text{ADC}' = \text{ADC} + \frac{(f-1)\,E_{\text{pre1}} + (g-1)\,E_{\text{pre2}} + (h-1)\,E_{\text{post}}}{f_s}\cdot G_T
+ * @f]
+ * where @f$G_T@f$ is the database tower gain and @f$f_s@f$ is the sampling fraction.
+ *
+ * ### Typical chain setup
+ *
+ * **Simulation BFC:**
+ * @code
+ *   StEEmcFastMaker  *fast = new StEEmcFastMaker();
+ *   StEEmcSlowMaker  *slow = new StEEmcSlowMaker();
+ *   chain->AddAfter("BbcSimulation", fast);
+ *   chain->AddAfter("EEmcFastSim",   slow);
+ * @endcode
+ *
+ * **Embedding:**
+ * @code
+ *   fast->SetEmbeddingMode();          // uses local StEmcCollection
+ *   slow->setEmbeddingMode(true);      // drops bad channels, no peds
+ *   StEEmcMixerMaker *mixer = new StEEmcMixerMaker();
+ *   chain->AddAfter("EEmcSlowSim", mixer);
+ * @endcode
+ *
+ * @{
+ */
+
+// ============================================================
+// File documentation
+// ============================================================
+
+/**
+ * @file StEEmcFastMaker.h
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Declaration of StEEmcFastMaker – fast EEMC GEANT→ADC converter.
+ */
+
+/**
+ * @file StEEmcFastMaker.cxx
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Implementation of StEEmcFastMaker.
+ *
+ * Reads EEmcMCData from the GEANT/fzd chain, sums raw MC hits per detector
+ * element via EEeventDst::sumRawMC(), and calls mEE2ST() to populate the
+ * StEmcCollection in StEvent (or a local collection for embedding).
+ */
+
+/**
+ * @file StEEmcSlowMaker.h
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Declaration of StEEmcSlowMaker – realistic EEMC slow simulator.
+ */
+
+/**
+ * @file StEEmcSlowMaker.cxx
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Implementation of StEEmcSlowMaker.
+ *
+ * Provides both MuDst and StEvent code paths.  Private helper methods
+ * implement per-subsystem physics (MakeTower, MakePrePost, MakeSMD) for
+ * each of the two input formats.
+ */
+
+/**
+ * @file StEEmcMixerMaker.h
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Declaration of StEEmcMixerMaker – EEMC ADC-level embedding.
+ */
+
+/**
+ * @file StEEmcMixerMaker.cxx
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Implementation of StEEmcMixerMaker.
+ *
+ * Locates the StEEmcFastMaker in the chain to obtain the MC StEmcCollection
+ * and calls mergeADCs() to perform the ADC summation sector by sector and
+ * detector by detector.
+ */
+
+/**
+ * @file StEEmcTrigSimuMaker.h
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Declaration of StEEmcTrigSimuMaker – EEMC trigger emulator.
+ */
+
+/**
+ * @file StEEmcTrigSimuMaker.cxx
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Implementation of StEEmcTrigSimuMaker.
+ *
+ * Iterates over BEMC and EEMC tower hits stored in StEvent and logs them at
+ * DEBUG level for trigger-emulation purposes.
+ */
+
+// ============================================================
+// StEEmcFastMaker
+// ============================================================
+
+/**
+ * @class StEEmcFastMaker
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Fast simulator converting GEANT energy deposits to ADC values for the EEMC.
+ *
+ * @details
+ * StEEmcFastMaker is the entry point of the EEMC simulation chain.  For each
+ * event it:
+ * -# Calls EEmcMCData::readEventFromChain() to decode raw GEANT hits.
+ * -# Stores them in a temporary EEeventDst, then calls sumRawMC() to
+ *    accumulate energy per detector cell.
+ * -# Calls mEE2ST() to translate the resulting hit list into StEmcRawHit
+ *    objects stored in the StEmcCollection of StEvent (or in a local
+ *    collection when operating in embedding mode).
+ *
+ * ### ADC conversion formulas
+ *
+ * **Towers** (eta-dependent ideal gain):
+ * @f[
+ *   \text{gain}(\eta_i) = \frac{4095}{60\;\text{GeV} \cdot \cosh(\eta_i) \cdot 0.048}
+ * @f]
+ * @f[
+ *   \text{ADC} = \text{clamp}(\lfloor E \cdot \text{gain}(\eta) \rfloor,\; 0,\; 4095)
+ * @f]
+ * The twelve η-bin centres used are:
+ * @code
+ *   feta[] = {1.95, 1.855, 1.765, 1.675, 1.59, 1.51,
+ *              1.435, 1.365, 1.30, 1.235, 1.17, 1.115};
+ * @endcode
+ *
+ * **Pre/Postshower and SMD** (fixed gain):
+ * @f[
+ *   \text{ADC} = \text{clamp}(\lfloor E \cdot 23000\;\text{ADC/GeV}\rfloor,\; 0,\; 4095)
+ * @f]
+ *
+ * ### Data members
+ *
+ * | Name                     | Type                  | Description                                              |
+ * |--------------------------|-----------------------|----------------------------------------------------------|
+ * | mevIN                    | EEmcMCData*           | Decoder for raw GEANT EEMC hits from .fzd chain          |
+ * | meeve                    | EEeventDst*           | Summed hit/tail list (energy per cell)                   |
+ * | mfixTgain                | float*                | Array[kEEmcNumEtas] of ideal tower gains [ADC/GeV]       |
+ * | mLocalStEmcCollection    | StEmcCollection*      | Local collection for embedding mode (owned)              |
+ * | mEmcCollectionIsLocal    | bool                  | If true, write to mLocalStEmcCollection instead of StEvent |
+ * | mUseFullTower            | bool                  | If true, create zero-ADC hits for all towers (default: true) |
+ * | mUseFullPreShower        | bool                  | If true, create zero-ADC hits for all pre/post channels  |
+ * | mUseFullSmdu             | bool                  | If true, create zero-ADC hits for all SMD-U strips       |
+ * | mUseFullSmdv             | bool                  | If true, create zero-ADC hits for all SMD-V strips       |
+ */
+
+/**
+ * @fn StEEmcFastMaker::StEEmcFastMaker(const char *name)
+ * @brief Constructor.
+ * @param name Maker name (default: "EEmcFastSim").
+ *
+ * Allocates mevIN, meeve, and the mfixTgain array.  Initialises gain array
+ * from getTowerGains().  Sets mUseFullTower = true and all other mUseFull*
+ * flags to false, which is the standard BFC behaviour.
+ */
+
+/**
+ * @fn StEEmcFastMaker::~StEEmcFastMaker()
+ * @brief Destructor.  Frees mevIN, meeve, mfixTgain, and (if owned) mLocalStEmcCollection.
+ */
+
+/**
+ * @fn StEEmcFastMaker::Init()
+ * @brief Initialisation.  Logs the run mode and delegates to StMaker::Init().
+ * @return kStOK on success.
+ */
+
+/**
+ * @fn StEEmcFastMaker::Make()
+ * @brief Process one event: read GEANT hits and populate StEmcCollection.
+ * @return kStOK on success or when no EEMC hits are present.
+ *
+ * @details
+ * Flow:
+ * -# mevIN->readEventFromChain() — read raw hits; bail out early if none.
+ * -# Copy to EEeventDst eeveRaw via mevIN->write().
+ * -# eeveRaw.sumRawMC(meeve) — accumulate energy per cell.
+ * -# Acquire (or create) StEmcCollection from StEvent or local storage.
+ * -# mEE2ST(meeve, emcColl) — write StEmcRawHit objects.
+ */
+
+/**
+ * @fn StEEmcFastMaker::Clear(Option_t *option)
+ * @brief Per-event cleanup: clears meeve and (in embedding mode) deletes the local StEmcCollection.
+ * @param option Passed to StMaker::Clear().
+ */
+
+/**
+ * @fn StEEmcFastMaker::SetLocalStEvent()
+ * @brief Forces the maker to use a local StEmcCollection (equivalent to SetEmbeddingMode()).
+ */
+
+/**
+ * @fn StEEmcFastMaker::SetEmcCollectionLocal(bool x)
+ * @brief Enable or disable use of the local (embedding) StEmcCollection.
+ * @param x If true, the maker owns its own StEmcCollection; if false (default), it uses StEvent.
+ */
+
+/**
+ * @fn StEEmcFastMaker::SetEmbeddingMode()
+ * @brief Convenience wrapper: calls SetEmcCollectionLocal(true).
+ */
+
+/**
+ * @fn StEEmcFastMaker::UseFullTower(bool flag)
+ * @brief Control whether zero-ADC hits are created for all tower channels.
+ * @param flag If true (default), all 60 towers per sector receive a hit even if ADC = 0.
+ *
+ * Required by the trigger simulator, which expects a complete hit list.
+ */
+
+/**
+ * @fn StEEmcFastMaker::UseFullPreShower(bool flag)
+ * @brief Control whether zero-ADC hits are created for all Pre1/Pre2/Post channels.
+ * @param flag If true, all 15 submodules × 12 η bins per sector receive a hit.
+ */
+
+/**
+ * @fn StEEmcFastMaker::UseFullSmdu(bool flag)
+ * @brief Control whether zero-ADC hits are created for all SMD-U strips.
+ * @param flag If true, all 288 strips per sector receive a hit.
+ */
+
+/**
+ * @fn StEEmcFastMaker::UseFullSmdv(bool flag)
+ * @brief Control whether zero-ADC hits are created for all SMD-V strips.
+ * @param flag If true, all 288 strips per sector receive a hit.
+ */
+
+/**
+ * @fn StEEmcFastMaker::GetLocalEmcCollection()
+ * @brief Returns the local StEmcCollection (embedding mode only).
+ * @return Pointer to mLocalStEmcCollection, or nullptr if not in embedding mode.
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getSamplingFraction()
+ * @brief Returns the tower electromagnetic sampling fraction.
+ * @return 0.048 (4.8%).
+ *
+ * Updated to 4.8% following Ilya Selyuzhenkov's study
+ * (http://drupal.star.bnl.gov/STAR/node/16426).
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getTowerGains()
+ * @brief Allocates and returns an array of ideal tower gains [ADC/GeV].
+ * @return Pointer to a Float_t[kEEmcNumEtas] array (caller does NOT take ownership;
+ *         small memory leak by design).
+ *
+ * @f[
+ *   \text{gain}[i] = \frac{4095}{60\;\text{GeV} \cdot \cosh(\eta_i) \cdot 0.048}
+ * @f]
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getSmdGain()
+ * @brief Returns the fixed SMD gain factor.
+ * @return 23 000 ADC/GeV.
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getPreshowerGain()
+ * @brief Returns the fixed Pre/Postshower gain factor.
+ * @return 23 000 ADC/GeV.
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getMaxAdc()
+ * @brief Returns the maximum ADC value.
+ * @return 4095 [ADC channels].
+ */
+
+/**
+ * @fn static StEEmcFastMaker::getMaxET()
+ * @brief Returns the transverse-energy scale used for gain calculation.
+ * @return 60 [GeV].
+ */
+
+/**
+ * @fn StEEmcFastMaker::mEE2ST(EEeventDst *eevt, StEmcCollection *emcC)
+ * @brief (private) Translates the summed EEeventDst to StEmcRawHit objects in StEmcCollection.
+ * @param eevt Pointer to the summed EEeventDst hit list.
+ * @param emcC Pointer to the target StEmcCollection.
+ *
+ * @details
+ * Iterates over all four EEMC sub-detector IDs
+ * (kEndcapEmcTowerId, kEndcapEmcPreShowerId, kEndcapSmdUStripId, kEndcapSmdVStripId)
+ * and over all 12 sectors.  For each hit, constructs a new StEmcRawHit and
+ * calls StEmcDetector::addHit().  If the corresponding mUseFull* flag is set,
+ * also adds zero-energy hits for all channels that did not fire.
+ *
+ * Pre1 hits are stored at submodule = sub(A–E, 1–5).<br>
+ * Pre2 hits are stored at submodule = sub + 5 (6–10).<br>
+ * Post hits are stored at submodule = sub + 10 (11–15).<br>
+ * SMD-U strips: submodule fixed at 1; SMD-V: submodule fixed at 2.
+ */
+
+// ============================================================
+// StEEmcSlowMaker
+// ============================================================
+
+/**
+ * @class StEEmcSlowMaker
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Realistic slow simulator for the EEMC Pre/Postshower, SMD, and Tower response.
+ *
+ * @details
+ * StEEmcSlowMaker runs after StEEmcFastMaker and replaces the ideal
+ * ADC values produced by the fast simulator with physically realistic ones.
+ * It applies:
+ * - Poisson statistics for photoelectron production.
+ * - Gaussian smearing of the single-photoelectron peak.
+ * - Database-driven calibration gains and pedestals.
+ * - Masking of channels flagged "fail" in the database.
+ * - A correction for the relative light yield of the preshower and postshower
+ *   layers in the tower sum.
+ *
+ * ### Data members
+ *
+ * | Name                   | Type                                   | Description                                                    |
+ * |------------------------|----------------------------------------|----------------------------------------------------------------|
+ * | mMip2ene               | Float_t                                | Energy deposited by 1 MIP in SMD (GeV); 1.998 MeV/cm × 7 mm  |
+ * | mSig1pe                | Float_t                                | Width of single-p.e. peak [p.e.]; default 0.85                 |
+ * | mMip2pe[MaxSmdStrips]  | Float_t[288]                           | Average pe/MIP for each SMD strip (trapezoid parametrisation)  |
+ * | mPmip2ene[3]           | Float_t[3]                             | MIP energy loss for Pre1, Pre2, Post layers [GeV]              |
+ * | mPmip2pe               | Float_t                                | Average pe/MIP for Pre/Postshower (2.6 × 1.5 = 3.9)           |
+ * | mSource                | Source_t                               | Input data source: kMuDst or kStEvent                          |
+ * | mEeDb                  | StEEmcDb*                              | Pointer to the EEMC database maker                             |
+ * | mNInpEve               | Int_t                                  | Event counter                                                  |
+ * | mHist[32]              | TH1*[32]                               | Internal diagnostic histograms                                 |
+ * | mEnableSMD             | Bool_t                                 | Enable slow simulation for SMD (default: true)                 |
+ * | mEnablePrePost         | Bool_t                                 | Enable slow simulation for Pre/Post (default: true)            |
+ * | mEnableTower           | Bool_t                                 | Enable slow simulation for towers (default: true)              |
+ * | mAddPed                | Bool_t                                 | Add pedestal offset from DB (default: true)                    |
+ * | mSmearPed              | Bool_t                                 | Smear pedestal with σ from DB (default: true)                  |
+ * | mDropBad               | Bool_t                                 | Zero out DB-flagged channels (default: false)                  |
+ * | mOverwrite             | Bool_t                                 | Overwrite ADC in MuDst/StEvent (default: true)                 |
+ * | mIsEmbeddingMode       | Bool_t                                 | True when running in embedding mode                            |
+ * | mIsBFC                 | Bool_t                                 | True when running inside BFC (auto-detected)                   |
+ * | mRelativeLightYield[3] | Float_t[3]                             | Brightness ratio relative to layers 3–23 for Pre1, Pre2, Post |
+ * | mSamplingFraction      | Float_t                                | Sampling fraction copied from fast simulator (0.048)           |
+ * | mSamplingFractionUser  | Float_t                                | User-overridable sampling fraction                             |
+ * | mTowerGains[kEEmcNumSectors] | Float_t[12]                   | Tower gains copied from fast simulator × sampling fraction     |
+ * | mPrepostGains          | Float_t                                | Pre/post gains from fast simulator (23 000 ADC/GeV)            |
+ * | mSmdGains              | Float_t                                | SMD gains from fast simulator (23 000 ADC/GeV)                 |
+ * | mMaxAdc                | Int_t                                  | Maximum ADC (4095)                                             |
+ * | mDoLightYield          | Bool_t                                 | Enable tower brightness correction (default: true)             |
+ * | mTowerGainFact[12][5][12] | Float_t                           | Per-channel tower gain spread factors (default: 1.0)           |
+ * | mSmdGainFact[12][2][288]  | Float_t                           | Per-strip SMD gain spread factors (default: 1.0)               |
+ * | mTruncatePedSmear      | Int_t                                  | Truncate pedestal smearing at N σ (default: 3)                 |
+ */
+
+/**
+ * @fn StEEmcSlowMaker::StEEmcSlowMaker(const Char_t *name, const Char_t *muDstMakerName)
+ * @brief Constructor.
+ * @param name         Maker name (default: "EEmcSlowSim").
+ * @param muDstMakerName Unused legacy parameter.
+ *
+ * Initialises all physics parameters to their default values, copies gains
+ * from StEEmcFastMaker static methods, and emits a warning if the fast
+ * simulator gains have been changed.  Auto-detects BFC context via
+ * GetParentChain()->InheritsFrom("StBFChain").
+ */
+
+/**
+ * @fn StEEmcSlowMaker::~StEEmcSlowMaker()
+ * @brief Destructor.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::Init()
+ * @brief Initialisation.
+ *
+ * @details
+ * Applies context-sensitive defaults:
+ * - **Embedding mode**: drop bad channels, disable ped addition/smearing, use StEvent.
+ * - **BFC (non-embedding)**: add + smear peds, drop bad channels, use StEvent.
+ * - **Analysis chain (MuDst)**: disable tower simulation (energy not in MuDst).
+ *
+ * Locates the StEEmcDb dataset and initialises diagnostic histograms.
+ *
+ * @return kStOK on success, kStErr if the database is not found.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::Make()
+ * @brief Process one event.
+ * @return kStOK, kStWarn (missing input), or kStErr (bad indexing).
+ *
+ * Dispatches to the MuDst or StEvent code path depending on mSource, then
+ * calls MakeTower, MakePrePost, and MakeSMD in turn (subject to enable flags).
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setEmbeddingMode(Bool_t e)
+ * @brief Enable embedding mode (drops bad channels, disables peds, forces StEvent path).
+ * @param e If true (default), embedding mode is activated.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::disableTower()
+ * @brief Disable slow simulation for towers.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::disablePrePost()
+ * @brief Disable slow simulation for Pre/Postshower detectors.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::disableSMD()
+ * @brief Disable slow simulation for SMD detectors.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setAddPed(Bool_t a)
+ * @brief Enable/disable addition of the DB pedestal offset to the ADC.
+ * @param a Default: true.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSmearPed(Bool_t s)
+ * @brief Enable/disable Gaussian smearing of the pedestal.
+ * @param s Default: true.  Smearing is truncated at mTruncatePedSmear × σ.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setDropBad(Bool_t d)
+ * @brief Enable/disable zeroing of channels with the DB "fail" bit set.
+ * @param d Default: false.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setOverwrite(Bool_t o)
+ * @brief Enable/disable overwriting of ADC values in the MuDst/StEvent.
+ * @param o Default: true.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setTruncatePedSmear(Float_t nSigma)
+ * @brief Set the Gaussian truncation level for pedestal smearing.
+ * @param nSigma Smearing is drawn from |gauss(0,1)| ≤ nSigma; default 3.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setMipElossSmd(Float_t e)
+ * @brief Set the MIP energy loss in an SMD strip.
+ * @param e Energy in GeV; default = 1.998 MeV/cm × 0.7 cm = 1.399×10⁻³ GeV.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setNpePerMipSmd(Int_t strip, Float_t npe)
+ * @brief Set the average number of photoelectrons per MIP for a specific SMD strip.
+ * @param strip Strip index 0–287.
+ * @param npe   Average pe/MIP.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setNpePerMipSmd(Float_t npe)
+ * @brief Set a uniform pe/MIP for all 288 SMD strips.
+ * @param npe Average pe/MIP for all strips.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setMipElossPre(Int_t layer, Float_t e)
+ * @brief Set the MIP energy loss for a Pre/Postshower layer.
+ * @param layer Layer index: 0=Pre1, 1=Pre2, 2=Post.
+ * @param e     Energy in GeV.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setNpePerMipPre(Float_t npe)
+ * @brief Set the average pe/MIP for all Pre/Postshower layers.
+ * @param npe Default: 2.6 × 1.5 = 3.9 pe/MIP.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSinglePeResolution(Float_t r)
+ * @brief Set the single-photoelectron resolution σ of the MAPMT.
+ * @param r Width in p.e.; default 0.85.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSource(const Char_t *name)
+ * @brief Set the ADC data source.
+ * @param name Either "MuDst" (default) or "StEvent".
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setRelativeLightYield(Float_t pre1, Float_t pre2, Float_t post)
+ * @brief Set the relative light yield (measured ⟨Npe⟩/MIP ratio) for the Pre1, Pre2, and Post layers.
+ * @param pre1 Ratio for Pre1 relative to layers 3–23; default 1.86.
+ * @param pre2 Ratio for Pre2; default 1.86.
+ * @param post Ratio for Postshower; default 0.94.
+ *
+ * The brightness correction applied internally accounts for the known
+ * thickness differences via a (4.0/thickness) factor, so callers should
+ * pass the measured ratios from full-thickness tiles.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setDoLightYield(Bool_t ly)
+ * @brief Enable or disable the tower pre/post brightness correction.
+ * @param ly If false, no brightness correction is applied.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSamplingFraction(Float_t f)
+ * @brief Override the sampling fraction used for tower ADC calculation.
+ * @param f New sampling fraction (dimensionless).
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setTowerGainSpread(Float_t s, Float_t mean)
+ * @brief Introduce a Gaussian spread in the tower channel gains.
+ * @param s    Standard deviation of the Gaussian [fraction of nominal].
+ * @param mean Mean gain factor (default 1.0).
+ *
+ * Each tower's gain factor is drawn from
+ * @f$\mathcal{N}(\text{mean},\, s)@f$ truncated to @f$(-\text{mean},\, 1]@f$.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSmdGainSpread(Float_t s, Int_t sector, Int_t uv, Int_t strip_index)
+ * @brief Introduce a gain spread for a specific SMD strip in one sector/plane.
+ * @param s           Standard deviation [fraction of nominal].
+ * @param sector      Sector index 0–11.
+ * @param uv          Plane index: 0=U, 1=V.
+ * @param strip_index Strip index 0–287.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSmdGainSpread(Float_t s, Int_t strip_index)
+ * @brief Apply the same gain spread to a given strip across all sectors and planes.
+ * @param s           Standard deviation [fraction of nominal].
+ * @param strip_index Strip index 0–287.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setSmdGainSpread(Float_t s)
+ * @brief Apply the same gain spread to all SMD strips in all sectors/planes.
+ * @param s Standard deviation [fraction of nominal].
+ */
+
+/**
+ * @fn static StEEmcSlowMaker::getMipdEdx()
+ * @brief Return the MIP specific energy loss used throughout the slow simulator.
+ * @return 0.001998 GeV/cm (1.998 MeV/cm from PDG).
+ */
+
+/**
+ * @fn StEEmcSlowMaker::avgNumPePerMip(Int_t stripID)
+ * @brief (private) Piecewise-linear parameterisation of ⟨Npe⟩/MIP vs. SMD strip ID.
+ * @param stripID Strip index 0–287 (0-based).
+ * @return Average number of photoelectrons per MIP for the given strip.
+ *
+ * @details
+ * Trapezoidal parameterisation (see EEMC elog 457):
+ * | Strip range | ⟨Npe⟩/MIP range |
+ * |-------------|----------------|
+ * | 0–1         | 2.0            |
+ * | 1–20        | 2.0 → 4.0      |
+ * | 20–250      | 4.0 → 6.0      |
+ * | 250–290     | 6.0 → 9.0      |
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakeTower(StMuEmcCollection *emc)
+ * @brief (private) Apply slow simulation to towers from MuDst input.
+ * @param emc Pointer to StMuEmcCollection.
+ * @return kStOK or kStErr.
+ *
+ * Applies DB gains, pre/post brightness correction, pedestal addition/smearing,
+ * channel masking, and ADC saturation clamping.  Overwrites the MuDst ADC
+ * if mOverwrite is set.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakePrePost(StMuEmcCollection *emc)
+ * @brief (private) Apply slow simulation to Pre/Postshower from MuDst input.
+ * @param emc Pointer to StMuEmcCollection.
+ * @return kStOK or kStErr.
+ *
+ * Applies Poisson + Gaussian photostatistics and DB pedestals.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakeSMD(StMuEmcCollection *emc)
+ * @brief (private) Apply slow simulation to SMD U/V strips from MuDst input.
+ * @param emc Pointer to StMuEmcCollection.
+ * @return kStOK or kStErr.
+ *
+ * Loops over U and V planes; for each strip applies the strip-dependent
+ * ⟨Npe⟩/MIP, Poisson + Gaussian statistics, gain-spread factor, and
+ * DB pedestal.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakeTower(StEmcCollection *emc)
+ * @brief (private) Apply slow simulation to towers from StEvent input.
+ * @param emc Pointer to StEmcCollection.
+ * @return kStOK or kStErr.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakePrePost(StEmcCollection *emc)
+ * @brief (private) Apply slow simulation to Pre/Postshower from StEvent input.
+ * @param emc Pointer to StEmcCollection.
+ * @return kStOK or kStErr.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::MakeSMD(StEmcCollection *emc)
+ * @brief (private) Apply slow simulation to SMD U/V strips from StEvent input.
+ * @param emc Pointer to StEmcCollection.
+ * @return kStOK or kStErr.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::checkDBped(const EEmcDbItem *x)
+ * @brief (private) Validate database pedestal values.
+ * @param x Pointer to EEmcDbItem.
+ * @return true if ped ≥ 0 and sigPed ≥ 0.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::getPedSmear(Float_t sigPed)
+ * @brief (private) Draw a truncated-Gaussian pedestal fluctuation.
+ * @param sigPed Pedestal sigma from the database [ADC].
+ * @return Smearing value [ADC]; drawn from @f$\mathcal{N}(0,\,\sigma)@f$ truncated at mTruncatePedSmear × σ.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setZeroAdc(StMuEmcCollection *emc)
+ * @brief (private) Zero out all EEMC ADC values in the MuDst collection (error recovery).
+ * @param emc Pointer to StMuEmcCollection.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::setZeroAdc(StEmcCollection *emc)
+ * @brief (private) Zero out all EEMC ADC values in the StEvent collection (error recovery).
+ * @param emc Pointer to StEmcCollection.
+ */
+
+/**
+ * @fn StEEmcSlowMaker::InitHisto()
+ * @brief (private) Allocate and register internal diagnostic histograms.
+ *
+ * Histograms include: initial and revised ADC distributions for towers,
+ * Pre/Post, and SMD; ADC vs. strip-ID scatter plots.
+ */
+
+// ============================================================
+// StEEmcMixerMaker
+// ============================================================
+
+/**
+ * @class StEEmcMixerMaker
+ * @ingroup StEEmcSimulatorMaker
+ * @brief ADC-level EEMC embedding: merges a real-data StEmcCollection with an MC StEmcCollection.
+ *
+ * @details
+ * StEEmcMixerMaker implements the EEMC embedding scheme at the ADC level.
+ * It obtains:
+ * - **Collection A** from the real-data StEvent::emcCollection() (built from DAQ raw data).
+ * - **Collection B** from StEEmcFastMaker::GetLocalEmcCollection() (MC simulation).
+ *
+ * For every detector cell (tower, pre/post, SMD strip) present in both
+ * collections the ADC values are summed:
+ * @f[
+ *   \text{ADC}_\text{merged} = \text{ADC}_A + \text{ADC}_B
+ * @f]
+ * Cells present only in collection B but absent from collection A (e.g. due
+ * to masked crates in the real data) are silently dropped.  After merging,
+ * the energy field of every hit is reset to a non-physical sentinel (−654.321)
+ * to force downstream ADC-to-energy makers to recompute it.
+ *
+ * An internal panic flag (`panicOff`) is set on the first fatal error and
+ * disables all subsequent processing for the job, preventing silent corruption
+ * of the output.
+ *
+ * ### Data members
+ *
+ * | Name                  | Type              | Description                                          |
+ * |-----------------------|-------------------|------------------------------------------------------|
+ * | panicOff              | Bool_t            | Fatal-error latch; disables embedding once set       |
+ * | mEEDb                 | StEEmcDb*         | Pointer to the EEMC database (for gain lookups)      |
+ * | mMixerEmcCollection   | StEmcCollection*  | Pointer to the merged collection (= collection A after merging) |
+ */
+
+/**
+ * @fn StEEmcMixerMaker::StEEmcMixerMaker(const char *name)
+ * @brief Constructor.
+ * @param name Maker name (default: "EEmcMixer").
+ *
+ * Initialises panicOff to false and mEEDb to nullptr.
+ */
+
+/**
+ * @fn StEEmcMixerMaker::~StEEmcMixerMaker()
+ * @brief Destructor.
+ */
+
+/**
+ * @fn StEEmcMixerMaker::Init()
+ * @brief Initialisation.
+ * @return kStOK on success, kStErr if StEEmcDb is not in the chain.
+ *
+ * Locates StEEmcDb in the dataset tree and sets panicOff on failure.
+ */
+
+/**
+ * @fn StEEmcMixerMaker::Make()
+ * @brief Process one event: merge real-data and MC ADC values.
+ * @return kStOK, kStWarn (missing source), or kStErr (no StEvent or fatal error).
+ *
+ * Retrieves both StEmcCollections, prints debug output if Debug() is set,
+ * then calls mergeADCs() to perform the actual ADC summation.
+ * Sets mMixerEmcCollection to point to the merged collection A.
+ */
+
+/**
+ * @fn StEEmcMixerMaker::Finish()
+ * @brief End-of-job cleanup (delegates to StMaker::Finish()).
+ * @return kStOK.
+ */
+
+/**
+ * @fn StEEmcMixerMaker::getMixerEmcCollection()
+ * @brief Return the merged (output) StEmcCollection.
+ * @return Pointer to mMixerEmcCollection (collection A after merging).
+ */
+
+/**
+ * @fn StEEmcMixerMaker::mergeADCs(StEmcCollection *A, StEmcCollection *B)
+ * @brief (private) Core ADC-merging routine.
+ * @param A Collection from real data (modified in place).
+ * @param B Collection from MC simulation (read-only semantics; hits not deleted).
+ * @return true on success, false on internal consistency error.
+ *
+ * @details
+ * Algorithm:
+ * -# Loop over four EEMC sub-detectors (tower, pre/post, SMD-U, SMD-V).
+ * -# Loop over 12 sectors.
+ * -# Build a working copy of collection-B hits (by pointer) for the current sector.
+ * -# For each hit in collection A, search the working copy of B for a matching
+ *    hit (same module, eta, sub).  On match: add ADC_B to ADC_A, remove the
+ *    B hit from the working list, reset energy to −654.321.
+ * -# After processing all A hits, warn about any B hits that could not be matched
+ *    (these correspond to channels masked out in the real data).
+ * -# Sets panicOff on internal consistency errors (mismatched module number).
+ */
+
+// ============================================================
+// StEEmcTrigSimuMaker
+// ============================================================
+
+/**
+ * @class StEEmcTrigSimuMaker
+ * @ingroup StEEmcSimulatorMaker
+ * @brief Trigger emulator reading EEMC (and BEMC) tower hits from StEvent.
+ *
+ * @details
+ * StEEmcTrigSimuMaker provides a framework for simulating the EMC trigger
+ * response.  In the current implementation it retrieves tower hits from
+ * StEvent for both the Barrel EMC (kBarrelEmcTowerId) and the Endcap EMC
+ * (kEndcapEmcTowerId), logs them at DEBUG level, and calls printE() for
+ * a formatted dump of all EEMC sub-detectors.
+ *
+ * This class is intended as a skeleton into which the full trigger
+ * emulation logic can be inserted.
+ */
+
+/**
+ * @fn StEEmcTrigSimuMaker::StEEmcTrigSimuMaker(const char *name)
+ * @brief Constructor.
+ * @param name Maker name (default: "EEmcTrigSimu").
+ */
+
+/**
+ * @fn StEEmcTrigSimuMaker::~StEEmcTrigSimuMaker()
+ * @brief Destructor.
+ */
+
+/**
+ * @fn StEEmcTrigSimuMaker::Init()
+ * @brief Initialisation (creates tables and histograms — currently empty).
+ * @return kStOK.
+ */
+
+/**
+ * @fn StEEmcTrigSimuMaker::Make()
+ * @brief Process one event: read tower hits and log them.
+ * @return kStOK.
+ *
+ * Accesses StEvent, iterates over BEMC and EEMC tower modules and all hits
+ * within each module, logging (sec, sub, eta, ADC, energy) at DEBUG level.
+ * Returns kStOK (not kStWarn) if EEMC tower data are absent, after a warning.
+ */
+
+/**
+ * @fn StEEmcTrigSimuMaker::printE()
+ * @brief Print a formatted dump of all four EEMC sub-detectors from StEvent.
+ *
+ * Iterates over kEndcapEmcTowerId, kEndcapEmcPreShowerId, kEndcapSmdUStripId,
+ * and kEndcapSmdVStripId, printing hit indices, sector, sub/strip, energy, and
+ * ADC at DEBUG level.
+ */
+
+/** @} */ // end of defgroup StEEmcSimulatorMaker

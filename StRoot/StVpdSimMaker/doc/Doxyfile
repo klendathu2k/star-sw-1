@@ -1,0 +1,117 @@
+# Doxyfile for StVpdSimMaker
+# Generated for the STAR VPD Simulation Maker documentation.
+# Run from this directory:  doxygen Doxyfile
+# Output will appear in ./html/
+
+#---------------------------------------------------------------------------
+# Project identity
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "StVpdSimMaker"
+PROJECT_BRIEF          = "STAR Vertex Position Detector Monte-Carlo Simulation Maker"
+PROJECT_NUMBER         = "1.3"
+
+#---------------------------------------------------------------------------
+# Input / output paths
+#---------------------------------------------------------------------------
+# The INPUT path is relative to the location of this Doxyfile, i.e. the
+# doc/ subdirectory.  ".." therefore resolves to StRoot/StVpdSimMaker/.
+INPUT                  = .. \
+                         .
+RECURSIVE              = NO
+FILE_PATTERNS          = *.h *.cxx *.dox
+
+EXCLUDE_PATTERNS       =
+
+OUTPUT_DIRECTORY       = .
+
+#---------------------------------------------------------------------------
+# Extraction policy
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+#---------------------------------------------------------------------------
+# Build options
+#---------------------------------------------------------------------------
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+INHERIT_DOCS           = YES
+SEPARATE_MEMBER_PAGES  = NO
+BUILTIN_STL_SUPPORT    = YES
+DISTRIBUTE_GROUP_DOC   = YES
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+#---------------------------------------------------------------------------
+# HTML output
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_COLORSTYLE        = AUTO_LIGHT
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_DYNAMIC_SECTIONS  = NO
+
+#---------------------------------------------------------------------------
+# LaTeX output  (disabled — use HTML only)
+#---------------------------------------------------------------------------
+GENERATE_LATEX         = NO
+
+#---------------------------------------------------------------------------
+# Man page output  (disabled)
+#---------------------------------------------------------------------------
+GENERATE_MAN           = NO
+
+#---------------------------------------------------------------------------
+# RTF output  (disabled)
+#---------------------------------------------------------------------------
+GENERATE_RTF           = NO
+
+#---------------------------------------------------------------------------
+# Preprocessing
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+SEARCH_INCLUDES        = YES
+
+PREDEFINED             = __cplusplus \
+                         ClassDef(name,id)= \
+                         ClassImp(name)=
+
+#---------------------------------------------------------------------------
+# Dot / graph output
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO
+
+#---------------------------------------------------------------------------
+# Messages
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+
+#---------------------------------------------------------------------------
+# Alphabetical index
+#---------------------------------------------------------------------------
+ALPHABETICAL_INDEX     = YES
+
+#---------------------------------------------------------------------------
+# Formula rendering  (requires LaTeX on PATH if dot is used)
+#---------------------------------------------------------------------------
+USE_MATHJAX            = YES
+MATHJAX_VERSION        = MathJax_3
+MATHJAX_FORMAT         = HTML-CSS

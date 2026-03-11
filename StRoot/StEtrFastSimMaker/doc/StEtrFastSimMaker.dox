@@ -1,0 +1,284 @@
+/**
+ * @file StEtrFastSimMaker.dox
+ * @brief Doxygen documentation for the StEtrFastSimMaker module.
+ *
+ * This file contains the physics narrative, group definition, and
+ * detailed per-method documentation for the ETR fast simulator.
+ */
+
+// ---------------------------------------------------------------------------
+// Group / module definition
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StEtrFastSimMaker ETR Fast Simulator
+ * @brief Fast digitisation of Monte Carlo hits for the STAR Endcap Tracking
+ *        (ETR) prototype detector.
+ *
+ * @section etr_overview Overview
+ *
+ * The **ETR** (Endcap Tracking, prototype) is a forward-endcap tracking
+ * detector studied within the STAR experiment framework.  It is modelled as
+ * a Transition-Radiation-Detector (TRD)-like stack with three disk layers,
+ * each divided into twelve azimuthal sectors, and each sector further
+ * subdivided into up to thirty pad sections.
+ *
+ * Geometry summary:
+ *   - **Layers**  (radial disks)  : 3  (iLayer = 0, 1, 2)
+ *   - **Sectors** (azimuthal)     : 12 (iSector = 0–11)
+ *   - **Sections** (pad sections) : up to 100 per sector/layer
+ *
+ * The detector volume identifier used in the GEANT hit table encodes all
+ * three indices:
+ * @code
+ *   volume_id = section + 100 * layer + 10000 * sector
+ * @endcode
+ *
+ * @section etr_fastsim Fast Simulation
+ *
+ * A *fast simulator* replaces the full GEANT/GSTAR digitisation chain
+ * (charge sharing, ADC response, cluster finding) with a parametric
+ * smearing step, dramatically reducing CPU cost for large-scale production
+ * simulations.
+ *
+ * `StEtrFastSimMaker` performs the following steps each event:
+ *
+ * 1. Retrieves `StEvent` from the input data stream.
+ * 2. Obtains (or creates) the `StEtrHitCollection` within that `StEvent`.
+ * 3. Reads the GEANT Monte Carlo hit table `g2t_etr_hit` from the `"geant"`
+ *    input dataset.
+ * 4. For every row in `g2t_etr_hit`:
+ *    -# Extracts the true global Cartesian hit position \f$(x, y, z)\f$.
+ *    -# Applies independent Gaussian smearing to \f$x\f$ and \f$y\f$
+ *       with \f$\sigma = 300\,\mu\text{m}\f$ (no smearing applied in
+ *       \f$z\f$, which is determined by the disk geometry).
+ *    -# Decodes `volume_id` into `section`, `layer`, and `sector`.
+ *    -# Constructs an `StEtrHit` from the smeared position, geometry
+ *       indices, and the deposited energy `de`.
+ *    -# Attaches MC truth track association via `StHit::setIdTruth()`.
+ *    -# Inserts the hit into the `StEtrHitCollection`.
+ * 5. Optionally renders all ETR hits in a 3-D event display
+ *    (`StuDraw3DEvent`) when the compile-time flag `etrDraw != 0`.
+ *
+ * @section etr_inputs Inputs
+ *
+ * | Dataset key   | Type                  | Description                            |
+ * |---------------|-----------------------|----------------------------------------|
+ * | `"StEvent"`   | `StEvent*`            | Reconstructed event container          |
+ * | `"geant"`     | `TDataSet` (iterator) | GEANT output tables                    |
+ * | `"geant/g2t_etr_hit"` | `St_g2t_etr_hit*` | Per-hit GEANT truth table         |
+ *
+ * @section etr_outputs Outputs
+ *
+ * | Container                | Location in `StEvent`              | Description                   |
+ * |--------------------------|------------------------------------|-------------------------------|
+ * | `StEtrHitCollection`     | `StEvent::etrHitCollection()`      | Collection of smeared ETR hits |
+ *
+ * @section etr_params Detector Resolution Parameters
+ *
+ * The transverse position resolution is controlled by `mErr[0]` (\f$\sigma_x\f$)
+ * and `mErr[1]` (\f$\sigma_y\f$), both initialised to
+ * \f$3 \times 10^{-2}\,\text{cm} = 300\,\mu\text{m}\f$.
+ * The longitudinal component `mErr[2]` (\f$\sigma_z\f$) is set to zero.
+ *
+ * @note The `InitRun()` log message reads "Smearing SVT hits" — this is a
+ *       copy-paste artefact from an SVT-based template; the maker smears
+ *       **ETR** hits.
+ *
+ * @section etr_history Revision History
+ *
+ * | Revision | Date       | Author | Note                        |
+ * |----------|------------|--------|-----------------------------|
+ * | 1.1      | 2012-03-22 | perev  | Initial version             |
+ * | 1.2      | 2012-04-10 | perev  | Position errors set to 300 µm |
+ * | 1.3      | 2012-07-21 | perev  | `IdTruth` propagation added |
+ *
+ * @ingroup StEtrFastSimMaker
+ */
+
+// ---------------------------------------------------------------------------
+// File block
+// ---------------------------------------------------------------------------
+
+/**
+ * @file StEtrFastSimMaker.h
+ * @ingroup StEtrFastSimMaker
+ * @brief Declaration of `StEtrFastSimMaker`.
+ *
+ * Defines the `StEtrFastSimMaker` class, a STAR `StMaker`-derived fast
+ * simulator that converts raw GEANT Monte Carlo hits (`g2t_etr_hit`) into
+ * smeared `StEtrHit` objects stored in `StEvent::etrHitCollection()`.
+ *
+ * **Include guard:** `STAR_StEtrFastSimMaker`
+ *
+ * @author V. Perev
+ * @date   2012-03-22
+ * @version $Id: StEtrFastSimMaker.h,v 1.2 2015/08/29 03:24:43 perev Exp $
+ */
+
+/**
+ * @file StEtrFastSimMaker.cxx
+ * @ingroup StEtrFastSimMaker
+ * @brief Implementation of `StEtrFastSimMaker`.
+ *
+ * Contains the constructor, `InitRun()`, and `Make()` implementations.
+ * A file-scope `TRandom* myRandom` pointer is created in the constructor
+ * and used for Gaussian smearing in `Make()`.
+ *
+ * @author V. Perev
+ * @date   2012-03-22
+ * @version $Id: StEtrFastSimMaker.cxx,v 1.3 2012/07/21 18:43:53 perev Exp $
+ */
+
+// ---------------------------------------------------------------------------
+// Class block
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StEtrFastSimMaker
+ * @ingroup StEtrFastSimMaker
+ * @brief Fast simulator for the STAR ETR (Endcap Tracking prototype) detector.
+ *
+ * Derives from `StMaker` and is inserted into the standard STAR maker chain.
+ * On each call to `Make()` it reads the GEANT truth hit table `g2t_etr_hit`,
+ * applies transverse Gaussian smearing to model detector resolution, and
+ * populates `StEvent::etrHitCollection()` with the resulting `StEtrHit`
+ * objects.
+ *
+ * ### Geometry encoding
+ *
+ * The `volume_id` field in `g2t_etr_hit` encodes detector geometry as:
+ * @code
+ *   section =  volume_id          % 100   // pad section index (0–99)
+ *   layer   = (volume_id / 100)   % 100   // disk layer index  (0–2)
+ *   sector  = (volume_id / 10000) % 100   // azimuthal sector  (0–11)
+ * @endcode
+ *
+ * ### Smearing model
+ *
+ * Independent Gaussian offsets are added to \f$x\f$ and \f$y\f$:
+ * \f[
+ *   x' = x + \mathcal{N}(0,\,\sigma_x), \quad
+ *   y' = y + \mathcal{N}(0,\,\sigma_y)
+ * \f]
+ * with \f$\sigma_x = \sigma_y = 300\,\mu\text{m}\f$ (no \f$z\f$ smearing).
+ *
+ * @see StEtrHit
+ * @see StEtrHitCollection
+ * @see St_g2t_etr_hit
+ */
+
+// ---------------------------------------------------------------------------
+// Constructor
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn StEtrFastSimMaker::StEtrFastSimMaker(const char *name)
+ * @brief Constructor.
+ * @ingroup StEtrFastSimMaker
+ *
+ * Registers the maker with the STAR maker chain under @p name, allocates a
+ * new `TRandom` instance for Gaussian smearing, and sets the per-axis
+ * position uncertainties:
+ * - `mErr[0]` = 3 × 10⁻² cm  (\f$\sigma_x\f$)
+ * - `mErr[1]` = 3 × 10⁻² cm  (\f$\sigma_y\f$)
+ * - `mErr[2]` = 0             (no \f$z\f$ smearing)
+ *
+ * @param[in] name  Name passed to the `StMaker` base class; used to
+ *                  identify the maker in the chain and for data-set
+ *                  ownership.  Defaults to `"etr_hits"`.
+ */
+
+// ---------------------------------------------------------------------------
+// InitRun
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn int StEtrFastSimMaker::InitRun(int RunNo)
+ * @brief Per-run initialisation.
+ * @ingroup StEtrFastSimMaker
+ *
+ * Called once per run before the first `Make()` call for that run.
+ * Currently only emits a `LOG_DEBUG` message reporting the configured
+ * smearing widths; the method is provided as a hook for future
+ * database-driven calibration of `mErr`.
+ *
+ * @note The log message text contains "SVT" — this is a historical
+ *       copy-paste artefact.  The smearing applied is for the **ETR**
+ *       detector.
+ *
+ * @param[in] RunNo  STAR run number (currently unused).
+ * @return `kStOk` (always).
+ */
+
+// ---------------------------------------------------------------------------
+// Make
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn int StEtrFastSimMaker::Make()
+ * @brief Main per-event processing method.
+ * @ingroup StEtrFastSimMaker
+ *
+ * Executed once per event by the STAR maker framework.  The method:
+ *
+ * 1. Retrieves `StEvent` from the `"StEvent"` input dataset.
+ *    Returns `kStWarn` if absent.
+ * 2. Retrieves or creates `StEtrHitCollection` in `StEvent`.
+ * 3. Retrieves the `g2t_etr_hit` table from the `"geant"` dataset.
+ *    Returns `kStWarn` if absent or empty.
+ * 4. Iterates over all GEANT hits:
+ *    - Copies the true global position \f$(x,y,z)\f$.
+ *    - Smears \f$x\f$ and \f$y\f$ with `gRandom->Gaus(0, mErr[j])`.
+ *    - Decodes `volume_id` into `section`, `layer`, `sector`.
+ *    - Allocates `StEtrHit(position, sector, layer, section, de)`.
+ *    - Sets MC truth via `setIdTruth(track_p, 100)`.
+ *    - Calls `StEtrHitCollection::addHit()`.
+ * 5. Logs the number of hits added at `Info` level.
+ * 6. If the file-scope flag `etrDraw` is non-zero, renders the ETR hits
+ *    using `StuDraw3DEvent`.
+ *
+ * @return `kStOK` on success; `kStWarn` if mandatory inputs are missing
+ *         or the hit table is empty.
+ *
+ * ### Data flow diagram
+ * @code
+ *   [geant/g2t_etr_hit]  →  smear(x,y)  →  StEtrHit  →  StEtrHitCollection
+ *                                                               ↑
+ *                                                          StEvent
+ * @endcode
+ */
+
+// ---------------------------------------------------------------------------
+// GetCVS
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn const char* StEtrFastSimMaker::GetCVS() const
+ * @brief Returns the CVS/RCS version string for this maker.
+ * @ingroup StEtrFastSimMaker
+ *
+ * Standard STAR maker mechanism for embedding the source-code version and
+ * build timestamp in the shared library.  The returned string encodes the
+ * CVS tag name, file revision, build date, and build time.
+ *
+ * @return Pointer to a static character array containing the version string.
+ */
+
+// ---------------------------------------------------------------------------
+// Data members
+// ---------------------------------------------------------------------------
+
+/**
+ * @var double StEtrFastSimMaker::mErr[3]
+ * @brief Per-axis Gaussian smearing widths (cm).
+ * @ingroup StEtrFastSimMaker
+ *
+ * - `mErr[0]`: \f$\sigma_x = 3 \times 10^{-2}\,\text{cm}\f$ (300 µm)
+ * - `mErr[1]`: \f$\sigma_y = 3 \times 10^{-2}\,\text{cm}\f$ (300 µm)
+ * - `mErr[2]`: \f$\sigma_z = 0\f$ (no longitudinal smearing)
+ *
+ * These values model the expected single-hit position resolution of the
+ * ETR prototype and may be replaced with database-driven values in a future
+ * version of `InitRun()`.
+ */

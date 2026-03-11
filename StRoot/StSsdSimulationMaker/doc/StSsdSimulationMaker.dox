@@ -1,0 +1,822 @@
+/**
+ * @defgroup StSsdSimulationMaker StSsdSimulationMaker — SSD Slow / Full Simulation
+ *
+ * @brief Full-chain slow simulation for the STAR Silicon Strip Detector (SSD, layer 7).
+ *
+ * @details
+ * ## Overview
+ *
+ * The SSD slow simulation converts primary GEANT energy-deposition records into
+ * digitised strip signals that are indistinguishable in format from real detector
+ * readout.  The chain comprises three consecutive STAR Makers:
+ *
+ * | Step | Maker             | Input table      | Output table     |
+ * |------|-------------------|------------------|------------------|
+ * | 1    | St_sls_Maker      | g2t_ssd_hit      | sls_strip        |
+ * | 2    | St_spa_Maker      | sls_strip        | spa_strip        |
+ * | 3    | StSsdEmbeddingMaker | spa_strip (simu) + spa_strip (real) | spa_strip (merged) |
+ *
+ * ---
+ *
+ * ## Detector Geometry
+ *
+ * The SSD occupies layer 7 of the STAR SVT/SSD system and consists of 20 ladders,
+ * each carrying several double-sided silicon strip detector (DSSD) wafers.  Every
+ * wafer has two strip planes:
+ *
+ * - **P-side** (junction side): strips parallel to the short axis.
+ * - **N-side** (ohmic side): strips inclined by the stereo angle @f$\theta@f$
+ *   with respect to the P-side, enabling 2D hit reconstruction from the
+ *   intersection of fired-strip pairs on the two sides.
+ *
+ * A unique wafer identifier is packed as:
+ * @f[
+ *   \text{idWafer} = \text{layer} \times 1000 + \text{wafer} \times 100 + \text{ladder}
+ * @f]
+ * and a strip identifier as:
+ * @f[
+ *   \text{id\_strip} = 10000 \times (10 \times n_\text{strip} + \text{side}) + \text{idWafer}
+ * @f]
+ * where @f$\text{side} = 0@f$ for the P-side and @f$\text{side} = 1@f$ for the N-side.
+ *
+ * ---
+ *
+ * ## Physics of Charge Deposition (Step 1 — St_sls_Maker)
+ *
+ * ### Energy loss
+ * GEANT propagates each primary or secondary track through the 300 μm thick
+ * silicon bulk.  The deposited energy @f$\Delta E@f$ follows a Landau
+ * distribution.  For a minimum-ionising particle (MIP):
+ * @f[
+ *   \langle \Delta E \rangle \approx 100\;\text{keV/cm} \times 300\;\mu\text{m}
+ *                           \approx 30\;\text{keV}
+ * @f]
+ *
+ * ### Electron–hole pair creation
+ * The deposited energy is converted to a number of electron–hole (e–h) pairs
+ * using the mean pair-creation energy @f$\epsilon@f$
+ * (parameter `slsCtrl_st::pairCreationEnergy`, typically 3.62 eV for silicon at
+ * room temperature):
+ * @f[
+ *   N_{e\!-\!h} = \frac{\Delta E}{\epsilon}
+ * @f]
+ *
+ * ### Charge diffusion
+ * Carriers drift to the collecting strips under the bias field.  Transverse
+ * diffusion broadens the charge cloud.  The r.m.s. spread @f$\sigma@f$ on the
+ * P-side and N-side is parameterised by `parDiffP` and `parDiffN` respectively
+ * (extracted from beam-test measurements).  The fraction of the total charge
+ * collected on the @f$k@f$-th strip is:
+ * @f[
+ *   f_k = \frac{1}{2}\left[
+ *           \mathrm{erf}\!\left(\frac{x_{k+1/2}}{\sqrt{2}\,\sigma}\right) -
+ *           \mathrm{erf}\!\left(\frac{x_{k-1/2}}{\sqrt{2}\,\sigma}\right)
+ *         \right]
+ * @f]
+ * where @f$x_{k\pm 1/2}@f$ are the boundaries of strip @f$k@f$ relative to the
+ * hit position.
+ *
+ * ### Capacitive induction
+ * Adjacent strips pick up an induced charge through inter-strip capacitance.
+ * Right- and left-neighbour induction amplitudes are controlled by
+ * `parIndRightP`, `parIndLeftP` (P-side) and `parIndRightN`, `parIndLeftN`
+ * (N-side), also from beam-test fits.
+ *
+ * ### Ideal → Real geometry translation
+ * GEANT computes hit positions in an idealised geometry.  The
+ * `ideal2RealTranslation()` method corrects for mechanical mis-alignment by
+ * propagating the track helix (StPhysicalHelixD) — constructed from the
+ * GEANT-level momentum and charge — onto the real wafer plane defined by its
+ * centre position and normal vector read from the `ssdWafersPosition` database
+ * table.  If the intersection falls outside the active area of the nominal wafer,
+ * the search is extended to the neighbouring ladders (±1).
+ *
+ * ---
+ *
+ * ## Electronics and DAQ Simulation (Step 2 — St_spa_Maker)
+ *
+ * Each of the 491 520 strips (20 ladders × wafers/ladder × 2 × 768 strips/side)
+ * receives a Gaussian noise contribution sampled from the per-strip noise and
+ * pedestal values stored in the `ssdStripCalib` calibration database table:
+ * @f[
+ *   Q_\text{out} = Q_\text{signal} + \mathcal{N}(0,\,\sigma_\text{strip})
+ * @f]
+ * A pedestal subtraction is then applied, followed by a DAQ zero-suppression
+ * threshold cut.  Only strips whose signal exceeds the cut are written to the
+ * `spa_strip` output table.
+ *
+ * ---
+ *
+ * ## Embedding (Step 3 — StSsdEmbeddingMaker)
+ *
+ * For embedding studies (simulated tracks embedded in real collisions) the maker
+ * merges the simulated `spa_strip` table with the real-data `spa_strip` table
+ * decoded from the DAQ stream.  For strips fired in both samples the ADC counts
+ * are summed:
+ * @f[
+ *   \text{ADC}_\text{merged} = \text{ADC}_\text{simu} + \text{ADC}_\text{real}
+ * @f]
+ * Strips present in only one sample are copied to the output unchanged.  MC truth
+ * information (`id_mchit`, `id_mctrack`) from the simulated strips is preserved.
+ *
+ * The maker can operate in three modes:
+ * - **Embedding** (default): merge simu + real.
+ * - **Plain simulation**: run with simulated strips only (no real data).
+ * - **Skip**: if `mDoEmbedding` is set but no SSD data exist in the DAQ stream and
+ *   `mPlainSimIfNoSSD` is false, the event is discarded.
+ *
+ * ---
+ *
+ * ## Data-flow diagram
+ * @verbatim
+ *  GEANT (g2t_ssd_hit / g2t_svt_hit)
+ *        |
+ *        v
+ *  St_sls_Maker::readPointFromTableWithEmbedding()
+ *    - ideal→real geometry correction (StPhysicalHelixD)
+ *    - fills StSsdBarrel hit collections
+ *        |
+ *  St_sls_Maker::chargeSharingOverStrip()
+ *    - e-h pair creation, diffusion, induction
+ *    - fills StSsdStrip signal lists
+ *        |
+ *  St_sls_Maker::writeStripToTable()   --> sls_strip table
+ *        |
+ *  St_spa_Maker::Make()
+ *    - readStripFromTable(sls_strip)
+ *    - readNoiseFromTable(ssdStripCalib)
+ *    - addNoiseToStrip()
+ *    - doDaqSimulation()              --> spa_strip table
+ *        |
+ *  StSsdEmbeddingMaker::AddRawData()
+ *    - merge spa_strip(simu) + spa_strip(real)
+ *                                     --> spa_strip (merged) table
+ * @endverbatim
+ *
+ * @authors B. Hippolyte, W. Pinganaud (original, 2000);
+ *          J. Bouchet (embedding maker, 2008)
+ *
+ * @see http://star.in2p3.fr/STAR_informatique/simulators.html#sls
+ */
+
+
+// ============================================================
+// File documentation blocks
+// ============================================================
+
+/**
+ * @file St_sls_Maker.h
+ * @ingroup StSsdSimulationMaker
+ * @brief Header for St_sls_Maker: GEANT-hit → strip-signal conversion.
+ *
+ * Declares the St_sls_Maker class, its private geometry and control-parameter
+ * data members, and the public interface for the SSD lazy simulator.
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @file St_sls_Maker.cxx
+ * @ingroup StSsdSimulationMaker
+ * @brief Implementation of St_sls_Maker.
+ *
+ * Contains the full simulation of GEANT-hit propagation, ideal-to-real geometry
+ * correction, charge-sharing calculation, and strip-table output for the STAR SSD.
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @file St_spa_Maker.h
+ * @ingroup StSsdSimulationMaker
+ * @brief Header for St_spa_Maker: electronics and DAQ simulation.
+ *
+ * Declares the St_spa_Maker class that applies noise, pedestal subtraction, and
+ * DAQ threshold cuts to the raw strip signals produced by St_sls_Maker.
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @file St_spa_Maker.cxx
+ * @ingroup StSsdSimulationMaker
+ * @brief Implementation of St_spa_Maker.
+ *
+ * Reads the @c sls_strip table, adds per-strip Gaussian noise from the
+ * calibration database, applies the zero-suppression cut, and writes surviving
+ * strips to the @c spa_strip table.
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @file StSsdEmbeddingMaker.h
+ * @ingroup StSsdSimulationMaker
+ * @brief Header for StSsdEmbeddingMaker: simulated + real strip merger.
+ *
+ * Declares the StSsdEmbeddingMaker class that merges simulated SSD strip signals
+ * with real collision data for embedding studies.
+ *
+ * @author J. Bouchet
+ * @date 2008
+ */
+
+/**
+ * @file StSsdEmbeddingMaker.cxx
+ * @ingroup StSsdSimulationMaker
+ * @brief Implementation of StSsdEmbeddingMaker.
+ *
+ * Implements the three-way strip merge (common, real-only, simu-only), DAQ
+ * presence check, and histogram diagnostics for the SSD embedding workflow.
+ *
+ * @author J. Bouchet
+ * @date 2008
+ */
+
+
+// ============================================================
+// Class: St_sls_Maker
+// ============================================================
+
+/**
+ * @class St_sls_Maker
+ * @ingroup StSsdSimulationMaker
+ * @brief Strip Lazy Simulator — converts GEANT hits to SSD strip signals.
+ *
+ * @details
+ * St_sls_Maker is the first stage of the SSD slow simulation.  It reads
+ * GEANT hit records from the @c g2t_ssd_hit (or legacy @c g2t_svt_hit) table,
+ * corrects the hit position from the idealised GEANT geometry to the real
+ * (survey-corrected) detector geometry using helix tracking, computes the
+ * electron–hole charge deposited on each strip through diffusion and capacitive
+ * induction, and writes the resulting analogue strip signals to the @c sls_strip
+ * table.
+ *
+ * All physics parameters (pair-creation energy, diffusion coefficients,
+ * induction amplitudes) are read at the start of each run from the @c slsCtrl
+ * database table via StSsdDbMaker.
+ *
+ * ### Data member summary
+ *
+ * | Member               | Type                    | Description                                     |
+ * |----------------------|-------------------------|-------------------------------------------------|
+ * | `m_ctrl`             | `slsCtrl_st *`          | Control/physics parameters (not owned)          |
+ * | `m_dimensions`       | `St_ssdDimensions *`    | Detector geometry table (not owned)             |
+ * | `m_positions`        | `St_ssdWafersPosition *`| Per-wafer survey positions (not owned)          |
+ * | `mBField`            | `double`                | @f$B_z@f$ at the origin [T·kilogauss unit]      |
+ * | `mHit`               | `StMcSsdHit *`          | Transient MC hit object                         |
+ * | `mSsdLayer`          | `Int_t`                 | SSD layer number (always 7)                     |
+ * | `mNLadder`           | `Int_t`                 | Number of ladders (20)                          |
+ * | `mNWaferPerLadder`   | `Int_t`                 | Number of wafers per ladder (from DB)           |
+ * | `mNStripPerSide`     | `Int_t`                 | Number of strips per side per wafer (from DB)   |
+ * | `mActiveLadders[20]` | `Int_t[20]`             | Active ladder mask (reserved)                   |
+ * | `mDetectorLargeEdge` | `Float_t`               | Full active length along beam [cm]              |
+ * | `mDetectorSmallEdge` | `Float_t`               | Full active width (transverse) [cm]             |
+ * | `mStripPitch`        | `Float_t`               | Strip pitch [cm]                                |
+ * | `mTheta`             | `Float_t`               | Stereo angle between P- and N-side strips [rad] |
+ * | `counter`            | `Int_t *`               | Per-wafer hit counter (diagnostic)              |
+ * | `hRejected`          | `TH1F *`                | Histogram: fraction of hits surviving dead-zone removal |
+ * | `mDimensions`        | `ssdDimensions_st *`    | Cached pointer to raw geometry struct           |
+ * | `mcEvent`            | `StMcEvent *` (prot.)   | Pointer to the MC event (filled per event)      |
+ * | `N`                  | `Int_t` (prot.)         | Number of rows in the wafer-position table      |
+ * | `positions`          | `ssdWafersPosition_st *`(prot.) | Raw pointer to wafer-position array    |
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @fn St_sls_Maker::St_sls_Maker(const char *name)
+ * @brief Constructor.
+ * @details Initialises @c mHit and @c m_ctrl to @c nullptr.
+ * @param name Maker name passed to StMaker base class; default is @c "sls_strip".
+ */
+
+/**
+ * @fn St_sls_Maker::~St_sls_Maker()
+ * @brief Destructor. No heap memory is owned by this class.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::Init()
+ * @brief One-time initialisation.
+ * @details If the @c ".histos" attribute is set, allocates the @c hRejected
+ *          diagnostic histogram.
+ * @return @c kStOk always.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::InitRun(Int_t runNumber)
+ * @brief Per-run initialisation.
+ * @details Retrieves the @c slsCtrl, @c ssdDimensions, and @c ssdWafersPosition
+ *          tables from StSsdDbMaker.  Reads the magnetic field z-component from
+ *          StarMagField at the origin and stores it in @c mBField.
+ * @param runNumber STAR run number (used by the base class to route DB queries).
+ * @return @c kStOk on success; @c kStFatal if any required database table is absent.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::Make()
+ * @brief Per-event processing — full hit-to-strip conversion.
+ * @details
+ * Execution sequence:
+ * -# Fetch geometry parameters and call setSsdParameters().
+ * -# Create the output @c sls_strip table (capacity 40 000 rows).
+ * -# Retrieve @c g2t_ssd_hit (preferred) or fall back to @c g2t_svt_hit.
+ * -# Call readPointFromTableWithEmbedding() to load hits into StSsdBarrel and
+ *    apply ideal→real geometry correction.
+ * -# Call convertGlobalFrameToOther() on the barrel.
+ * -# Call removeInactiveHitInTable() to purge hits in dead zones.
+ * -# Call chargeSharingOverStrip() to compute strip signals.
+ * -# Call writeStripToTable() to serialise signals into @c sls_strip.
+ * -# Reset the barrel for the next event.
+ * @return @c kStOK if at least one strip was produced; @c kStWarn otherwise.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::Finish()
+ * @brief End-of-job clean-up. Currently a no-op beyond debug logging.
+ * @return @c kStOK always.
+ */
+
+/**
+ * @fn void St_sls_Maker::PrintInfo()
+ * @brief Prints maker information when debug mode is active.
+ */
+
+/**
+ * @fn void St_sls_Maker::Clear(const char *opt)
+ * @brief Event-level reset; delegates to StMaker::Clear().
+ * @param opt Options string forwarded to the base-class implementation.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::readPointFromTable(St_g2t_ssd_hit *g2t_ssd_hit)
+ * @brief Load GEANT SSD hits into the StSsdBarrel wafer hit lists (simple path).
+ * @details Iterates over all rows of the @c g2t_ssd_hit table.  For each hit
+ *          with a valid SSD volume ID (> @c mSsdLayer×1000) the ladder and wafer
+ *          indices are decoded and the hit is inserted into the corresponding
+ *          StSsdWafer via @c addHit().  No geometry correction is applied.
+ * @param g2t_ssd_hit Pointer to the GEANT SSD hit table.
+ * @return Number of SSD hits successfully inserted.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::readPointFromTable(St_g2t_svt_hit *g2t_svt_hit)
+ * @brief Overload for the legacy SVT hit table; casts and delegates to the SSD overload.
+ * @param g2t_svt_hit Pointer to the GEANT SVT hit table (recast as SSD table).
+ * @return Number of hits inserted (see SSD overload).
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::removeInactiveHitInTable(St_g2t_ssd_hit *g2t_ssd_hit)
+ * @brief Remove hits that fall in detector dead zones from the GEANT table.
+ * @details Retrieves the list of inactive (dead-zone) hits from
+ *          @c StSsdBarrel::getInactiveHitList() and, exploiting the fact that the
+ *          table is often sorted by hit ID, compacts the table in-place by
+ *          overwriting removed rows with the next valid row.  After removal
+ *          @c StSsdBarrel::renumHitAfterRemove() is called to renumber the
+ *          remaining hits.
+ * @param g2t_ssd_hit Pointer to the GEANT SSD hit table (modified in place).
+ * @return Number of hits removed.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::removeInactiveHitInTable(St_g2t_svt_hit *g2t_svt_hit)
+ * @brief Overload for the legacy SVT hit table.
+ * @param g2t_svt_hit Pointer to the GEANT SVT hit table (recast as SSD table).
+ * @return Number of hits removed (see SSD overload).
+ */
+
+/**
+ * @fn void St_sls_Maker::chargeSharingOverStrip(slsCtrl_st *ctrl)
+ * @brief Trigger the full charge-sharing calculation on all wafers.
+ * @details Delegates to @c StSsdBarrel::convertToStrip() passing the complete
+ *          set of physics parameters from the @c slsCtrl database struct:
+ *          - @c pairCreationEnergy: mean e–h pair creation energy [eV].
+ *          - @c nstripInACluster: maximum strip cluster width considered.
+ *          - @c parDiffP / @c parDiffN: diffusion spread parameters for the
+ *            P-side and N-side respectively.
+ *          - @c parIndRightP/N, @c parIndLeftP/N: right- and left-neighbour
+ *            capacitive induction amplitudes for each side.
+ * @param ctrl Pointer to the first element of the @c slsCtrl table row.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::writeStripToTable(St_sls_strip *sls_strip)
+ * @brief Serialise the computed strip signals into the @c sls_strip ROOT table.
+ * @details Iterates over every ladder and wafer in StSsdBarrel.  For each wafer
+ *          both the P-side and N-side strip lists are traversed; each fired strip
+ *          becomes one row in the output table with the following fields:
+ *          - @c id: sequential record number (1-based).
+ *          - @c adc_count: digitised signal (integer ADC counts).
+ *          - @c noise_count: set to 0 at this stage (noise added in St_spa_Maker).
+ *          - @c id_strip: packed strip identifier (strip#, side, idWafer).
+ *          - @c de: analogue energy-equivalent signal [GeV].
+ *          - @c N_hits: number of GEANT hits contributing to the strip.
+ *          - @c id_hit[5], @c id_mchit[5], @c id_mctrack[5]: MC truth indices
+ *            for up to five contributing hits.
+ * @param sls_strip Output table; must already be allocated.
+ * @return Total number of strip records written (sum of P-side and N-side).
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::readPointFromTableWithEmbedding(St_g2t_ssd_hit *g2t_ssd_hit, St_g2t_track *g2t_track, Int_t N, ssdWafersPosition_st *positions)
+ * @brief Load GEANT hits with full ideal→real geometry correction (embedding path).
+ * @details This is the primary hit-loading method used in production.
+ *          For each hit in @c g2t_ssd_hit:
+ *          -# The track helix is reconstructed from the GEANT momentum vector,
+ *             position, particle charge, and the measured magnetic field.
+ *          -# ideal2RealTranslation() propagates the helix onto the real wafer
+ *             plane (from @c ssdWafersPosition) and updates the hit position and
+ *             momentum.
+ *          -# The hit is added to the barrel with the corrected position.
+ *          -# An @c StMcSsdHit object is created and inserted into the
+ *             @c StMcEvent SSD hit collection for downstream truth association.
+ *          Hits for which no valid real-geometry wafer intersection is found are
+ *          flagged with negative @c de and skipped (not inserted into the barrel).
+ * @param g2t_ssd_hit  Pointer to the GEANT SSD hit table.
+ * @param g2t_track    Pointer to the GEANT track table (provides particle charge).
+ * @param N            Number of rows in the wafer-position table.
+ * @param positions    Array of @c ssdWafersPosition_st structs (survey positions).
+ * @return Number of hits for which a valid real-geometry wafer was found.
+ */
+
+/**
+ * @fn void St_sls_Maker::setSsdParameters(ssdDimensions_st *geom_par)
+ * @brief Populate internal geometry cache from the @c ssdDimensions table.
+ * @details Sets `mSsdLayer=7`, `mNLadder=20`, and reads
+ *          `waferHalfActLength`, `waferHalfActWidth`, `wafersPerLadder`,
+ *          `stripPerSide`, `stripPitch`, and `stereoAngle` from the first
+ *          row of @p geom_par.
+ * @param geom_par Pointer to the first element of the @c ssdDimensions table row.
+ */
+
+/**
+ * @fn void St_sls_Maker::printSsdParameters()
+ * @brief Log the cached geometry parameters at INFO level.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::idWaferToWaferNumb(Int_t idWafer)
+ * @brief Convert a packed wafer ID to a flat wafer index within the barrel.
+ * @details
+ * @f[
+ *   \text{waferNumb} = (\text{ladder}-1) \times \text{mNWaferPerLadder} + (\text{wafer}-1)
+ * @f]
+ * where ladder and wafer are extracted from @p idWafer.
+ * @param idWafer Packed wafer identifier (@c layer×1000 + wafer×100 + ladder).
+ * @return Zero-based flat wafer index in the range @f$[0,\, N_\text{ladders} \times N_\text{wafers/ladder})@f$.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::idWaferToLadderNumb(Int_t idWafer)
+ * @brief Extract the zero-based ladder index from a packed wafer ID.
+ * @param idWafer Packed wafer identifier.
+ * @return Zero-based ladder index in the range @f$[0, 19]@f$.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::waferNumbToIdWafer(Int_t waferNumb)
+ * @brief Inverse of idWaferToWaferNumb: convert flat index to packed wafer ID.
+ * @param waferNumb Zero-based flat wafer index.
+ * @return Packed wafer identifier (@c mSsdLayer×1000 + wafer×100 + ladder).
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::idWaferToWafer(Int_t idWafer)
+ * @brief Extract the zero-based wafer-within-ladder index from a packed wafer ID.
+ * @details Inline convenience function: @c (idWafer - 7000)/100 - 1.
+ * @param idWafer Packed wafer identifier.
+ * @return Zero-based wafer index within its ladder.
+ */
+
+/**
+ * @fn Int_t St_sls_Maker::ideal2RealTranslation(StThreeVector<double> *pos, StThreeVector<double> *mtm, double charge, int wafId, int index, ssdWafersPosition_st *positions, Int_t *IL, Int_t *IW)
+ * @brief Propagate a track helix from the ideal-geometry hit position to the real wafer plane.
+ * @details
+ * Algorithm:
+ * -# Build an @c StPhysicalHelixD from @p mtm, @p pos, @c mBField, and @p charge.
+ * -# Compute the path length @f$s@f$ to the plane defined by the wafer's
+ *    survey centre and normal vector (@c pathLength(centre, normal)).
+ * -# Evaluate the helix position at @f$s@f$ to obtain the corrected global
+ *    hit coordinates; update @p pos in place.
+ * -# Transform to the local wafer frame via @c MasterToLocal().
+ * -# If the local coordinates are within the active area (IsOnWafer()), record
+ *    the corrected ladder/wafer indices in @p IL and @p IW and return @c kStOK.
+ * -# Otherwise, loop over the same and the ±1 neighbouring ladders, testing all
+ *    their wafers.  If a valid landing wafer is found, return @c kStOk.
+ * -# If no valid wafer is found, return @c kStSkip.
+ * @param[in,out] pos    Global hit position [cm]; updated to the real-geometry intersection.
+ * @param[in,out] mtm    Track momentum [GeV/c]; updated to the momentum at the intersection.
+ * @param         charge Particle charge in units of the elementary charge (e.g. +1 or −1).
+ * @param         wafId  Original packed wafer ID (ideal geometry).
+ * @param         index  Row index of @p wafId in the @p positions array.
+ * @param         positions Array of survey-corrected wafer position structs.
+ * @param[out]    IL     Zero-based index of the real ladder on which the hit lands.
+ * @param[out]    IW     Zero-based index of the real wafer on which the hit lands.
+ * @return @c kStOK if a valid real-geometry wafer was found and the intersection
+ *         was within the active area; @c kStSkip otherwise.
+ */
+
+/**
+ * @fn int St_sls_Maker::IsOnWafer(const StThreeVector<double>& LocalPosition)
+ * @brief Test whether a local-frame position lies within the active wafer area.
+ * @details The active area is a rectangle centred on the origin with full extent
+ *          @c mDetectorLargeEdge × @c mDetectorSmallEdge [cm].
+ * @param LocalPosition 3-vector in the wafer local coordinate frame [cm].
+ * @return 1 if the position is inside the active area; 0 otherwise.
+ */
+
+/**
+ * @fn void St_sls_Maker::debugUnPeu()
+ * @brief Dump debug information for all wafers in all ladders.
+ * @details Delegates to @c StSsdBarrel::debugUnPeu() for each (ladder, wafer) pair.
+ *          Intended for development use only.
+ */
+
+
+// ============================================================
+// Class: St_spa_Maker
+// ============================================================
+
+/**
+ * @class St_spa_Maker
+ * @ingroup StSsdSimulationMaker
+ * @brief Strip Pedestal Annihilator — electronics and DAQ simulation for the SSD.
+ *
+ * @details
+ * St_spa_Maker is the second stage of the SSD slow simulation.  It reads the
+ * analogue strip signals produced by St_sls_Maker from the @c sls_strip table,
+ * adds per-strip Gaussian electronic noise sampled from the @c ssdStripCalib
+ * calibration database, applies pedestal subtraction and a DAQ zero-suppression
+ * threshold, and writes the surviving strips to the @c spa_strip table.
+ *
+ * There are 491 520 strips in total (20 ladders, varying wafers/ladder,
+ * 768 strips/side × 2 sides).  Each strip receives an independent noise
+ * contribution; only strips with a net signal above the DAQ cut appear in the
+ * output table.
+ *
+ * All threshold and noise parameters are read once per run from the
+ * @c Calibrations/ssd/ssdStripCalib database path via @c InitRun().
+ *
+ * ### Data member summary
+ *
+ * | Member        | Type                   | Description                                          |
+ * |---------------|------------------------|------------------------------------------------------|
+ * | `m_noise`     | `St_ssdStripCalib *`   | Per-strip noise and pedestal calibration table       |
+ * | `m_condition` | `St_sdm_condition_db *`| DAQ operating-condition table (zero-suppression cut) |
+ * | `m_ctrl`      | `slsCtrl_st *`         | Simulation control parameters (DAQ cut multiplier)  |
+ *
+ * @authors B. Hippolyte, W. Pinganaud
+ * @date 2000
+ */
+
+/**
+ * @fn St_spa_Maker::St_spa_Maker(const char *name)
+ * @brief Constructor. Initialises all data-member pointers to @c nullptr.
+ * @param name Maker name; default is @c "spa_strip".
+ */
+
+/**
+ * @fn St_spa_Maker::~St_spa_Maker()
+ * @brief Destructor. No heap memory is owned.
+ */
+
+/**
+ * @fn Int_t St_spa_Maker::Init()
+ * @brief One-time initialisation.
+ * @details Retrieves the @c sdm_condition_db table from the @c svt/ssd input
+ *          database and caches it in @c m_condition.
+ * @return Return value of @c StMaker::Init().
+ */
+
+/**
+ * @fn Int_t St_spa_Maker::InitRun(Int_t runumber)
+ * @brief Per-run database retrieval.
+ * @details Loads the @c ssdStripCalib table from
+ *          @c Calibrations/ssd/ssdStripCalib and the @c slsCtrl table from
+ *          StSsdDbMaker.  Returns @c kStFATAL if the noise table is absent.
+ * @param runumber STAR run number.
+ * @return @c kStOK on success; @c kStFATAL if @c ssdStripCalib is unavailable.
+ */
+
+/**
+ * @fn Int_t St_spa_Maker::Make()
+ * @brief Per-event processing — noise injection and DAQ simulation.
+ * @details
+ * Execution sequence:
+ * -# Retrieve the @c sls_strip input table from the data set.
+ * -# Create an output @c spa_strip table (capacity 40 000 rows).
+ * -# Load the StSsdBarrel instance and call @c readStripFromTable().
+ * -# Call @c readNoiseFromTable() to populate per-strip σ and pedestal values.
+ * -# Call @c readConditionDbFromTable() for the DAQ operating conditions.
+ * -# Call @c addNoiseToStrip() to add Gaussian noise to every fired strip.
+ * -# Call @c doDaqSimulation() to apply pedestal subtraction and threshold cut.
+ * -# Call @c writeStripToTable() to serialise surviving strips to @c spa_strip.
+ * -# Reset the barrel.
+ * @return @c kStOK if at least one strip survives; @c kStWarn otherwise.
+ */
+
+/**
+ * @fn Int_t St_spa_Maker::Finish()
+ * @brief End-of-job clean-up. No-op beyond optional debug logging.
+ * @return @c kStOK always.
+ */
+
+/**
+ * @fn void St_spa_Maker::PrintInfo()
+ * @brief Print maker information when debug mode is active.
+ */
+
+
+// ============================================================
+// Class: StSsdEmbeddingMaker
+// ============================================================
+
+/**
+ * @class StSsdEmbeddingMaker
+ * @ingroup StSsdSimulationMaker
+ * @brief Merges simulated SSD strip signals with real collision data.
+ *
+ * @details
+ * StSsdEmbeddingMaker is the optional third stage of the SSD simulation chain,
+ * used when simulated tracks are to be embedded into real STAR collision events.
+ * It reads two @c spa_strip tables — one from the SSD simulation (labelled
+ * @c SsdSimuData) and one decoded from the real DAQ stream (labelled
+ * @c SsdRealData) — and produces a merged @c spa_strip table.
+ *
+ * ### Merge algorithm
+ * For each strip in the real-data table the simulation table is searched for a
+ * matching entry (same strip number, wafer ID, and side).
+ * - **Match found**: the ADC counts are summed; MC truth fields
+ *   (@c id_mchit, @c id_mctrack) from the simulated strip are preserved.
+ * - **Real only**: the real strip is copied with zero MC truth.
+ * - **Simu only**: the simulated strip is appended with its MC truth intact.
+ *
+ * ### Operating modes
+ * The maker supports three modes, selected via setter methods:
+ *
+ * | `mDoEmbedding` | `mPlainSimIfNoSSD` | SSD in DAQ? | Behaviour                              |
+ * |:--------------:|:------------------:|:-----------:|----------------------------------------|
+ * | true (default) | false (default)    | yes         | Full embedding (merge simu + real)     |
+ * | true           | false              | no          | Skip event                             |
+ * | true           | true               | no          | Plain simulation (simu only)           |
+ * | false          | any                | any         | Plain simulation                       |
+ *
+ * ### Data member summary
+ *
+ * | Member               | Type             | Description                                           |
+ * |----------------------|------------------|-------------------------------------------------------|
+ * | `m_dimensions`       | `St_ssdDimensions *` | Geometry table (not owned)                       |
+ * | `MODE`               | `Int_t`          | Active run mode: 1 = embedding                        |
+ * | `mDoEmbedding`       | `Bool_t`         | Enable embedding (default: @c kTRUE)                  |
+ * | `mPlainSimIfNoSSD`   | `Bool_t`         | Fall back to plain simulation if no SSD in DAQ        |
+ * | `mRunningEmbedding`  | `Bool_t`         | Runtime flag: embedding actually active this event    |
+ * | `mSsdLayer`          | `Int_t`          | SSD layer number (7)                                  |
+ * | `mNLadder`           | `Int_t`          | Number of ladders (20)                                |
+ * | `mNWaferPerLadder`   | `Int_t`          | Number of wafers per ladder (from DB)                 |
+ * | `mNStripPerSide`     | `Int_t`          | Number of strips per side per wafer (from DB)         |
+ * | `mDetectorLargeEdge` | `Float_t`        | Full active length along beam [cm]                    |
+ * | `mDetectorSmallEdge` | `Float_t`        | Full active width (transverse) [cm]                   |
+ * | `mStripPitch`        | `Float_t`        | Strip pitch [cm]                                      |
+ * | `mTheta`             | `Float_t`        | Stereo angle [rad]                                    |
+ * | `mSsdSimuData`       | `St_spa_strip *` | Input: simulated strips (not owned)                   |
+ * | `mSsdrealData`       | `St_spa_strip *` | Input: real DAQ strips (not owned)                    |
+ * | `mSsdSimuReal`       | `St_spa_strip *` | Output: merged strip table (owned)                    |
+ * | `mDimensions`        | `ssdDimensions_st *` | Cached pointer to raw geometry struct             |
+ * | `mCurrentEvent`      | `StEvent *` (prot.) | Pointer to the reconstructed event                 |
+ * | `hStripsSimu`        | `TH1F *` (prot.)  | Diagnostic: log10(# simu strips after DAQ cut)       |
+ * | `hStripsReal`        | `TH1F *` (prot.)  | Diagnostic: log10(# real strips after DAQ cut)       |
+ * | `hStripsCommon`      | `TH1F *` (prot.)  | Diagnostic: # strips common to simu and real          |
+ * | `myfile`             | `TFile *` (prot.) | Optional output file for diagnostics                  |
+ *
+ * @author J. Bouchet
+ * @date 2008
+ */
+
+/**
+ * @fn StSsdEmbeddingMaker::StSsdEmbeddingMaker(const char *name)
+ * @brief Constructor. Sets embedding mode as default; clears strip table pointers.
+ * @details Sets @c mDoEmbedding = @c kTRUE, @c mPlainSimIfNoSSD = @c kFALSE,
+ *          and initialises @c mSsdrealData and @c mSsdSimuData to @c nullptr.
+ * @param name Maker name; default is @c "SsdEmbed".
+ */
+
+/**
+ * @fn StSsdEmbeddingMaker::~StSsdEmbeddingMaker()
+ * @brief Destructor. No heap memory is owned.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::Init()
+ * @brief One-time initialisation.
+ * @details If the @c ".histos" attribute is set, allocates the three diagnostic
+ *          histograms (@c hStripsSimu, @c hStripsReal, @c hStripsCommon).
+ * @return Return value of @c StMaker::Init().
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::InitRun(int RunNo)
+ * @brief Per-run database retrieval.
+ * @details Verifies that an @c StSsdBarrel instance exists, then loads the
+ *          @c ssdDimensions table from @c Geometry/ssd and calls
+ *          setSsdParameters().
+ * @param RunNo STAR run number.
+ * @return @c kStOk on success; @c kStFatal if the geometry database is unavailable.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::Make()
+ * @brief Per-event processing — embedding decision and merge.
+ * @details
+ * -# Decides whether embedding can actually run:
+ *    if @c mDoEmbedding is true, calls NoSsd() to check DAQ stream.
+ * -# Calls GetSsdData() to retrieve the simu and real strip tables.
+ * -# If running in embedding mode (MODE=1) calls AddRawData() to perform the merge.
+ * -# Fills diagnostic histograms if @c ".histos" is set.
+ * @return @c kStOk on success; propagates error codes from GetSsdData().
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::Finish()
+ * @brief End-of-job clean-up.
+ * @return @c kStOK always.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::GetSsdData()
+ * @brief Retrieve simulated and real @c spa_strip tables from the data set.
+ * @details Looks for the @c SsdSimuData dataset (simulated strips) and the
+ *          @c SsdRealData dataset (real strips).  Returns an error if either
+ *          table is absent or empty.
+ * @return @c kStOk if both tables are found and non-empty;
+ *         @c kStErr if either table is missing or empty.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::AddRawData()
+ * @brief Perform the three-way merge of simulated and real strip tables.
+ * @details
+ * Creates the output @c spa_strip table @c mSsdSimuReal (capacity 50 000 rows).
+ * Three passes:
+ * -# **Common strips**: for each real strip, search the simulation table for a
+ *    strip with the same (strip#, wafer, side); if found, sum the ADC counts and
+ *    write the entry, keeping MC truth from the simulated strip.  Track the
+ *    matched strip IDs in @c IdCommon[].
+ * -# **Real-only strips**: real strips with no simulation counterpart are copied
+ *    with zero MC truth fields.
+ * -# **Simu-only strips**: simulated strips not listed in @c IdCommon are appended
+ *    with their own MC truth fields.
+ * @return Total number of strip records in the merged output table.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::NoSsd()
+ * @brief Check whether SSD data are present in the current DAQ event.
+ * @details Retrieves @c StDAQReader from the chain and calls
+ *          @c StDAQReader::SSDPresent().
+ * @return @c kTRUE if no SSD data are found in the DAQ stream (or if the
+ *         DAQ reader is unavailable); @c kFALSE if SSD data are present.
+ */
+
+/**
+ * @fn void StSsdEmbeddingMaker::CheckTables()
+ * @brief Dump the contents of the simulated (and optionally real) strip tables.
+ * @details Decodes each strip's geometry (ladder, wafer, side, strip number) and
+ *          logs it at DEBUG level.  Called only when @c Debug() is true.
+ */
+
+/**
+ * @fn void StSsdEmbeddingMaker::setDoEmbedding(Bool_t doIt)
+ * @brief Enable or disable embedding mode.
+ * @param doIt @c kTRUE to attempt embedding; @c kFALSE to run plain simulation.
+ */
+
+/**
+ * @fn void StSsdEmbeddingMaker::setPlainSimEvenIfNoSSD(Bool_t doIt)
+ * @brief Control fallback behaviour when no SSD data exist in the DAQ stream.
+ * @param doIt @c kTRUE to run plain simulation if no SSD is found in DAQ;
+ *             @c kFALSE (default) to skip the event entirely in that case.
+ */
+
+/**
+ * @fn Int_t StSsdEmbeddingMaker::idWaferToWafer(Int_t idWafer)
+ * @brief Extract the zero-based wafer-within-ladder index from a packed wafer ID.
+ * @details Inline: @c (idWafer - 7000)/100 - 1.
+ * @param idWafer Packed wafer identifier.
+ * @return Zero-based wafer index within its ladder.
+ */
+
+/**
+ * @fn void StSsdEmbeddingMaker::setSsdParameters(ssdDimensions_st *geom_par)
+ * @brief Populate internal geometry cache from the @c ssdDimensions table.
+ * @details Sets `mSsdLayer=7`, `mNLadder=20`, and reads geometry fields from
+ *          the first row of @p geom_par.  Identical logic to
+ *          St_sls_Maker::setSsdParameters().
+ * @param geom_par Pointer to the first element of the @c ssdDimensions table row.
+ */

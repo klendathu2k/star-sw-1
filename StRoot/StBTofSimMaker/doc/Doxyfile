@@ -1,0 +1,37 @@
+PROJECT_NAME           = "StBTofSimMaker"
+PROJECT_BRIEF          = "STAR Barrel Time-of-Flight Simulation Maker"
+
+# ---------- Input -------------------------------------------------------
+INPUT                  = ..
+INPUT                 += StBTofSimMaker.dox
+FILE_PATTERNS          = *.cxx *.h *.cc *.C
+RECURSIVE              = NO
+
+# ---------- Extraction --------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+# ---------- Build -------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+
+# ---------- Dot / graphs ------------------------------------------------
+HAVE_DOT               = NO
+
+# ---------- Misc --------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+# ---------- Preprocessor ------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+PREDEFINED             = __CINT__
+
+# ---------- Output tweaks -----------------------------------------------
+SORT_MEMBER_DOCS       = NO
+SHOW_USED_FILES        = YES
+GENERATE_TREEVIEW      = YES

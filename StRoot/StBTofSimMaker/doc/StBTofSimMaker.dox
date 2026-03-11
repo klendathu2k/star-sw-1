@@ -1,0 +1,876 @@
+/**
+ * @defgroup StBTofSimMaker StBTofSimMaker
+ *
+ * @brief STAR Barrel Time-of-Flight (BTOF) Detector Simulation Maker.
+ *
+ * @details
+ * ## Overview
+ *
+ * The **StBTofSimMaker** module is the GEANT-to-reconstruction bridge for the
+ * STAR Barrel Time-of-Flight (BTOF) detector.  Its purpose is to convert raw
+ * GEANT Monte-Carlo hit information into the same data structures that are
+ * written by the real DAQ system, so that the full offline reconstruction and
+ * analysis chain can run identically on simulated and real data.
+ *
+ * The BTOF detector surrounds the STAR TPC at a radius of ~2.2 m and covers
+ * full azimuth and pseudo-rapidity @f$|\eta| < 0.9@f$.  It is based on
+ * **Multi-gap Resistive Plate Chambers** (MRPCs), which exploit Townsend
+ * electron-avalanche multiplication in a stack of narrow gas gaps between
+ * resistive glass plates to achieve an intrinsic single-cell time resolution
+ * of approximately **80–100 ps** (σ).
+ *
+ * ## Detector Geometry
+ *
+ * | Parameter          | Value  |
+ * |--------------------|--------|
+ * | Number of trays    | 120 (60 West + 60 East) |
+ * | Modules per tray   | 32     |
+ * | Cells per module   | 6      |
+ * | Total cells        | 23 040 |
+ * | Channels per tray  | 192 (= 32 × 6) |
+ * | Pad width          | 3.45 mm |
+ *
+ * The `volume_id` field of the GEANT `g2t_ctf_hit` table encodes geometry as
+ * a six-digit decimal integer:
+ * @f[
+ *   \text{volume\_id} = (\text{half}-1)\times 10^5 + \text{tray}\times 10^3
+ *                     + \text{module}\times 10
+ * @f]
+ * where half=1 is West and half=2 is East, tray is 1–60 within the half, and
+ * module is 1–32.  The cell within a module is determined from the local
+ * y-coordinate of the hit:
+ * @f[
+ *   i_{\rm cell} = \left\lfloor
+ *     \frac{y_{\rm local} + w_{\rm pad}\,N_{\rm cell}/2}{w_{\rm pad}}
+ *   \right\rfloor + 1,
+ * @f]
+ * where @f$w_{\rm pad} = 3.45\,\text{mm}@f$ is the pad width and
+ * @f$N_{\rm cell} = 6@f$.
+ *
+ * ## Physics of Particle Identification
+ *
+ * The BTOF identifies charged particles by measuring their velocity
+ * @f$\beta = v/c@f$ via the time of flight @f$t@f$ over a known path length
+ * @f$L@f$:
+ * @f[
+ *   \beta = \frac{L}{c\,t}.
+ * @f]
+ * Combined with the track momentum @f$p@f$ from the TPC, the squared particle
+ * mass is reconstructed as
+ * @f[
+ *   m^2 = p^2\!\left(\frac{1}{\beta^2} - 1\right)
+ *       = p^2\!\left(\frac{c^2 t^2}{L^2} - 1\right).
+ * @f]
+ * This allows separation of @f$\pi/K/p@f$ over a broad momentum range.
+ *
+ * ## Simulation Modes
+ *
+ * ### Fast Simulation (default)
+ *
+ * The fast simulator applies a per-cell Gaussian smearing to the GEANT flight
+ * time @f$t_{\rm GEANT}@f$:
+ * @f[
+ *   t_{\rm sim} = t_{\rm GEANT} + \delta t_{\rm MRPC} + \delta t_{\rm VPD},
+ * @f]
+ * where @f$\delta t_{\rm MRPC} \sim \mathcal{N}(0,\sigma_{\rm cell})@f$ with
+ * @f$\sigma_{\rm cell}@f$ loaded cell-by-cell from the database table
+ * `Calibrations/tof/tofSimResParams` (default fallback: @f$\sigma = 85\,\text{ps}@f$),
+ * and @f$\delta t_{\rm VPD}@f$ accounts for the start-time uncertainty from
+ * the Vertex Position Detector (VPD).
+ *
+ * ### Slow Simulation
+ *
+ * The slow simulator fully models the MRPC avalanche physics in two steps:
+ *
+ * **Step 1 – CellResponse:** For each GEANT hit, electron clusters are formed
+ * along the particle track inside the gas gap.  The number of primary
+ * ionisation clusters follows a Poisson distribution with mean
+ * @f[
+ *   \bar{n}_{\rm clus} = d_g \cdot \rho_{\rm clus}(\beta),
+ * @f]
+ * where @f$d_g@f$ is the gas-gap thickness and @f$\rho_{\rm clus}(\beta)@f$ is
+ * the cluster density.  Each cluster contains a Poisson-distributed number of
+ * primary electrons with mean @f$\bar{n}_e@f$, started at an exponentially
+ * distributed position @f$x_0@f$ within the gap.  The avalanche size for
+ * cluster @f$m@f$ (Townsend multiplication from position @f$x_0@f$ to the
+ * anode at @f$d_g@f$) is
+ * @f[
+ *   sa_m = \left(e^{\alpha(d_g - x_{0,m})} - 1\right) n_{e,m}\,\Gamma,
+ * @f]
+ * where @f$\alpha@f$ is the Townsend first-ionisation coefficient and
+ * @f$\Gamma@f$ is a Gamma-distributed random factor modelling stochastic
+ * fluctuations.  The total collected charge is
+ * @f[
+ *   Q_{\rm tot} = \frac{k_a}{\alpha d_g}\sum_m sa_m \cdot 10^{12}\,e_{\rm SI}
+ *               \quad [\text{pC}],
+ * @f]
+ * where the weighting factor
+ * @f[
+ *   k_a = \frac{\varepsilon_r d_g}
+ *              {N_{\rm gap}\,\varepsilon_r d_g
+ *               + (N_{\rm gap}-1)\,d_{\rm in} + 2\,d_{\rm out}}
+ * @f]
+ * accounts for the capacitive coupling between the gas and glass layers
+ * (@f$\varepsilon_r@f$ = relative permittivity, @f$d_{\rm in}@f$ = inner glass
+ * thickness, @f$d_{\rm out}@f$ = outer glass thickness, @f$N_{\rm gap}@f$ =
+ * number of gas gaps).
+ *
+ * The time-dependent induced current is also computed in bins of
+ * @f$\Delta t = 25\,\text{ps}@f$:
+ * @f[
+ *   Q_j = \frac{k_a}{\alpha d_g} \sum_m
+ *         \left(e^{\alpha v_{d,m}(t_j - t_0 - t_{x,m})} - 1\right)
+ *         n_{e,m}\,\Gamma \cdot 10^{12}\,e_{\rm SI},
+ * @f]
+ * for @f$t_0 + t_{x,m} \le t_j \le t_0 + t_{x,m} + t_{\rm drift,m}@f$,
+ * where @f$t_{x,m}@f$ is the photon propagation delay and
+ * @f$t_{\rm drift,m} = (d_g - x_{0,m})/v_{d,m}@f$ is the electron drift
+ * time in the gap.
+ *
+ * **Step 2 – CellTimePassTh:** Hits in the same cell from multiple tracks or
+ * cross-talk are merged.  The earliest hit time is kept.  An additional
+ * Gaussian smearing of @f$\sigma = 85\,\text{ps}@f$ (MRPC electronics) is
+ * applied.  Only cells whose charge profile crosses the ADC threshold
+ * @f$Q_{\rm thr}@f$ (from `StTofSimParam::adc_thre()`) produce a recorded hit.
+ *
+ * ## Cell Cross-Talk
+ *
+ * When `mCellXtalk` is enabled (default), charge is shared between adjacent
+ * cells when the hit y-position is within @f$\Delta y_{\rm cut}@f$ of the
+ * pad edge.  The primary-cell weight is
+ * @f[
+ *   w = 1 - \frac{|dy| - \Delta y_{\rm cut}}{w_{\rm pad} - 2\,\Delta y_{\rm cut}},
+ * @f]
+ * and the neighbour cell receives weight @f$(1-w)@f$.
+ *
+ * ## TDC Encoding
+ *
+ * | Mode              | Resolution |
+ * |-------------------|------------|
+ * | Very High Res (VHR) | 24.4 ps/bin |
+ * | High Res (HR)     | 97.7 ps/bin |
+ *
+ * ## Data Flow
+ *
+ * ```
+ * GEANT g2t_ctf_hit + g2t_track
+ *          |
+ *          v
+ *   CalcCellId()           (decode volume_id, compute cell from y_local)
+ *          |
+ *     mSlow ? ─────────────────────────── No ──────────────────────────────────────────────────┐
+ *       │                                                                                       │
+ *      Yes                                                                                      │
+ *       │                                                                                FastCellResponse()
+ *  CellResponse()          (avalanche model, charge vs time)                                   │
+ *       +                                                                                       │
+ *  CellTimePassTh()        (merge, threshold, 85 ps smear)                                     │
+ *       │                                                                                       │
+ *       └──────────────────────────────────────────────┬────────────────────────────────────────┘
+ *                                                      │
+ *                                              storeMcBTofHit()
+ *                                                      │
+ *                                        StMcBTofHitCollection
+ *                                                      │
+ *                                              fillEvent()
+ *                                        ┌─────────────┴────────────┐
+ *                                  StMcEvent                    StEvent
+ *                            (setBTofHitCollection)       (StBTofCollection:
+ *                                                          StBTofHit +
+ *                                                          StBTofRawHit)
+ * ```
+ *
+ * ## Database Tables Used
+ *
+ * | Table path                              | Class                  | Purpose                         |
+ * |-----------------------------------------|------------------------|---------------------------------|
+ * | `Calibrations/tof/tofSimResParams`      | StBTofSimResParams     | Per-cell timing resolutions     |
+ * | `Calibrations/tof/vpdSimParams`         | StVpdSimConfig         | VPD tube resolutions and status |
+ * | (StTofSimParam defaults hard-coded)     | StTofSimParam          | MRPC physics parameters         |
+ *
+ * ## Usage Example
+ *
+ * @code{.cpp}
+ * StBTofSimMaker *simMaker = new StBTofSimMaker("TofSim");
+ * simMaker->setBookHist(kTRUE);          // enable QA histograms
+ * simMaker->writeStEvent(kTRUE);         // write hits to StEvent
+ * simMaker->setCellXtalk(kTRUE);         // enable cell cross-talk
+ * // simMaker->setEmbeddingMode(kTRUE);  // enable embedding mode
+ * @endcode
+ *
+ * @see StMaker
+ * @see StBTofCollection
+ * @see StMcBTofHitCollection
+ * @see StTofSimParam
+ * @see StBTofSimResParams
+ * @see StVpdSimConfig
+ *
+ * @author Frank Geurts (Rice University)
+ */
+
+// ============================================================
+// @file StBTofSimMaker.h
+// ============================================================
+/**
+ * @file StBTofSimMaker.h
+ * @ingroup StBTofSimMaker
+ * @brief Header for the StBTofSimMaker class.
+ *
+ * @details
+ * Declares the StBTofSimMaker class, the inner TrackHit aggregate struct,
+ * all protected data members, and the public interface.  Also declares the
+ * static physics constants mVHRBIN2PS, mHRBIN2PS, and mBTofPadWidth.
+ *
+ * ### Include dependencies
+ * - `StMaker.h` — STAR Maker framework base class.
+ * - `tables/St_g2t_ctf_hit_Table.h` — GEANT Cherenkov/TOF hit table.
+ * - `tables/St_g2t_track_Table.h` — GEANT track table.
+ * - `StBTofUtil/StVpdSimConfig.h` — VPD simulation configuration helper.
+ * - `StMcEvent/StMcBTofHit.hh`, `StMcBTofHitCollection.hh` — Monte Carlo
+ *   BTOF hit and collection classes.
+ * - `StThreeVectorF.hh` — Three-vector with float precision.
+ *
+ * @version CVS $Id: StBTofSimMaker.h,v 1.10 2021/01/27 14:58:56 geurts Exp $
+ */
+
+// ============================================================
+// @file StBTofSimMaker.cxx
+// ============================================================
+/**
+ * @file StBTofSimMaker.cxx
+ * @ingroup StBTofSimMaker
+ * @brief Implementation of the StBTofSimMaker class.
+ *
+ * @details
+ * Contains all method bodies for StBTofSimMaker.  A file-scope static
+ * RanluxEngine / RandGauss pair provides the thread-local Gaussian random
+ * number source used for timing smearing.
+ *
+ * The three static physical constants defined at file scope are:
+ * - `StBTofSimMaker::mVHRBIN2PS = 24.4` — TDC VHR bin width (ps).
+ * - `StBTofSimMaker::mHRBIN2PS  = 97.7` — TDC HR  bin width (ps).
+ * - `StBTofSimMaker::mBTofPadWidth = 3.45` — MRPC pad width (mm).
+ *
+ * @version CVS $Id: StBTofSimMaker.cxx,v 1.18 2021/01/27 16:24:27 geurts Exp $
+ */
+
+// ============================================================
+// @file macros/simM2Maker.C
+// ============================================================
+/**
+ * @file macros/simM2Maker.C
+ * @ingroup StBTofSimMaker
+ * @brief ROOT macro that runs the full BTOF simulation chain.
+ *
+ * @details
+ * Loads all required STAR shared libraries, builds a StChain containing:
+ * - St_geant_Maker (geometry loading, y2009)
+ * - StIOMaker (reads a .geant.root file)
+ * - StMcEventMaker (builds StMcEvent from GEANT tables)
+ * - St_db_Maker (database access, timestamp 20090401)
+ * - StBTofSimMaker (BTOF simulation, the subject of this module)
+ * - StBTofMatchMaker (track-to-hit matching)
+ * - StMuDstMaker (output)
+ *
+ * Typical invocation:
+ * @code{.sh}
+ * root4star -b -q 'simM2Maker.C("input.geant.root", 100, "output.root")'
+ * @endcode
+ *
+ * @param MainFile   Path to the input .geant.root file.
+ * @param nevents    Number of events to process (default 10).
+ * @param outFileName Output ROOT file name (default "test.root").
+ */
+
+// ============================================================
+// Class StBTofSimMaker
+// ============================================================
+/**
+ * @class StBTofSimMaker
+ * @ingroup StBTofSimMaker
+ * @brief STAR Maker that converts GEANT BTOF hits into reconstructable data.
+ *
+ * @details
+ * StBTofSimMaker inherits from StMaker and sits in the standard STAR BFC
+ * (Big Full Chain).  For every event it:
+ *
+ * 1. Retrieves the `g2t_tfr_hit` table from the `geant` (or `geantBranch`)
+ *    dataset.
+ * 2. For each GEANT BTOF hit, invokes either FastCellResponse() or the
+ *    CellResponse() + CellTimePassTh() pair depending on the `mSlow` flag.
+ * 3. Accumulates results in an StMcBTofHitCollection.
+ * 4. In fillEvent(), translates the MC hit collection into StBTofHit and
+ *    StBTofRawHit objects stored in the event's StBTofCollection, applying
+ *    cell-by-cell detector efficiency.
+ *
+ * ### Operating Modes
+ *
+ * | Flag         | Default | Meaning                                   |
+ * |--------------|---------|-------------------------------------------|
+ * | mSlow        | kFALSE  | Fast Gaussian smearing (recommended)      |
+ * | mIsEmbedding | kFALSE  | Pure simulation; set kTRUE for embedding  |
+ * | mCellXtalk   | kTRUE   | Simulate charge sharing between cells     |
+ * | mUseVpdStart | kTRUE   | Include VPD start-time uncertainty        |
+ * | mBookHisto   | kFALSE  | Book and fill QA histograms               |
+ * | mWriteStEvent| kTRUE   | Write simulated hits back to StEvent      |
+ * | mVpdSim      | kFALSE  | Set automatically if StVpdSimMaker exists |
+ *
+ * ### Static Constants
+ *
+ * | Name          | Value | Unit    | Description                     |
+ * |---------------|-------|---------|---------------------------------|
+ * | mVHRBIN2PS    | 24.4  | ps/bin  | TDC Very-High-Resolution bin    |
+ * | mHRBIN2PS     | 97.7  | ps/bin  | TDC High-Resolution bin         |
+ * | mBTofPadWidth | 3.45  | mm      | MRPC strip (pad) width          |
+ * | kSimulation   | kFALSE | —      | Alias for pure-simulation mode  |
+ * | kEmbedding    | kTRUE  | —      | Alias for embedding mode        |
+ *
+ * ### Detector Geometry Constants (enum)
+ *
+ * | Name       | Value | Description                  |
+ * |------------|-------|------------------------------|
+ * | mNTOF      | 192   | Channels per tray (32 × 6)   |
+ * | mNTray     | 120   | Total number of trays         |
+ * | mNModule   | 32    | Modules per tray              |
+ * | mNCell     | 6     | Cells per module              |
+ * | mAMP       | 50000 | ADC amplitude scale           |
+ * | mADCBINWIDTH | 25  | ADC bin width (arbitrary)     |
+ * | mTDCBINWIDTH | 50  | TDC bin width (arbitrary)     |
+ *
+ * ### Protected Data Members
+ *
+ * | Member                    | Type                        | Description                                     |
+ * |---------------------------|-----------------------------|-------------------------------------------------|
+ * | mSimDb                    | StTofSimParam*              | MRPC simulation parameters from DB/defaults     |
+ * | mSimResDb                 | StBTofSimResParams*         | Per-cell timing resolutions from DB             |
+ * | mDaqMap                   | StBTofDaqMap*               | BTOF DAQ channel mapping                        |
+ * | mMcBTofHitCollection      | StMcBTofHitCollection*      | Accumulates simulated MC hits                   |
+ * | mGeantData                | St_DataSet*                 | Pointer to the GEANT data set                   |
+ * | mEvent                    | StEvent*                    | Current StEvent                                 |
+ * | mMcEvent                  | StMcEvent*                  | Current StMcEvent                               |
+ * | mBTofCollection           | StBTofCollection*           | BTOF collection in StEvent                      |
+ * | mBTofHeader               | StBTofHeader*               | BTOF header (VPD hit counts)                    |
+ * | mVpdSimConfig             | StVpdSimConfig*             | VPD simulation configuration helper             |
+ * | mVpdSim                   | bool                        | True if StVpdSimMaker is in the chain           |
+ * | mIsEmbedding              | bool                        | True for embedding mode                         |
+ * | mUseVpdStart              | bool                        | True to apply VPD start-time correction         |
+ * | mCellXtalk                | bool                        | True to simulate cell cross-talk                |
+ * | mSlow                     | bool                        | True to use slow (avalanche) simulator          |
+ * | mBookHisto                | bool                        | True to book and fill QA histograms             |
+ * | mWriteStEvent             | bool                        | True to write hits to StEvent                   |
+ * | mTofHitFlag[120][192]     | int                         | Occupancy flag: 1 if cell was hit               |
+ * | mHistoFile                | string                      | QA histogram file base name                     |
+ * | mHistoFileName            | string                      | Full QA histogram file path                     |
+ * | ntuple                    | TNtuple*                    | Optional debug n-tuple (not currently filled)   |
+ *
+ * ### QA Histogram Data Members
+ *
+ * | Member              | Type  | Axes / range                                   | Description                         |
+ * |---------------------|-------|------------------------------------------------|-------------------------------------|
+ * | mRawBetaHist        | TH1F  | β ∈ [−1, 1.5], 400 bins                        | Raw β before resolution smearing    |
+ * | mBetaHist           | TH1F  | β ∈ [−2, 2], 400 bins                          | β after resolution smearing         |
+ * | mRawBetaVsMom       | TH2F  | p ∈ [0.1,1.25] GeV, 1/β ∈ [0.6,3]             | Raw 1/β vs momentum                 |
+ * | mCalcBetaVsMom      | TH2F  | same                                            | Calculated 1/β vs momentum          |
+ * | mBetaVsMom          | TH2F  | same                                            | Smeared 1/β vs momentum             |
+ * | Electron_BetaVsMom  | TH2F  | same                                            | 1/β vs p for electrons              |
+ * | Muon_BetaVsMom      | TH2F  | same                                            | 1/β vs p for muons                  |
+ * | Pion_BetaVsMom      | TH2F  | same                                            | 1/β vs p for pions                  |
+ * | Kaon_BetaVsMom      | TH2F  | same                                            | 1/β vs p for kaons                  |
+ * | Proton_BetaVsMom    | TH2F  | same                                            | 1/β vs p for protons                |
+ * | mPathLHist          | TH1F  | L ∈ [−2, 500] cm, 500 bins                      | Track path length to BTOF           |
+ * | mRawTofHist         | TH1F  | t ∈ [−10, 25000] ps, 2000 bins                  | TOF before resolution smearing      |
+ * | mTofHist            | TH1F  | t ∈ [−10, 25000] ps, 2000 bins                  | TOF after resolution smearing       |
+ * | mRecMass            | TH1F  | m ∈ [−2, 4] GeV, 1000 bins                      | Reconstructed particle mass         |
+ * | massHist            | TH1F  | m ∈ [0, 4] GeV, 200 bins                        | Reconstructed particle mass (alt.)  |
+ * | m2VsP               | TH2F  | p ∈ [0.1,1.5] GeV, m² ∈ [0,4] GeV²             | m² vs momentum                      |
+ * | mTofCalculated      | TH1F  | t ∈ [−10, 25000] ps, 2000 bins                  | TOF calculated from mass + momentum |
+ * | tof_RealVsCalc      | TH2F  | t_calc and t_real ∈ [−10, 25000] ps             | Smeared TOF vs calculated TOF       |
+ * | momBinRaw1–8        | TH1F  | 1/β in specific p slices                        | Raw 1/β in 8 momentum slices        |
+ * | momBin1–8           | TH1F  | 1/β in specific p slices                        | Smeared 1/β in 8 momentum slices    |
+ * | mCellGeant          | TH2F  | channel ∈ [0,192], tray ∈ [1,120]               | GEANT hit cell occupancy map        |
+ * | mNCellGeant         | TH2F  | same                                            | Number of GEANT hit cells per tray  |
+ * | mDeGeant            | TH1F  | dE ∈ [0, 10] keV, 1000 bins                     | Energy deposit from GEANT           |
+ * | mTofGeant           | TH1F  | t ∈ [0, 20] ns, 1000 bins                       | TOF from GEANT                      |
+ * | mCellSeen           | TH2F  | channel ∈ [0,192], tray ∈ [1,120]               | Cell occupancy after DetResponse    |
+ * | mNCellSeen          | TH2F  | same                                            | Number of cells after DetResponse   |
+ * | mDeSeen             | TH1F  | dE ∈ [0, 10] keV, 1000 bins                     | Energy deposit after DetResponse    |
+ * | mT0Seen             | TH1F  | t ∈ [0, 20] ns, 1000 bins                       | True t0 after DetResponse (ns)      |
+ * | mTofSeen            | TH1F  | t ∈ [0, 20] ns, 1000 bins                       | Smeared TOF after DetResponse (ns)  |
+ * | mTofResSeen         | TH1F  | Δt ∈ [−500, 500] ps, 1001 bins                  | TOF resolution after DetResponse    |
+ * | mCellReco           | TH2F  | channel ∈ [0,192], tray ∈ [1,120]               | Cell occupancy in StEvent           |
+ * | mNCellReco          | TH2F  | same                                            | Number of reconstructed cells       |
+ * | mTDCReco            | TH1F  | (not booked — reserved)                         | TDC distribution                    |
+ * | mADCReco            | TH1F  | (not booked — reserved)                         | ADC distribution                    |
+ * | mT0Reco             | TH1F  | (not booked — reserved)                         | t0 at reconstruction level          |
+ * | mTofResReco         | TH1F  | Δt ∈ [−300, 300] ps, 1000 bins                  | TOF resolution at reconstruction    |
+ * | mTACorr             | TH2F  | (not booked — reserved)                         | Time–amplitude slewing correlation  |
+ * | mModHist            | TH1F  | (not booked — reserved)                         | Module distribution                 |
+ * | mdE, mdS, mT, mTime | TH1F  | (not booked — TOFp legacy)                      | Legacy TOFp histograms              |
+ *
+ * @author Frank Geurts (Rice University)
+ * @date 2009–2021
+ */
+
+// ============================================================
+// Inner struct StBTofSimMaker::TrackHit
+// ============================================================
+/**
+ * @struct StBTofSimMaker::TrackHit
+ * @ingroup StBTofSimMaker
+ * @brief Aggregate holding a single simulated BTOF hit for the slow simulator.
+ *
+ * @details
+ * Each TrackHit represents the detector response in one MRPC cell for one
+ * primary ionising track (or its cross-talk partner cell).  After CellResponse()
+ * fills one or two TrackHit objects per GEANT hit, CellTimePassTh() reduces
+ * the vector to unique (tray, module, cell) entries before thresholding.
+ *
+ * | Member          | Type              | Unit  | Description                                         |
+ * |-----------------|-------------------|-------|-----------------------------------------------------|
+ * | tray            | int               | —     | Tray index, 1–120                                   |
+ * | module          | int               | —     | Module index within tray, 1–32                      |
+ * | cell            | int               | —     | Cell index within module, 1–6                       |
+ * | trkId           | int               | —     | Row index in g2t_track table (0-based)              |
+ * | dE              | double            | GeV   | Energy deposited in this cell                       |
+ * | dQ              | double            | pC    | Total collected charge                              |
+ * | dQdt[600]       | double            | pC    | Charge vs time in 600 bins of 25 ps each            |
+ * | tof             | double            | ps    | True flight time (GEANT value)                      |
+ * | s_track         | double            | cm    | Track path length to this cell                      |
+ * | t0              | double            | ns    | Ideal (unsmeared) TOF start time for this hit       |
+ * | position        | StThreeVectorF    | cm    | Local hit position in the MRPC reference frame      |
+ */
+
+// ============================================================
+// Method documentation
+// ============================================================
+
+/**
+ * @fn StBTofSimMaker::StBTofSimMaker(const char *name)
+ * @ingroup StBTofSimMaker
+ * @brief Constructor.  Sets all default flag values and calls Reset().
+ *
+ * @details
+ * Default values set by the constructor:
+ * - `mBookHisto  = kFALSE` — QA histograms not booked.
+ * - `mSlow       = kFALSE` — Fast simulator is active.
+ * - `mCellXtalk  = kTRUE`  — Cell cross-talk is modelled.
+ * - `mWriteStEvent = kTRUE` — Hits are written to StEvent.
+ * - `mDaqMap     = nullptr` — Initialised in InitRun().
+ * - `mIsEmbedding = kFALSE` — Pure simulation mode.
+ * - `mVpdSim     = kFALSE` — Determined at InitRun() time.
+ * - `mUseVpdStart = kTRUE` — VPD start time is applied.
+ *
+ * @param name  Name of the Maker in the StChain; default is `"TofSim"`.
+ */
+
+/**
+ * @fn StBTofSimMaker::~StBTofSimMaker()
+ * @ingroup StBTofSimMaker
+ * @brief Destructor.  Deletes mSimDb and mDaqMap.
+ */
+
+/**
+ * @fn int StBTofSimMaker::Init()
+ * @ingroup StBTofSimMaker
+ * @brief Framework initialisation: calls Reset() and optionally books histograms.
+ *
+ * @details
+ * Called once before the event loop begins.  If `mBookHisto` is true,
+ * bookHistograms() is invoked.  Database objects (mSimDb, mDaqMap) are
+ * deferred to InitRun() so that run-dependent parameters can be loaded.
+ *
+ * @return kStOK on success (propagated from StMaker::Init()).
+ */
+
+/**
+ * @fn void StBTofSimMaker::Reset()
+ * @ingroup StBTofSimMaker
+ * @brief Resets all per-event transient pointers and deletes the MC hit collection.
+ *
+ * @details
+ * Sets mBTofHeader, mGeantData, mEvent, mMcEvent to nullptr.  Deletes and
+ * nulls mMcBTofHitCollection.  Deletes mSimDb.  Deletes mDaqMap if it exists.
+ * Calls ResetFlags() to zero the hit-occupancy array.
+ */
+
+/**
+ * @fn int StBTofSimMaker::ResetFlags()
+ * @ingroup StBTofSimMaker
+ * @brief Zeros the mTofHitFlag[120][192] occupancy array.
+ *
+ * @details
+ * Uses `memset` to clear the entire flag array to zero at the start of each
+ * event.  The flag is set to 1 by CellResponse() and FastCellResponse()
+ * whenever a cell is fired.
+ *
+ * @return kStOk always.
+ */
+
+/**
+ * @fn int StBTofSimMaker::InitRun(int runnumber)
+ * @ingroup StBTofSimMaker
+ * @brief Run-dependent initialisation: creates DAQ map, loads simulation parameters.
+ *
+ * @details
+ * Performs the following actions:
+ * 1. Creates a new `StBTofDaqMap` and calls its `Init()` method.
+ * 2. Creates a new `StTofSimParam` with default MRPC physics constants.
+ * 3. Creates a new `StBTofSimResParams` and calls `loadParams()` to load
+ *    per-cell timing resolutions from `Calibrations/tof/tofSimResParams`.
+ * 4. Searches the maker chain for `StVpdSimMaker`; if found, sets `mVpdSim = kTRUE`.
+ * 5. Creates a new `StVpdSimConfig`.
+ * 6. Searches for `StVpdCalibMaker`; if found, reads its `useVpdStart()` flag.
+ *
+ * @param runnumber  The STAR run number (unused directly but provided by framework).
+ * @return kStOK on success.
+ */
+
+/**
+ * @fn int StBTofSimMaker::FinishRun(int runnumber)
+ * @ingroup StBTofSimMaker
+ * @brief Cleans up run-dependent objects at end of run.
+ *
+ * @details
+ * Deletes and nulls mDaqMap, mSimDb, mSimResDb, and mVpdSimConfig.
+ *
+ * @param runnumber  The STAR run number (unused but required by framework).
+ * @return kStOk on success.
+ */
+
+/**
+ * @fn int StBTofSimMaker::Finish()
+ * @ingroup StBTofSimMaker
+ * @brief End-of-job: writes QA histograms to a ROOT file if mBookHisto is true.
+ *
+ * @details
+ * Calls setHistFileName() to determine the output file name (derived from the
+ * chain output file, or defaulting to `"BTofSim.root"`), opens the file with
+ * `RECREATE`, calls writeHistograms(), and closes the file.
+ *
+ * @return kStOK on success.
+ */
+
+/**
+ * @fn int StBTofSimMaker::Make()
+ * @ingroup StBTofSimMaker
+ * @brief Per-event processing: drives the full simulation chain.
+ *
+ * @details
+ * Execution sequence:
+ * 1. ResetFlags() — clears hit occupancy.
+ * 2. Allocates a new StMcBTofHitCollection.
+ * 3. Retrieves the GEANT data set (`"geant"` then `"geantBranch"`).
+ * 4. Retrieves StEvent.
+ * 5. Looks for the `g2t_tfr_hit` table; if not found, returns kStWarn.
+ * 6. If `mSlow`: iterates over all hits calling CellResponse(), then calls
+ *    CellTimePassTh() once on the full response vector.
+ * 7. If `!mSlow` (default): iterates calling FastCellResponse() per hit.
+ * 8. Calls fillEvent() to transfer results to StMcEvent and StEvent.
+ *
+ * @return kStOK on success, kStWarn if GEANT data or hits are missing.
+ */
+
+/**
+ * @fn int StBTofSimMaker::CellResponse(g2t_ctf_hit_st* tofHitsFromGeant, TrackVec& tofResponseVec)
+ * @ingroup StBTofSimMaker
+ * @brief Slow simulator step 1: full MRPC avalanche model for a single GEANT hit.
+ *
+ * @details
+ * Implements the Townsend avalanche model for one MRPC gas gap, producing
+ * both the total collected charge and the time-binned charge profile.
+ *
+ * Algorithm:
+ * 1. Validates the hit (rejects if s_track ≤ 0 or dE ≤ 0).
+ * 2. Decodes tray/module/cell via CalcCellId().
+ * 3. Looks up β = p_tot/E for the associated track from the g2t_track table.
+ * 4. Samples Poisson(ρ_clus · d_g) primary electron clusters.
+ * 5. For each cluster m:
+ *    - Drift velocity: @f$v_{d,m} \sim U[0.9,1.1]\cdot\bar{v}_d@f$
+ *    - Primary electrons: Poisson(@f$\bar{n}_e@f$), minimum 1
+ *    - Cluster start position: Exp(@f$1/\rho_{\rm clus}@f$), clamped to @f$(0,d_g]@f$
+ *    - Avalanche: @f$sa_m = (e^{\alpha(d_g-x_{0,m})}-1)\,n_{e,m}\,\Gamma@f$
+ * 6. Total charge: @f$Q_{\rm tot} = kaa\sum_m sa_m \cdot 10^{12}\,e_{\rm SI}@f$ [pC]
+ * 7. Time-binned charge: integrates each cluster contribution over 600 bins
+ *    of @f$\Delta t = 25\,\text{ps}@f$.
+ * 8. Handles cross-talk: if the hit is near a pad edge, creates a second
+ *    TrackHit for the neighbour cell with complementary weights.
+ * 9. Appends one (or two) TrackHit objects to tofResponseVec and sets
+ *    mTofHitFlag.
+ *
+ * @param tofHitsFromGeant  Pointer to the current row in the g2t_ctf_hit table.
+ * @param tofResponseVec    Output vector accumulating TrackHit objects for this event.
+ * @return kStOk on success, kStWarn if the hit is invalid or geometry decoding fails.
+ */
+
+/**
+ * @fn int StBTofSimMaker::CellTimePassTh(TrackVec& tofResponseVec)
+ * @ingroup StBTofSimMaker
+ * @brief Slow simulator step 2: merges multi-track cell hits, applies threshold and timing smear.
+ *
+ * @details
+ * For each unique (tray, module, cell) combination, the hit with the earliest
+ * TOF is kept and its charge profile is accumulated from all contributing
+ * tracks (with correct time offsets in units of 25 ps bins).  A hit passes
+ * the discriminator if the accumulated charge profile crosses the ADC
+ * threshold @f$Q_{\rm thr}@f$ from `mSimDb->adc_thre()`.  For passing hits,
+ * a Gaussian timing resolution of
+ * @f[
+ *   \delta t \sim \mathcal{N}(0, 85\,\text{ps})
+ * @f]
+ * is applied.  Valid hits are stored as StMcBTofHit objects in the
+ * mMcBTofHitCollection.
+ *
+ * @param tofResponseVec  Vector of TrackHit objects produced by CellResponse().
+ * @return kStOk on success, kStWarn if the g2t_track table is missing.
+ */
+
+/**
+ * @fn int StBTofSimMaker::FastCellResponse(g2t_ctf_hit_st* tofHitsFromGeant, StBTofCollection* btofColl)
+ * @ingroup StBTofSimMaker
+ * @brief Fast simulator: applies Gaussian timing smear directly to the GEANT TOF.
+ *
+ * @details
+ * For each GEANT BTOF hit:
+ * 1. Validates s_track > 0 and dE > 0.
+ * 2. Decodes tray/module/cell via CalcCellId().
+ * 3. Applies Gaussian smearing:
+ *    @f$\delta t \sim \mathcal{N}(0,\,\sigma_{\rm cell})@f$
+ *    where @f$\sigma_{\rm cell}@f$ = `mSimResDb->timeres_tof(itray,imodule,icell)`.
+ * 4. Adds VPD start-time correction if applicable:
+ *    - If StVpdSimMaker was run: adds `mVpdSimConfig->getMcClock() * 1000` ps.
+ *    - Else if VPD hits exist: adds `mVpdSimConfig->getVpdResolution(nWest,nEast)`.
+ * 5. Constructs an StMcBTofHit with (tray, module, cell, dE, pathLength, t0, tof, q).
+ * 6. Handles cross-talk: creates a second StMcBTofHit for the neighbour cell.
+ * 7. Calls storeMcBTofHit() for each hit.
+ *
+ * @param tofHitsFromGeant  Pointer to the current row in the g2t_ctf_hit table.
+ * @param btofColl          Pointer to the existing StBTofCollection (may be null).
+ * @return kStOk on success, kStWarn if the hit is invalid or geometry fails.
+ */
+
+/**
+ * @fn int StBTofSimMaker::storeMcBTofHit(StMcBTofHit* mcBTofHit)
+ * @ingroup StBTofSimMaker
+ * @brief Inserts a simulated hit into the MC collection, merging if a same-cell hit exists.
+ *
+ * @details
+ * Scans mMcBTofHitCollection for an existing hit in the same (tray, module, cell).
+ * If found, the existing hit is updated:
+ * - Time and TOF are replaced only if the new hit is earlier.
+ * - Energy deposit and charge are summed.
+ * The passed pointer is **deleted** in the found case; ownership is
+ * transferred to the collection otherwise.
+ *
+ * @param mcBTofHit  Pointer to the StMcBTofHit to store or merge.
+ * @return kStOk always.
+ */
+
+/**
+ * @fn int StBTofSimMaker::fillEvent()
+ * @ingroup StBTofSimMaker
+ * @brief Transfers the MC hit collection to StMcEvent and StEvent, applying efficiency.
+ *
+ * @details
+ * 1. Updates GEANT-level occupancy histograms from mTofHitFlag.
+ * 2. Stores mMcBTofHitCollection in the current StMcEvent via
+ *    `setBTofHitCollection()`.
+ * 3. Obtains or creates an StBTofCollection (directly in StEvent for
+ *    pure simulation; locally for embedding).
+ * 4. For each StMcBTofHit:
+ *    a. Draws a random number; if > efficiency, the hit is discarded.
+ *    b. Creates StBTofHit (tray, module, cell, leading/trailing edge = mcTof ns,
+ *       idTruth = parentTrackId).
+ *    c. Creates StBTofRawHit (tray, channel = 6×(module−1)+cell, flag=1).
+ *    d. Adds both to mBTofCollection.
+ * 5. In pure-simulation mode, creates and sets the StBTofHeader.
+ * 6. In debug mode, logs the reconstructed hit list and fills additional histograms.
+ *
+ * @return kStOk always.
+ */
+
+/**
+ * @fn IntVec StBTofSimMaker::CalcCellId(int volume_id, float ylocal)
+ * @ingroup StBTofSimMaker
+ * @brief Decodes a GEANT volume ID and local y-coordinate into (tray, module, cell).
+ *
+ * @details
+ * The volume_id encoding (six digits):
+ * @f[
+ *   \text{volume\_id} = (\text{half}-1)\times 100000
+ *                     + \text{tray\_in\_half}\times 1000
+ *                     + \text{module}\times 10
+ * @f]
+ * Tray in the full barrel: @f$i_{\rm tray} = i_{\rm tray,half} + (\text{half}-1)\times 60@f$.
+ * Cell from y-local:
+ * @f[
+ *   i_{\rm cell} = \left\lfloor
+ *     \frac{y_{\rm local} + w_{\rm pad}\cdot N_{\rm cell}/2}{w_{\rm pad}}
+ *   \right\rfloor + 1
+ * @f]
+ * Any out-of-range index is set to −1.
+ *
+ * @param volume_id  GEANT CTOF volume identifier.
+ * @param ylocal     Local y-coordinate of the hit in the MRPC frame (mm).
+ * @return IntVec of size 3: {itray [1,120], imodule [1,32], icell [1,6]};
+ *         elements are −1 if out of range.
+ */
+
+/**
+ * @fn int StBTofSimMaker::CellXtalk(int icell, float ylocal, float& wt, int& icellx)
+ * @ingroup StBTofSimMaker
+ * @brief Computes cross-talk weight and neighbour cell for a hit near a pad boundary.
+ *
+ * @details
+ * The centre of cell icell is at @f$y_c = (i_{\rm cell}-1-2.5)\,w_{\rm pad}@f$.
+ * The displacement from the centre is @f$dy = y_{\rm local} - y_c@f$.
+ *
+ * If @f$|dy| < \Delta y_{\rm cut}@f$ (default ~1 mm), no cross-talk: wt=1, icellx=−1.
+ * Otherwise:
+ * @f[
+ *   w = 1 - \frac{|dy| - \Delta y_{\rm cut}}{w_{\rm pad} - 2\,\Delta y_{\rm cut}}
+ * @f]
+ * and icellx = icell ± 1 (sign follows sign of dy), clamped to [1,6]; icellx=−1 if
+ * the neighbour is out of range.
+ *
+ * @param icell    Primary cell index (1–6).
+ * @param ylocal   Local y-coordinate of the hit (mm).
+ * @param wt       Output: weight for the primary cell (0–1).
+ * @param icellx   Output: neighbour cell index (1–6), or −1 if no cross-talk.
+ * @return kStOk always.
+ */
+
+/**
+ * @fn double StBTofSimMaker::GammaRandom()
+ * @ingroup StBTofSimMaker
+ * @brief Returns a Gamma-distributed random variate for avalanche fluctuation modelling.
+ *
+ * @details
+ * Implements an acceptance–rejection sampler.  The returned value models the
+ * stochastic factor in the avalanche size and has an approximate Gamma(1.5, 1)
+ * distribution (the returned value is x/1.5 where x is sampled from an
+ * exponential-weighted distribution up to xmax=10).
+ *
+ * @return A non-negative double drawn from the Gamma distribution.
+ */
+
+/**
+ * @fn int StBTofSimMaker::fillRaw()
+ * @ingroup StBTofSimMaker
+ * @brief Placeholder for ADC/TDC digitisation (currently not implemented).
+ * @return kStOk always.
+ */
+
+/**
+ * @fn int StBTofSimMaker::electronicNoise()
+ * @ingroup StBTofSimMaker
+ * @brief Placeholder for electronic noise simulation (currently not implemented).
+ * @return kStOk always.
+ */
+
+/**
+ * @fn float StBTofSimMaker::slatResponseExp(float&)
+ * @ingroup StBTofSimMaker
+ * @brief Legacy TOFp slat response (not used in MRPC simulation).
+ * @param (unnamed)  Reference to a float parameter.
+ * @return Exponential slat response value.
+ */
+
+/**
+ * @fn int StBTofSimMaker::bookHistograms()
+ * @ingroup StBTofSimMaker
+ * @brief Allocates and registers all QA histograms via StMaker::AddHist().
+ *
+ * @details
+ * Creates the full set of TH1F and TH2F histograms listed in the class
+ * documentation.  Called from Init() when mBookHisto is true.
+ *
+ * @return kStOk on success.
+ */
+
+/**
+ * @fn Int_t StBTofSimMaker::writeHistograms()
+ * @ingroup StBTofSimMaker
+ * @brief Writes all booked histograms to the currently open TFile.
+ *
+ * @details
+ * Calls TH1::Write() / TH2::Write() on every histogram pointer.  Called
+ * from Finish() within a RECREATE TFile context.
+ *
+ * @return kStOk on success.
+ */
+
+/**
+ * @fn string StBTofSimMaker::setHistFileName()
+ * @ingroup StBTofSimMaker
+ * @brief Derives the QA histogram file name from the chain output file name.
+ *
+ * @details
+ * Reads the chain output file path from `GetChainOpt()->GetFileOut()`, strips
+ * the extension and directory path, and appends `.BTofSim.root`.  If the chain
+ * output is not set, returns an empty string (Finish() then uses
+ * `"BTofSim.root"` as the fallback).
+ *
+ * @return The constructed histogram file name, or empty string if not available.
+ */
+
+/**
+ * @fn int StBTofSimMaker::Init()
+ * @ingroup StBTofSimMaker
+ * (See above.)
+ */
+
+/**
+ * @fn bool StBTofSimMaker::getEmbeddingMode()
+ * @ingroup StBTofSimMaker
+ * @brief Returns the current embedding mode flag.
+ * @return `true` if running in embedding mode, `false` for pure simulation.
+ */
+
+/**
+ * @fn StTofSimParam* StBTofSimMaker::GetSimParam() const
+ * @ingroup StBTofSimMaker
+ * @brief Returns a pointer to the MRPC simulation parameter object.
+ * @return Pointer to mSimDb (may be null before InitRun()).
+ */
+
+/**
+ * @fn StBTofCollection* StBTofSimMaker::GetBTofCollection() const
+ * @ingroup StBTofSimMaker
+ * @brief Returns a pointer to the current event's StBTofCollection.
+ * @return Pointer to mBTofCollection (may be null before Make() is called).
+ */
+
+/**
+ * @fn StMcBTofHitCollection* StBTofSimMaker::GetMcBTofHitCollection() const
+ * @ingroup StBTofSimMaker
+ * @brief Returns a pointer to the current event's MC BTOF hit collection.
+ * @return Pointer to mMcBTofHitCollection (null before Make()).
+ */
+
+/**
+ * @fn void StBTofSimMaker::setEmbeddingMode(bool mode)
+ * @ingroup StBTofSimMaker
+ * @brief Enables or disables embedding mode.
+ * @param mode  `kTRUE` for embedding, `kFALSE` (default) for pure simulation.
+ */
+
+/**
+ * @fn void StBTofSimMaker::setCellXtalk(bool val)
+ * @ingroup StBTofSimMaker
+ * @brief Enables or disables cell cross-talk simulation.
+ * @param val  `true` to enable cross-talk (default), `false` to disable.
+ */
+
+/**
+ * @fn void StBTofSimMaker::setBookHist(bool val)
+ * @ingroup StBTofSimMaker
+ * @brief Enables or disables booking and filling of QA histograms.
+ * @param val  `true` to enable histogram output.
+ */
+
+/**
+ * @fn void StBTofSimMaker::writeStEvent(bool val)
+ * @ingroup StBTofSimMaker
+ * @brief Controls whether simulated hits are written to the StEvent BTOF collection.
+ * @param val  `true` (default) to write to StEvent; `false` to suppress.
+ */

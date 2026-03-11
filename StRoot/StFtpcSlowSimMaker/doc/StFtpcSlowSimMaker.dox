@@ -1,0 +1,1161 @@
+/**
+ * @defgroup StFtpcSlowSimMaker StFtpcSlowSimMaker — FTPC Slow Simulator
+ * @ingroup  StFtpcSlowSimMaker
+ *
+ * @brief Full detector simulation of the STAR Forward Time Projection
+ *        Chambers (FTPC West and FTPC East), modelling every physical
+ *        process from primary ionisation through to zero-suppressed ADC
+ *        output in the STAR DAQ raw-data format.
+ *
+ * @section ftpc_physics_overview Physics Overview
+ *
+ * Each FTPC is a cylindrical radial-drift time-projection chamber centred
+ * on the beam axis.  Charged particles produced in the STAR interaction
+ * region enter the sensitive gas volume (Ar/CO₂ 50:50) and deposit energy
+ * by ionisation along their path.  The liberated electrons drift
+ * <em>radially outward</em> (away from the beam) under a radial electric
+ * field maintained by a cylindrical cathode at inner radius \f$r_\text{in}\f$
+ * and the anode wires/Frisch grid near the outer radius \f$r_\text{out}\f$.
+ * On arrival at the anode, each primary electron is amplified in a
+ * Townsend avalanche.  The induced charge is collected on segmented cathode
+ * pads arranged in azimuthal sectors, digitised by switched-capacitor-array
+ * (SCA) electronics, and shipped to the DAQ as zero-suppressed 8-bit
+ * samples.
+ *
+ * @section ftpc_pipeline Simulation Pipeline
+ *
+ * The simulation proceeds in the following stages for every GEANT hit in
+ * the FTPC sensitive volume:
+ *
+ * -# **Coordinate transform** (StFtpcSlowSimulator::simulate) \n
+ *    The global GEANT hit position \f$(x,y,z)\f$ is rotated into the local
+ *    FTPC coordinate system using StFtpcTrackingParams.  The FTPC row
+ *    index is extracted from the GEANT volume ID.
+ *
+ * -# **Primary ionisation** (StFtpcSlowSimulator::simulate) \n
+ *    The number of primary electrons is
+ *    \f[ N_e = \frac{\Delta E}{W_i} \f]
+ *    where \f$\Delta E\f$ is the GEANT energy deposit in the step and
+ *    \f$W_i\f$ is the effective gas ionisation potential stored in the
+ *    database (\c ftpcGas, field \c gasIonizationPotential, in eV).
+ *
+ * -# **Track-angle widths** (StFtpcSlowSimulator::simulate) \n
+ *    The cluster is spread in the radial direction by the dip angle
+ *    \f$\lambda\f$ and in the azimuthal direction by the crossing angle
+ *    \f$\alpha\f$:
+ *    \f[ \delta r = L_\text{pad} \tan\lambda, \qquad
+ *        \delta\phi\cdot r = L_\text{pad} \tan\alpha \f]
+ *    where \f$L_\text{pad}\f$ is the pad length.
+ *
+ * -# **Electric field grid** (StFtpcSlowSimField) \n
+ *    The radial field is discretised on a uniform grid of
+ *    \c numSlowSimGridPoints points from \f$r_\text{in}\f$ to
+ *    \f$r_\text{out}\f$.  At each grid point the local electric field
+ *    \f[ E(r) = \frac{|V_\text{cath}|}{r\,\ln(r_\text{out}/r_\text{in})} \f]
+ *    is used to interpolate the drift velocity \f$v_z(E)\f$, the
+ *    transverse and longitudinal diffusion coefficients
+ *    \f$D_T\f$, \f$D_L\f$ (in \f$\mu\text{m}/\sqrt{\text{cm}}\f$), and
+ *    the Lorentz deflection angle \f$\theta_L(E)\f$ from the slow-sim gas
+ *    table (\c ftpcSlowSimGas).
+ *
+ *    A second, higher-resolution table of drift velocity and Lorentz
+ *    angle binned by E-field and pad-row position is read from the
+ *    Magboltz-derived database tables (\c ftpcVDrift, \c ftpcDeflection,
+ *    \c ftpcdVDriftdP, \c ftpcdDeflectiondP) and corrected for the
+ *    ambient pressure and temperature of each FTPC independently:
+ *    \f[ v(E,\Delta P) = v_0(E) + \frac{dv}{dP}\Delta P, \qquad
+ *        \theta_L(E,\Delta P) = \theta_0(E) + \frac{d\theta}{dP}\Delta P \f]
+ *    where \f$\Delta P = P_\text{now} - P_\text{std}\f$ is the pressure
+ *    deviation from standard conditions.  An optional cathode-offset
+ *    correction modifies the effective inner radius as a function of
+ *    azimuth \f$\phi\f$ to simulate mechanical misalignment of the inner
+ *    cathode cylinder.
+ *
+ * -# **Drift and diffusion** (StFtpcSlowSimCluster::DriftDiffuse) \n
+ *    Each cluster drifts radially outward in steps of size
+ *    \f$\delta r = (r_\text{out}-r_\text{in}) / (N_\text{grid}-1)\f$.
+ *    At each step:
+ *    \f{align*}{
+ *      \phi      &\mathrel{+}= \frac{\delta r}{r}\,\theta_L(r) \\
+ *      t_\text{drift} &\mathrel{+}= \frac{\delta r}{v_z(r)}
+ *    \f}
+ *    Diffusion is computed every \c diffusionCoarseness steps to save
+ *    CPU, accumulating
+ *    \f{align*}{
+ *      \sigma_r^2 &\mathrel{+}= D_L^2\,\delta r\,n_c
+ *                  + \sigma_r^2\left(1 + \frac{d\ln v}{dr}\cdot 2\delta r\,n_c\right) \\
+ *      \sigma_\phi^2 &\mathrel{+}= D_T^2\,n_c\,\delta r
+ *                    + \sigma_\phi^2 (1+\delta r/r \cdot n_c)^2
+ *    \f}
+ *    where \f$n_c\f$ is the diffusion coarseness integer.  A linear
+ *    electron-attachment loss \f$\epsilon\f$ per unit path (gas
+ *    attenuation from the database) reduces the cluster charge each
+ *    coarseness block.
+ *
+ * -# **Gas amplification** (StFtpcSlowSimReadout::Avalanche) \n
+ *    Groups of 10 primary electrons are processed together; each group
+ *    produces a Polya-distributed gain sample centred on the mean gas
+ *    gain \f$G\f$ (from \c ftpcGas::gasGain):
+ *    \f[ P(k) = C \left(mk\right)^{m-1} e^{-mk}, \qquad m=\tfrac{3}{2} \f]
+ *    The cumulative CDF is pre-tabulated and sampled via the
+ *    Locate–binary-search algorithm.
+ *
+ * -# **Pad-response function** (StFtpcSlowSimReadout::PadResponse) \n
+ *    The azimuthal width (in \f$\mu\text{m}\f$) after including the pad
+ *    response function (PRF) is
+ *    \f[ \sigma_\text{pad} = \sqrt{\sigma_\phi^2 + \sigma_\text{PRF}^2} \f]
+ *    The Gaussian PRF sigma \f$\sigma_\text{PRF}\f$ is stored in
+ *    \c ftpcSlowSimPars::sigmaPadResponseFuntion.
+ *
+ * -# **Shaper-electronics response** (StFtpcSlowSimReadout::ShaperResponse) \n
+ *    The drift-time width is converted to nanoseconds and convolved with
+ *    the shaper FWHM \f$\tau_s\f$ (from \c ftpcSlowSimPars::readoutShaperTime):
+ *    \f[ \sigma_t = \sqrt{\left(\frac{\sigma_r}{v_\text{final}}\right)^2
+ *                  + \left(\frac{\tau_s}{2.355}\right)^2} \f]
+ *    The factor 2.355 converts FWHM to \f$\sigma\f$ of a Gaussian.
+ *
+ * -# **Digitisation** (StFtpcSlowSimReadout::Digitize) \n
+ *    Track-angle offsets are used to split each cluster into
+ *    \f$2n_\text{sub}+1\f$ equally-weighted sub-hits along the track,
+ *    where \f$n_\text{sub} = 2\sqrt{(\delta r/L_\text{pad})^2+(\delta\phi/\delta\phi_\text{bin})^2}\f$.
+ *    Each sub-hit deposits charge into the floating-point ADC array
+ *    \c mADCArray[row][sector][pad][timebin] by integrating the
+ *    Gaussian pad and time distributions over each pad/timebin cell.
+ *    A per-channel time offset from the database (\c ftpcTimeOffset) is
+ *    applied before the time integration.
+ *
+ * -# **ADC conversion and noise** (StFtpcSlowSimReadout::OutputADC) \n
+ *    Each non-zero cell is scaled by the ADC conversion factor, a
+ *    per-channel gain slope (\c ftpcAmpSlope) and offset (\c ftpcAmpOffset)
+ *    from the database, then smeared by Gaussian white noise of
+ *    \f$\sigma=1.5\f$ ADC counts.  Cells below the zero-suppression
+ *    threshold are cleared; cells above the maximum 8-bit value are
+ *    clipped.
+ *
+ * -# **DAQ encoding** (StFtpcRawWriter::writeArray) \n
+ *    The hardware pad/sector numbering differs from the simulation
+ *    ordering: in the West FTPC and the outer cards of East FTPC the
+ *    pad order is inverted.  After remapping, data are encoded into
+ *    three STAR DAQ tables (\c fcl_ftpcndx, \c fcl_ftpcsqndx,
+ *    \c fcl_ftpcadc) using a two-threshold zero-suppression scheme
+ *    (high threshold 5 ADC counts, low threshold 2 ADC counts, minimum
+ *    2 bins above the low threshold) and the STAR SEQD run-length
+ *    encoding used by the real DAQ.
+ *
+ * @section ftpc_database Database Tables
+ *
+ * | Table                | Dataset path                           | Contents |
+ * |----------------------|----------------------------------------|----------|
+ * | ftpcDimensions       | Geometry/ftpc                          | Radii, number of rows/sectors/pads/timebins |
+ * | ftpcAsicMap          | Geometry/ftpc                          | ASIC mapping flags |
+ * | ftpcInnerCathode     | Geometry/ftpc                          | Cathode offset and angle |
+ * | ftpcEField           | Calibrations/ftpc                      | Nominal cathode voltage |
+ * | ftpcVDrift           | Calibrations/ftpc                      | Magboltz drift-velocity table |
+ * | ftpcDeflection       | Calibrations/ftpc                      | Magboltz Lorentz-angle table |
+ * | ftpcdVDriftdP        | Calibrations/ftpc                      | Drift-velocity pressure derivative |
+ * | ftpcdDeflectiondP    | Calibrations/ftpc                      | Lorentz-angle pressure derivative |
+ * | ftpcGas              | Calibrations/ftpc                      | Gas gain, ionisation potential, attenuation |
+ * | ftpcDriftField       | Calibrations/ftpc                      | Radial field geometry |
+ * | ftpcElectronics      | Calibrations/ftpc                      | t₀, microsecondsPerTimebin |
+ * | ftpcAmpSlope         | Calibrations/ftpc                      | Per-channel gain slope |
+ * | ftpcAmpOffset        | Calibrations/ftpc                      | Per-channel gain offset |
+ * | ftpcTimeOffset       | Calibrations/ftpc                      | Per-channel time offset |
+ * | ftpcTemps            | Calibrations/ftpc                      | Body temperature sensors |
+ * | ftpcSlowSimGas       | ftpc (StarDb)                          | Drift/diffusion vs. E-field table |
+ * | ftpcSlowSimPars      | ftpc (StarDb)                          | Simulator tuning parameters |
+ * | ftpcClusterPars      | ftpc (StarDb)                          | Cluster-finder parameters |
+ *
+ * @section ftpc_files Source Files
+ *
+ * | File                         | Role |
+ * |------------------------------|------|
+ * | StFtpcSlowSimMaker.cxx/.h    | STAR Maker; database initialisation, per-event orchestration |
+ * | StFtpcSlowSimulator.cc/.hh   | Core simulation loop over GEANT hits |
+ * | StFtpcSlowSimField.cc/.hh    | Electric-field grid, drift velocity and Lorentz angle |
+ * | StFtpcSlowSimCluster.cc/.hh  | Single ionisation cluster: drift, diffusion |
+ * | StFtpcSlowSimReadout.cc/.hh  | Avalanche, PRF, shaper, digitisation |
+ * | StFtpcSlowSimLibs.cc         | Utility: binary-search Locate() |
+ * | StFtpcRawWriter.cc/.hh       | DAQ table encoder (ndx/sqndx/adc) |
+ * | StFssSectorReader.cc/.hh     | Sector-level DAQ table reader |
+ */
+
+//===========================================================================
+// File documentation blocks
+//===========================================================================
+
+/**
+ * @file StFtpcSlowSimMaker.h
+ * @brief Declaration of StFtpcSlowSimMaker, the STAR Maker wrapper for the
+ *        FTPC slow simulator.
+ *
+ * Holds pointers to all offline-database table objects required by the
+ * simulator (geometry, calibrations, gas parameters) and the three
+ * monitoring histograms produced per event.
+ */
+
+/**
+ * @file StFtpcSlowSimMaker.cxx
+ * @brief Implementation of StFtpcSlowSimMaker.
+ *
+ * Contains InitRun() (database loading, magnetic-field flavour selection,
+ * time-bin calibration), Init() (histogram booking), Make() (per-event
+ * simulation dispatch), and MakeHistograms() (histogram filling).
+ */
+
+/**
+ * @file StFtpcSlowSimulator.hh
+ * @brief Declaration of StFtpcSlowSimulator, the main simulation loop.
+ */
+
+/**
+ * @file StFtpcSlowSimulator.cc
+ * @brief Implementation of StFtpcSlowSimulator::simulate(), the loop that
+ *        processes every GEANT hit through the full detector simulation chain.
+ */
+
+/**
+ * @file StFtpcSlowSimField.hh
+ * @brief Declaration of StFtpcSlowSimField.
+ *
+ * Defines the radial E-field grid and provides fast lookup of drift
+ * velocity and Lorentz angle as a function of radius, pad row, and
+ * azimuthal angle (for cathode-offset correction).
+ */
+
+/**
+ * @file StFtpcSlowSimField.cc
+ * @brief Implementation of StFtpcSlowSimField.
+ *
+ * Builds the grid from the slow-sim gas table and the Magboltz database
+ * tables; applies independent pressure/temperature corrections for
+ * FTPC West and FTPC East; implements cathode-offset geometry correction.
+ *
+ * Original author: W.G. Gong, gong\@mppmu.mpg.de, Oct 25, 1996.
+ */
+
+/**
+ * @file StFtpcSlowSimCluster.hh
+ * @brief Declaration of StFtpcSlowSimCluster.
+ *
+ * Represents a single cloud of primary electrons at one GEANT hit point;
+ * carries the cluster state (position, spread, charge, drift time) through
+ * the drift and diffusion step.
+ */
+
+/**
+ * @file StFtpcSlowSimCluster.cc
+ * @brief Implementation of StFtpcSlowSimCluster.
+ *
+ * Implements the radial drift loop with Lorentz deflection, longitudinal
+ * and transverse diffusion, divergence broadening, and electron attenuation.
+ *
+ * Original author: W.G. Gong, gong\@mppmu.mpg.de, Oct 25, 1996.
+ */
+
+/**
+ * @file StFtpcSlowSimReadout.hh
+ * @brief Declaration of StFtpcSlowSimReadout.
+ *
+ * Handles gas amplification (Polya-distributed avalanche), pad-response
+ * function, shaper-electronics response, and digitisation into the
+ * floating-point ADC array.
+ */
+
+/**
+ * @file StFtpcSlowSimReadout.cc
+ * @brief Implementation of StFtpcSlowSimReadout.
+ *
+ * Includes the Polya distribution generator for gain fluctuation, the
+ * Gaussian integral helper InteGauss(), the Marsaglia–Zaman universal
+ * random-number generator (ranmar/rmarin), and the hardware-to-DAQ
+ * pad/sector mapping routines GetHardPad() / GetHardSec().
+ *
+ * Original author: W.G. Gong, gong\@mppmu.mpg.de, Oct 25, 1996.
+ */
+
+/**
+ * @file StFtpcSlowSimLibs.cc
+ * @brief Utility functions shared across the FTPC slow simulator.
+ *
+ * Currently provides only Locate(), a binary-search routine for
+ * monotone arrays.
+ *
+ * Original author: W.G. Gong, gong\@mppmu.mpg.de, Oct 25, 1996.
+ */
+
+/**
+ * @file StFtpcRawWriter.hh
+ * @brief Declaration of StFtpcRawWriter.
+ *
+ * Writes simulated ADC data into the three STAR DAQ tables used by the
+ * offline cluster finder: fcl_ftpcndx (FTPC index), fcl_ftpcsqndx
+ * (sequence index), and fcl_ftpcadc (ADC values).
+ */
+
+/**
+ * @file StFtpcRawWriter.cc
+ * @brief Implementation of StFtpcRawWriter.
+ *
+ * Applies hardware pad/sector remapping to account for the inversion of
+ * pad order in the West FTPC (and optionally in FTPC East for pre-2003
+ * data), then encodes the data using the STAR SEQD run-length format with
+ * a two-threshold zero-suppression algorithm.
+ */
+
+/**
+ * @file StFssSectorReader.hh
+ * @brief Declaration of StFssSectorReader.
+ *
+ * Provides a sector-level interface to read back the simulated raw-data
+ * tables as if they were real DAQ data, implementing the same API used by
+ * the real FTPC DAQ reader.
+ */
+
+/**
+ * @file StFssSectorReader.cc
+ * @brief Implementation of StFssSectorReader.
+ *
+ * Parses the fcl_ftpcsqndx and fcl_ftpcadc tables for a single hardware
+ * sector, building the Pad_array and Row_array internal structures that
+ * allow the cluster finder to iterate over pad-rows and sequences in
+ * exactly the same way as for real data.
+ */
+
+//===========================================================================
+// Class documentation blocks
+//===========================================================================
+
+/**
+ * @class StFtpcSlowSimMaker
+ * @brief STAR Maker that drives the full FTPC slow simulation for one event.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Inherits from StMaker.  Responsibilities:
+ * - Load all required offline-database table objects in InitRun().
+ * - Select the correct Magboltz drift-map flavour based on the STAR solenoidal
+ *   field sign and magnitude (ffp10kv / hfp10kv / zf10kv / hfn10kv / ffn10kv).
+ * - Calculate the ADC time-bin width from the RHIC RF clock frequency.
+ * - For embedding runs, obtain the ambient gas temperature and pressure from
+ *   the online conditions database and compute per-FTPC temperature-corrected
+ *   pressures.
+ * - Instantiate and invoke StFtpcSlowSimulator for every event that contains
+ *   GEANT FTPC hits.
+ * - Book and fill three diagnostic histograms.
+ *
+ * @section data_members Data Members
+ *
+ * | Member                       | Type                   | Description |
+ * |------------------------------|------------------------|-------------|
+ * | mDbMaker                     | St_db_Maker *          | Pointer to the STAR database maker |
+ * | m_clusterpars                | St_ftpcClusterPars *   | Cluster-finder parameters (StarDb/ftpc) |
+ * | m_slowsimgas                 | St_ftpcSlowSimGas *    | Slow-sim gas table (StarDb/ftpc) |
+ * | m_slowsimpars                | St_ftpcSlowSimPars *   | Slow-sim tuning parameters (StarDb/ftpc) |
+ * | m_dimensions                 | St_ftpcDimensions *    | Geometry: radii, pad counts, timebin count |
+ * | m_asicmap                    | St_ftpcAsicMap *       | ASIC mapping flags |
+ * | m_efield                     | St_ftpcEField *        | Cathode voltage |
+ * | m_vdrift                     | St_ftpcVDrift *        | Magboltz drift velocity table |
+ * | m_deflection                 | St_ftpcDeflection *    | Magboltz Lorentz-angle table |
+ * | m_dvdriftdp                  | St_ftpcdVDriftdP *     | dv/dP pressure derivative table |
+ * | m_ddeflectiondp              | St_ftpcdDeflectiondP * | dθ_L/dP pressure derivative table |
+ * | m_ampslope                   | St_ftpcAmpSlope *      | Per-channel gain slope |
+ * | m_ampoffset                  | St_ftpcAmpOffset *     | Per-channel gain offset |
+ * | m_timeoffset                 | St_ftpcTimeOffset *    | Per-channel time offset (timebins) |
+ * | m_driftfield                 | St_ftpcDriftField *    | Radial field geometry (r·E product) |
+ * | m_gas                        | St_ftpcGas *           | Gas gain, ionisation potential, attenuation |
+ * | m_electronics                | St_ftpcElectronics *   | t₀, µs/timebin |
+ * | m_cathode                    | St_ftpcInnerCathode *  | Cathode offset and angle |
+ * | m_temps                      | St_ftpcTemps *         | Body temperature sensors |
+ * | microsecondsPerTimebin        | float                  | ADC time-bin width (µs), from RHIC clock |
+ * | m_nadc                       | TH1F *                 | Histogram: total ADC count per event |
+ * | m_nsqndx                     | TH1F *                 | Histogram: sequence index distribution |
+ * | m_nadc_index1                | TH2F *                 | Histogram: total ADC vs. FTPC East ADC |
+ */
+
+/**
+ * @fn StFtpcSlowSimMaker::StFtpcSlowSimMaker(const char *name)
+ * @brief Constructor.
+ * @param name  Maker name registered with the STAR chain (default "ftpc_raw").
+ *
+ * Initialises all database-table pointers to zero; histogram pointers are
+ * initialised by Init().
+ */
+
+/**
+ * @fn StFtpcSlowSimMaker::~StFtpcSlowSimMaker()
+ * @brief Destructor.  No dynamic memory owned directly by this class.
+ */
+
+/**
+ * @fn Int_t StFtpcSlowSimMaker::InitRun(int runnumber)
+ * @brief Per-run initialisation.
+ * @param runnumber  STAR run number for the current run.
+ * @return kStOK (0) on success, kStWarn on database failure.
+ *
+ * Actions performed:
+ * -# Query StarMagField for the magnetic field at the origin to compute
+ *    the g-factor \f$g = B_z / 4.980\f$ and set the Magboltz drift-map
+ *    flavour accordingly.
+ * -# Derive \c microsecondsPerTimebin from the RHIC clock frequency
+ *    via StDetectorDbClock; fall back to the database default if the
+ *    clock is unavailable.
+ * -# Retrieve all geometry and calibration database table objects for the
+ *    current run timestamp.
+ * -# Initialise StFtpcTrackingParams for coordinate rotations.
+ * -# Load the StarDb/ftpc parameter tables (\c ftpcClusterPars,
+ *    \c ftpcSlowSimGas, \c ftpcSlowSimPars).
+ */
+
+/**
+ * @fn Int_t StFtpcSlowSimMaker::Init()
+ * @brief One-time initialisation.  Books the three monitoring histograms
+ *        and delegates to StMaker::Init().
+ * @return Return value of StMaker::Init().
+ */
+
+/**
+ * @fn Int_t StFtpcSlowSimMaker::Make()
+ * @brief Per-event simulation.
+ * @return kStOK on success, kStWarn if GEANT input tables are absent or
+ *         the database reader cannot be constructed.
+ *
+ * Retrieves the GEANT hit tables (g2t_vertex, g2t_track, g2t_ftp_hit),
+ * allocates the output DAQ tables (fcl_ftpcndx, fcl_ftpcsqndx, fcl_ftpcadc),
+ * constructs the reader/writer/simulator objects, runs the simulation, and
+ * fills the monitoring histograms.  For embedding, also fetches temperature
+ * and pressure from the online conditions database and computes
+ * per-FTPC adjusted pressures.
+ */
+
+/**
+ * @fn void StFtpcSlowSimMaker::MakeHistograms()
+ * @brief Fills the three diagnostic histograms after simulation.
+ *
+ * Reads the fcl_ftpcadc, fcl_ftpcndx, and fcl_ftpcsqndx tables from the
+ * data store and fills:
+ * - \c fss_total_adc  — total number of ADC samples in both FTPCs.
+ * - \c fss_sqndx      — sequence-index values.
+ * - \c fss_nadc_index1 — (total ADC count) vs. (FTPC East ADC count).
+ */
+
+//===========================================================================
+
+/**
+ * @class StFtpcSlowSimulator
+ * @brief Core simulation loop: iterates over all GEANT hits in the FTPC
+ *        sensitive volume and applies the full detector response chain.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Owns no persistent state beyond the four pointers set in the constructor.
+ * The single public entry point simulate() creates the field and readout
+ * objects, allocates the ADC array, loops over hits, and writes the result.
+ *
+ * @section ss_data_members Data Members
+ *
+ * | Member   | Type                  | Description |
+ * |----------|-----------------------|-------------|
+ * | mGeant   | StFtpcGeantReader *   | Access to GEANT hit table (position, momentum, dE) |
+ * | mParam   | StFtpcParamReader *   | Access to StarDb parameter tables |
+ * | mDb      | StFtpcDbReader *      | Access to offline calibration database |
+ * | mWriter  | StFtpcRawWriter *     | Output: encodes ADC data into DAQ tables |
+ */
+
+/**
+ * @fn StFtpcSlowSimulator::StFtpcSlowSimulator(StFtpcGeantReader *geantReader, StFtpcParamReader *paramReader, StFtpcDbReader *dbReader, StFtpcRawWriter *rawWriter)
+ * @brief Constructor.  Stores the four reader/writer pointers; no additional
+ *        initialisation is performed.
+ * @param geantReader  Provides GEANT hit data (positions, momenta, dE).
+ * @param paramReader  Provides StarDb slow-sim and cluster-finder parameters.
+ * @param dbReader     Provides offline calibration database values.
+ * @param rawWriter    Receives the simulated ADC output.
+ */
+
+/**
+ * @fn int StFtpcSlowSimulator::simulate()
+ * @brief Run the full FTPC simulation for all hits in the current event.
+ * @return 1 on success (always).
+ *
+ * Algorithm outline:
+ * -# Construct StFtpcSlowSimField and StFtpcSlowSimReadout.
+ * -# Allocate the floating-point ADC array of size
+ *    \f$N_\text{row}\times N_\text{sec}\times N_\text{pad}\times N_\text{bin}\f$.
+ * -# For each GEANT hit:
+ *    - Skip if outside the radial sensitive-volume bounds.
+ *    - Rotate global coordinates to local FTPC frame.
+ *    - Compute dip angle \f$\lambda\f$ and crossing angle \f$\alpha\f$.
+ *    - Calculate \f$N_e\f$, \f$\delta r\f$, \f$\delta\phi\f$.
+ *    - Create StFtpcSlowSimCluster, call DriftDiffuse, Avalanche,
+ *      PadResponse, ShaperResponse, Digitize.
+ * -# Call OutputADC() (apply gain, noise, suppression).
+ * -# Call writeArray() (encode to DAQ tables).
+ */
+
+/**
+ * @fn StFtpcSlowSimulator::~StFtpcSlowSimulator()
+ * @brief Destructor.  No dynamic allocations owned by this class.
+ */
+
+//===========================================================================
+
+/**
+ * @class StFtpcSlowSimField
+ * @brief Radial electric field model and drift-parameter lookup for the FTPC.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Builds and caches two levels of field description:
+ * - A coarse grid (numSlowSimGridPoints points) interpolated from the
+ *   slow-sim gas table, used for diffusion accumulation during drift.
+ * - A fine Magboltz table (nMagboltzBins × nPadrowPositions) giving
+ *   precise drift velocity and Lorentz angle per pad row, corrected for
+ *   ambient pressure and temperature independently for each FTPC half.
+ *
+ * The optional cathode-offset correction modifies the effective inner
+ * radius as a function of azimuth \f$\phi\f$, changing the local E-field
+ * and hence the drift velocity seen by each cluster.
+ *
+ * @section field_data_members Data Members
+ *
+ * | Member                       | Type      | Units             | Description |
+ * |------------------------------|-----------|-------------------|-------------|
+ * | del_r                        | float     | cm                | Coarse grid step size |
+ * | inverseDeltaRadius           | float     | cm⁻¹              | 1/del_r, precomputed for speed |
+ * | twoDeltaRadius               | float     | cm                | 2·del_r |
+ * | finalVelocity                | float     | cm/µs             | Drift velocity at outer radius (for time→space conversion) |
+ * | nMagboltzBins                | int       | —                 | Number of E-field bins in Magboltz table |
+ * | nPadrowPositions             | int       | —                 | Number of pad-row positions per side |
+ * | EFieldMin                    | float     | V/cm              | Minimum E-field in Magboltz table |
+ * | EFieldStep                   | float     | V/cm              | E-field step in Magboltz table |
+ * | EFieldStepInverted           | float     | cm/V              | 1/EFieldStep |
+ * | EFieldStepInvConverted       | float     | rad·cm/V          | EFieldStepInverted × (π/180) |
+ * | radTimesField                | float     | V                 | r·E product (= V/ln(r_out/r_in)) |
+ * | innerRadius                  | float     | cm                | Inner sensitive-volume radius |
+ * | outerRadius                  | float     | cm                | Outer sensitive-volume radius |
+ * | preciseEField                | float *   | V/cm              | E-field values for Magboltz bins |
+ * | inverseDriftVelocityWest     | float *   | µs/cm             | 1/v_drift for each (E,padrow) — West |
+ * | preciseLorentzAngleWest      | float *   | rad               | Lorentz angle for each (E,padrow) — West |
+ * | inverseDriftVelocityEast     | float *   | µs/cm             | 1/v_drift for each (E,padrow) — East |
+ * | preciseLorentzAngleEast      | float *   | rad               | Lorentz angle for each (E,padrow) — East |
+ * | angleFactor                  | float     | —                 | Lorentz angle correction factor (currently unused) |
+ * | mOffsetCathodeWest           | float     | cm                | Cathode offset for West FTPC |
+ * | mOffsetCathodeEast           | float     | cm                | Cathode offset for East FTPC |
+ * | mAngleOffsetWest             | float     | rad               | Cathode angle offset for West FTPC |
+ * | mAngleOffsetEast             | float     | rad               | Cathode angle offset for East FTPC |
+ * | grid_point                   | grid_data*| —                 | Array of coarse grid points |
+ *
+ * The nested \c grid_data struct stores per-grid-point values:
+ *
+ * | Field       | Type  | Units          | Description |
+ * |-------------|-------|----------------|-------------|
+ * | rhit        | float | cm             | Radial position |
+ * | ef          | float | V/cm           | Electric field magnitude |
+ * | vel_z       | float | cm/µs          | Longitudinal drift velocity |
+ * | diff_z      | float | µm²/cm         | \f$D_L^2\f$, longitudinal diffusion coefficient squared |
+ * | diff_x      | float | µm²/cm         | \f$D_T^2\f$, transverse diffusion coefficient squared |
+ * | diff_y      | float | µm²/cm         | Transverse (y) diffusion coefficient squared (not used separately) |
+ * | lorentz     | float | rad            | Lorentz deflection angle |
+ * | dlnv_dr     | float | cm⁻¹           | \f$d\ln v / dr\f$, drift-velocity gradient |
+ */
+
+/**
+ * @fn StFtpcSlowSimField::StFtpcSlowSimField(StFtpcParamReader *paramReader, StFtpcDbReader *dbReader)
+ * @brief Constructor.  Builds the complete field model from parameter and
+ *        database tables.
+ * @param paramReader  StarDb slow-sim gas and parameter tables.
+ * @param dbReader     Offline calibration database values.
+ *
+ * Steps performed:
+ * -# Allocate and fill the coarse grid from the slow-sim gas table using
+ *    Newton polynomial interpolation (Interpolate / InterpValue).
+ * -# Compute drift-velocity gradients \f$d\ln v/dr\f$ by backward
+ *    differencing on the coarse grid.
+ * -# Allocate and fill the precise Magboltz tables for West and East,
+ *    applying the pressure correction \f$v = v_0 + (dv/dP)\,\Delta P\f$.
+ * -# Store the cathode-offset parameters.
+ */
+
+/**
+ * @fn StFtpcSlowSimField::~StFtpcSlowSimField()
+ * @brief Destructor.  Frees all dynamically allocated arrays.
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::Interpolate(const int npt, const float *x, const float *y, const int ich, const float xx)
+ * @brief Interpolate using Newton's polynomial method.
+ * @param npt  Total number of data points in the table.
+ * @param x    Array of independent-variable values (size \p npt).
+ * @param y    Array of dependent-variable values (size \p npt).
+ * @param ich  Index of the nearest lower data point (from Locate()).
+ * @param xx   Value at which to interpolate.
+ * @return Interpolated value at \p xx.
+ *
+ * Uses 2-point linear interpolation near the table boundaries and
+ * 5-point polynomial interpolation in the interior.
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::InterpValue(const int npt, const float *x, const float *y, const float xx)
+ * @brief Newton-form polynomial interpolation over \p npt points.
+ * @param npt  Number of data points (2 or 5).
+ * @param x    Independent-variable values.
+ * @param y    Dependent-variable values.
+ * @param xx   Evaluation point.
+ * @return Interpolated value.
+ */
+
+/**
+ * @fn void StFtpcSlowSimField::GetVelocityZ(const float inverseRadius, const int padrow, const float phi, float *inverseVelocity, float *angle)
+ * @brief Return the inverse drift velocity and Lorentz angle at a given
+ *        radial position, pad row, and azimuthal angle.
+ * @param inverseRadius     \f$1/r\f$ (cm⁻¹) of the current cluster position.
+ * @param padrow            Full (0–19) pad-row index; rows 0–9 are West,
+ *                          rows 10–19 are East.
+ * @param phi               Azimuthal angle of the cluster (rad).
+ * @param[out] inverseVelocity  Set to \f$1/v_\text{drift}\f$ (µs/cm).
+ * @param[out] angle            Set to the Lorentz deflection angle (rad).
+ *
+ * If the cathode offset is non-zero, the effective inner radius (and hence
+ * the local E-field) is corrected using
+ * \f[ r_\text{eff} = \frac{r_\text{in}\,\sin(\pi - \phi - \arcsin(x_\text{off}/r_\text{in}\cdot\sin\phi))}{\sin\phi} \f]
+ * The corrected E-field is
+ * \f[ E_\text{eff} = r\cdot E_0 \cdot \frac{\ln(r_\text{out}/r_\text{in})}{\ln(r_\text{out}/r_\text{eff})} \cdot \frac{1}{r} \f]
+ */
+
+/**
+ * @fn void StFtpcSlowSimField::Output() const
+ * @brief Debug: write the coarse field grid to the file \c field.dat.
+ */
+
+/**
+ * @fn int StFtpcSlowSimField::GetGridIndex(const float r) const
+ * @brief Convert a radius to a coarse grid index.
+ * @param r  Radius (cm).
+ * @return Integer grid index \f$\lfloor (r - r_\text{in}) / \delta r \rfloor\f$.
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetVelAtReadout() const
+ * @brief Return the drift velocity at the outer sensitive-volume boundary.
+ * @return Drift velocity at \f$r_\text{out}\f$ (cm/µs).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetDeltaRadius() const
+ * @brief Return the coarse grid step size \f$\delta r\f$ (cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetInverseDeltaRadius() const
+ * @brief Return \f$1/\delta r\f$ (cm⁻¹).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetTwoDeltaRadius() const
+ * @brief Return \f$2\delta r\f$ (cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetDiffusionXSqr(const int i) const
+ * @brief Return the transverse diffusion coefficient squared \f$D_T^2\f$
+ *        at grid point \p i (µm²/cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetDiffusionZSqr(const int i) const
+ * @brief Return the longitudinal diffusion coefficient squared \f$D_L^2\f$
+ *        at grid point \p i (µm²/cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimField::GetDlnvDr(const int i) const
+ * @brief Return \f$d\ln v/dr\f$ at grid point \p i (cm⁻¹), used to
+ *        account for the velocity-gradient broadening of the radial cluster
+ *        width during drift.
+ */
+
+//===========================================================================
+
+/**
+ * @class StFtpcSlowSimCluster
+ * @brief Represents one cloud of primary electrons from a single GEANT hit
+ *        during its drift through the FTPC gas.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Created per GEANT hit; updated in-place by DriftDiffuse(); read by
+ * StFtpcSlowSimReadout for the subsequent avalanche and digitisation steps.
+ *
+ * @section cluster_data_members Data Members
+ *
+ * | Member               | Type  | Units   | Description |
+ * |----------------------|-------|---------|-------------|
+ * | electron             | float | —       | Number of primary electrons in the cluster |
+ * | electronLoss         | float | —       | Electrons lost per drift step (\f$= -\delta r \cdot \epsilon_\text{att}\f$) |
+ * | sigma_rad_squared    | float | µm²     | Variance of cluster in radial direction |
+ * | sigma_phi_squared    | float | µm²     | Variance of cluster in azimuthal direction |
+ * | radialDipWidth       | float | cm      | Track-dip geometric width in radial direction |
+ * | azimuthalCrossWidth  | float | cm      | Track-crossing geometric width in azimuthal direction |
+ * | currentRadius        | float | cm      | Current radial position |
+ * | currentPhi           | float | rad     | Current azimuthal position |
+ * | drift_time           | float | µs      | Accumulated drift time |
+ * | padrow               | int   | —       | Full padrow index 0–19 (used in field lookup) |
+ * | original_padrow      | int   | —       | Padrow at creation (debug only) |
+ * | outerRadius          | float | cm      | Drift stop radius \f$r_\text{out}\f$ |
+ * | deltaRadius          | float | cm      | Drift step size from StFtpcSlowSimField |
+ * | twoDeltaRadius       | float | cm      | 2 × drift step size |
+ * | mIntDiffCoarseness   | int   | —       | Number of steps between diffusion updates |
+ * | mFlDiffCoarseness    | float | —       | Float cast of mIntDiffCoarseness |
+ */
+
+/**
+ * @fn StFtpcSlowSimCluster::StFtpcSlowSimCluster(StFtpcParamReader *paramReader, StFtpcDbReader *dbReader, StFtpcSlowSimField *field, const float el, const float rad_offset, const float pad_offset, const float r, const float ph, const float time, const int call_padrow)
+ * @brief Constructor.  Initialises the cluster state from the GEANT hit
+ *        parameters and derives drift step sizes from the field object.
+ * @param paramReader  Provides diffusionCoarseness.
+ * @param dbReader     Provides sensitiveVolumeOuterRadius, gasAttenuation.
+ * @param field        Provides deltaRadius, twoDeltaRadius.
+ * @param el           Number of primary electrons (\f$\Delta E / W_i\f$).
+ * @param rad_offset   Track-dip geometric spread in radial direction (cm).
+ * @param pad_offset   Track-crossing geometric spread in azimuthal direction (cm).
+ * @param r            Initial radial position (cm).
+ * @param ph           Initial azimuthal position (rad).
+ * @param time         Initial drift time (µs); typically \f$-t_0\f$.
+ * @param call_padrow  Full padrow index 0–19.
+ */
+
+/**
+ * @fn void StFtpcSlowSimCluster::DriftDiffuse(StFtpcSlowSimField *field)
+ * @brief Drift the cluster radially outward, accumulating Lorentz deflection,
+ *        drift time, and azimuthal/radial diffusion.
+ * @param field  Electric field model providing drift velocity, Lorentz angle,
+ *               and diffusion coefficients at each grid point.
+ *
+ * The cluster is stepped from \c currentRadius to \c outerRadius in
+ * increments of \c deltaRadius.  At each step the Lorentz deflection
+ * \f$d\phi = (\delta r / r)\,\theta_L\f$ and time increment
+ * \f$dt = \delta r / v_z\f$ are applied.  Every \c mIntDiffCoarseness
+ * steps the diffusion variances are updated (see the @ref ftpc_pipeline
+ * section for formulas).
+ */
+
+/**
+ * @fn void StFtpcSlowSimCluster::Print() const
+ * @brief Log cluster state to StMessMgr at INFO level (debug helper).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetElectron() const
+ * @brief Return the current number of primary electrons.
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetSigRad() const
+ * @brief Return the radial sigma \f$\sigma_r = \sqrt{\sigma_r^2}\f$ (µm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetSigPhi() const
+ * @brief Return the azimuthal sigma \f$\sigma_\phi = \sqrt{\sigma_\phi^2}\f$ (µm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetRadOff() const
+ * @brief Return the track-dip geometric width in the radial direction (cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetPadOff() const
+ * @brief Return the track-crossing geometric width in the azimuthal direction (cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetRad() const
+ * @brief Return the current radial position (cm).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetPhi() const
+ * @brief Return the current azimuthal position (rad).
+ */
+
+/**
+ * @fn float StFtpcSlowSimCluster::GetDriftTime() const
+ * @brief Return the accumulated drift time (µs).
+ */
+
+//===========================================================================
+
+/**
+ * @class StFtpcSlowSimReadout
+ * @brief Simulates the FTPC readout electronics: gas avalanche, pad-response
+ *        function, shaper-electronics response, and digitisation.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * @section readout_data_members Data Members
+ *
+ * | Member                  | Type     | Units    | Description |
+ * |-------------------------|----------|----------|-------------|
+ * | mParam                  | StFtpcParamReader * | — | Parameter reader |
+ * | mDb                     | StFtpcDbReader *    | — | Database reader |
+ * | mMaxAdc                 | int      | ADC cnt  | ADC saturation value (typically 255) |
+ * | mGaussIntSteps          | int      | —        | Integration sub-steps for InteGauss |
+ * | mGasGain                | float    | —        | Mean gas gain |
+ * | mOuterRadius            | float    | cm       | Outer sensitive-volume radius |
+ * | mInverseFinalVelocity   | float    | µs/cm    | \f$1/v_\text{final}\f$ for time conversion |
+ * | mRandomNumberGenerator  | int      | —        | 0 = ROOT TRandom, 1 = ranmar |
+ * | mADCArray               | float *  | electrons| Floating-point ADC accumulation array |
+ * | mFinalElectrons         | float    | —        | Amplified electrons after avalanche |
+ * | sigma_pad               | float    | µm       | Azimuthal sigma after PRF convolution |
+ * | pad_off                 | float    | cm       | Azimuthal track-crossing offset |
+ * | sigma_tim               | float    | ns       | Radial sigma after shaper convolution |
+ * | time_off                | float    | ns       | Radial dip-angle time offset |
+ * | number_plane            | int      | —        | Pad rows per FTPC half |
+ * | pad_pitch               | float    | cm       | Centre-to-centre pad spacing |
+ * | pad_length              | float    | cm       | Pad length in radial direction |
+ * | sigma_prf               | float    | µm       | Pad-response function Gaussian sigma |
+ * | shaper_time             | float    | ns       | Shaper FWHM |
+ * | slice                   | float    | µs       | ADC time-bin width |
+ * | pcum                    | float *  | —        | Cumulative Polya CDF (gnch bins) |
+ * | gnch                    | int      | —        | Number of bins in Polya CDF (50) |
+ * | glow / ghigh / gdelta   | float    | —        | Polya table range and step (0.1–2.5) |
+ * | phiMin / phiMax         | float    | rad      | Azimuthal range of one sector |
+ * | uc                      | raset1   | —        | Internal state for Marsaglia–Zaman RNG |
+ */
+
+/**
+ * @fn StFtpcSlowSimReadout::StFtpcSlowSimReadout(StFtpcParamReader *paramReader, StFtpcDbReader *dbReader, float *adcIn, const StFtpcSlowSimField *field)
+ * @brief Constructor.  Initialises all readout parameters, zeros the ADC
+ *        array, and pre-computes the Polya cumulative distribution.
+ * @param paramReader  Provides sigma_prf, shaper_time, adcConversion,
+ *                     randomNumberGenerator, maxAdc, gaussIntegrationSteps,
+ *                     zeroSuppressThreshold.
+ * @param dbReader     Provides pad geometry, gas gain, time-bin width,
+ *                     sector angular boundaries, gain calibration tables.
+ * @param adcIn        Pre-allocated floating-point array of size
+ *                     \f$N_\text{row}\times N_\text{sec}\times N_\text{pad}\times N_\text{bin}\f$.
+ * @param field        Provides \c GetVelAtReadout() for the time–space conversion.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::Avalanche(const StFtpcSlowSimCluster *cl)
+ * @brief Sample the gas multiplication using the Polya distribution.
+ * @param cl  Input cluster; only GetElectron() is used.
+ *
+ * Electrons are grouped into bundles of 10 to save CPU.  Each bundle
+ * draws one sample from the Polya CDF via sample_polya() and the total
+ * is rescaled by the group size.  The result is stored in
+ * \c mFinalElectrons.
+ *
+ * The Polya distribution used is
+ * \f[ P(k;\,m) = \frac{m\,(mk)^{m-1} e^{-mk}}{\Gamma(m)}, \quad m=\tfrac{3}{2} \f]
+ * which gives a relative variance \f$\sigma^2/\mu^2 = 1/m = 2/3\f$.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::PadResponse(const StFtpcSlowSimCluster *cl)
+ * @brief Convolve the azimuthal cluster width with the pad-response function.
+ * @param cl  Cluster after drift; provides GetSigPhi() and GetPadOff().
+ *
+ * \f[ \sigma_\text{pad} = \sqrt{\sigma_\phi^2 + \sigma_\text{PRF}^2} \f]
+ * Units: µm.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::ShaperResponse(const StFtpcSlowSimCluster *cl)
+ * @brief Convolve the radial time width with the electronics shaper response.
+ * @param cl  Cluster after drift; provides GetSigRad() and GetRadOff().
+ *
+ * The radial sigma in µm is converted to nanoseconds via
+ * \f$\sigma_t = \sigma_r / v_\text{final}\f$.
+ * The shaper sigma is \f$\sigma_s = \tau_\text{FWHM} / 2.355\f$.
+ * The combined time sigma is \f$\sigma_\text{tim} = \sqrt{\sigma_t^2 + \sigma_s^2}\f$.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::Digitize(const StFtpcSlowSimCluster *cl, const int irow)
+ * @brief Map the cluster onto the pad/timebin grid and accumulate charge.
+ * @param cl    Cluster after PRF and shaper convolution.
+ * @param irow  FTPC row index 0–19.
+ *
+ * The cluster is optionally split into \f$2n_\text{sub}+1\f$ sub-hits along
+ * the track direction.  For each sub-hit the azimuthal Gaussian is
+ * integrated over each pad cell via InteGauss() and the time Gaussian is
+ * integrated over each timebin cell; the product weights \c mFinalElectrons
+ * into \c mADCArray.  A per-channel time offset from the database is applied
+ * before the time binning.  Clusters spanning multiple azimuthal sectors
+ * are handled by looping over the required sector range.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::OutputADC()
+ * @brief Convert the floating-point ADC array to integer ADC counts,
+ *        applying gain calibration, white noise, zero-suppression, and
+ *        saturation clipping.
+ *
+ * For each non-zero cell:
+ * -# Scale by \c 1/adcConversion.
+ * -# Subtract the per-channel amplitude offset and divide by the
+ *    per-channel amplitude slope (from \c ftpcAmpOffset / \c ftpcAmpSlope).
+ * -# Add Gaussian noise of \f$\sigma = 1.5\f$ ADC counts.
+ * -# Zero values below the suppression threshold.
+ * -# Clip to \c maxAdc (255).
+ */
+
+/**
+ * @fn float StFtpcSlowSimReadout::PhiOfPad(const int pad, const int deg_or_rad)
+ * @brief Return the azimuthal centre of pad \p pad (within one sector).
+ * @param pad         0-based pad index within a sector.
+ * @param deg_or_rad  Ignored; always returns radians.
+ * @return \f$(\text{pad}+0.5)\,\Delta\phi_\text{pad} + \Delta\phi_\text{boundary}/2\f$ (rad).
+ */
+
+/**
+ * @fn int StFtpcSlowSimReadout::WhichPad(const float phi, int &isec)
+ * @brief Find the pad index and sector number for azimuthal angle \p phi.
+ * @param phi    Azimuthal position (rad).
+ * @param[out] isec  Set to the 0-based sector index (0–5).
+ * @return 0-based pad index within the sector (clamped to [0, nPads-1]).
+ */
+
+/**
+ * @fn int StFtpcSlowSimReadout::WhichSlice(const float time)
+ * @brief Convert a drift time to a timebin index.
+ * @param time  Drift time (ns).
+ * @return Timebin index (clamped to valid range).
+ */
+
+/**
+ * @fn float StFtpcSlowSimReadout::TimeOfSlice(const int slice)
+ * @brief Return the centre time of timebin \p slice (ns).
+ * @param slice  Timebin index.
+ * @return \f$(\text{slice}+0.5)\times 1000 \times \mu\text{s/timebin}\f$ (ns).
+ */
+
+/**
+ * @fn float StFtpcSlowSimReadout::InteGauss(const float x_1, const float x_2, const float x_0, const float sig)
+ * @brief Numerically integrate a Gaussian over the interval [x_1, x_2].
+ * @param x_1  Lower integration bound.
+ * @param x_2  Upper integration bound.
+ * @param x_0  Gaussian mean.
+ * @param sig  Gaussian sigma.
+ * @return \f$\int_{x_1}^{x_2} \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{(x-x_0)^2}{2\sigma^2}\right)dx\f$
+ *         (approximated by a midpoint Riemann sum with \c mGaussIntSteps sub-intervals).
+ */
+
+/**
+ * @fn int StFtpcSlowSimReadout::GetHardPad(const int daqsec, const int daqpad, const int irow)
+ * @brief Map a DAQ pad number to the corresponding hardware pad number.
+ * @param daqsec  DAQ sector index.
+ * @param daqpad  DAQ pad index.
+ * @param irow    FTPC row index 0–19.
+ * @return Hardware pad index for database gain/offset table access.
+ *
+ * In the West FTPC (rows 0–9) and the outer FEE cards of the East FTPC
+ * (rows 10–19, excluding pads 64–95 for pre-2003 data), the pad order is
+ * reversed: \f$\text{hwPad} = N_\text{pads} - \text{daqpad} - 1\f$.
+ */
+
+/**
+ * @fn int StFtpcSlowSimReadout::GetHardSec(const int daqsec, const int irow)
+ * @brief Map a DAQ sector number to the corresponding hardware sector number.
+ * @param daqsec  DAQ sector index.
+ * @param irow    FTPC row index 0–19.
+ * @return Hardware sector index for database access.
+ *
+ * For the West FTPC the sector order is reversed:
+ * \f$\text{hwSec} = N_\text{sectors} - \text{daqsec} - 1\f$.
+ * The East FTPC sector order matches DAQ.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::polya(const int nch, const float low, const float high, const float delta)
+ * @brief Pre-compute the cumulative Polya distribution CDF table.
+ * @param nch    Number of bins (50).
+ * @param low    Lower bound of relative gain range (0.1).
+ * @param high   Upper bound of relative gain range (2.5).
+ * @param delta  Bin width \f$= (\text{high}-\text{low})/\text{nch}\f$.
+ *
+ * Uses \f$m=3/2\f$, \f$C = m^m/\Gamma(m) = 1.6926\f$.
+ */
+
+/**
+ * @fn int StFtpcSlowSimReadout::sample_polya(const float gain)
+ * @brief Sample the Polya distribution for a given mean gain.
+ * @param gain  Mean gas gain \f$G\f$.
+ * @return Number of electrons produced by one input electron, drawn from
+ *         \f$G\cdot P(k;\,m=3/2)\f$.
+ */
+
+/**
+ * @fn float StFtpcSlowSimReadout::ranmar()
+ * @brief Marsaglia–Zaman universal random number generator.
+ * @return Uniform pseudorandom float on [0, 1).
+ *
+ * Based on the Marsaglia–Zaman algorithm (FSU-SCRI-87-50), as described
+ * by F. James (CERN SOFTWR 88-20).  Used only when
+ * \c randomNumberGenerator == 1.
+ */
+
+/**
+ * @fn void StFtpcSlowSimReadout::rmarin(int ij, int kl)
+ * @brief Initialise the Marsaglia–Zaman RNG.
+ * @param ij  First seed integer (0–31328).
+ * @param kl  Second seed integer (0–30081).
+ *
+ * Standard Marsaglia–Zaman seed values: ij=1802, kl=9373.
+ */
+
+//===========================================================================
+
+/**
+ * @class StFtpcRawWriter
+ * @brief Writes simulated FTPC ADC data into the three STAR DAQ tables
+ *        (\c fcl_ftpcndx, \c fcl_ftpcsqndx, \c fcl_ftpcadc).
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Implements the same run-length encoding used by the real STAR FTPC
+ * DAQ, so the output can be processed by the offline cluster finder
+ * without modification.
+ *
+ * @section raw_data_members Data Members
+ *
+ * | Member                | Type                 | Description |
+ * |-----------------------|----------------------|-------------|
+ * | mAsic2EastNotInverted | int (bool)           | Flag: if true, centre FEE card pads in East FTPC are not reversed (pre-2003 data) |
+ * | ndx                   | FCL_FTPCNDX_ST *     | Pointer to ndx table rows |
+ * | numNdx / maxNdx       | int                  | Current / maximum rows in ndx |
+ * | sqndx                 | FCL_FTPCSQNDX_ST *   | Pointer to sqndx table rows |
+ * | numSqndx / maxSqndx   | int                  | Current / maximum rows in sqndx |
+ * | adc                   | FCL_FTPCADC_ST *     | Pointer to adc table rows |
+ * | numAdc / maxAdc       | int                  | Current / maximum rows in adc |
+ * | ftpcndx/sqndx/adc     | St_fcl_ftpc* *       | ROOT table objects |
+ */
+
+/**
+ * @fn StFtpcRawWriter::StFtpcRawWriter(St_fcl_ftpcndx *ftpcndxIn, St_fcl_ftpcsqndx *ftpcsqndxIn, St_fcl_ftpcadc *ftpcadcIn, const int inAsic2EastNotInverted)
+ * @brief Constructor.  Stores the three output table objects and caches
+ *        their current row counts and maximum capacities.
+ * @param ftpcndxIn              FTPC index table (2 rows: West start, East start).
+ * @param ftpcsqndxIn            FTPC sequence-index table (up to 500000 rows).
+ * @param ftpcadcIn              FTPC ADC table (up to 2000000 rows).
+ * @param inAsic2EastNotInverted ASIC mapping flag for pre-2003 East FTPC data.
+ */
+
+/**
+ * @fn StFtpcRawWriter::~StFtpcRawWriter()
+ * @brief Destructor.  Updates the \c NRows fields of the three ROOT tables
+ *        to reflect the actual number of filled rows.
+ */
+
+/**
+ * @fn int StFtpcRawWriter::writeArray(float *array, int numberPadrows, int numberSectors, int numberPads, int numberTimebins, int threshold)
+ * @brief Convert the floating-point ADC array to the STAR SEQD DAQ format.
+ * @param array           Floating-point ADC array
+ *                        [row × sector × pad × timebin] (simulation ordering).
+ * @param numberPadrows   Total pad rows (both FTPCs combined; typically 20).
+ * @param numberSectors   Number of sectors per pad row (typically 6).
+ * @param numberPads      Number of pads per sector (typically 160).
+ * @param numberTimebins  Number of time bins (typically 256).
+ * @param threshold       Zero-suppression threshold (ADC counts).
+ * @return 1 on success.
+ *
+ * Algorithm:
+ * -# Create a copy array \c cArray with hardware-ordered pad/sector indices
+ *    (West FTPC: pads and sectors reversed; East FTPC: pads reversed,
+ *    sectors unchanged; with special handling for the centre FEE card in
+ *    pre-2003 East data).
+ * -# Apply a two-threshold zero-suppression: a sequence is valid if it
+ *    contains at least one sample above \c th_high (5 ADC) and at least
+ *    \c minAboveLow (2) samples above \c th_low (2 ADC).
+ * -# Encode valid samples into the SEQD format:
+ *    - \c ndx[0].index = 0 (West FTPC start), \c ndx[1].index = first East sequence.
+ *    - Each sequence header in \c sqndx encodes pad/sector/row address
+ *      (when the pad changes) or length and start bin (for data sequences).
+ *    - Each ADC byte is written to \c adc.
+ */
+
+//===========================================================================
+
+/**
+ * @class StFssSectorReader
+ * @brief Read the simulated FTPC raw-data tables as if they were real DAQ
+ *        data for one hardware sector.
+ * @ingroup StFtpcSlowSimMaker
+ *
+ * Implements the same pad-list and sequence-access API as the real FTPC
+ * DAQ reader, allowing the offline cluster finder to process simulated and
+ * real data identically.
+ *
+ * @section sector_reader_data_members Data Members
+ *
+ * | Member        | Type              | Description |
+ * |---------------|-------------------|-------------|
+ * | mSector       | int               | Hardware sector number (1-based) |
+ * | m_ftpcsqndx   | unsigned short *  | Pointer to sequence-index array |
+ * | m_ftpcadc     | char *            | Pointer to ADC byte array |
+ * | m_numSqndx    | int               | Number of entries in sqndx |
+ * | m_numAdc      | int               | Number of ADC bytes |
+ * | Pad_array     | Pad[FTP_PADROWS][FTP_MAXPADS] | Per-pad sequence metadata |
+ * | Row_array     | PadRow[FTP_PADROWS] | Per-row pad count |
+ * | padlist       | uint8_t[FTP_PADROWS][FTP_MAXPADS] | Pad numbers that have data |
+ */
+
+/**
+ * @fn StFssSectorReader::StFssSectorReader(int sector, unsigned short *fcl_ftpcsqndx, int nSeq, char *fcl_ftpcadc, int nAdc)
+ * @brief Constructor.  Stores the sector number and pointers to the two
+ *        raw-data arrays.  Call initialize() before use.
+ * @param sector         Hardware sector number (1-based).
+ * @param fcl_ftpcsqndx  Sequence-index array from \c fcl_ftpcsqndx table.
+ * @param nSeq           Number of entries in the sequence-index array.
+ * @param fcl_ftpcadc    ADC byte array from \c fcl_ftpcadc table.
+ * @param nAdc           Number of ADC bytes.
+ */
+
+/**
+ * @fn StFssSectorReader::~StFssSectorReader()
+ * @brief Destructor.  Frees the Sequence arrays allocated by initialize().
+ */
+
+/**
+ * @fn int StFssSectorReader::initialize()
+ * @brief Parse the raw-data tables and build the internal Pad_array and
+ *        Row_array structures.
+ * @return TRUE on success, FALSE if a format error is detected.
+ *
+ * Makes two passes over the sequence-index table:
+ * -# First pass: count sequences per pad to determine malloc sizes.
+ * -# Second pass: fill the Sequence structs with start time, length, and
+ *    pointer into the ADC array.
+ */
+
+/**
+ * @fn int StFssSectorReader::getPadList(int PadRow, unsigned char **padList)
+ * @brief Return the list of pads with data in \p PadRow.
+ * @param PadRow          1-based pad row index.
+ * @param[out] padList    Set to point to the padlist array for this row.
+ * @return Number of pads with data, or -1 on invalid row number.
+ */
+
+/**
+ * @fn int StFssSectorReader::getSequences(int PadRow, int Pad, int *nSeq, Sequence **SeqData)
+ * @brief Return the sequences for a given pad row and pad.
+ * @param PadRow          1-based pad row index.
+ * @param Pad             1-based pad index.
+ * @param[out] nSeq       Set to the number of sequences on this pad.
+ * @param[out] SeqData    Set to point to the Sequence array for this pad.
+ * @return 0 always.
+ */
+
+//===========================================================================
+
+/**
+ * @fn int Locate(const int npt, const float *x, const float xx)
+ * @brief Binary search for a value in a sorted array.
+ * @ingroup StFtpcSlowSimMaker
+ * @param npt  Number of elements in array \p x.
+ * @param x    Monotonically increasing or decreasing array of \p npt floats.
+ * @param xx   Value to locate.
+ * @return Index \f$j\f$ such that \f$x[j] \le xx \le x[j+1]\f$ (or 0 if
+ *         \p xx is out of range, with a warning).
+ *
+ * Used by both StFtpcSlowSimField (to locate the E-field bin in the
+ * gas table) and StFtpcSlowSimReadout::sample_polya (to invert the
+ * cumulative Polya CDF).
+ */

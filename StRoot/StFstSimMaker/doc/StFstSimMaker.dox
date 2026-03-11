@@ -1,0 +1,456 @@
+/**
+ * @file StFstSimMaker.dox
+ * @brief Doxygen documentation for the STAR Forward Silicon Tracker fast simulator.
+ *
+ * This file contains the complete Doxygen documentation for the StFstSimMaker
+ * package, which implements a fast Monte Carlo simulator for the STAR Forward
+ * Silicon Tracker (FST).
+ */
+
+// ============================================================
+//  Module group definition
+// ============================================================
+
+/**
+ * @defgroup StFstSimMaker StFstSimMaker — FST Fast Simulator
+ * @ingroup  star_sim
+ *
+ * @brief Fast Monte Carlo simulator for the STAR Forward Silicon Tracker (FST).
+ *
+ * @section fst_overview Physics Overview
+ *
+ * The Forward Silicon Tracker (FST) is a silicon micro-strip detector that
+ * extends the charged-particle tracking acceptance of the STAR experiment at
+ * RHIC into the forward pseudo-rapidity region (roughly 2.5 < η < 4).  It
+ * consists of **six annular disk stations** arranged concentrically around the
+ * beam axis at increasing z positions.  Each disk is divided into twelve
+ * wedge-shaped sectors and carries micro-strip sensors oriented so that one
+ * coordinate is measured radially (r-strips) and the other azimuthally
+ * (φ-strips).
+ *
+ * @subsection fst_geometry Disk Geometry
+ *
+ * The six disks are grouped into two sets with slightly different active radii:
+ *
+ * | Disk | r_min (cm)   | r_max (cm)   | Notes                   |
+ * |------|-------------|-------------|-------------------------|
+ * |  1   | 0.95 × 4.3  | 1.05 × 15.0 | Inner ring               |
+ * |  2   | 0.95 × 4.3  | 1.05 × 25.0 |                          |
+ * |  3   | 0.95 × 4.3  | 1.05 × 25.0 |                          |
+ * |  4   | 0.95 × 5.0  | 1.05 × 28.0 | Outer ring               |
+ * |  5   | 0.95 × 5.0  | 1.05 × 28.0 |                          |
+ * |  6   | 0.95 × 5.0  | 1.05 × 28.0 |                          |
+ *
+ * The 5 % margin on each boundary accounts for dead zones and alignment
+ * uncertainties.
+ *
+ * @subsection fst_strip Strip Segmentation
+ *
+ * Each disk is divided into:
+ * - **8 radial strips** (r-strips), whose boundaries are defined by the
+ *   @c RSegment[] array: {5, 7.875, 10.75, 13.625, 16.5, 19.375, 22.25,
+ *   25.125, 28} cm.  All six disks share the same radial bin edges.
+ * - **1536 φ-strips** per disk (128 strips × 12 sectors).
+ *
+ * The strip-cell address is the triplet @f$(d, i_r, i_\phi)@f$, where @f$d@f$
+ * is the zero-based disk index, @f$i_r \in [0,7]@f$ is the radial bin, and
+ * @f$i_\phi \in [0,1535]@f$ is the azimuthal bin.
+ *
+ * @subsection fst_digitisation Digitisation Algorithm
+ *
+ * The fast simulator processes GEANT truth hits from the @c g2t_fsi_hit table
+ * and produces reconstructed-level hits without explicit charge transport or
+ * clustering.  The algorithm proceeds as follows:
+ *
+ * 1. **Z-offset correction** — A fixed offset of 1.755 cm is added to each
+ *    hit's z coordinate to shift it to the tracking-plane reference surface at
+ *    the centre of the sensor.
+ *
+ * 2. **Fiducial acceptance** — Hits are rejected if their transverse radius
+ *    @f$r = \sqrt{x^2+y^2}@f$ lies outside the active window
+ *    @f$[r_\text{min}, r_\text{max}]@f$ for the corresponding disk, or if the
+ *    hit's z coordinate exceeds 200 cm (guard against non-FST volumes).
+ *
+ * 3. **Strip address assignment** — The radial bin @f$i_r@f$ is found by
+ *    linear search over the @c RSegment[] boundaries.  The azimuthal bin
+ *    @f$i_\phi@f$ is computed as @f$\lfloor 1536\,\phi / (2\pi) \rfloor@f$,
+ *    where @f$\phi \in [0, 2\pi)@f$.
+ *
+ * 4. **Energy accumulation** — Multiple GEANT steps in the same strip cell
+ *    are merged.  The hit position is set from the *first* step; subsequent
+ *    steps only add to the accumulated charge (energy deposit).  The
+ *    @c idTruth quality is diluted proportionally to the fraction of energy
+ *    deposited by the dominant track.
+ *
+ * 5. **Rasterised position** — The reconstructed position is placed at the
+ *    geometric centre of the strip cell:
+ *    @f[
+ *      r_0 = \tfrac{1}{2}(R_\text{seg}[i_r] + R_\text{seg}[i_r+1]), \quad
+ *      \phi_0 = (i_\phi + \tfrac{1}{2})\,\frac{2\pi}{1536}
+ *    @f]
+ *    giving Cartesian coordinates @f$(x_0, y_0) = r_0(\cos\phi_0,\sin\phi_0)@f$.
+ *
+ * 6. **Position uncertainties** — Position errors assume a uniform distribution
+ *    across the strip width.  For a uniform distribution on an interval of
+ *    width @f$w@f$ the one-sigma error is @f$w/\sqrt{12}@f$:
+ *    @f[
+ *      \sigma_r     = \Delta r / \sqrt{12}, \quad
+ *      \sigma_\phi  = \Delta\phi / \sqrt{12}, \quad
+ *      \sigma_z     = 0.03\,\text{cm} / \sqrt{12}
+ *    @f]
+ *    where @f$\Delta\phi = 2\pi/1536@f$.
+ *
+ * 7. **Covariance matrix** — The cylindrical errors
+ *    @f$(\sigma_r, \sigma_\phi, \sigma_z)@f$ are propagated to the global
+ *    Cartesian frame via the Jacobian
+ *    @f$\mathbf{J} = \partial(x,y,z)/\partial(r,\phi,z)@f$ using
+ *    @c FstGlobal::Hack1to6().
+ *
+ * 8. **Efficiency roll** — Each merged hit is accepted with probability
+ *    @f$1 - \epsilon_\text{ineff}@f$.  A uniform random number @f$u@f$ is
+ *    drawn from @c StarRandom; the hit is dropped if @f$u < \epsilon_\text{ineff}@f$.
+ *
+ * 9. **Output collections** — Accepted hits are added both to the
+ *    @c StRnDHitCollection (generic research-and-development hit container)
+ *    and to a @c StFstHitCollection (FST-specific hit container).  The latter
+ *    stores the hit also in local cylindrical coordinates @f$(r, \phi, z)@f$.
+ *
+ * @subsection fst_passthrough GEANT Passthrough Mode
+ *
+ * When @c mGEANTPassthrough is @c true the rasterisation step is skipped.
+ * Hits are placed at the exact GEANT-truth @f$(x, y, z)@f$ coordinates and
+ * the efficiency roll is bypassed.  This mode is intended for studies that
+ * require perfect position resolution (e.g. alignment validation).
+ *
+ * @subsection fst_qa Quality-Assurance Histograms
+ *
+ * When @c mHist is @c true a set of ROOT histograms is filled and written to
+ * the file specified by @c SetQAFileName().  The histograms compare truth-level
+ * hit positions to reconstructed positions in (x,y), r, φ, and z projections,
+ * and record residuals per disk.
+ *
+ * @section fst_usage Typical Usage
+ *
+ * @code{.cpp}
+ * StFstFastSimMaker *fstSim = new StFstFastSimMaker("fstFastSim");
+ * fstSim->SetInEfficiency(0.05);          // 5 % inefficiency
+ * fstSim->SetFillHist(true);
+ * fstSim->SetQAFileName("fst_qa.root");
+ * chain->AddMaker(fstSim);
+ * @endcode
+ *
+ * @section fst_dependencies Dependencies
+ * - StChain / StMaker framework
+ * - StEvent (StRnDHit, StFstHit, collections)
+ * - GEANT tables: @c g2t_fsi_hit, @c g2t_track
+ * - StarClassLibrary (StThreeVectorF, StMatrixF)
+ * - StarGenerator/UTIL/StarRandom
+ * - ROOT (TH1F, TH2F, TH3F, TFile, TVector2, TVector3, TCernLib)
+ */
+
+// ============================================================
+//  File documentation
+// ============================================================
+
+/**
+ * @file StFstFastSimMaker.h
+ * @ingroup StFstSimMaker
+ * @brief Declaration of StFstFastSimMaker.
+ *
+ * Declares the StFstFastSimMaker class, all public configuration setters, and
+ * private member variables (including the full suite of QA histograms).
+ */
+
+/**
+ * @file StFstFastSimMaker.cxx
+ * @ingroup StFstSimMaker
+ * @brief Implementation of StFstFastSimMaker and FstGlobal helpers.
+ *
+ * Contains the implementation of the FST fast simulator, the anonymous-
+ * namespace geometry constants, and the covariance-matrix helper
+ * FstGlobal::Hack1to6().
+ */
+
+// ============================================================
+//  Namespace documentation
+// ============================================================
+
+/**
+ * @namespace FstGlobal
+ * @ingroup   StFstSimMaker
+ * @brief     File-scope constants and utilities for the FST fast simulator.
+ *
+ * This namespace isolates all module-level constants and free functions from
+ * the global scope.  It is defined in @c StFstFastSimMaker.cxx and is
+ * intentionally not exposed in the public header.
+ *
+ * ### Contents
+ * | Symbol | Type | Description |
+ * |--------|------|-------------|
+ * | @c SQRT12     | @c constexpr @c float | @f$\sqrt{12}@f$, converts uniform half-width to 1σ |
+ * | @c RMIN[6]    | @c float[]            | Per-disk minimum active radius (cm) |
+ * | @c RMAX[6]    | @c float[]            | Per-disk maximum active radius (cm) |
+ * | @c RSegment[9]| @c float[]            | Radial strip-boundary positions (cm) |
+ * | @c verbose    | @c const @c bool      | Enable extra @c LOG_INFO output |
+ * | @c FstKeyTriple | @c typedef          | @c std::tuple<int,int,int> — (disk, r, φ) cell key |
+ * | @c Hack1to6() | function              | Cylindrical → Cartesian covariance transform |
+ */
+
+// ============================================================
+//  Class documentation
+// ============================================================
+
+/**
+ * @class StFstFastSimMaker
+ * @ingroup StFstSimMaker
+ * @brief Fast Monte Carlo simulator for the STAR Forward Silicon Tracker.
+ *
+ * StFstFastSimMaker inherits from StMaker and is designed to run inside the
+ * STAR reconstruction chain (StChain).  For each event it reads the GEANT
+ * truth-hit table @c g2t_fsi_hit, digitises the hits onto the FST strip grid,
+ * applies a configurable hit-detection inefficiency, and writes the result into
+ * the event's @c StRnDHitCollection and @c StFstHitCollection.
+ *
+ * ### Design rationale
+ * The "fast" label distinguishes this maker from a full (realistic) simulator
+ * that would model charge collection, cross-talk, and clustering explicitly.
+ * Here the entire detector response is collapsed into three steps:
+ * 1. Snap each truth hit to the nearest strip-cell centre.
+ * 2. Add independent Gaussian / uniform position uncertainties.
+ * 3. Drop each hit with probability @f$\epsilon_\text{ineff}@f$.
+ *
+ * This approach is accurate enough for tracking-performance studies but runs
+ * orders of magnitude faster than a full Garfield++ or HEED simulation.
+ *
+ * @see FstGlobal
+ * @see StFstHit
+ * @see StRnDHit
+ */
+
+// ============================================================
+//  Constructor / destructor
+// ============================================================
+
+/**
+ * @fn StFstFastSimMaker::StFstFastSimMaker(const Char_t *name)
+ * @brief Construct the FST fast simulator maker.
+ * @ingroup StFstSimMaker
+ *
+ * Initialises all data members to safe defaults:
+ * - Strip-grid dimensions: 8 radial bins, 128 φ-bins per sector, 12 sectors.
+ * - Inefficiency: 0 (every hit accepted).
+ * - QA histograms: disabled.
+ * - GEANT passthrough: disabled.
+ * - All histogram pointers: null.
+ *
+ * @param name  Name passed to the StMaker base class; used to identify the
+ *              maker in the chain printout.  Defaults to @c "fstFastSim".
+ */
+
+/**
+ * @fn StFstFastSimMaker::~StFstFastSimMaker()
+ * @brief Destructor.
+ * @ingroup StFstSimMaker
+ *
+ * Trivial; ROOT manages histogram ownership through @c AddHist().
+ */
+
+// ============================================================
+//  StMaker interface
+// ============================================================
+
+/**
+ * @fn int StFstFastSimMaker::Init()
+ * @brief Initialise the maker before the event loop.
+ * @ingroup StFstSimMaker
+ *
+ * If QA-histogram filling is enabled (@c mHist == @c true):
+ * - Opens the output ROOT file specified by @c SetQAFileName().
+ * - Allocates and registers all TH1/TH2/TH3 histograms via @c AddHist().
+ *
+ * Always delegates to @c StMaker::Init() at the end.
+ *
+ * @return @c kStOk on success; propagates the return value of @c StMaker::Init().
+ */
+
+/**
+ * @fn int StFstFastSimMaker::Make()
+ * @brief Process one event.
+ * @ingroup StFstSimMaker
+ *
+ * This is the main per-event entry point called by StChain.  It:
+ * 1. Retrieves (or creates) the @c StEvent object from the data set.
+ * 2. Ensures an @c StRnDHitCollection and an @c StFstHitCollection exist on
+ *    the event.
+ * 3. Delegates all FST-specific work to @c FillSilicon().
+ *
+ * @return @c kStOk always (errors inside @c FillSilicon() are silent).
+ */
+
+/**
+ * @fn int StFstFastSimMaker::Finish()
+ * @brief Finalise the maker after the event loop.
+ * @ingroup StFstSimMaker
+ *
+ * If QA-histogram filling is enabled, writes all histograms to the output file
+ * and closes it.
+ *
+ * @return @c kStOK always.
+ */
+
+// ============================================================
+//  Configuration setters
+// ============================================================
+
+/**
+ * @fn void StFstFastSimMaker::SetDisk(const int i, const float rmn, const float rmx)
+ * @brief Override the active-radius window for disk @p i.
+ * @ingroup StFstSimMaker
+ *
+ * Writes directly to the module-level @c FstGlobal::RMIN[i] and
+ * @c FstGlobal::RMAX[i] arrays, so the change is visible to all subsequent
+ * calls to @c FillSilicon() within the same job.
+ *
+ * @param i    Zero-based disk index (0–5).
+ * @param rmn  New minimum active radius in cm.
+ * @param rmx  New maximum active radius in cm.
+ *
+ * @warning No bounds check is performed on @p i; passing a value outside [0,5]
+ *          causes undefined behaviour.
+ */
+
+/**
+ * @fn void StFstFastSimMaker::SetInEfficiency(float ineff)
+ * @brief Set the per-hit detection inefficiency.
+ * @ingroup StFstSimMaker
+ *
+ * Each reconstructed hit is independently dropped with probability @p ineff.
+ * A random number @f$u \sim \mathcal{U}(0,1)@f$ is drawn from @c StarRandom;
+ * the hit is discarded if @f$u < \epsilon_\text{ineff}@f$.
+ *
+ * @param ineff  Inefficiency in [0, 1].  Default is 0.1 (10 % inefficiency).
+ *               Pass 0 to accept every hit; pass 1 to reject every hit.
+ */
+
+/**
+ * @fn void StFstFastSimMaker::SetQAFileName(TString filename)
+ * @brief Set the output file name for QA histograms.
+ * @ingroup StFstSimMaker
+ *
+ * Has no effect unless @c SetFillHist(true) is also called.  The file is
+ * opened in @c Init() and closed in @c Finish().
+ *
+ * @param filename  Path to the output ROOT file.
+ */
+
+/**
+ * @fn void StFstFastSimMaker::SetFillHist(const bool hist)
+ * @brief Enable or disable QA histogram filling.
+ * @ingroup StFstSimMaker
+ *
+ * When @p hist is @c true, the maker allocates ~20 ROOT histograms in @c Init()
+ * and fills them during @c FillSilicon().  The histograms are written to the
+ * file set by @c SetQAFileName() in @c Finish().
+ *
+ * @param hist  @c true to enable, @c false (default) to disable.
+ */
+
+/**
+ * @fn void StFstFastSimMaker::setGEANTPassthrough(bool passthrough)
+ * @brief Enable or disable GEANT hit-coordinate passthrough.
+ * @ingroup StFstSimMaker
+ *
+ * When @p passthrough is @c true:
+ * - Hit positions are taken directly from the GEANT truth hit coordinates
+ *   (plus the z-offset correction) without rasterisation onto strip centres.
+ * - The efficiency roll is bypassed; all hits are accepted unconditionally.
+ *
+ * This mode is useful for resolution and alignment studies where artificially
+ * perfect position information is desired.
+ *
+ * @param passthrough  @c true to enable passthrough, @c false (default) to
+ *                     apply normal digitisation.
+ */
+
+// ============================================================
+//  Private methods
+// ============================================================
+
+/**
+ * @fn void StFstFastSimMaker::FillSilicon(StEvent *event)
+ * @brief Core digitisation routine — converts GEANT hits to FST strip hits.
+ * @ingroup StFstSimMaker
+ *
+ * @details
+ * This private method implements the complete digitisation chain:
+ *
+ * ### 1  Input
+ * Reads @c g2t_fsi_hit (FST GEANT truth hits) and @c g2t_track (GEANT track
+ * table) from the StChain data store.  Returns immediately if either table is
+ * absent.
+ *
+ * ### 2  Per-hit processing
+ * For each entry in @c g2t_fsi_hit:
+ * - Decodes @c volume_id into @f$(d, w, s)@f$ = disk (1–6), wedge, sensor.
+ * - Skips hits on disk > 6 (non-FST forward volumes).
+ * - Applies z-offset of 1.755 cm and rejects hits with z > 200 cm.
+ * - Rejects hits outside the disk's fiducial @f$[r_\text{min}, r_\text{max}]@f$.
+ * - Determines the strip-cell address @f$(d-1, i_r, i_\phi)@f$.
+ * - If the cell is new: creates an @c StRnDHit at the strip-cell centre with
+ *   uniform-distribution position errors and the covariance matrix from
+ *   @c FstGlobal::Hack1to6().
+ * - If the cell already has a hit: accumulates the deposited energy and updates
+ *   the @c idTruth quality factor.
+ *
+ * ### 3  Efficiency roll
+ * After all GEANT hits are processed, iterates over the merged hit list.  Each
+ * hit passes if @f$u > \epsilon_\text{ineff}@f$ (or if passthrough is active).
+ * Accepted hits are:
+ * - Added to the event's @c StRnDHitCollection.
+ * - Mirrored as an @c StFstHit (with local cylindrical coordinates) and added
+ *   to the event's @c StFstHitCollection.
+ *
+ * ### 4  QA fill
+ * When @c mHist is @c true, truth and reco positions are filled into the
+ * corresponding histograms for offline validation.
+ *
+ * @param event  Pointer to the current @c StEvent; must not be null.
+ */
+
+// ============================================================
+//  Free function documentation (FstGlobal namespace)
+// ============================================================
+
+/**
+ * @fn StMatrixF FstGlobal::Hack1to6(const StHit *stHit)
+ * @ingroup StFstSimMaker
+ * @brief Convert cylindrical position errors to a 3×3 Cartesian covariance matrix.
+ *
+ * @details
+ * The FST strip geometry naturally expresses position uncertainties in
+ * cylindrical coordinates @f$(r, \phi, z)@f$.  The STAR tracking framework
+ * expects a full 3×3 covariance matrix in global Cartesian coordinates.  This
+ * function computes the transformation via the Jacobian
+ *
+ * @f[
+ *   \mathbf{J} =
+ *   \frac{\partial(x,y,z)}{\partial(r,\phi,z)} =
+ *   \begin{pmatrix}
+ *     \cos\phi & -r\sin\phi & 0 \\
+ *     \sin\phi &  r\cos\phi & 0 \\
+ *     0        &  0         & 1
+ *   \end{pmatrix}
+ * @f]
+ *
+ * and the relation @f$\mathbf{C}_\text{cart} = \mathbf{J}\,\mathbf{C}_\text{cyl}\,\mathbf{J}^T@f$,
+ * where @f$\mathbf{C}_\text{cyl} = \text{diag}(\sigma_r^2, \sigma_\phi^2, \sigma_z^2)@f$.
+ * The lower-triangular product is computed with @c TCL::trasat() (CERNLIB).
+ *
+ * The function name "Hack1to6" refers to the STAR convention of packing the
+ * six independent elements of a symmetric 3×3 matrix into a 6-element array
+ * (positions [0][0], [1][0], [1][1], [2][0], [2][1], [2][2]).
+ *
+ * @param stHit  Hit whose @c position() and @c positionError() are used.
+ *               @c positionError() is interpreted as @f$(\sigma_r, \sigma_\phi, \sigma_z)@f$.
+ * @return       Symmetric 3×3 StMatrixF representing the Cartesian covariance.
+ */

@@ -1,0 +1,136 @@
+/**
+ * @defgroup StMuDSTEMC StMuDSTMaker/EMC — Legacy EMC Micro-DST
+ * @brief Historical standalone EMC micro-DST maker (superseded by StMuEmcCollection in COMMON/).
+ * @details
+ * The EMC/ package provides a self-contained EMC micro-DST system that predates
+ * the integrated EMC support in the main MuDST.  It was written by Alexandre
+ * A. P. Suaide (initial version August 2001) and converts StEvent into compact
+ * ROOT-persistable objects written to a separate .emcEvent.root file.
+ *
+ * The package can also operate in reverse: reading .emcEvent.root files and
+ * reconstructing a minimal StEvent for downstream analysis makers.
+ *
+ * New analyses should use StMuDst::emcCollection() (StMuEmcCollection, COMMON/)
+ * and StMuEmcUtil instead of this package.
+ *
+ * All implementation files reside in the examples/ subdirectory.
+ * @{
+ */
+
+/**
+ * @class StEmcMicroDstMaker
+ * @brief STAR maker that converts StEvent to StEmcMicroEvent (write mode) or
+ *        StEmcMicroEvent to StEvent (read mode).
+ *
+ * In write mode (default) the maker applies event and track filters, creates
+ * one .emcEvent.root output file per input file, and fills a TTree "EmcTree"
+ * with a single branch "MicroEvent" (StEmcMicroEvent, split=99).
+ *
+ * In read mode (activated by calling addMicroEventFile()) the maker reads
+ * entries from a TChain and optionally reconstructs StEvent objects via
+ * StEmcMicroUtil.
+ *
+ * Two StEmcFilter instances are exposed: mPFilter (event + primary-track
+ * selection) and mGFilter (global-track selection).  Default cuts require
+ * EMC presence, a primary vertex, |z| < 100 cm, and multiplicity 0–500000.
+ */
+
+/**
+ * @class StEmcMicroUtil
+ * @brief Bidirectional conversion utility between StEvent and StEmcMicroEvent.
+ *
+ * getMicroEvent(StEvent*) runs the full StEvent → StEmcMicroEvent conversion:
+ * event info, tracks, V0 vertices, four BEMC sub-detectors (hits, clusters,
+ * points), and FPD summary.
+ *
+ * getStEvent(StEmcMicroEvent*) reconstructs a minimal StEvent including
+ * StEventSummary, StL0Trigger, StTriggerDetectorCollection, primary vertex,
+ * global and primary tracks (with StHelixModel, dE/dx, and fit traits),
+ * V0 vertices, and StEmcCollection (hits, clusters, barrel points).
+ */
+
+/**
+ * @class StEmcMicroEvent
+ * @brief Top-level event container for the standalone EMC micro-DST.
+ *
+ * Stores all event-level quantities needed for EMC physics analyses:
+ * run and event IDs, Unix timestamp, trigger token, primary vertex position,
+ * original multiplicity, L0 trigger word, CTB sum, ZDC east/west ADC sums and
+ * z-vertex, BBC east/west ADC sums and z-vertex, EMC high-tower and patch ADC
+ * arrays (300 entries each), bunch-crossing IDs (7-bit and full), spin bits,
+ * and magnetic field.
+ *
+ * Aggregates: StEmcMicroCollection (EMC), StFpdMicroCollection (FPD),
+ * primary tracks (TObjArray of StEmcMicroTrack), global tracks (TObjArray),
+ * and V0 vertices (TObjArray of StEmcMicroV0).
+ */
+
+/**
+ * @class StEmcMicroCollection
+ * @brief Per-event EMC container holding hits, clusters, and points.
+ *
+ * Sub-detector indexing: 1=bemc (towers), 2=bprs (pre-shower),
+ * 3=bsmde (SMD eta), 4=bsmdp (SMD phi).
+ *
+ * Provides getHit(det, id), getCluster(det, id), getPoint(id) and the
+ * corresponding count accessors.  Owns all contained objects and deletes
+ * them in clear().
+ */
+
+/**
+ * @class StEmcMicroHit
+ * @brief Single-tower or single-strip detector hit.
+ *
+ * Stores the geometrical address (module UChar_t, eta bin UChar_t, sub bin
+ * UChar_t), the raw ADC value (Short_t), and the calibrated energy (Float_t).
+ */
+
+/**
+ * @class StEmcMicroCluster
+ * @brief EMC cluster: a group of geometrically adjacent hits with a centroid.
+ *
+ * Stores centroid eta, phi, sigmaEta, sigmaPhi, total energy, and an array
+ * of pointers to the constituent StEmcMicroHit objects (non-owning: hits are
+ * owned by the parent StEmcMicroCollection).
+ */
+
+/**
+ * @class StEmcMicroPoint
+ * @brief EMC point matched across sub-detectors.
+ *
+ * Stores the physical position (eta, phi, deltaEta, deltaPhi), total energy,
+ * and fit chi-square, together with arrays of associated StEmcMicroCluster
+ * pointers for each of the four sub-detectors.
+ */
+
+/**
+ * @class StEmcMicroTrack
+ * @brief Compact track representation for EMC analyses.
+ *
+ * Persists total momentum p, eta, phi, curvature, track origin in 3D, charge,
+ * DCA (scalar and signed), chi2 (stored as Int_t = chi2*1000 to save space),
+ * fit points, maximum possible points, TPC hits, dE/dx mean and error,
+ * number of dE/dx points, track length, original track-node index (for
+ * StEvent reconstruction), and a flag byte.
+ */
+
+/**
+ * @class StEmcMicroV0
+ * @brief V0 decay vertex with two daughter tracks.
+ *
+ * Stores the decay vertex position (x, y, z) and owns two StEmcMicroTrack
+ * daughter objects (indices 0 and 1).  Deleted in the destructor.
+ */
+
+/**
+ * @class StFpdMicroCollection
+ * @brief Compact Forward Pion Detector summary.
+ *
+ * Stores the FPD trigger token and the sum ADC values for the nine FPD
+ * detector regions: North, South, Top, Bottom, PreShower1, PreShower2,
+ * SmdX, SmdY.
+ */
+
+/**
+ * @}
+ */

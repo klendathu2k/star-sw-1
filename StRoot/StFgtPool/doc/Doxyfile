@@ -1,0 +1,32 @@
+# Doxyfile for StFgtPool
+# Generated for STAR software documentation
+
+PROJECT_NAME           = "StFgtPool"
+PROJECT_BRIEF          = "STAR Forward GEM Tracker offline analysis pool"
+
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx *.C
+
+OUTPUT_DIRECTORY       = doc/doxygen
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+ALPHABETICAL_INDEX     = YES
+HTML_DYNAMIC_SECTIONS  = YES
+
+HAVE_DOT               = NO

@@ -1,0 +1,46 @@
+# Doxyfile for StSvtSimulationMaker
+# Doxygen configuration file
+
+PROJECT_NAME           = "StSvtSimulationMaker"
+PROJECT_BRIEF          = "STAR SVT Silicon Drift Detector Slow Simulator"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = .
+
+INPUT                  = ..
+RECURSIVE              = NO
+FILE_PATTERNS          = *.cxx *.cc *.h *.hh
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+
+GENERATE_LATEX         = NO
+
+GENERATE_XML           = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+HAVE_DOT               = NO
+
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+
+SORT_MEMBER_DOCS       = NO
+SHOW_USED_FILES        = YES

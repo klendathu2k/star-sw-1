@@ -1,0 +1,50 @@
+# Doxyfile for StFstSimMaker
+# Run: doxygen Doxyfile  (from the doc/ directory)
+
+PROJECT_NAME           = "StFstSimMaker"
+PROJECT_BRIEF          = "STAR Forward Silicon Tracker — Fast Monte Carlo Simulator"
+PROJECT_NUMBER         = ""
+
+OUTPUT_DIRECTORY       = .
+CREATE_SUBDIRS         = NO
+
+INPUT                  = ..
+FILE_PATTERNS          = *.h *.cxx *.dox
+RECURSIVE              = NO
+EXCLUDE_PATTERNS       =
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+
+GENERATE_LATEX         = NO
+
+GENERATE_TREEVIEW      = YES
+HAVE_DOT               = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+
+JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+ALPHABETICAL_INDEX     = YES
+
+USE_MDFILE_AS_MAINPAGE = StFstSimMaker.md

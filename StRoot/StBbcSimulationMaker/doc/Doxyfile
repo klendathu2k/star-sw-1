@@ -1,0 +1,14 @@
+PROJECT_NAME           = "StBbcSimulationMaker"
+PROJECT_BRIEF          = "STAR BBC Simulation Maker"
+INPUT                  = ..
+FILE_PATTERNS          = *.cxx *.h *.cc *.C
+RECURSIVE              = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+QUIET                  = YES
+INPUT                 += StBbcSimulationMaker.dox
+EXAMPLE_PATH           = ..
+HAVE_DOT               = NO

@@ -1,0 +1,523 @@
+/**
+ * @defgroup StPicoEventDetectors StPicoEvent — Detector Subsystem Classes
+ * @brief Hit, PID-traits, and trigger data classes for each STAR detector in the PicoDST.
+ *
+ * @details
+ * Each detector subsystem in the PicoDST follows a two-class pattern:
+ * - A **Hit class** (`StPico*Hit`) holds the raw detector address (cell/channel ID)
+ *   and measured signal (time, ADC, …).
+ * - A **PidTraits class** (`StPico*PidTraits`) holds the result of matching a
+ *   reconstructed track to a detector hit, plus derived PID quantities.
+ *   Every PidTraits class carries a `trackIndex` member that is the index of the
+ *   associated `StPicoTrack` in the event's track TClonesArray.
+ *
+ * A third type, the **trigger class**, stores hardware-trigger bookkeeping that
+ * is not associated with a single track.
+ *
+ * ### Integer compression conventions
+ *
+ * Floating-point quantities are scaled to short integers before storage.
+ * The accessor functions always return the decoded physical value.
+ *
+ * | Quantity                      | Scale | Physical unit |
+ * |-------------------------------|-------|---------------|
+ * | β (velocity)                  | ×20 000 (UShort_t) | — |
+ * | nσ (e, π, K, p) — BTOF       | ×1 000 (Short_t) | — |
+ * | BTOF yLocal / zLocal          | ×1 000 (Short_t) | cm |
+ * | BTOF hit position X/Y/Z       | ×100 (Short_t) | cm |
+ * | ETOF localX/Y (hit)           | ×800 (Short_t) | cm |
+ * | ETOF ΔX/ΔY (traits)           | ×800 (Short_t) | cm |
+ * | ETOF time-over-threshold      | ×250 (UShort_t) | ns |
+ * | ETOF crossing position        | ×100 (Short_t) | cm |
+ * | MTD ΔY / ΔZ (traits)          | ×200 (Short_t) | cm |
+ * | BEMC tower / cluster energy   | ×1 000 (Short_t) | GeV |
+ * | BEMC Z-distance               | ×100 (Short_t) | cm |
+ * | BEMC φ/η-distance             | ×10 000 (Short_t) | cm |
+ *
+ * Values that overflow the storage range are clamped to the type's saturation
+ * boundary at fill time.
+ *
+ * The library can be compiled standalone (without the full STAR software stack)
+ * by defining `_VANILLA_ROOT_` before including any header.
+ *
+ * @see DETECTORS.md for detailed per-subsystem documentation.
+ * @{
+ */
+
+// ============================================================
+// BTOF
+// ============================================================
+
+/**
+ * @defgroup StPicoBTOF Barrel Time-of-Flight (BTOF)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoBTofHit and StPicoBTofPidTraits
+ *
+ * @details
+ * The Barrel TOF detector uses Multi-gap Resistive Plate Chambers (MRPC)
+ * arranged in 120 trays (60 east, 60 west), each containing 32 modules of
+ * 6 cells.  Coverage: |η| < 0.9.
+ *
+ * ### Address encoding
+ * The entire BTOF geometry is packed into a single `Short_t`:
+ * @code
+ * mId = (tray - 1) * 192 + (module - 1) * 6 + (cell - 1)
+ * @endcode
+ * The same encoding is used by StPicoBTofHit::mId and
+ * StPicoBTofPidTraits::mBTofCellId.
+ *
+ * ### Compression in StPicoBTofPidTraits
+ * | Member | Stored type | Scale | Decoded by |
+ * |--------|------------|-------|-----------|
+ * | mBTofBeta | UShort_t | ×20 000 | btofBeta() = mBTofBeta / 20000.f |
+ * | mBTofYLocal | Short_t | ×1 000 | btofYLocal() = mBTofYLocal / 1000. |
+ * | mBTofZLocal | Short_t | ×1 000 | btofZLocal() = mBTofZLocal / 1000. |
+ * | mBTofHitPos{X,Y,Z} | Short_t | ×100 | btofHitPos{X,Y,Z}() = member / 100. |
+ * | mNSigma{Electron,Pion,Kaon,Proton} | Short_t | ×1 000 | nSigma*() = member / 1000. |
+ *
+ * Track link: StPicoBTofPidTraits::trackIndex() indexes StPicoEvent::tracks().
+ */
+
+/**
+ * @class StPicoBTofHit
+ * @ingroup StPicoBTOF
+ * @brief One BTOF cell address per fired hit.
+ *
+ * The hit id encodes: `(tray-1)*192 + (module-1)*6 + (cell-1)`.
+ * Accessors tray(), module(), and cell() decode the id on the fly.
+ */
+
+/**
+ * @class StPicoBTofPidTraits
+ * @ingroup StPicoBTOF
+ * @brief BTOF match and PID quantities for one reconstructed track.
+ *
+ * trackIndex() returns the index of the associated StPicoTrack.
+ * btofBeta(), btofYLocal(), btofZLocal(), and nSigma*() are all
+ * integer-compressed; see the group documentation for the scale factors.
+ */
+
+// ============================================================
+// ETOF
+// ============================================================
+
+/**
+ * @defgroup StPicoETOF Endcap Time-of-Flight (ETOF)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoETofHit and StPicoETofPidTraits
+ *
+ * @details
+ * The endcap TOF detector (installed Run 19) extends particle identification
+ * to the forward rapidity region.  Coverage: −1.6 > η > −2.2 (west endcap,
+ * TPC sectors 13–24).
+ *
+ * ### Address encoding
+ * @code
+ * mGeomId = (sector - 13) * 9 + (plane - 1) * 3 + (counter - 1) + 1
+ * @endcode
+ * Sector 13–24; plane 1–3 (1 = closest to IP); counter 1–3 (1 = innermost).
+ *
+ * ### Compression in StPicoETofHit
+ * | Member | Stored type | Scale | Decoded by |
+ * |--------|------------|-------|-----------|
+ * | mLocalX | Short_t | ×800 | localX() = mLocalX / 800. |
+ * | mLocalY | Short_t | ×800 | localY() = mLocalY / 800. |
+ * | mTimeOverThreshold | UShort_t | ×250 | tot() = mTimeOverThreshold / 250. |
+ *
+ * mLeadingEdgeTime is stored as a `Float_t` cyclic within the BTOF clock
+ * window (0–51 200 ns).
+ *
+ * ### Compression in StPicoETofPidTraits
+ * | Member | Stored type | Scale | Decoded by |
+ * |--------|------------|-------|-----------|
+ * | mBeta | UShort_t | ×20 000 | beta() = mBeta / 20000. |
+ * | mDeltaX | Short_t | ×800 | deltaX() = mDeltaX / 800. |
+ * | mDeltaY | Short_t | ×800 | deltaY() = mDeltaY / 800. |
+ * | mCrossing{X,Y,Z} | Short_t | ×100 | crossing*() = member / 100. |
+ *
+ * Track link: StPicoETofPidTraits::trackIndex() indexes StPicoEvent::tracks().
+ * Hit link: StPicoETofPidTraits::hitIndex() indexes the eTOF hit TClonesArray.
+ */
+
+/**
+ * @class StPicoETofHit
+ * @ingroup StPicoETOF
+ * @brief One eTOF hit: geometry, local coordinates, leading-edge time, and ToT.
+ */
+
+/**
+ * @class StPicoETofPidTraits
+ * @ingroup StPicoETOF
+ * @brief eTOF match and PID quantities for one reconstructed track.
+ *
+ * Carries both trackIndex() (→ StPicoTrack array) and hitIndex()
+ * (→ eTOF hit array), so the track and hit can both be retrieved directly.
+ */
+
+// ============================================================
+// MTD
+// ============================================================
+
+/**
+ * @defgroup StPicoMTD Muon Telescope Detector (MTD)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoMtdHit, StPicoMtdPidTraits, and StPicoMtdTrigger
+ *
+ * @details
+ * The MTD surrounds the STAR magnet return yoke at r ≈ 400 cm and identifies
+ * muons via hadronic absorption in the steel.  Coverage: |η| < 0.5.
+ * 30 backlegs × 5 modules × 12 cells.
+ *
+ * ### Address encoding
+ * @code
+ * mgChannel = (backleg - 1) * 60 + (module - 1) * 12 + cell
+ * @endcode
+ * Backleg 1–30; module 1–5; cell 0–11.
+ *
+ * ### Compression in StPicoMtdPidTraits
+ * | Member | Stored type | Scale | Decoded by |
+ * |--------|------------|-------|-----------|
+ * | mDeltaY | Short_t | ×200 | deltaY() = mDeltaY / 200. (0.005 cm precision) |
+ * | mDeltaZ | Short_t | ×200 | deltaZ() = mDeltaZ / 200. |
+ * | mBeta | UShort_t | ×20 000 | beta() = mBeta / 20000. |
+ *
+ * mDeltaTimeOfFlight is stored uncompressed as a Float_t.
+ *
+ * Track link: StPicoMtdPidTraits::trackIndex() indexes StPicoEvent::tracks().
+ * Hit link: StPicoMtdPidTraits::mtdHitIndex() indexes the MTD hit TClonesArray.
+ *
+ * ### StPicoMtdTrigger
+ * One object per event.  Stores VPD TACsum, THUB timing, per-QT TACsums
+ * (after slewing correction), MT101 top-two candidates, and the TF201
+ * online trigger bit word.  See the class documentation for the bit layout.
+ */
+
+/**
+ * @class StPicoMtdHit
+ * @ingroup StPicoMTD
+ * @brief One MTD hit: backleg/module/cell address and east/west leading and
+ * trailing edge times (stored as std::pair<Float_t,Float_t>).
+ *
+ * Time-over-threshold for each end is: trailingEdgeTime − leadingEdgeTime.
+ */
+
+/**
+ * @class StPicoMtdPidTraits
+ * @ingroup StPicoMTD
+ * @brief MTD match and PID quantities for one reconstructed track.
+ */
+
+/**
+ * @class StPicoMtdTrigger
+ * @ingroup StPicoMTD
+ * @brief MTD hardware trigger data for the event (one object per event).
+ *
+ * @details
+ * Contains:
+ * - VPD TACsum (east + west) used as start-time input.
+ * - THUB trigger timestamps (two boards: thub=1 for backlegs 16–30,
+ *   thub=2 for backlegs 1–15).
+ * - Per-QT, per-position slewing-corrected TACsums (8 boards × 8 positions).
+ *   Zero means no valid signal.  Use getMaximumQTtac() to find the two
+ *   largest positions in a given QT board.
+ * - MT101 top-two TACsum candidates per QT (the values that enter the
+ *   online di-muon trigger decision).
+ * - TF201 trigger bit word encoding which QTs fired; bit layout is
+ *   year-dependent (Run 16 uses a two-word scheme for all 8 QTs;
+ *   earlier runs encode QTs 1–4 in a single word).
+ *   Bit position: qt_index*2 + 0 = low-threshold fired;
+ *                 qt_index*2 + 1 = high-threshold fired.
+ * - shouldHaveRejectEvent(): production-filtering flag
+ *   (0 = not di-muon triggered, 1 = should have been rejected,
+ *    2 = passed filtering cuts).
+ */
+
+// ============================================================
+// BBC
+// ============================================================
+
+/**
+ * @defgroup StPicoBBC Beam-Beam Counter (BBC)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoBbcHit
+ *
+ * @details
+ * The BBC provides forward-rapidity triggering, luminosity monitoring, and
+ * event-plane determination.  Coverage: 3.3 < |η| < 5.0.  16 PMTs per side
+ * read 18 scintillator+Cherenkov tiles per side.
+ *
+ * ### StPicoBbcHit
+ * One entry per phototube.  The hit id encodes:
+ * - abs(mId) = PMT number [1,16]
+ * - sign(mId) = +1 West / −1 East
+ *
+ * The 32-bit mQTdata word packs all QT board fields:
+ * | Bits  | Field   | Range  |
+ * |-------|---------|--------|
+ * | 0–11  | ADC     | 0–4095 |
+ * | 12–23 | TAC     | 0–4095 |
+ * | 24–28 | TDC     | 0–31   |
+ * | 29    | hasTAC  | 0/1    |
+ * | 30    | isGood  | 1=good |
+ *
+ * Geometrical information (tile position, ring, …) is obtained from
+ * StBbcGeom::* using the hit id.
+ *
+ * No PidTraits class exists; the BBC is used for global event characterisation.
+ */
+
+/**
+ * @class StPicoBbcHit
+ * @ingroup StPicoBBC
+ * @brief One BBC phototube signal.
+ *
+ * @see StBbcGeom for geometrical tile information indexed by id().
+ */
+
+// ============================================================
+// EPD
+// ============================================================
+
+/**
+ * @defgroup StPicoEPD Event Plane Detector (EPD)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoEpdHit
+ *
+ * @details
+ * The EPD measures the reaction-plane angle and forward multiplicity for
+ * flow analyses and centrality determination.  Coverage: 2.1 < |η| < 5.1.
+ * Geometry: 2 wheels × 12 supersectors × 31 tiles = 744 tiles total.
+ *
+ * ### StPicoEpdHit
+ * One entry per fired tile.  The hit id encodes:
+ * - abs(mId) = 100 × position + tile  (position [1,12]; tile [1,31])
+ * - sign(mId) = +1 West / −1 East
+ *
+ * The 32-bit mQTdata word packs:
+ * | Bits  | Field   | Range  |
+ * |-------|---------|--------|
+ * | 0–11  | ADC     | 0–4095 |
+ * | 12–23 | TAC     | 0–4095 |
+ * | 24–28 | TDC     | 0–31   |
+ * | 29    | hasTAC  | 0/1    |
+ * | 30    | isGood  | 1=good |
+ *
+ * The Float_t mnMIP field stores the gain-calibrated energy loss in units of
+ * the Landau MPV for a single minimum-ionising particle.  nMIP() returns 0
+ * for database-flagged bad tiles; the raw ADC is always accessible.
+ * TnMIP(MAX, thresh) applies a lower threshold and upper truncation for
+ * flow analyses.
+ *
+ * Geometrical information is obtained from StEpdGeom::* using id().
+ *
+ * No PidTraits class.
+ */
+
+/**
+ * @class StPicoEpdHit
+ * @ingroup StPicoEPD
+ * @brief One EPD tile signal with gain-calibrated nMIP energy.
+ *
+ * @see StEpdGeom for geometrical tile information indexed by id().
+ */
+
+// ============================================================
+// FMS
+// ============================================================
+
+/**
+ * @defgroup StPicoFMS Forward Meson Spectrometer (FMS)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoFmsHit
+ *
+ * @details
+ * The FMS is a lead-glass Cherenkov calorimeter used to measure forward
+ * photons, π⁰, and η mesons.  Coverage: 2.5 < η < 4.0.
+ * 1264 lead-glass cells in four quadrants (east/west × large/small cell).
+ *
+ * ### Address encoding
+ * A single UShort_t packs channel and detector id:
+ * @code
+ * mChannelDetectorId = 32 * channel + detectorId
+ * @endcode
+ * channel() = mChannelDetectorId / 32  [0, 2047]
+ * detectorId() = mChannelDetectorId % 32  [0, 31]
+ *
+ * The ADC is stored raw as a UShort_t with no compression.
+ *
+ * No PidTraits class; FMS cluster–track matching is done externally.
+ */
+
+/**
+ * @class StPicoFmsHit
+ * @ingroup StPicoFMS
+ * @brief One FMS lead-glass cell: channel+detector address and raw ADC.
+ */
+
+// ============================================================
+// FCS
+// ============================================================
+
+/**
+ * @defgroup StPicoFCS Forward Calorimeter System (FCS)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoFcsHit and StPicoFcsCluster
+ *
+ * @details
+ * The FCS provides forward electromagnetic and hadronic calorimetry for the
+ * sPHENIX/iTPC era.  It comprises the W-Sci (WCAL) electromagnetic
+ * calorimeter, the H-Sci (HCAL) hadronic calorimeter, and preshower
+ * detectors.  Coverage: 2.5 < η < 4.0.
+ *
+ * Unlike most PicoDST hit classes, StPicoFcsHit and StPicoFcsCluster store
+ * energy and momentum quantities as uncompressed Float_t fields.
+ *
+ * ### StPicoFcsHit
+ * One entry per calorimeter cell.  Stores detectorId, channel id, and a
+ * full four-momentum (px, py, pz, E).  energy() returns the T component.
+ *
+ * ### StPicoFcsCluster
+ * One entry per reconstructed cluster.  Stores the cluster's local
+ * centre-of-gravity (x, y), total energy, tower count, second moments
+ * (sigmaMin, sigmaMax, theta), χ²/ndf for 1- and 2-photon shower shape
+ * fits, and the full four-momentum.
+ * mFwdTrackMatchIndex is a transient (ROOT //!) vector not written to disk.
+ */
+
+/**
+ * @class StPicoFcsHit
+ * @ingroup StPicoFCS
+ * @brief One FCS calorimeter cell: detector/channel address, four-momentum, energy.
+ */
+
+/**
+ * @class StPicoFcsCluster
+ * @ingroup StPicoFCS
+ * @brief Reconstructed FCS cluster: position, shape moments, chi2 fits, four-momentum.
+ */
+
+// ============================================================
+// BEMC
+// ============================================================
+
+/**
+ * @defgroup StPicoBEMC Barrel Electromagnetic Calorimeter (BEMC)
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoBTowHit, StPicoBEmcPidTraits, StPicoBEmcSmdEHit,
+ *        StPicoBEmcSmdPHit, and StPicoEmcTrigger
+ *
+ * @details
+ * The Barrel EMC is a lead-scintillator sampling calorimeter with 4 800
+ * projective towers covering |η| < 1.0.  Each tower is backed by a
+ * shower-maximum detector (BSMD) with η-plane and φ-plane wire layers.
+ *
+ * ### StPicoBTowHit
+ * One entry per tower, stored at array index = softId − 1 (softId 1–4800).
+ * mAdc is uncompressed; mE = energy × 1000 (Short_t).
+ * A tower with energy ≤ −2 GeV and ADC == 0 is considered bad (isBad()).
+ *
+ * ### StPicoBEmcPidTraits
+ * Contains two sets of match quantities for one track:
+ * - **BEMC cluster match** (`bemc*`): result of the STAR standard clustering
+ *   algorithm (cluster id, ADC, energies, z- and φ-distances, BSMD wire counts).
+ *   Energies: ÷1000 (Short_t).  ZDist: ÷100 (Short_t).
+ *   PhiDist: ÷10000 (Short_t).
+ * - **Single-tower projection** (`btow*`): result of StEmcPosition::projTrack().
+ *   btowId() is the matched tower softId [1,4800].
+ *   btowId2()/btowId3() are local IDs of the 2nd/3rd closest towers, packed
+ *   as mBtowId23 = 10×id2 + id3 (9 = not found).
+ *   Tower energies: ÷1000 (Short_t).
+ *   Eta/phi distances: ÷10000 (Short_t).
+ *
+ * Track link: StPicoBEmcPidTraits::trackIndex() indexes StPicoEvent::tracks().
+ *
+ * ### StPicoBEmcSmdEHit / StPicoBEmcSmdPHit
+ * One entry per fired BSMD wire.  Store softId, raw ADC, and calibrated
+ * energy (Float_t, uncompressed).
+ *
+ * ### StPicoEmcTrigger
+ * See @ref StPicoEMCTrigger.
+ */
+
+/**
+ * @class StPicoBTowHit
+ * @ingroup StPicoBEMC
+ * @brief One BEMC tower: pedestal-subtracted ADC and compressed energy.
+ *
+ * Array index in the TClonesArray corresponds to softId − 1.
+ */
+
+/**
+ * @class StPicoBEmcPidTraits
+ * @ingroup StPicoBEMC
+ * @brief BEMC cluster and single-tower match quantities for one track.
+ */
+
+/**
+ * @class StPicoBEmcSmdEHit
+ * @ingroup StPicoBEMC
+ * @brief One BSMD η-plane wire hit: softId, ADC, and calibrated energy.
+ */
+
+/**
+ * @class StPicoBEmcSmdPHit
+ * @ingroup StPicoBEMC
+ * @brief One BSMD φ-plane wire hit: softId, ADC, and calibrated energy.
+ */
+
+// ============================================================
+// Trigger classes
+// ============================================================
+
+/**
+ * @defgroup StPicoTriggers Trigger Data Classes
+ * @ingroup StPicoEventDetectors
+ * @brief StPicoEmcTrigger and StPicoMtdTrigger
+ *
+ * @details
+ * Trigger classes store hardware trigger decisions.  They are not linked to
+ * individual tracks via a trackIndex.
+ */
+
+/**
+ * @defgroup StPicoEMCTrigger BEMC Trigger (StPicoEmcTrigger)
+ * @ingroup StPicoTriggers
+ * @brief Per-tower / per-jet-patch BEMC trigger information.
+ *
+ * @details
+ * One StPicoEmcTrigger object is stored for each BEMC tower or jet patch that
+ * fired a hardware trigger in the event.
+ *
+ * ### Flag bit layout (mFlag, UChar_t)
+ * | Bit | Mask | Accessor | Trigger |
+ * |-----|------|----------|---------|
+ * | 0 | 0x01 | isHT0() | BHT0 (lowest high-tower threshold) |
+ * | 1 | 0x02 | isHT1() | BHT1 |
+ * | 2 | 0x04 | isHT2() | BHT2 |
+ * | 3 | 0x08 | isHT3() | BHT3 (highest high-tower threshold) |
+ * | 4 | 0x10 | isJP0() | BJP0 (lowest jet-patch threshold) |
+ * | 5 | 0x20 | isJP1() | BJP1 |
+ * | 6 | 0x40 | isJP2() | BJP2 (highest jet-patch threshold) |
+ *
+ * The flag is a bitmask; multiple bits can be set simultaneously for a tower
+ * that exceeded several thresholds.
+ *
+ * id() identifies the triggering element: tower softId [1,4800] for HT triggers;
+ * jet-patch id [1,18] for JP triggers.
+ *
+ * smdEIndex(i) and smdPIndex(i) return indices into the StPicoBEmcSmdEHit and
+ * StPicoBEmcSmdPHit TClonesArrays associated with this trigger.
+ */
+
+/**
+ * @class StPicoEmcTrigger
+ * @ingroup StPicoEMCTrigger
+ * @brief BEMC high-tower and jet-patch trigger data for one trigger candidate.
+ *
+ * isHT0()–isHT3() and isJP0()–isJP2() query individual threshold bits.
+ * Indices to associated BSMD hits are stored in mSmdE and mSmdP vectors.
+ */
+
+/**
+ * @}
+ */

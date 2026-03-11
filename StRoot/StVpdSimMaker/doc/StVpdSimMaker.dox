@@ -1,0 +1,568 @@
+/**
+ * @file StVpdSimMaker.dox
+ * @brief Doxygen documentation for the StVpdSimMaker module.
+ *
+ * This file contains the full Doxygen narrative, group definition, class
+ * documentation, and per-method annotations for the VPD simulation maker
+ * housed in StRoot/StVpdSimMaker/.  It is intended to be processed together
+ * with the actual source files; no code is duplicated here.
+ *
+ * Author: Nickolas Luttrell (Rice University)\n
+ * Adapted from StBTofSimMaker circa 2016.\n
+ * CVS: $Id: StVpdSimMaker.dox 1.0 $
+ */
+
+// ===========================================================================
+//  @defgroup block
+// ===========================================================================
+
+/**
+ * @defgroup StVpdSimMaker VPD Simulation Maker
+ * @brief Monte-Carlo simulation of the STAR Vertex Position Detector (VPD).
+ *
+ * @section vpd_overview Overview
+ *
+ * The **Vertex Position Detector (VPD)** is a fast-timing subsystem of the
+ * STAR experiment at RHIC.  It consists of two identical detector assemblies,
+ * one on each side of the nominal interaction region:
+ *
+ * | Assembly | Tray ID | z position |
+ * |----------|---------|------------|
+ * | West VPD | 121     | −570 cm    |
+ * | East VPD | 122     | +570 cm    |
+ *
+ * Each assembly holds **19 channels**, each comprising a fast BC-418
+ * plastic-scintillator tile read out by a Hamamatsu fine-mesh PMT.
+ * The VPD provides two physics quantities:
+ *
+ *  - **Event start time** \f$t_{\rm start}\f$ — used by the Barrel Time-of-Flight
+ *    (BTof) system to measure particle velocities.
+ *  - **Primary-vertex z-position** \f$v_z^{\rm VPD}\f$ — an independent,
+ *    fast online measurement of the collision vertex.
+ *
+ * @section vpd_physics Physics of the timing measurement
+ *
+ * A particle produced at the primary vertex \f$(0,0,v_z)\f$ at time
+ * \f$t_0\f$ and travelling along the beam axis at the speed of light arrives
+ * at the West and East VPD faces after flight times
+ *
+ * \f[
+ *   t_W = \frac{L - v_z}{c}, \qquad
+ *   t_E = \frac{L + v_z}{c},
+ * \f]
+ *
+ * where \f$L = 570\,\text{cm}\f$ is the distance of each face from the
+ * nominal interaction point.  From the measured average leading-edge times
+ * \f$\bar{t}_W\f$ and \f$\bar{t}_E\f$ the maker derives:
+ *
+ * \f[
+ *   v_z^{\rm VPD} = \frac{c}{2}\bigl(\bar{t}_E - \bar{t}_W\bigr),
+ * \f]
+ * \f[
+ *   t_{\rm start} = \frac{\sum_W t_i^W + \sum_E t_i^E
+ *                         - (N_E - N_W)\,v_z/c}
+ *                        {N_E + N_W}
+ *                   - \frac{L}{c},
+ * \f]
+ *
+ * where \f$N_W\f$ and \f$N_E\f$ are the numbers of fired tubes on the
+ * west and east sides respectively.
+ *
+ * @section vpd_sim_overview Simulation chain
+ *
+ * The maker operates inside the standard STAR BFC (Big Full Chain) and
+ * interfaces with three data stores:
+ *
+ *  -# **GEANT hit table** (`g2t_vpd_hit`) — raw Monte-Carlo energy deposits
+ *     produced by GEANT3/GEANT4 inside the VPD scintillator volumes.
+ *  -# **StMcEvent** — Monte-Carlo truth event structure (vertex position,
+ *     track ancestry).
+ *  -# **StEvent** — reconstructed event structure into which digitised hits
+ *     are written as `StBTofHit` and `StBTofRawHit` objects.
+ *
+ * The processing sequence in each event (StVpdSimMaker::Make()) is:
+ *
+ *  1. Retrieve GEANT data and extract the MC primary vertex z-position.
+ *  2. Loop over all `g2t_vpd_hit` rows; for each active tube compute the
+ *     geometric flight time, then call StVpdSimMaker::vpdResponse() to apply
+ *     per-tube timing resolution smearing.
+ *  3. Call StVpdSimMaker::thresholdCut() separately for West and East hits
+ *     to (a) reject tubes below the minimum-hit threshold, and (b) select
+ *     the single earliest hit (leading edge) per tube.
+ *  4. Compute \f$v_z^{\rm VPD}\f$ and \f$t_{\rm start}\f$.
+ *  5. Call StVpdSimMaker::fillEvent() to package accepted hits into
+ *     `StBTofHit` / `StBTofRawHit` objects and attach them to `StEvent`.
+ *  6. Optionally fill QA histograms.
+ *
+ * @section vpd_config Calibration and configuration
+ *
+ * Per-tube calibration parameters are managed by StVpdSimConfig
+ * (StBTofUtil/StVpdSimConfig.h).  Each of the 38 channels (tubes 0–18 West,
+ * 19–37 East) carries a StVpdSimConfig::SingleTubeParams record containing:
+ *
+ *  - `singleTubeRes` — single-tube timing resolution in **picoseconds**,
+ *    used as the standard deviation of a Gaussian smearing kernel applied to
+ *    the Monte-Carlo flight time.
+ *  - `tubeStatusFlag` — 1 if the tube was active, 0 if masked off.
+ *  - `tubeTriggerFlag` — 1 if the tube participated in the hardware trigger.
+ *
+ * Parameters are loaded at the start of each run (StVpdSimMaker::InitRun())
+ * either from the STAR offline calibration database
+ * (`Calibrations/tof/vpdSimParams`) or from a plain-text flat file
+ * (useful for debugging and standalone tests).
+ *
+ * @section vpd_qa Quality-assurance histograms
+ *
+ * When histogram booking is enabled via StVpdSimMaker::setBookHisto(true),
+ * the following ROOT histograms are created and registered with the maker:
+ *
+ * | Histogram          | Type  | Contents |
+ * |--------------------|-------|----------|
+ * | mNRawHitsWest      | TH1F  | Raw hit count per West tube (before threshold) |
+ * | mNRawHitsEast      | TH1F  | Raw hit count per East tube (before threshold) |
+ * | mTubeHitsWest      | TH1F  | Hit count per West tube (after threshold cut) |
+ * | mTubeHitsEast      | TH1F  | Hit count per East tube (after threshold cut) |
+ * | mNHitsWest         | TH1F  | Number of West tubes fired per event |
+ * | mNHitsEast         | TH1F  | Number of East tubes fired per event |
+ * | mLeTimeWest        | TH1F  | Leading-edge times, West (ns) |
+ * | mLeTimeEast        | TH1F  | Leading-edge times, East (ns) |
+ * | mTStartHist        | TH1F  | Reconstructed \f$t_{\rm start}\f$ (ns) |
+ * | mLeTubeHitsWest    | TH2F  | Leading-edge time vs. tube hit count, West |
+ * | mLeTubeHitsEast    | TH2F  | Leading-edge time vs. tube hit count, East |
+ * | mZVertexHist       | TH1F  | True MC vertex z (cm) |
+ * | mVpdVertexHist     | TH1F  | Reconstructed VPD vertex z (cm) |
+ * | mVpdResHist        | TH1F  | \f$v_z^{\rm MC} - v_z^{\rm VPD}\f$ (cm) |
+ * | mResVsNumHits      | TH3F  | Vertex residual vs. \f$N_W\f$ vs. \f$N_E\f$ |
+ *
+ * @ingroup Simulation
+ */
+
+// ===========================================================================
+//  @file annotation
+// ===========================================================================
+
+/**
+ * @file StVpdSimMaker.h
+ * @ingroup StVpdSimMaker
+ * @brief Declaration of StVpdSimMaker — the STAR VPD Monte-Carlo simulation maker.
+ *
+ * Defines the StVpdSimMaker class, the `VpdSingleHit` internal struct, and
+ * all protected data members including the per-tube calibration map, the
+ * Monte-Carlo and reconstructed event pointers, and the QA histogram set.
+ *
+ * @author Nickolas Luttrell (Rice University)
+ * @date 2017-03-02 (initial), 2021-01-27 (last revision)
+ * $Id: StVpdSimMaker.h,v 1.2 2021/01/27 04:33:30 geurts Exp $
+ */
+
+/**
+ * @file StVpdSimMaker.cxx
+ * @ingroup StVpdSimMaker
+ * @brief Implementation of StVpdSimMaker — the STAR VPD Monte-Carlo simulation maker.
+ *
+ * Adapted from StBTofSimMaker circa 2016.  Reads GEANT VPD hits, applies
+ * per-tube timing resolution smearing, selects leading-edge hits, and
+ * populates StEvent / StMcEvent.
+ *
+ * @author Nickolas Luttrell (Rice University)
+ * @date 2017-03-02 (initial), 2021-01-27 (last revision)
+ * $Id: StVpdSimMaker.cxx,v 1.3 2021/01/27 04:33:30 geurts Exp $
+ */
+
+// ===========================================================================
+//  @class StVpdSimMaker
+// ===========================================================================
+
+/**
+ * @class StVpdSimMaker
+ * @ingroup StVpdSimMaker
+ * @brief STAR BFC maker that simulates the Vertex Position Detector response.
+ *
+ * StVpdSimMaker is a StMaker-derived class that sits in the Big Full Chain
+ * (BFC) between the GEANT transport step and the reconstruction step.  It
+ * translates raw Monte-Carlo energy deposits in the VPD scintillator volumes
+ * into digitised timing hits suitable for downstream calibration and
+ * reconstruction makers.
+ *
+ * ### Inheritance
+ * ```
+ * TObject
+ *  └─ TNamed
+ *      └─ TTask (ROOT)
+ *          └─ StMaker (STAR)
+ *              └─ StVpdSimMaker
+ * ```
+ *
+ * ### Typical usage inside a BFC macro
+ * @code{.cpp}
+ * StVpdSimMaker *vpdSim = new StVpdSimMaker("VpdSim");
+ * vpdSim->setBookHisto(true);          // optional QA histograms
+ * // To use a flat-file instead of the database:
+ * // vpdSim->setParamsFile("db/vpdSimParams/vpdSimParams.dat");
+ * chain->AddMaker(vpdSim);
+ * @endcode
+ *
+ * @see StVpdSimConfig for the per-tube calibration parameter structure.
+ * @see StBTofSimMaker for the analogous BTof simulation maker.
+ */
+
+// ===========================================================================
+//  Constructor / destructor
+// ===========================================================================
+
+/**
+ * @fn StVpdSimMaker::StVpdSimMaker(const char *name)
+ * @brief Default constructor.
+ * @ingroup StVpdSimMaker
+ *
+ * Initialises all internal state to safe defaults:
+ * - `mMcBTofHitCollection` set to null.
+ * - `mBookHisto` set to `kFALSE` (no QA histograms).
+ * - `mUseFileParameters` set to `kFALSE` (load from database).
+ * - Calls Reset() to zero all event-level accumulators.
+ *
+ * @param name  Name passed to the StMaker base class; defaults to `"VpdSim"`.
+ */
+
+/**
+ * @fn StVpdSimMaker::~StVpdSimMaker()
+ * @brief Destructor.
+ * @ingroup StVpdSimMaker
+ *
+ * Frees the heap-allocated StVpdSimConfig object (`mSimConfig`).
+ * The `mMcBTofHitCollection` and histogram objects are owned by the STAR
+ * framework and must not be deleted here.
+ */
+
+// ===========================================================================
+//  StMaker interface
+// ===========================================================================
+
+/**
+ * @fn void StVpdSimMaker::Reset()
+ * @brief Reset all event-level and run-level pointers to null/zero.
+ * @ingroup StVpdSimMaker
+ *
+ * Sets `mGeantData`, `mEvent`, `mMcEvent`, and `mSimConfig` to null.
+ * Deletes and nulls `mMcBTofHitCollection`.  Called from the constructor
+ * and from Init() at the start of each processing job.
+ *
+ * @note Does **not** reset histogram pointers; those persist across events.
+ */
+
+/**
+ * @fn int StVpdSimMaker::Init()
+ * @brief One-time initialisation called at the start of the job.
+ * @ingroup StVpdSimMaker
+ *
+ * Calls Reset() to zero all state, then optionally books QA histograms if
+ * `mBookHisto` is `kTRUE`.  Delegates to StMaker::Init() for framework
+ * bookkeeping.
+ *
+ * @return `kStOK` on success; propagates any error from StMaker::Init().
+ */
+
+/**
+ * @fn int StVpdSimMaker::InitRun(int runnumber)
+ * @brief Per-run initialisation — loads calibration parameters.
+ * @ingroup StVpdSimMaker
+ *
+ * Constructs a new StVpdSimConfig instance and calls one of its two
+ * `loadVpdSimParams()` overloads depending on `mUseFileParameters`:
+ *
+ *  - **Database** (default): loads from `Calibrations/tof/vpdSimParams` via
+ *    the STAR offline database, selecting validity intervals appropriate for
+ *    the current run number.
+ *  - **Flat file**: loads from the path stored in `mParamsFileName` (set by
+ *    setParamsFile()).  Useful for standalone tests or embedding studies where
+ *    the database is unavailable.
+ *
+ * After loading, the parameter map is copied into `mSimParams` for fast
+ * per-event access.
+ *
+ * @param runnumber  STAR run number (unused for database flavour selection,
+ *                   but required by the StMaker interface).
+ * @return `kStOK` on success.
+ */
+
+/**
+ * @fn int StVpdSimMaker::FinishRun(int runnumber)
+ * @brief Per-run cleanup (currently a no-op).
+ * @ingroup StVpdSimMaker
+ *
+ * @param runnumber  STAR run number (unused).
+ * @return `kStOk`.
+ */
+
+/**
+ * @fn int StVpdSimMaker::Make()
+ * @brief Main event-processing method — called once per event.
+ * @ingroup StVpdSimMaker
+ *
+ * This is the heart of the VPD simulation.  The following steps are
+ * performed in order:
+ *
+ *  1. **Allocate** a fresh `StMcBTofHitCollection` for this event.
+ *  2. **Retrieve GEANT data** from the `"geant"` (BFC chain) or
+ *     `"geantBranch"` (standalone) input dataset.  Returns `kStWarn` if
+ *     neither is found.
+ *  3. **Read MC primary vertex** z-position from `StMcEvent`.  Returns
+ *     `kStWarn` if no vertex is present.
+ *  4. **Loop over `g2t_vpd_hit` rows**:
+ *     - Decode `volume_id` into tray number (121 = West, 122 = East) and
+ *       tube index [0, 18].
+ *     - Skip tubes with an invalid index or a `tubeStatusFlag == 0`.
+ *     - Compute the geometric flight time:
+ *       \f$t_W = (L - v_z)/c\f$ (West) or \f$t_E = (L + v_z)/c\f$ (East).
+ *     - Call vpdResponse() to apply Gaussian resolution smearing and
+ *       populate a `VpdSingleHit` struct.
+ *     - Accumulate hits into `hitsWest` / `hitsEast` vectors and increment
+ *       per-tube hit counters.
+ *  5. **Apply threshold cut and leading-edge selection** via thresholdCut()
+ *     for West and East separately.  If either side has no hits above
+ *     threshold, the corresponding average time is set to −9999.
+ *  6. **Compute vertex and start time** (only if both sides fired):
+ *     \f$v_z^{\rm VPD} = c(\bar{t}_E - \bar{t}_W)/2\f$ and
+ *     \f$t_{\rm start}\f$ from the tube-time sums.
+ *  7. **Write to StEvent** via fillEvent().
+ *  8. **Fill QA histograms** if `mBookHisto` is set.
+ *
+ * @return `kStOK` on success; `kStWarn` if GEANT data or MC vertex is absent.
+ */
+
+/**
+ * @fn int StVpdSimMaker::Finish()
+ * @brief End-of-job finalisation (currently a no-op).
+ * @ingroup StVpdSimMaker
+ *
+ * @return `kStOK`.
+ */
+
+// ===========================================================================
+//  Core simulation methods
+// ===========================================================================
+
+/**
+ * @fn int StVpdSimMaker::vpdResponse(VpdSingleHit &singleHit, g2t_vpd_hit_st *vpd_hit, int vId)
+ * @brief Simulate the analogue response of a single VPD PMT channel.
+ * @ingroup StVpdSimMaker
+ *
+ * Given a GEANT hit and a partially-filled `VpdSingleHit` (with `tof` already
+ * set to the geometric flight time by the caller), this method:
+ *
+ *  1. Decodes `vId` to set `singleHit.tray` (121/122) and `singleHit.tubeId`
+ *     (1–19).
+ *  2. Draws a Gaussian random number with mean 0 and sigma equal to the
+ *     per-tube resolution `singleTubeRes` (in ps) from the calibration map
+ *     `mSimParams`.  Uses ROOT's global `TRandom3` (`gRandom`).
+ *  3. Adds the smearing (converted from ps to ns by dividing by 1000) to
+ *     `singleHit.tof`.
+ *  4. Stores the raw GEANT time-of-flight in `singleHit.t0` (ns).
+ *  5. Copies the energy deposit `vpd_hit->de` into `singleHit.de`.
+ *  6. Sets `singleHit.pathL = −9999` and `singleHit.q = 0` (not used for
+ *     the VPD).
+ *
+ * The East VPD parameter index is offset by 19 (`tubeId - 1 + 19`) relative
+ * to the West, reflecting the ordering in `mSimParams` / the database table.
+ *
+ * @param[in,out] singleHit  The hit struct to be filled.  On entry, `tof`
+ *                            must contain the unsmeared geometric flight time.
+ *                            On exit all fields are populated.
+ * @param[in]     vpd_hit    Pointer to the GEANT `g2t_vpd_hit_st` row for
+ *                            this energy deposit.
+ * @param[in]     vId        GEANT volume ID encoding tray and tube:
+ *                            `tray = vId/1000 + 120`, `tubeId = vId % 100`.
+ * @return `kStOK`.
+ */
+
+/**
+ * @fn double StVpdSimMaker::thresholdCut(std::vector<VpdSingleHit> singleHitsVec, std::vector<int> tubeCounts, TH1F *TubeHits, TH1F *NHits)
+ * @brief Apply per-tube hit threshold and select the earliest hit in each tube.
+ * @ingroup StVpdSimMaker
+ *
+ * This method implements two successive selection steps:
+ *
+ *  **Step 1 — Threshold gate.**  For each of the 19 tubes, check whether
+ *  `tubeCounts[i] >= mSimConfig->getThreshold()` (default threshold = 1).
+ *  Tubes below threshold are discarded (only their zero-bin histogram entry
+ *  is recorded).
+ *
+ *  **Step 2 — Leading-edge selection.**  Among all hits belonging to a tube
+ *  that passed the threshold gate, find the one with the smallest `tof`
+ *  (subject to `tof > 1e-4 ns` to exclude zero-velocity artefacts).  This
+ *  represents the first photon reaching the PMT — the physical leading-edge
+ *  signal.
+ *
+ *  The selected hit is passed to storeMcVpdHit(), accumulated into
+ *  `mSumTubeTime`, and appended to an internal time vector.
+ *
+ *  After processing all tubes, `mNHits` is set to the number of selected
+ *  hits and `mTubeTAvg` is set to their mean flight time.  If no hits
+ *  survive, `mTubeTAvg` is set to −9999.
+ *
+ * @param[in]  singleHitsVec  All VPD hits for one side (West or East) after
+ *                             resolution smearing.
+ * @param[in]  tubeCounts     Vector of length 19 giving the raw hit count per
+ *                             tube.
+ * @param[in]  TubeHits       QA histogram: tube number of hits passing the
+ *                             threshold.  May be null if `mBookHisto` is false.
+ * @param[in]  NHits          QA histogram: total number of fired tubes per
+ *                             event.  May be null if `mBookHisto` is false.
+ * @return Average leading-edge flight time (ns) across all selected tubes on
+ *         this side, or −9999 if no tubes passed the threshold.
+ *
+ * @post `mSumTubeTime` contains the sum of the selected per-tube times.\n
+ *       `mNHits` contains the count of selected tubes.
+ */
+
+/**
+ * @fn int StVpdSimMaker::storeMcVpdHit(StMcBTofHit *mcVpdHit)
+ * @brief Add a simulated VPD hit to the MC hit collection, rejecting duplicates.
+ * @ingroup StVpdSimMaker
+ *
+ * Iterates over `mMcBTofHitCollection` to check whether any existing entry
+ * occupies the same (tray, module, cell) position as `mcVpdHit` using
+ * `StMcBTofHit::sameCell()`.  If a collision is found the new hit is
+ * discarded and `kStWarn` is returned.  Otherwise the hit is added via
+ * `StMcBTofHitCollection::addHit()`.
+ *
+ * @param[in] mcVpdHit  Heap-allocated MC hit.  Ownership transfers to
+ *                       `mMcBTofHitCollection` on success.
+ * @return `kStOk` if the hit was stored; `kStWarn` if a duplicate was detected.
+ */
+
+/**
+ * @fn int StVpdSimMaker::fillEvent()
+ * @brief Transfer simulated VPD hits into StEvent and StMcEvent.
+ * @ingroup StVpdSimMaker
+ *
+ * Performs the final digitalisation step:
+ *
+ *  1. **StMcEvent**: attaches `mMcBTofHitCollection` to the MC event via
+ *     `StMcEvent::setBTofHitCollection()`, replacing any prior collection.
+ *  2. **StEvent — StBTofHit**: for each `StMcBTofHit` in the collection,
+ *     creates an `StBTofHit` with:
+ *     - Tray, module, and cell numbers copied from the MC hit.
+ *     - `leadingEdgeTime` = `trailingEdgeTime` = MC time-of-flight (no
+ *       slewing or walk corrections applied at this stage).
+ *     - `idTruth` = parent track id with `qaTruth = 1`, allowing downstream
+ *       calibration makers to identify simulated hits.
+ *     - `associatedTrack` set to null (linked in StBTofMatchMaker).
+ *  3. **StEvent — StBTofRawHit**: creates a matching raw-hit with the channel
+ *     number encoded as `6*(module-1) + cell` and `flag = 1`.
+ *  4. Attaches a default `StBTofHeader` to `mVpdCollection`.
+ *
+ *  If `StEvent` does not yet contain a `StBTofCollection`, one is created
+ *  and registered.
+ *
+ * @return `kStOK` on success; logs an error and continues if StMcEvent or
+ *         StEvent is unavailable.
+ */
+
+// ===========================================================================
+//  Utility / accessor methods
+// ===========================================================================
+
+/**
+ * @fn int StVpdSimMaker::bookHistograms()
+ * @brief Allocate and register all QA histograms.
+ * @ingroup StVpdSimMaker
+ *
+ * Creates 13 histograms (9 × TH1F, 2 × TH2F, 1 × TH3F) and registers them
+ * with the maker via `AddHist()` so they are automatically written to the
+ * output ROOT file at the end of the job.  See the @ref vpd_qa table in the
+ * module description for the full list.
+ *
+ * Called from Init() when `mBookHisto == kTRUE`.
+ *
+ * @return `kStOK`.
+ */
+
+/**
+ * @fn string StVpdSimMaker::pullHistFileName()
+ * @brief Derive the QA histogram output file name from the BFC chain output path.
+ * @ingroup StVpdSimMaker
+ *
+ * Queries the chain output file name, strips the extension and leading
+ * directory components, then appends `".VpdSim.root"` to form the histogram
+ * file name stored in `mHistoFileName`.
+ *
+ * @return The derived histogram file name (e.g. `"run15_sim.VpdSim.root"`),
+ *         or an empty string if the chain output path is not set.
+ */
+
+/**
+ * @fn string StVpdSimMaker::getParamsFileName()
+ * @brief Return the path of the calibration flat-file.
+ * @ingroup StVpdSimMaker
+ * @return Value of `mParamsFileName`.
+ */
+
+/**
+ * @fn void StVpdSimMaker::setParamsFile(string fileName)
+ * @brief Set the path to a flat-file calibration source and enable file mode.
+ * @ingroup StVpdSimMaker
+ *
+ * When called, `mUseFileParameters` is implicitly activated (the internal flag
+ * is set in the constructor; this setter merely records the path).  If called
+ * from InitRun() without an argument, the default path
+ * `"db/vpdSimParams/vpdSimParams.dat"` is used.
+ *
+ * The flat file must contain 38 lines, one per tube, in the format:
+ * @code
+ * <tubeId>  <resolutionPs>  <statusFlag>  <triggerFlag>
+ * @endcode
+ *
+ * @param fileName  Path to the parameter file.
+ *                  Defaults to `"db/vpdSimParams/vpdSimParams.dat"`.
+ */
+
+/**
+ * @fn void StVpdSimMaker::setBookHisto(bool bookHist)
+ * @brief Enable or disable QA histogram creation.
+ * @ingroup StVpdSimMaker
+ *
+ * Must be called **before** Init() to take effect.
+ *
+ * @param bookHist  `true` to create and fill QA histograms; `false` (default)
+ *                  to skip histogram booking for production running.
+ */
+
+/**
+ * @fn StBTofCollection *StVpdSimMaker::GetVpdCollection() const
+ * @brief Return the current event's `StBTofCollection` of VPD hits.
+ * @ingroup StVpdSimMaker
+ * @return Pointer to `mVpdCollection`; may be null before Make() completes
+ *         or if StEvent was unavailable.
+ */
+
+/**
+ * @fn StMcBTofHitCollection *StVpdSimMaker::GetMcBTofHitCollection() const
+ * @brief Return the current event's Monte-Carlo VPD hit collection.
+ * @ingroup StVpdSimMaker
+ * @return Pointer to `mMcBTofHitCollection`; non-null after Make() is called.
+ */
+
+// ===========================================================================
+//  Internal struct
+// ===========================================================================
+
+/**
+ * @struct StVpdSimMaker::VpdSingleHit
+ * @ingroup StVpdSimMaker
+ * @brief Lightweight container for a single simulated VPD PMT signal.
+ *
+ * This plain struct is used internally by Make(), vpdResponse(), and
+ * thresholdCut() to accumulate hit parameters before they are converted into
+ * persistent `StMcBTofHit` objects.
+ *
+ * | Field  | Unit | Description |
+ * |--------|------|-------------|
+ * | tray   | —    | VPD tray number: 121 (West) or 122 (East) |
+ * | tubeId | —    | Tube number within the tray, [1, 19] |
+ * | tof    | ns   | Smeared time-of-flight (geometric + Gaussian noise) |
+ * | t0     | ns   | Raw GEANT time-of-flight (stored for reference) |
+ * | de     | GeV  | Energy deposited by the GEANT track in the scintillator |
+ * | pathL  | cm   | Path length (fixed at −9999; not used for VPD) |
+ * | q      | —    | Charge (fixed at 0; not used for VPD) |
+ */

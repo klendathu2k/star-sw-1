@@ -1,0 +1,8 @@
+PROJECT_NAME           = "StJetMaker"
+INPUT                  = ..
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.cxx *.C *.F
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+OUTPUT_DIRECTORY       = doc/doxygen
+EXTRACT_ALL            = YES

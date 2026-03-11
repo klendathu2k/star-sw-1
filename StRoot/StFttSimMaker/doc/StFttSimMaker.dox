@@ -1,0 +1,327 @@
+/**
+ * @file StFttSimMaker.dox
+ * @brief Doxygen documentation for the StFttSimMaker package (Forward sTGC Tracker fast simulator).
+ *
+ * This file contains the narrative documentation, defgroup, and per-symbol
+ * documentation for every class and method in the StFttSimMaker package.
+ * It is intended to be processed by Doxygen together with the source files
+ * located one directory level up (see the accompanying Doxyfile).
+ */
+
+// ---------------------------------------------------------------------------
+// Group definition
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup StFttSimMaker StFttSimMaker – Forward sTGC Tracker Fast Simulator
+ * @brief Fast Monte-Carlo simulator for the STAR Forward sTGC Tracking (FTT) detector.
+ *
+ * @section ftt_overview Detector Overview
+ *
+ * The **Forward sTGC Tracker (FTT)** is a forward-rapidity tracking detector
+ * installed in the STAR experiment at Brookhaven National Laboratory's
+ * Relativistic Heavy Ion Collider (RHIC).  It uses small-strip Thin-Gap
+ * Chamber (sTGC) technology — the same technology chosen for the ATLAS New
+ * Small Wheel upgrade — to reconstruct charged-particle trajectories in the
+ * pseudorapidity range 2.5 < η < 4.
+ *
+ * The FTT comprises **four stations**, each divided into **four quadrants**
+ * (northeast, northwest, southeast, southwest).  Each station itself contains
+ * two double-gap sTGC modules stacked along the beam axis, giving a total
+ * of eight gas gaps per station.  For tracking purposes the relevant
+ * geometric identifier is the *plane index*:
+ *
+ * @code
+ *   plane_id = (volume_id - 1) / 100   // range 0–15; four planes per station
+ * @endcode
+ *
+ * where `volume_id` is the GEANT volume identifier encoded in the
+ * `g2t_fts_hit` table.  Only hits on **front modules** (odd `volume_id`) are
+ * used by this simulator; back-module hits (`volume_id % 2 == 0`) are
+ * discarded to avoid double-counting.
+ *
+ * @section ftt_resolution Position Resolution
+ *
+ * The intrinsic single-plane spatial resolution of an sTGC detector is
+ * approximately **100 μm (0.1 mm)** in both the bending (x) and non-bending
+ * (y) directions for minimum-ionising particles at normal incidence.  This
+ * resolution comes primarily from charge sharing between neighbouring strips
+ * (strip pitch ≈ 3.2 mm) combined with centroid finding.  The fast simulator
+ * models this with an isotropic Gaussian smear of
+ * **σ = 100 μm = 0.01 cm** applied independently in x and y.
+ *
+ * @section ftt_fastsim Role of the Fast Simulator
+ *
+ * Full GEANT4/GEANT3 detector simulation produces per-hit energy depositions
+ * (`g2t_fts_hit`) that encode the exact Monte-Carlo truth crossing position.
+ * The fast simulator converts these truth hits directly into reconstructed
+ * `StFttPoint` objects stored in `StFttCollection`, bypassing the full
+ * digitisation → strip reconstruction → clustering chain.  This is
+ * appropriate for:
+ * - rapid detector-acceptance and tracking-efficiency studies;
+ * - fast-simulation production chains where CPU time is constrained;
+ * - upper-bound performance studies ("ideal" clustering).
+ *
+ * @section ftt_data_flow Data Flow
+ *
+ * @code
+ *   GEANT output (StBFC chain)
+ *        │
+ *        ▼
+ *   geant/g2t_stg_hit  (St_g2t_fts_hit table)
+ *        │   per-hit fields: x[3], volume_id, track_p
+ *        ▼
+ *   StFttFastSimMaker::Make()
+ *        │  1. fetch/create StEvent
+ *        │  2. fetch/create StFttCollection
+ *        │  3. loop over g2t hits, skip back modules
+ *        │  4. smear x,y by Gaus(0, 0.01 cm)
+ *        │  5. compute plane_id from volume_id
+ *        │  6. fill StFttPoint (plane, quadrant, xyz, idTruth)
+ *        ▼
+ *   StFttCollection::points()  →  downstream tracking (StFwdTrackMaker, etc.)
+ * @endcode
+ *
+ * @section ftt_limitations Known Limitations / TODO Items
+ *
+ * - **Quadrant assignment** is hard-coded to `0`; a proper lookup using the
+ *   hit's (x, y) position within the detector plane would improve fidelity.
+ * - The simulator uses `gRandom` (ROOT's global `TRandom3`) for the Gaussian
+ *   smear.  For reproducibility in production, consider seeding through
+ *   `StarRandom` (already included but not used for smearing).
+ * - Back-module hits are silently skipped rather than being combined with
+ *   front-module hits to form a stereo measurement.
+ * - No efficiency or noise modelling is applied; every truth hit becomes
+ *   exactly one reconstructed point.
+ *
+ * @section ftt_usage Usage in StBFC
+ *
+ * Register the maker in a chain before the tracking maker:
+ * @code
+ *   StFttFastSimMaker *fttSim = new StFttFastSimMaker("fttSim");
+ *   chain->AddMaker(fttSim);
+ * @endcode
+ * The maker name is used by StChain for logging and dataset registration; the
+ * default `"fttSim"` is appropriate for normal use.
+ *
+ * @{
+ */
+
+// ---------------------------------------------------------------------------
+// File documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @file StFttFastSimMaker.h
+ * @ingroup StFttSimMaker
+ * @brief Declaration of StFttFastSimMaker.
+ *
+ * Defines the StFttFastSimMaker class, which is a lightweight StMaker-derived
+ * fast simulator for the STAR Forward sTGC Tracker (FTT).  The header
+ * intentionally declares ROOT histogram and ntuple members as future
+ * diagnostic hooks even though they are not yet populated in the current
+ * implementation.
+ *
+ * ### Include guard
+ * `ST_FTT_FASTER_SIM_MAKER_H`
+ *
+ * ### Dependencies
+ * | Header | Purpose |
+ * |--------|---------|
+ * | `StChain/StMaker.h` | Base class providing the StBFC chain interface |
+ * | `<vector>` | STL vector (reserved for future hit buffering) |
+ * | `TFile.h` | ROOT file handle (diagnostic output, future use) |
+ * | `TH1F.h` | 1-D histogram (diagnostic plots, future use) |
+ * | `TH2F.h` | 2-D histogram (diagnostic plots, future use) |
+ * | `TNtuple.h` | Flat ntuple (diagnostic output, future use) |
+ */
+
+/**
+ * @file StFttFastSimMaker.cxx
+ * @ingroup StFttSimMaker
+ * @brief Implementation of StFttFastSimMaker.
+ *
+ * Contains the full implementation of the fast simulator.  The core logic
+ * resides in StFttFastSimMaker::Make(), which iterates over GEANT sTGC hits,
+ * applies a 100 μm Gaussian position smear, and inserts `StFttPoint` objects
+ * into the `StFttCollection` owned by `StEvent`.
+ *
+ * ### Additional dependencies (implementation only)
+ * | Header | Purpose |
+ * |--------|---------|
+ * | `StEvent/StEvent.h` | StEvent – top-level event container |
+ * | `St_base/StMessMgr.h` | LOG_DEBUG / LOG_INFO / LOG_WARN macros |
+ * | `StThreeVectorF.hh` | 3-vector types (StThreeVectorD used at runtime) |
+ * | `tables/St_g2t_fts_hit_Table.h` | GEANT FTT hit table descriptor |
+ * | `StEvent/StFttCollection.h` | FTT collection on StEvent |
+ * | `StEvent/StFttPoint.h` | Reconstructed FTT space point |
+ * | `StarGenerator/UTIL/StarRandom.h` | STAR-managed random-number service |
+ */
+
+// ---------------------------------------------------------------------------
+// Class documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StFttFastSimMaker
+ * @ingroup StFttSimMaker
+ * @brief Fast simulator for the STAR Forward sTGC Tracker (FTT).
+ *
+ * `StFttFastSimMaker` is an `StMaker`-derived class that converts GEANT3
+ * Monte-Carlo truth hits in the sTGC detector planes into reconstructed
+ * `StFttPoint` objects with a simple Gaussian position smear.  It is
+ * designed for use in fast-simulation production chains and acceptance /
+ * efficiency studies where full digitisation and strip reconstruction would
+ * be too CPU-intensive.
+ *
+ * ### Responsibilities
+ * 1. Retrieve (or create) the `StEvent` and `StFttCollection` containers.
+ * 2. Read the `geant/g2t_stg_hit` dataset produced by GEANT3/GEANT4.
+ * 3. For each hit on a **front module** (`volume_id % 2 != 0`):
+ *    - Apply a 100 μm Gaussian blur in x and y (σ = 0.01 cm).
+ *    - Decode `plane_id` from `volume_id`.
+ *    - Construct an `StFttPoint` and add it to `StFttCollection`.
+ *
+ * ### Geometry encoding
+ * The `volume_id` field of `g2t_fts_hit_st` encodes both the station and
+ * the module type:
+ * @code
+ *   plane_id   = (volume_id - 1) / 100    // 0–15, four planes per station
+ *   front/back = volume_id % 2            // 1 = front, 0 = back (skipped)
+ * @endcode
+ *
+ * ### Position smearing
+ * The smear models the intrinsic sTGC single-plane spatial resolution of
+ * ≈ 100 μm (0.01 cm) using ROOT's global random number generator:
+ * @code
+ *   x_reco = x_truth + gRandom->Gaus(0, 0.01)   // cm
+ *   y_reco = y_truth + gRandom->Gaus(0, 0.01)   // cm
+ *   z_reco = z_truth                             // no smear along beam axis
+ * @endcode
+ *
+ * ### ROOT dictionary
+ * The class registers itself with the ROOT reflection system via
+ * `ClassDef(StFttFastSimMaker, 0)`.  Schema version 0 means no persistent
+ * I/O is defined; the maker is used purely at runtime.
+ *
+ * @see StFttPoint
+ * @see StFttCollection
+ * @see StMaker
+ */
+
+// ---------------------------------------------------------------------------
+// Constructor / destructor documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn StFttFastSimMaker::StFttFastSimMaker(const Char_t *name)
+ * @ingroup StFttSimMaker
+ * @brief Construct the fast simulator and register it with StChain.
+ *
+ * Delegates entirely to the `StMaker` base-class constructor, passing the
+ * supplied @p name string.  No additional resources are allocated at
+ * construction time.
+ *
+ * @param name Maker name used by StChain for logging, dataset lookup, and
+ *             the maker registry.  The default value `"fttSim"` is
+ *             appropriate for normal use; supply a different name only when
+ *             running multiple instances (e.g. for systematic studies).
+ */
+
+/**
+ * @fn StFttFastSimMaker::~StFttFastSimMaker()
+ * @ingroup StFttSimMaker
+ * @brief Destructor.  No resources to release; all allocated `StFttPoint`
+ *        objects are owned by `StFttCollection` / `StEvent`.
+ */
+
+// ---------------------------------------------------------------------------
+// Method documentation
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn int StFttFastSimMaker::Init()
+ * @ingroup StFttSimMaker
+ * @brief Initialise the maker at the start of a processing chain.
+ *
+ * Calls `StMaker::Init()` to register the maker within the StChain
+ * framework and set up any base-class infrastructure (timer, debug flags,
+ * etc.).  No FTT-specific initialisation is currently required.
+ *
+ * This method is called **once** per chain instantiation, before the first
+ * call to Make().
+ *
+ * @return `kStOk` (= 0) on success; any negative value signals an error to
+ *         StChain, which will abort the job.
+ */
+
+/**
+ * @fn Int_t StFttFastSimMaker::Make()
+ * @ingroup StFttSimMaker
+ * @brief Main per-event processing method — converts GEANT hits to FTT points.
+ *
+ * Called once per event by StChain.  The full processing sequence is:
+ *
+ * 1. **Retrieve StEvent** via `GetDataSet("StEvent")`.  If not present,
+ *    a new `StEvent` is created and registered with `AddData()`.
+ *
+ * 2. **Retrieve StFttCollection** from `event->fttCollection()`.  If not
+ *    present, a new `StFttCollection` is allocated with `new` and attached
+ *    via `event->setFttCollection()`.
+ *
+ * 3. **Retrieve GEANT hits** from the dataset `"geant/g2t_stg_hit"` (type
+ *    `St_g2t_fts_hit`).  If the dataset is absent (e.g. the event has no
+ *    forward particles) a `LOG_WARN` is issued and `kStOk` is returned
+ *    immediately — this is not a fatal error.
+ *
+ * 4. **Loop over hits** (indices 0 … nstg−1):
+ *    - Skip null row pointers.
+ *    - Skip **back-module hits** (`volume_id % 2 == 0`).
+ *    - Decode `plane_id = (volume_id - 1) / 100`.
+ *    - Apply Gaussian smear: σ = 0.01 cm in x and y independently.
+ *    - Construct an `StFttPoint` on the heap (`new StFttPoint()`).
+ *    - Set `plane`, `quadrant` (= 0, placeholder), global `xyz`, and
+ *      `idTruth` (= `track_p` from the GEANT hit).
+ *    - Add the point to `StFttCollection` via `addPoint()`.
+ *
+ * ### Coordinate conventions
+ * | Symbol | Source | Units | Notes |
+ * |--------|--------|-------|-------|
+ * | `git->x[0]` | GEANT truth x | cm | in global STAR frame |
+ * | `git->x[1]` | GEANT truth y | cm | in global STAR frame |
+ * | `git->x[2]` | GEANT truth z | cm | beam axis, not smeared |
+ * | `sigXY` | simulator constant | cm | = 0.01 cm = 100 μm |
+ *
+ * ### Magic numbers
+ * | Constant | Value | Physical meaning |
+ * |----------|-------|-----------------|
+ * | `sigXY`  | 0.01 cm | sTGC single-plane x–y spatial resolution (σ) |
+ * | `100` (divisor) | — | volume_id encoding: 100 IDs reserved per plane |
+ *
+ * @return `kStOk` (= 0) in all non-fatal cases.  Returns `kStOk` early
+ *         (with a warning) if the GEANT hit dataset is missing.
+ *
+ * @note The quadrant field of every produced `StFttPoint` is set to `0`.
+ *       This is a known approximation; quadrant assignment from hit
+ *       coordinates is marked as a TODO in the source.
+ *
+ * @note `StFttPoint` objects are allocated with `new` and their ownership
+ *       is transferred to `StFttCollection`.  Do **not** delete them after
+ *       calling `addPoint()`.
+ *
+ * @warning `gRandom` must be initialised before this method is called.
+ *          Within a standard StBFC chain this is guaranteed.
+ */
+
+/**
+ * @fn int StFttFastSimMaker::Finish()
+ * @ingroup StFttSimMaker
+ * @brief End-of-job cleanup.  Currently a no-op that returns `kStOk`.
+ *
+ * Provided to satisfy the `StMaker` interface contract.  Any future
+ * diagnostic file or histogram output should be written here.
+ *
+ * @return `kStOk` (= 0) unconditionally.
+ */
+
+/** @} */ // end group StFttSimMaker

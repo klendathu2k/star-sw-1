@@ -1,0 +1,39 @@
+# Doxyfile for StMtdSimMaker
+# Run `doxygen Doxyfile` from the doc/ directory.
+
+PROJECT_NAME           = "StMtdSimMaker"
+PROJECT_BRIEF          = "STAR Muon Telescope Detector (MTD) Monte-Carlo Simulation Maker"
+PROJECT_NUMBER         = "1.13"
+
+OUTPUT_DIRECTORY       = .
+INPUT                  = ..
+RECURSIVE              = NO
+FILE_PATTERNS          = *.cxx *.h *.dox
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+GENERATE_LATEX         = NO
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+
+HAVE_DOT               = NO
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+
+ALPHABETICAL_INDEX     = YES
+
+USE_MDFILE_AS_MAINPAGE = StMtdSimMaker.md

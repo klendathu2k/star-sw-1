@@ -1,0 +1,1273 @@
+/**
+ * @defgroup StSvtSimulationMaker StSvtSimulationMaker — SVT Slow Simulator
+ * @{
+ *
+ * @brief Full slow simulation of the STAR Silicon Vertex Tracker (SVT),
+ *        a Silicon Drift Detector (SDD) system.
+ *
+ * @details
+ * ## SVT Detector Overview
+ *
+ * The STAR SVT is a three-barrel silicon drift detector surrounding the
+ * collision point.  Each barrel is made of silicon wafers divided into two
+ * hybrids per wafer.  Each hybrid contains 240 anodes and 128 time bins,
+ * giving a 240×128 pixel grid per hybrid.
+ *
+ * | Barrel | Layers | Ladders | Wafers | Hybrids |
+ * |--------|--------|---------|--------|---------|
+ * | 1      | 1–2    | 4       | 4      | 2       |
+ * | 2      | 3–4    | 6       | 6      | 2       |
+ * | 3      | 5–6    | 8       | 7      | 2       |
+ *
+ * In a Silicon Drift Detector the ionisation electrons do **not** drift
+ * straight to the back surface; instead an internal lateral electric field
+ * drives them sideways toward a row of collection anodes at one end of the
+ * wafer.  The drift direction is therefore approximately along the beam axis
+ * (X in local coordinates), and the anodes are oriented transverse to it.
+ *
+ * ## Simulation Pipeline
+ *
+ * The simulation follows these steps in order:
+ *
+ * ### Step 1 — GEANT Hit Ingestion
+ * StSvtSimulationMaker::Make() reads Monte-Carlo hits from the
+ * `StMcSvtHitCollection` produced by GEANT.  For every hit the global
+ * position and local momentum are extracted.
+ *
+ * ### Step 2 — Ideal-to-Real Geometry Translation
+ * Because GEANT uses an idealised geometry while the actual wafers have
+ * survey-measured positions, StSvtSimulationMaker::ideal2RealTranslation()
+ * projects the hit from the ideal surface onto the nearest real wafer using
+ * the StPhysicalHelixD track helix and the actual magnetic field.
+ *
+ * ### Step 3 — Coordinate Transformation
+ * The global hit position is converted to local (barrel/wafer) coordinates
+ * via StSvtCoordinateTransform, then to detector (anode, time-bucket)
+ * coordinates.  An iterative correction loop ensures consistency between the
+ * local↔wafer round-trip given the per-hybrid drift-velocity mapping.
+ *
+ * ### Step 4 — Track Angle Calculation
+ * StSvtAngles::calcAngles() computes the polar angle θ (between the track
+ * momentum and the wafer normal **n**) and the azimuthal angle φ (in the
+ * wafer plane, measured from the drift direction **d**).  These angles
+ * determine the initial shape of the ionisation electron cloud.
+ *
+ * ### Step 5 — Ionisation and Electron-Cloud Expansion
+ * StSvtElectronCloud::setPar() initialises the total charge:
+ * @f[
+ *   Q_0 = \frac{\Delta E}{\varepsilon_{\rm Si}} \times
+ *         \Bigl(1 - \frac{2\,w_0\,|\sin\theta|}{3\,d_{\rm SDD}}\Bigr)
+ * @f]
+ * where @f$\varepsilon_{\rm Si}=3.6\;\text{eV}@f$ is the mean ionisation
+ * energy in silicon and @f$d_{\rm SDD}=0.28\;\text{mm}@f$ is the wafer
+ * thickness.  The correction factor removes the fraction of the track
+ * path that exits the wafer before all charge is created.
+ *
+ * The three variance components of the cloud
+ * @f$(\sigma_X^2,\sigma_Y^2,\sigma_{XY}^2)@f$ evolve under combined
+ * thermal diffusion and space-charge (Coulomb) repulsion.  The equations
+ * of motion for the *cube roots* @f$(S_X,S_Y,S_{XY})@f$ of the variances are:
+ * @f{align*}{
+ *   \dot S_X    &= \tfrac{3}{2}S_X   \bigl[2D_X      + \tfrac{1}{2}(f_1+f_2 + (f_1-f_2)\cos 2\phi)\bigr] \\
+ *   \dot S_Y    &= \tfrac{3}{2}S_Y   \bigl[2D_Y      + \tfrac{1}{2}(f_1+f_2 - (f_1-f_2)\cos 2\phi)\bigr] \\
+ *   \dot S_{XY} &= \tfrac{3}{2}S_{XY}\bigl[\cdots + \tfrac{1}{2}(f_1-f_2)\sin 2\phi\bigr]
+ * @f}
+ * where @f$D_X,D_Y@f$ are the diffusion constants (identical without
+ * trapping, enhanced along drift when trapping is present) and @f$f_1,f_2@f$
+ * are the two space-charge force functions that depend on the
+ * minor-to-major axis ratio @f$r=\sigma_{\min}/\sigma_{\maj}@f$ and the
+ * normalised minor radius @f$v_d = \sigma_{\min}/d_{\rm SDD}@f$.
+ *
+ * Integration is performed by a hybrid Runge–Kutta 4 / Adams–Bashforth–
+ * Moulton 4-step predictor–corrector scheme:
+ * - Short drift times use pure RK4.
+ * - Long drift times use three RK4 bootstrap steps, then the ABM
+ *   predictor–corrector at larger step sizes for efficiency.
+ *
+ * Charge attenuation during drift:
+ * @f[
+ *   Q(t) = Q_0\,e^{-t/\tau_{\rm life}}
+ * @f]
+ *
+ * ### Step 6 — Anode Charge Fraction
+ * StSvtSignal::chargeFraction() partitions the collected charge among the
+ * anodes surrounding the hit using the complementary error function (Gaussian
+ * integral) of the cloud's σ_Y (anode-direction width).
+ *
+ * ### Step 7 — PASA Signal Shaping
+ * The charge deposited on each anode is convolved with the PASA (Pre-
+ * Amplifier Shaper Amplifier) impulse response.  The PASA is modelled as a
+ * bipolar shaper:
+ * @f[
+ *   h(t) = \Bigl(b_5 e^{-bt} + P(t)\,e^{-at}\Bigr)\,\Theta(t)
+ * @f]
+ * where @f$a=1/\tau_s=90.9\;\mu\text{s}^{-1}@f$ (short time constant,
+ * @f$\tau_s=11\;\text{ns}@f$) and @f$b=1/\tau_l=2\;\mu\text{s}^{-1}@f$
+ * (long time constant, @f$\tau_l=500\;\text{ns}@f$), and @f$P(t)@f$ is a
+ * degree-4 polynomial in @f$t@f$.  The convolution with a Gaussian input of
+ * width @f$\sigma_t@f$ is computed analytically for narrow clouds
+ * (StSvtSignal::getShortSignal()) and via a closed-form integral of the
+ * Gaussian×PASA product for wide clouds (StSvtSignal::getLongSignal()).
+ * Gain is @f$G=13.4\;\mu\text{V/e}@f$.
+ *
+ * ### Step 8 — ADC Digitisation
+ * The shaped signal in mV is scaled to counts:
+ * @f[
+ *   \text{counts} = V_{\rm mV} / 3.90625
+ * @f]
+ * (1 count = 4 mV × 1000/1024 in 10-bit mode).  The pedestal offset is
+ * added, and the result is stored as a double-precision pixel array.
+ *
+ * ### Step 9 — Embedding and Background (StSvtEmbeddingMaker)
+ * In true-embedding mode, real raw-data sequences from the DAQ reader are
+ * added directly to the simulated pixel array.  Background Gaussian noise
+ * is then added under the simulated hits (and everywhere in plain-simulation
+ * mode) using per-pixel or per-hybrid RMS values from the database, or a
+ * fallback default of σ = 1.8 counts.
+ *
+ * ### Step 10 — Online DAQ Simulation (StSvtOnlineSeqAdjSimMaker)
+ * - The 10-bit pixel array is compressed to 8 bits via the lookup table
+ *   in StSvtConversionTable.h (linear for codes 0–127, then 3-to-1 average
+ *   for codes 128–895, then saturation at 255).
+ * - Bad anodes (from the database) are zeroed.
+ * - The first `N` time bins are cleared (DAQ blanking, default N=2).
+ * - Sequence search: a two-threshold algorithm with minimum sequence lengths
+ *   @f$n_{\rm lo}@f$, @f$n_{\rm hi}@f$ and thresholds @f$T_{\rm lo}@f$,
+ *   @f$T_{\rm hi}@f$ (all configurable) retains only pixels above threshold.
+ * - Extra pixels @f$N_{\rm before}@f$, @f$N_{\rm after}@f$ around each
+ *   sequence are preserved.
+ *
+ * @}
+ */
+
+// =========================================================================
+//  FILE BLOCKS
+// =========================================================================
+
+/**
+ * @file StSvtSimulationMaker.h
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtSimulationMaker, the top-level STAR maker
+ *        that orchestrates the SVT slow simulation.
+ */
+
+/**
+ * @file StSvtSimulationMaker.cxx
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtSimulationMaker.
+ *        Contains the full event-loop logic (Make()), database-access
+ *        helpers (getSvtGeometry(), getSvtT0(), etc.), and the
+ *        ideal-to-real geometry translation.
+ */
+
+/**
+ * @file StSvtEmbeddingMaker.h
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtEmbeddingMaker.
+ */
+
+/**
+ * @file StSvtEmbeddingMaker.cxx
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtEmbeddingMaker.
+ *        Handles both true-embedding (simulation into real data) and
+ *        plain-simulation (simulation into artificial background) modes.
+ */
+
+/**
+ * @file StSvtOnlineSeqAdjSimMaker.h
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtOnlineSeqAdjSimMaker.
+ */
+
+/**
+ * @file StSvtOnlineSeqAdjSimMaker.cxx
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtOnlineSeqAdjSimMaker.
+ *        Simulates the SVT online DAQ processing: 10→8 bit conversion,
+ *        bad-anode masking, time-bin clearing, and zero-suppression via
+ *        two-threshold sequence search.
+ */
+
+/**
+ * @file StSvtAngles.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtAngles.
+ */
+
+/**
+ * @file StSvtAngles.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtAngles.
+ *        Computes the angles (θ, φ) of the track momentum relative to the
+ *        SVT wafer coordinate frame.
+ */
+
+/**
+ * @file StSvtClusterMatrix.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtClusterMatrix.
+ */
+
+/**
+ * @file StSvtClusterMatrix.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtClusterMatrix.
+ *        A heap-allocated 2-D double matrix with resizable dimensions,
+ *        used to represent signal clusters in anode–time space.
+ */
+
+/**
+ * @file StSvtConversionTable.h
+ * @ingroup StSvtSimulationMaker
+ * @brief 10-to-8-bit ADC conversion lookup table.
+ *        The 1024-entry table is linear (0–127→0–127), then 3:1 averaging
+ *        (128–895→128–254), then saturates at 255.
+ */
+
+/**
+ * @file StSvtElectronCloud.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtElectronCloud.
+ */
+
+/**
+ * @file StSvtElectronCloud.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtElectronCloud.
+ *        Solves the coupled ODEs for the three variance components
+ *        (σX², σY², σXY²) of the drifting electron cloud using a hybrid
+ *        Runge–Kutta 4 / Adams–Bashforth–Moulton integrator.
+ */
+
+/**
+ * @file StSvtEnergySim.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtEnergySim.
+ */
+
+/**
+ * @file StSvtEnergySim.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtEnergySim.
+ *        Utility class for generating test particles with random energies and
+ *        momenta (exponential or Gaussian distributions).  Not used in the
+ *        production simulation chain.
+ */
+
+/**
+ * @file StSvtGeantHits.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtGeantHits.
+ */
+
+/**
+ * @file StSvtGeantHits.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtGeantHits.
+ *        Stores per-hybrid arrays of GEANT hit attributes for debugging
+ *        and comparison with reconstructed hits.
+ */
+
+/**
+ * @file StSvtHybridNoise.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtHybridNoise.
+ */
+
+/**
+ * @file StSvtHybridNoise.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtHybridNoise.
+ *        Provides Gaussian noise generation and threshold-probability
+ *        utilities for the SVT hybrid background model.
+ */
+
+/**
+ * @file StSvtSignal.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtSignal.
+ */
+
+/**
+ * @file StSvtSignal.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtSignal.
+ *        Computes the full PASA-shaped signal waveform for a given charge
+ *        deposition at each anode, using either short-signal or long-signal
+ *        convolution paths.
+ */
+
+/**
+ * @file StSvtSimulation.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtSimulation.
+ */
+
+/**
+ * @file StSvtSimulation.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtSimulation.
+ *        Coordinates StSvtElectronCloud expansion and StSvtSignal shaping
+ *        for a single GEANT hit, writing output into the per-hybrid pixel
+ *        array.
+ */
+
+/**
+ * @file StSvtTable.hh
+ * @ingroup StSvtSimulationMaker
+ * @brief Declaration of StSvtTable.
+ */
+
+/**
+ * @file StSvtTable.cc
+ * @ingroup StSvtSimulationMaker
+ * @brief Implementation of StSvtTable.
+ *        Pre-computes a look-up table of Gaussian probability integrals
+ *        @f$P(x,\sigma)@f$ for given ranges of position and width.
+ */
+
+// =========================================================================
+//  CLASS DOCUMENTATION
+// =========================================================================
+
+/**
+ * @class StSvtSimulationMaker
+ * @ingroup StSvtSimulationMaker
+ * @brief Top-level STAR maker for the SVT slow simulation.
+ *
+ * Inherits from StMaker and participates in the STAR chain framework.
+ * Reads StMcSvtHitCollection from StMcEvent, performs geometry translation,
+ * coordinate transforms, electron-cloud expansion, and PASA signal shaping,
+ * then writes the results to the `StSvtPixelData` and `StSvt8bitPixelData`
+ * datasets.
+ *
+ * ### Usage
+ * @code
+ * StSvtSimulationMaker *svtSim = new StSvtSimulationMaker("SvtSimulator");
+ * // optional overrides
+ * svtSim->setElectronLifeTime(1e6);   // micro seconds
+ * svtSim->setTrappingConst(0.0);
+ * svtSim->setDiffusionConst(0.0035);  // mm^2/us
+ * @endcode
+ *
+ * ### Data Members
+ * | Member | Type | Units | Description |
+ * |--------|------|-------|-------------|
+ * | mLifeTime | double | µs | Carrier lifetime for charge attenuation |
+ * | mTrapConst | double | µs | Trapping constant; adds to σX diffusion |
+ * | mDiffusionConst | double | mm²/µs | Isotropic diffusion constant |
+ * | mTimeBinSize | double | µs | Size of one time bin |
+ * | mAnodeSize | double | mm | Anode pitch |
+ * | mPedOffset | int | counts | Pedestal offset added to all pixels |
+ * | mSigOption | int | — | PASA computation mode (0=mixed,1=Selemon,2=Rykov) |
+ * | mNumOfHybrids | int | — | Total number of hybrids in the configuration |
+ * | mDefaultDriftVelocity | double | mm/µs | Fallback drift velocity |
+ * | mBField | double | T | Z-component of STAR magnetic field |
+ * | mConfig | StSvtConfig* | — | SVT geometry configuration |
+ * | mDoEmbedding | Bool_t | — | Flag: perform embedding into real data |
+ * | mSvtAngles | StSvtAngles* | — | Angle-calculation utility |
+ * | mElectronCloud | StSvtElectronCloud* | — | Cloud expansion engine |
+ * | mSvtSimulation | StSvtSimulation* | — | Simulation coordinator |
+ * | mCoordTransform | StSvtCoordinateTransform* | — | Coordinate transformer |
+ * | mSvtGeom | StSvtGeometry* | — | SVT wafer geometry (owned by DB maker) |
+ * | mDriftSpeedColl | StSvtHybridCollection* | — | Per-hybrid drift velocities |
+ * | mT0 | StSvtT0* | — | Per-hybrid T0 offsets |
+ * | mSvtSimPixelColl | StSvtData* | — | 10-bit simulated pixel collection |
+ * | mSvt8bitPixelColl | StSvtData* | — | 8-bit compressed pixel collection |
+ * | mSvtGeantHitColl | StSvtData* | — | Debug: GEANT hit collection |
+ * | mNTuple | TNtuple* | — | Debug: output ntuple |
+ */
+
+/**
+ * @fn StSvtSimulationMaker::StSvtSimulationMaker(const char* name)
+ * @brief Constructor.  Initialises all physics constants to their defaults
+ *        and sets all pointers to nullptr.
+ * @param name  STAR chain name for this maker (default: `"SvtSimulator"`).
+ */
+
+/**
+ * @fn StSvtSimulationMaker::~StSvtSimulationMaker()
+ * @brief Destructor.  Deletes StSvtElectronCloud, StSvtSimulation,
+ *        StSvtAngles, and StSvtCoordinateTransform.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::Init()
+ * @brief Standard STAR Init().  Calls StMaker::Init(); no additional setup.
+ * @return kStOK on success.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::InitRun(int runumber)
+ * @brief Run-level initialisation.  Called when the run number changes.
+ *        Reads all database quantities, constructs simulation objects,
+ *        and sets up the pixel-data structures in the STAR chain.
+ * @param runumber  Current STAR run number.
+ * @return kStOK on success, kStErr if geometry is missing.
+ *
+ * @details Sequence:
+ *  1. getConfig() — SVT configuration (barrel/ladder/wafer counts).
+ *  2. getSvtGeometry() — wafer positions and local axes.
+ *  3. getSvtT0() — per-hybrid T0 offsets.
+ *  4. getPedestalOffset() — global pedestal offset.
+ *  5. setSvtPixelData() — creates StSvtData objects and adds them to chain.
+ *  6. Constructs StSvtCoordinateTransform with DB pointers.
+ *  7. Sets mTimeBinSize, mAnodeSize from geometry.
+ *  8. Constructs StSvtElectronCloud and StSvtSimulation with physics params.
+ *  9. Reads magnetic field magnitude for ideal2RealTranslation.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::Make()
+ * @brief Per-event processing.  Main simulation loop.
+ * @return kStOK on success.
+ *
+ * @details For every StMcSvtHit in the current event:
+ *  1. Calls ideal2RealTranslation() to move from idealised GEANT geometry to
+ *     surveyed real geometry.
+ *  2. Converts global → local → wafer coordinates via mCoordTransform.
+ *  3. Iteratively corrects the time-bucket to be consistent with the
+ *     per-hybrid drift-velocity mapping (up to 10000 iterations with
+ *     damped steps).
+ *  4. Computes track angles via mSvtAngles.
+ *  5. Retrieves per-hybrid drift velocity from the database.
+ *  6. Applies a 220 µm PASA shift in time-bucket units.
+ *  7. Calls mSvtSimulation->doCloud() and mSvtSimulation->fillBuffer() to
+ *     compute and deposit the signal.
+ *  8. Calls svtSimDataPixels->updateTruth() on all hybrids.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::Clear(const char* opt)
+ * @brief Per-event cleanup.  Deletes the GEANT-hit debug collection.
+ * @param opt  Not used.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::Finish()
+ * @brief End-of-run cleanup.  Closes optional debug ntuple file.
+ * @return kStOK.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::FinishRun(int oldrunumber)
+ * @brief End-of-run hook.  Removes StSvtPixelData and StSvt8bitPixelData
+ *        datasets from the chain.
+ * @param oldrunumber  The run number that just ended.
+ * @return kStOK.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::setOptions(int SigOption)
+ * @brief Select the PASA convolution algorithm.
+ * @param SigOption  0 = mixed (analytical for narrow, numerical for wide),
+ *                   1 = Selemon analytic, 2 = Rykov analytic.
+ * @return kStOK.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::setConst(double timBinSize, double anodeSize)
+ * @brief Override the time-bin size and anode pitch (normally read from DB).
+ * @param timBinSize  Time-bin width [µs].
+ * @param anodeSize   Anode pitch [mm].
+ * @return kStOK.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::setElectronLifeTime(double tLife)
+ * @brief Set the carrier lifetime used in charge attenuation.
+ * @param tLife  Carrier lifetime [µs].  Default: 1×10⁶ µs (no attenuation).
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::setTrappingConst(double trapConst)
+ * @brief Set the trapping constant, which augments the diffusion constant
+ *        along the drift direction: @f$D_X = D_0 + \kappa v_d^2@f$.
+ * @param trapConst  Trapping constant @f$\kappa@f$ [µs].  Default: 0.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::setDiffusionConst(double diffConst)
+ * @brief Set the isotropic diffusion constant.
+ * @param diffConst  Diffusion constant @f$D_0@f$ [mm²/µs].  Default: 0.0035.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::setSvtPixelData()
+ * @brief Creates the StSvtData pixel collections and registers them in the
+ *        STAR chain as `StSvtPixelData` and `StSvt8bitPixelData`.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::setGeantData()
+ * @brief Creates the StSvtData collection for GEANT hit debugging and
+ *        registers it in the chain as `StSvtGeantHits`.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::resetPixelData()
+ * @brief Resets all pixel arrays to zero (pedestal offset preserved) before
+ *        each event.
+ */
+
+/**
+ * @fn void StSvtSimulationMaker::FillGeantHit(int barrel, int ladder, int wafer,
+ *     int hybrid, StSvtWaferCoordinate* waferCoord, StThreeVector<double>* VecG,
+ *     StThreeVector<double>* VecL, double peak, int idtrk)
+ * @brief Fills the per-hybrid debug GEANT-hit container.
+ *        Only called when the maker debug level > 0.
+ * @param barrel     Barrel index (1–3).
+ * @param ladder     Ladder index (1–N).
+ * @param wafer      Wafer index (1–M).
+ * @param hybrid     Hybrid index (1–2).
+ * @param waferCoord Wafer coordinate of the hit.
+ * @param VecG       Hit position in global coordinates [cm].
+ * @param VecL       Hit position in local coordinates [cm].
+ * @param peak       Simulated signal peak [ADC counts].
+ * @param idtrk      GEANT track identifier.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::ideal2RealTranslation(StThreeVector<double>* pos,
+ *     StThreeVector<double>* mtm, double charge, int* wafId)
+ * @brief Translates a hit position from the GEANT ideal geometry to the
+ *        surveyed real geometry.
+ *
+ * Constructs a StPhysicalHelixD from the hit position and momentum in the
+ * STAR magnetic field, then finds the path length to the real wafer centre
+ * plane.  Iterates over adjacent ladders and wafers if the nominal one is
+ * missed, updating both position and momentum.
+ *
+ * @param pos    [in/out] Global position [cm]; updated on success.
+ * @param mtm    [in/out] Momentum direction [unitless]; updated on success.
+ * @param charge Track charge [e].
+ * @param wafId  [in/out] Hardware wafer ID (layer×1000+wafer×100+ladder).
+ * @return kStOK on success, kStSkip if the hit could not be relocated.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::getConfig()
+ * @brief Reads the SVT configuration (barrel/wafer/hybrid counts) from the
+ *        STAR chain dataset `StSvtConfig`.
+ * @return kStOK, or kStErr if dataset is missing.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::getSvtGeometry()
+ * @brief Reads the per-wafer geometry (positions, local axes) from the chain.
+ * @return kStOK, or kStErr if geometry is missing.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::getSvtDriftSpeeds()
+ * @brief Reads per-hybrid drift velocities from the database.
+ * @return kStOK.  Currently disabled in production (#if 0).
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::getSvtT0()
+ * @brief Reads per-hybrid T0 offsets from `St_svtHybridDriftVelocityC`.
+ * @return kStOK, or kStErr if the table is missing.
+ */
+
+/**
+ * @fn Int_t StSvtSimulationMaker::getPedestalOffset()
+ * @brief Reads the global pedestal offset from `StSvtHybridPed`.
+ *        Falls back to a hard-wired default if unavailable.
+ * @return kStOK.
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtEmbeddingMaker
+ * @ingroup StSvtSimulationMaker
+ * @brief Mixes SVT simulation output with real raw data and/or artificial
+ *        background noise.
+ *
+ * Runs after StSvtSimulationMaker in the chain.  Reads the simulated
+ * 10-bit pixel collection (`StSvtPixelData`) and, depending on the
+ * operating mode, either overlays real raw-data sequences or creates a
+ * purely simulated background.
+ *
+ * ### Operating Modes
+ * | Mode | mDoEmbedding | mPlainSimIfNoSVT | Description |
+ * |------|-------------|-----------------|-------------|
+ * | True embedding (default) | TRUE | FALSE | Real data overlaid; if SVT absent, return empty event |
+ * | True embedding, fallback | TRUE | TRUE  | Real data overlaid; if SVT absent, run plain simulation |
+ * | Plain simulation | FALSE | any | No real data; artificial noise only |
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mSimPixelColl | StSvtData* | Simulated pixel collection from SimMaker |
+ * | mRealDataColl | StSvtData* | Real raw-data collection from DAQ reader |
+ * | mPedColl | StSvtHybridCollection* | Per-hybrid pedestal RMS values |
+ * | mPedRMSColl | StSvtHybridCollection* | Per-pixel pedestal RMS values |
+ * | mBackGSigma | double | Default background RMS [counts] (default: 1.8) |
+ * | mBackGrOption | Bool_t | Add background noise |
+ * | mDoEmbedding | Bool_t | Attempt to read real data from chain |
+ * | mPlainSimIfNoSVT | Bool_t | Fall back to plain sim if SVT absent |
+ * | mUsePixelRMS | Bool_t | Try per-pixel RMS from database |
+ * | mUseHybridRMS | Bool_t | Try per-hybrid RMS from database |
+ * | mRunningEmbedding | Bool_t | Actual mode in current event |
+ * | mMask | Bool_t[128×240] | Pixel mask: TRUE = add noise here |
+ * | mCurrentPixelData | StSvtHybridPixelsD* | Working pointer for loop |
+ * | mCurrentIndex | int | Current hybrid flat index |
+ */
+
+/**
+ * @fn StSvtEmbeddingMaker::StSvtEmbeddingMaker(const char* name)
+ * @brief Constructor.  Sets default mode (embedding on, fallback off,
+ *        background σ=1.8, pixel and hybrid RMS from DB).
+ * @param name  Chain name (default: `"SvtEmbedding"`).
+ */
+
+/**
+ * @fn Int_t StSvtEmbeddingMaker::Make()
+ * @brief Per-event processing.
+ * @return kStOK; kStOK with empty data if SVT absent and no fallback.
+ *
+ * Decides which mode to run, then iterates over all hybrids calling
+ * AddRawData() and/or CreateBackground().
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::setBackGround(Bool_t backgr, double backgSigma)
+ * @brief Enable or disable background noise generation and set its default σ.
+ * @param backgr     TRUE to generate noise, FALSE to skip.
+ * @param backgSigma Default RMS [ADC counts] when DB info is unavailable.
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::setDoEmbedding(Bool_t doIt)
+ * @brief Force plain-simulation mode (doIt=FALSE) or embedding mode (TRUE).
+ * @param doIt  FALSE = ignore real data; TRUE = attempt embedding.
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::SetPedRmsPreferences(Bool_t usePixelRMS,
+ *                                                     Bool_t useHybridRMS)
+ * @brief Control which RMS source to use for background generation.
+ * @param usePixelRMS  If TRUE, attempt to read per-pixel RMS from database.
+ * @param useHybridRMS If TRUE, attempt to read per-hybrid RMS from database.
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::setPlainSimEvenIfNoSVT(Bool_t doIt)
+ * @brief If TRUE, run plain simulation when SVT is not present in real data
+ *        (instead of returning an empty event).
+ * @param doIt  Fallback mode flag.
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::AddRawData()
+ * @brief Overlays raw-data ADC sequences onto the simulated pixel array,
+ *        pixel by pixel: @f$A_{\rm out}[i] = A_{\rm sim}[i] + A_{\rm raw}[i] - \text{pedOffset}@f$.
+ *        Pixels covered by real sequences are removed from the noise mask.
+ */
+
+/**
+ * @fn void StSvtEmbeddingMaker::CreateBackground()
+ * @brief Adds Gaussian noise to masked pixels.  Uses per-pixel, per-hybrid,
+ *        or default RMS in decreasing priority order.
+ */
+
+/**
+ * @fn double StSvtEmbeddingMaker::MakeGaussDev(double sigma)
+ * @brief Box–Muller Gaussian deviate with mean 0 and the given σ.
+ * @param sigma  Standard deviation [ADC counts].
+ * @return A single Gaussian-distributed sample.
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtOnlineSeqAdjSimMaker
+ * @ingroup StSvtSimulationMaker
+ * @brief Simulates the SVT online DAQ processing (sequence adjuster).
+ *
+ * Runs after StSvtEmbeddingMaker.  Takes the 10-bit double-precision pixel
+ * collection and produces the zero-suppressed 8-bit sequence data that
+ * mirrors the hardware output.
+ *
+ * ### Configuration Parameters
+ * | Setter | Default | Description |
+ * |--------|---------|-------------|
+ * | SetKillBadAnodes(bool) | true | Zero anodes listed in bad-anode DB table |
+ * | SetNumberTBinsToClear(int) | 2 | First N time bins forced to zero |
+ * | SetExtraPixelsBefore(int) | 1 | Extra pixels saved before each sequence |
+ * | SetExtraPixelsAfter(int) | 2 | Extra pixels saved after each sequence |
+ * | Set_thresh_lo(int) | 5 | Low threshold [counts above pedestal] |
+ * | Set_n_seq_lo(int) | 1 | Minimum sequence length at low threshold |
+ * | Set_thresh_hi(int) | 8 | High threshold [counts above pedestal] |
+ * | Set_n_seq_hi(int) | 1 | Minimum hits at high threshold to keep seq |
+ * | SetPedOffset(int) | (from DB) | Pedestal offset for threshold comparison |
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mPixelColl | StSvtData* | Input 10-bit pixel collection |
+ * | m8bitPixelColl | StSvtData* | Output 8-bit pixel collection |
+ * | mRawData | StSvtData* | Output DAQ sequence data |
+ * | mSvtBadAnodes | StSvtHybridCollection* | Bad-anode database list |
+ * | mConfig | StSvtConfig* | SVT configuration |
+ * | mKillBadAnodes | bool | Apply bad-anode mask |
+ * | mNumberTBinsToClear | int | Number of first time bins to zero |
+ * | mExtraBefore, mExtraAfter | int | Guard pixels around sequences |
+ * | m_thresh_lo, m_thresh_hi | int | Low and high ADC thresholds |
+ * | m_n_seq_lo, m_n_seq_hi | int | Minimum sequence lengths |
+ * | mPedOffset | int | Global pedestal offset |
+ * | mMask | Bool_t[128×240] | Internal pixel mask for sequence building |
+ */
+
+/**
+ * @fn Int_t StSvtOnlineSeqAdjSimMaker::Make()
+ * @brief Per-event processing.
+ *        Iterates over all hybrids calling, in order:
+ *        Conversion10to8bit(), KillBadAnodes(), ClearFirstTbins(),
+ *        SequenceSearch(), WriteMask().
+ * @return kStOK on success.
+ */
+
+/**
+ * @fn void StSvtOnlineSeqAdjSimMaker::Conversion10to8bit()
+ * @brief Applies the StSvt10to8ConversionTable lookup to every pixel,
+ *        converting 10-bit integer values to 8-bit.
+ *        Values 0–127 map 1:1; 128–895 are averaged 3:1 to 128–254;
+ *        896–1023 saturate at 255.
+ */
+
+/**
+ * @fn void StSvtOnlineSeqAdjSimMaker::SequenceSearch()
+ * @brief Two-threshold zero-suppression algorithm.
+ *        A sequence is retained if it has at least m_n_seq_lo pixels above
+ *        m_thresh_lo AND at least m_n_seq_hi pixels above m_thresh_hi.
+ *        Guard pixels (mExtraBefore, mExtraAfter) are also kept.
+ */
+
+/**
+ * @fn void StSvtOnlineSeqAdjSimMaker::KillBadAnodes()
+ * @brief Zeros all pixels on anodes listed in the mSvtBadAnodes database
+ *        collection for the current hybrid.
+ */
+
+/**
+ * @fn void StSvtOnlineSeqAdjSimMaker::ClearFirstTbins()
+ * @brief Zeros the first mNumberTBinsToClear time bins on every anode,
+ *        replicating the hardware DAQ blanking of the SCA reset transient.
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtAngles
+ * @ingroup StSvtSimulationMaker
+ * @brief Computes the polar (θ) and azimuthal (φ) angles of a track
+ *        momentum vector in the SVT wafer local frame.
+ *
+ * Given the track momentum vector @f$\mathbf{V}@f$ and the three wafer
+ * unit vectors (normal **n**, drift direction **d**, transverse **t**):
+ * @f{align*}{
+ *   \theta &= \arccos\!\Bigl(\hat{\mathbf{V}}\cdot\hat{\mathbf{n}}\Bigr) \\
+ *   \phi   &= \arccos\!\Bigl(\frac{V_d}{\sqrt{V_d^2+V_t^2}}\Bigr)
+ * @f}
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mTheta | double | Polar angle θ between momentum and wafer normal [rad] |
+ * | mPhi   | double | Azimuthal angle φ in wafer plane from drift axis [rad] |
+ */
+
+/**
+ * @fn void StSvtAngles::calcAngles(StSvtGeometry* geom, double x, double y,
+ *                                   double z, int mLayer, int mLadder, int mWafer)
+ * @brief Computes θ and φ for momentum vector (x, y, z) and the given
+ *        wafer identified by (mLayer, mLadder, mWafer).
+ *        Retrieves wafer geometry from the StSvtGeometry object.
+ * @param geom    SVT geometry object (from database).
+ * @param x, y, z Track momentum components [GeV/c] (direction only; magnitude
+ *                is irrelevant).
+ * @param mLayer  Layer number (1–6).
+ * @param mLadder Ladder number.
+ * @param mWafer  Wafer number.
+ */
+
+/**
+ * @fn void StSvtAngles::svtTheta(const StThreeVector<double>& V,
+ *                                 const StThreeVector<double>& uz)
+ * @brief Computes θ = arccos(V̂·uz) and stores it in mTheta.
+ * @param V   Momentum (or direction) vector.
+ * @param uz  Unit vector along the wafer normal.
+ */
+
+/**
+ * @fn void StSvtAngles::svtPhi(const StThreeVector<double>& V,
+ *                               const StThreeVector<double>& ux,
+ *                               const StThreeVector<double>& uy)
+ * @brief Computes φ = arccos(Vx / √(Vx²+Vy²)) where Vx, Vy are the
+ *        projections of V onto the drift (ux) and transverse (uy) axes.
+ * @param V   Momentum (or direction) vector.
+ * @param ux  Unit vector along the drift direction.
+ * @param uy  Unit vector transverse to the drift direction, in the wafer plane.
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtElectronCloud
+ * @ingroup StSvtSimulationMaker
+ * @brief Models the expansion of the ionisation electron cloud inside an SVT
+ *        silicon drift detector wafer.
+ *
+ * The cloud is described by the three elements of its covariance matrix:
+ * @f$\sigma_X@f$ (along drift), @f$\sigma_Y@f$ (along anode), and
+ * @f$\sigma_{XY}@f$ (cross term).  The internal integration variables are
+ * the *cube roots* @f$(S_X, S_Y, S_{XY})@f$ of the variances, which give
+ * better numerical stability when the space-charge force is dominant.
+ *
+ * ### Physics Constants (set by setSiliconProp())
+ * | Symbol | Value | Units | Meaning |
+ * |--------|-------|-------|---------|
+ * | d_SDD | 0.28 | mm | Wafer (SDD) thickness |
+ * | w₀ | 0.12 | mm | Initial ionisation spot size |
+ * | τ_life | 1×10⁶ | µs | Default carrier lifetime |
+ * | κ | 0 | µs | Default trapping constant |
+ * | D₀ | 0.0035 | mm²/µs | Isotropic diffusion constant |
+ * | ε_Si | 3.6 | eV | Si ionisation energy |
+ * | μ_Si | 0.135 | mm²/(V·µs) | Si electron mobility |
+ * | ε_r | 12.0 | — | Si relative permittivity |
+ *
+ * ### Data Members
+ * | Member | Type | Units | Description |
+ * |--------|------|-------|-------------|
+ * | mSigX | double | mm | σX: cloud width along drift direction |
+ * | mSigY | double | mm | σY: cloud width along anode direction |
+ * | mSigXY | double | mm | σXY: cross-covariance |
+ * | m_dSigX[4] | double[4] | — | ODE derivative history for ABM integrator |
+ * | m_dSigY[4] | double[4] | — | ODE derivative history for ABM integrator |
+ * | m_dSigXY[4] | double[4] | — | ODE derivative history for ABM integrator |
+ * | mChargeNow | double | e⁻ | Current charge (after attenuation) |
+ * | mTotCharge | double | e⁻ | Initial charge from ionisation |
+ * | mEnergy | double | eV | Energy deposit of the GEANT hit |
+ * | mTheta | double | rad | Polar angle of track wrt wafer normal |
+ * | mPhi | double | rad | Azimuthal angle in wafer plane |
+ * | mInitPhi | double | rad | Original φ before quadrant mapping |
+ * | mDriftVel | double | mm/µs | Electron drift velocity |
+ * | mTimBinSize | double | µs | Time bin width |
+ * | mSDD_thickness | double | mm | Wafer thickness |
+ * | mInitHitSize | double | mm | Initial cloud radius |
+ * | mTrapConst | double | µs | Trapping constant κ |
+ * | mDiffusionConst | double | mm²/µs | Isotropic diffusion D₀ |
+ * | mDiffConstX | double | mm²/µs | Effective diffusion along drift (D₀+κv²) |
+ * | mDiffConstY | double | mm²/µs | Effective diffusion along anode (=D₀) |
+ * | mLifeTime | double | µs | Carrier lifetime τ |
+ * | mTrackId | int | — | GEANT track ID for MC truth |
+ */
+
+/**
+ * @fn void StSvtElectronCloud::setPar(double energy, double theta, double phi,
+ *                                      double timeBinSize, int trackId)
+ * @brief Initialises all per-hit parameters before cloud expansion.
+ *        Computes the total ionisation charge with an edge-effect correction:
+ *        @f$Q_0 = 0.27\overline{7}\,\Delta E\,(1 - 2w_0|\sin\theta|/(3d_{\rm SDD}))@f$
+ * @param energy      Energy deposit [eV].
+ * @param theta       Polar track angle [rad].
+ * @param phi         Azimuthal track angle [rad].
+ * @param timeBinSize Time-bin width [µs].
+ * @param trackId     GEANT track ID.
+ */
+
+/**
+ * @fn void StSvtElectronCloud::CalcExpansion(double mTc)
+ * @brief Advances the ODE system from t=0 to t=mTc time bins.
+ *        Chooses the integration strategy:
+ *        - mTc × 6000 steps ≤ 3×RungeDiv: pure Runge–Kutta 4.
+ *        - Longer drift: 4 RK4 bootstrap steps, then Adams–Bashforth–
+ *          Moulton predictor–corrector at coarser step size.
+ * @param mTc  Drift time [time bins].
+ */
+
+/**
+ * @fn void StSvtElectronCloud::runge_kutta4(int steps, double t0,
+ *                                            double steplen, int save)
+ * @brief Advances the cloud covariance by `steps` steps of Runge–Kutta 4
+ *        integration, starting from time t0 with step length steplen.
+ *        The final derivative is saved into m_dSigX/Y/XY[save].
+ * @param steps    Number of integration steps.
+ * @param t0       Starting time [µs].
+ * @param steplen  Step length [µs].
+ * @param save     Index (0–3) into the derivative history arrays.
+ */
+
+/**
+ * @fn void StSvtElectronCloud::adamsBushFort(int steps, double t0,
+ *                                             double steplen)
+ * @brief Adams–Bashforth–Moulton 4-step predictor–corrector integrator.
+ *        Uses two corrector iterations (CE²) per step for stability.
+ *        Requires four bootstrap derivatives from prior RK4 calls.
+ * @param steps    Number of ABM steps.
+ * @param t0       Starting time [µs].
+ * @param steplen  Step length [µs].
+ */
+
+/**
+ * @fn void StSvtElectronCloud::GetDerivatives(double& dSx, double& dSy,
+ *     double& dSxy, double SX, double SY, double SXY, double time)
+ * @brief Evaluates the right-hand side of the ODE system at the given
+ *        cloud state (SX, SY, SXY) and time.
+ *        Computes the space-charge force functions:
+ *        @f{align*}{
+ *          f_1 &= \Lambda Q(t) \frac{K_1 r^{2/3} - (K_3/4)\ln(r^4+(1+1/v_d^2)^{-2})}
+ *                              {(1+(K_1 v_d/K_2)^{1.5})^{2/3}} \\
+ *          f_2 &= \Lambda Q(t) \frac{K_3-(K_3-K_1)\sqrt{r}}
+ *                              {(1+(K_1 v_d/K_2)^{1.5})^{2/3}}
+ *        @f}
+ *        with @f$K_1=0.43@f$, @f$K_2=0.25@f$, @f$K_3=0.58@f$ and
+ *        @f$\Lambda = \mu_{\rm Si}/(4\pi\varepsilon_0\varepsilon_r) = 1.62\times10^{-8}\;\text{mm}^5/(e\cdot\text{µs})@f$.
+ * @param dSx, dSy, dSxy  [out] Derivatives dSX/dt, dSY/dt, dSXY/dt.
+ * @param SX, SY, SXY     Current covariance cube roots [mm].
+ * @param time            Current time [µs].
+ */
+
+/**
+ * @fn double StSvtElectronCloud::getSigmaDrift()
+ * @brief Returns mSigX, the cloud RMS along the drift direction [mm].
+ */
+
+/**
+ * @fn double StSvtElectronCloud::getSigmaAnode()
+ * @brief Returns mSigY, the cloud RMS along the anode direction [mm].
+ */
+
+/**
+ * @fn double StSvtElectronCloud::getSigmaMajor()
+ * @brief Returns the semi-major axis of the cloud ellipse [mm]:
+ *        @f$\sigma_{\maj} = \sqrt{\tfrac{1}{2}(R+S)}@f$ where
+ *        @f$R=\sigma_X^2+\sigma_Y^2@f$,
+ *        @f$S=\sqrt{(\sigma_X^2-\sigma_Y^2)^2+4\sigma_{XY}^4}@f$.
+ */
+
+/**
+ * @fn double StSvtElectronCloud::getSigmaMinor()
+ * @brief Returns the semi-minor axis of the cloud ellipse [mm]:
+ *        @f$\sigma_{\min} = \sqrt{\tfrac{1}{2}(R-S)}@f$.
+ */
+
+/**
+ * @fn double StSvtElectronCloud::getChargeAtAnode()
+ * @brief Returns the current charge after exponential attenuation:
+ *        @f$Q = Q_0\,e^{-t/\tau_{\rm life}}@f$ [electrons].
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtSimulation
+ * @ingroup StSvtSimulationMaker
+ * @brief Coordinates the electron-cloud expansion and PASA shaping for a
+ *        single GEANT hit, writing the result into the per-hybrid pixel array.
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mNumOfAnodesPerHit | int | Number of anodes to compute (default: 8, ±4 around centre) |
+ * | mUpperAn, mLowerAn | int | Upper/lower anode offsets from centre anode |
+ * | mTimeBinSize | double | Time bin width [µs] |
+ * | mAnodeSize | double | Anode pitch [mm] |
+ * | mDriftVelocity | double | Drift velocity [mm/µs] |
+ * | mSignalOption | int | PASA algorithm selector |
+ * | mPeakSignal | double | Peak signal value over all anodes [counts] |
+ * | mElectronCloud | StSvtElectronCloud* | Cloud expansion engine |
+ * | mSvtSignal | StSvtSignal* | PASA signal calculator |
+ * | mPasaSignals | PasaSignalAttributes | Debug: per-anode signal attributes |
+ *
+ * ### PasaSignalAttributes struct
+ * Holds per-anode debug information for up to `SvtSim_MaxBufferSize`=20 anodes.
+ * | Field | Description |
+ * |-------|-------------|
+ * | anode[N] | Anode index |
+ * | mPeak[N] | Peak ADC value [counts] |
+ * | mTimeCenter[N] | Time centroid [time bins] |
+ * | mTimeWidth[N] | Time width σ [time bins] |
+ * | mUnderShoot[N] | PASA undershoot minimum [counts] |
+ * | mTempBuffer[N][128] | Full 128-bin waveform per anode |
+ * | mCharge[N] | Charge fraction on each anode |
+ */
+
+/**
+ * @fn void StSvtSimulation::doCloud(double time, double Energy,
+ *                                    double mTheta, double mPhi, int trackId)
+ * @brief Sets up and integrates the electron-cloud expansion for one hit.
+ *        Calls mElectronCloud->setPar(), setDriftVelocity(), CalcExpansion().
+ * @param time     Drift time [time bins].
+ * @param Energy   Energy deposit [eV].
+ * @param mTheta   Track polar angle [rad].
+ * @param mPhi     Track azimuthal angle [rad].
+ * @param trackId  GEANT track ID.
+ */
+
+/**
+ * @fn void StSvtSimulation::fillBuffer(double mAnHit, double mTimeHit,
+ *                                       StSvtHybridPixelsD* svtSimDataPixels)
+ * @brief Distributes the expanded cloud charge across adjacent anodes and
+ *        time bins, calling StSvtSignal for each contributing anode.
+ *        Adds the shaped waveform to `svtSimDataPixels`.
+ * @param mAnHit           Fractional anode position of the hit.
+ * @param mTimeHit         Fractional time-bin position of the hit.
+ * @param svtSimDataPixels Target pixel array for this hybrid.
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtSignal
+ * @ingroup StSvtSimulationMaker
+ * @brief Computes the PASA-shaped signal waveform for a single anode.
+ *
+ * The PASA impulse response (Rykov model) is:
+ * @f[
+ *   h(t) = \Bigl(b_5\,e^{-bt} + \sum_{k=0}^{4}p_k t^k \cdot e^{-at}\Bigr)\,\Theta(t)
+ * @f]
+ * with @f$a=1/\tau_s=90.9\;\mu\text{s}^{-1}@f$, @f$b=1/\tau_l=2\;\mu\text{s}^{-1}@f$.
+ * The convolution with a Gaussian charge distribution of width @f$\sigma_t@f$ is
+ * computed by two paths:
+ *   - **Short signal** (@f$\sigma_t \le 0.02\,\tau_s@f$): impulse approximation
+ *     (polynomial × exponential).
+ *   - **Long signal** (@f$\sigma_t > 0.02\,\tau_s@f$): closed-form analytical
+ *     integral using the complementary error function.
+ *
+ * Gain: @f$G = 13.4\;\mu\text{V/e}@f$ (tuned to STAR Run 7 Au+Au data).
+ * ADC scale: 1 count = 3.90625 mV (4 mV × 1000/1024 in 10-bit).
+ *
+ * ### Key Data Members
+ * | Member | Type | Units | Description |
+ * |--------|------|-------|-------------|
+ * | mPasaGain | double | µV/e | PASA gain constant (13.4) |
+ * | mTau_s | double | µs | Short PASA time constant (11 ns) |
+ * | mTau_l | double | µs | Long PASA time constant (500 ns) |
+ * | mPasa[5] | double[5] | µV/e·µsⁿ | Normalised PASA polynomial coefficients |
+ * | mSignal[128] | double[128] | µV | Shaped waveform, one entry per time bin |
+ * | mDriftVel | double | mm/µs | Drift velocity |
+ * | mTimeBinSize | double | µs | Time bin width |
+ * | mAnodeSize | double | mm | Anode pitch |
+ * | mSigmaMajor, mSigmaMinor | double | mm | Cloud semi-axes from ElectronCloud |
+ * | mTimeCenter | double | µs | Drift time centre of the charge pulse |
+ * | mTimeWidth | double | µs | σ_t of the Gaussian input to PASA |
+ * | mPeakSignal | double | µV | Peak PASA output over the 128 bins |
+ * | mMinUnderShoot | double | µV | Minimum (most negative) PASA output |
+ * | mOption | int | — | 0=mixed, 1=Selemon, 2=Rykov |
+ * | mLowTBin, mHiTBin | int | — | First and last active time bins |
+ * | mTrackId | int | — | GEANT track ID for MC truth propagation |
+ * | mArray1–6 | double[] | — | Rational-function coefficients for erfc approximation |
+ */
+
+/**
+ * @fn double StSvtSignal::chargeFraction(int an, double anHit)
+ * @brief Computes the fraction of the total cloud charge collected by
+ *        anode `an` using the Gaussian CDF integrated between anode edges:
+ *        @f$f = \Phi\!\bigl(\tfrac{an+0.5 - a_{\rm hit}}{\sigma_Y/\Delta_a}\bigr)
+ *               - \Phi\!\bigl(\tfrac{an-0.5 - a_{\rm hit}}{\sigma_Y/\Delta_a}\bigr)@f$
+ * @param an     Anode index (integer).
+ * @param anHit  Fractional hit position in anode units.
+ * @return Charge fraction [0, 1].
+ */
+
+/**
+ * @fn int StSvtSignal::timeCenterAndWidth(double anHit, double timeHit)
+ * @brief Projects the cloud geometry onto the time axis for the current anode,
+ *        computing mTimeCenter and mTimeWidth for the Gaussian input to the PASA.
+ * @param anHit   Fractional hit anode.
+ * @param timeHit Fractional hit time bucket.
+ * @return 0 on success.
+ */
+
+/**
+ * @fn void StSvtSignal::calcConvSignal(double chargeOnAnode)
+ * @brief Convolves the PASA response with the Gaussian charge input for the
+ *        current anode, populating mSignal[0..127] and setting mPeakSignal
+ *        and mMinUnderShoot.
+ * @param chargeOnAnode  Collected charge on this anode [electrons].
+ */
+
+/**
+ * @fn double StSvtSignal::getShortSignal(double localTime)
+ * @brief Evaluates the PASA output for a delta-function input (narrow-cloud
+ *        approximation) at local time `localTime = t − t_center`.
+ * @param localTime  Time offset from the pulse centre [µs].
+ * @return PASA output [µV·e].
+ */
+
+/**
+ * @fn double StSvtSignal::getLongSignal(double localTime)
+ * @brief Evaluates the analytical convolution of the PASA response with a
+ *        Gaussian of width mTimeWidth, using a rational-function approximation
+ *        to erfc for numerical efficiency.
+ * @param localTime  Time offset from the pulse centre [µs].
+ * @return PASA output [µV·e].
+ */
+
+/**
+ * @fn double StSvtSignal::pasaRes(double tim)
+ * @brief Evaluates the raw (un-normalised) PASA impulse response at time `tim`.
+ * @param tim  Time [µs], must be ≥ 0.
+ * @return @f$h(t)@f$ value.
+ */
+
+/**
+ * @fn double StSvtSignal::gausInput(double tim)
+ * @brief Evaluates the Gaussian charge-density input at offset `tim` from the
+ *        pulse centre: @f$g(t) = \frac{1}{\sqrt{2\pi}\sigma_t}e^{-t^2/(2\sigma_t^2)}@f$.
+ * @param tim  Time offset [µs].
+ * @return Gaussian value [µs⁻¹].
+ */
+
+/**
+ * @fn double StSvtSignal::analConvInt(double tim, double sigmat, double tc)
+ * @brief Evaluates the analytical convolution of PASA with a Gaussian centred
+ *        at `tc` with width `sigmat` at time `tim`.
+ * @param tim    Evaluation time [µs].
+ * @param sigmat Gaussian width σ_t [µs].
+ * @param tc     Gaussian centre [µs].
+ * @return Convolution value.
+ */
+
+/**
+ * @fn double StSvtSignal::prob1(double anOrTimeDiff, double sigma)
+ * @brief Gaussian CDF: @f$\Phi(x/(\sqrt{2}\sigma)) = \frac{1}{2}(1+\mathrm{erf}(x/(\sqrt{2}\sigma)))@f$.
+ * @param anOrTimeDiff  Argument x.
+ * @param sigma         Distribution width σ.
+ * @return Cumulative probability in [0,1].
+ */
+
+/**
+ * @fn double StSvtSignal::freq(double num)
+ * @brief Alternative CDF: returns 0.5 + 0.5×erfc(num/√2) for num>0,
+ *        or 0.5×erfc(num/√2) for num≤0.
+ * @param num  Argument.
+ * @return Cumulative probability.
+ */
+
+/**
+ * @fn double StSvtSignal::prob2(double num, double sigma)
+ * @brief High-precision CDF via Taylor-series expansion of erf, used in the
+ *        analytical convolution path where standard erf may lose precision.
+ * @param num   Upper limit.
+ * @param sigma Distribution width.
+ * @return @f$\Phi(x/\sigma)@f$ in [0,1].
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtGeantHits
+ * @ingroup StSvtSimulationMaker
+ * @brief Per-hybrid container for GEANT hit properties used in debugging.
+ *
+ * Stores up to MAX_HITS=200 hits per hybrid, with wafer coordinates, local
+ * and global positions, peak signal, and track ID.
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mNumOfHits | int | Number of hits stored |
+ * | mWaferCoord[MAX_HITS] | StSvtWaferCoordinate[] | Hit in detector coordinates |
+ * | mLocalCoord[MAX_HITS] | StSvtLocalCoordinate[] | Hit in local (wafer) coordinates |
+ * | mGlobalCoord[MAX_HITS] | StGlobalCoordinate[] | Hit in global STAR coordinates |
+ * | mIdTrack[MAX_HITS] | int[] | GEANT track IDs |
+ * | mPeak[MAX_HITS] | float[] | Simulated peak signal [mV] |
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtHybridNoise
+ * @ingroup StSvtSimulationMaker
+ * @brief Gaussian noise generator and threshold-probability calculator for
+ *        SVT hybrid background simulation.
+ *
+ * Derives from StSvtHybridPixelsC (which stores 8-bit pixel data).
+ * Uses the Box–Muller algorithm with a static state variable for efficiency.
+ */
+
+/**
+ * @fn double StSvtHybridNoise::makeGausDev(double sigma, double mean)
+ * @brief Returns a Gaussian deviate with the given σ and mean.
+ * @param sigma  Standard deviation [ADC counts].
+ * @param mean   Mean value (default: 0).
+ * @return Gaussian-distributed sample.
+ */
+
+/**
+ * @fn double StSvtHybridNoise::prob(double sigma, double threshold)
+ * @brief Returns the probability that a Gaussian random variable exceeds
+ *        the threshold: @f$P = \frac{1}{2}(1-\mathrm{erf}(T/(\sqrt{2}\sigma)))@f$.
+ * @param sigma      Distribution width [ADC counts].
+ * @param threshold  Threshold level [ADC counts].
+ * @return Probability in [0,1].
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtClusterMatrix
+ * @ingroup StSvtSimulationMaker
+ * @brief Heap-allocated resizable 2-D matrix of doubles for cluster data.
+ *
+ * Stores a `mCluRow × mCluCol` matrix allocated on the heap.  Supports
+ * resize (SetDimension()), copy construction, operator() access, and
+ * stream input.
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mCluRow | int | Number of rows |
+ * | mCluCol | int | Number of columns |
+ * | mData | double** | Row-major data array |
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtEnergySim
+ * @ingroup StSvtSimulationMaker
+ * @brief Test-particle energy and momentum generator (not used in production).
+ *
+ * Generates an array of StParticle objects with random energies drawn from
+ * an exponential or Gaussian distribution and isotropic momentum directions.
+ *
+ * ### StParticle struct
+ * | Field | Type | Description |
+ * |-------|------|-------------|
+ * | mass | float | Particle mass [MeV/c²] |
+ * | energy | float | Total energy [MeV] |
+ * | momentum | float | Total momentum magnitude |
+ * | momentumZ | float | Z-component of momentum |
+ * | momentumXY | float | Transverse momentum |
+ * | momentumX | float | X-component of momentum |
+ * | momentumY | float | Y-component of momentum |
+ * | theta | float | Polar angle [rad] |
+ * | phi | float | Azimuthal angle [rad] |
+ */
+
+// =========================================================================
+
+/**
+ * @class StSvtTable
+ * @ingroup StSvtSimulationMaker
+ * @brief Pre-computed look-up table of Gaussian probability integrals.
+ *
+ * Stores a 1000×2000 matrix `mFreq[j][k]` where
+ * @f$\texttt{mFreq}[j][k] = \Phi\!\bigl((j\cdot0.001+i)/k\cdot0.001\bigr)@f$
+ * for a given integer base `i` set by setFreq(i).
+ *
+ * In practice, StSvtSignal uses the direct erf/erfc functions; this class
+ * is a legacy utility retained for historical reference.
+ *
+ * ### Data Members
+ * | Member | Type | Description |
+ * |--------|------|-------------|
+ * | mFreq[1000][2000] | double | Tabulated CDF values |
+ */

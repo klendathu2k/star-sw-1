@@ -1,0 +1,75 @@
+# Doxyfile for StTofSimMaker
+# Generated for the STAR TOFp fast-simulator documentation package.
+
+#---------------------------------------------------------------------------
+# Project metadata
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "StTofSimMaker"
+PROJECT_BRIEF          = "STAR TOFp (prototype Time-of-Flight) fast Monte Carlo simulator"
+PROJECT_NUMBER         = ""
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+# Input is the parent directory of doc/ (i.e. StRoot/StTofSimMaker/).
+# The .dox file in this doc/ directory is picked up automatically because
+# Doxygen scans INPUT recursively when RECURSIVE=YES, but here we keep
+# RECURSIVE=NO and list both the source and doc directories explicitly so
+# only these files contribute.
+INPUT                  = .. \
+                         .
+RECURSIVE              = NO
+FILE_PATTERNS          = *.h *.cxx *.dox
+
+#---------------------------------------------------------------------------
+# Extraction settings — document everything, including private members
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+#---------------------------------------------------------------------------
+# Output
+#---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+
+#---------------------------------------------------------------------------
+# HTML options
+#---------------------------------------------------------------------------
+HTML_TIMESTAMP         = YES
+GENERATE_TREEVIEW      = YES
+
+#---------------------------------------------------------------------------
+# Preprocessor
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+PREDEFINED             = ClassDef(x,y)= \
+                         ClassImp(x)=
+
+#---------------------------------------------------------------------------
+# Build options
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = YES
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+#---------------------------------------------------------------------------
+# Dot / graphs (disable to avoid requiring Graphviz)
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO

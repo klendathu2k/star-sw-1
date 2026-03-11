@@ -1,0 +1,78 @@
+# Doxyfile for StEtrFastSimMaker
+# Generated documentation configuration.
+# Run:  doxygen Doxyfile   (from this directory)
+
+#---------------------------------------------------------------------------
+# Project
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "StEtrFastSimMaker"
+PROJECT_BRIEF          = "Fast simulator for the STAR Endcap Tracking (ETR) prototype detector"
+PROJECT_NUMBER         = "1.3"
+
+#---------------------------------------------------------------------------
+# Input
+#---------------------------------------------------------------------------
+INPUT                  = ..
+RECURSIVE              = NO
+FILE_PATTERNS          = *.h *.cxx *.dox
+EXCLUDE_PATTERNS       =
+INPUT_ENCODING         = UTF-8
+
+#---------------------------------------------------------------------------
+# Extraction
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+
+#---------------------------------------------------------------------------
+# Build
+#---------------------------------------------------------------------------
+INLINE_INHERITED_MEMB  = YES
+INHERIT_DOCS           = YES
+SEPARATE_MEMBER_PAGES  = NO
+OPTIMIZE_OUTPUT_FOR_C  = NO
+MACRO_EXPANSION        = NO
+SKIP_FUNCTION_MACROS   = YES
+
+#---------------------------------------------------------------------------
+# Output
+#---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
+
+#---------------------------------------------------------------------------
+# Diagrams
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES
+
+#---------------------------------------------------------------------------
+# Messages
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+
+#---------------------------------------------------------------------------
+# Source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES

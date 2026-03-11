@@ -1,0 +1,471 @@
+/**
+ * @file StFmsFastSimulatorMaker.dox
+ * @brief Doxygen documentation for the FMS fast simulator maker.
+ *
+ * @author Pibero Djawotho <pibero@tamu.edu>
+ * @author Akio Ogawa (BNL) — subsequent revisions
+ * @date 4 Jan 2011; documentation consolidated 2026
+ */
+
+// ============================================================
+//  Defgroup
+// ============================================================
+
+/**
+ * @defgroup FmsFastSim FMS Fast Simulator
+ * @brief Fast digitisation simulator for the STAR Forward Meson Spectrometer
+ *        (FMS) and its associated sub-detectors.
+ *
+ * @section fms_overview Physics Overview
+ *
+ * The **Forward Meson Spectrometer (FMS)** is a lead-glass Cherenkov
+ * electromagnetic calorimeter located on the west side of the STAR detector
+ * at BNL RHIC.  It covers the pseudorapidity range \f$2.5 < \eta < 4.0\f$
+ * and is the primary instrument for studying forward \f$\pi^0\f$, \f$\eta\f$,
+ * and direct-photon production, as well as spin physics observables such as
+ * the transverse single-spin asymmetry \f$A_N\f$.
+ *
+ * The FMS consists of four arrays of lead-glass (PbG) Cherenkov cells,
+ * arranged north and south of the beam axis in two cell sizes:
+ *
+ * | Detector              | DB ID | Cells (nx × ny) | PbG type   |
+ * |----------------------|-------|-----------------|------------|
+ * | FMS North Large      |   8   |   17 × 34        | Large cell |
+ * | FMS South Large      |   9   |   17 × 34        | Large cell |
+ * | FMS North Small      |  10   |   12 × 24        | Small cell |
+ * | FMS South Small      |  11   |   12 × 24        | Small cell |
+ *
+ * The **FPD (Forward Pi-zero Detector)**, located on the east side, shares
+ * the same digitisation pipeline:
+ *
+ * | Detector             | DB ID | Notes                        |
+ * |---------------------|-------|------------------------------|
+ * | FPD North            |   0   | 7 × 7 small cells            |
+ * | FPD South            |   1   | 7 × 7 small cells            |
+ * | FPD North Preshower  |   2   | 7 × 1 preshower              |
+ * | FPD South Preshower  |   3   | 7 × 1 preshower              |
+ *
+ * Two scintillator-based sub-detectors are also processed:
+ *
+ * | Detector               | DB ID | Notes                               |
+ * |-----------------------|-------|-------------------------------------|
+ * | FPS (FMS PreShower)    |  14   | Quadrant preshower, 3 layers × 21 slats |
+ * | FPOST (FMS PostShower) |  15   | Post-shower detector                |
+ *
+ * @section fms_digitisation Digitisation Model
+ *
+ * Particle transport through the detector geometry is performed by GEANT3
+ * (or GEANT4 via Virtual Monte Carlo).  Energy depositions in each sensitive
+ * volume are accumulated in the `g2t_fpd_hit` table as `g2t_emc_hit_st`
+ * structures.  The fast simulator converts these truth-level depositions into
+ * simulated raw ADC values following four steps:
+ *
+ * 1. **Accumulation** — Multiple GEANT sub-steps depositing energy in the
+ *    same physical cell are summed into a single `StFmsHit`.
+ *
+ * 2. **Gain look-up** — Per-channel gains and gain corrections are retrieved
+ *    from the STAR conditions database via `StFmsDbMaker`.  Two numbers are
+ *    used:
+ *    - `gain`  [ADC counts / (gain·gainCorrection·GeV)]
+ *    - `gainCorrection`  [dimensionless, absorbs time-dependent drifts]
+ *
+ * 3. **Attenuation correction** — When the GEANT simulation was run with
+ *    fibre-attenuation enabled (`fpdm_fmcg.atten != 0`), the reconstructed
+ *    ADC is divided by `mAttenuationGainScale` (default 0.35) to recover the
+ *    unattenuated signal.
+ *
+ * 4. **Bit-shift gain** — An optional per-channel bit-shift (stored in the
+ *    database) can be applied to model the effective gain range of the QT
+ *    boards.  A positive shift zero-masks the lower bits; a negative shift
+ *    clips the upper range.
+ *
+ * The resulting ADC value is a 12-bit integer in the range [0, 4095].
+ *
+ * **FPS / FPOST scintillators** — For these detectors the signal is
+ * parameterised in terms of MIPs rather than absolute energy.  An optional
+ * Poisson fluctuation models photon-counting statistics in the SiPM readout:
+ *
+ * \f[
+ *   N_{\text{pixel}} = \text{Poisson}\!\left(
+ *     \frac{E_{\text{dep}}}{\Delta E_{\text{MIP}}} \cdot N_{\gamma/\text{MIP}}
+ *   \right)
+ * \f]
+ *
+ * where \f$\Delta E_{\text{MIP}} \approx 1.6\,\mathrm{MeV}\f$ and
+ * \f$N_{\gamma/\text{MIP}} \approx 100\f$ (both configurable).
+ *
+ * **Zero suppression** — Hits with \f$\mathrm{ADC} \leq \texttt{mFmsZSch}\f$
+ * (default 1) are discarded to suppress noise.
+ *
+ * @section fms_volume_id GEANT Volume ID Encoding
+ *
+ * The `g2t_emc_hit_st::volume_id` field encodes the sub-detector, module, and
+ * channel as follows:
+ *
+ * - FPD / FMS cells:
+ *   \f[
+ *     \texttt{volume\_id} = ew \times 10000 + nstb \times 1000 + ch
+ *   \f]
+ *   where `ew = 1` (FPD east) or `ew = 2` (FMS west); `nstb` identifies the
+ *   quadrant (see source for full table); `ch` is the zero-based channel number.
+ *
+ * - FPS (\f$\texttt{volume\_id} > 100000\f$):
+ *   \f[
+ *     \texttt{volume\_id} = 100000 + ew \times 10000 + quad \times 1000
+ *                         + layer \times 100 + slat
+ *   \f]
+ *   where `quad` ∈ [1, 4], `layer` ∈ [1, 3], `slat` ∈ [1, 21].
+ *
+ * - FPOST (\f$\texttt{volume\_id} > 200000\f$):  same pattern with leading
+ *   `200000`.
+ *
+ * @section fms_references References
+ *
+ * - FMS hit structures in GEANT:
+ *   http://www.star.bnl.gov/protected/spin/akio/fpd_geant/
+ * - Database geometry tables:
+ *   `$STAR/StDb/idl/fmsChannelGeometry.idl`,
+ *   `$STAR/StDb/idl/fmsDetectorPosition.idl`,
+ *   `$STAR/StDb/idl/fmsPatchPannelMap.idl`,
+ *   `$STAR/StDb/idl/fmsQTMap.idl`
+ * - Online DB explorer:
+ *   http://online.star.bnl.gov/dbExplorer/# → Geometry/fms/ChannelGeometry
+ * - GEANT volume definitions:
+ *   `pams/sim/g2t/g2t_volume_id.g` (search for `FLGR`, `FLXF`)
+ *
+ * @{
+ */
+
+// ============================================================
+//  @file
+// ============================================================
+
+/**
+ * @file StFmsFastSimulatorMaker.h
+ * @ingroup FmsFastSim
+ * @brief Declaration of StFmsFastSimulatorMaker, the FMS fast simulator maker.
+ *
+ * Provides the class definition, inline `GetCVS()`, and the
+ * `ClassDef` ROOT macro registration for ROOT I/O and reflection.
+ *
+ * @author Pibero Djawotho <pibero@tamu.edu>
+ * @date 4 Jan 2011
+ */
+
+/**
+ * @file StFmsFastSimulatorMaker.cxx
+ * @ingroup FmsFastSim
+ * @brief Implementation of StFmsFastSimulatorMaker, the FMS fast simulator maker.
+ *
+ * Contains the full digitisation logic: GEANT hit accumulation, gain look-up,
+ * attenuation correction, bit-shift gain, Poisson smearing for FPS/FPOST,
+ * zero suppression, and population of `StFmsCollection` in `StEvent`.
+ *
+ * @author Pibero Djawotho <pibero@tamu.edu>
+ * @date 4 Jan 2011
+ */
+
+// ============================================================
+//  @class
+// ============================================================
+
+/**
+ * @class StFmsFastSimulatorMaker
+ * @ingroup FmsFastSim
+ * @brief STAR maker that converts GEANT FPD/FMS hits into digitised StFmsHits.
+ *
+ * StFmsFastSimulatorMaker is a link in the standard STAR BFC (Benchmark
+ * Framework Chain).  On each event it:
+ *
+ *  -# Checks that `StFmsDbMaker` ("fmsDb") is available in the chain.
+ *  -# Obtains or creates the `StEvent` and its `StFmsCollection`.
+ *  -# Reads the `g2t_fpd_hit` table from the GEANT data set.
+ *  -# Decodes each `g2t_emc_hit_st::volume_id` to a detector ID and channel
+ *     number (using `getDetectorId()`), and accumulates energy per channel.
+ *  -# Digitises accumulated energies to 12-bit ADC counts using per-channel
+ *     gains from the database.
+ *  -# Applies optional Poisson smearing (FPS / FPOST only), attenuation
+ *     correction, and bit-shift gain.
+ *  -# Zero-suppresses hits with ADC ≤ `mFmsZSch` and stores the survivors in
+ *     `StFmsCollection`.
+ *
+ * ### Typical BFC usage
+ * @code
+ *   StFmsFastSimulatorMaker* fmsSim = new StFmsFastSimulatorMaker("fmsSim");
+ *   fmsSim->setFmsZS(1);                  // zero-suppress ADC <= 1
+ *   fmsSim->setBitShiftGain(1);           // use DB bit-shift gain
+ *   fmsSim->setAttenuationGainScale(0.35);// correction for attenuated runs
+ *   fmsSim->setFpsNPhotonPerMIP(100.0);   // enable Poisson smearing for FPS
+ * @endcode
+ *
+ * ### Data flow
+ * @verbatim
+ *   GEANT g2t_fpd_hit
+ *        │
+ *        ▼
+ *   getDetectorId()  ──→  accumulate energy per cell
+ *        │
+ *        ▼
+ *   StFmsDbMaker::getGain / fpsGain / fpostGain
+ *        │
+ *        ▼
+ *   Poisson smear (FPS/FPOST only)
+ *        │
+ *        ▼
+ *   ADC = E / (gain × gainCorr)   [+ attenuation / bit-shift corrections]
+ *        │
+ *        ▼
+ *   Zero suppression  (ADC > mFmsZSch)
+ *        │
+ *        ▼
+ *   StFmsCollection::addHit()
+ * @endverbatim
+ *
+ * @note The compiler-generated copy constructor and assignment operator are
+ *       intentionally left in use because the class holds no heap resources.
+ *
+ * @see StFmsDbMaker
+ * @see StFmsCollection
+ * @see StFmsHit
+ */
+
+// ============================================================
+//  Constructor / Destructor
+// ============================================================
+
+/**
+ * @fn StFmsFastSimulatorMaker::StFmsFastSimulatorMaker(const Char_t* name)
+ * @brief Constructor.
+ *
+ * Registers the maker with the STAR BFC under the given name and initialises
+ * all data members to their defaults:
+ *
+ * | Member                | Default  | Description                             |
+ * |----------------------|----------|-----------------------------------------|
+ * | `mFmsZSch`           | 1        | Zero-suppress threshold (ADC counts)    |
+ * | `mFmsBitShiftGain`   | 1        | Enable DB bit-shift gain correction     |
+ * | `mFpsDEPerMIP`       | 0.0016 GeV | Energy deposited per MIP in FPS       |
+ * | `mFpsNPhotonPerMIP`  | 100.0    | Mean photons per MIP in FPS SiPM        |
+ * | `mAttenuation`       | 0        | Determined at run time from FMCG table  |
+ * | `mAttenuationGainScale` | 0.35  | Effective gain factor when attenuated   |
+ *
+ * @param name  Name of this maker in the BFC chain (default: `"fmsSim"`).
+ */
+
+/**
+ * @fn StFmsFastSimulatorMaker::~StFmsFastSimulatorMaker()
+ * @brief Destructor.
+ *
+ * Trivial; no heap resources are owned by this class.
+ */
+
+// ============================================================
+//  Public methods
+// ============================================================
+
+/**
+ * @fn Int_t StFmsFastSimulatorMaker::Make()
+ * @brief Process one event: digitise GEANT FPD/FMS hits and populate StEvent.
+ *
+ * This is the principal entry point called by the BFC for each event.
+ * It performs the following sequence:
+ *
+ *  1. Verifies that `StFmsDbMaker` ("fmsDb") is present; returns `kStErr`
+ *     if not.
+ *  2. Obtains or creates `StEvent` and its `StFmsCollection`.
+ *  3. Reads the attenuation flag from the `fpdm_fmcg` GEANT geometry table
+ *     at path `bfc/.make/geant/.const/geom/fpdm_fmcg`.
+ *  4. Calls `fillStEvent()` to perform hit accumulation and digitisation.
+ *  5. If debug mode is active, calls `printStEventSummary()`.
+ *
+ * @return `kStOk` on success, `kStErr` if `StFmsDbMaker` is unavailable.
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::setFmsZS(int v)
+ * @brief Set the zero-suppression threshold for FMS/FPD hits.
+ *
+ * Hits with digitised ADC ≤ `v` are discarded before being stored in
+ * `StFmsCollection`.  The default value is 1, meaning hits with ADC = 0 or
+ * ADC = 1 are suppressed.
+ *
+ * @param v  Zero-suppression threshold in ADC counts (inclusive).
+ *           Set to 0 to keep all hits with ADC > 0.
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::setBitShiftGain(int v)
+ * @brief Enable or disable the bit-shift gain correction from the database.
+ *
+ * When enabled (`v = 1`, the default), the per-channel `bitShiftGain` value
+ * retrieved from `StFmsDbMaker::getBitShiftGain()` is used to model the
+ * effective dynamic range of the QT readout boards:
+ *
+ * - Positive shift `b > 0`:  lower `b` bits of ADC are zeroed
+ *   (`adc &= 0x0fff << b`), effectively rounding down.
+ * - Negative shift `b < 0`:  ADC is clipped to \f$2^{12+b} - 1\f$.
+ *
+ * @param v  1 to enable bit-shift gain correction, 0 to disable.
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::setFpsDEPerMIP(float v)
+ * @brief Set the mean energy deposited per MIP in the FPS (and FPOST) scintillator.
+ *
+ * Used in the MIP-based gain conversion for FPS and FPOST channels.
+ * The default value is **0.0016 GeV** (1.6 MeV), appropriate for a thin
+ * plastic scintillator slab traversed by a minimum-ionising particle.
+ *
+ * @param v  Energy per MIP in GeV.
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::setFpsNPhotonPerMIP(float v)
+ * @brief Set the mean number of detected photons per MIP in the FPS SiPM readout.
+ *
+ * When this value is greater than zero, a Poisson fluctuation is applied
+ * to the number of detected photons to model SiPM photon-counting statistics:
+ *
+ * \f[
+ *   N_{\text{pixel}} = \text{Poisson}\!\left(
+ *     \frac{E_{\text{dep}}}{\Delta E_{\text{MIP}}} \cdot N_{\gamma/\text{MIP}}
+ *   \right)
+ * \f]
+ *
+ * and the effective deposited energy is recalculated as:
+ *
+ * \f[
+ *   E_{\text{eff}} = N_{\text{pixel}} \cdot
+ *     \frac{\Delta E_{\text{MIP}}}{N_{\gamma/\text{MIP}}}
+ * \f]
+ *
+ * Setting this to 0 (or any non-positive value) disables the smearing.
+ * The default is **100.0** photons/MIP.
+ *
+ * @param v  Mean photons per MIP detected by the SiPM.
+ *           Set to 0 to disable Poisson smearing.
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::setAttenuationGainScale(float v)
+ * @brief Set the effective gain scale factor for runs where fibre attenuation was active.
+ *
+ * Some GEANT simulation productions were run with fibre light-attenuation
+ * enabled in the geometry (`fpdm_fmcg.atten != 0`).  Because the
+ * attenuation artificially reduces the collected light, the database gains
+ * (tuned to data without attenuation) overestimate the ADC response.
+ * This scale factor corrects for that effect:
+ *
+ * \f[
+ *   \mathrm{ADC} = \frac{E_{\text{dep}}}{s \cdot g \cdot g_c}
+ * \f]
+ *
+ * where \f$s\f$ is this scale factor, \f$g\f$ is the per-channel gain, and
+ * \f$g_c\f$ is the gain correction.
+ *
+ * The default value is **0.35**, empirically determined for the FMS geometry.
+ * This method has no effect when the simulation was run without attenuation.
+ *
+ * @param v  Attenuation gain scale factor (dimensionless, typically < 1).
+ */
+
+/**
+ * @fn virtual const char* StFmsFastSimulatorMaker::GetCVS() const
+ * @brief Return the CVS/RCS version tag for this file.
+ *
+ * Standard STAR maker method that embeds the CVS tag, revision ID, and build
+ * date/time into the binary for provenance tracking.
+ *
+ * @return Pointer to a static string containing the CVS tag and build info.
+ */
+
+// ============================================================
+//  Private methods
+// ============================================================
+
+/**
+ * @fn Int_t StFmsFastSimulatorMaker::getDetectorId(const g2t_emc_hit_st& hit) const
+ * @brief Decode a GEANT volume ID into a STAR FMS detector ID.
+ *
+ * The GEANT volume identifier encodes the physical sub-detector, its
+ * east/west and north/south location, and the cell index in a single integer.
+ * This method decodes that integer and maps it to the canonical detector ID
+ * values used by `StFmsChannelGeometry` in the STAR database
+ * (see `StEnumerations.h`).
+ *
+ * **Decoding logic:**
+ *
+ * | `volume_id` range   | Sub-detector         | Returned ID           |
+ * |--------------------|---------------------|-----------------------|
+ * | ≥ 200 000           | FPOST                | `kFpostDetId` (15)    |
+ * | 100 000 – 199 999   | FPS                  | `kFpsDetId`   (14)    |
+ * | `ew = 1`, `nstb = 1`| FPD North            | `kFpdNorthDetId` (0)  |
+ * | `ew = 1`, `nstb = 2`| FPD South            | `kFpdSouthDetId` (1)  |
+ * | `ew = 1`, `nstb = 5`| FPD North Preshower  | `kFpdNorthPrsDetId` (2) |
+ * | `ew = 1`, `nstb = 6`| FPD South Preshower  | `kFpdSouthPrsDetId` (3) |
+ * | `ew = 2`, `nstb = 1`| FMS North Large      | `kFmsNorthLargeDetId` (8) |
+ * | `ew = 2`, `nstb = 2`| FMS South Large      | `kFmsSouthLargeDetId` (9) |
+ * | `ew = 2`, `nstb = 3`| FMS North Small      | `kFmsNorthSmallDetId` (10) |
+ * | `ew = 2`, `nstb = 4`| FMS South Small      | `kFmsSouthSmallDetId` (11) |
+ * | any other           | Invalid / unsupported | −1                   |
+ *
+ * @param hit  Reference to a GEANT EMC hit structure whose `volume_id` field
+ *             will be decoded.
+ * @return     STAR detector ID integer, or −1 if the volume ID is unrecognised
+ *             or corresponds to an unsupported sub-detector (e.g. FPD top/bottom,
+ *             FPD SMD).
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::fillStEvent(StEvent* event)
+ * @brief Accumulate GEANT hits and digitise them into StFmsHits in StEvent.
+ *
+ * Core digitisation routine.  Reads all rows of the `g2t_fpd_hit` table,
+ * accumulates the deposited energy per (detector, channel) pair, then
+ * converts each accumulated energy to a 12-bit ADC value using the
+ * per-channel gain retrieved from `StFmsDbMaker`.
+ *
+ * **Accumulation phase:**
+ *
+ *  - A temporary `NDET × NCH` (16 × 600) pointer array (`map`) indexed by
+ *    `[detectorId][channel]` tracks whether a hit for that cell has already
+ *    been created.
+ *  - If no prior hit exists, a new `StFmsHit` is allocated and the QT crate,
+ *    slot, and channel are looked up via `StFmsDbMaker::getMap()`,
+ *    `fpsQTMap()`, or `fpostQTMap()`.
+ *  - If a prior hit exists, the new energy deposit is added to it.
+ *
+ * **Digitisation phase:**
+ *
+ *  - For FPS / FPOST: `gain = 1 / fpsGain(channel)` (ADC counts per MIP
+ *    peak); optional Poisson smearing is applied.
+ *  - For FMS / FPD: `gain` and `gainCorrection` are retrieved from the DB.
+ *  - `adc = round(E / (gain × gainCorrection))` with attenuation correction
+ *    applied if `mAttenuation != 0`.
+ *  - Optional bit-shift gain is applied.
+ *  - ADC is clamped to [0, 4095].
+ *  - Zero suppression: if `adc <= mFmsZSch` the hit is deleted and not stored.
+ *  - Surviving hits are added to `StFmsCollection` via `addHit()`.
+ *
+ * @param event  Pointer to the current `StEvent`.  Must not be null; existence
+ *               of a valid `StFmsCollection` within the event is assumed
+ *               (guaranteed by `Make()`).
+ */
+
+/**
+ * @fn void StFmsFastSimulatorMaker::printStEventSummary(const StEvent* event) const
+ * @brief Print a per-sub-detector summary of hit counts and total energies.
+ *
+ * Iterates over all `StFmsHit` objects in `StFmsCollection`, accumulates the
+ * number of hits and total deposited energy for each of the 16 sub-detectors,
+ * and prints a formatted table to `LOG_INFO`.  Only sub-detectors with at
+ * least one hit are printed.  If the debug level is greater than 1, each
+ * individual hit is printed via `StFmsHit::print()`.
+ *
+ * This method is called at the end of `Make()` when debug mode is active.
+ *
+ * @param event  Pointer to the current (const) `StEvent`.  The
+ *               `StFmsCollection` must be non-null.
+ */
+
+/** @} */ // end of FmsFastSim group

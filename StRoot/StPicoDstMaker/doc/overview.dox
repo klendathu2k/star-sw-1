@@ -1,0 +1,182 @@
+/**
+ * @defgroup StPicoDstMaker StPicoDstMaker — MuDST-to-PicoDST Converter
+ * @brief STAR maker that converts MuDST files into the compact PicoDST format.
+ * @details
+ * `StPicoDstMaker` derives from `StMaker` and must be placed downstream of
+ * `StMuDstMaker` in the `StChain`.  For each event it selects one primary
+ * vertex (according to the user-specified `PicoVtxMode`), copies detector
+ * information from `StMuDst` into 24 `TClonesArray` branches, and writes a
+ * ROOT TTree named `PicoDst`.
+ *
+ * The maker can also run in read mode (`IoRead`), where it drives iteration
+ * over an existing set of `.picoDst.root` files within a chain, exposing the
+ * current event via `picoDst()`.
+ *
+ * See `doc/README.md` in this directory for a full description, scheduler XML
+ * example, and usage macros.
+ *
+ * @see StPicoDst, StPicoDstReader, StPicoEvent, StPicoTrack
+ * @{
+ */
+
+/**
+ * @class StPicoDstMaker
+ * @brief Converts MuDST events into PicoDST format or reads existing PicoDST files.
+ *
+ * @par I/O modes
+ * - `IoWrite` (1): reads from `StMuDst` and writes a `.picoDst.root` file.
+ * - `IoRead`  (2): reads `.picoDst.root` files; populates the `StPicoDst`
+ *   object accessible via picoDst().
+ *
+ * @par Vertex selection
+ * The `PicoVtxMode` must be set before `Init()` is called.  Default is
+ * `NotSet`; leaving it unset terminates processing with `kStFatal`.
+ *
+ * @par Output TTree
+ * The TTree is named `PicoDst` and contains 24 `TClonesArray` branches,
+ * one per entry in `StPicoArrays::TypeIndex`.
+ */
+
+/**
+ * @fn StPicoDstMaker::StPicoDstMaker(char const* name)
+ * @brief Default constructor.  Sets `mVtxMode = NotSet`, `mCovMtxMode = Skip`,
+ *        `mBEmcSmdMode = SmdSkip`.  Creates all 24 pico arrays.
+ */
+
+/**
+ * @fn StPicoDstMaker::StPicoDstMaker(PicoIoMode ioMode, char const* fileName, char const* name)
+ * @brief Constructor that specifies I/O mode and input/output filename.
+ * @param ioMode  `IoWrite` or `IoRead`.
+ * @param fileName  Path to a MuDST file (write) or picoDst file / `.list`
+ *                  file (read).
+ * @param name  Name of the maker within `StChain`.
+ */
+
+/**
+ * @fn virtual Int_t StPicoDstMaker::Init()
+ * @brief Called once by `StChain::Init()`.
+ *
+ * In write mode: validates that a vertex mode has been set (reads it from
+ * the TAttr `PicoVtxMode` string if not already set via `setVtxMode()`);
+ * validates covariance and SMD modes; opens the output ROOT file; initialises
+ * BEMC geometry objects.
+ *
+ * In read mode: opens the input chain via `openRead()`.
+ */
+
+/**
+ * @fn virtual Int_t StPicoDstMaker::InitRun(Int_t const runnumber)
+ * @brief Called once per run.  In write mode, loads MTD module-to-QT-board
+ *        maps and slewing corrections from the STAR calibration database.
+ * @param runnumber  STAR run number used to determine the data-taking year.
+ */
+
+/**
+ * @fn virtual Int_t StPicoDstMaker::Make()
+ * @brief Called once per event.  Dispatches to `MakeWrite()` or `MakeRead()`
+ *        depending on the I/O mode.
+ */
+
+/**
+ * @fn virtual void StPicoDstMaker::Clear(Option_t* option)
+ * @brief Called by `StChain` between events.  Clears all 24 pico arrays in
+ *        write mode; no-op in read mode.
+ */
+
+/**
+ * @fn virtual Int_t StPicoDstMaker::Finish()
+ * @brief Called once at the end of processing.  Writes and closes the output
+ *        ROOT file (write mode) or releases the input chain (read mode).
+ *        Also releases BEMC geometry objects.
+ */
+
+/**
+ * @fn void StPicoDstMaker::setVtxMode(const PicoVtxMode vtxMode)
+ * @brief Set the primary-vertex selection strategy.
+ * @param vtxMode  One of `Default`, `VpdOrDefault`, `Vpd`, `Mtd`, `FXT`, or
+ *                 `Vtxless`.
+ */
+
+/**
+ * @fn void StPicoDstMaker::setCovMtxMode(const PicoCovMtxMode covMtxMode)
+ * @brief Enable or disable writing of per-track covariance matrices.
+ * @param covMtxMode  `Skip` (default) or `Write`.
+ */
+
+/**
+ * @fn void StPicoDstMaker::setBEmcSmdMode(const PicoBEmcSmdMode bemcSmdMode)
+ * @brief Enable or disable writing of BEMC SMD hits near BHT3 triggers.
+ * @param bemcSmdMode  `SmdSkip` (default) or `SmdWrite`.
+ */
+
+/**
+ * @fn void StPicoDstMaker::SetStatus(char const* branchNameRegex, int enable)
+ * @brief Enable (1) or disable (0) branches whose names match the simple
+ *        regex `branchNameRegex`.  Leading `"St"` in the pattern is ignored.
+ *
+ * @code
+ * maker->SetStatus("*",    0);   // disable all
+ * maker->SetStatus("Event",1);   // enable Event branch
+ * maker->SetStatus("BTof*",1);   // enable all BTof branches
+ * @endcode
+ */
+
+/**
+ * @fn StPicoDst* StPicoDstMaker::picoDst()
+ * @brief Return pointer to the current `StPicoDst` object.  Returns `nullptr`
+ *        if no event has been loaded.
+ */
+
+/**
+ * @fn TChain* StPicoDstMaker::chain()
+ * @brief Return pointer to the `TChain` in read mode.
+ */
+
+/**
+ * @fn TTree* StPicoDstMaker::tree()
+ * @brief Return pointer to the current `TTree` (both modes).
+ */
+
+/**
+ * @fn void StPicoDstMaker::setSplit(int split)
+ * @brief Set the ROOT split level for the output TTree (default 99).
+ */
+
+/**
+ * @fn void StPicoDstMaker::setBufferSize(int buf)
+ * @brief Set the branch buffer size in bytes (default 256 kB).
+ */
+
+/**
+ * @fn void StPicoDstMaker::setCompression(int comp)
+ * @brief Set the ROOT compression level (0 = none, 9 = maximum; default 9).
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @class StPicoFmsFiller
+ * @brief Helper that copies FMS hit data from `StMuDst` into `StPicoDst`.
+ * @ingroup StPicoDstMaker
+ *
+ * `StPicoFmsFiller` is held by value inside `StPicoDstMaker`.  It obtains
+ * the `StMuFmsCollection` from `StMuDst`, iterates over its `StMuFmsHit`
+ * objects, and appends `StPicoFmsHit` entries (carrying `detectorId`,
+ * `channel`, and `adc`) to the `FmsHit` TClonesArray in `StPicoDst`.
+ */
+
+/**
+ * @fn StPicoFmsFiller::StPicoFmsFiller(StPicoDst& picoDst)
+ * @brief Construct with a reference to the target `StPicoDst`.
+ */
+
+/**
+ * @fn void StPicoFmsFiller::fill(const StMuDst& muDst, const StFmsDbMaker* fmsDbMaker)
+ * @brief Copy FMS hits from `muDst` into the `FmsHit` branch of the
+ *        associated `StPicoDst`.
+ * @param muDst       Source MuDST object for the current event.
+ * @param fmsDbMaker  Optional pointer to the FMS database maker (currently
+ *                    unused in the copy loop but provided for future use).
+ */
+
+/** @} */ // end of StPicoDstMaker group

@@ -1,0 +1,27 @@
+# Doxyfile for StSpinPool
+# Generate with: doxygen doc/Doxyfile  (run from StRoot/StSpinPool/)
+
+PROJECT_NAME           = "StSpinPool"
+PROJECT_BRIEF          = "STAR spin-physics analysis packages"
+
+OUTPUT_DIRECTORY       = doc/doxygen
+
+INPUT                  = ..
+RECURSIVE              = YES
+
+FILE_PATTERNS          = *.h *.cxx *.C
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+HAVE_DOT               = NO
+
+QUIET                  = NO
+WARNINGS               = YES
