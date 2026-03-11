@@ -1,0 +1,146 @@
+/*!
+\page page_stTpcHitCollection StTpcHitCollection
+
+\ref StTpcHitCollection is the top-level container for all reconstructed hits in the STAR Time
+Projection Chamber (TPC). Hits are stored in a three-level hierarchy — <b>sector → padrow → hit</b>
+— mirroring the physical readout geometry of the TPC. The two supporting classes,
+\ref StTpcSectorHitCollection and \ref StTpcPadrowHitCollection, are internal nodes of that
+hierarchy and are not used independently.
+
+\section sec_tpc_hierarchy Class Hierarchy
+
+\verbatim
+StTpcHitCollection          (top level, 24 sectors)
+└── StTpcSectorHitCollection    (one per sector, up to 100 padrows)
+    └── StTpcPadrowHitCollection    (one per padrow, holds StTpcHit* pointers)
+\endverbatim
+
+All three classes inherit from StObject.
+
+\section sec_tpc_containment Containment Model
+
+- \ref StTpcHitCollection holds an embedded array of 24 \ref StTpcSectorHitCollection objects
+  (<tt>mSectors[24]</tt>).
+- Each \ref StTpcSectorHitCollection holds an embedded array of up to 100
+  \ref StTpcPadrowHitCollection objects (<tt>mPadrows[100]</tt>).
+- Each \ref StTpcPadrowHitCollection holds a dynamic <tt>StSPtrVecTpcHit mHits</tt> vector of
+  pointers to \ref StTpcHit objects.
+
+\ref StTpcHitCollection::addHit "addHit(StTpcHit*)" routes an \ref StTpcHit into the correct
+<tt>mHits</tt> vector using the hit's own 1-based <tt>sector()</tt> and <tt>padrow()</tt>
+accessors, converting internally to 0-based array indices. The public accessor methods
+<tt>sector()</tt> and <tt>padrow()</tt> use <b>0-based</b> indices.
+
+\section sec_tpc_ownership Object Ownership
+
+\subsection subsec_tpc_subcoll Sub-collection Storage
+\ref StTpcSectorHitCollection and \ref StTpcPadrowHitCollection objects are
+<b>stack-allocated as plain arrays</b> inside their parent. They are not heap-allocated and must
+not be deleted by the caller.
+
+\subsection subsec_tpc_hits Hit Storage — StSPtrVecTpcHit
+The per-padrow hit vector is of type <tt>StSPtrVecTpcHit</tt>, a <em>smart-pointer vector</em>.
+\ref StTpcPadrowHitCollection::~StTpcPadrowHitCollection "~StTpcPadrowHitCollection()" iterates
+over the vector and explicitly <tt>delete</tt>s each <tt>StTpcHit*</tt>. This explicit deletion is
+required because \ref StTpcHit uses a custom <tt>new</tt>/<tt>delete</tt> via
+<tt>StMemoryPool</tt>.
+
+\warning Do <b>not</b> <tt>delete</tt> \ref StTpcHit pointers obtained from the collection.
+Ownership belongs to \ref StTpcPadrowHitCollection; external deletion will cause a double-free.
+
+\subsection subsec_tpc_framework Framework Ownership
+\ref StTpcHitCollection itself is owned by the StEvent framework (via the
+<tt>St_DataSet</tt>/<tt>StXRefMain</tt> mechanism). When registered with StEvent via
+<tt>StEvent::setTpcHitCollection()</tt>, ownership transfers to the framework, which handles
+cleanup. <tt>StTpcHitCollection::~StTpcHitCollection()</tt> is a no-op.
+
+\section sec_tpc_members Data Members
+
+\subsection subsec_tpc_members_top StTpcHitCollection
+- <tt>enum { mNumberOfSectors = 24 }</tt> — Fixed number of TPC readout sectors.
+- <tt>StTpcSectorHitCollection mSectors[24]</tt> — Embedded array of per-sector collections.
+
+\subsection subsec_tpc_members_sector StTpcSectorHitCollection
+- <tt>enum { mNumberOfPadrows = 100 }</tt> — Maximum number of padrows per sector.
+- <tt>StTpcPadrowHitCollection mPadrows[100]</tt> — Embedded array of per-padrow collections.
+
+\subsection subsec_tpc_members_padrow StTpcPadrowHitCollection
+- <tt>StSPtrVecTpcHit mHits</tt> — Dynamic vector of pointers to \ref StTpcHit objects in this
+  padrow.
+
+\section sec_tpc_methods Key Methods
+
+\subsection subsec_tpc_methods_top StTpcHitCollection
+- <tt>bool addHit(StTpcHit*)</tt> — Routes a hit into the correct sector/padrow sub-collection.
+  Returns <tt>false</tt> if the hit is null or its indices are out of range.
+- <tt>unsigned int numberOfHits() const</tt> — Total hits across all sectors and padrows.
+- <tt>unsigned int numberOfSectors() const</tt> — Returns 24.
+- <tt>unsigned int numberOfPadrows(int sectorId) const</tt> — Padrow count for the given 0-based
+  sector index.
+- <tt>StTpcSectorHitCollection* sector(unsigned int)</tt> — Returns the sub-collection at the
+  given 0-based index, or <tt>nullptr</tt> if out of range.
+- <tt>const StSPtrVecTpcHit* hits(int sectorId, int padrowId) const</tt> — Returns the hit vector
+  for the given 0-based sector and padrow, or <tt>nullptr</tt> if out of range.
+- <tt>StTpcHitIter begin() / end()</tt> — Forward iterators over all hits in the collection.
+
+\subsection subsec_tpc_methods_sector StTpcSectorHitCollection
+- <tt>unsigned int numberOfHits() const</tt> — Total hits in this sector.
+- <tt>unsigned int numberOfPadrows() const</tt> — Returns 100.
+- <tt>StTpcPadrowHitCollection* padrow(unsigned int)</tt> — Sub-collection at 0-based index.
+
+\subsection subsec_tpc_methods_padrow StTpcPadrowHitCollection
+- <tt>StSPtrVecTpcHit& hits()</tt> — Mutable reference to the hit vector.
+- <tt>const StSPtrVecTpcHit& hits() const</tt> — Const reference to the hit vector.
+
+\subsection subsec_tpc_methods_iter StTpcHitCollection::StTpcHitIter (inner class)
+An <tt>std::input_iterator</tt>-compatible iterator that traverses all hits, automatically skipping
+empty padrows and sectors.
+- <tt>static StTpcHitIter begin(StTpcHitCollection&)</tt>
+- <tt>static StTpcHitIter end(StTpcHitCollection&)</tt>
+- <tt>StTpcHitIter& operator++()</tt>
+- <tt>const StTpcHit* operator*() const</tt>
+
+\section sec_tpc_usage Usage Examples
+
+\subsection subsec_tpc_usage_iter Iterate Using the Built-in Iterator (recommended)
+
+\code{.cpp}
+StTpcHitCollection* tpcColl = event->tpcHitCollection();
+if (tpcColl) {
+    for (const StTpcHit* hit : *tpcColl) {  // range-for via begin()/end()
+        // process hit
+    }
+}
+\endcode
+
+\subsection subsec_tpc_usage_nested Iterate by Sector and Padrow (explicit nested loops)
+
+\code{.cpp}
+StTpcHitCollection* tpcColl = event->tpcHitCollection();
+if (!tpcColl) return;
+
+for (unsigned int iSec = 0; iSec < tpcColl->numberOfSectors(); ++iSec) {
+    const StTpcSectorHitCollection* sec = tpcColl->sector(iSec);
+    if (!sec) continue;
+
+    for (unsigned int iRow = 0; iRow < sec->numberOfPadrows(); ++iRow) {
+        const StTpcPadrowHitCollection* row = sec->padrow(iRow);
+        if (!row) continue;
+
+        const StSPtrVecTpcHit& hits = row->hits();
+        for (const StTpcHit* hit : hits) {
+            // process hit -- do NOT delete hit
+        }
+    }
+}
+\endcode
+
+\subsection subsec_tpc_usage_add Add a Hit (e.g. from a Maker)
+
+\code{.cpp}
+StTpcHit* hit = new StTpcHit(/*...*/);  // allocated via StTpcHit::operator new
+tpcColl->addHit(hit);                   // ownership transferred to the collection
+// Do not delete 'hit' after this call.
+\endcode
+
+*/

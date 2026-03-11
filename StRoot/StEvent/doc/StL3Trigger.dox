@@ -1,0 +1,54 @@
+/*!
+\page page_stl3trigger StL3Trigger
+
+\brief Level-3 online trigger object: online TPC hits, tracks, vertices, and algorithm decisions.
+
+\section stl3trigger_overview Overview
+\c StL3Trigger is the container for Level-3 online trigger data.  The L3 farm
+reconstructs TPC tracks online in ~10 ms and runs per-event algorithms to decide
+whether to write the event to tape.  This object stores the online TPC hit collection,
+track nodes, track detector-info records, primary vertices, L3 trigger words, and the
+\ref page_stl3eventsummary which records individual algorithm decisions.
+
+\section stl3trigger_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StL3Trigger
+\endcode
+
+\section stl3trigger_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| StL3EventSummary* | mL3EventSummary | Owned algorithm decision summary |
+| StTpcHitCollection* | mL3TpcHits | Owned online TPC hit collection |
+| StSPtrVecTrackDetectorInfo | mL3TrackDetectorInfo | Online track detector-info list |
+| StSPtrVecTrackNode | mL3TrackNodes | Online track nodes |
+| StSPtrVecPrimaryVertex | mL3PrimaryVertices | Online primary vertices |
+| TArrayL | mTriggerWords | L3 trigger decision words |
+
+\section stl3trigger_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StL3EventSummary* l3EventSummary() const` | Algorithm decision summary |
+| `StTpcHitCollection* tpcHitCollection() const` | Online TPC hit collection |
+| `StSPtrVecTrackNode& trackNodes()` | Online track nodes |
+| `unsigned int numberOfPrimaryVertices() const` | Online primary vertex count |
+| `StPrimaryVertex* primaryVertex(unsigned int i=0) const` | Online primary vertex i |
+| `void setL3EventSummary(StL3EventSummary*)` | Set algorithm summary (takes ownership) |
+| `void addPrimaryVertex(StPrimaryVertex*)` | Add an online primary vertex |
+
+\section stl3trigger_usage Usage Example
+\code{.cpp}
+StL3Trigger* l3 = event->l3Trigger();
+StL3EventSummary* sum = l3->l3EventSummary();
+cout << "L3 tracks: "   << sum->numberOfTracks()  << endl;
+cout << "z-vtx trig: "  << sum->zVertexTrigger()  << endl;
+\endcode
+
+\see \ref page_stl3eventsummary
+\see \ref page_stl3algorithminfo
+\see \ref page_sttrigger
+*/

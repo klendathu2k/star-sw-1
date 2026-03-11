@@ -1,0 +1,48 @@
+/*!
+\page page_sttrigger StTrigger
+
+\brief Base class for STAR trigger information; stores the trigger word and action word.
+
+\section sttrigger_overview Overview
+\c StTrigger is the base class for all STAR trigger objects (\ref page_stl0trigger,
+\ref page_stl1trigger).  It stores the two words common to every trigger level:
+the L0 hardware trigger word (which conditions fired) and the trigger action word
+(which detector/algorithm responses were invoked).  Subclasses extend it with
+level-specific data.
+
+\section sttrigger_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StTrigger
+           ├── StL0Trigger
+           └── StL1Trigger
+\endcode
+
+\section sttrigger_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| UInt_t | mTriggerWord | L0 hardware trigger word |
+| UInt_t | mTriggerActionWord | Trigger action word |
+
+\section sttrigger_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int triggerWord() const` | L0 hardware trigger word |
+| `unsigned int triggerActionWord() const` | Trigger action word |
+| `void setTriggerWord(unsigned int)` | Set trigger word |
+| `void setTriggerActionWord(unsigned int)` | Set action word |
+
+\section sttrigger_usage Usage Example
+\code{.cpp}
+StL0Trigger* l0 = event->l0Trigger();
+if (l0)
+    cout << "Trigger word: 0x" << hex << l0->triggerWord() << endl;
+\endcode
+
+\see \ref page_stl0trigger
+\see \ref page_stl1trigger
+\see \ref page_stl3trigger
+*/

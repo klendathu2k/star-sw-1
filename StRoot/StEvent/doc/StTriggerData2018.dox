@@ -1,0 +1,68 @@
+/**
+\page page_sttriggerdata2018 StTriggerData2018
+
+\brief Concrete StTriggerData implementation for STAR Run 18 (year 2018) trigger data.
+
+\section sec2018_overview Overview
+
+StTriggerData2018 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 18 (year 2018)</b> raw trigger data.  It wraps a \c TriggerDataBlk2018 structure
+(from \c StDaqLib/TRG/trgStructures2018.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2017, Run 18 introduces a fuller EPD DSM layer hierarchy, VPD aggregate
+quantities (ADC sum and mean time difference), a vertex DSM accessor, and run-blinding support.
+
+\section sec2018_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2018
+\endcode
+
+\section sec2018_runyear Run Year
+Run 18, calendar year 2018 &mdash; Au+Au collisions at &radic;s = 27 GeV.
+
+\section sec2018_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2018* | Pointer to the raw Run 18 trigger data block. |
+| EvtDesc | EvtDescData2018* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2018* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2018* | Decoded trigger summary (transient). |
+| mEQ1[11], mEQ2[11], mEQ3[11] | QTBlock2018*[11] | EPD QT crate blocks (transient). |
+
+\section sec2018_new New Compared to 2017
+
+<b>EPD DSM layer hierarchy:</b>
+- epdTimeDifference()
+- epdHitLayer2(StBeamDirection eastwest)
+- epdLayer0t(int ch, int prepost=0)
+- epdLayer1(int ch, int prepost=0)
+- epdLayer0a(int ch, int prepost=0)
+- epdNHits(StBeamDirection eastwest, int prepost=0)
+
+<b>VPD aggregates:</b>
+- vpdADCSum(StBeamDirection eastwest, int prepost=0)
+- vpdMeanTimeDifference(int prepost=0) &mdash; returns float.
+
+<b>Other:</b>
+- vertexDSM(int channel) &mdash; vertex-finding DSM word.
+- blindRunInfo() &mdash; blind run-identifying fields for blind analysis.
+
+\section sec2018_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short epdNE = trgData->epdNHits(east, 0);
+    float vpdMean        = trgData->vpdMeanTimeDifference(0);
+    unsigned short vpdSE = trgData->vpdADCSum(east, 0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2017
+\see StTriggerData2019
+*/

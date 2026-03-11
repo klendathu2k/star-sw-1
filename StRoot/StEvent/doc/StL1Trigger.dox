@@ -1,0 +1,47 @@
+/*!
+\page page_stl1trigger StL1Trigger
+
+\brief Level-1 software trigger data; adds a secondary "prime" trigger word to the L0 data.
+
+\section stl1trigger_overview Overview
+\c StL1Trigger extends \ref page_sttrigger with a secondary trigger word
+(\c mTriggerWordPrime) that records additional condition bits evaluated by the L1
+software processor (~100 µs decision time).  The inherited \c mTriggerWord is the L0
+hardware word; \c mTriggerWordPrime captures L1-only refinements.
+
+\section stl1trigger_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StTrigger
+           └── StL1Trigger
+\endcode
+
+\section stl1trigger_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| UInt_t | mTriggerWordPrime | Secondary L1 trigger word |
+| *(inherited)* | mTriggerWord | L0 hardware trigger word |
+| *(inherited)* | mTriggerActionWord | Trigger action word |
+
+\section stl1trigger_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int triggerWord() const` | L0 hardware trigger word |
+| `unsigned int triggerActionWord() const` | Trigger action word |
+| `unsigned int triggerWordPrime() const` | Secondary L1 trigger word |
+| `void setTriggerWordPrime(unsigned int)` | Set secondary L1 trigger word |
+
+\section stl1trigger_usage Usage Example
+\code{.cpp}
+StL1Trigger* l1 = event->l1Trigger();
+if (l1)
+    cout << "L1 prime word: 0x" << hex << l1->triggerWordPrime() << endl;
+\endcode
+
+\see \ref page_sttrigger
+\see \ref page_stl0trigger
+\see \ref page_stl3trigger
+*/

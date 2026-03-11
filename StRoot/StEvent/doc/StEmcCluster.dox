@@ -1,0 +1,57 @@
+/*!
+\page page_stEmcCluster StEmcCluster
+
+\brief Reconstructed cluster of adjacent hits in a STAR EMC sub-detector.
+
+\section emccluster_overview Overview
+
+StEmcCluster represents a group of neighbouring StEmcRawHit cells that share
+energy from a common electromagnetic shower in one sub-detector of the STAR
+Electromagnetic Calorimeter.  It stores the total energy, the (η, φ) centroid,
+the RMS shower widths in η and φ, a list of constituent hits, adjacent
+clusters, and matched tracks.
+
+The class derives from StHit so that the sub-detector identity is encoded in
+the inherited hardware-position word and the cluster can participate in
+track–calorimeter matching.
+
+\section emccluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StMeasuredPoint → StHit → StEmcCluster
+\endcode
+
+Clusters are stored in StEmcClusterCollection, which is attached to
+\ref page_stEmcDetector "StEmcDetector".
+
+\section emccluster_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| Float_t | mEta | Pseudorapidity centroid of the cluster. |
+| Float_t | mPhi | Azimuthal centroid [rad]. |
+| Float_t | mSigmaEta | RMS η shower width. |
+| Float_t | mSigmaPhi | RMS φ shower width [rad]. |
+| Float_t | mEnergy | Total calibrated energy [GeV]. |
+| StPtrVecEmcRawHit | mHits | Constituent raw hits (non-owning). |
+| StPtrVecEmcCluster | mNeighbors | Adjacent clusters (non-owning). |
+| StPtrVecTrack | mTracks | Matched reconstructed tracks (non-owning). |
+
+\section emccluster_methods Key Methods
+
+- \c eta(), \c phi() — cluster centroid.
+- \c sigmaEta(), \c sigmaPhi() — RMS shower widths.
+- \c energy() — total cluster energy [GeV].
+- \c nHits(), \c hit() — constituent raw hits.
+- \c nNeighbors(), \c neighbor() — adjacent clusters.
+- \c nTracks(), \c track() — matched tracks.
+- \c detector() — sub-detector ID (from StHit bit field).
+- \c addHit(), \c addNeighbor(), \c addTrack() — population helpers.
+- \c Print() — print summary to stdout.
+
+\section emccluster_seealso See Also
+
+\ref page_stEmcRawHit "StEmcRawHit",
+\ref page_stEmcPoint "StEmcPoint",
+\ref page_stEmcDetector "StEmcDetector"
+*/

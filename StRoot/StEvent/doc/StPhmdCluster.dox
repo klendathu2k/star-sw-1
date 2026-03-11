@@ -1,0 +1,52 @@
+/*!
+\page page_stPhmdCluster StPhmdCluster
+
+\brief Reconstructed cluster of adjacent pad cells in the STAR PHMD.
+
+\section phmdCluster_overview Overview
+
+StPhmdCluster represents a group of contiguous StPhmdHit cells sharing
+energy from a common particle shower in one plane of the STAR Photon
+Multiplicity Detector (2.3 < η < 3.9).  The centroid is expressed in
+(η, φ) coordinates.  Two PID fields classify each cluster as a photon,
+charged hadron, or other particle using energy-deposition shape and
+track-matching criteria.
+
+\section phmdCluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StPhmdCluster
+\endcode
+
+Stored in \c StPhmdClusterCollection attached to
+\ref page_stPhmdDetector "StPhmdDetector".
+
+\section phmdCluster_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| Int_t | mModule | Supermodule number [0, 11]. |
+| Int_t | mNumberOfCells | Number of constituent cells. |
+| Float_t | mEta | η centroid. |
+| Float_t | mPhi | φ centroid [rad]. |
+| Float_t | mEnergy | Total energy deposit [GeV]. |
+| Float_t | mSigma | RMS spatial spread. |
+| Int_t | mPID | Track-matching particle ID. |
+| Int_t | mEnergyPID | Energy-deposition particle ID. |
+| Int_t | mMcPID | Monte Carlo truth particle ID. |
+| StPtrVecPhmdHit | mHits | Constituent hits (non-owning). |
+
+\section phmdCluster_methods Key Methods
+
+- \c module(), \c numberOfCells() — cluster address and size.
+- \c eta(), \c phi(), \c energy(), \c sigma() — cluster kinematics and shape.
+- \c energyPid(), \c pid(), \c mcPid() — particle identification.
+- \c hit(), \c addHit() — access constituent hits.
+- \c set*() — corresponding setters.
+
+\section phmdCluster_seealso See Also
+
+\ref page_stPhmdHit "StPhmdHit",
+\ref page_stPhmdDetector "StPhmdDetector",
+\ref page_stPhmdModule "StPhmdModule"
+*/

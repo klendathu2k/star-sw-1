@@ -1,0 +1,110 @@
+/*!
+\page page_stfstrawit StFstRawHit
+
+\ref StFstRawHit stores the raw, per-channel ADC readout for a single strip in the Forward
+Silicon Tracker (FST) for one event.  It is the pre-clustering hit object (digi) and holds all
+time-bin ADC samples before clustering into \ref StFstHit objects.
+
+\note \ref StFstRawHit inherits from \ref StObject, <b>not</b> from \ref StHit, because it
+is a raw channel readout rather than a reconstructed space point.
+
+\see StFstHitCollection
+
+\section sec_fstraw_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StFstRawHit
+\endverbatim
+
+\section sec_fstraw_electronics Electronics Layout
+
+From <tt>StFstConsts.h</tt>:
+
+- <tt>kFstNumRdos = 6</tt> (RDO boards, 1–6)
+- <tt>kFstNumArmsPerRdo = 3</tt>
+- <tt>kFstNumApvChannels = 128</tt>
+- <tt>kFstNumElecIds = 36864</tt> (electronics IDs, 0–36863)
+- <tt>kFstNumTimeBins = 9</tt>
+- <tt>kFstDefaultTimeBin = 2</tt>
+- <tt>kFstMaxAdc = 4096</tt>
+
+\section sec_fstraw_members Data Members
+
+- <tt>Int_t mChannelId</tt> — Electronics channel ID (0–36863).
+  Encodes RDO, ARM, APV, and channel within APV.
+- <tt>Int_t mGeoId</tt> — Geometry ID (0–36863).
+  Encodes disk, wedge, R-strip, and φ-strip.
+- <tt>Int_t mSeedhitflag</tt> — Seed-hit flag: 0 = not a seed hit, 1 = seed hit.
+- <tt>Float_t mCharge[9]</tt> — ADC values per time bin.
+  Physics mode: pedestal- and CMN-subtracted.  Calibration mode: raw ADC.
+  Default-initialized to −999.
+- <tt>Float_t mChargeErr[9]</tt> — Charge uncertainty per time bin.
+- <tt>UChar_t mMaxTimeBin</tt> — Time bin index with maximum ADC (0-based, 0–8).
+- <tt>UShort_t mIdTruth</tt> — MC truth Geant track ID; 0 = background in embedding.
+- <tt>static UChar_t mDefaultTimeBin</tt> — Default time bin index (class-wide, initialized to 2).
+
+\section sec_fstraw_decode Geometry Decoding from mGeoId
+
+| Method | Description | Range |
+|--------|-------------|-------|
+| <tt>getDisk()</tt> | Disk number | 1–3 |
+| <tt>getWedge()</tt> | Wedge number | 1–36 |
+| <tt>getPhiStrip()</tt> | φ-strip index | 0–127 |
+| <tt>getRStrip()</tt> | R-strip index | 0–7 |
+
+\section sec_fstraw_elec Electronics Decoding from mChannelId
+
+| Method | Description | Range |
+|--------|-------------|-------|
+| <tt>getRdo()</tt> | RDO board | 1–6 |
+| <tt>getArm()</tt> | ARM board index | 0–2 |
+| <tt>getApv()</tt> | APV chip index | 0–15 |
+| <tt>getSensor()</tt> | Sensor index | 0–2 |
+| <tt>getChannel()</tt> | Channel within APV | 0–127 |
+
+\section sec_fstraw_methods Key Methods
+
+- <tt>int getChannelId() const</tt> — Electronics channel ID.
+- <tt>int getGeoId() const</tt> — Geometry ID.
+- <tt>int getSeedhitflag() const</tt> — Seed-hit flag (0 or 1).
+- <tt>float getCharge(int tb = 0) const</tt> — ADC value for time bin <tt>tb</tt>.
+- <tt>float getChargeErr(int tb = 0) const</tt> — Charge error for time bin <tt>tb</tt>.
+- <tt>unsigned char getMaxTimeBin() const</tt> — Max-ADC time bin index.
+- <tt>unsigned short getIdTruth() const</tt> — MC truth Geant track ID.
+- <tt>static unsigned char getDefaultTimeBin()</tt> — Current default time bin.
+- <tt>void setCharge(float, int tb = -1)</tt> — Set ADC value for time bin (<tt>tb == -1</tt> → default bin).
+- <tt>template&lt;typename Container&gt; void setCharges(const Container&)</tt> — Overwrite all time-bin charges.
+- <tt>static void setDefaultTimeBin(int)</tt> — Set class-wide default time bin.
+- <tt>void Print(int nTimeBins) const</tt> — Print decoded geometry and charge values.
+
+\section sec_fstraw_ownership Object Ownership
+
+\ref StFstRawHit does not use a custom memory pool.  Objects are heap-allocated.  Ownership
+belongs to the collection that holds them.
+\warning Do <b>not</b> <tt>delete</tt> \ref StFstRawHit pointers obtained from a collection.
+
+\section sec_fstraw_usage Usage Example
+
+\code{.cpp}
+StFstCollection* fstColl = event->fstCollection();
+if (!fstColl) return;
+
+for (int iWedge = 1; iWedge <= 36; ++iWedge) {
+    const StSPtrVecFstRawHit& rawHits = fstColl->rawHits(iWedge);
+    for (const StFstRawHit* rawHit : rawHits) {
+        unsigned char disk   = rawHit->getDisk();     // 1–3
+        unsigned char wedge  = rawHit->getWedge();    // 1–36
+        unsigned char rStrip = rawHit->getRStrip();   // 0–7
+        unsigned char phi    = rawHit->getPhiStrip(); // 0–127
+
+        float charge = rawHit->getCharge(); // default time bin
+        for (int itb = 0; itb < kFstNumTimeBins; ++itb)
+            float adc = rawHit->getCharge(itb);
+
+        bool isSeed = (rawHit->getSeedhitflag() == 1);
+    }
+}
+\endcode
+
+*/

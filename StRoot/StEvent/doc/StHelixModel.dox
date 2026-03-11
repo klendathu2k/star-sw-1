@@ -1,0 +1,65 @@
+/*!
+\page page_sthelixmodel StHelixModel
+
+\brief Concrete helix-based track geometry for a charged particle in STAR's solenoidal field.
+
+\section sthelixmodel_overview Overview
+
+\ref StHelixModel is the concrete implementation of \ref StTrackGeometry.  It stores
+the five helix parameters (charge \e q, curvature \e κ, azimuthal angle \e ψ, dip angle
+\e λ, and reference-point origin \b r₀), together with the full momentum vector
+\b p and the helicity sign \e h.
+
+\section sthelixmodel_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackGeometry   (abstract)
+           └── StHelixModel
+\endcode
+
+\section sthelixmodel_params Helix Parameterisation
+
+| Symbol | Units | Physical Meaning |
+|---|---|---|
+| \e q | — | Electric charge (+1 or −1). |
+| κ | cm⁻¹ | Signed curvature; \|κ\| = \|qB\|/p_T. |
+| ψ | rad | Azimuthal angle of the momentum vector at the origin. |
+| λ | rad | Dip angle: arctan(p_z/p_T). |
+| **r**₀ | cm | Reference point (3-D PCA to primary vertex). |
+| **p** | GeV/c | Momentum vector at **r**₀. |
+| h | — | Helix sense: +1 = clockwise viewed along +z = −sign(qB_z). |
+
+The phase passed to \c StPhysicalHelixD is φ₀ = ψ − h·π/2.
+
+\section sthelixmodel_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mCharge | \c Short_t | Electric charge. |
+| \c mCurvature | \c Float_t | Signed κ (cm⁻¹). |
+| \c mPsi | \c Float_t | Azimuthal momentum angle ψ (rad). |
+| \c mDipAngle | \c Float_t | Dip angle λ (rad). |
+| \c mOrigin | \c StThreeVectorF | Reference point (cm). |
+| \c mMomentum | \c StThreeVectorF | Momentum vector (GeV/c). |
+| \c mHelicity | \c Short_t | Helix sense ±1. |
+
+\section sthelixmodel_example Usage Example
+
+\code{.cpp}
+const StHelixModel* hm =
+    dynamic_cast<const StHelixModel*>(track->geometry());
+if (!hm) return;
+
+double pt    = hm->momentum().perp();  // GeV/c
+double kappa = hm->curvature();        // cm⁻¹
+int    h     = hm->helicity();         // +1 or -1
+
+StPhysicalHelixD helix = hm->helix();
+double sAtR = helix.pathLength(100.0 /* cm */);
+StThreeVectorD pos = helix.at(sAtR);
+\endcode
+
+\see StTrackGeometry
+\see StTrack
+*/

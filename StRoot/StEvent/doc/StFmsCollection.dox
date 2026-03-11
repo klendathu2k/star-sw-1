@@ -1,0 +1,103 @@
+/**
+\page page_stfmscollection StFmsCollection — FMS Event Data Collection
+
+\section fms_overview Overview
+
+\ref StFmsCollection is the event-level container for all data from the
+<b>Forward Meson Spectrometer (FMS)</b>, a lead-glass calorimeter covering forward
+rapidities (2.6 < η < 4.2) that is the successor to the FPD.  The FMS is segmented
+into small-cell and large-cell quadrants arranged around the beam pipe.
+
+For each event the collection stores three tiers of physics objects plus on-demand
+FPS preshower slats and lazily-built photon point pairs:
+
+| Tier | Class | Accessor |
+|---|---|---|
+| Tower hits | \ref StFmsHit | \ref StFmsCollection::hits() |
+| Shower clusters | \ref StFmsCluster | \ref StFmsCollection::clusters() |
+| Photon points | \ref StFmsPoint | \ref StFmsCollection::points() |
+| FPS slats (transient) | \ref StFpsSlat | \ref StFmsCollection::fpsSlats() |
+| Point pairs (transient) | \ref StFmsPointPair | \ref StFmsCollection::pointPairs() |
+
+\section fms_ownership Object Ownership
+
+\warning This collection <b>owns</b> every \ref StFmsHit, \ref StFmsCluster,
+\ref StFmsPoint, and \ref StFmsPointPair it contains.  <b>Do not call \c delete</b>
+on any pointer retrieved from this collection.  All objects added via \c add*()
+<b>must</b> be heap-allocated with \c new and must not be owned anywhere else.
+
+\ref StFpsSlat objects are transient (not persisted); they are rebuilt on demand.
+\ref StFmsPointPair objects are deleted in the destructor.
+
+The collection itself is owned by \ref StEvent, managed by the
+\c St_DataSet/StXRefMain framework.
+
+\section fms_reconflags Reconstruction Flag Bits
+
+The packed integer \c mFmsReconstructionFlag encodes algorithm choices:
+
+| Bit | Accessor | Meaning when set |
+|---|---|---|
+| 0 (LSB) | \ref StFmsCollection::isMergeSmallToLarge | Small-cell clusters merged into large-cell clusters. |
+| 1 | \ref StFmsCollection::isGlobalRefit | Global cluster refit was performed. |
+| 2 | \ref StFmsCollection::isTry1PhotonFit | 1-photon fit retry for poor 2-photon fits. |
+| 3 | \ref StFmsCollection::isNewClusterCategorization | New cluster-categorization algorithm. |
+| 4 | \ref StFmsCollection::isScaleShowerShape | Shower-shape scaling applied. |
+
+\section fms_datamembers Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| \c StSPtrVecFmsHit | \c mHits | Owns all FMS tower hits. |
+| \c StSPtrVecFmsCluster | \c mClusters | Owns all FMS clusters. |
+| \c StSPtrVecFmsPoint | \c mPoints | Owns all FMS photon points. |
+| \c StSPtrVecFpsSlat | \c mFpsSlats | Transient FPS slat objects (not persisted, marked //!). |
+| \c vector<StFmsPointPair*> | \c mPointPairs | All point pairs (sorted by E1 desc, then E2). |
+| \c vector<StFmsPointPair*> | \c mPointPairsEnergySorted | Pairs sorted by descending total energy. |
+| \c vector<StFmsPointPair*> | \c mPointPairsETSorted | Pairs sorted by descending total pT. |
+| \c vector<StFmsPointPair*> | \c mPointPairsPi0MassSorted | Pairs sorted by proximity to π⁰ mass. |
+| \c Int_t | \c mFmsReconstructionFlag | Packed algorithm flags (see above). |
+| \c Float_t | \c mScaleShowerShapeLarge | Shower-shape scale factor, large-cell FMS (default 1.0). |
+| \c Float_t | \c mScaleShowerShapeSmall | Shower-shape scale factor, small-cell FMS (default 1.0). |
+
+\section fms_methods Key Methods
+
+| Method | Description |
+|---|---|
+| \ref StFmsCollection::addHit "addHit(hit)" | Append a hit. |
+| \ref StFmsCollection::addCluster "addCluster(cl)" | Append a cluster. |
+| \ref StFmsCollection::addPoint "addPoint(pt)" | Append a photon point. |
+| \ref StFmsCollection::hits "hits()" / \ref StFmsCollection::clusters "clusters()" / \ref StFmsCollection::points "points()" | Access the three persistent collections. |
+| \ref StFmsCollection::numberOfHits "numberOfHits()" / \ref StFmsCollection::numberOfClusters "numberOfClusters()" / \ref StFmsCollection::numberOfPoints "numberOfPoints()" | Return collection sizes. |
+| \ref StFmsCollection::fmsReconstructionFlag "fmsReconstructionFlag()" | Raw packed flags word. |
+| \ref StFmsCollection::isMergeSmallToLarge "isMergeSmallToLarge()" … \ref StFmsCollection::isScaleShowerShape "isScaleShowerShape()" | Test individual flag bits. |
+| \ref StFmsCollection::scaleShowerShapeLarge "scaleShowerShapeLarge()" / \ref StFmsCollection::scaleShowerShapeSmall "scaleShowerShapeSmall()" | Shower-shape scale factors. |
+| \ref StFmsCollection::setScaleShowerShape(float, float) "setScaleShowerShape(l,s)" | Set both scale factors. |
+| \ref StFmsCollection::fpsSlats "fpsSlats()" / \ref StFmsCollection::fps "fps(id)" | Access FPS slats (lazy-build). |
+| \ref StFmsCollection::pointPairs "pointPairs()" / … | Access sorted point-pair views (lazy-build). |
+| \ref StFmsCollection::numberOfPointPairs "numberOfPointPairs()" | Number of point pairs. |
+| \ref StFmsCollection::sortPointsByEnergy "sortPointsByEnergy()" / \ref StFmsCollection::sortPointsByET "sortPointsByET()" | In-place sort of the point vector. |
+| \ref StFmsCollection::print "print(option)" | Print summary. |
+
+\section fms_example Usage Example
+
+\code{.cpp}
+#include "StEvent/StFmsCollection.h"
+#include "StEvent/StFmsPointPair.h"
+
+StFmsCollection* fmsColl = event->fmsCollection();
+if (!fmsColl) return;
+
+// Iterate over photon points
+for (unsigned int i = 0; i < fmsColl->numberOfPoints(); ++i) {
+    StFmsPoint* pt = fmsColl->points()[i];
+    // use pt ...
+}
+
+// Access pi0 candidates
+auto& pi0Pairs = fmsColl->pointPairsPi0MassSorted();
+for (StFmsPointPair* pair : pi0Pairs) {
+    printf("mass = %.3f GeV  E = %.3f GeV\n", pair->mass(), pair->energy());
+}
+\endcode
+*/

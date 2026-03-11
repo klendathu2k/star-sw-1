@@ -1,0 +1,53 @@
+/**
+\page page_sttriggerdata2008 StTriggerData2008
+
+\brief Concrete StTriggerData implementation for STAR Run 8 (year 2008) trigger data.
+
+\section sec2008_overview Overview
+
+StTriggerData2008 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 8 (year 2008)</b> raw trigger data.  It wraps a \c TrgDataType2008 structure
+(from \c StDaqLib/TRG/trgStructures2008.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2007, Run 8 adds partial <b>BTOF</b> multiplicity readout via
+tofAtAddress() and tofMultiplicity(), reflecting the start of BTOF installation.
+
+\section sec2008_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2008
+\endcode
+
+\section sec2008_runyear Run Year
+Run 8, calendar year 2008 &mdash; d+Au and p+p collisions at &radic;s = 200 GeV.
+
+\section sec2008_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TrgDataType2008* | Pointer to the raw Run 8 trigger bank in memory. |
+
+\section sec2008_new New Compared to 2007
+
+<b>TOF (BTOF, partial installation):</b>
+- tofAtAddress(int address, int prepost=0) &mdash; raw BTOF value at address.
+- tofMultiplicity(int prepost=0) &mdash; BTOF hit multiplicity.
+
+getDsm0_BEMCE(), getDsm0_BEMCW(), and getDsm1_BEMC() return \c nullptr for this format.
+
+\section sec2008_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short tofMult = trgData->tofMultiplicity(0);
+    unsigned short vpdDT   = trgData->vpdTimeDifference();
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2007
+\see StTriggerData2009
+*/

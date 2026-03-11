@@ -1,0 +1,39 @@
+/*!
+\page page_stEmcModule StEmcModule
+
+\brief One readout module of a STAR EMC sub-detector, holding raw hits.
+
+\section emcmodule_overview Overview
+
+StEmcModule groups the raw hits (StEmcRawHit objects) that belong to a
+single readout module of an EMC sub-detector.  For BEMC towers there are
+120 modules (each covering 40 η-towers in a narrow φ slice); for SMD planes
+a module holds a set of strip channels.
+
+\section emcmodule_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StEmcModule
+\endcode
+
+Owned by \ref page_stEmcDetector "StEmcDetector"; accessed via
+\c StEmcDetector::module(uint).
+
+\section emcmodule_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| StSPtrVecEmcRawHit | mHits | Strongly-owned collection of raw hits in this module. |
+
+\section emcmodule_methods Key Methods
+
+- \c numberOfHits() — hit count.
+- \c hits() — mutable/const access to the hit vector.
+- \c getEnergy() — sum of calibrated hit energies [GeV].
+- \c printNumberOfHits() — print module hit count (ROOT browser).
+
+\section emcmodule_seealso See Also
+
+\ref page_stEmcRawHit "StEmcRawHit",
+\ref page_stEmcDetector "StEmcDetector"
+*/

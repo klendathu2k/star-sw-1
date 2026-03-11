@@ -1,0 +1,48 @@
+/*!
+\page page_stfmstriggerdetector StFmsTriggerDetector
+
+\brief FMS trigger detector data: multi-level DSM chain outputs and raw QT board data.
+
+\section stfmstriggerdetector_overview Overview
+\c StFmsTriggerDetector stores data from the Forward Meson Spectrometer (FMS) trigger
+system.  The FMS covers 2.5 < η < 4.0 and uses lead-glass calorimeter cells to select
+forward photons and π⁰s.  This class records Layer-0 through Layer-2 DSM output words
+and raw QT board ADC/TDC values for offline trigger verification.
+
+\section stfmstriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StFmsTriggerDetector
+\endcode
+
+\section stfmstriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| unsigned short[] | DSM / DSM01 / DSM02 | Layer-0 DSM output words |
+| unsigned short[] | DSM1 | Layer-1 DSM output words |
+| unsigned short[] | DSM2 | Layer-2 DSM output words |
+| raw QT arrays | — | QT board ADC/TDC words |
+
+\section stfmstriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int nHit() const` | Number of hits above threshold |
+| `int hit(int line) const` | Hit pattern for trigger line |
+| `int adc(int crate, int addr, int dcard, int dch) const` | QT board ADC |
+| `int tdc(int crate, int addr, int dcard, int dch) const` | QT board TDC |
+| `unsigned short DSM(int ch) const` | Layer-0 DSM word ch |
+| `unsigned short DSM1(int ch) const` | Layer-1 DSM word ch |
+| `unsigned short DSM2(int ch) const` | Layer-2 DSM word ch |
+
+\section stfmstriggerdetector_usage Usage Example
+\code{.cpp}
+StFmsTriggerDetector& fms = event->triggerDetectorCollection()->fms();
+cout << "FMS nHit = " << fms.nHit() << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stfpdtriggerdetector
+*/

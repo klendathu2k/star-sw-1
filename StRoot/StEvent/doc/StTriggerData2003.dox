@@ -1,0 +1,61 @@
+/**
+\page page_sttriggerdata2003 StTriggerData2003
+
+\brief Concrete StTriggerData implementation for STAR Run 3 (year 2003) trigger data.
+
+\section sec2003_overview Overview
+
+StTriggerData2003 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 3 (year 2003)</b> raw trigger data.  It wraps a \c TrgDataType2003 structure &mdash;
+the in-memory image of the DAQ trigger bank written by the STAR Trigger Control Unit (TCU) &mdash;
+and exposes its content through the common StTriggerData accessor API.
+
+\section sec2003_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2003
+\endcode
+
+\section sec2003_runyear Run Year
+Run 3, calendar year 2003 &mdash; Au+Au collisions at &radic;s = 200 GeV.
+
+\section sec2003_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TrgDataType2003* | Pointer to the raw Run 3 trigger bank in memory. |
+
+\section sec2003_methods Methods
+
+All public methods override the pure-virtual StTriggerData interface.  Detector subsystems
+active in Run 3: BBC, CTB, MWC, FPD, ZDC (without SMD), BEMC (partial), EEMC.
+
+Key method groups:
+- Generic trigger info: token(), triggerWord(), actionWord(), version(), numberOfPreXing(), numberOfPostXing()
+- Bunch/spin bits: bunchId48Bit(), bunchId7Bit(), spinBit(), spinBitYellow*(), spinBitBlue*()
+- DSM hierarchy: bemcLayer1DSM(), eemcLayer1DSM(), emcLayer2DSM(), fpdLayer1DSMRaw(), fpdLayer2DSMRaw()
+- CTB: ctbRaw(), ctb(), ctbTraySlat(), ctbSum()
+- MWC: mwc()
+- BBC: bbcADC(), bbcTDC(), bbcADCSum(), bbcADCSumLargeTile(), bbcEarliestTDC(), bbcTimeDifference()
+- FPD: fpd(), fpdSum()
+- ZDC: zdcAtChannel(), zdcAtAddress(), zdcUnAttenuated(), zdcAttenuated(), zdcADC(), zdcTDC(), zdcHardwareSum()
+  <br><b>Note:</b> zdcSMD() is NOT available in this format (added in 2004).
+- EMC: bemcHighTower(), bemcJetPatch(), eemcHighTower(), eemcJetPatch(), bemcHighestTowerADC(), eemcHighestTowerADC()
+- Expert: getTriggerStructure(), getTriggerStructure2003(), getRawSize(), l2Result(), l2ResultLength()
+
+getDsm0_BEMCE(), getDsm0_BEMCW(), and getDsm1_BEMC() return \c nullptr for this format.
+
+\section sec2003_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short bbcEast = trgData->bbcEarliestTDC(east, 0);
+    unsigned short zdcSum  = trgData->zdcHardwareSum(0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2004
+*/

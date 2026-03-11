@@ -1,0 +1,45 @@
+/*!
+\page page_stmwctriggerdetector StMwcTriggerDetector
+
+\brief MWC trigger detector data: MIP counts for 24 sectors × 4 sub-sectors × 11 time samples.
+
+\section stmwctriggerdetector_overview Overview
+\c StMwcTriggerDetector stores data from the Multi-Wire Chamber (MWC), an outer
+tracker used in early STAR running.  MIP counts are stored per sector, sub-sector,
+and time sample, along with auxiliary DSM words.  MWC data were combined with CTB
+data in the L0 DSMs to form combined multiplicity and topology trigger inputs.
+
+\section stmwctriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StMwcTriggerDetector
+\endcode
+
+\section stmwctriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Float_t[24][4][11] | mMips | MIP counts [sector][sub-sector][time sample] |
+| Float_t[32][11] | mAux | Auxiliary DSM words [word][time sample] |
+
+\section stmwctriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `float mips(int sector, int subsec, int evt=0) const` | MIP count |
+| `float aux(int i, int evt=0) const` | Auxiliary word i at sample evt |
+| `int numberOfSectors() const` | 24 |
+| `int numberOfSubSectors() const` | 4 |
+
+\section stmwctriggerdetector_usage Usage Example
+\code{.cpp}
+StMwcTriggerDetector& mwc = event->triggerDetectorCollection()->mwc();
+for (int s = 0; s < mwc.numberOfSectors(); ++s)
+    for (int ss = 0; ss < mwc.numberOfSubSectors(); ++ss)
+        if (mwc.mips(s, ss) > 0) cout << "MWC hit s=" << s << " ss=" << ss << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stctbtriggerdetector
+*/

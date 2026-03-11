@@ -1,0 +1,70 @@
+/*!
+\page page_sthltracknode StHltTrackNode
+
+\brief HLT track node grouping a global track, primary track, BTOF hit, and BEMC tower hit for one particle candidate.
+
+\section overview Overview
+
+`StHltTrackNode` groups the global track, primary track, BTOF hit, and BEMC tower hit that belong
+to a single particle candidate in the HLT. It stores geometrical matching quantities between the
+track extrapolation and each detector element. Because it inherits from
+\ref StHltTriggerReasonCapable, it can itself be the trigger object recorded in an
+\ref StHltTriggerReason entry. Back-links from \ref StHltBEmcTowerHit and \ref StHltBTofHit
+point to their parent `StHltTrackNode`.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTriggerReasonCapable
+        └── StHltTrackNode
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `int` | `mGlobalTrackSN` | Serial number of associated global track |
+| `int` | `mPrimaryTrackSN` | Serial number of associated primary track |
+| `int` | `mTofHitSN` | Serial number of associated BTOF hit |
+| `int` | `mEmcTowerSN` | Serial number of associated BEMC tower hit |
+| `double` | `mBEmcMatchPhiDiff` | φ difference between track and BEMC tower (rad) |
+| `double` | `mBEmcMatchZEdge` | z-edge distance for BEMC tower match (cm) |
+| `float` | `mBTofProjChannel` | Projected BTOF channel |
+| `float` | `mBTofCellLocalY` | Local y within matched BTOF cell (cm) |
+| `float` | `mBTofCellLocalZ` | Local z within matched BTOF cell (cm) |
+| `float` | `mBTofPathLength` | Path length to matched BTOF hit (cm) |
+| `float` | `mBeta` | Particle velocity β = v/c |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StHltTrack* globalTrack() const` | Associated global track |
+| `StHltTrack* primaryTrack() const` | Associated primary track |
+| `StHltBTofHit* bTofHit() const` | Associated BTOF hit |
+| `StHltBEmcTowerHit* bEmcTowerHit() const` | Associated BEMC tower hit |
+| `double bEmcMatchPhiDiff() const` | φ difference for BEMC match (rad) |
+| `double bEmcMatchZEdge() const` | z-edge distance for BEMC match (cm) |
+| `float bTofPathLength() const` | Path length to BTOF hit (cm) |
+| `float beta() const` | Particle velocity β |
+
+\section example Usage Example
+
+\code{.cpp}
+const StSPtrVecHltTrackNode& nodes = hlt->trackNode();
+for (size_t i = 0; i < nodes.size(); ++i) {
+    const StHltTrackNode* node = nodes[i];
+    if (node->bTofHit())
+        cout << "beta=" << node->beta() << endl;
+}
+\endcode
+
+\see StHltEvent
+\see StHltTrack
+\see StHltBTofHit
+\see StHltBEmcTowerHit
+\see StHltTriggerReasonCapable
+\see StHltTriggerReason
+*/

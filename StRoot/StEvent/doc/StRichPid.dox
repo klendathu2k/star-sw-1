@@ -1,0 +1,80 @@
+/*!
+\page page_strichpid StRichPid
+
+\brief \ref page_strichpid "StRichPid" — per-species RICH PID hypothesis with ring statistics.
+
+\section strichpid_overview Overview
+StRichPid stores the Cherenkov ring statistics for a single particle species
+hypothesis (pion, kaon, or proton). Ring quantities are provided in two forms:
+\e total (full geometric ring) and \e truncated (after a constant pad-plane
+area cut that equalises acceptance across species). The class also holds the
+associated photon hits and per-photon geometry records
+(\ref page_strichphotoninfo "StRichPhotonInfo").
+Multiple StRichPid objects are owned by
+\ref page_strichpidtraits "StRichPidTraits".
+
+\section strichpid_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichPid
+\endcode
+
+\section strichpid_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| StParticleDefinition* | mParticleType | Particle species (transient) |
+| Int_t | mParticleNumber | PDG-encoded particle number |
+| StPtrVecRichHit | mAssociatedHits | Photon hits on this ring (not owned) |
+| StSPtrVecRichPhotonInfo | mPhotonInfo | Per-photon geometry records |
+| StThreeVectorD | mMipResidual | MIP-to-ring-centre residual |
+| Float_t | mTotalAzimuth | Full-ring azimuthal coverage (rad) |
+| Float_t | mTotalArea | Full-ring pad-plane area |
+| UShort_t | mTotalHits | Photon hits on full ring |
+| Float_t | mTotalDensity | Photon density on full ring |
+| Float_t | mTruncatedAzimuth | Truncated azimuthal coverage (rad) |
+| Float_t | mTruncatedArea | Truncated pad-plane area |
+| UShort_t | mTruncatedHits | Photon hits after area cut |
+| Float_t | mTruncatedDensity | Photon density after area cut |
+| Float_t | mConstantAreaCut | Constant pad-plane area cut value |
+| UInt_t | mFlags | PID status flag bit field |
+
+\section strichpid_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| StParticleDefinition* getRingType() const | Particle species definition |
+| int getParticleNumber() const | PDG-encoded particle number |
+| StThreeVectorD getMipResidual() const | MIP-to-ring-centre residual |
+| float getTotalAzimuth() const | Full-ring azimuthal coverage (rad) |
+| float getTotalArea() const | Full-ring pad-plane area |
+| unsigned short getTotalHits() const | Photon hits on full ring |
+| float getTotalDensity() const | Photon density on full ring |
+| float getTruncatedAzimuth() const | Truncated azimuthal coverage (rad) |
+| float getTruncatedArea() const | Truncated pad-plane area |
+| unsigned short getTruncatedHits() const | Photon hits after area cut |
+| float getTruncatedDensity() const | Photon density after area cut |
+| float getConstantAreaCut() const | Constant-area cut value |
+| void setConstantAreaCut(float) | Set constant-area cut |
+| const StPtrVecRichHit& getAssociatedRichHits() const | Photon hits on this ring |
+| void addHit(StRichHit*) | Add a photon hit |
+| const StSPtrVecRichPhotonInfo& getPhotonInfo() | All per-photon geometry records |
+| StRichPhotonInfo* getPhotonInfo(int) | Per-photon geometry at index |
+| void addPhotonInfo(StRichPhotonInfo*) | Append a photon geometry record |
+| bool isSet(StRichPidFlag) const | Test a PID flag bit |
+| void setBit(StRichPidFlag) | Set a PID flag bit |
+| void unSetBit(StRichPidFlag) | Clear a PID flag bit |
+
+\section strichpid_example Usage Example
+\code{.cpp}
+StRichPid* pionPid = rpt->getPid(StPionPlus::instance());
+if (pionPid) {
+    unsigned short n = pionPid->getTruncatedHits();
+    float density    = pionPid->getTruncatedDensity();
+}
+\endcode
+
+\section strichpid_related Related Classes
+\ref page_strichpidtraits "StRichPidTraits" — parent object holding all species hypotheses. \n
+\ref page_strichphotoninfo "StRichPhotonInfo" — per-photon geometry attached to each hypothesis. \n
+\ref page_strichhit "StRichHit" — photon hits referenced by this hypothesis.
+*/

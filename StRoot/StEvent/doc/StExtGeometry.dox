@@ -1,0 +1,56 @@
+/*!
+\page page_stextgeometry StExtGeometry
+
+\brief Extended track geometry (helix state) extrapolated to a named external detector surface.
+
+\section stextgeometry_overview Overview
+
+\ref StExtGeometry stores the track state — cylindrical position (r_xy, φ, z),
+helix parameters (ψ, 1/p_T, tan λ, κ), arc length, and a 6×6 error matrix —
+at the extrapolation surface of a specific external detector (e.g. BEMC, BTOF).
+
+Multiple instances for the same track are chained in a singly-linked list sorted
+by increasing r_xy, attached to the parent \c StTrack via \c StTrack::extGeometry().
+
+\section stextgeometry_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StExtGeometry
+\endcode
+
+\section stextgeometry_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mName | \c char[8] | External surface name (null-terminated, ≤7 chars). |
+| \c mNext | \c StExtGeometry* | Next in linked list (null = last). |
+| \c mRxy | \c Float_t | Radial distance of extrapolation point in xy (cm). |
+| \c mPhi | \c Float_t | Azimuthal angle of extrapolation point (rad). |
+| \c mZ | \c Float_t | z-coordinate (cm). |
+| \c mPsi | \c Float_t | Momentum azimuth ψ at this surface (rad). |
+| \c mPti | \c Float_t | Signed 1/p_T (sign = −sign(qB)) (GeV/c)⁻¹. |
+| \c mTan | \c Float_t | tan(λ) = p_z/p_T. |
+| \c mCurv | \c Float_t | Signed curvature κ (cm⁻¹). |
+| \c mLen | \c Float_t | Arc length from primary vertex (cm). |
+| \c mG[15] | \c Float_t | Upper-triangle of 6×6 error matrix. |
+
+\section stextgeometry_params Parameter Indices
+
+\c kPhi=0, \c kZ=1, \c kPsi=2, \c kPti=3, \c kTan=4, \c kCurv=5, \c kLen=6.
+
+\section stextgeometry_example Usage Example
+
+\code{.cpp}
+for (const StExtGeometry* eg = track->extGeometry();
+     eg; eg = eg->next()) {
+    if (std::string(eg->name()) == "BEMC") {
+        StThreeVectorF pos = eg->origin();   // [cm]
+        double pt          = eg->pt();       // [GeV/c]
+    }
+}
+\endcode
+
+\see StTrack
+\see StHelixModel
+*/

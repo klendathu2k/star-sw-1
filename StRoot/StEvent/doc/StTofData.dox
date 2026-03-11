@@ -1,0 +1,64 @@
+/*!
+\page page_sttofdata StTofData
+
+\brief Raw electronic data from a single channel of the legacy TOFp detector system.
+
+\section tofdata_overview Overview
+
+StTofData stores raw ADC and TDC data from a single channel of the legacy TOFp detector system
+(TOFp + pVPD), the earliest STAR barrel TOF subsystem.
+
+It is active in early STAR run data and is \b superseded by \ref StTofRawData (Run 5+)
+and ultimately by the full BTOF system.
+
+Each object holds one channel's raw ADC and TDC values, plus derived time-calibration (TC) and
+slewing-correction (SC) quantities computed during offline reconstruction.
+Extended leading/trailing edge TDC fields (mLeadingTdc, mTrailingTdc) were added in the Run 5 format.
+
+Objects are held in \ref StTofCollection via StEvent::tofCollection().
+
+\section tofdata_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StTofData
+\endcode
+
+\section tofdata_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mDataIndex | UShort_t | Channel index |
+| mAdc | UShort_t | Raw ADC value |
+| mTdc | UShort_t | Raw TDC value |
+| mTc | Short_t | Time calibration correction |
+| mSc | UShort_t | Slewing correction |
+| mLeadingTdc | UInt_t | Leading-edge TDC count (Run 5+ format) |
+| mTrailingTdc | UInt_t | Trailing-edge TDC count (Run 5+ format) |
+
+\section tofdata_methods Key Methods
+
+- dataIndex() — channel index
+- adc() — raw ADC value
+- tdc() — raw TDC value
+- tc() — time calibration value
+- sc() — slewing correction value
+- leadingTdc() — leading-edge TDC count
+- trailingTdc() — trailing-edge TDC count
+
+\section tofdata_example Usage Example
+
+\code{.cpp}
+StTofCollection* coll = event->tofCollection();
+if (coll) {
+    const StSPtrVecTofData& data = coll->tofData();
+    for (const auto& d : data) {
+        unsigned short idx = d->dataIndex();
+        unsigned short adc = d->adc();
+        unsigned short tdc = d->tdc();
+        short          tc  = d->tc();
+    }
+}
+\endcode
+
+\see StTofCell, StTofRawData, StTofCollection
+*/

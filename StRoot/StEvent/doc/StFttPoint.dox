@@ -1,0 +1,67 @@
+/*!
+\page page_stfttpoint StFttPoint
+
+\brief Reconstructed space point in the FTT from combined cluster projections.
+
+\section fttpoint_overview Overview
+
+StFttPoint is a reconstructed space point in the **Forward sTGC Tracker (FTT)**.
+It is formed by combining up to four cluster projections (horizontal, vertical, and diagonal
+orientations) within a single FTT plane and quadrant.  Both local strip-unit coordinates
+and global STAR Cartesian coordinates are stored.
+
+**Detector**: Forward sTGC Tracker (FTT)  
+**Stage**: Cluster combination → 2D/3D space point + global coordinate assignment
+
+\section fttpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFttPoint
+\endcode
+
+Stored in \c StFttCollection via \c StPtrVecFttPoint.
+
+\section fttpoint_coordinates Local vs. Global Coordinates
+
+| Set | Access | Units | Description |
+|-----|--------|-------|-------------|
+| Local | \c x(), \c y() | strip units | Internal reconstruction coordinates |
+| Global | \c xyz() | cm | Global STAR Cartesian position |
+
+\section fttpoint_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c UChar_t | \c mPlane | Detector plane (0–3) |
+| \c UChar_t | \c mQuadrant | Quadrant A–D (0–3) |
+| \c Float_t | \c mX, \c mY | Local strip-unit coordinates |
+| \c StFttCluster*[4] | \c mClusters | Parent clusters by readout direction (0–3) |
+| \c StThreeVectorD | \c mXYZ | Global STAR position (cm) |
+| \c UShort_t | \c mIdTruth, \c mQaTruth | MC truth ID and quality |
+
+\section fttpoint_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c plane(), \c quadrant() | Detector location |
+| \c x(), \c y() | Local strip-unit coordinates |
+| \c xyz() | Global STAR position (cm) |
+| \c nClusters() | Number of contributing cluster projections |
+| \c cluster(i) | Parent cluster for direction i |
+| \c addCluster(cluster, dir) | Add parent cluster for direction \c dir |
+| \c setXYZ(p3) | Set global position |
+
+\section fttpoint_example Usage Example
+
+\code{.cpp}
+for (const StFttPoint* pt : fttColl->points()) {
+    const StThreeVectorD& xyz = pt->xyz(); // global cm
+    double gx = xyz.x();
+    double gy = xyz.y();
+    double gz = xyz.z();
+    size_t nCl = pt->nClusters();
+}
+\endcode
+
+\see StFttCluster, StFttRawHit, StFttCollection
+*/

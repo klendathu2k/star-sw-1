@@ -1,0 +1,124 @@
+/*!
+\page page_stistHitCollection StIstHitCollection — Collection Documentation
+
+\ref StIstHitCollection is the top-level container for all reconstructed
+Intermediate Silicon Tracker (IST) hits in a single STAR event.  The IST was
+the middle layer of the STAR Heavy Flavour Tracker (HFT), bridging the PXL
+pixel detector and the outer SSD/SST layer for track extrapolation in
+heavy-flavour vertex finding.  Hits are organised in a three-level hierarchy:
+detector → ladder → sensor.
+
+\see StIstHitCollection
+\see StIstLadderHitCollection
+\see StIstSensorHitCollection
+\see StIstHit
+
+---
+
+\section ist_hierarchy Class Hierarchy
+
+\code
+StIstHitCollection                   (top-level, one per event)
+└── StIstLadderHitCollection           [kIstNumLadders=24 ladders, indices 0–23]
+    └── StIstSensorHitCollection         [kIstNumSensorsPerLadder=6 sensors, indices 0–5]
+        └── StSPtrVecIstHit                (owns the StIstHit objects)
+\endcode
+
+The constants \c kIstNumLadders (24) and \c kIstNumSensorsPerLadder (6) are
+defined in \c StEvent/StEnumerations.h inside the \c StIstConsts namespace.
+
+All sub-collection nodes are embedded (stack-allocated) inside their parent;
+no heap allocation is used for collection nodes.
+
+\section ist_containment Containment Model
+
+| Level    | Class                          | Contents                                    |
+|----------|--------------------------------|---------------------------------------------|
+| Detector | \ref StIstHitCollection        | 24 \ref StIstLadderHitCollection objects    |
+| Ladder   | \ref StIstLadderHitCollection  | 6 \ref StIstSensorHitCollection objects     |
+| Sensor   | \ref StIstSensorHitCollection  | `StSPtrVecIstHit` of `StIstHit*`            |
+
+\section ist_ownership Object Ownership
+
+\ref StIstSensorHitCollection holds its hits in a member of type
+\c StSPtrVecIstHit, which is a **smart-pointer vector** that **owns** the
+\ref StIstHit objects it contains.  The \ref StIstSensorHitCollection destructor
+explicitly deletes every hit in the vector (necessary because \ref StIstHit
+provides its own pool-allocated \c new/delete).
+
+Ladder and sensor sub-collections are embedded members of their parent classes
+and are destroyed automatically with the parent.  \ref StIstHitCollection itself
+is owned by the StEvent framework (\c St_DataSet / \c StXRefMain).
+
+\warning Do **not** delete individual \ref StIstHit pointers obtained from the
+collection.  The collection manages their lifetimes.
+
+\section ist_members Data Members
+
+\subsection ist_members_top StIstHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StIstLadderHitCollection[24]` | `mLadders` | Fixed-size array of 24 ladder sub-collections, sized by `kIstNumLadders`. |
+| `UChar_t` | `mClusteringType` | Identifier for the clustering algorithm used to produce the hits. |
+
+\subsection ist_members_ladder StIstLadderHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StIstSensorHitCollection[6]` | `mSensors` | Fixed-size array of 6 sensor sub-collections per ladder, sized by `kIstNumSensorsPerLadder`. |
+
+\subsection ist_members_sensor StIstSensorHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSPtrVecIstHit` | `mHits` | Smart-pointer vector of `StIstHit*`; owns all contained hits. |
+
+\section ist_methods Key Methods
+
+\subsection ist_methods_top StIstHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `addHit(StIstHit*)` | `bool` | Routes hit to correct ladder/sensor. Returns `false` if any index is out of range. |
+| `numberOfHits() const` | `unsigned int` | Total hits across all ladders and sensors. |
+| `getClusteringType() const` | `unsigned char` | Returns the clustering algorithm type identifier. |
+| `setClusteringType(unsigned char)` | `void` | Sets the clustering algorithm type identifier. |
+| `ladder(unsigned int)` | `StIstLadderHitCollection*` | 0-based ladder access; returns `nullptr` if out of range. |
+
+\subsection ist_methods_ladder StIstLadderHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `numberOfHits() const` | `unsigned int` | Total hits on this ladder. |
+| `sensor(unsigned int)` | `StIstSensorHitCollection*` | 0-based sensor access; returns `nullptr` if out of range. |
+
+\subsection ist_methods_sensor StIstSensorHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `hits()` | `StSPtrVecIstHit&` | Mutable reference to the hit vector. |
+| `hits() const` | `const StSPtrVecIstHit&` | Const reference to the hit vector. |
+
+\section ist_example Usage Example
+
+\code{.cpp}
+const StIstHitCollection* istColl = event->istHitCollection();
+if (!istColl) return;
+
+for (unsigned int iLad = 0; iLad < kIstNumLadders; ++iLad) {
+    const StIstLadderHitCollection* ladderColl = istColl->ladder(iLad);
+    if (!ladderColl) continue;
+
+    for (unsigned int iSen = 0; iSen < kIstNumSensorsPerLadder; ++iSen) {
+        const StIstSensorHitCollection* senColl = ladderColl->sensor(iSen);
+        if (!senColl) continue;
+
+        const StSPtrVecIstHit& hits = senColl->hits();
+        for (const StIstHit* hit : hits) {
+            // process hit ...
+        }
+    }
+}
+\endcode
+*/

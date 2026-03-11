@@ -1,0 +1,70 @@
+/*!
+\page page_stl3algorithminfo StL3AlgorithmInfo
+
+\brief Per-algorithm configuration and event counters for a single L3 online trigger algorithm.
+
+\section stl3algorithminfo_overview Overview
+\c StL3AlgorithmInfo stores the configuration and per-event results for one L3 online
+trigger algorithm.  It records whether the algorithm was enabled, whether it accepted
+the current event, whether it requested full TPC reconstruction, run-segment cumulative
+counters, pre- and post-scale factors, algorithm-specific integer and floating-point
+configuration parameters, and per-event result data words.
+
+\section stl3algorithminfo_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StL3AlgorithmInfo
+\endcode
+
+\section stl3algorithminfo_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mId | Algorithm identifier |
+| Bool_t | mOn | Algorithm was enabled |
+| Bool_t | mAccept | Algorithm accepted this event |
+| Bool_t | mBuild | Full TPC build requested |
+| Int_t | mNumberOfProcessedEvents | Cumulative processed events |
+| Int_t | mNumberOfAcceptedEvents | Cumulative accepted events |
+| Int_t | mNumberOfBuildEvents | Cumulative build-requested events |
+| UShort_t | mDataSize | Per-event data word count |
+| TArrayF | mDataArray | Per-event floating-point data |
+| Int_t | mPreScale | Pre-scale factor |
+| Int_t | mPostScale | Post-scale factor |
+| UShort_t | mIntParameterSize | Integer config parameter count |
+| TArrayI | mIntParameterArray | Integer config parameters |
+| UShort_t | mFloatParameterSize | Float config parameter count |
+| TArrayF | mFloatParameterArray | Float config parameters |
+
+\section stl3algorithminfo_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int id() const` | Algorithm identifier |
+| `bool on() const` | Algorithm enabled flag |
+| `bool accept() const` | Event accept flag |
+| `bool build() const` | Full build requested flag |
+| `int numberOfProcessedEvents() const` | Cumulative processed count |
+| `int numberOfAcceptedEvents() const` | Cumulative accepted count |
+| `int numberOfBuildEvents() const` | Cumulative build count |
+| `int dataSize() const` | Per-event data word count |
+| `float data(int index) const` | Per-event data word at index |
+| `int preScale() const` | Pre-scale factor |
+| `int postScale() const` | Post-scale factor |
+| `int intParameter(int i) const` | Integer config param i |
+| `float floatParameter(int i) const` | Float config param i |
+
+\section stl3algorithminfo_usage Usage Example
+\code{.cpp}
+StL3EventSummary* sum = event->l3Trigger()->l3EventSummary();
+for (int i = 0; i < sum->numberOfAlgorithms(); ++i) {
+    StL3AlgorithmInfo* alg = sum->algorithms()[i];
+    if (alg->accept())
+        cout << "Alg " << alg->id() << " accepted (preScale=" << alg->preScale() << ")" << endl;
+}
+\endcode
+
+\see \ref page_stl3eventsummary
+\see \ref page_stl3trigger
+*/

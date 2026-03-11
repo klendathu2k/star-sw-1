@@ -1,0 +1,52 @@
+/**
+\page page_sttriggerdata2004 StTriggerData2004
+
+\brief Concrete StTriggerData implementation for STAR Run 4 (year 2004) trigger data.
+
+\section sec2004_overview Overview
+
+StTriggerData2004 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 4 (year 2004)</b> raw trigger data.  It wraps a \c TrgDataType2004 structure and
+exposes its content through the common StTriggerData accessor API.
+
+Compared to StTriggerData2003, Run 4 adds the <b>ZDC Shower-Maximum Detector (ZDC-SMD)</b>
+readout via zdcSMD().
+
+\section sec2004_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2004
+\endcode
+
+\section sec2004_runyear Run Year
+Run 4, calendar year 2004 &mdash; Au+Au collisions at &radic;s = 200 GeV.
+
+\section sec2004_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TrgDataType2004* | Pointer to the raw Run 4 trigger bank in memory. |
+
+\section sec2004_new New Compared to 2003
+
+- zdcSMD(StBeamDirection eastwest, int verthori, int strip, int prepost=0) &mdash;
+  ZDC Shower-Maximum Detector strip ADC.  \c verthori selects vertical (0) or horizontal (1)
+  readout plane; \c strip selects the strip number.
+
+getDsm0_BEMCE(), getDsm0_BEMCW(), and getDsm1_BEMC() return \c nullptr for this format.
+
+\section sec2004_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short zdcSmdEastV3 = trgData->zdcSMD(east, 0, 3, 0);
+    unsigned short bbcWest      = trgData->bbcADCSum(west, 0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2003
+\see StTriggerData2005
+*/

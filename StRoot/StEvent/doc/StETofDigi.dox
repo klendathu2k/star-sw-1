@@ -1,0 +1,76 @@
+/*!
+\page page_stetofdigi StETofDigi
+
+\brief Electronic digitisation from a single MRPC strip-end in the STAR Endcap TOF (eTOF).
+
+\section etofdigi_overview Overview
+
+StETofDigi represents a single digitised signal from one end of an MRPC strip
+in the STAR Endcap TOF (eTOF) detector, operational since Run 19 (2019).
+
+Each MRPC strip is read from two sides (top and bottom).
+Two matching digis — one from each side of the same strip — are merged by the hit-finding algorithm
+to form a single \ref StETofHit.
+
+A digi carries:
+- \b Geometry address: sector, z-plane, counter, strip, side.
+- \b Hardware address: ROC ID, Get4 TDC chip ID, electronic channel.
+- \b Raw and calibrated time and time-over-threshold (ToT).
+
+Digis are stored in \ref StETofCollection via StEvent::etofCollection().
+
+\section etofdigi_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StETofDigi
+\endcode
+
+\section etofdigi_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mSector | UInt_t | STAR sector number |
+| mZPlane | UInt_t | z-plane number (1–3) |
+| mCounter | UInt_t | Counter (MRPC) number (1–3) |
+| mStrip | UInt_t | Strip number within counter (1–32) |
+| mSide | UInt_t | Readout side: 1=top, 2=bottom |
+| mRocId | UInt_t | Readout Controller (ROC) hardware ID |
+| mGet4Id | UInt_t | Get4 TDC chip hardware ID |
+| mElChan | UInt_t | Electronic channel within Get4 |
+| mRawTime | Double_t | Uncalibrated time from TDC [ns] |
+| mCalibTime | Double_t | Calibrated time [ns] |
+| mRawTot | Double_t | Uncalibrated time-over-threshold [ns] |
+| mCalibTot | Double_t | Calibrated time-over-threshold [ns] |
+| mAssociatedHit | StETofHit* | Merged hit formed from this digi |
+
+\section etofdigi_methods Key Methods
+
+- sector(), zPlane(), counter(), strip(), side() — geometry address
+- rocId(), get4Id(), elChan() — hardware address
+- rawTime(), calibTime() — timing [ns]
+- rawTot(), calibTot() — time-over-threshold [ns]
+- rawCharge() / calibCharge() — aliases for rawTot() / calibTot()
+- associatedHit() — pointer to merged \ref StETofHit
+- setGeoAddress(sector, zPlane, counter, channel, side) — set geometry in one call
+- setHwAddress(rocId, get4Id, elChan) — set hardware address
+- operator<, compare() — sort/compare by calibrated time
+
+\section etofdigi_example Usage Example
+
+\code{.cpp}
+StETofCollection* coll = event->etofCollection();
+if (coll) {
+    const StSPtrVecETofDigi& digis = coll->etofDigis();
+    for (const auto& d : digis) {
+        unsigned int strip    = d->strip();      // 1–32
+        unsigned int side     = d->side();       // 1=top, 2=bottom
+        double       rawTime  = d->rawTime();    // [ns]
+        double       calibTot = d->calibTot();   // [ns]
+        if (d->associatedHit())
+            double hitTime = d->associatedHit()->time();
+    }
+}
+\endcode
+
+\see StETofHit, StETofHeader, StETofCollection
+*/

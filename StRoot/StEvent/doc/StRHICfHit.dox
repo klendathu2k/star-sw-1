@@ -1,0 +1,84 @@
+/*!
+\page page_strhicfhit StRHICfHit
+
+\brief Reconstructed shower data from the RHICf dual-tower calorimeter.
+
+\section rhicfhit_overview Overview
+
+StRHICfHit stores the full reconstructed shower information for the
+**RHICf very-forward calorimeter** (η > 6).  The detector has two towers (small: tower 0,
+large: tower 1), each with 16 longitudinal GSO sampling plates and position-sensitive
+GSO bars (20 bars for the small tower, 40 for the large).
+
+The class stores energy deposits in plates and bars (always present) plus optional
+dynamic arrays for shower depth parameters (L20, L90) and single/multi-shower fit
+results.  Call \c initDataArray() before accessing the optional arrays.
+
+**Detector**: RHICf very-forward calorimeter (η > 6)  
+**Stage**: ADC → energy calibration → shower reconstruction
+
+\section rhicfhit_hierarchy Class Hierarchy
+
+\code
+TObject → StRHICfHit
+\endcode
+
+Stored in \c StRHICfCollection.
+
+\section rhicfhit_geometry Geometry
+
+| Constant | Value | Meaning |
+|----------|-------|---------|
+| \c kRHICfNtower | 2 | Towers (0 = small, 1 = large) |
+| \c kRHICfNplate | 16 | GSO sampling plates per tower |
+| \c kRHICfNlayer | 4 | Bar readout layers |
+| \c kRHICfNbarSmall | 20 | Bars in small tower |
+| \c kRHICfNbarLarge | 40 | Bars in large tower |
+
+\section rhicfhit_members Data Members
+
+Always-present arrays (streamed):
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Float_t[2][16] | \c mPlateE | GSO plate energies [tower][plate] (GeV) |
+| \c Float_t[4][2][20] | \c mGSOBarSmallE | Small-tower bar energies [layer][xy][bar] (GeV) |
+| \c Float_t[4][2][40] | \c mGSOBarLargeE | Large-tower bar energies [layer][xy][bar] (GeV) |
+
+Optional arrays (allocated by \c initDataArray()):
+
+| Member | Description |
+|--------|-------------|
+| \c mL20 | Shower depth at 20% containment (X₀) per tower |
+| \c mL90 | Shower depth at 90% containment (X₀) per tower |
+| \c mSingleHitPos | Single-shower transverse position (mm) |
+| \c mMultiHitPos | Multi-shower component positions (mm) |
+| \c mMultiEnergySum | Multi-shower energy sums (GeV) |
+
+\section rhicfhit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c initDataArray() | Allocate optional TArray data |
+| \c isSaveDataArray() | True if optional arrays are allocated |
+| \c getPlateEnergy(tower, plate) | Sampling plate energy (GeV) |
+| \c getGSOBarEnergy(tower, layer, xy, bar) | GSO bar energy (GeV) |
+| \c getL20(tower), \c getL90(tower) | Shower depth parameters (X₀) |
+| \c getSingleHitPos(tower, layer, xy) | Single-shower position (mm) |
+| \c getMultiHitPos(tower, layer, xy, order) | Multi-shower component position (mm) |
+
+\section rhicfhit_example Usage Example
+
+\code{.cpp}
+StRHICfHit* hit = rhicfColl->hit();
+for (int tower = 0; tower < kRHICfNtower; ++tower) {
+    float totalE = 0.f;
+    for (int plate = 0; plate < kRHICfNplate; ++plate)
+        totalE += hit->getPlateEnergy(tower, plate);
+    if (hit->isSaveDataArray())
+        float l90 = hit->getL90(tower);
+}
+\endcode
+
+\see StRHICfRawHit, StRHICfPoint, StRHICfCollection
+*/

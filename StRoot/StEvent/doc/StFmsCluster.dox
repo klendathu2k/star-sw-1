@@ -1,0 +1,58 @@
+/*!
+\page page_stFmsCluster StFmsCluster
+
+\brief Reconstructed cluster of adjacent FMS lead-glass towers.
+
+\section fmsCluster_overview Overview
+
+StFmsCluster represents a group of adjacent FMS lead-glass towers sharing
+energy from one or more particles (2.5 < η < 4.0).  The class stores total
+energy (0th moment), centroid position in local grid units (1st moment),
+2nd-moment shape parameters, chi2 quality of 1- and 2-photon shower profile
+fits, and the reconstructed four-momentum.  Non-owning references link it to
+constituent StFmsHit tower objects and fitted StFmsPoint photon points.
+
+\section fmsCluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFmsCluster
+\endcode
+
+Stored in \ref page_stFmsCollection "StFmsCollection".
+
+\section fmsCluster_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetectorId | 8=NLarge, 9=SLarge, 10=NSmall, 11=SSmall. |
+| Int_t | mCategory | Category: 1-photon, 2-photon, etc. |
+| Int_t | mNTowers | Number of contributing towers. |
+| Float_t | mEnergy | Total energy [GeV]. |
+| Float_t | mX | x centroid in local grid units. |
+| Float_t | mY | y centroid in local grid units. |
+| Float_t | mSigmaMin | Minor-axis 2nd moment. |
+| Float_t | mSigmaMax | Major-axis 2nd moment. |
+| Float_t | mChi2Ndf1Photon | χ²/ndf for 1-photon fit. |
+| Float_t | mChi2Ndf2Photon | χ²/ndf for 2-photon fit. |
+| Int_t | mId | Event-wide cluster ID. |
+| StLorentzVectorF | mFourMomentum | Cluster four-momentum. |
+| StPtrVecFmsPoint | mPhotons | Fitted photon points (non-owning). |
+| StPtrVecFmsHit | mHits | Constituent hits (non-owning). |
+
+\section fmsCluster_methods Key Methods
+
+- \c detectorId() — sub-detector ID.
+- \c category(), \c nTowers(), \c nPhotons() — classification.
+- \c energy(), \c x(), \c y() — energy and centroid.
+- \c sigmaMin(), \c sigmaMax() — shower shape.
+- \c chi2Ndf1Photon(), \c chi2Ndf2Photon() — fit quality.
+- \c id(), \c fourMomentum() — identification and kinematics.
+- \c hits(), \c points() — constituent objects.
+- \c print() — print summary.
+
+\section fmsCluster_seealso See Also
+
+\ref page_stFmsHit "StFmsHit",
+\ref page_stFmsPoint "StFmsPoint",
+\ref page_stFmsPointPair "StFmsPointPair"
+*/

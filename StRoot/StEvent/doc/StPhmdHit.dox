@@ -1,0 +1,51 @@
+/*!
+\page page_stPhmdHit StPhmdHit
+
+\brief Single pad-cell hit in the STAR Photon Multiplicity Detector (PHMD/PMD).
+
+\section phmdHit_overview Overview
+
+StPhmdHit stores the raw signal from one cell of the STAR PHMD (Photon
+Multiplicity Detector) which covers forward rapidity 2.3 < η < 3.9.  The
+detector consists of two planes: PMD (photon detection, behind lead converter)
+and CPV (charged-particle veto, in front of lead).  Each plane has 12
+supermodules containing a honeycomb-cell pad array.
+
+A hit records the supermodule, sub-detector (PMD or CPV), cell row and
+column, the raw ADC count, and the calibrated energy deposition.
+
+\section phmdHit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StPhmdHit
+\endcode
+
+Owned by \ref page_stPhmdModule "StPhmdModule" inside
+\ref page_stPhmdDetector "StPhmdDetector".
+
+\section phmdHit_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| Int_t | mSuperModuleNumber | Global supermodule index [0, 11]. |
+| Int_t | mSubDetector | 0 = PMD (photon), 1 = CPV (charged-particle veto). |
+| Int_t | mRow | Cell row within the supermodule. |
+| Int_t | mCol | Cell column within the supermodule. |
+| Float_t | mEnergy | Calibrated energy deposit [GeV]. |
+| Int_t | mAdc | Raw ADC count. |
+
+\section phmdHit_methods Key Methods
+
+- \c superModule() / \c module() — supermodule index.
+- \c subDetector() — PMD or CPV plane.
+- \c row() / \c column() — cell position.
+- \c energy() — calibrated energy [GeV].
+- \c adc() — raw ADC count.
+- \c set*() — corresponding setters.
+
+\section phmdHit_seealso See Also
+
+\ref page_stPhmdCluster "StPhmdCluster",
+\ref page_stPhmdModule "StPhmdModule",
+\ref page_stPhmdDetector "StPhmdDetector"
+*/

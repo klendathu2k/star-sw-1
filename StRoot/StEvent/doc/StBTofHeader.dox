@@ -1,0 +1,79 @@
+/*!
+\page page_stbtofheader StBTofHeader
+
+\brief Event-level header data for the STAR Barrel TOF (BTOF) detector, including VPD summary.
+
+\section btofheader_overview Overview
+
+StBTofHeader stores per-event timing and VPD (Vertex Position Detector) information
+collected alongside the BTOF data.
+It has been present since Run 8 (2007) and provides:
+
+- Per-fiber DAQ header and trigger words for the four BTOF fibers.
+- VPD hit-pattern bitmasks, individual tube times, and vertex z candidates.
+- The event start time (t0) derived from VPD timing, used for all BTOF TOF calculations.
+- Bookkeeping of BTOF hits used in the t0 determination.
+
+The VPD has up to 19 tubes on each side (east/west).
+The time difference between east and west signals encodes the collision z-vertex.
+
+The object is held by \ref StBTofCollection via StEvent::btofCollection()->tofHeader().
+
+\section btofheader_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StBTofHeader
+\endcode
+
+\section btofheader_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mFiberHeader[4] | Short_t | DAQ header words per fiber |
+| mFiberTriggerWord[4] | UInt_t | Trigger words per fiber |
+| mVpdHitPattern[2] | UInt_t | VPD tube bitmasks: [0]=east, [1]=west |
+| mVpdVz[20] | Float_t | VPD vertex z candidates [cm] |
+| mTStart | Double_t | Event start time [ns] |
+| mTStartErr | Double_t | Uncertainty on start time [ns] |
+| mTDiff | Double_t | VPD east–west time difference [ns] |
+| mVpdTime[2][19] | Double_t | Individual VPD tube times [ns] |
+| mTriggerTime[4] | UInt_t | Trigger time TDC counts per fiber |
+| mNTzero | Short_t | BTOF hits used for t0 |
+| mNTzeroCan | Short_t | BTOF hits in t0 candidate sample |
+| mTCanFirst | Double_t | Earliest t0 candidate time [ns] |
+| mTCanLast | Double_t | Latest t0 candidate time [ns] |
+| mVpdEHits | Double_t | Number of VPD east hits |
+| mVpdWHits | Double_t | Number of VPD west hits |
+| mEarliestVpdEHit | Double_t | Earliest VPD east hit time [ns] |
+| mEarliestVpdWHit | Double_t | Earliest VPD west hit time [ns] |
+
+\section btofheader_methods Key Methods
+
+- tStart() — event start time from VPD [ns]
+- tStartError() — uncertainty on start time [ns]
+- vpdVz(rank=0) — VPD vertex z estimate [cm]
+- tDiff() — east–west time difference [ns]
+- numberOfVpdHits(side) — fired VPD tube count for east or west
+- isVpdHit(side, tubeId) — true if tube fired
+- vpdTime(side, tubeId) — calibrated tube time [ns]
+- nTzero() — BTOF hits used for t0
+- triggerTime(fiberId) — trigger TDC count for fiber
+
+\section btofheader_example Usage Example
+
+\code{.cpp}
+StBTofCollection* coll = event->btofCollection();
+if (coll) {
+    StBTofHeader* hdr = coll->tofHeader();
+    if (hdr) {
+        double t0    = hdr->tStart();
+        float  vz    = hdr->vpdVz();
+        auto   nVpdE = hdr->numberOfVpdHits(east);
+        auto   nVpdW = hdr->numberOfVpdHits(west);
+        int    nT0   = hdr->nTzero();
+    }
+}
+\endcode
+
+\see StBTofHit, StBTofRawHit, StBTofCollection
+*/

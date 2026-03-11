@@ -1,0 +1,74 @@
+/*!
+\page page_stoftofcollection StTofCollection — Collection Documentation
+
+\section tof_overview Overview
+
+\ref StTofCollection is the event-level container for the <b>legacy STAR
+Time-of-Flight (TOF)</b> system — the TOFp and TOFr patch detectors that
+preceded the full Barrel TOF (BTOF).  It is <b>superseded by
+\ref StBTofCollection</b> for Run 8 (2008) and later data.
+
+The collection stores reconstructed hits (\ref StTofHit), scintillator slats
+(\ref StTofSlat), cells (\ref StTofCell), and raw data objects
+(\ref StTofData, \ref StTofRawData), together with event-wise pVPD summary
+quantities (hit patterns, event start time, vertex z).
+
+\section tof_ownership Object Ownership
+
+All five \c StSPtrVec data members own their elements; elements are deleted when
+the vector is destroyed.  The \ref StTofCollection destructor itself is a
+<b>no-op</b>; cleanup is delegated to the \c StSPtrVec mechanism and ultimately
+to the \c StEvent framework (\c StXRefMain / \c St_DataSet).
+
+\section tof_members Data Members
+
+| Type | Name | Default | Description |
+|------|------|---------|-------------|
+| \c UInt_t | mVpdEast | 0 | VPD east hit-pattern bitmask (one bit per tube). |
+| \c UInt_t | mVpdWest | 0 | VPD west hit-pattern bitmask. |
+| \c Float_t | mTstart | −999 | Event start time from the VPD [ns]. |
+| \c Float_t | mTdiff | −999 | VPD east–west time difference [ns]. |
+| \c Float_t | mVzVpd | −999 | Primary vertex z from the VPD [cm]. |
+| \c StSPtrVecTofSlat | mTofSlats | empty | TOFp/TOFr scintillator slats. |
+| \c StSPtrVecTofCell | mTofCells | empty | TOF cell objects. |
+| \c StSPtrVecTofHit | mTofHits | empty | Reconstructed TOF hits. |
+| \c StSPtrVecTofData | mTofData | empty | TOFp raw data objects. |
+| \c StSPtrVecTofRawData | mTofRawData | empty | TDC raw data objects (Run 5+). |
+
+\section tof_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c vpdEast() / \c vpdWest() | VPD hit-pattern bitmask for east / west side. |
+| \c numberOfVpdEast() / \c numberOfVpdWest() | Number of fired VPD tubes (popcount of bitmask). |
+| \c tstart() | Event start time from VPD [ns]. |
+| \c tdiff() | East–west time difference [ns]. |
+| \c vzVpd() | VPD-derived primary vertex z [cm]; −999 if unavailable. |
+| \c tofHits() | Mutable reference to reconstructed hit collection. |
+| \c tofSlats() / \c tofCells() / \c tofData() / \c tofRawData() | Mutable references to the other sub-collections. |
+| \c addHit / \c addSlat / \c addCell / \c addData / \c addRawData | Null-safe append to the corresponding collection. |
+| \c hitsPresent() / \c slatsPresent() / \c cellsPresent() / \c dataPresent() / \c rawdataPresent() | Non-empty checks. |
+
+\section tof_example Usage Example
+
+\code{.cpp}
+StTofCollection* tofColl = event->tofCollection();
+if (!tofColl) return;
+
+int nEast = tofColl->numberOfVpdEast();
+int nWest = tofColl->numberOfVpdWest();
+float vz  = tofColl->vzVpd();  // -999 if unavailable
+
+if (tofColl->hitsPresent()) {
+    const StSPtrVecTofHit& hits = tofColl->tofHits();
+    for (size_t i = 0; i < hits.size(); ++i) {
+        StTofHit* hit = hits[i];
+        // use hit->...
+    }
+}
+\endcode
+
+\note This class is superseded by \ref StBTofCollection for Run 8+ data.
+
+\see StBTofCollection, StTofHit, StTofSlat, StTofCell
+*/

@@ -1,0 +1,52 @@
+/*!
+\page page_strichmchit StRichMCHit
+
+\brief \ref page_strichmchit "StRichMCHit" — Monte Carlo RICH hit pairing a reconstructed hit with generator-level truth.
+
+\section strichmchit_overview Overview
+StRichMCHit extends \ref page_strichhit "StRichHit" with a
+\ref page_strichmcinfo "StRichMCInfo" truth record stored by value. It allows
+direct comparison between reconstructed hit quantities and the known simulation
+input, enabling detector performance studies and efficiency measurements.
+
+\section strichmchit_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StMeasuredPoint
+        └── StHit
+            └── StRichHit
+                └── StRichMCHit
+\endcode
+
+\section strichmchit_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| StRichMCInfo | mInfo | MC truth record (stored by value) |
+
+All data members of \ref page_strichhit "StRichHit" are also available.
+
+\section strichmchit_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| const StRichMCInfo& getMCInfo() const | Returns the MC truth record |
+| void setMCInfo(const StRichMCInfo&) | Sets the MC truth record |
+
+\section strichmchit_example Usage Example
+\code{.cpp}
+StRichCollection* rich = event->richCollection();
+StSPtrVecRichHit& hits = rich->getRichHits();
+for (const auto& hit : hits) {
+    StRichMCHit* mcHit = dynamic_cast<StRichMCHit*>(hit);
+    if (!mcHit) continue;
+    const StRichMCInfo& info = mcHit->getMCInfo();
+    int geantPid = info.gid();
+    int process  = info.process();
+}
+\endcode
+
+\section strichmchit_related Related Classes
+\ref page_strichhit "StRichHit" — base reconstructed hit. \n
+\ref page_strichmcinfo "StRichMCInfo" — MC truth record embedded in this hit. \n
+\ref page_strichmcpixel "StRichMCPixel" — MC pixel analogue at the raw-data level.
+*/

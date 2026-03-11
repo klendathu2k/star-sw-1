@@ -1,0 +1,118 @@
+/*!
+\page page_stsstHitCollection StSstHitCollection — Collection Documentation
+
+\ref StSstHitCollection is the top-level container for all reconstructed Silicon
+Strip Tracker (SST) hits in a single STAR event.  The SST was a refurbishment
+and upgrade of the SSD, reusing the same barrel geometry with updated electronics.
+Hits are organised in a three-level hierarchy: detector → ladder → wafer.
+
+\see StSstHitCollection
+\see StSstLadderHitCollection
+\see StSstWaferHitCollection
+\see StSstHit
+
+---
+
+\section sst_hierarchy Class Hierarchy
+
+\code
+StSstHitCollection                 (top-level, one per event)
+└── StSstLadderHitCollection         [20 ladders, indices 0–19]
+    └── StSstWaferHitCollection        [up to 16 wafers per ladder, indices 0–15]
+        └── StSPtrVecSstHit              (owns the StSstHit objects)
+\endcode
+
+All sub-collection nodes are embedded (stack-allocated) inside their parent;
+no heap allocation is used for collection nodes.
+
+\section sst_containment Containment Model
+
+| Level    | Class                         | Contents                                  |
+|----------|-------------------------------|-------------------------------------------|
+| Detector | \ref StSstHitCollection       | 20 \ref StSstLadderHitCollection objects  |
+| Ladder   | \ref StSstLadderHitCollection | 16 \ref StSstWaferHitCollection objects   |
+| Wafer    | \ref StSstWaferHitCollection  | `StSPtrVecSstHit` of `StSstHit*`          |
+
+\section sst_ownership Object Ownership
+
+\ref StSstWaferHitCollection holds its hits in a member of type
+\c StSPtrVecSstHit, which is a **smart-pointer vector** that **owns** the
+\ref StSstHit objects it contains.  The \ref StSstWaferHitCollection destructor
+explicitly deletes every hit in the vector (necessary because \ref StSstHit
+provides its own pool-allocated \c new/delete).
+
+Ladder and wafer sub-collections are embedded members of their parent classes
+and are destroyed automatically with the parent.  \ref StSstHitCollection itself
+is owned by the StEvent framework (\c St_DataSet / \c StXRefMain).
+
+\warning Do **not** delete individual \ref StSstHit pointers obtained from the
+collection.  The collection manages their lifetimes.
+
+\section sst_members Data Members
+
+\subsection sst_members_top StSstHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSstLadderHitCollection[20]` | `mLadders` | Fixed-size array of 20 ladder sub-collections. |
+
+\subsection sst_members_ladder StSstLadderHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSstWaferHitCollection[16]` | `mWafers` | Fixed-size array of up to 16 wafer sub-collections. |
+
+\subsection sst_members_wafer StSstWaferHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSPtrVecSstHit` | `mHits` | Smart-pointer vector of `StSstHit*`; owns all contained hits. |
+
+\section sst_methods Key Methods
+
+\subsection sst_methods_top StSstHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `addHit(StSstHit*)` | `bool` | Routes hit to correct ladder/wafer. Returns `false` if indices are out of range. |
+| `numberOfHits() const` | `unsigned int` | Total hits across all ladders and wafers. |
+| `numberOfLadders() const` | `unsigned int` | Always 20. |
+| `ladder(unsigned int)` | `StSstLadderHitCollection*` | 0-based ladder access; returns `nullptr` if out of range. |
+
+\subsection sst_methods_ladder StSstLadderHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `numberOfHits() const` | `unsigned int` | Total hits on this ladder. |
+| `numberOfWafers() const` | `unsigned int` | Always 16. |
+| `wafer(unsigned int)` | `StSstWaferHitCollection*` | 0-based wafer access; returns `nullptr` if out of range. |
+
+\subsection sst_methods_wafer StSstWaferHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `hits()` | `StSPtrVecSstHit&` | Mutable reference to the hit vector. |
+| `hits() const` | `const StSPtrVecSstHit&` | Const reference to the hit vector. |
+
+\section sst_example Usage Example
+
+\code{.cpp}
+const StSstHitCollection* sstColl = event->sstHitCollection();
+if (!sstColl) return;
+
+for (unsigned int iLad = 0; iLad < sstColl->numberOfLadders(); ++iLad) {
+    const StSstLadderHitCollection* ladderColl = sstColl->ladder(iLad);
+    if (!ladderColl) continue;
+
+    for (unsigned int iWaf = 0; iWaf < ladderColl->numberOfWafers(); ++iWaf) {
+        const StSstWaferHitCollection* waferColl = ladderColl->wafer(iWaf);
+        if (!waferColl) continue;
+
+        const StSPtrVecSstHit& hits = waferColl->hits();
+        for (const StSstHit* hit : hits) {
+            // process hit ...
+        }
+    }
+}
+\endcode
+*/

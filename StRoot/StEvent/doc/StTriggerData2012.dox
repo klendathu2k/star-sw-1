@@ -1,0 +1,58 @@
+/**
+\page page_sttriggerdata2012 StTriggerData2012
+
+\brief Concrete StTriggerData implementation for STAR Run 12 (year 2012) trigger data.
+
+\section sec2012_overview Overview
+
+StTriggerData2012 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 12 (year 2012)</b> raw trigger data.  It wraps a \c TriggerDataBlk2012 structure
+(from \c StDaqLib/TRG/trgStructures2012.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2009, Run 12 adds TPC mask DSM readout, the MTD–VPD TAC difference,
+BBC large-tile TDC, and the consolidated l2sum() accessor.
+
+\section sec2012_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2012
+\endcode
+
+\section sec2012_runyear Run Year
+Run 12, calendar year 2012 &mdash; p+p collisions at &radic;s = 200 GeV.
+
+\section sec2012_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2012* | Pointer to the raw Run 12 trigger data block. |
+| EvtDesc | EvtDescData2012* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2012* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2012* | Decoded trigger summary (transient). |
+| mBC1[11]…mQT4[11] | various block pointers | Per-crossing crate sub-blocks (transient). |
+
+\section sec2012_new New Compared to 2009
+
+- tpcMaskDSM(int channel) &mdash; TPC mask DSM word.
+- mtdVpdTacDiff() &mdash; MTD–VPD TAC difference.
+- bbcEarliestTDCLarge(StBeamDirection, int prepost=0) &mdash; BBC large-tile earliest TDC.
+- bbcTimeDifferenceLarge() &mdash; BBC large-tile time difference.
+- l2sum() &mdash; 64-bit L2 summary.
+
+\section sec2012_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short tpcMask = trgData->tpcMaskDSM(0);
+    unsigned short mtdVpd  = trgData->mtdVpdTacDiff();
+    unsigned long long l2s = trgData->l2sum();
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2009
+\see StTriggerData2013
+*/

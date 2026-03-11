@@ -1,0 +1,41 @@
+/*!
+\page page_strichmcinfo StRichMCInfo
+
+\brief \ref page_strichmcinfo "StRichMCInfo" — generator-level truth record for a RICH MC pixel or hit.
+
+\section strichmcinfo_overview Overview
+StRichMCInfo is the lowest-level Monte Carlo truth object in the RICH data
+model. It records the simulator and GEANT particle identifiers, the parent MC
+track index, the particle charge, and the GEANT process code that produced the
+hit. It is embedded in \ref page_strichmcpixel "StRichMCPixel" (by pointer,
+multiple per pixel) and \ref page_strichmchit "StRichMCHit" (by value).
+
+\section strichmcinfo_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichMCInfo
+\endcode
+
+\section strichmcinfo_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mId | Simulator particle identifier |
+| Int_t | mGid | GEANT particle identifier (8=π⁺, 11=K⁺, 14=proton) |
+| Int_t | mTrackp | Parent MC track index |
+| Float_t | mCharge | Electric charge (units of e) |
+| Int_t | mProcess | GEANT process code (e.g. 0=Cherenkov) |
+
+\section strichmcinfo_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| int id() const | Simulator particle identifier |
+| int gid() const | GEANT particle identifier |
+| int trackp() const | Parent MC track index |
+| float charge() const | Particle electric charge |
+| int process() const | GEANT process code |
+
+\section strichmcinfo_related Related Classes
+\ref page_strichmcpixel "StRichMCPixel" — pixel that owns a collection of these records. \n
+\ref page_strichmchit "StRichMCHit" — reconstructed hit that embeds one of these records.
+*/

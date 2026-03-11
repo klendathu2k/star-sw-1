@@ -1,0 +1,64 @@
+/*!
+\page page_sthlttriggerreason StHltTriggerReason
+
+\brief Associates an HLT trigger reason bit with the specific physics object that fired the online trigger.
+
+\section overview Overview
+
+`StHltTriggerReason` links an HLT trigger bit to the physics object that caused the online trigger
+decision. Each event may contain multiple entries if several physics signatures fired. The
+`mReasonBit` field identifies the trigger type; the `mReason` link points polymorphically—through
+\ref StHltTriggerReasonCapable—to the actual \ref StHltHighPt, \ref StHltDiElectron, or
+\ref StHltHeavyFragment object. The aggregate bitmask is in \ref StHltEvent::triggerReasonBitOred.
+
+\subsection trigbits StHltTriggerReasonType Enum
+
+| Enum | Value | Meaning |
+|------|-------|---------|
+| `kHighPt` | `0x10000` | High-pT track trigger |
+| `kDiElectron` | `0x20000` | Di-electron pair trigger |
+| `kHeavyFragment` | `0x40000` | Heavy nuclear fragment trigger |
+| `kAllEvents` | `0x80000` | Accept-all events |
+| `kRandomEvents` | `0x100000` | Random event sampling |
+| `kBESGoodEvents` | `0x200000` | BES good-event trigger |
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTriggerReason
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StHltTriggerReasonType` | `mReasonBit` | Trigger reason bit |
+| *(StLink)* | `mReason` | Pointer to the triggering \ref StHltTriggerReasonCapable object |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StHltTriggerReasonType reasonBit() const` | Returns the trigger reason bit |
+| `StHltTriggerReasonCapable* reason() const` | Returns the triggering physics object |
+
+\section example Usage Example
+
+\code{.cpp}
+for (size_t i = 0; i < hlt->triggerReason().size(); ++i) {
+    const StHltTriggerReason* tr = hlt->triggerReason()[i];
+    if (tr->reasonBit() == kHighPt) {
+        const StHltHighPt* hp = static_cast<const StHltHighPt*>(tr->reason());
+        cout << "HighPt pT=" << hp->primaryTrack().pt() << endl;
+    }
+}
+\endcode
+
+\see StHltEvent
+\see StHltTriggerReasonCapable
+\see StHltHighPt
+\see StHltDiElectron
+\see StHltHeavyFragment
+*/

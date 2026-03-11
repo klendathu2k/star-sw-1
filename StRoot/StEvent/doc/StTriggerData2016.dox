@@ -1,0 +1,60 @@
+/**
+\page page_sttriggerdata2016 StTriggerData2016
+
+\brief Concrete StTriggerData implementation for STAR Run 16 (year 2016) trigger data.
+
+\section sec2016_overview Overview
+
+StTriggerData2016 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 16 (year 2016)</b> raw trigger data.  It wraps a \c TriggerDataBlk2016 structure
+(from \c StDaqLib/TRG/trgStructures2016.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2013, Run 16 adds full TCU/RCC bunch-counter readout, BBC VP101 and
+TAC-sum access, and MTD QT per-channel readout.  This run also supports the BES-II
+fixed-target programme.
+
+\section sec2016_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2016
+\endcode
+
+\section sec2016_runyear Run Year
+Run 16, calendar year 2016 &mdash; Au+Au at &radic;s = 200 GeV; BES-II fixed-target.
+
+\section sec2016_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2016* | Pointer to the raw Run 16 trigger data block. |
+| EvtDesc | EvtDescData2016* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2016* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2016* | Decoded trigger summary (transient). |
+| mBC1[11]…mQT4[11] | various block pointers | Per-crossing crate sub-blocks (transient). |
+
+\section sec2016_new New Compared to 2013
+
+- tcuCounter() &mdash; TCU revolution counter.
+- rccCounter(int crate) &mdash; RCC revolution counter per crate.
+- bunchCounter() &mdash; full 64-bit bunch counter.
+- bbcVP101(int ch, int prepost=0) &mdash; BBC VP101 board channel.
+- bbcTacSum() &mdash; BBC TAC sum.
+- mtdQtAtCh(int qtid, int address, int prepost) &mdash; MTD QT board per-channel value.
+
+\section sec2016_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned long long bunch = trgData->bunchCounter();
+    unsigned short vp101     = trgData->bbcVP101(0, 0);
+    unsigned short mtdQT     = trgData->mtdQtAtCh(1, 0, 0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2013
+\see StTriggerData2017
+*/

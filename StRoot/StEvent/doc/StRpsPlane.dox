@@ -1,0 +1,75 @@
+/*!
+\page page_strpsplane StRpsPlane
+
+\brief A single silicon strip detector plane inside a Roman Pot station.
+
+\section rpsplane_overview Overview
+
+StRpsPlane represents one of four silicon strip detector planes housed inside a
+single Roman Pot station of the **Roman Pot System (RPS)**.  It holds the reconstructed
+cluster collection together with alignment geometry (z-position, offset, rotation angle,
+strip orientation) and a hardware status flag.
+
+**Detector**: Roman Pot System (RPS / pp2pp)  
+**Stage**: Cluster container + geometry alignment
+
+\section rpsplane_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StRpsPlane
+\endcode
+
+Position in the detector hierarchy:
+
+\code
+StRpsCollection → StRpsRomanPot[0..7] → StRpsPlane[0..3] → StRpsCluster
+\endcode
+
+\section rpsplane_orientation Strip Orientation
+
+| \c mOrientation | Sensitive axis |
+|----------------|----------------|
+| 0 | x-measuring |
+| 1 | y-measuring |
+
+\section rpsplane_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c UChar_t | \c mPlaneId | Plane index within the Roman Pot (0–3) |
+| \c Double_t | \c mOffset | Alignment offset along the strip-sensitive axis (cm) |
+| \c Double_t | \c mZ | z-position along the beam axis (cm) |
+| \c Double_t | \c mAngle | Rotation angle about the beam axis (rad) |
+| \c Short_t | \c mOrientation | Strip orientation code (0 = x, 1 = y) |
+| \c UChar_t | \c mStatus | Plane status flag (0 = good) |
+| \c UChar_t | \c mRomanPotId | Parent Roman Pot index (0–7) |
+| \c StSPtrVecRpsCluster | \c mClusters | Reconstructed clusters in this plane |
+
+\section rpsplane_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c planeId() | Plane index (0–3) |
+| \c romanPotId() | Parent Roman Pot index (0–7) |
+| \c offset() | Alignment offset (cm) |
+| \c z() | z-position (cm) |
+| \c angle() | Rotation angle (rad) |
+| \c orientation() | Strip orientation (0 = x, 1 = y) |
+| \c status() | Plane status flag |
+| \c numberOfClusters() | Number of reconstructed clusters |
+| \c cluster(i) | Cluster at index i |
+| \c addCluster(StRpsCluster*) | Add cluster (also sets parent IDs on the cluster) |
+
+\section rpsplane_example Usage Example
+
+\code{.cpp}
+const StRpsPlane* plane = rp->plane(ip);
+if (plane->status() != 0) continue; // skip bad planes
+for (unsigned int ic = 0; ic < plane->numberOfClusters(); ++ic) {
+    const StRpsCluster* cl = plane->cluster(ic);
+    double pos = cl->position() + plane->offset();
+}
+\endcode
+
+\see StRpsCluster, StRpsRomanPot, StRpsCollection
+*/

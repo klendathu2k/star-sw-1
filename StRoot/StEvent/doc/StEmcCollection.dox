@@ -1,0 +1,183 @@
+/*!
+\page page_stemccollection StEmcCollection — EMC Collection Documentation
+
+\section emc_overview Overview
+
+The STAR Electromagnetic Calorimeter (EMC) detects photons, electrons, and positrons by
+measuring electromagnetic shower energy in lead-scintillator sampling calorimeters.
+It is divided into two physical systems:
+
+- <b>Barrel EMC (BEMC)</b> — covers |η| < 1, full azimuth.  Four sub-detectors:
+  towers (energy), preshower (BPRS), and two Shower Maximum Detector (SMD) planes segmented
+  in η (BSMDE) and φ (BSMDP).
+- <b>Endcap EMC (EEMC)</b> — covers 1 < η < 2.  Analogous structure: towers, preshower
+  (EPRS), and SMD planes (ESMDU, ESMDV).
+
+\ref StEmcCollection is the single top-level object saved in \c StEvent for all EMC data.
+It aggregates per-sub-detector \ref StEmcDetector objects, global reconstructed points, and
+raw DAQ data banks.  Cluster data live one level deeper inside each \ref StEmcDetector via
+an owned \ref StEmcClusterCollection.
+
+\section emc_classes Classes in this group
+
+| Class | Role |
+|-------|------|
+| \ref StEmcCollection | Top-level event container for all EMC sub-detectors, points, and raw data |
+| \ref StEmcClusterCollection | Per-sub-detector container for reconstructed EMC clusters |
+
+Related classes (not documented here):
+
+| Class | Role |
+|-------|------|
+| \ref StEmcDetector | One EMC sub-detector; holds modules, raw hits, and a cluster collection |
+| \ref StEmcModule | One readout module within a sub-detector; holds raw hits |
+| \ref StEmcCluster | A reconstructed cluster of adjacent hits |
+| \ref StEmcPoint | Higher-level object combining clusters from multiple sub-detectors |
+| \c StEmcRawData | Raw DAQ data banks for BEMC or EEMC |
+
+\section emc_indexing Sub-detector array indexing
+
+\ref StEmcCollection stores sub-detector objects in \c mDetector[8], a fixed-size array of
+raw pointers.  The array index is computed as \c (StDetectorId - kBarrelEmcTowerId).
+Identifier integer values are defined in \c StDetectorDefinitions.h.
+
+| Array index | \c StDetectorId | Integer | Physical sub-detector |
+|-------------|-----------------|---------|----------------------|
+| 0 | \c kBarrelEmcTowerId | 9 | BEMC towers (energy measurement) |
+| 1 | \c kBarrelEmcPreShowerId | 10 | BEMC preshower (BPRS) |
+| 2 | \c kBarrelSmdEtaStripId | 11 | BEMC SMD η strips (BSMDE) |
+| 3 | \c kBarrelSmdPhiStripId | 12 | BEMC SMD φ strips (BSMDP) |
+| 4 | \c kEndcapEmcTowerId | 13 | EEMC towers (energy measurement) |
+| 5 | \c kEndcapEmcPreShowerId | 14 | EEMC preshower (EPRS) |
+| 6 | \c kEndcapSmdUStripId | 15 | EEMC SMD U strips (ESMDU) |
+| 7 | \c kEndcapSmdVStripId | 16 | EEMC SMD V strips (ESMDV) |
+
+\ref StEmcCollection::detector returns \c nullptr for any ID outside the range
+[\c kBarrelEmcTowerId, \c kEndcapSmdVStripId].
+
+\section emc_hierarchy Containment hierarchy
+
+\code{.unparsed}
+StEmcCollection                                       (1 per event, in StEvent)
+├── mDetector[8]  (StEmcDetector*, heap-allocated, indexed by StDetectorId offset)
+│   ├── mModules[120] (StEmcModule*, 1-based, heap-allocated by StEmcDetector)
+│   │   └── mHits     (StSPtrVecEmcRawHit — owns StEmcRawHit objects)
+│   └── mClusters     (StEmcClusterCollection*, heap-allocated, owned by StEmcDetector)
+│       └── mClusters (StSPtrVecEmcCluster — owns StEmcCluster objects)
+├── mBarrel        (StSPtrVecEmcPoint — owns barrel StEmcPoint objects)
+├── mEndcap        (StSPtrVecEmcPoint — owns endcap StEmcPoint objects)
+├── mBemcRawData   (StEmcRawData*, heap-allocated, owned by StEmcCollection)
+└── mEemcRawData   (StEmcRawData*, heap-allocated, owned by StEmcCollection)
+\endcode
+
+\section emc_ownership Object Ownership
+
+\subsection emc_own_coll StEmcCollection
+\c mDetector[8] holds raw pointers to heap-allocated \ref StEmcDetector objects.  The
+destructor deletes every non-null element.  \c mBemcRawData and \c mEemcRawData are
+deleted by the destructor as well.  \c mBarrel and \c mEndcap are \c StSPtrVecEmcPoint
+owning vectors; their elements are automatically deleted via \c StStrArray on destruction.
+
+The copy constructor and assignment operator are \b private — \ref StEmcCollection is
+non-copyable.
+
+\warning Do not delete \ref StEmcDetector, \ref StEmcPoint, or \c StEmcRawData objects
+obtained from this collection.
+
+\subsection emc_own_cluster StEmcClusterCollection
+\c mClusters is a \c StSPtrVecEmcCluster owning vector.  \c StStrArray automatically
+deletes the \ref StEmcCluster objects when the vector is destroyed.  The
+\ref StEmcClusterCollection destructor is an explicit no-op.
+
+\warning Do not delete \ref StEmcCluster objects obtained from
+\ref StEmcClusterCollection::clusters.
+
+\section emc_members Data Members
+
+\subsection emc_mem_coll StEmcCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StEmcDetector*[8] | \c mDetector | Per-sub-detector objects, indexed by \c (StDetectorId - kBarrelEmcTowerId) |
+| \c StSPtrVecEmcPoint | \c mBarrel | Reconstructed points in the Barrel EMC (BEMC) |
+| \c StSPtrVecEmcPoint | \c mEndcap | Reconstructed points in the Endcap EMC (EEMC) |
+| \c StEmcRawData* | \c mBemcRawData | Raw DAQ data banks for the BEMC |
+| \c StEmcRawData* | \c mEemcRawData | Raw DAQ data banks for the EEMC |
+
+\subsection emc_mem_cluster StEmcClusterCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StDetectorId | \c mDetector | Identifier of the sub-detector owning these clusters |
+| \c StSPtrVecEmcCluster | \c mClusters | Owned vector of reconstructed \ref StEmcCluster objects |
+| \c Int_t | \c mClusterFinderId | Cluster-finder algorithm identifier |
+| \c Int_t | \c mClusterFinderParamVersion | Cluster-finder parameter version |
+
+\section emc_methods Key Methods
+
+\subsection emc_meth_coll StEmcCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c StEmcDetector* \c detector(StDetectorId) | Sub-detector for the given ID; \c nullptr if out of range |
+| \c StSPtrVecEmcPoint& \c barrelPoints() | Mutable reference to the barrel point list |
+| \c StSPtrVecEmcPoint& \c endcapPoints() | Mutable reference to the endcap point list |
+| \c StEmcRawData* \c bemcRawData() | Raw DAQ data for the BEMC |
+| \c StEmcRawData* \c eemcRawData() | Raw DAQ data for the EEMC |
+| \c void \c setDetector(StEmcDetector*) | Register a sub-detector (takes ownership; replaces the existing slot if non-null) |
+| \c void \c addBarrelPoint(const \c StEmcPoint*) | Append a point to the barrel list |
+| \c void \c addEndcapPoint(const \c StEmcPoint*) | Append a point to the endcap list |
+| \c void \c setBemcRawData(StEmcRawData*) | Set BEMC raw data pointer (takes ownership) |
+| \c void \c setEemcRawData(StEmcRawData*) | Set EEMC raw data pointer (takes ownership) |
+
+\subsection emc_meth_cluster StEmcClusterCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c StDetectorId \c detector() \c const | Sub-detector identifier |
+| \c void \c setDetector(StDetectorId) | Set sub-detector identifier |
+| \c int \c numberOfClusters() \c const | Number of clusters in the collection |
+| \c StSPtrVecEmcCluster& \c clusters() | Mutable reference to the cluster vector |
+| \c const \c StSPtrVecEmcCluster& \c clusters() \c const | Read-only reference |
+| \c void \c addCluster(StEmcCluster*) | Append a cluster (takes ownership) |
+| \c int \c clusterFinderId() \c const | Cluster-finder algorithm identifier |
+| \c int \c clusterFinderParamVersion() \c const | Cluster-finder parameter version |
+| \c void \c setClusterFinderId(int) | Set cluster-finder algorithm identifier |
+| \c void \c setClusterFinderParamVersion(int) | Set cluster-finder parameter version |
+
+\section emc_example Usage Example
+
+\code{.cpp}
+// Access BEMC tower clusters
+const StEmcCollection* emcColl = event->emcCollection();
+if (!emcColl) return;
+
+const StEmcDetector* bemcTowers = emcColl->detector(kBarrelEmcTowerId);
+if (bemcTowers) {
+    const StEmcClusterCollection* clColl = bemcTowers->cluster();
+    if (clColl) {
+        const StSPtrVecEmcCluster& clusters = clColl->clusters();
+        for (const StEmcCluster* cl : clusters) {
+            // cl->energy(), cl->eta(), cl->phi(), etc.
+        }
+    }
+}
+
+// Access all BEMC tower raw hits (module loop, 1-based)
+if (bemcTowers) {
+    for (unsigned int iMod = 1; iMod <= bemcTowers->numberOfModules(); ++iMod) {
+        const StEmcModule* mod = bemcTowers->module(iMod);
+        if (!mod) continue;
+        for (const StEmcRawHit* rh : mod->hits()) {
+            // rh->energy(), rh->adc(), etc.
+        }
+    }
+}
+
+// Iterate over barrel reconstructed points
+for (const StEmcPoint* pt : emcColl->barrelPoints()) {
+    // pt->energy(), pt->position(), etc.
+}
+\endcode
+
+*/

@@ -1,0 +1,76 @@
+/*!
+\page page_strichcollection StRichCollection — Collection Documentation
+
+\section rich_overview Overview
+
+\ref StRichCollection is the event-level container for data from the
+<b>Ring Imaging Cherenkov (RICH)</b> detector — a prototype particle-identification
+system in STAR that exploited Cherenkov radiation imaging.
+
+The collection holds:
+- \ref StRichPixel — raw pad-plane pixel signals.
+- \ref StRichCluster — pad clusters formed from adjacent pixels.
+- \ref StRichHit — single-photon hit positions used to reconstruct Cherenkov rings.
+- \c StPtrVecTrack — <em>external references</em> to tracks traversing the RICH.
+
+\section rich_ownership Object Ownership
+
+A key distinction applies to the two pointer-vector types used here:
+
+- <b>mRichPixels</b>, <b>mRichClusters</b>, <b>mRichHits</b> use \c StSPtrVec
+  (smart-pointer vector): these collections <b>own</b> their elements and will
+  delete them on destruction.
+- <b>mTracks</b> uses \c StPtrVec (bare-pointer vector): this collection does
+  <b>not own</b> the track objects.  The tracks are owned by the primary/global
+  track collections elsewhere in \ref StEvent.
+
+The \ref StRichCollection destructor is a <b>no-op</b>; \c StSPtrVec handles cleanup.
+
+\section rich_members Data Members
+
+| Type | Name | Owned | Description |
+|------|------|-------|-------------|
+| \c StSPtrVecRichPixel | mRichPixels | Yes | Raw photon-detector pad pixel signals. |
+| \c StSPtrVecRichCluster | mRichClusters | Yes | Reconstructed clusters of adjacent pixels. |
+| \c StSPtrVecRichHit | mRichHits | Yes | Single-photon hit positions on the pad plane. |
+| \c StPtrVecTrack | mTracks | **No** | External references to tracks traversing the RICH. |
+
+\section rich_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getRichPixels() | Reference to the raw pixel collection (mutable and const). |
+| \c getRichClusters() | Reference to the cluster collection (mutable and const). |
+| \c getRichHits() | Reference to the RICH hit collection (mutable and const). |
+| \c getTracks() | Reference to the associated-track list — <em>not ownership</em> (mutable and const). |
+| \c addPixel(const StRichPixel*) | Appends a raw pixel. |
+| \c addCluster(const StRichCluster*) | Appends a pad cluster. |
+| \c addHit(const StRichHit*) | Appends a RICH hit. |
+| \c addTrack(const StTrack*) | Appends an external track reference. |
+| \c pixelsPresent() const | Returns \c true if pixels are present. |
+| \c clustersPresent() const | Returns \c true if clusters are present. |
+| \c hitsPresent() const | Returns \c true if hits are present. |
+
+\section rich_example Usage Example
+
+\code{.cpp}
+StRichCollection* richColl = event->richCollection();
+if (!richColl) return;
+
+if (richColl->hitsPresent()) {
+    const StSPtrVecRichHit& hits = richColl->getRichHits();
+    for (size_t i = 0; i < hits.size(); ++i) {
+        const StRichHit* hit = hits[i];
+        // use hit->...
+    }
+}
+
+// Tracks passing through RICH (external references, not owned)
+const StPtrVecTrack& tracks = richColl->getTracks();
+for (size_t i = 0; i < tracks.size(); ++i) {
+    const StTrack* trk = tracks[i];
+}
+\endcode
+
+\see StRichHit, StRichCluster, StRichPixel, StTrack
+*/

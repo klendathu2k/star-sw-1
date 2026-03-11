@@ -1,0 +1,75 @@
+/*!
+\page page_sttofhit StTofHit
+
+\brief Reconstructed hit in the legacy STAR Time-of-Flight (TOF) detector with PID information.
+
+\section tofhit_overview Overview
+
+StTofHit represents a fully reconstructed hit in the legacy STAR TOF detector —
+the MRPC-based barrel TOF system used from approximately Run 3 through Run 7,
+before the full BTOF installation in Run 8.
+
+\note This class is superseded by \ref StBTofHit for Run 8 and later data.
+
+Beyond geometry and raw timing, StTofHit provides particle-identification (PID) data:
+measured time of flight, expected TOF under each mass hypothesis (e, π, K, p),
+and the corresponding number-of-sigma deviations.
+
+Hits are stored in \ref StTofCollection via StEvent::tofCollection().
+
+\section tofhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StHit → StTofHit
+\endcode
+
+\section tofhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mTrayIndex | Int_t | TOF tray index |
+| mModuleIndex | Int_t | Module index within tray |
+| mCellIndex | Int_t | Cell index within module |
+| mDaqIndex | Int_t | DAQ channel index (255 = unassigned) |
+| mCellCollIndex | Int_t | Index of the associated StTofCell in the collection |
+| mTimeOfFlight | Float_t | Measured time of flight [ns] |
+| mPathLength | Float_t | Track path length from vertex to hit [cm] |
+| mBeta | Float_t | Particle velocity β = v/c |
+| mAssociatedTrack | StLink<StTrack> | Matched reconstructed track |
+| mTOFExpectedAsElectron | Float_t | Expected TOF for electron hypothesis [ns] |
+| mTOFExpectedAsPion | Float_t | Expected TOF for pion hypothesis [ns] |
+| mTOFExpectedAsKaon | Float_t | Expected TOF for kaon hypothesis [ns] |
+| mTOFExpectedAsProton | Float_t | Expected TOF for proton hypothesis [ns] |
+| mSigmaElectron | Float_t | nσ from electron hypothesis (default 999) |
+| mSigmaPion | Float_t | nσ from pion hypothesis |
+| mSigmaKaon | Float_t | nσ from kaon hypothesis |
+| mSigmaProton | Float_t | nσ from proton hypothesis |
+| mParticleHypothesis | StParticleDefinition* | Best PID hypothesis |
+
+\section tofhit_methods Key Methods
+
+- timeOfFlight() — measured TOF [ns]
+- pathLength() — track path length [cm]
+- beta() — particle velocity v/c
+- tofExpectedAsPion() / AsKaon() / AsProton() / AsElectron() — expected TOF [ns]
+- sigmaPion() / sigmaKaon() / sigmaProton() / sigmaElectron() — PID nσ
+- associatedTrack() — pointer to StTrack
+- detector() — detector ID from inherited bit field
+
+\section tofhit_example Usage Example
+
+\code{.cpp}
+// Legacy pre-Run8 data only
+StTofCollection* coll = event->tofCollection();
+if (coll) {
+    const StSPtrVecTofHit& hits = coll->tofHits();
+    for (const auto& h : hits) {
+        float tof   = h->timeOfFlight();    // [ns]
+        float beta  = h->beta();
+        float nSigPi = h->sigmaPion();
+    }
+}
+\endcode
+
+\see StTofCell, StTofData, StTofCollection, StBTofHit
+*/

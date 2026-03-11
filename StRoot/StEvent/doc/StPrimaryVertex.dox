@@ -1,0 +1,48 @@
+/*!
+\page page_stprimaryvertex StPrimaryVertex
+
+\brief Reconstructed primary hadronic collision vertex.
+
+\section stprimaryvertex_overview Overview
+StPrimaryVertex is the concrete vertex representing the primary
+interaction point.  It owns an array of StPrimaryTrack daughters and
+stores rich quality metrics from the vertex finder (ranking, detector
+matches, track statistics).
+
+Multiple primary vertices may exist per event (pile-up).
+Access the best via StEvent::primaryVertex(); others via
+StEvent::primaryVertex(unsigned int index).
+
+\section stprimaryvertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex → StPrimaryVertex
+\endcode
+
+\section stprimaryvertex_datamembers Selected Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDaughters | StSPtrVecPrimaryTrack | Owned primary-track daughters. |
+| mVertexFinderId | StVertexFinderId | Vertex finder algorithm ID. |
+| mRanking | Float_t | Vertex quality ranking (higher = better). |
+| mSumOfTrackPt | Float_t | Scalar sum of daughter pT (GeV/c). |
+| mMeanDip | Float_t | Mean dip angle of daughters (rad). |
+| mNumMatchesWithBEMC | UShort_t | BEMC-matched daughters. |
+
+\section stprimaryvertex_methods Key Methods
+
+\code{.cpp}
+const StPrimaryVertex* pv = event->primaryVertex();
+StThreeVectorF pos = pv->position();         // vertex position (cm)
+float chi2         = pv->chiSquared();
+float rank         = pv->ranking();
+UInt_t nDau        = pv->numberOfDaughters();
+for (UInt_t i = 0; i < nDau; ++i) {
+    const StPrimaryTrack* t =
+        static_cast<const StPrimaryTrack*>(pv->daughter(i));
+    double pt = t->geometry()->momentum().perp();
+}
+\endcode
+
+\sa \ref page_stvertex, \ref page_stprimarytrack
+*/

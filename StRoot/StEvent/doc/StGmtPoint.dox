@@ -1,0 +1,56 @@
+/*!
+\page page_stgmtpoint StGmtPoint
+
+\brief Reconstructed 2D space point in the GMT, formed by pairing X-strip and Y-pad hits.
+
+\section gmtpoint_overview Overview
+
+StGmtPoint is a 2D space point in the **GEM-based Muon Tracker (GMT)** formed by pairing
+an X-strip hit (StGmtHit) with a Y-pad hit from the same module.  It is the GMT analogue
+of StFgtPoint.  If construction fails, \c mKey = −999.
+
+\note A known pre-existing bug in the constructor checks \c mHitLocalX for both null-pointer
+conditions and sums \c mHitLocalX->charge() twice for the total charge.
+This documentation reflects the intended design.
+
+**Detector**: GEM-based Muon Tracker (GMT)  
+**Stage**: 1D hit pairing → 2D space point
+
+\section gmtpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StHit → StGmtPoint
+\endcode
+
+Stored in the GMT point container within \c StGmtCollection.
+
+\section gmtpoint_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mKey | Unique point ID; −999 = construction error |
+| \c StGmtHit* | \c mHitLocalX | X-strip cluster pointer |
+| \c StGmtHit* | \c mHitLocalY | Y-pad cluster pointer |
+
+\section gmtpoint_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getKey() | Unique point ID (−999 = invalid) |
+| \c getModule() | GMT module index (0–7) |
+| \c getPositionLocalX() | Local X (cm); −999 if null hit |
+| \c getPositionLocalY() | Local Y (cm); −999 if null hit |
+| \c getHitLocalX() | Pointer to X-strip hit |
+| \c getHitLocalY() | Pointer to Y-pad hit |
+
+\section gmtpoint_example Usage Example
+
+\code{.cpp}
+const StGmtPoint* pt = ptColl->point(ip);
+if (pt->getKey() == -999) continue; // invalid
+float x = pt->getPositionLocalX();  // cm
+float y = pt->getPositionLocalY();  // cm
+\endcode
+
+\see StGmtHit, StGmtStrip, StGmtCollection
+*/

@@ -1,0 +1,57 @@
+/**
+\page page_sttriggerdata2013 StTriggerData2013
+
+\brief Concrete StTriggerData implementation for STAR Run 13 (year 2013) trigger data.
+
+\section sec2013_overview Overview
+
+StTriggerData2013 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 13 (year 2013)</b> raw trigger data.  It wraps a \c TriggerDataBlk2013 structure
+(from \c StDaqLib/TRG/trgStructures2013.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2012, Run 13 adds MXQ crate slot access, MTD 3rd/4th-generation
+board readout, and TF201 TOF DSM channel access.
+
+\section sec2013_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2013
+\endcode
+
+\section sec2013_runyear Run Year
+Run 13, calendar year 2013 &mdash; p+p collisions at &radic;s = 510 GeV.
+
+\section sec2013_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2013* | Pointer to the raw Run 13 trigger data block. |
+| EvtDesc | EvtDescData2013* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2013* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2013* | Decoded trigger summary (transient). |
+| mBC1[11]…mQT4[11] | various block pointers | Per-crossing crate sub-blocks (transient). |
+
+\section sec2013_new New Compared to 2012
+
+- mxqAtSlotAddress(int address, int prepost=0, int slot=0) &mdash; MXQ crate slot readout.
+- mtd3AtAddress(int address, int prepost=0) &mdash; MTD 3rd-gen board value.
+- mtd4AtAddress(int address, int prepost=0) &mdash; MTD 4th-gen board value.
+- dsmTF201Ch(int ch) &mdash; TF201 TOF DSM channel.
+
+\section sec2013_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short mtd3    = trgData->mtd3AtAddress(0, 0);
+    unsigned short mxqSlot = trgData->mxqAtSlotAddress(0, 0, 2);
+    unsigned short tf201   = trgData->dsmTF201Ch(3);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2012
+\see StTriggerData2016
+*/

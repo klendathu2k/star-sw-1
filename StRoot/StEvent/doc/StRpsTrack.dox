@@ -1,0 +1,85 @@
+/*!
+\page page_strpstrack StRpsTrack
+
+\brief Reconstructed forward proton track in the Roman Pot System.
+
+\section rpstrack_overview Overview
+
+StRpsTrack is a fully reconstructed forward proton track in the **Roman Pot System (RPS)**.
+It is built from one or two StRpsTrackPoint objects (local hit positions, one per station)
+and carries the three-momentum vector plus derived physics observables: scattering angles
+(θ_x, θ_y, θ), azimuthal angles (φ), Mandelstam *t*, fractional momentum loss ξ, and
+time-of-flight.
+
+**Detector**: Roman Pot System (RPS / pp2pp)  
+**Stage**: Track finding + momentum reconstruction
+
+\section rpstrack_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StRpsTrack
+\endcode
+
+Stored in \c StRpsCollection via \c StSPtrVecRpsTrack; retrieved via
+\c StRpsCollection::tracks().
+
+\section rpstrack_branch Branch Numbering
+
+| \c mBranch | Label |
+|-----------|-------|
+| 0 | EU (East Upper) |
+| 1 | ED (East Down) |
+| 2 | WU (West Upper) |
+| 3 | WD (West Down) |
+
+\section rpstrack_types Track Type Enum
+
+| Enumerator | Meaning |
+|------------|---------|
+| \c rpsLocal | Single-station track |
+| \c rpsGlobal | Two-station track; full momentum reconstruction |
+| \c rpsUndefined | Type not assigned |
+
+\section rpstrack_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c StPtrVecRpsTrackPoint | \c mTrackPoints | Pointers to the two local track points (one per station) |
+| \c StThreeVectorF | \c mP | Reconstructed three-momentum (GeV/c) |
+| \c Int_t | \c mBranch | Detector branch index (0–3) |
+| \c StRpsTrackType | \c mType | Track type (local / global / undefined) |
+
+\section rpstrack_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c trackPoint(station) | Track point for station 0 or 1 |
+| \c pVec() | Three-momentum vector (GeV/c) |
+| \c branch() | Branch index (0–3) |
+| \c type() | Track type |
+| \c theta(coord) | Scattering angle θ_x, θ_y, or θ (rad) |
+| \c thetaRp(coord) | Geometric scattering angle at the RP (rad) |
+| \c phi() | Azimuthal angle φ from momentum (rad) |
+| \c phiRp() | Azimuthal angle φ measured at the RP (rad) |
+| \c t(beamP) | Mandelstam variable *t* (GeV²) |
+| \c xi(beamP) | Fractional momentum loss ξ |
+| \c p() | Momentum magnitude (GeV/c) |
+| \c pt() | Transverse momentum (GeV/c) |
+| \c eta() | Pseudorapidity |
+| \c time() | Average PMT TOF signal (ns); −1 if unavailable |
+
+\section rpstrack_example Usage Example
+
+\code{.cpp}
+double beamP = 100.0; // GeV/c
+for (unsigned int it = 0; it < rpsColl->numberOfTracks(); ++it) {
+    const StRpsTrack* trk = rpsColl->track(it);
+    if (trk->type() != StRpsTrack::rpsGlobal) continue;
+    double xi  = trk->xi(beamP);
+    double t   = trk->t(beamP);
+    double phi = trk->phi();
+}
+\endcode
+
+\see StRpsTrackPoint, StRpsCollection
+*/

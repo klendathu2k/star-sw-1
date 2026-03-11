@@ -1,0 +1,61 @@
+/*!
+\page page_stbtofrawhit StBTofRawHit
+
+\brief Raw TDC hit from the STAR Barrel Time-of-Flight (BTOF) DAQ stream.
+
+\section btofrawhit_overview Overview
+
+StBTofRawHit stores a single raw TDC hit from the BTOF DAQ stream before any calibration.
+Each object corresponds to one TDC edge (leading or trailing) recorded by the HPTDC/TDIG
+electronics on a given BTOF tray fiber.
+
+The BTOF system, operational since Run 8 (2007), reads out 120 trays via four fibers.
+The edge type is encoded in the sign of \c mFlag (positive = leading, negative = trailing);
+the magnitude minus one gives the fiber ID (0–3).
+
+Raw hits are stored in \ref StBTofCollection via StEvent::btofCollection().
+
+\section btofrawhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StBTofRawHit
+\endcode
+
+\section btofrawhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mFlag | Char_t | Edge flag: +ve = leading, −ve = trailing; \|flag\|−1 = fiberId |
+| mTray | UChar_t | Tray number (1–120) |
+| mChannel | UChar_t | TDC channel within the tray electronics |
+| mTdc | UInt_t | Raw TDC count (bin number; ~24.4 ps/bin) |
+
+\section btofrawhit_methods Key Methods
+
+- flag() — raw flag byte
+- leadingEdge() — true if leading-edge hit
+- trailingEdge() — true if trailing-edge hit
+- fiberId() — fiber ID derived from flag (0–3)
+- tray() — tray number (1–120)
+- channel() — TDC channel number
+- tdc() — raw TDC count
+
+\section btofrawhit_example Usage Example
+
+\code{.cpp}
+StBTofCollection* coll = event->btofCollection();
+if (coll) {
+    const StSPtrVecBTofRawHit& rawHits = coll->tofRawHits();
+    for (const auto& r : rawHits) {
+        int  tray   = r->tray();
+        int  chan   = r->channel();
+        bool isLE   = r->leadingEdge();
+        int  fiber  = r->fiberId();   // 0–3
+        // ~24.4 ps/bin
+        double approxNs = r->tdc() * 24.4e-3;
+    }
+}
+\endcode
+
+\see StBTofHit, StBTofHeader, StBTofCollection
+*/

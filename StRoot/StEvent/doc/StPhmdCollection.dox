@@ -1,0 +1,162 @@
+/*!
+\page page_stphmdcollection StPhmdCollection — PHMD Collection Documentation
+
+\section phmd_overview Overview
+
+The <b>Photon Multiplicity Detector (PHMD)</b>, also labelled PMD in STAR documentation,
+measures photon multiplicity at forward rapidities (2.3 < η < 3.9).  It is a gas-filled
+pad detector and consists of two planes facing each other:
+
+- <b>PMD</b> (\c kPhmdId = 26) — the photon-signal plane.  Photons convert in a lead
+  absorber and produce electromagnetic showers detected here.
+- <b>CPV</b> (\c kPhmdCpvId = 25) — the Charged Particle Veto plane.  Charged particles
+  that reach this plane without converting allow rejection of non-photon signals.
+
+\ref StPhmdCollection is the single top-level object saved in \c StEvent for all PHMD data.
+It owns two \ref StPhmdDetector objects (one per plane), both of which are heap-allocated in
+the constructor.  Cluster data reside one level deeper inside each \ref StPhmdDetector via
+an owned \ref StPhmdClusterCollection.
+
+\section phmd_classes Classes in this group
+
+| Class | Role |
+|-------|------|
+| \ref StPhmdCollection | Top-level event container for both PHMD detector planes |
+| \ref StPhmdClusterCollection | Per-plane container for reconstructed PHMD clusters |
+
+Related classes (not documented here):
+
+| Class | Role |
+|-------|------|
+| \ref StPhmdDetector | One PHMD detector plane (PMD or CPV); holds supermodules and clusters |
+| \c StPhmdModule | One supermodule within a detector plane; holds raw hits |
+| \ref StPhmdHit | A single cell (pad) hit in a PHMD supermodule |
+| \ref StPhmdCluster | A reconstructed cluster of adjacent cells |
+
+\section phmd_ids Detector identifier values
+
+| \c StDetectorId | Integer | Physical plane |
+|----------------|---------|----------------|
+| \c kPhmdCpvId | 25 | Charged Particle Veto (CPV) |
+| \c kPhmdId | 26 | Photon Multiplicity Detector (PMD, photon signal) |
+
+\section phmd_hierarchy Containment hierarchy
+
+\code{.unparsed}
+StPhmdCollection                                    (1 per event, in StEvent)
+├── mDetector    (StPhmdDetector*, kPhmdId=26,    heap-allocated, created in ctor)
+│   ├── mModules (StPhmdModule*, supermodules, heap-allocated by StPhmdDetector)
+│   │   └── hits (StSPtrVecPhmdHit — owns StPhmdHit objects)
+│   └── mClusters (StPhmdClusterCollection*, heap-allocated, owned by StPhmdDetector)
+│       └── mClusters (StSPtrVecPhmdCluster — owns StPhmdCluster objects)
+└── mCpvDetector (StPhmdDetector*, kPhmdCpvId=25, heap-allocated, created in ctor)
+    ├── mModules (StPhmdModule*, supermodules)
+    └── mClusters (StPhmdClusterCollection*)
+\endcode
+
+\section phmd_ownership Object Ownership
+
+\subsection phmd_own_coll StPhmdCollection
+\c mDetector and \c mCpvDetector are raw pointers to \ref StPhmdDetector objects
+heap-allocated in the constructor: \c new \c StPhmdDetector(kPhmdId) and
+\c new \c StPhmdDetector(kPhmdCpvId).  The destructor always calls \c delete on both.
+\ref StPhmdCollection::setDetector replaces the appropriate slot after deleting the
+existing occupant.
+
+\warning Do not delete \ref StPhmdDetector objects obtained from
+\ref StPhmdCollection::detector.
+
+\subsection phmd_own_cluster StPhmdClusterCollection
+\c mClusters is a \c StSPtrVecPhmdCluster owning vector.  \c StStrArray automatically
+deletes \ref StPhmdCluster objects on destruction.  The \ref StPhmdClusterCollection
+destructor is an explicit no-op.  Additional methods
+\ref StPhmdClusterCollection::deleteCluster and
+\ref StPhmdClusterCollection::deleteClusters allow removal during event processing.
+
+\warning Do not delete \ref StPhmdCluster objects obtained from
+\ref StPhmdClusterCollection::clusters directly, unless you have first removed them with
+\ref StPhmdClusterCollection::deleteCluster.
+
+\section phmd_members Data Members
+
+\subsection phmd_mem_coll StPhmdCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StPhmdDetector* | \c mDetector | PMD photon-signal plane (\c kPhmdId = 26), heap-allocated |
+| \c StPhmdDetector* | \c mCpvDetector | CPV charged-veto plane (\c kPhmdCpvId = 25), heap-allocated |
+
+\subsection phmd_mem_cluster StPhmdClusterCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StDetectorId | \c mDetector | Identifier of the detector plane these clusters belong to |
+| \c StSPtrVecPhmdCluster | \c mClusters | Owned vector of reconstructed \ref StPhmdCluster objects |
+| \c Int_t | \c mClusterFinderId | Cluster-finder algorithm identifier |
+| \c Int_t | \c mClusterFinderParamVersion | Version of the cluster-finder parameter set |
+
+\section phmd_methods Key Methods
+
+\subsection phmd_meth_coll StPhmdCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c StPhmdDetector* \c detector(StDetectorId) | PMD or CPV detector plane; \c nullptr for any other ID |
+| \c const \c StPhmdDetector* \c detector(StDetectorId) \c const | Const overload |
+| \c void \c setDetector(StPhmdDetector*) | Replace a plane (PMD or CPV) based on \c val->id(); deletes the existing pointer |
+
+\subsection phmd_meth_cluster StPhmdClusterCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c int \c numberOfclusters() \c const | Number of clusters in the collection |
+| \c StSPtrVecPhmdCluster& \c clusters() | Mutable reference to the cluster vector |
+| \c const \c StSPtrVecPhmdCluster& \c clusters() \c const | Read-only reference |
+| \c void \c addCluster(StPhmdCluster*) | Append a cluster (takes ownership) |
+| \c void \c deleteCluster(StPhmdCluster*) | Remove (and delete) a specific cluster |
+| \c void \c deleteClusters() | Remove (and delete) all clusters |
+| \c int \c clusterFinderId() \c const | Cluster-finder algorithm identifier |
+| \c int \c clusterFinderParamVersion() \c const | Cluster-finder parameter version |
+| \c void \c setClusterFinderId(int) | Set cluster-finder algorithm identifier |
+| \c void \c setClusterFinderParamVersion(int) | Set cluster-finder parameter version |
+
+\section phmd_example Usage Example
+
+\code{.cpp}
+// Access PHMD cluster collections
+const StPhmdCollection* phmdColl = event->phmdCollection();
+if (!phmdColl) return;
+
+// Photon-signal plane (PMD)
+const StPhmdDetector* pmd = phmdColl->detector(kPhmdId);
+if (pmd) {
+    const StPhmdClusterCollection* clColl = pmd->cluster();
+    if (clColl) {
+        for (const StPhmdCluster* cl : clColl->clusters()) {
+            // cl->eta(), cl->phi(), cl->energy(), cl->numberOfCells(), etc.
+        }
+    }
+}
+
+// Charged-veto plane (CPV)
+const StPhmdDetector* cpv = phmdColl->detector(kPhmdCpvId);
+if (cpv) {
+    const StPhmdClusterCollection* clColl = cpv->cluster();
+    if (clColl) {
+        for (const StPhmdCluster* cl : clColl->clusters()) {
+            // use CPV cluster information for charged-particle veto
+        }
+    }
+}
+
+// Raw cell hits in the PMD (supermodule loop)
+if (pmd) {
+    for (unsigned int iMod = 0; iMod < pmd->numberOfModules(); ++iMod) {
+        const StPhmdModule* mod = pmd->module(iMod);
+        if (!mod) continue;
+        // iterate over mod->hits() for cell-level data
+    }
+}
+\endcode
+
+*/

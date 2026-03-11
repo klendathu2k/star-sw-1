@@ -1,0 +1,45 @@
+/*!
+\page page_stxivertex StXiVertex
+
+\brief Vertex representing a cascade (Xi or Omega) decay: bachelor track plus associated V0.
+
+\section stxivertex_overview Overview
+StXiVertex reconstructs the secondary decay vertex of multi-strange baryons
+(Ξ⁻→Λπ⁻, Ω⁻→ΛK⁻, and charge conjugates).  It stores the bachelor track
+link, its momentum at the Xi vertex, DCA quantities, and a link to the
+associated StV0Vertex (the Λ decay vertex).
+
+Xi vertices are stored in StEvent::xiVertices().
+
+\section stxivertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex → StXiVertex
+\endcode
+
+\section stxivertex_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDaughter | StLink<StTrack> | Non-owning link to the bachelor track. |
+| mDcaBachelorToPrimaryVertex | Float_t | Bachelor DCA to PV (cm). |
+| mMomentumOfBachelor | StThreeVectorF | Bachelor momentum at Xi vertex (GeV/c). |
+| mDcaDaughters | Float_t | Bachelor–V0 DCA at Xi vertex (cm). |
+| mDcaParentToPrimaryVertex | Float_t | Xi DCA to PV (cm). |
+| mV0Vertex | StLink<StV0Vertex> | Non-owning link to the V0 decay vertex. |
+
+\section stxivertex_methods Key Methods
+
+\code{.cpp}
+const StSPtrVecXiVertex& xis = event->xiVertices();
+for (size_t i = 0; i < xis.size(); ++i) {
+    const StXiVertex* xi = xis[i];
+    if (xi->dcaDaughters() > 0.5) continue;
+    const StV0Vertex*    v0 = xi->v0Vertex();
+    StThreeVectorF pBach    = xi->momentumOfBachelor();
+    StThreeVectorF pTotal   = xi->momentum();
+    // compute Xi invariant mass under Lambda+pion hypothesis
+}
+\endcode
+
+\sa \ref page_stvertex, \ref page_stv0vertex
+*/

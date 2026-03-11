@@ -1,0 +1,78 @@
+/**
+\page page_sttriggerdata2009 StTriggerData2009
+
+\brief Concrete StTriggerData implementation for STAR Run 9 (year 2009) trigger data.
+
+\section sec2009_overview Overview
+
+StTriggerData2009 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 9 (year 2009)</b> raw trigger data.  It wraps a \c TriggerDataBlk2009 structure
+(from \c StDaqLib/TRG/trgStructures2009.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Run 9 introduces a <b>block-based DAQ trigger format</b>: the monolithic \c TrgDataType struct
+of Runs 3–8 is replaced by a self-describing multi-block layout where each detector crate
+occupies a separate variable-length sub-block.  The class decodes these blocks into transient
+arrays during construction and provides uniform pre/post-crossing access.
+
+\section sec2009_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2009
+\endcode
+
+\section sec2009_runyear Run Year
+Run 9, calendar year 2009 &mdash; p+p collisions at &radic;s = 200 GeV and 500 GeV.
+
+\section sec2009_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2009* | Pointer to the raw Run 9 trigger data block. |
+| EvtDesc | EvtDescData2009* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2009* | Decoded layer-1 DSM data (transient). |
+| TrgSum  | TrgSumData2009* | Decoded trigger summary (transient). |
+| mBC1[11]…mQT4[11] | various block pointers | Per-crossing detector crate sub-blocks (transient). |
+
+\section sec2009_new New Compared to 2008
+
+<b>Block-based DAQ format</b> (TriggerDataBlk2009 replaces TrgDataType2008).
+
+New accessor methods:
+- eventNumber() &mdash; DAQ event number.
+- l2sum() &mdash; 64-bit L2 summary.
+- readData(const TriggerDataBlk2009*, int bs) &mdash; explicit decode with byte-swap.
+- zdcPresent(), zdcPmtTDC(), zdcEarliestTDC(), zdcSumADCaboveThreshold(),
+  zdcFrontADCaboveThreshold(), zdcBackADCaboveThreshold(), zdcTruncatedSum() (ZDC DSM L1).
+- zdcSumADCaboveThresholdL2(), zdcFrontADCaboveThresholdL2(), zdcBackADCaboveThresholdL2(),
+  zdcTimeDifference() (ZDC DSM L2).
+- zdcSumADCaboveThresholdL3(), zdcFrontADCaboveThresholdL3(), zdcBackADCaboveThresholdL3(),
+  zdcTimeDifferenceInWindow() (ZDC last DSM).
+- zdcSMDPresent(), zdcSMDHighestStrip().
+- vpdADCHighThr(), vpdTDCHighThr(), vpdEarliestTDCHighThr() (VPD high threshold).
+- mtdDsmAtCh(), mtdDsmHit(), mtdgemAtAddress() (MTD DSM).
+- tofTrayMultiplicity() (BTOF per-tray).
+- bbcEarliestTDCLarge(), bbcTimeDifferenceLarge() (BBC large tile).
+- fmsADC(), fmsTDC() (FMS ADC/TDC).
+- pp2ppADC(), pp2ppTAC(), pp2ppDSM() (PP2PP roman pots).
+- getDsm0_BEMCE(), getDsm0_BEMCW(), getDsm1_BEMC() (first format to return non-null).
+- killFMS() (for StFmsHitMaker only).
+
+CTB methods are not available in Run 9 format.
+
+\section sec2009_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    bool zdcCoinc       = trgData->zdcTimeDifferenceInWindow();
+    unsigned short vpdH = trgData->vpdEarliestTDCHighThr(east, 0);
+    unsigned short tofT = trgData->tofTrayMultiplicity(0, 0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2008
+\see StTriggerData2012
+*/

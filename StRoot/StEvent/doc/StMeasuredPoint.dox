@@ -1,0 +1,64 @@
+/*!
+\page page_stmeasuredpoint StMeasuredPoint
+
+\brief Abstract base class for any STAR detector measurement with a 3-D position.
+
+\ref StMeasuredPoint is the abstract base class for every detector measurement in STAR that
+carries a 3-D spatial position. It provides storage for the position vector (\c mPosition) and
+declares a pure-virtual interface for position errors and the full covariance matrix that all
+concrete sub-classes (hits, vertices) must implement. It sits at the root of the entire STAR hit
+and vertex class hierarchy.
+
+\section sec_mp_hierarchy Class Hierarchy
+
+\verbatim
+TObject
+└── StObject
+    └── StMeasuredPoint          (abstract base — this class)
+        └── StHit                (abstract; adds charge, hardware address, MC truth)
+            ├── StTpcHit
+            ├── StFtpcHit
+            ├── StSvtHit
+            ├── StSsdHit
+            ├── StPxlHit
+            └── ...              (all other detector hit classes)
+\endverbatim
+
+\c StMeasuredPoint objects are <b>never instantiated directly</b>. Concrete derived objects are
+held inside detector-specific hit collections (e.g. <tt>StSPtrVecTpcHit</tt> inside
+\ref StTpcPadrowHitCollection) which are owned by the StEvent framework.
+
+\section sec_mp_members Data Members
+
+- <tt>StThreeVectorF mPosition</tt> — 3-D position of the measured point in the <b>STAR global
+  coordinate system</b>, in <b>centimetres</b>. The origin is the nominal interaction point.
+  The z-axis points along the beam towards the FTPC West.
+
+\section sec_mp_methods Key Methods
+
+- <tt>StMeasuredPoint()</tt> — Default constructor; initialises \c mPosition to zero.
+- <tt>StMeasuredPoint(const StThreeVectorF&)</tt> — Constructs with the given 3-D position.
+- <tt>virtual const StThreeVectorF& position() const</tt> — Returns the stored 3-D position
+  (cm) in the STAR global frame.
+- <tt>virtual StThreeVectorF positionError() const = 0</tt> — <b>Pure virtual.</b> Returns the
+  1-sigma position errors along (x, y, z) in cm. Implemented by each concrete sub-class.
+- <tt>virtual StMatrixF covariantMatrix() const = 0</tt> — <b>Pure virtual.</b> Returns the
+  full 3×3 position covariance matrix in cm². Implemented by each concrete sub-class.
+- <tt>virtual void setPosition(const StThreeVectorF&)</tt> — Sets the 3-D position.
+- <tt>int operator==(const StMeasuredPoint&) const</tt> — Equality based on \c mPosition.
+- <tt>virtual void Print(Option_t*) const</tt> — Prints the position to stdout.
+
+\section sec_mp_ownership Object Ownership
+
+\c StMeasuredPoint instances are never created stand-alone. Ownership ultimately resides with
+the \c StSPtrVec<T>-based collection that holds the object, which is owned by the StEvent
+framework. <b>Do not delete pointers obtained from a collection.</b>
+
+\section sec_mp_impl Notes for Sub-class Implementors
+
+Sub-classes <b>must</b> implement \c positionError() and \c covariantMatrix().
+\ref StHit::covariantMatrix "StHit::covariantMatrix()" provides a diagonal approximation using
+only <tt>mPositionError</tt>; sub-classes with full off-diagonal covariance should override it.
+
+\sa \ref page_sthit, \ref page_stTpcHit, \ref page_stFtpcHit
+*/

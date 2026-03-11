@@ -1,0 +1,31 @@
+/*!
+\page page_sttpttrack StTptTrack
+
+\brief Track produced by the TPT (TPC Pattern recognition and Tracking) fast algorithm.
+
+\section sttpttrack_overview Overview
+StTptTrack stores the output of the STAR online/offline TPT fast tracker.
+It inherits all track-state storage from \ref page_sttrack "StTrack" and
+adds no new data members.  TPT tracks are not associated with any vertex
+(vertex() always returns null) and are owned by
+\ref page_sttracknode "StTrackNode".
+
+\section sttpttrack_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StTrack → StTptTrack
+\endcode
+
+\section sttpttrack_methods Key Methods
+
+\code{.cpp}
+// Access TPT tracks from a node
+unsigned int nTpt = node->entries(tpt);
+for (unsigned int j = 0; j < nTpt; ++j) {
+    const StTptTrack* t =
+        static_cast<const StTptTrack*>(node->track(tpt, j));
+    StThreeVectorD p = t->geometry()->momentum();
+}
+\endcode
+
+\sa \ref page_sttrack, \ref page_sttracknode
+*/

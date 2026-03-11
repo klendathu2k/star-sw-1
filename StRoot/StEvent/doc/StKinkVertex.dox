@@ -1,0 +1,46 @@
+/*!
+\page page_stkinkvertex StKinkVertex
+
+\brief Vertex representing a kink decay: one charged parent decaying to one charged daughter.
+
+\section stkinkvertex_overview Overview
+StKinkVertex reconstructs the decay vertex of K± → μ±ν and π± → μ±ν (and similar)
+topologies.  The parent track (accessed via StVertex::parent()) ends at the kink
+vertex; the daughter track (daughter()) starts there.  Decay angles and DCA
+quantities for topology selection are stored directly.
+
+Kink vertices are stored in StEvent::kinkVertices().
+
+\section stkinkvertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex → StKinkVertex
+\endcode
+
+\section stkinkvertex_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDaughter | StLink<StTrack> | Non-owning link to daughter track. |
+| mParentGeantId | UShort_t | GEANT ID of the parent. |
+| mDaughterGeantId | UShort_t | GEANT ID of the daughter. |
+| mDcaParentDaughter | Float_t | Parent–daughter DCA at kink (cm). |
+| mDecayAngleCM | Float_t | Decay angle in parent rest frame (rad). |
+| mDecayAngle | Float_t | Decay angle in lab frame (rad). |
+| mParentMomentum | StThreeVectorF | Parent momentum at kink vertex (GeV/c). |
+| mDaughterMomentum | StThreeVectorF | Daughter momentum at kink vertex (GeV/c). |
+| mDeltaEnergy[3] | Float_t | dE for three decay hypotheses. |
+
+\section stkinkvertex_methods Key Methods
+
+\code{.cpp}
+const StSPtrVecKinkVertex& kinks = event->kinkVertices();
+for (size_t i = 0; i < kinks.size(); ++i) {
+    const StKinkVertex* kink = kinks[i];
+    float angleCM = kink->decayAngleCM();  // rad - use for K/pi ID
+    const StThreeVectorF& pP = kink->parentMomentum();
+    const StThreeVectorF& pD = kink->daughterMomentum();
+}
+\endcode
+
+\sa \ref page_stvertex, \ref page_stv0vertex
+*/

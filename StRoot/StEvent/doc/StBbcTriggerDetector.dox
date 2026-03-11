@@ -1,0 +1,58 @@
+/*!
+\page page_stbbctriggerdetector StBbcTriggerDetector
+
+\brief BBC trigger detector data: 64 PMT ADC/TDC values, DSM registers, scalars, pedestal tables.
+
+\section stbbctriggerdetector_overview Overview
+\c StBbcTriggerDetector stores raw and processed data from the Beam-Beam Counter (BBC),
+STAR's primary luminosity monitor and minimum-bias selector.  It holds ADC and TDC
+values for all 64 PMTs per side, DSM register outputs, scalar rate counters, pedestal
+and MIP calibration tables, and the online east–west time difference used for the
+online z-vertex estimate.
+
+\section stbbctriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StBbcTriggerDetector
+\endcode
+
+\section stbbctriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| unsigned int[64] | mAdc | ADC per PMT (0–31=east, 32–63=west) |
+| unsigned int[64] | mTdc | TDC per PMT |
+| unsigned int[8] | mRegisters | DSM Layer-2 register outputs |
+| unsigned int[128] | mPedestalData | Pedestal, width, MIP tables |
+| unsigned int[32] | mScalars | Scalar rate counters |
+| unsigned short | mDSMVTX | Online east–west time difference |
+
+\section stbbctriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int adc(unsigned int pmt) const` | ADC for PMT 0–63 |
+| `unsigned int tdc(unsigned int pmt) const` | TDC for PMT 0–63 |
+| `unsigned int bbcRegister(int i) const` | DSM register i |
+| `unsigned int scalar(int i) const` | Scalar counter i |
+| `float pedestal(int id) const` | Pedestal for channel id |
+| `float mip(int id) const` | MIP calibration value |
+| `unsigned int adcSumEast() const` | East ADC sum |
+| `unsigned int adcSumWest() const` | West ADC sum |
+| `unsigned int nHitEast() const` | East hit count |
+| `unsigned int nHitWest() const` | West hit count |
+| `unsigned int tdcEarliestEast() const` | Earliest east TDC |
+| `unsigned int tdcEarliestWest() const` | Earliest west TDC |
+| `unsigned short onlineTimeDifference() const` | DSM online time difference |
+
+\section stbbctriggerdetector_usage Usage Example
+\code{.cpp}
+StBbcTriggerDetector& bbc = event->triggerDetectorCollection()->bbc();
+cout << "nHitEast=" << bbc.nHitEast() << "  nHitWest=" << bbc.nHitWest() << endl;
+bool minbias = bbc.nHitEast() >= 1 && bbc.nHitWest() >= 1;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stzdctriggerdetector
+*/

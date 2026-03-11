@@ -1,0 +1,49 @@
+/*!
+\page page_sttracknode StTrackNode
+
+\brief Groups an StGlobalTrack with its StPrimaryTrack refit(s) into a single node.
+
+\section sttracknode_overview Overview
+StTrackNode is the owner of every track representation derived from the
+same set of detector hits.  It holds one StGlobalTrack (owned) and zero
+or more StPrimaryTrack objects (non-owning references; owned by
+StPrimaryVertex).
+
+All track nodes for an event live in StEvent::trackNodes().
+
+\section sttracknode_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StTrackNode
+\endcode
+
+\section sttracknode_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mOwnedTracks | StSPtrVecTrack | Owned global/tpt tracks. |
+| mReferencedTracks | StPtrVecTrack | Non-owning primary track pointers. |
+
+\section sttracknode_methods Key Methods
+
+\code{.cpp}
+// Standard iteration pattern
+const StSPtrVecTrackNode& nodes = event->trackNodes();
+for (size_t i = 0; i < nodes.size(); ++i) {
+    const StTrackNode* nd = nodes[i];
+
+    // Global track (first in mOwnedTracks)
+    const StGlobalTrack* g =
+        static_cast<const StGlobalTrack*>(nd->track(global));
+
+    // Primary refit(s)
+    unsigned int np = nd->entries(primary);
+    for (unsigned int j = 0; j < np; ++j) {
+        const StPrimaryTrack* p =
+            static_cast<const StPrimaryTrack*>(nd->track(primary, j));
+    }
+}
+\endcode
+
+\sa \ref page_sttrack, \ref page_stglobaltrack,
+    \ref page_stprimarytrack, \ref page_stprimaryvertex
+*/

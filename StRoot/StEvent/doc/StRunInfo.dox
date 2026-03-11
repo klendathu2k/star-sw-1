@@ -1,0 +1,74 @@
+/*!
+\page page_struninfo StRunInfo
+
+\brief Run-level metadata: beam species, energy, magnetic field, TPC/SVT drift velocities, luminosity rates.
+
+\section struninfo_overview Overview
+\c StRunInfo stores quantities that are constant across every event in a run.
+It provides beam species (mass number A), centre-of-mass energy √s_NN, the solenoidal
+magnetic field, TPC east/west drift velocities, SVT drift-velocity scale factor, and
+luminosity-monitor rates from the BBC and ZDC.  Beam intensities, lifetimes, and the RHIC
+fill number are also stored.  A TPC space-charge correction mode and value are included for
+track-momentum corrections.
+
+\section struninfo_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StRunInfo
+\endcode
+
+\section struninfo_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mRunId | Run number |
+| UInt_t | mProductionTime | Unix timestamp of offline reconstruction |
+| TString | mProductionVersion | Software version string (e.g. "SL05d") |
+| Float_t | mCenterOfMassEnergy | √s_NN (GeV) |
+| Int_t[2] | mBeamMassNumber | Mass number A: [0]=east, [1]=west |
+| Double_t | mMagneticFieldZ | Solenoidal B along z (kGauss) |
+| Float_t[2] | mTpcDriftVelocity | TPC drift velocity (cm/µs): [0]=east, [1]=west |
+| Float_t | mSvtDriftVelocityScaler | SVT drift-velocity scale factor |
+| Double_t | mZdcEastRate | ZDC east single-arm rate (Hz) |
+| Double_t | mZdcWestRate | ZDC west single-arm rate (Hz) |
+| Double_t | mZdcCoincidenceRate | ZDC coincidence rate (Hz) |
+| Double_t | mBbcCoincidenceRate | BBC coincidence rate (Hz) |
+| Double_t | mBackgroundRate | Beam-background rate (Hz) |
+| Double_t | mL0RateToRich | L0 rate to RICH (Hz) |
+| Float_t[2] | mBeamEnergy | Beam energy per nucleon (GeV) |
+| Float_t[2] | mInitialBeamIntensity | Initial beam intensity |
+| Float_t[2] | mBeamLifeTime | Beam lifetime (hours) |
+| Float_t[2] | mBeamFillNumber | RHIC fill number |
+| Double_t | mBbcEastRate | BBC east single-arm rate (Hz) |
+| Double_t | mBbcWestRate | BBC west single-arm rate (Hz) |
+| Double_t | mBbcBlueBackgroundRate | Blue-beam background (Hz) |
+| Double_t | mBbcYellowBackgroundRate | Yellow-beam background (Hz) |
+| Int_t | mSpaceChargeCorrectionMode | TPC space-charge correction mode flag |
+| Float_t | mSpaceCharge | TPC space-charge correction value |
+
+\section struninfo_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int runId() const` | Run number |
+| `float centerOfMassEnergy() const` | √s_NN (GeV) |
+| `int beamMassNumber(StBeamDirection) const` | Beam mass number for east/west |
+| `float beamEnergy(StBeamDirection) const` | Beam energy per nucleon (GeV) |
+| `double magneticField() const` | B along z (kGauss) |
+| `float tpcDriftVelocity(StBeamDirection) const` | TPC drift velocity (cm/µs) |
+| `double zdcCoincidenceRate() const` | ZDC coincidence rate (Hz) |
+| `double bbcCoincidenceRate() const` | BBC coincidence rate (Hz) |
+| `const char* productionVersion() const` | Software version string |
+
+\section struninfo_usage Usage Example
+\code{.cpp}
+StRunInfo* run = event->runInfo();
+cout << "sqrt(sNN) = " << run->centerOfMassEnergy() << " GeV" << endl;
+cout << "B = "         << run->magneticField()       << " kG"  << endl;
+cout << "ZDC coinc = " << run->zdcCoincidenceRate()  << " Hz"  << endl;
+\endcode
+
+\see \ref page_steventinfo
+\see \ref page_steventsummary
+*/

@@ -1,0 +1,45 @@
+/*!
+\page page_stEmcRawData StEmcRawData
+
+\brief Raw DAQ data banks for the STAR Electromagnetic Calorimeter (BEMC or EEMC).
+
+\section emcrawdata_overview Overview
+
+StEmcRawData stores the unprocessed DAQ output from the EMC readout
+electronics as an array of up to 60 bank objects (one per DAQ crate).  Each
+bank consists of a header array (crate/trigger metadata) and a data array
+(raw ADC payload words).  The class is the input to the EMC unpacker chain;
+most physics analyses use the decoded StEmcRawHit objects instead.
+
+\section emcrawdata_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StEmcRawData
+\endcode
+
+Held by \ref page_stEmcCollection "StEmcCollection" (for BEMC and/or EEMC).
+
+\section emcrawdata_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| TArrayS[60] | mHeader | Header word arrays, one per DAQ crate bank (index 0–59). |
+| TArrayS[60] | mData | Raw ADC payload arrays, one per DAQ crate bank. |
+
+\c MAXEMCDATABANK = 60 is the maximum number of bank slots.
+
+\section emcrawdata_methods Key Methods
+
+- \c getNBlocks() — total number of bank slots (60).
+- \c header(bank) / \c data(bank) — pointer to array for a bank.
+- \c header(bank,pos) / \c data(bank,pos) — individual words.
+- \c sizeHeader(bank) / \c sizeData(bank) — array sizes.
+- \c createBank(bank,nH,nD) — allocate bank arrays.
+- \c deleteBank(bank) — release bank arrays.
+- \c setHeader() / \c setData() — populate from external buffers.
+
+\section emcrawdata_seealso See Also
+
+\ref page_stEmcRawHit "StEmcRawHit",
+\ref page_stEmcDetector "StEmcDetector"
+*/

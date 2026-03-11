@@ -1,0 +1,59 @@
+/*!
+\page page_stFcsCluster StFcsCluster
+
+\brief Reconstructed cluster of adjacent FCS towers.
+
+\section fcsCluster_overview Overview
+
+StFcsCluster represents a group of adjacent FCS tower channels sharing energy
+from one or more particles.  It stores the energy (0th moment), the centroid
+in local tower-grid coordinates (1st moment), second-moment shape parameters,
+chi2 for 1- and 2-photon fits, and the reconstructed four-momentum.  It
+contains non-owning references to both the constituent StFcsHit tower objects
+and the fitted StFcsPoint photon points.
+
+\section fcsCluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFcsCluster
+\endcode
+
+Stored in \ref page_stFcsCollection "StFcsCollection" (one vector per sub-detector).
+
+\section fcsCluster_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetectorId | Sub-detector ID: 0=ECAL-N, 1=ECAL-S, 2=HCAL-N, 3=HCAL-S, 4=PrsH-N, 5=PrsH-S. |
+| Int_t | mCategory | Cluster category (1-photon, 2-photon, other). |
+| Int_t | mNTowers | Number of contributing tower hits. |
+| Float_t | mEnergy | Total energy [GeV]. |
+| Float_t | mX | x centroid in local grid units. |
+| Float_t | mY | y centroid in local grid units. |
+| Float_t | mSigmaMin | Minor-axis 2nd moment (minimum). |
+| Float_t | mSigmaMax | Major-axis 2nd moment (maximum). |
+| Float_t | mChi2Ndf1Photon | χ²/ndf for 1-photon fit. |
+| Float_t | mChi2Ndf2Photon | χ²/ndf for 2-photon fit. |
+| Int_t | mId | Event-wide cluster ID. |
+| StLorentzVectorF | mFourMomentum | Cluster four-momentum. |
+| StPtrVecFmsPoint | mPhotons | Fitted photon points (non-owning). |
+| StPtrVecFmsHit | mHits | Constituent hits (non-owning). |
+
+\section fcsCluster_methods Key Methods
+
+- \c detectorId() — sub-detector ID.
+- \c category() — cluster category code.
+- \c nTowers(), \c nPhotons() — tower/photon counts.
+- \c energy(), \c x(), \c y() — total energy and centroid.
+- \c sigmaMin(), \c sigmaMax() — 2nd-moment shape.
+- \c chi2Ndf1Photon(), \c chi2Ndf2Photon() — fit quality.
+- \c id() — event-wide cluster identifier.
+- \c fourMomentum() — four-momentum.
+- \c hits(), \c points() — access towers and photon points.
+- \c print() — print summary.
+
+\section fcsCluster_seealso See Also
+
+\ref page_stFcsHit "StFcsHit",
+\ref page_stFcsPoint "StFcsPoint"
+*/

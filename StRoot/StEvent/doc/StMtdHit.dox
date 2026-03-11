@@ -1,0 +1,75 @@
+/*!
+\page page_stmtdhit StMtdHit
+
+\brief Reconstructed hit in the STAR Muon Telescope Detector (MTD).
+
+\section mtdhit_overview Overview
+
+StMtdHit represents a fully reconstructed hit in the STAR Muon Telescope Detector (MTD),
+which became fully operational in Run 12 (2012) and covers |η| < 0.5.
+
+The MTD is a scintillator-based detector mounted \b outside the STAR magnet return yoke,
+purpose-built for muon identification and di-muon physics (J/ψ → μμ, ϒ → μμ).
+
+Geometry: 30 backlegs × 5 modules × 12 cells.
+
+Each module is read from two ends (west/east or top/bottom), providing a \c pair of
+leading and trailing edge times. The time of flight is estimated as the average of the
+two leading-edge times; the difference encodes the hit position along the module.
+
+Hits are stored in \ref StMtdCollection via StEvent::mtdCollection().
+
+\section mtdhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StMtdHit
+\endcode
+
+\section mtdhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mBackLeg | UChar_t | Backleg number (1–30) |
+| mModule | UChar_t | Module number within backleg (1–5) |
+| mCell | UChar_t | Cell number within module (1–12) |
+| mLeadingEdgeTime | pair<Double_t,Double_t> | Leading-edge times for both ends [ns] |
+| mTrailingEdgeTime | pair<Double_t,Double_t> | Trailing-edge times for both ends [ns] |
+| mAssociatedTrack | StLink<StTrack> | Matched reconstructed track |
+| mIdTruth | Int_t | MC truth track ID |
+| mQuality | UShort_t | MC truth quality (% charge from truth) |
+
+tot() returns a pair: (trailing.first−leading.first, trailing.second−leading.second) [ns].
+tof() returns 0.5*(leading.first + leading.second) [ns].
+
+\section mtdhit_methods Key Methods
+
+- backleg() — backleg number (1–30)
+- module() — module number (1–5)
+- cell() — cell number (1–12)
+- leadingEdgeTime() — leading-edge times for both ends [ns]
+- trailingEdgeTime() — trailing-edge times for both ends [ns]
+- tot() — time-over-threshold pair [ns]
+- tof() — estimated time of flight [ns] (average of two ends)
+- associatedTrack() — pointer to matched StTrack
+- idTruth(), qaTruth() — MC truth information
+- setLeadingEdgeTime(pair<double,double>) — set leading-edge times
+
+\section mtdhit_example Usage Example
+
+\code{.cpp}
+StMtdCollection* coll = event->mtdCollection();
+if (coll) {
+    const StSPtrVecMtdHit& hits = coll->mtdHits();
+    for (const auto& h : hits) {
+        int    backleg = h->backleg();
+        int    module  = h->module();
+        double tof     = h->tof();       // average of two ends [ns]
+        auto   leTime  = h->leadingEdgeTime();  // pair [ns]
+        auto   tot     = h->tot();       // pair [ns]
+        if (h->associatedTrack()) { /* muon PID */ }
+    }
+}
+\endcode
+
+\see StMtdRawHit, StMtdHeader, StMtdCollection
+*/

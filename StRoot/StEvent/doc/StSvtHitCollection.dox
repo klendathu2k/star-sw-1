@@ -1,0 +1,163 @@
+/*!
+\page page_stSvtHitCollection StSvtHitCollection
+
+\ref StSvtHitCollection is the top-level container for all reconstructed hits in the STAR Silicon
+Vertex Tracker (SVT). Hits are stored in a four-level hierarchy —
+<b>barrel → ladder → wafer → hit</b> — mirroring the physical geometry of the SVT's three
+concentric silicon barrels. The three supporting classes, \ref StSvtBarrelHitCollection,
+\ref StSvtLadderHitCollection, and \ref StSvtWaferHitCollection, are internal nodes of that
+hierarchy and are not used independently.
+
+\section sec_svt_hierarchy Class Hierarchy
+
+\verbatim
+StSvtHitCollection            (top level, 3 barrels)
+└── StSvtBarrelHitCollection      (one per barrel; 8, 12, or 16 ladders)
+    └── StSvtLadderHitCollection      (one per ladder; 4, 6, or 7 wafers)
+        └── StSvtWaferHitCollection       (one per wafer, holds StSvtHit* pointers)
+\endverbatim
+
+All four classes inherit from StObject.
+
+\section sec_svt_containment Containment Model
+
+- \ref StSvtHitCollection holds an embedded array of 3 \ref StSvtBarrelHitCollection objects
+  (<tt>mBarrels[3]</tt>).
+- Each \ref StSvtBarrelHitCollection holds an embedded array of up to 16
+  \ref StSvtLadderHitCollection objects (<tt>mLadders[16]</tt>); the active count is
+  barrel-dependent (8, 12, or 16).
+- Each \ref StSvtLadderHitCollection holds an embedded array of up to 7
+  \ref StSvtWaferHitCollection objects (<tt>mWafers[7]</tt>); the active count is
+  barrel-dependent (4, 6, or 7).
+- Each \ref StSvtWaferHitCollection holds a dynamic <tt>StSPtrVecSvtHit mHits</tt> vector of
+  pointers to \ref StSvtHit objects.
+
+\subsection subsec_svt_geometry Barrel-Dependent Geometry
+
+| Barrel index | Ladders per barrel | Wafers per ladder |
+|---|---|---|
+| 0 | 8 | 4 |
+| 1 | 12 | 6 |
+| 2 | 16 | 7 |
+
+This configuration is established in the \ref StSvtHitCollection constructor, which calls
+<tt>setBarrelNumber(i)</tt> on each barrel and ladder collection. The barrel number drives the
+<tt>numberOfLadders()</tt> and <tt>numberOfWafers()</tt> switch statements in those classes.
+
+\ref StSvtHitCollection::addHit "addHit(StSvtHit*)" routes an \ref StSvtHit into the correct
+<tt>mHits</tt> vector using the hit's own 1-based <tt>barrel()</tt>, <tt>ladder()</tt>, and
+<tt>wafer()</tt> accessors, converting internally to 0-based array indices. The public accessor
+methods <tt>barrel()</tt>, <tt>ladder()</tt>, and <tt>wafer()</tt> all use <b>0-based</b> indices.
+
+\section sec_svt_ownership Object Ownership
+
+\subsection subsec_svt_subcoll Sub-collection Storage
+\ref StSvtBarrelHitCollection, \ref StSvtLadderHitCollection, and \ref StSvtWaferHitCollection
+objects are <b>stack-allocated as plain arrays</b> inside their parent. They are not heap-allocated
+and must not be deleted by the caller. The arrays are sized to the maximum capacity
+(<tt>mMaxNumberOfLadders = 16</tt>, <tt>mMaxNumberOfWafers = 7</tt>); only entries with indices
+below the barrel-specific active count are meaningful.
+
+\subsection subsec_svt_hits Hit Storage — StSPtrVecSvtHit
+The per-wafer hit vector is of type <tt>StSPtrVecSvtHit</tt>, a <em>smart-pointer vector</em>.
+\ref StSvtWaferHitCollection::~StSvtWaferHitCollection "~StSvtWaferHitCollection()" iterates over
+the vector and explicitly <tt>delete</tt>s each <tt>StSvtHit*</tt>. This explicit deletion is
+required because \ref StSvtHit uses a custom <tt>new</tt>/<tt>delete</tt> via
+<tt>StMemoryPool</tt>.
+
+\warning Do <b>not</b> <tt>delete</tt> \ref StSvtHit pointers obtained from the collection.
+Ownership belongs to \ref StSvtWaferHitCollection; external deletion will cause a double-free.
+
+\subsection subsec_svt_framework Framework Ownership
+\ref StSvtHitCollection itself is owned by the StEvent framework (via the
+<tt>St_DataSet</tt>/<tt>StXRefMain</tt> mechanism). When registered with StEvent via
+<tt>StEvent::setSvtHitCollection()</tt>, ownership transfers to the framework, which handles
+cleanup. <tt>StSvtHitCollection::~StSvtHitCollection()</tt>,
+<tt>StSvtBarrelHitCollection::~StSvtBarrelHitCollection()</tt>, and
+<tt>StSvtLadderHitCollection::~StSvtLadderHitCollection()</tt> are all no-ops; only
+\ref StSvtWaferHitCollection performs explicit hit cleanup.
+
+\section sec_svt_members Data Members
+
+\subsection subsec_svt_members_top StSvtHitCollection
+- <tt>enum { mNumberOfBarrels = 3 }</tt> — Fixed number of SVT barrels.
+- <tt>StSvtBarrelHitCollection mBarrels[3]</tt> — Embedded array of per-barrel collections.
+
+\subsection subsec_svt_members_barrel StSvtBarrelHitCollection
+- <tt>enum { mMaxNumberOfLadders = 16 }</tt> — Array capacity; active count is 8, 12, or 16.
+- <tt>Int_t mBarrelNumber</tt> — 0-based barrel index; drives <tt>numberOfLadders()</tt>.
+- <tt>StSvtLadderHitCollection mLadders[16]</tt> — Embedded array of ladder collections.
+
+\subsection subsec_svt_members_ladder StSvtLadderHitCollection
+- <tt>enum { mMaxNumberOfWafers = 7 }</tt> — Array capacity; active count is 4, 6, or 7.
+- <tt>Int_t mBarrelNumber</tt> — 0-based barrel index; drives <tt>numberOfWafers()</tt>.
+- <tt>StSvtWaferHitCollection mWafers[7]</tt> — Embedded array of wafer collections.
+
+\subsection subsec_svt_members_wafer StSvtWaferHitCollection
+- <tt>StSPtrVecSvtHit mHits</tt> — Dynamic vector of pointers to \ref StSvtHit objects on this
+  wafer.
+
+\section sec_svt_methods Key Methods
+
+\subsection subsec_svt_methods_top StSvtHitCollection
+- <tt>bool addHit(StSvtHit*)</tt> — Routes a hit into the correct barrel/ladder/wafer
+  sub-collection. Returns <tt>false</tt> if null or indices out of range.
+- <tt>unsigned int numberOfHits() const</tt> — Total hits across all barrels, ladders, and wafers.
+- <tt>unsigned int numberOfBarrels() const</tt> — Returns 3.
+- <tt>StSvtBarrelHitCollection* barrel(unsigned int)</tt> — Sub-collection at 0-based index, or
+  <tt>nullptr</tt> if out of range.
+
+\subsection subsec_svt_methods_barrel StSvtBarrelHitCollection
+- <tt>unsigned int numberOfHits() const</tt> — Total hits in this barrel.
+- <tt>unsigned int numberOfLadders() const</tt> — Active ladder count (8, 12, or 16).
+- <tt>StSvtLadderHitCollection* ladder(unsigned int)</tt> — Sub-collection at 0-based index.
+- <tt>void setBarrelNumber(int)</tt> — Sets barrel index; no-op if already set.
+
+\subsection subsec_svt_methods_ladder StSvtLadderHitCollection
+- <tt>unsigned int numberOfHits() const</tt> — Total hits on this ladder.
+- <tt>unsigned int numberOfWafers() const</tt> — Active wafer count (4, 6, or 7).
+- <tt>StSvtWaferHitCollection* wafer(unsigned int)</tt> — Sub-collection at 0-based index.
+- <tt>void setBarrelNumber(int)</tt> — Sets parent barrel index; no-op if already set.
+
+\subsection subsec_svt_methods_wafer StSvtWaferHitCollection
+- <tt>StSPtrVecSvtHit& hits()</tt> — Mutable reference to the hit vector.
+- <tt>const StSPtrVecSvtHit& hits() const</tt> — Const reference to the hit vector.
+
+\section sec_svt_usage Usage Examples
+
+\subsection subsec_svt_usage_iter Iterate Over All Hits
+
+\code{.cpp}
+StSvtHitCollection* svtColl = event->svtHitCollection();
+if (!svtColl) return;
+
+for (unsigned int iBarrel = 0; iBarrel < svtColl->numberOfBarrels(); ++iBarrel) {
+    const StSvtBarrelHitCollection* barrel = svtColl->barrel(iBarrel);
+    if (!barrel) continue;
+
+    for (unsigned int iLadder = 0; iLadder < barrel->numberOfLadders(); ++iLadder) {
+        const StSvtLadderHitCollection* ladder = barrel->ladder(iLadder);
+        if (!ladder) continue;
+
+        for (unsigned int iWafer = 0; iWafer < ladder->numberOfWafers(); ++iWafer) {
+            const StSvtWaferHitCollection* wafer = ladder->wafer(iWafer);
+            if (!wafer) continue;
+
+            const StSPtrVecSvtHit& hits = wafer->hits();
+            for (const StSvtHit* hit : hits) {
+                // process hit -- do NOT delete hit
+            }
+        }
+    }
+}
+\endcode
+
+\subsection subsec_svt_usage_add Add a Hit (e.g. from a Maker)
+
+\code{.cpp}
+StSvtHit* hit = new StSvtHit(/*...*/);  // allocated via StSvtHit::operator new
+svtColl->addHit(hit);                   // ownership transferred to the collection
+// Do not delete 'hit' after this call.
+\endcode
+
+*/

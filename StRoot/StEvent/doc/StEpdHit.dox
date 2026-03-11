@@ -1,0 +1,92 @@
+/*!
+\page page_stepdhit StEpdHit
+
+\brief Calibrated hit from a single scintillator tile in the STAR Event Plane Detector.
+
+\section epdhit_overview Overview
+
+StEpdHit stores the gain-corrected signal from one tile of the **Event Plane Detector (EPD)**.
+The EPD has 744 plastic scintillator tiles on two wheels (East and West) covering
+2.1 < |η| < 5.1.  Each tile is read out by a silicon photomultiplier (SiPM) and a
+QT charge-integrating board.  One StEpdHit is created per good tile per event.
+
+The object carries three payloads (10 bytes total):
+- a packed tile identifier (side, super-sector, tile number),
+- packed QT-board data (ADC, TAC, TDC, flags), and
+- a gain-calibrated energy loss \c nMIP (in units of the Landau MPV for one MIP).
+
+\section epdhit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StEpdHit
+\endcode
+
+StEpdHit objects are stored in \ref page_stepdepdcollection via \c StSPtrVecEpdHit
+and retrieved with \c StEvent::epdCollection().
+
+\section epdhit_id Tile Identification
+
+The signed 16-bit member \c mId encodes the complete tile address:
+
+| Quantity | Computation |
+|----------|-------------|
+| Side | sign(\c mId): +1 = West, −1 = East |
+| Super-sector position | \c abs(mId) / 100, range [1,12] |
+| Tile number | \c abs(mId) % 100, range [1,31] |
+
+Tiles 1–9 are small (inner ring, higher |η|); tiles 10–31 are large (outer ring).
+
+\section epdhit_qtdata QT-Board Packing
+
+The 32-bit \c mQTdata word packs:
+
+| Bits | Field |
+|------|-------|
+| 0–11 | ADC [0,4095] |
+| 12–23 | TAC [0,4095] |
+| 24–28 | TDC [0,31] |
+| 29 | hasTAC flag |
+| 30 | database good/bad status |
+
+\section epdhit_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Short_t | \c mId | Packed tile ID (sign = side, abs = 100×position + tile) |
+| \c Int_t | \c mQTdata | Packed QT-board word (ADC, TAC, TDC, flags) |
+| \c Float_t | \c mnMIP | Gain-calibrated energy in units of one MIP Landau MPV |
+| \c Int_t | \c mTruthId | MC truth GEANT track ID of the primary energy-deposit particle |
+
+\section epdhit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c id() | Signed tile ID |
+| \c side() | +1 (West) or −1 (East) |
+| \c position() | Super-sector index [1,12] |
+| \c tile() | Tile number within super-sector [1,31] |
+| \c adc() | Raw ADC [0,4095] |
+| \c tac() | TAC value (valid if \c hasTac()) |
+| \c tdc() | TDC value [0,31] |
+| \c hasTac() | True if TAC is measured |
+| \c nMIP() | Gain-corrected energy (MIP units) |
+| \c isGood() | True if tile is good in the database |
+| \c idTruth() | MC truth particle GEANT ID |
+
+\section epdhit_example Usage Example
+
+\code{.cpp}
+StEpdCollection* epdColl = event->epdCollection();
+for (const StEpdHit* hit : epdColl->hits()) {
+    if (!hit->isGood()) continue;
+    float nMIP = hit->nMIP();
+    int   side = hit->side();   // +1 West, -1 East
+    int   pos  = hit->position();
+    int   tile = hit->tile();
+    bool  isSmall = (tile <= 9);
+    // accumulate event-plane Q-vector ...
+}
+\endcode
+
+\see StEpdCollection, StEvent
+*/

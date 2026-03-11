@@ -1,0 +1,142 @@
+/*!
+\page page_stpxlHitCollection StPxlHitCollection — Collection Documentation
+
+\ref StPxlHitCollection is the top-level container for all reconstructed Pixel
+Detector (PXL) hits in a single STAR event.  The PXL was the innermost layer of
+the STAR Heavy Flavour Tracker (HFT), providing high-resolution silicon pixel
+measurements for heavy-flavour vertex tagging.  Hits are organised in a
+four-level hierarchy: detector → sector → ladder → sensor.
+
+\see StPxlHitCollection
+\see StPxlSectorHitCollection
+\see StPxlLadderHitCollection
+\see StPxlSensorHitCollection
+\see StPxlHit
+
+---
+
+\section pxl_hierarchy Class Hierarchy
+
+\code
+StPxlHitCollection                   (top-level, one per event)
+└── StPxlSectorHitCollection           [10 sectors, indices 0–9]
+    └── StPxlLadderHitCollection         [4 ladders per sector, indices 0–3]
+        └── StPxlSensorHitCollection       [10 sensors per ladder, indices 0–9]
+            └── StSPtrVecPxlHit              (owns the StPxlHit objects)
+\endcode
+
+All sub-collection nodes are embedded (stack-allocated) inside their parent;
+no heap allocation is used for collection nodes.
+
+\section pxl_containment Containment Model
+
+| Level    | Class                          | Contents                                    |
+|----------|--------------------------------|---------------------------------------------|
+| Detector | \ref StPxlHitCollection        | 10 \ref StPxlSectorHitCollection objects    |
+| Sector   | \ref StPxlSectorHitCollection  | 4 \ref StPxlLadderHitCollection objects     |
+| Ladder   | \ref StPxlLadderHitCollection  | 10 \ref StPxlSensorHitCollection objects    |
+| Sensor   | \ref StPxlSensorHitCollection  | `StSPtrVecPxlHit` of `StPxlHit*`            |
+
+\section pxl_ownership Object Ownership
+
+\ref StPxlSensorHitCollection holds its hits in a member of type
+\c StSPtrVecPxlHit, which is a **smart-pointer vector** that **owns** the
+\ref StPxlHit objects it contains.  The \ref StPxlSensorHitCollection destructor
+explicitly deletes every hit in the vector (necessary because \ref StPxlHit
+provides its own pool-allocated \c new/delete).
+
+All intermediate sub-collection arrays are embedded members of their parent
+classes and are destroyed automatically with the parent.
+\ref StPxlHitCollection itself is owned by the StEvent framework
+(\c St_DataSet / \c StXRefMain).
+
+\warning Do **not** delete individual \ref StPxlHit pointers obtained from the
+collection.  The collection manages their lifetimes.
+
+\section pxl_members Data Members
+
+\subsection pxl_members_top StPxlHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StPxlSectorHitCollection[10]` | `mSectors` | Fixed-size array of 10 sector sub-collections. |
+
+\subsection pxl_members_sector StPxlSectorHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StPxlLadderHitCollection[4]` | `mLadders` | Fixed-size array of 4 ladder sub-collections per sector. |
+
+\subsection pxl_members_ladder StPxlLadderHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StPxlSensorHitCollection[10]` | `mSensors` | Fixed-size array of 10 sensor sub-collections per ladder. |
+
+\subsection pxl_members_sensor StPxlSensorHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSPtrVecPxlHit` | `mHits` | Smart-pointer vector of `StPxlHit*`; owns all contained hits. |
+
+\section pxl_methods Key Methods
+
+\subsection pxl_methods_top StPxlHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `addHit(StPxlHit*)` | `bool` | Routes hit to correct sector/ladder/sensor. Returns `false` if any index is out of range. |
+| `numberOfHits() const` | `unsigned int` | Total hits across all sectors, ladders, and sensors. |
+| `numberOfSectors() const` | `unsigned int` | Always 10. |
+| `sector(unsigned int)` | `StPxlSectorHitCollection*` | 0-based sector access; returns `nullptr` if out of range. |
+
+\subsection pxl_methods_sector StPxlSectorHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `numberOfHits() const` | `unsigned int` | Total hits in this sector. |
+| `numberOfLadders() const` | `unsigned int` | Always 4. |
+| `ladder(unsigned int)` | `StPxlLadderHitCollection*` | 0-based ladder access; returns `nullptr` if out of range. |
+
+\subsection pxl_methods_ladder StPxlLadderHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `numberOfHits() const` | `unsigned int` | Total hits on this ladder. |
+| `numberOfSensors() const` | `unsigned int` | Always 10. |
+| `sensor(unsigned int)` | `StPxlSensorHitCollection*` | 0-based sensor access; returns `nullptr` if out of range. |
+
+\subsection pxl_methods_sensor StPxlSensorHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `hits()` | `StSPtrVecPxlHit&` | Mutable reference to the hit vector. |
+| `hits() const` | `const StSPtrVecPxlHit&` | Const reference to the hit vector. |
+
+\section pxl_example Usage Example
+
+\code{.cpp}
+const StPxlHitCollection* pxlColl = event->pxlHitCollection();
+if (!pxlColl) return;
+
+for (unsigned int iSec = 0; iSec < pxlColl->numberOfSectors(); ++iSec) {
+    const StPxlSectorHitCollection* secColl = pxlColl->sector(iSec);
+    if (!secColl) continue;
+
+    for (unsigned int iLad = 0; iLad < secColl->numberOfLadders(); ++iLad) {
+        const StPxlLadderHitCollection* ladColl = secColl->ladder(iLad);
+        if (!ladColl) continue;
+
+        for (unsigned int iSen = 0; iSen < ladColl->numberOfSensors(); ++iSen) {
+            const StPxlSensorHitCollection* senColl = ladColl->sensor(iSen);
+            if (!senColl) continue;
+
+            const StSPtrVecPxlHit& hits = senColl->hits();
+            for (const StPxlHit* hit : hits) {
+                // process hit ...
+            }
+        }
+    }
+}
+\endcode
+*/

@@ -1,0 +1,100 @@
+/*!
+\page page_sthit StHit
+
+\brief Abstract base class for all single-detector-space-point hits in STAR.
+
+\ref StHit is the abstract base class for all single-detector-space-point hits in STAR. It
+extends \ref StMeasuredPoint with an integrated charge, a packed hardware address, hit-status
+flags, Monte Carlo truth information, and a reference count recording how many reconstructed
+tracks claim this hit. Every concrete hit class for a specific sub-detector (TPC, FTPC, SVT, …)
+derives from \c StHit and must implement \c detector().
+
+\section sec_hit_hierarchy Class Hierarchy
+
+\verbatim
+TObject
+└── StObject
+    └── StMeasuredPoint
+        └── StHit                (abstract base — this class)
+            ├── StTpcHit         (kTpcId / kiTpcId)
+            ├── StFtpcHit        (kFtpcEastId / kFtpcWestId)
+            ├── StSvtHit         (kSvtId)
+            ├── StSsdHit         (kSsdId)
+            ├── StPxlHit         (kPxlId)
+            └── ...
+\endverbatim
+
+Concrete hit objects are owned by \c StSPtrVec<T> collections inside the detector hit collection
+class (e.g. \ref StTpcPadrowHitCollection), which is owned by the StEvent framework.
+
+\section sec_hit_members Data Members
+
+- <tt>UInt_t mHardwarePosition</tt> — Packed hardware address. Bit layout is detector-specific;
+  use the protected <tt>bits(bit, nbits)</tt> helper. For TPC: bit 1 = iTPC flag, bits 4–8 =
+  sector (1–24), bits 9–15 = padrow (1–128), bits 22–31 = pixel count.
+- <tt>StThreeVectorF mPositionError</tt> — 1-sigma position uncertainties (σ_x, σ_y, σ_z) in
+  the STAR global frame, in centimetres.
+- <tt>Float_t mCharge</tt> — Integrated cluster charge. For TPC, in ADC counts or keV (see
+  sub-class documentation for calibration details).
+- <tt>Int_t mId</tt> — Cluster/strip identifier assigned during reconstruction; zero if not set.
+- <tt>Int_t mIdTruth</tt> — <em>Simulation only.</em> Geant track ID of the primary MC particle.
+  Lower 16 bits: track ID; upper 16 bits: quality when encoded together.
+- <tt>UShort_t mQuality</tt> — <em>Simulation only.</em> Fraction (0–100 %) of cluster charge
+  from the \c mIdTruth track. Accessible via <tt>qaTruth()</tt>.
+- <tt>UChar_t mFitFlag</tt> — Non-zero if this hit was included in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit (max 255).
+- <tt>UShort_t mFlag</tt> — General-purpose detector-specific status bitmask.
+- <tt>StHit* mNextHit</tt> — <b>Transient</b> (not persisted; <tt>//!</tt>). Linked-list pointer
+  used to chain sorted hits during reconstruction.
+
+\section sec_hit_methods Key Methods
+
+\subsection subsec_hit_accessors Accessors
+- <tt>float charge() const</tt> — Integrated cluster charge.
+- <tt>unsigned int trackReferenceCount() const</tt> — Number of referencing tracks.
+- <tt>unsigned int flag() const</tt> — Status bitmask.
+- <tt>int usedInFit() const</tt> — Non-zero if used in a track fit.
+- <tt>StThreeVectorF positionError() const</tt> — 1-sigma position errors (cm).
+- <tt>StMatrixF covariantMatrix() const</tt> — Diagonal 3×3 covariance matrix (cm²).
+- <tt>unsigned int hardwarePosition() const</tt> — Raw packed hardware address.
+- <tt>int id() const</tt> — Cluster/strip identifier.
+- <tt>const StHit* nextHit() const</tt> — Transient linked-list pointer (may be null).
+- <tt>int idTruth() const</tt> — MC truth Geant track ID.
+- <tt>int qaTruth() const</tt> — MC truth quality (%).
+
+\subsection subsec_hit_mutators Mutators
+- <tt>void setCharge(float)</tt>
+- <tt>void setFlag(unsigned short)</tt>
+- <tt>void setFitFlag(unsigned char)</tt>
+- <tt>void setTrackReferenceCount(unsigned char)</tt>
+- <tt>void setHardwarePosition(unsigned int)</tt>
+- <tt>void setPositionError(const StThreeVectorF&)</tt>
+- <tt>void setId(int)</tt>
+- <tt>void setIdTruth(int idtru, int qatru=0)</tt> — Encodes truth and quality; if
+  <tt>qatru==0</tt>, bits 16–31 of <tt>idtru</tt> supply the quality.
+- <tt>void SetNextHit(StHit* next=nullptr)</tt>
+
+\subsection subsec_hit_purevirtual Pure Virtual
+- <tt>virtual StDetectorId detector() const = 0</tt> — Must be implemented by every concrete
+  sub-class to identify the sub-detector.
+
+\section sec_hit_detectorids StDetectorId Values
+
+| Value | Integer | Sub-detector |
+|---|---|---|
+| kTpcId | 1 | Main TPC |
+| kFtpcWestId | 4 | FTPC West |
+| kFtpcEastId | 5 | FTPC East |
+| kSvtId | 6 | Silicon Vertex Tracker |
+| kSsdId | 14 | Silicon Strip Detector |
+| kPxlId | 37 | Pixel detector (HFT) |
+| kiTpcId | 39 | Inner TPC upgrade (iTPC) |
+
+\section sec_hit_ownership Object Ownership
+
+\c StHit objects are owned by the \c StSPtrVec<T>-based padrow/plane collection inside a
+detector hit collection class, which is owned by the StEvent framework.
+<b>Never delete an StHit* obtained from a collection.</b>
+
+\sa \ref page_stmeasuredpoint, \ref page_stTpcHit, \ref page_stFtpcHit
+*/

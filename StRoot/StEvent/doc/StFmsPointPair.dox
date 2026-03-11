@@ -1,0 +1,55 @@
+/*!
+\page page_stFmsPointPair StFmsPointPair
+
+\brief Pair (or group) of FMS photon points for di-photon invariant-mass analysis.
+
+\section fmsPointPair_overview Overview
+
+StFmsPointPair accumulates two or more StFmsPoint photon candidates and
+provides the combined four-momentum, invariant mass, energy asymmetry (\c zgg),
+opening distance (\c dgg), and isolation cone energies.  Its primary use is
+π⁰ → γγ reconstruction in the FMS forward region (2.5 < η < 4.0).
+
+An FPS PID word encodes each constituent photon's pre-shower classification
+as a decimal digit: 1 = photon, 2 = hadron, 3 = electron.  For a 2-photon
+pair, fpsPid()=11 means both are photon candidates.
+
+\section fmsPointPair_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFmsPointPair
+\endcode
+
+Stored in \ref page_stFmsCollection "StFmsCollection".
+
+\section fmsPointPair_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| vector<StFmsPoint*> | mPoints | Constituent photon points (non-owning, transient). |
+| StLorentzVectorD | mFourMomentum | Combined four-momentum (transient). |
+| UInt_t | mFpsPid | Packed FPS PID digits, one per photon (transient). |
+| Float_t[3] | mConeRadius | Isolation cone radii (transient). |
+| Float_t[3] | mConeEnergy | FMS energy within each isolation cone (transient). |
+
+\section fmsPointPair_methods Key Methods
+
+- \c nPoints() — number of constituent photons.
+- \c addPoint(StFmsPoint*) — add a photon (updates 4-momentum and FPS PID).
+- \c point(int) — access photon at index i.
+- \c fourMomentum(), \c energy(), \c pT(), \c eta(), \c phi() — combined kinematics.
+- \c mass() — di-photon invariant mass M(γγ) [GeV/c²].
+- \c zgg() — energy asymmetry |E1−E2|/(E1+E2).
+- \c dgg() — photon–photon opening distance [cm].
+- \c x(), \c y() — energy-weighted centroid.
+- \c fpsPid() — packed FPS PID word.
+- \c coneRadius(), \c coneEnergy(), \c coneEnergyFraction() — isolation.
+- \c setConeEnergy() — set isolation cone energy.
+- \c print() — print summary.
+
+\section fmsPointPair_seealso See Also
+
+\ref page_stFmsPoint "StFmsPoint",
+\ref page_stFmsCluster "StFmsCluster",
+\ref page_stFpsSlat "StFpsSlat"
+*/

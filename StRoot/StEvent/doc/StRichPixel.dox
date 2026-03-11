@@ -1,0 +1,36 @@
+/*!
+\page page_strichpixel StRichPixel
+
+\brief \ref page_strichpixel "StRichPixel" — raw RICH pad pixel with bit-packed row, column, and ADC data.
+
+\section strichpixel_overview Overview
+StRichPixel stores a single raw pad signal from the RICH cathode pad plane.
+It is the lowest-level data object in the RICH reconstruction chain. The pad
+plane is organised in rows and columns; the ADC value is 10-bit (0–1023) with
+an overflow sentinel at 1024. All three quantities are packed into a single
+\c UInt_t to minimise memory footprint.
+
+\section strichpixel_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichPixel
+\endcode
+
+\section strichpixel_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| UInt_t | mPackedData | Bit-packed: bits[7:0]=pad, bits[15:8]=row, bits[26:16]=ADC (bit 26 = overflow flag) |
+
+\section strichpixel_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| int pad() const | Pad (column) index from bits [7:0] |
+| int row() const | Row index from bits [15:8] |
+| int adc() const | ADC value; 1024 if overflow flag is set |
+| void setPackedData(unsigned int) | Set the entire packed word |
+
+\section strichpixel_related Related Classes
+\ref page_strichmcpixel "StRichMCPixel" extends this class with Monte Carlo truth.
+See also \ref page_strichcollection "StRichCollection" for the container that holds pixel vectors.
+*/

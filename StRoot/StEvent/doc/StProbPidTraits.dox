@@ -1,0 +1,65 @@
+/*!
+\page page_stprobpidtraits StProbPidTraits
+
+\brief PID traits storing per-hypothesis Bichsel likelihoods and Bayesian probabilities.
+
+\section stprobpidtraits_overview Overview
+
+\ref StProbPidTraits stores the results of a likelihood-based PID analysis using the
+Bichsel ionisation model applied to TPC dE/dx measurements.  It provides, for each of
+\c KPidParticles = 9 species hypotheses, the raw −2 ln L value, the normalised Bayesian
+probability (with optional prior fractions), and the chi-squared probability.
+
+\section stprobpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits
+           └── StProbPidTraits
+\endcode
+
+\section stprobpidtraits_species Species Ordering (StPidParticle)
+
+| Index | Species |
+|---|---|
+| 0 (\c kPidElectron) | Electron |
+| 1 (\c kPidProton) | Proton |
+| 2 (\c kPidKaon) | Kaon |
+| 3 (\c kPidPion) | Pion |
+| 4 (\c kPidMuon) | Muon |
+| 5 (\c kPidDeuteron) | Deuteron |
+| 6 (\c kPidTriton) | Triton |
+| 7 (\c kPidHe3) | Helium-3 |
+| 8 (\c kPidAlpha) | Alpha |
+
+\section stprobpidtraits_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mNDF | \c Int_t | Degrees of freedom in the likelihood fit. |
+| \c mPidArray | \c TArrayF* | Raw −2 ln L values (KPidParticles elements, persistent). |
+| \c mSum | \c Double_t | Normalisation sum (transient, recomputed on first access). |
+| \c mFractions | \c Double_t* | Prior abundance fractions (transient, set by caller). |
+| \c mProbability[] | \c Double_t | Cached normalised probabilities (transient). |
+
+\section stprobpidtraits_example Usage Example
+
+\code{.cpp}
+StProbPidTraits* prob = nullptr;
+for (StTrackPidTraits* p : track->pidTraits()) {
+    prob = dynamic_cast<StProbPidTraits*>(p);
+    if (prob) break;
+}
+
+if (prob) {
+    double probPi = prob->GetProbability(kPidPion);
+    double probK  = prob->GetProbability(kPidKaon);
+    double chi2Pi = prob->GetChi2Prob(kPidPion);
+    int    ndf    = prob->GetNDF();
+}
+\endcode
+
+\see StTrackPidTraits
+\see StDedxPidTraits
+\see StTrack
+*/

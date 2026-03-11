@@ -1,0 +1,54 @@
+/**
+\page page_sttriggerdata2005 StTriggerData2005
+
+\brief Concrete StTriggerData implementation for STAR Run 5 (year 2005) trigger data.
+
+\section sec2005_overview Overview
+
+StTriggerData2005 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 5 (year 2005)</b> raw trigger data.  It wraps a \c TrgDataType2005 structure and
+exposes its content through the common StTriggerData accessor API.
+
+Compared to StTriggerData2004, Run 5 introduces access to <b>Level-2 algorithm trigger
+results</b> through L2ResultsOffset() and isL2Triggered(), reflecting the activation of online
+L2 triggers during the Cu+Cu run.
+
+\section sec2005_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2005
+\endcode
+
+\section sec2005_runyear Run Year
+Run 5, calendar year 2005 &mdash; Cu+Cu collisions at &radic;s = 200 GeV.
+
+\section sec2005_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TrgDataType2005* | Pointer to the raw Run 5 trigger bank in memory. |
+
+\section sec2005_new New Compared to 2004
+
+- L2ResultsOffset(StL2AlgorithmId id) &mdash; byte offset for a given L2 algorithm in the
+  L2 results block.
+- isL2Triggered(StL2TriggerResultType id) &mdash; returns \c true if the specified L2 trigger
+  result type is set.
+
+getDsm0_BEMCE(), getDsm0_BEMCW(), and getDsm1_BEMC() return \c nullptr for this format.
+
+\section sec2005_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    bool l2ht = trgData->isL2Triggered(L2TriggerResultType_BEmcHighTower);
+    unsigned short zdcSum = trgData->zdcHardwareSum(0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2004
+\see StTriggerData2007
+*/

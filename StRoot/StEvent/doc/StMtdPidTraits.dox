@@ -1,0 +1,59 @@
+/*!
+\page page_stmtdpidtraits StMtdPidTraits
+
+\brief Muon Telescope Detector (MTD) particle identification traits for a matched track.
+
+\section stmtdpidtraits_overview Overview
+
+\ref StMtdPidTraits stores PID information for a track matched to a hit in the STAR Muon
+Telescope Detector (|η| < 0.8, r ≈ 400 cm, outside the STAR iron absorber).  The MTD
+is the primary tool for muon identification in STAR: hits behind ~5 interaction lengths
+of iron strongly suppress hadronic backgrounds.  TOF information provides supplementary
+muon/hadron separation.
+
+\section stmtdpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits
+           └── StMtdPidTraits
+\endcode
+
+\section stmtdpidtraits_members Key Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mMatchFlag | \c UChar_t | Matching quality flag. |
+| \c mYLocal / \c mZLocal | \c Float_t | Local track coordinates at the MTD module (cm). |
+| \c mDeltaY / \c mDeltaZ | \c Float_t | Track–hit residuals (cm). |
+| \c mThetaLocal | \c Float_t | Local incident angle (rad). |
+| \c mTimeOfFlight | \c Float_t | Measured TOF (ns). |
+| \c mExpTimeOfFlight | \c Float_t | Expected TOF for muon hypothesis (ns). |
+| \c mPathLength | \c Float_t | Path length from vertex (cm). |
+| \c mBeta | \c Float_t | β = v/c. |
+| \c mSigmaMuon | \c Float_t | nσ from the muon hypothesis. |
+| \c mProbMuon | \c Float_t | Muon PID probability (0–1). |
+
+\section stmtdpidtraits_example Usage Example
+
+\code{.cpp}
+const StMtdPidTraits* mtd = nullptr;
+for (const StTrackPidTraits* p : track->pidTraits()) {
+    mtd = dynamic_cast<const StMtdPidTraits*>(p);
+    if (mtd) break;
+}
+
+if (mtd && mtd->matchFlag() > 0) {
+    double dtof     = mtd->timeOfFlight() - mtd->expTimeOfFlight();
+    double nSigMuon = mtd->sigmaMuon();
+
+    if (std::abs(nSigMuon) < 3. &&
+        std::abs(mtd->deltaY()) < 30. &&
+        std::abs(mtd->deltaZ()) < 30.) { /* muon candidate */ }
+}
+\endcode
+
+\see StTrackPidTraits
+\see StMtdCollection
+\see StTrack
+*/

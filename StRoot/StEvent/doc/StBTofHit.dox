@@ -1,0 +1,71 @@
+/*!
+\page page_stbtofhit StBTofHit
+
+\brief Reconstructed hit in the STAR Barrel Time-of-Flight (BTOF) detector.
+
+\section btofhit_overview Overview
+
+StBTofHit represents a fully reconstructed hit in the STAR Barrel Time-of-Flight (BTOF) detector.
+The BTOF became operational in Run 8 (2007) and covers |η| < 0.9.
+It comprises 120 trays arranged azimuthally, each housing 32 Multi-gap Resistive Plate Chamber (MRPC)
+modules of 6 cells, giving 23 040 cells in total.
+
+A hit is produced after the BTOF reconstruction has matched a calibrated TDC pulse to a track.
+Geometry is identified by tray (1–120), module (1–32), and cell (1–6).
+Timing is captured as calibrated leading-edge and trailing-edge times in nanoseconds;
+their difference is the time-over-threshold (ToT) used for slewing corrections.
+
+Hits are stored in \ref StBTofCollection via StEvent::btofCollection().
+
+\section btofhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StHit → StBTofHit
+\endcode
+
+\section btofhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mTray | UChar_t | Tray number (1–120) |
+| mModule | UChar_t | Module number within tray (1–32) |
+| mCell | UChar_t | Cell number within module (1–6) |
+| mLeadingEdgeTime | Double_t | Calibrated leading-edge time [ns] |
+| mTrailingEdgeTime | Double_t | Calibrated trailing-edge time [ns] |
+| mBTofPadWidth | static Float_t | Pad width = 3.45 cm |
+| mAssociatedTrack | StLink<StTrack> | Matched reconstructed track |
+
+\section btofhit_methods Key Methods
+
+- tray() — tray number (1–120)
+- module() — module number (1–32)
+- cell() — cell number (1–6)
+- leadingEdgeTime() — calibrated leading-edge time [ns]
+- trailingEdgeTime() — calibrated trailing-edge time [ns]
+- tot() — time-over-threshold = trailing − leading [ns]
+- ID() — unique module ID across all trays (0-based)
+- position() — local 3D hit position [cm]
+- associatedTrack() — pointer to matched StTrack
+- detector() — returns kBTofId
+
+\section btofhit_example Usage Example
+
+\code{.cpp}
+StBTofCollection* coll = event->btofCollection();
+if (coll) {
+    const StSPtrVecBTofHit& hits = coll->tofHits();
+    for (const auto& h : hits) {
+        int    tray   = h->tray();               // 1–120
+        int    module = h->module();             // 1–32
+        int    cell   = h->cell();               // 1–6
+        double le     = h->leadingEdgeTime();    // [ns]
+        double te     = h->trailingEdgeTime();   // [ns]
+        double tot    = h->tot();                // trailing − leading [ns]
+        if (h->associatedTrack())
+            double pt = h->associatedTrack()->geometry()->momentum().perp();
+    }
+}
+\endcode
+
+\see StBTofRawHit, StBTofHeader, StBTofCollection
+*/

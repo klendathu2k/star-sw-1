@@ -1,0 +1,92 @@
+/*!
+\page page_stFtpcHit StFtpcHit
+
+\brief Reconstructed hit in the STAR Forward Time Projection Chamber (FTPC).
+
+\ref StFtpcHit represents a single reconstructed cluster in the STAR Forward TPC (FTPC). The
+FTPC is a cylindrical TPC along the beam axis covering 2.5 < |η| < 4, with an East and a West
+module. Hits are produced from \c StFtpcPoint objects by the FTPC cluster finder and stored in
+\ref StFtpcHitCollection. In addition to the inherited position and charge, \ref StFtpcHit stores
+the cluster centroid and its uncertainty in native pad and time-bin coordinates.
+
+\section sec_ftpchit_hierarchy Class Hierarchy
+
+\verbatim
+TObject
+└── StObject
+    └── StMeasuredPoint
+        └── StHit
+            └── StFtpcHit        (concrete — this class)
+\endverbatim
+
+Objects are held in \c StSPtrVecFtpcHit inside \ref StFtpcHitCollection, owned by the StEvent
+framework.
+
+\section sec_ftpchit_hwpack Hardware Address Packing (mHardwarePosition)
+
+| Bits | Width | Meaning | Accessor |
+|---|---|---|---|
+| 0–3 | 4 | StDetectorId (kFtpcEastId=5 or kFtpcWestId=4) | detector() |
+| 4–8 | 5 | Readout plane number (1–20) | plane() |
+| 9–11 | 3 | Sector number (1–6) | sector() |
+| 12–19 | 8 | Number of pads in cluster | padsInHit() |
+| 20–28 | 9 | Number of time bins in cluster | timebinsInHit() |
+
+\section sec_ftpchit_members Data Members
+
+\subsection subsec_ftpchit_inherited Inherited (selected)
+- <tt>UInt_t mHardwarePosition</tt> — Packed FTPC hardware address (see table above).
+- <tt>StThreeVectorF mPosition</tt> — 3-D hit centroid in STAR global frame (cm).
+- <tt>StThreeVectorF mPositionError</tt> — 1-sigma position uncertainties (cm).
+- <tt>Float_t mCharge</tt> — Cluster charge encoded as
+  <tt>float(ftpcq) / 65536.0</tt> where \c ftpcq is the integer charge from the FTPC cluster
+  finder.
+- <tt>UChar_t mFlag</tt> — FTPC cluster status flags.
+
+\subsection subsec_ftpchit_own StFtpcHit-specific
+- <tt>Float_t mPadPos</tt> — Hit centroid in pad units within the FTPC readout plane.
+- <tt>Float_t mTimePos</tt> — Hit centroid in time-bin units within the FTPC drift window.
+- <tt>Float_t mPadPosSigma</tt> — Standard deviation of the pad position (pad units).
+- <tt>Float_t mTimePosSigma</tt> — Standard deviation of the time-bin position (time-bin units).
+
+\section sec_ftpchit_methods Key Methods
+
+- <tt>StDetectorId detector() const</tt> — Returns \c kFtpcEastId (5) or \c kFtpcWestId (4)
+  from bits 0–3 of the hardware position.
+- <tt>unsigned int sector() const</tt> — Sector 1–6 (bits 9–11).
+- <tt>unsigned int plane() const</tt> — Readout plane 1–20 (bits 4–8).
+- <tt>unsigned int padsInHit() const</tt> — Number of pads in cluster (bits 12–19).
+- <tt>unsigned int timebinsInHit() const</tt> — Number of time bins in cluster (bits 20–28).
+- <tt>double padPosition() const</tt> — Centroid in pad units (\c mPadPos).
+- <tt>double timePosition() const</tt> — Centroid in time-bin units (\c mTimePos).
+- <tt>double sigmaPadPosition() const</tt> — Pad position sigma.
+- <tt>double sigmaTimePosition() const</tt> — Time position sigma.
+- <tt>void setPadPosition(float)</tt>, <tt>setTimePosition(float)</tt>,
+  <tt>setSigmaPadPosition(float)</tt>, <tt>setSigmaTimePosition(float)</tt> — Setters.
+- <tt>void update(const StFtpcPoint&)</tt> — Re-populates all fields from an
+  \c StFtpcPoint cluster object.
+
+\section sec_ftpchit_ownership Object Ownership
+
+\ref StFtpcHit uses a custom memory pool (\c StMemoryPool) via overloaded \c new/delete. Objects
+are owned by \ref StFtpcHitCollection. <b>Do not delete StFtpcHit* pointers from a collection.</b>
+
+\section sec_ftpchit_usage Usage Example
+
+\code{.cpp}
+StFtpcHitCollection* ftpcColl = event->ftpcHitCollection();
+if (!ftpcColl) return;
+
+for (const StFtpcHit* hit : ftpcColl->hits()) {
+    bool isEast = (hit->detector() == kFtpcEastId);
+    std::cout << (isEast ? "E" : "W")
+              << " sec=" << hit->sector()
+              << " plane=" << hit->plane()
+              << " pad=" << hit->padPosition()
+              << " t=" << hit->timePosition()
+              << " q=" << hit->charge() << "\n";
+}
+\endcode
+
+\sa \ref page_sthit, \ref page_stmeasuredpoint, \ref page_stFtpcHitCollection
+*/

@@ -1,0 +1,206 @@
+/**
+\page page_stgmtcollection StGmtCollection — GMT Collection Documentation
+
+\brief Top-level event container for all Global Muon Tracker (GMT) data in StEvent.
+
+\section gmt_overview Overview
+
+\ref StGmtCollection is the root-level container that aggregates all Global Muon Tracker
+(GMT) data for a single STAR event.  The GMT is a GEM-based detector providing muon
+identification and tracking.  It is composed of **8 modules** (\c kGmtNumModules = 8),
+each with **2 readout layers** (\c kGmtNumLayers = 2 — one X-strip layer and one Y-pad
+layer) and **128 channels per layer** (\c kGmtNumStrips = 128).
+
+Three levels of reconstruction are represented:
+
+- **Strip** (\ref StGmtStrip) — individual 1D readout channel carrying raw ADC and
+  calibration data.
+- **Hit** (\ref StGmtHit) — a 1D cluster of adjacent strips within one layer of one
+  module.
+- **Point** (\ref StGmtPoint) — a 2D reconstructed position formed by pairing an
+  X-layer hit and a Y-layer hit.
+
+\section gmt_hierarchy Class Hierarchy
+
+All four collection classes derive directly from \c StObject:
+
+\code
+StObject
+└── StGmtCollection           (top-level event container)
+    ├── StGmtStripCollection  (embedded array[kGmtNumModules=8])
+    ├── StGmtHitCollection    (embedded array[kGmtNumModules=8])
+    └── StGmtPointCollection  (single embedded instance)
+\endcode
+
+\section gmt_containment Containment Model
+
+\code
+StGmtCollection
+│
+├── mStripCollection[8]  : StGmtStripCollection
+│   ├── mModule            : Short_t
+│   ├── mStripVec          : StSPtrVecGmtStrip   (owns StGmtStrip objects)
+│   ├── mStripElecIdVec    : StPtrVecGmtStrip    (transient, not streamed)
+│   └── mStripGeoIdVec     : StPtrVecGmtStrip    (transient, not streamed)
+│
+├── mHitCollection[8]    : StGmtHitCollection
+│   ├── mModule            : Short_t
+│   └── mHitVec            : StSPtrVecGmtHit     (owns StGmtHit objects)
+│
+└── mPointCollection     : StGmtPointCollection
+    └── mPointVec          : StSPtrVecGmtPoint   (owns StGmtPoint objects)
+\endcode
+
+Key constants from \c StEnumerations.h:
+
+| Constant | Value | Meaning |
+|----------|-------|---------|
+| \c kGmtNumModules       | 8    | Total GMT detector modules |
+| \c kGmtNumLayers        | 2    | Readout layers per module (X + Y) |
+| \c kGmtNumStrips        | 128  | Channels per layer per module |
+| \c kGmtNumStripsPerModule | 256 | Total strips per module |
+| \c kGmtNumGeoIds        | 2048 | Total geometry IDs across all modules and layers |
+
+\section gmt_ownership Object Ownership
+
+- All sub-collections (\ref StGmtStripCollection, \ref StGmtHitCollection,
+  \ref StGmtPointCollection) are **stack-allocated** (embedded) inside
+  \ref StGmtCollection; callers must not delete them.
+- Each sub-collection holds an \c StSPtrVec (smart-pointer vector) that **owns** its
+  leaf objects.  The vector's destructor and \c clear() both delete the pointed-to
+  objects.
+- \ref StGmtStripCollection holds two additional plain-pointer vectors,
+  \c mStripElecIdVec and \c mStripGeoIdVec, for fast transient lookup.  They are not
+  written to the persistent store and do not own strips.  \c mStripGeoIdVec is sized
+  to \c kGmtNumGeoIds at construction.
+- \ref StGmtCollection itself is owned by the StEvent framework (St_DataSet /
+  StXRefMain); its destructor is a no-op.
+- **Do not delete** any pointer returned by getStripCollection(), getHitCollection(),
+  getPointCollection(), getStrip(), getSortedStrip(), or any element from the
+  \c StSPtrVec vectors.
+
+\section gmt_datamembers Data Members
+
+\subsection gmt_dm_top StGmtCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StGmtStripCollection[8] | \c mStripCollection | Strip collections, one per module (0-based) |
+| \c StGmtHitCollection[8]   | \c mHitCollection   | Hit collections, one per module |
+| \c StGmtPointCollection    | \c mPointCollection | 2D point collection for all modules |
+
+\subsection gmt_dm_strip StGmtStripCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c Short_t           | \c mModule          | GMT module index (0–7) |
+| \c StSPtrVecGmtStrip | \c mStripVec        | Persistent, owned strip vector |
+| \c StPtrVecGmtStrip  | \c mStripElecIdVec  | Transient lookup by electronics ID (not streamed) |
+| \c StPtrVecGmtStrip  | \c mStripGeoIdVec   | Transient lookup by geometry ID; sized to \c kGmtNumGeoIds (not streamed) |
+
+\subsection gmt_dm_hit StGmtHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c Short_t          | \c mModule  | GMT module index (0–7) |
+| \c StSPtrVecGmtHit  | \c mHitVec  | Persistent, owned hit vector |
+
+\subsection gmt_dm_point StGmtPointCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecGmtPoint | \c mPointVec | Persistent, owned 2D-point vector |
+
+\section gmt_methods Key Methods
+
+\subsection gmt_meth_top StGmtCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getNumModules() const | Returns \c kGmtNumModules (8) |
+| \c getNumStrips() const | Total strips across all modules |
+| \c getNumStrips(unsigned\ short\ module) const | Strips in one module |
+| \c getNumHits() const | Total hits across all modules |
+| \c getNumHits(unsigned\ short\ module) const | Hits in one module |
+| \c getNumPoints() const | Total 2D points |
+| \c getStripCollection(unsigned\ short) | Strip collection for module; \c nullptr if out of range |
+| \c getHitCollection(unsigned\ short) | Hit collection for module; \c nullptr if out of range |
+| \c getPointCollection() | Pointer to the point collection |
+| \c Clear(Option_t*) | Clears all sub-collections (framework callback) |
+
+\subsection gmt_meth_strip StGmtStripCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getStrip(int\ id) | Returns or creates the strip for a geometry ID — the only way to add strips |
+| \c getSortedStrip(int\ id) | Returns the strip at vector index \c id after sorting; logs error if null |
+| \c getStripVec() | Direct access to the persistent strip vector |
+| \c sortByGeoId() | Sorts the strip vector by geometry ID |
+| \c sortByLayer() | Sorts the strip vector by layer (X strips first, then Y) |
+| \c sortByCoord() | Sorts the strip vector by coordinate number |
+| \c partialSortByCoord() | Partial sort of the first \c kGmtNumStrips elements by coordinate |
+| \c removeFlagged() | Removes strips with negative geoIds |
+| \c getNumStrips() const | Number of strips |
+| \c getModule() / setModule() | Get/set module index |
+
+\subsection gmt_meth_hit StGmtHitCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getHitVec() | Reference to the owned hit vector |
+| \c getNumHits() const | Number of hits |
+| \c getModule() / setModule() | Get/set module index |
+
+\subsection gmt_meth_point StGmtPointCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getPointVec() | Reference to the owned point vector |
+| \c getNumPoints() const | Number of 2D points |
+
+\section gmt_example Usage Example
+
+\code{.cpp}
+// Obtain StGmtCollection from StEvent
+StGmtCollection* gmtColl = event->gmtCollection();
+if (!gmtColl) return;
+
+// --- Strips ---
+for (unsigned short mod = 0; mod < gmtColl->getNumModules(); ++mod) {
+    const StGmtStripCollection* sc = gmtColl->getStripCollection(mod);
+    if (!sc) continue;
+    const StSPtrVecGmtStrip& strips = sc->getStripVec();
+    for (const StGmtStrip* strip : strips) {
+        if (!strip) continue;
+        // strip->getGeoId(), strip->getAdc(), strip->isY(), ...
+    }
+}
+
+// --- Hits ---
+for (unsigned short mod = 0; mod < gmtColl->getNumModules(); ++mod) {
+    const StGmtHitCollection* hc = gmtColl->getHitCollection(mod);
+    if (!hc) continue;
+    const StSPtrVecGmtHit& hits = hc->getHitVec();
+    for (const StGmtHit* hit : hits) {
+        if (!hit) continue;
+        // hit->position(), hit->charge(), ...
+    }
+}
+
+// --- 2D Points ---
+const StGmtPointCollection* pc = gmtColl->getPointCollection();
+if (pc) {
+    const StSPtrVecGmtPoint& points = pc->getPointVec();
+    for (const StGmtPoint* pt : points) {
+        if (!pt) continue;
+        // pt->position(), pt->charge(), ...
+    }
+}
+\endcode
+
+\warning Never call \c push_back() on the vector returned by \c getStripVec().
+         Always use \ref StGmtStripCollection::getStrip(int) to insert new strips.
+         The \c id argument to \c getStrip() is a **geometry ID**, unlike the FGT
+         counterpart which uses an electronics ID.
+
+*/

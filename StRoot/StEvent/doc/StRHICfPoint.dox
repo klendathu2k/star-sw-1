@@ -1,0 +1,68 @@
+/*!
+\page page_strhicfpoint StRHICfPoint
+
+\brief Reconstructed shower position, particle ID, and energy in one RHICf calorimeter tower.
+
+\section rhicfpoint_overview Overview
+
+StRHICfPoint is a single reconstructed shower in the **RHICf very-forward calorimeter**.
+It stores the tower index, particle identification code, transverse position (mm),
+and reconstructed shower energies for two particle-type hypotheses.
+
+**Detector**: RHICf very-forward calorimeter (η > 6)  
+**Stage**: Shower fit → particle ID → position and energy assignment
+
+\section rhicfpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StRHICfPoint
+\endcode
+
+Stored in \c StRHICfCollection.
+
+\section rhicfpoint_tower Tower Convention
+
+| \c mTowerIdx | Tower | Cross-section |
+|-------------|-------|---------------|
+| 0 | Small | 20 × 20 mm² |
+| 1 | Large | 25 × 25 mm² |
+
+\section rhicfpoint_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mTowerIdx | Tower index (0 = small, 1 = large; −999 if not set) |
+| \c Int_t | \c mParticleID | Particle identification code (−999 if not set) |
+| \c Float_t[2] | \c mPointPos | Transverse shower position [x, y] (mm) |
+| \c Float_t[2] | \c mPointEnergy | Shower energy for each particle hypothesis (GeV) |
+| \c Float_t[2] | \c mTowerSumEnergy | Tower energy sums (GeV): [0] total, [1] partial |
+
+\section rhicfpoint_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getTowerIdx() | Tower index (0 or 1) |
+| \c getPID() | Particle ID code |
+| \c getPointPos(xy) | Transverse position, xy=0 for x, 1 for y (mm) |
+| \c getPointEnergy(order) | Shower energy for hypothesis 0 or 1 (GeV) |
+| \c getTowerSumEnergy(order) | Tower energy sum: 0=total, 1=partial (GeV) |
+| \c setPointPos(x, y) | Set transverse position |
+| \c setPointEnergy(e1, e2) | Set energies for both hypotheses |
+| \c setTowerSumEnergy(all, part) | Set energy sums |
+| \c clear() | Reset all to defaults |
+
+\section rhicfpoint_example Usage Example
+
+\code{.cpp}
+for (unsigned int ip = 0; ip < rhicfColl->numberOfPoints(); ++ip) {
+    StRHICfPoint* pt = rhicfColl->point(ip);
+    int   tower  = pt->getTowerIdx();   // 0 = small, 1 = large
+    int   pid    = pt->getPID();
+    float x      = pt->getPointPos(0); // mm
+    float y      = pt->getPointPos(1); // mm
+    float energy = pt->getPointEnergy(0); // GeV
+}
+\endcode
+
+\see StRHICfHit, StRHICfRawHit, StRHICfCollection
+*/

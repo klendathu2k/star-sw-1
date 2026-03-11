@@ -1,0 +1,62 @@
+/*!
+\page page_sttracktopologymap StTrackTopologyMap
+
+\brief Compact bit-field encoding which detector layers a reconstructed track has hits in.
+
+\section sttracktopologymap_overview Overview
+
+\ref StTrackTopologyMap encodes the detector-layer hit pattern of a reconstructed
+track in two 32-bit words (\c mMap0, \c mMap1) covering 64 bits, plus a supplementary
+64-bit word (\c mMap_iTpc) for the inner TPC (iTPC) upgrade (Run 18+).
+
+The map enables O(1) sub-detector membership queries without iterating over hit
+collections, making it ideal for fast track-selection cuts in analysis code.
+
+\section sttracktopologymap_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackTopologyMap
+\endcode
+
+\section sttracktopologymap_bitlayout Bit Layout Summary
+
+| Bits | Case 1 (TPC/SVT) | Case 2 (FTPC) | Case 3 (HFT) |
+|---|---|---|---|
+| 0 | Primary vertex used | ← | ← |
+| 1–7 | SVT layers 1–6 + SSD | FTPC-W rows 1–7 | PXL/IST/SSD layers |
+| 8–20 | TPC rows 1–13 | FTPC rows 7–20 | TPC rows 1–13 |
+| 21–52 | TPC rows 14–45 | — | TPC rows 14–45 |
+| 53–58 | MWPC, CTB, TOF, RICH, BEMC, EEMC | ← | ← |
+| 59–63 | Post-X, membrane-X, HFT flag, turn-around, FTPC flag | ← | ← |
+
+\c mMap_iTpc encodes iTPC rows 1–40 using the same row-bit scheme.
+
+\section sttracktopologymap_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mMap0 | \c UInt_t | Bits 0–31 (SVT/PXL/IST/SSD, TPC rows 1–24). |
+| \c mMap1 | \c UInt_t | Bits 32–63 (TPC rows 25–45, fast detectors, flags). |
+| \c mMap_iTpc | \c ULong64_t | iTPC hit-row pattern (Run 18+). |
+
+\section sttracktopologymap_example Usage Example
+
+\code{.cpp}
+const StTrackTopologyMap& topo = track->topologyMap();
+
+// Require >= 15 TPC hits
+if (topo.numberOfHits(kTpcId) < 15) return;
+
+// TPC-only track
+if (!topo.trackTpcOnly()) return;
+
+// BEMC match
+if (topo.hasHitInBemc()) { /* extrapolate to calorimeter */ }
+
+// Largest gap
+int gap = topo.largestGap(kTpcId);
+\endcode
+
+\see StTrack
+*/

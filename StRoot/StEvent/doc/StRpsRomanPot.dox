@@ -1,0 +1,62 @@
+/*!
+\page page_strpsromanpot StRpsRomanPot
+
+\brief A single Roman Pot detector station housing four silicon planes and two PMT timing detectors.
+
+\section rpsromanpot_overview Overview
+
+StRpsRomanPot is a station-level container for the **Roman Pot System (RPS)**.
+Each of the eight stations (indexed 0–7) holds four silicon strip detector planes and
+two scintillator/PMT timing detectors.  The class stores the PMT ADC/TAC values and
+a status flag for the whole station.
+
+**Detector**: Roman Pot System (RPS / pp2pp)  
+**Stage**: Station-level container
+
+\section rpsromanpot_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StRpsRomanPot
+\endcode
+
+\code
+StRpsCollection → StRpsRomanPot[0..7] → StRpsPlane[0..3] → StRpsCluster
+\endcode
+
+\section rpsromanpot_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c StRpsPlane[4] | \c mPlanes | Array of four silicon strip detector planes |
+| \c UChar_t | \c mRomanPotId | Roman Pot index (0–7) |
+| \c UChar_t | \c mStatus | Station status flag (0 = good) |
+| \c UInt_t[2] | \c mAdc | ADC values from the two PMT scintillator timing detectors |
+| \c UInt_t[2] | \c mTac | TAC values from the two PMT scintillator timing detectors |
+
+\section rpsromanpot_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c romanPotId() | Roman Pot index (0–7) |
+| \c numberOfPlanes() | Always 4 |
+| \c numberOfPlanesWithClusters() | Planes with at least one cluster |
+| \c adc(i) | ADC of PMT i (0 or 1) |
+| \c tac(i) | TAC of PMT i (0 or 1) |
+| \c status() | Station status flag |
+| \c plane(i) | Pointer to plane i (0–3) |
+
+\section rpsromanpot_example Usage Example
+
+\code{.cpp}
+const StRpsRomanPot* rp = rpsColl->romanPot(irp);
+if (rp->status() != 0) continue;
+unsigned int nActive = rp->numberOfPlanesWithClusters();
+unsigned int tac0 = rp->tac(0); // PMT 0 timing
+for (unsigned int ip = 0; ip < rp->numberOfPlanes(); ++ip) {
+    const StRpsPlane* plane = rp->plane(ip);
+    // ... process clusters
+}
+\endcode
+
+\see StRpsPlane, StRpsCluster, StRpsCollection
+*/

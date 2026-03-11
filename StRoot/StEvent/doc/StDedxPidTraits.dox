@@ -1,0 +1,64 @@
+/*!
+\page page_stdedxpidtraits StDedxPidTraits
+
+\brief PID traits storing dE/dx mean, uncertainty, method, and track length for a reconstructed track.
+
+\section stdedxpidtraits_overview Overview
+
+\ref StDedxPidTraits stores the ionisation energy-loss (dE/dx) measurement for a single
+dE/dx estimation method (truncated mean, likelihood fit, etc.).  One instance per method
+is attached to the track's PID traits vector.  The dE/dx signal in the STAR TPC is the
+primary low-momentum PID discriminant (π/K/p separation up to ~1 GeV/c).
+
+\section stdedxpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits
+           └── StDedxPidTraits
+\endcode
+
+\section stdedxpidtraits_physics Physics Context
+
+The mean dE/dx (\c mDedx, units GeV/cm) is computed from the charge deposited in TPC
+pad rows using the Bethe–Bloch energy-loss curve.  The standard STAR method is the
+truncated mean (top ~30% of samples removed).  Particle identification is performed
+by comparing the measured value to the Bichsel-model prediction for each species.
+
+\section stdedxpidtraits_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mNumberOfPoints | \c UShort_t | Packed: lower 2 digits = hit count; upper = track length (cm) × 100. |
+| \c mMethod | \c Short_t | Encoded dE/dx method id (maps to \c StDedxMethod). |
+| \c mDedx | \c Float_t | Mean dE/dx (GeV/cm). |
+| \c mSigma | \c Float_t | Uncertainty on the mean. |
+| \c mLog2dX | \c Float_t | log₂(⟨dX⟩) — mean segment length in log₂ units. |
+
+\section stdedxpidtraits_methods StDedxMethod Values
+
+| Enumerator | Description |
+|---|---|
+| \c kTruncatedMeanId | Truncated-mean estimator (standard). |
+| \c kEnsembleTruncatedMeanId | Ensemble truncated mean. |
+| \c kLikelihoodFitId | Likelihood fit (Bichsel model). |
+| \c kWeightedTruncatedMeanId | Weighted truncated mean. |
+
+\section stdedxpidtraits_example Usage Example
+
+\code{.cpp}
+for (const StTrackPidTraits* p : track->pidTraits()) {
+    const StDedxPidTraits* d = dynamic_cast<const StDedxPidTraits*>(p);
+    if (d && d->method() == kTruncatedMeanId) {
+        double dEdx  = d->mean();            // GeV/cm
+        double sigma = d->errorOnMean();
+        int    n     = d->numberOfPoints();
+        double len   = d->length();          // cm
+    }
+}
+\endcode
+
+\see StTrackPidTraits
+\see StProbPidTraits
+\see StTrack
+*/

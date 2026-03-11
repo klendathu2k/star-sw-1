@@ -1,0 +1,76 @@
+/*!
+\page page_sthltrack StHltTrack
+
+\brief HLT reconstructed charged-particle track (global or primary) from the STAR online farm.
+
+\section overview Overview
+
+`StHltTrack` represents a single charged-particle track reconstructed by the STAR High Level
+Trigger (HLT) online farm. Tracks may be global (not constrained to vertex) or primary
+(re-fitted through the vertex). The class stores helix parameters describing the curved trajectory
+in the STAR solenoidal magnetic field, the number of TPC hits, mean dE/dx, fit quality (χ²),
+and momentum. Objects are collected in \ref StHltEvent and referenced by \ref StHltTrackNode,
+\ref StHltHighPt, \ref StHltHeavyFragment, and \ref StHltDiElectron.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTrack
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StTrackType` | `mType` | Track type: global or primary |
+| `int` | `mId` | Unique track identifier within this event |
+| `unsigned int` | `mFlag` | Track quality and status flags |
+| `int` | `mInnerMostRow` | Innermost TPC pad row in fit |
+| `int` | `mOuterMostRow` | Outermost TPC pad row in fit |
+| `unsigned int` | `mNHits` | Number of TPC hits on track |
+| `unsigned int` | `mNdedx` | Hits used in dE/dx calculation |
+| `int` | `mQ` | Electric charge: +1 or −1 |
+| `float[2]` | `mChi2` | χ² of momentum fit |
+| `float` | `mDedx` | Mean dE/dx energy loss (GeV/cm) |
+| `float` | `mPt` | Transverse momentum (GeV/c) |
+| `float` | `mPhi0` | Azimuthal angle φ₀ of reference point (rad) |
+| `float` | `mPsi` | Azimuthal momentum angle ψ (rad) |
+| `float` | `mR0` | Radial coordinate of reference point (cm) |
+| `float` | `mTanl` | tan λ = pz/pT |
+| `float` | `mZ0` | z of reference point (cm) |
+| `float` | `mLength` | Track arc length (cm) |
+| `float` | `mDpt` | Uncertainty on pT (GeV/c) |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StTrackType type() const` | Track type (global or primary) |
+| `int id() const` | Unique track identifier |
+| `unsigned int nHits() const` | Number of TPC hits |
+| `int q() const` | Charge sign (+1 or −1) |
+| `float chi2(int i) const` | χ²[i] of fit |
+| `float dedx() const` | Mean dE/dx (GeV/cm) |
+| `float pt() const` | Transverse momentum (GeV/c) |
+| `float tanl() const` | tan λ = pz/pT |
+| `float z0() const` | z of reference point (cm) |
+| `float length() const` | Arc length (cm) |
+
+\section example Usage Example
+
+\code{.cpp}
+const StSPtrVecHltTrack& gTracks = hlt->globalTrack();
+for (size_t i = 0; i < gTracks.size(); ++i) {
+    const StHltTrack* tr = gTracks[i];
+    cout << "pT=" << tr->pt() << " dEdx=" << tr->dedx() << endl;
+}
+\endcode
+
+\see StHltEvent
+\see StHltTrackNode
+\see StHltHighPt
+\see StHltHeavyFragment
+\see StHltDiElectron
+*/

@@ -1,0 +1,70 @@
+/*!
+\page page_stbtofcollection StBTofCollection — Collection Documentation
+
+\section btof_overview Overview
+
+\ref StBTofCollection is the event-level container for all data produced by the
+<b>Barrel Time-of-Flight (BTOF)</b> detector.  The BTOF is a cylindrical array
+of 120 MRPC trays surrounding the STAR TPC, providing particle identification via
+time-of-flight over a large mid-rapidity acceptance.
+
+All BTOF objects written into \ref StEvent for a single collision — reconstructed hits,
+raw TDC hits, and the event-wise header — reside here.
+\ref StBTofPidTraits are stored on the associated track, not in this collection.
+
+\section btof_ownership Object Ownership
+
+- <b>mBTofHeader</b> (\ref StBTofHeader*): Owned by this collection. The pointer is
+  assigned via \c setHeader() and is <b>deleted in the destructor</b>.
+- <b>mBTofHits</b> (\c StSPtrVecBTofHit): An \c StSPtrVec; elements are owned and
+  deleted when the vector is destroyed.
+- <b>mBTofRawHits</b> (\c StSPtrVecBTofRawHit): Same ownership semantics.
+- The collection itself is owned by the \c StEvent framework (\c StXRefMain /
+  \c St_DataSet mechanism).
+
+\section btof_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \ref StBTofHeader* | mBTofHeader | Event-wise BTOF header: VPD hit patterns, trigger timestamps, pVPD vertex z, T<sub>zero</sub> info. Owned and deleted by this class. |
+| \c StSPtrVecBTofHit | mBTofHits | Collection of reconstructed \ref StBTofHit objects (tray 1–120, module 1–32, cell 1–6). |
+| \c StSPtrVecBTofRawHit | mBTofRawHits | Collection of raw TDC \ref StBTofRawHit objects from the DAQ stream. |
+
+\section btof_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c tofHeader() | Returns a pointer to the BTOF event header. |
+| \c tofHits() | Returns a reference to the reconstructed hit collection. |
+| \c tofRawHits() | Returns a reference to the raw TDC hit collection. |
+| \c setHeader(StBTofHeader*) | Assigns the header pointer; collection takes ownership. |
+| \c addHit(const StBTofHit*) | Appends a reconstructed hit (null-safe). |
+| \c addRawHit(const StBTofRawHit*) | Appends a raw TDC hit (null-safe). |
+| \c hitsPresent() const | Returns \c true if the reconstructed hit collection is non-empty. |
+| \c rawHitsPresent() const | Returns \c true if the raw hit collection is non-empty. |
+
+\section btof_example Usage Example
+
+\code{.cpp}
+StBTofCollection* btofColl = event->btofCollection();
+if (!btofColl) return;
+
+// VPD vertex z from the header
+if (btofColl->tofHeader()) {
+    double vpdVz = btofColl->tofHeader()->vpdVz();
+}
+
+// Loop over reconstructed hits
+if (btofColl->hitsPresent()) {
+    const StSPtrVecBTofHit& hits = btofColl->tofHits();
+    for (size_t i = 0; i < hits.size(); ++i) {
+        StBTofHit* hit = hits[i];
+        int tray   = hit->tray();    // 1-120
+        int module = hit->module();  // 1-32
+        int cell   = hit->cell();    // 1-6
+    }
+}
+\endcode
+
+\see StBTofHit, StBTofRawHit, StBTofHeader
+*/

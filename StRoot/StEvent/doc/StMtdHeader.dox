@@ -1,0 +1,68 @@
+/*!
+\page page_stmtdheader StMtdHeader
+
+\brief Event-level header data for the STAR Muon Telescope Detector (MTD).
+
+\section mtdheader_overview Overview
+
+StMtdHeader stores per-event header data for the STAR Muon Telescope Detector (MTD),
+fully operational since Run 12 (2012).
+
+Like \ref StBTofHeader, it records per-fiber DAQ header and trigger words.
+In addition it provides:
+- \c mShouldHaveRejectEvent: a flag indicating whether the event would have been vetoed
+  by the MTD di-muon trigger filter (−1=unknown, 0=not di-muon triggered, 1=should have been
+  rejected, 2=passes filter cuts). Used in di-muon physics analyses.
+- \c mTpcSectorMask: bitmask of TPC sectors used in the first-pass tracking iteration
+  for MTD-matched muon candidates.
+
+The object is held by \ref StMtdCollection via StEvent::mtdCollection()->mtdHeader().
+
+\section mtdheader_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StMtdHeader
+\endcode
+
+\section mtdheader_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mFiberHeader[2] | Short_t | DAQ header words per fiber (default −1) |
+| mFiberTriggerWord[2] | UInt_t | Trigger words per fiber |
+| mTriggerTime[2] | UInt_t | Trigger time TDC counts per fiber |
+| mShouldHaveRejectEvent | Int_t | Di-muon event filter status (−1/0/1/2) |
+| mTpcSectorMask | UInt_t | TPC sector bitmask for first-pass tracking |
+
+mShouldHaveRejectEvent values:
+- −1: unknown / uninitialised
+-  0: event was not triggered as di-muon
+-  1: event should have been rejected by the di-muon filter
+-  2: event passes di-muon filter cuts
+
+\section mtdheader_methods Key Methods
+
+- fiberHeader(fiberId) — DAQ header word for given fiber
+- fiberTriggerWord(fiberId) — trigger word for given fiber
+- triggerTime(fiberId) — trigger time TDC count for given fiber
+- shouldHaveRejectEvent() — di-muon event filter status
+- tpcSectorMask() — TPC sector bitmask
+
+\section mtdheader_example Usage Example
+
+\code{.cpp}
+StMtdCollection* coll = event->mtdCollection();
+if (coll) {
+    StMtdHeader* hdr = coll->mtdHeader();
+    if (hdr) {
+        unsigned int tTrig0 = hdr->triggerTime(0);
+        unsigned int tTrig1 = hdr->triggerTime(1);
+        int diMuonStatus    = hdr->shouldHaveRejectEvent();
+        // 2 = passes di-muon filter; use for J/psi or Upsilon analyses
+        unsigned int tpcMask = hdr->tpcSectorMask();
+    }
+}
+\endcode
+
+\see StMtdHit, StMtdRawHit, StMtdCollection
+*/

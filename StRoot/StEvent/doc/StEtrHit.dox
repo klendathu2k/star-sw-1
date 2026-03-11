@@ -1,0 +1,89 @@
+/*!
+\page page_stetrhit StEtrHit
+
+\ref StEtrHit represents a single reconstructed hit in the Endcap Tracking (ETR) prototype
+detector.  The ETR is a small-scale forward tracking prototype with three radial layers and 12
+azimuthal sectors.  All geometry is packed into the inherited <tt>mHardwarePosition</tt> word
+using the formula <tt>section + 100*layer + 10000*sector</tt>.
+
+\see StEtrHitCollection
+
+\section sec_etrhit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StEtrHit
+\endverbatim
+
+Hits are collected in \ref StEtrHitCollection.
+
+\section sec_etrhit_geometry ETR Geometry
+
+| Parameter | Range | Description |
+|-----------|-------|-------------|
+| Layer   | 0–2  | Radial layer index (3 layers). |
+| Sector  | 0–11 | Azimuthal sector (12 × 30°). |
+| Section | 0–29 | Pad section within a layer–sector. |
+
+\section sec_etrhit_members Data Members
+
+\ref StEtrHit adds <b>no persistent data members</b> beyond those inherited from \ref StHit.
+Geometry is encoded entirely in the inherited <tt>mHardwarePosition</tt>:
+
+- <tt>UInt_t mHardwarePosition</tt> — <tt>section + 100*layer + 10000*sector</tt>.
+- <tt>StThreeVectorF mPositionError</tt> — Fixed sentinel <tt>(0,0,9)</tt> cm. <em>Not a measured uncertainty.</em>
+- <tt>Float_t mCharge</tt> — Deposited charge (ADC counts).
+- <tt>Int_t mId</tt> — Hit identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\section sec_etrhit_methods Key Methods
+
+- <tt>int section() const</tt> — Pad section index (0–29): <tt>hardwarePosition() % 100</tt>.
+- <tt>int layer() const</tt> — Radial layer (0–2): <tt>(hardwarePosition()/100) % 100</tt>.
+- <tt>int sector() const</tt> — Azimuthal sector (0–11): <tt>(hardwarePosition()/10000) % 100</tt>.
+- <tt>StDetectorId detector() const</tt> — Returns <tt>kEtrId</tt>.
+
+Inherited from \ref StHit:
+
+- <tt>StThreeVectorF position() const</tt> — Hit position in STAR global frame (cm).
+- <tt>float charge() const</tt> — Deposited charge.
+- <tt>unsigned int hardwarePosition() const</tt> — Raw packed geometry word.
+
+\section sec_etrhit_ownership Object Ownership
+
+\ref StEtrHit does not use a custom memory pool.  Objects are heap-allocated.  Ownership
+transfers to the framework on insertion.
+\warning Do <b>not</b> <tt>delete</tt> \ref StEtrHit pointers obtained from the collection.
+
+\section sec_etrhit_usage Usage Example
+
+\code{.cpp}
+StEtrHitCollection* etrColl = event->etrHitCollection();
+if (!etrColl) return;
+
+const StSPtrVecEtrHit& hits = etrColl->hits();
+for (const StEtrHit* hit : hits) {
+    int sector  = hit->sector();   // 0–11
+    int layer   = hit->layer();    // 0–2
+    int section = hit->section();  // 0–29
+    float charge = hit->charge();  // ADC counts
+    StThreeVectorF pos = hit->position(); // STAR global (cm)
+}
+\endcode
+
+\subsection subsec_etrhit_ctor Constructing an StEtrHit
+
+\code{.cpp}
+StThreeVectorF pos(x, y, z); // global position (cm)
+StEtrHit* hit = new StEtrHit(pos, /*sector=*/3, /*layer=*/1,
+                              /*section=*/12, /*charge=*/150.f);
+etrColl->addHit(hit);
+\endcode
+
+*/

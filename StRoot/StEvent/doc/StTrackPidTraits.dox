@@ -1,0 +1,53 @@
+/*!
+\page page_sttrackpidtraits StTrackPidTraits
+
+\brief Abstract base class for particle-identification traits attached to a reconstructed track.
+
+\section sttrackpidtraits_overview Overview
+
+\ref StTrackPidTraits is the abstract root of the PID-traits class hierarchy.  Each
+concrete sub-class encapsulates PID information from one specific detector or algorithm.
+Instances are stored in the \c StSPtrVecTrackPidTraits collection inside \c StTrack
+and are accessed via \c StTrack::pidTraits().
+
+\section sttrackpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits            (abstract)
+           ├── StDedxPidTraits
+           ├── StBTofPidTraits
+           ├── StETofPidTraits
+           ├── StMtdPidTraits
+           ├── StRichPidTraits
+           ├── StProbPidTraits
+           └── StTofPidTraits
+\endcode
+
+\section sttrackpidtraits_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mDetectorId | \c Short_t | \c StDetectorId value identifying the source detector. |
+
+\section sttrackpidtraits_example Usage Example
+
+\code{.cpp}
+for (const StTrackPidTraits* p : track->pidTraits()) {
+    if (p->detector() == kTpcId) {
+        const StDedxPidTraits* d =
+            dynamic_cast<const StDedxPidTraits*>(p);
+        if (d) { /* use d->mean() etc. */ }
+    }
+}
+\endcode
+
+\see StDedxPidTraits
+\see StBTofPidTraits
+\see StETofPidTraits
+\see StMtdPidTraits
+\see StRichPidTraits
+\see StProbPidTraits
+\see StTofPidTraits
+\see StTrack
+*/

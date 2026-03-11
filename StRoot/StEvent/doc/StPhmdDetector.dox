@@ -1,0 +1,46 @@
+/*!
+\page page_stPhmdDetector StPhmdDetector
+
+\brief One detector plane (PMD or CPV) of the STAR Photon Multiplicity Detector.
+
+\section phmdDetector_overview Overview
+
+StPhmdDetector represents one complete plane of the STAR PHMD (2.3 < η < 3.9):
+the PMD photon-detection plane (kPmdId, behind lead converter) or the CPV
+charged-particle veto plane (kPhmdCpvId, in front of lead).  It owns the
+array of 12 StPhmdModule supermodule objects, per-supermodule hit counts, and
+the StPhmdClusterCollection produced during reconstruction.
+
+\section phmdDetector_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StPhmdDetector
+\endcode
+
+Managed by \ref page_stPhmdCollection "StPhmdCollection".
+
+\section phmdDetector_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| StDetectorId | mDetectorId | kPmdId or kPhmdCpvId. |
+| Int_t[12] | mModulesNHit | Hit count per supermodule. |
+| StPhmdModule*[12] | mModules | Owned supermodule array. |
+| StPhmdClusterCollection* | mClusters | Owned cluster collection. |
+
+\section phmdDetector_methods Key Methods
+
+- \c id() — detector identifier.
+- \c numberOfModules() — returns 12.
+- \c addHit(StPhmdHit*) — route a hit to the correct supermodule.
+- \c moduleHits(uint) — hit count for one supermodule.
+- \c module(uint) — access a supermodule.
+- \c cluster() — cluster collection.
+- \c setCluster(), \c setModule() — setters.
+
+\section phmdDetector_seealso See Also
+
+\ref page_stPhmdHit "StPhmdHit",
+\ref page_stPhmdModule "StPhmdModule",
+\ref page_stPhmdCluster "StPhmdCluster"
+*/

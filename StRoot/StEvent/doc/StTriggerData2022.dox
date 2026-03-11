@@ -1,0 +1,66 @@
+/**
+\page page_sttriggerdata2022 StTriggerData2022
+
+\brief Concrete StTriggerData implementation for STAR Run 22 (year 2022) trigger data.
+
+\section sec2022_overview Overview
+
+StTriggerData2022 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 22 (year 2022)</b> raw trigger data.  It wraps a \c TriggerDataBlk2022 structure
+(from \c StDaqLib/TRG/trgStructures2022.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Run 22 features the installation of the Forward Calorimeter System (FCS) and Forward Tracking
+Tracker (FTT).  The FPD and FMS DSM readout are removed; a fourth EPD QT crate (mEQ4) and the
+zdcKillerBit() accessor are added.
+
+\section sec2022_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2022
+\endcode
+
+\section sec2022_runyear Run Year
+Run 22, calendar year 2022 &mdash; Au+Au collisions at &radic;s = 200 GeV.
+FCS and FTT installed.
+
+\section sec2022_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2022* | Pointer to the raw Run 22 trigger data block. |
+| EvtDesc | EvtDescData2022* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2022* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2022* | Decoded trigger summary (transient). |
+| mEQ1[11]…mEQ4[11] | QTBlock2022*[11] | Four EPD QT crate blocks (transient). mEQ4 is new vs Run 19. |
+
+\section sec2022_new New Compared to 2019
+
+- zdcKillerBit() &mdash; ZDC killer/veto bit.
+- mEQ4 (4th EPD QT crate block).
+
+\section sec2022_removed Removed Compared to 2019
+
+- fpdLayer1DSMRaw() / fpdLayer2DSMRaw() &mdash; FPD removed.
+- nQTdata() / QTdata() &mdash; FMS QT removed.
+- getDsm_FMS() / getDsm1_FMS() / getDsm2_FMS() &mdash; FMS DSM layers removed.
+- killFMS() &mdash; FMS removed.
+
+The FPD raw PMT accessors fpd() and fpdSum() are retained.
+The FMS channel accessors fmsADC() and fmsTDC() are retained.
+
+\section sec2022_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned int zdcKill  = trgData->zdcKillerBit();
+    unsigned short epdTot = trgData->epdMultTotal(0);
+    bool zdcCoinc         = trgData->zdcTimeDifferenceInWindow();
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2019
+*/

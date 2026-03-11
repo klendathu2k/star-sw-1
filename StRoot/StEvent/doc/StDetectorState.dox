@@ -1,0 +1,51 @@
+/*!
+\page page_stdetectorstate StDetectorState
+
+\brief Records the operational status (good/bad) of one STAR sub-detector for an event.
+
+\section overview Overview
+
+\brief `StDetectorState` records the operational status of a single STAR sub-detector for one event.
+
+`StDetectorState` is stored in the detector-state collection attached to \ref StEvent and allows
+downstream analysis code to quickly determine which detectors were active (good) or inactive (bad)
+during data taking. A detector is considered "good" if it was fully operational and its data are
+suitable for physics analysis.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StDetectorState
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StDetectorId` | `mDetectorId` | Detector identifier enum (e.g. `kTpcId`, `kBbcId`, `kBEmcId`); maps to the STAR sub-detector whose status is recorded |
+| `Bool_t` | `mIsGood` | `true` if the detector was operational for this event; `false` if flagged bad or absent |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StDetectorId detector() const` | Returns the detector identifier |
+| `bool good() const` | Returns `true` if the detector was operational |
+| `bool bad() const` | Returns `true` if the detector was not operational |
+| `void setDetector(StDetectorId id)` | Sets the detector identifier |
+| `void setGood(bool flag)` | Sets the good/bad operational status |
+
+\section example Usage Example
+
+\code{.cpp}
+StDetectorState* state = event->detectorState(kTpcId);
+if (state && state->good()) {
+    // TPC was active; proceed with TPC-based analysis
+}
+\endcode
+
+\see StEvent
+\see StDetectorId
+*/

@@ -1,0 +1,52 @@
+/*!
+\page page_stemctriggerdetector StEmcTriggerDetector
+
+\brief EMC trigger detector data: BEMC/EEMC high-tower ADCs, patch sums, multi-level DSM outputs.
+
+\section stemctriggerdetector_overview Overview
+\c StEmcTriggerDetector stores electromagnetic calorimeter trigger data for the Barrel
+EMC (BEMC) and Endcap EMC (EEMC).  High-tower and patch-sum ADC values feed the L0
+trigger decision for selecting high-energy photons, electrons, and neutral pions.
+Multi-level DSM output arrays allow offline inspection of the trigger logic chain.
+
+\section stemctriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StEmcTriggerDetector
+\endcode
+
+\section stemctriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| unsigned char[300] | mHighTower | BEMC patch high-tower ADC |
+| unsigned char[300] | mPatch | BEMC patch sum ADC |
+| unsigned char[90] | mHighTowerEndcap | EEMC patch high-tower ADC |
+| unsigned char[90] | mPatchEndcap | EEMC patch sum ADC |
+| unsigned short[48] | mBemcLayer1 | BEMC DSM Layer-1 words |
+| unsigned short[16] | mEemcLayer1 | EEMC DSM Layer-1 words |
+| unsigned short[8] | mEmcLayer2 | Combined EMC DSM Layer-2 words |
+
+\section stemctriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int highTower(int i) const` | BEMC high-tower ADC patch i |
+| `unsigned int patch(int i) const` | BEMC patch sum ADC patch i |
+| `unsigned int highTowerEndcap(int i) const` | EEMC high-tower ADC patch i |
+| `unsigned int patchEndcap(int i) const` | EEMC patch sum ADC patch i |
+| `unsigned short bemcLayer1(int i) const` | BEMC Layer-1 DSM word i |
+| `unsigned short eemcLayer1(int i) const` | EEMC Layer-1 DSM word i |
+| `unsigned short emcLayer2(int i) const` | EMC Layer-2 DSM word i |
+
+\section stemctriggerdetector_usage Usage Example
+\code{.cpp}
+StEmcTriggerDetector& emc = event->triggerDetectorCollection()->emc();
+for (int i = 0; i < 300; ++i)
+    if (emc.highTower(i) > 15)
+        cout << "High tower patch " << i << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+*/

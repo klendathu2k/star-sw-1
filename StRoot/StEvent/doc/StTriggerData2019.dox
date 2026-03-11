@@ -1,0 +1,67 @@
+/**
+\page page_sttriggerdata2019 StTriggerData2019
+
+\brief Concrete StTriggerData implementation for STAR Run 19 (year 2019) trigger data.
+
+\section sec2019_overview Overview
+
+StTriggerData2019 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 19 (year 2019)</b> raw trigger data.  It wraps a \c TriggerDataBlk2019 structure
+(from \c StDaqLib/TRG/trgStructures2019.h) and exposes its content through the common
+StTriggerData accessor API.
+
+Compared to StTriggerData2018, Run 19 provides a complete EPD multiplicity and DSM layer
+hierarchy, EPD earliest TDC, and revolution tick counters.  ETOF was installed for this run.
+
+\section sec2019_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2019
+\endcode
+
+\section sec2019_runyear Run Year
+Run 19, calendar year 2019 &mdash; Au+Au at &radic;s = 14.5 GeV (BES-II); ETOF installed.
+
+\section sec2019_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TriggerDataBlk2019* | Pointer to the raw Run 19 trigger data block. |
+| EvtDesc | EvtDescData2019* | Decoded event descriptor (transient). |
+| L1_DSM  | L1_DSM_Data2019* | Decoded L1 DSM data (transient). |
+| TrgSum  | TrgSumData2019* | Decoded trigger summary (transient). |
+| mEQ1[11], mEQ2[11], mEQ3[11] | QTBlock2019*[11] | EPD QT crate blocks (transient). |
+
+\section sec2019_new New Compared to 2018
+
+<b>Revolution tick counters:</b>
+- revTick1(), revTick2(), revTick3()
+
+<b>EPD extended:</b>
+- epdEarliestTDC(StBeamDirection eastwest, int prepost)
+- epdLayer1a(int ch, int prepost=0)
+- epdLayer1b(int ch, int prepost=0)
+- epdLayer0h(int ch, int prepost=0) &mdash; returns unsigned char.
+- epdNHitsQT(int crate, int qt, int mult12, int prepost=0)
+- epdLayer0aMult(int ch, int prepost=0)
+- epdLayer0hMult(int ch, int mult12, int prepost=0)
+- epdLayer1bMult(StBeamDirection eastwest, int ring, int prepost=0)
+- epdMultTotal(int prepost=0)
+- epdMultDiff(int prepost=0)
+
+\section sec2019_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short epdTot  = trgData->epdMultTotal(0);
+    unsigned short epdDiff = trgData->epdMultDiff(0);
+    unsigned int tick1     = trgData->revTick1();
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2018
+\see StTriggerData2022
+*/

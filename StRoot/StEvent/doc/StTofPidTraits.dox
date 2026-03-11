@@ -1,0 +1,62 @@
+/*!
+\page page_sttofpidtraits StTofPidTraits
+
+\brief Legacy STAR TOF patch particle identification traits for a matched track.
+
+\section sttofpidtraits_overview Overview
+
+\ref StTofPidTraits stores PID information for a track matched to a hit in the original
+STAR TOF patch detector (operated during early runs, 2001–2004).  This was a small
+scintillator-array detector covering a limited azimuthal sector at mid-rapidity,
+the predecessor to the full BTOF barrel system.
+
+The class stores the hit cell address (tray/module/cell), the measured TOF, path length,
+velocity β, and nσ values for four species hypotheses (e, π, K, p).
+
+\section sttofpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits
+           └── StTofPidTraits
+\endcode
+
+\section sttofpidtraits_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mTray | \c Int_t | TOF tray number. |
+| \c mModule | \c Int_t | Module number within the tray. |
+| \c mCell | \c Int_t | Cell number within the module. |
+| \c mTof | \c Float_t | Measured time of flight (ns). |
+| \c mPathLength | \c Float_t | Path length from vertex to hit (cm). |
+| \c mBeta | \c Float_t | β = v/c. |
+| \c mSigmaElectron | \c Float_t | nσ from electron hypothesis; +999 if unset. |
+| \c mSigmaPion | \c Float_t | nσ from pion hypothesis; +999 if unset. |
+| \c mSigmaKaon | \c Float_t | nσ from kaon hypothesis; +999 if unset. |
+| \c mSigmaProton | \c Float_t | nσ from proton hypothesis; +999 if unset. |
+
+\section sttofpidtraits_example Usage Example
+
+\code{.cpp}
+const StTofPidTraits* tof = nullptr;
+for (const StTrackPidTraits* p : track->pidTraits()) {
+    tof = dynamic_cast<const StTofPidTraits*>(p);
+    if (tof) break;
+}
+
+if (tof) {
+    double measTof = tof->tof();          // ns
+    double beta    = tof->beta();         // v/c
+    double p       = track->geometry()->momentum().mag();
+    double m2      = p*p*(1./(beta*beta) - 1.);  // (GeV/c²)²
+
+    if (std::abs(tof->sigmaPion()) < 2.) { /* pion */ }
+}
+\endcode
+
+\see StTrackPidTraits
+\see StBTofPidTraits
+\see StTofCollection
+\see StTrack
+*/

@@ -1,0 +1,58 @@
+/*!
+\page page_sthltbemctowerhit StHltBEmcTowerHit
+
+\brief HLT Barrel Electromagnetic Calorimeter (BEMC) tower hit with geometry, energy, and ADC information.
+
+\section overview Overview
+
+`StHltBEmcTowerHit` stores information for a single BEMC tower hit recorded by the HLT online farm.
+The BEMC covers |η| < 1 with 4800 towers and is used in the HLT to identify high-energy electrons
+and photons and to match them to charged tracks. An `StHltBEmcTowerHit` is linked to its parent
+\ref StHltTrackNode through an `StLink`.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltBEmcTowerHit
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `int` | `mAdc` | Raw ADC count of the tower |
+| `float` | `mEnergy` | Calibrated energy deposit (GeV) |
+| `float` | `mPhi` | Tower center azimuthal angle (rad) |
+| `float` | `mEta` | Tower center pseudorapidity |
+| `float` | `mZ` | Tower center z position (cm) |
+| `float` | `mSoftId` | Software tower identifier (1–4800) |
+| `float` | `mDaqId` | DAQ tower identifier |
+| *(StLink)* | `mTrackNode` | Parent track node |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int adc() const` | Raw ADC count |
+| `float energy() const` | Calibrated tower energy (GeV) |
+| `float phi() const` | Tower center φ (rad) |
+| `float eta() const` | Tower center η |
+| `float z() const` | Tower center z (cm) |
+| `float softId() const` | Software tower identifier |
+| `float daqId() const` | DAQ tower identifier |
+| `StHltTrackNode* trackNode() const` | Parent track node |
+
+\section example Usage Example
+
+\code{.cpp}
+const StSPtrVecHltBEmcTowerHit& towers = hlt->bEmcTowerHits();
+for (size_t i = 0; i < towers.size(); ++i) {
+    cout << "E=" << towers[i]->energy() << " GeV  eta=" << towers[i]->eta() << endl;
+}
+\endcode
+
+\see StHltEvent
+\see StHltTrackNode
+*/

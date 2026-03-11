@@ -1,0 +1,83 @@
+/*!
+\page page_sttriggeridcollection StTriggerIdCollection — Collection Documentation
+
+\section tic_overview Overview
+
+\ref StTriggerIdCollection stores the complete set of <b>trigger IDs</b> for a
+single event in \ref StEvent.
+
+STAR's trigger system evaluates events at three levels (L1, L2, L3); this class
+holds a separate \ref StTriggerId object for each level and for an expanded L3
+set, plus a <b>nominal</b> \ref StTriggerId representing the consensus decision.
+<b>Most analyses should access only \c nominal()</b>.
+
+Each \ref StTriggerId stores up to 42 trigger IDs that fired, per-trigger version
+numbers (name, threshold, prescale), and a 64-bit bitmask.
+
+\section tic_ownership Object Ownership
+
+All five \ref StTriggerId pointers are initialised to \c nullptr in the constructor
+and are <b>explicitly deleted in the destructor</b>.  Callers must not delete the
+objects returned by the accessors.
+
+| Pointer | Ownership |
+|---------|-----------|
+| mL1TriggerId | Owned — deleted in destructor. |
+| mL2TriggerId | Owned — deleted in destructor. |
+| mL3TriggerId | Owned — deleted in destructor. |
+| mL3ExpandedTriggerId | Owned — deleted in destructor. |
+| mNominalTriggerId | Owned — deleted in destructor. |
+
+The collection itself is owned by the \c StEvent framework.
+
+\section tic_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \ref StTriggerId* | mL1TriggerId | Trigger IDs that passed the L1 (hardware) decision. May be \c nullptr. |
+| \ref StTriggerId* | mL2TriggerId | Trigger IDs that passed the L2 decision. May be \c nullptr. |
+| \ref StTriggerId* | mL3TriggerId | Trigger IDs that passed the L3 (software) decision. May be \c nullptr. |
+| \ref StTriggerId* | mL3ExpandedTriggerId | Extended L3 trigger ID set (Run 6+). May be \c nullptr. |
+| \ref StTriggerId* | mNominalTriggerId | <b>Nominal (consensus) trigger IDs — use this for analyses.</b> |
+
+\section tic_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c nominal() const | Returns the nominal \ref StTriggerId. <b>Primary accessor for analyses.</b> |
+| \c l1() const | Returns the L1 \ref StTriggerId; may be \c nullptr. |
+| \c l2() const | Returns the L2 \ref StTriggerId; may be \c nullptr. |
+| \c l3() const | Returns the L3 \ref StTriggerId; may be \c nullptr. |
+| \c l3Expanded() const | Returns the expanded L3 \ref StTriggerId; may be \c nullptr. |
+| \c setNominal(StTriggerId*) | Assigns nominal; collection takes ownership. |
+| \c setL1 / setL2 / setL3 / setL3Expanded | Assign the respective level's object; collection takes ownership. |
+
+\section tic_striggerid StTriggerId Quick Reference
+
+- \c isTrigger(unsigned int id) — \c true if trigger \c id fired.
+- \c triggerIds() — \c vector of all fired trigger IDs.
+- \c mask() — 64-bit fired-trigger bitmask.
+- \c version(id) / \c nameVersion(id) / \c thresholdVersion(id) / \c prescaleVersion(id) — per-trigger versioning.
+
+\section tic_example Usage Example
+
+\code{.cpp}
+StTriggerIdCollection* trigColl = event->triggerIdCollection();
+if (!trigColl) return;
+
+const StTriggerId* nominal = trigColl->nominal();
+if (nominal && nominal->isTrigger(15007)) {
+    // event passed trigger 15007
+}
+
+if (nominal) {
+    vector<unsigned int> ids = nominal->triggerIds();
+    for (size_t i = 0; i < ids.size(); ++i) {
+        unsigned int id       = ids[i];
+        unsigned int prescale = nominal->prescaleVersion(id);
+    }
+}
+\endcode
+
+\see StTriggerId
+*/

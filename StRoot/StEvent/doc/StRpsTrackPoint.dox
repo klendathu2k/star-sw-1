@@ -1,0 +1,65 @@
+/*!
+\page page_strpstrackpoint StRpsTrackPoint
+
+\brief Reconstructed (x, y, z) hit position in a single Roman Pot detector station.
+
+\section rpstrackpoint_overview Overview
+
+StRpsTrackPoint is the local reconstructed hit position in one Roman Pot station.
+It is built from clusters in the four silicon strip planes of the station and stores
+the 3D position, PMT timing signals, a quality classification, and per-plane cluster indices.
+
+**Detector**: Roman Pot System (RPS / pp2pp)  
+**Stage**: Per-station hit reconstruction; input to StRpsTrack
+
+\section rpstrackpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StRpsTrackPoint
+\endcode
+
+Referenced by \c StRpsTrack::trackPoint(station).
+
+\section rpstrackpoint_quality Quality Enum
+
+| Enumerator | Meaning |
+|------------|---------|
+| \c rpsNormal | Standard quality |
+| \c rpsGolden | All four planes contributed |
+| \c rpsNotSet | Quality not assigned |
+
+\section rpstrackpoint_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c int | \c mRpId | Roman Pot index (0–7) |
+| \c int[4] | \c mClusterId | Cluster index in each plane (−1 = plane unused) |
+| \c double[2] | \c mTime | PMT timing signals (ns); −1 if absent |
+| \c StThreeVectorF | \c mPosition | Reconstructed (x, y, z) hit position (cm) |
+| \c StRpsTrackPointQuality | \c mQuality | Quality classification |
+
+\section rpstrackpoint_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c positionVec() | 3D position vector (cm) |
+| \c x(), \c y(), \c z() | Individual coordinates (cm) |
+| \c rpId() | Roman Pot index (0–7) |
+| \c clusterId(planeId) | Cluster index for plane \c planeId |
+| \c time(pmtId) | PMT timing signal (ns) |
+| \c quality() | Reconstruction quality |
+| \c planesUsed() | Number of contributing silicon planes |
+
+\section rpstrackpoint_example Usage Example
+
+\code{.cpp}
+const StRpsTrackPoint* tp = track->trackPoint(0); // station 0
+if (!tp) return;
+double x  = tp->x();          // cm
+double y  = tp->y();          // cm
+double t0 = tp->time(0);      // PMT 0 timing (ns)
+unsigned int nPl = tp->planesUsed();
+\endcode
+
+\see StRpsTrack, StRpsCluster, StRpsCollection
+*/

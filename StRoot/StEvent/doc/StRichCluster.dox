@@ -1,0 +1,50 @@
+/*!
+\page page_strichcluster StRichCluster
+
+\brief \ref page_strichcluster "StRichCluster" — group of adjacent RICH pads formed during hit reconstruction.
+
+\section strichcluster_overview Overview
+StRichCluster collects contiguous RICH pad pixels whose signals are merged
+during the clustering step of hit reconstruction. The resulting cluster is
+the parent of one or more \ref page_strichhit "StRichHit" objects representing
+individual Cherenkov photon impact points. Multiple local maxima within a
+single cluster indicate overlapping photon hits on adjacent pads.
+
+\section strichcluster_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichCluster
+\endcode
+
+\section strichcluster_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mNumberOfPads | Number of pads in the cluster |
+| Int_t | mNumberOfLocalMax | Number of local amplitude maxima (sub-peaks) |
+| Int_t | mFirstPad | Index of the first pad in the pixel array |
+| Float_t | mMinimumAmplitudeOfLocalMax | Lowest amplitude threshold for local-maximum identification |
+| Float_t | mAmplitudeSum | Sum of all pad ADC values |
+| Float_t | mAmplitude2Sum | Sum of squares of all pad ADC values |
+| Float_t | mRms2 | Square RMS of pad amplitudes |
+
+\section strichcluster_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| int numberOfPads() const | Number of pads in the cluster |
+| int numberOfLocalMax() const | Number of local maxima |
+| int firstPad() const | First-pad index |
+| float amplitudeSum() const | Total ADC amplitude sum |
+| float amplitude2Sum() const | Sum of squared ADC amplitudes |
+| float rms2() const | Stored square RMS |
+| float rms2Calc() const | Computed square RMS from sums |
+| void updateAmplitude(float) | Accumulate a pad ADC value |
+| void increaseNumberOfPads() | Increment pad count |
+| void increaseNumberOfLocalMax() | Increment local-maxima count |
+| void setFirstPad(int) | Set first-pad index |
+| void setMinimumAmplitudeOfLocalMax(float) | Set local-max amplitude threshold |
+
+\section strichcluster_related Related Classes
+\ref page_strichpixel "StRichPixel" — individual pad contributing to this cluster. \n
+\ref page_strichhit "StRichHit" — reconstructed hit derived from this cluster.
+*/

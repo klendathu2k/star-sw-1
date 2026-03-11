@@ -1,0 +1,102 @@
+/*!
+\page page_stpxlhit StPxlHit
+
+\ref StPxlHit represents a single reconstructed space-point hit in the STAR Pixel Detector
+(PXL), the innermost layer of the Heavy Flavor Tracker (HFT).  The PXL is a fine-pitch MAPS
+detector providing two layers of pixel measurements at small radii.
+
+\see StPxlHitCollection
+
+\section sec_pxlhit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StPxlHit
+\endverbatim
+
+Hits are collected in \ref StPxlHitCollection.
+
+\section sec_pxlhit_members Data Members
+
+\subsection subsec_pxlhit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Packed hardware address.
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ errors in STAR global frame (cm). <em>Not persisted.</em>
+- <tt>Float_t mCharge</tt> — Cluster charge (ADC counts).
+- <tt>Int_t mId</tt> — Hit identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_pxlhit_own Own Data Members
+
+- <tt>UChar_t mSector</tt> — Sector number (1–10).
+- <tt>UChar_t mLadder</tt> — Ladder number within the sector (1–4); ladder 1 = inner PXL layer,
+  ladders 2–4 = outer PXL layer.
+- <tt>UChar_t mSensor</tt> — Sensor number within the ladder (1–10).
+- <tt>Float_t mMeanRow</tt> — Mean pixel row of the cluster centroid (charge-weighted, pixel units).
+- <tt>Float_t mMeanColumn</tt> — Mean pixel column of the cluster centroid (pixel units).
+- <tt>UChar_t mNRawHits</tt> — Number of raw pixel hits (cluster size).
+- <tt>Float_t mLocalPosition[3]</tt> — Local hit position within the sensor (cm): [0] = u (row
+  direction), [1] = v (sensor normal), [2] = transverse.
+- <tt>StDetectorId mDetectorId</tt> — Detector identifier (nominally <tt>kPxlId</tt>).
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_pxlhit_methods Key Methods
+
+- <tt>unsigned int sector() const</tt> — Sector (1–10).
+- <tt>unsigned int ladder() const</tt> — Ladder (1–4).
+- <tt>unsigned int sensor() const</tt> — Sensor (1–10).
+- <tt>unsigned int layer() const</tt> — PXL layer: 1 if ladder == 1, else 2.
+- <tt>float meanRow() const</tt> — Mean cluster row (pixel units).
+- <tt>float meanColumn() const</tt> — Mean cluster column (pixel units).
+- <tt>unsigned int nRawHits() const</tt> — Cluster size.
+- <tt>float localPosition(unsigned int i) const</tt> — Local position along axis <tt>i</tt> (cm).
+- <tt>const float* localPosition() const</tt> — Pointer to the 3-element local position array.
+- <tt>void setLocalPosition(float u, float v, float w)</tt> — Set local position (cm).
+- <tt>void setLocalY(float y)</tt> — Set sensor-normal component v (cm).
+- <tt>StDetectorId detector() const</tt> — Returns <tt>mDetectorId</tt>.
+- <tt>virtual bool isSortable() const</tt> — Returns <tt>true</tt>.
+
+\section sec_pxlhit_ctors Multiple Constructors
+
+\ref StPxlHit provides four constructors:
+-# <b>Default</b> — invalid initialization for ROOT I/O.
+-# <b>Full</b> — <tt>(localPos[3], sector, ladder, sensor, position, error, hwPosition, charge, ...)</tt>.
+-# <b>Fast simulation</b> — <tt>(localPos[3], sector, ladder, sensor, idTruth)</tt>; caller must
+   complete remaining fields.
+-# <b>Cluster</b> — <tt>(meanRow, meanColumn, sector, ladder, sensor)</tt>; global position not set.
+
+\section sec_pxlhit_ownership Object Ownership
+
+\ref StPxlHit uses a custom <tt>StMemoryPool</tt> allocator.  Ownership transfers to the
+framework on insertion.
+\warning Do <b>not</b> <tt>delete</tt> \ref StPxlHit pointers obtained from the collection.
+
+\section sec_pxlhit_usage Usage Example
+
+\code{.cpp}
+StPxlHitCollection* pxlColl = event->pxlHitCollection();
+if (!pxlColl) return;
+
+for (unsigned int iSector = 1; iSector <= 10; ++iSector) {
+    for (unsigned int iLadder = 1; iLadder <= 4; ++iLadder) {
+        for (unsigned int iSensor = 1; iSensor <= 10; ++iSensor) {
+            const StSPtrVecPxlHit* hits = pxlColl->hits(iSector, iLadder, iSensor);
+            if (!hits) continue;
+            for (const StPxlHit* hit : *hits) {
+                unsigned int layer = hit->layer(); // 1 or 2
+                float u = hit->localPosition(0);   // local u (cm)
+                float v = hit->localPosition(1);   // local v (cm)
+                float row = hit->meanRow();         // pixel row centroid
+            }
+        }
+    }
+}
+\endcode
+
+*/

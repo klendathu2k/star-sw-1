@@ -1,0 +1,67 @@
+/*!
+\page page_stFcsHit StFcsHit
+
+\brief Raw tower hit in the STAR Forward Calorimeter System (FCS), including waveform data.
+
+\section fcsHit_overview Overview
+
+StFcsHit stores the digitised waveform and derived energy for a single tower
+in the STAR FCS (Forward Calorimeter System, Run 22+).  The FCS has six
+sub-detectors: ECAL North/South (ID 0/1), HCAL North/South (ID 2/3), and
+Pre-shower North/South (ID 4/5).  The readout uses DEP boards; two packed
+16-bit words (\c mDetId and \c mDepCh) encode the full detector address.
+
+The waveform is stored as a TArrayS with 12-bit ADC samples plus 4-bit flag
+bits.  In zero-suppressed mode each sample is paired with its time-bin index.
+
+\section fcsHit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFcsHit
+\endcode
+
+Stored in \ref page_stFcsCollection "StFcsCollection" (vector per sub-detector).
+
+\section fcsHit_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetId | Packed: bit15=ZS flag, bits14-12=sub-detector ID, bits11-0=channel ID. |
+| UShort_t | mDepCh | Packed: bit15=NS, bits14-13=EHP, bits12-8=DEP board, bits7-0=channel. |
+| UInt_t | mAdcSum | Sum of ADC over all time bins. |
+| Float_t | mFitPeak | Fitted waveform peak position [time bins]. |
+| Float_t | mFitSigma | Fitted Gaussian sigma [time bins]. |
+| Float_t | mFitChi2 | Waveform fit χ². |
+| UInt_t | mNPeak | Number of peaks in the waveform. |
+| Float_t | mEnergy | Calibrated energy [GeV]. |
+| TArrayS* | mData | Waveform samples (12-bit ADC + 4-bit flags). |
+| StFcsCluster* | mCluster | Parent cluster (non-owning). |
+
+\section fcsHit_subdets Sub-detector IDs
+
+| ID | Description |
+|---|---|
+| 0 | ECAL North (W-Shashlyk, 22×34=748 ch) |
+| 1 | ECAL South |
+| 2 | HCAL North (Fe-scint, 13×20=260 ch) |
+| 3 | HCAL South |
+| 4 | Pre-shower North (16×12=192 ch) |
+| 5 | Pre-shower South |
+
+\section fcsHit_methods Key Methods
+
+- \c detectorId() — sub-detector ID (0–5).
+- \c id() — channel ID within the sub-detector.
+- \c ns(), \c ehp(), \c dep(), \c channel() — DEP address fields.
+- \c zs() — zero-suppression flag.
+- \c nTimeBin(), \c adc(i), \c timebin(i), \c flag(i) — waveform access.
+- \c adcSum(), \c fitPeak(), \c fitSigma(), \c fitChi2(), \c nPeak() — derived waveform quantities.
+- \c energy() — calibrated energy [GeV].
+- \c cluster() — parent cluster.
+- \c print() — print summary.
+
+\section fcsHit_seealso See Also
+
+\ref page_stFcsCluster "StFcsCluster",
+\ref page_stFcsPoint "StFcsPoint"
+*/

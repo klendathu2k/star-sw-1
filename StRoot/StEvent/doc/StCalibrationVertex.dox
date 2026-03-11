@@ -1,0 +1,34 @@
+/*!
+\page page_stcalibrationvertex StCalibrationVertex
+
+\brief Concrete vertex sub-class for calibration and diagnostic vertices (no daughters or parent).
+
+\section stcalibrationvertex_overview Overview
+StCalibrationVertex stores positions and covariances for vertices
+produced by calibration procedures (e.g., FTPC laser tracks, cosmic
+crossings).  It has no daughter tracks and no parent track.
+
+Calibration vertices are stored in StEvent::calVertices().
+
+\section stcalibrationvertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex → StCalibrationVertex
+\endcode
+
+\section stcalibrationvertex_types Calibration Types
+- kFtpcEastCalibrationVertexId (6): FTPC east laser calibration
+- kFtpcWestCalibrationVertexId (7): FTPC west laser calibration
+
+\section stcalibrationvertex_methods Key Methods
+
+\code{.cpp}
+const StSPtrVecCalibrationVertex& cv = event->calVertices();
+for (size_t i = 0; i < cv.size(); ++i) {
+    if (cv[i]->type() != kFtpcEastCalibrationVertexId) continue;
+    StThreeVectorF pos = cv[i]->position();
+    float chi2 = cv[i]->chiSquared();
+}
+\endcode
+
+\sa \ref page_stvertex
+*/

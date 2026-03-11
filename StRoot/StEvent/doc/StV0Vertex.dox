@@ -1,0 +1,43 @@
+/*!
+\page page_stv0vertex StV0Vertex
+
+\brief Vertex representing a V0 neutral two-prong decay (K0s, Lambda, anti-Lambda, γ conversion).
+
+\section stv0vertex_overview Overview
+StV0Vertex stores the secondary decay vertex of a neutral particle into
+two charged daughters.  It holds the 3-D decay position, daughter momenta
+at the vertex, and DCA quantities needed for V0 selection.
+
+V0 vertices are stored in StEvent::v0Vertices().
+
+\section stv0vertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex → StV0Vertex
+\endcode
+
+\section stv0vertex_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDaughters | StPtrVecTrack | Non-owning: [0]=negative, [1]=positive daughter. |
+| mDcaDaughtersToPrimaryVertex[2] | Float_t | DCA of each daughter to PV (cm). |
+| mMomentumOfDaughters[2] | StThreeVectorF | Daughter momenta at vertex (GeV/c). |
+| mDcaDaughters | Float_t | DCA between daughters at the decay point (cm). |
+| mDcaParentToPrimaryVertex | Float_t | DCA of V0 to primary vertex (cm). |
+
+\section stv0vertex_methods Key Methods
+
+\code{.cpp}
+const StSPtrVecV0Vertex& v0s = event->v0Vertices();
+for (size_t i = 0; i < v0s.size(); ++i) {
+    const StV0Vertex* v0 = v0s[i];
+    if (v0->dcaDaughters() > 0.8) continue;
+    const StThreeVectorF& pMinus = v0->momentumOfDaughter(negative);
+    const StThreeVectorF& pPlus  = v0->momentumOfDaughter(positive);
+    StThreeVectorF pV0 = v0->momentum();
+    // compute invariant mass under K0s or Lambda hypothesis
+}
+\endcode
+
+\sa \ref page_stvertex, \ref page_stxivertex
+*/

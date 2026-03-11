@@ -1,0 +1,73 @@
+/*!
+\page page_sthltheavyfragment StHltHeavyFragment
+
+\brief HLT heavy nuclear fragment candidate (e.g. ³He, ⁴He) selected online by the High Level Trigger.
+
+\section overview Overview
+
+`StHltHeavyFragment` represents a heavy nuclear fragment candidate selected online by the STAR HLT.
+Heavy fragments (³He, ⁴He and their anti-matter counterparts) are identified by large TPC dE/dx
+(∝ Z²) and anomalously slow velocity (small β) measured by BTOF. The HLT applies tight real-time
+cuts on these quantities. All data are stored by value. As a \ref StHltTriggerReasonCapable, it
+can be the trigger object in an \ref StHltTriggerReason record.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTriggerReasonCapable
+        └── StHltHeavyFragment
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StHltTrack` | `mPrimaryTrack` | Primary track (by value) |
+| `StHltTrack` | `mGlobalTrack` | Global track (by value) |
+| `StHltBTofHit` | `mBTofHit` | Matched BTOF hit (by value) |
+| `StHltBEmcTowerHit` | `mBEmcTowerHit` | Matched BEMC tower hit (by value) |
+| `int` | `mGlobalTrackSN` | Global track serial number |
+| `int` | `mPrimaryTrackSN` | Primary track serial number |
+| `int` | `mTofHitSN` | BTOF hit serial number |
+| `int` | `mEmcTowerSN` | BEMC tower hit serial number |
+| `double` | `mBEmcMatchPhiDiff` | φ difference for BEMC match (rad) |
+| `double` | `mBEmcMatchZEdge` | z-edge distance for BEMC match (cm) |
+| `float` | `mBTofProjChannel` | Projected BTOF channel |
+| `float` | `mBTofCellLocalY` | Local y in BTOF cell (cm) |
+| `float` | `mBTofCellLocalZ` | Local z in BTOF cell (cm) |
+| `float` | `mBTofPathLength` | Path length to BTOF hit (cm) |
+| `float` | `mBeta` | Velocity β = v/c |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `const StHltTrack& primaryTrack() const` | Primary track |
+| `const StHltTrack& globalTrack() const` | Global track |
+| `const StHltBTofHit& bTofHit() const` | Matched BTOF hit |
+| `const StHltBEmcTowerHit& bEmcTowerHit() const` | Matched BEMC tower hit |
+| `float beta() const` | Velocity β (small for heavy fragments) |
+| `double bEmcMatchPhiDiff() const` | BEMC φ match difference (rad) |
+| `double bEmcMatchZEdge() const` | BEMC z-edge match distance (cm) |
+| `float bTofPathLength() const` | Path length to BTOF hit (cm) |
+
+\section example Usage Example
+
+\code{.cpp}
+for (size_t i = 0; i < hlt->heavyFragment().size(); ++i) {
+    const StHltHeavyFragment* hf = hlt->heavyFragment()[i];
+    cout << "pT=" << hf->primaryTrack().pt()
+         << " dEdx=" << hf->primaryTrack().dedx()
+         << " beta=" << hf->beta() << endl;
+}
+\endcode
+
+\see StHltEvent
+\see StHltTrack
+\see StHltBTofHit
+\see StHltBEmcTowerHit
+\see StHltTriggerReasonCapable
+\see StHltTriggerReason
+*/

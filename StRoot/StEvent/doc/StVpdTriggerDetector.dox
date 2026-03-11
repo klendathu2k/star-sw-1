@@ -1,0 +1,48 @@
+/*!
+\page page_stvpdtriggerdetector StVpdTriggerDetector
+
+\brief VPD trigger detector data: ADC/TDC for 16 PMT tubes per east/west side, online vertex-z.
+
+\section stvpdtriggerdetector_overview Overview
+\c StVpdTriggerDetector stores ADC and TDC values from the Vertex Position Detector
+(VPD), a fast Čerenkov/scintillator timing detector at ±5.7 m.  It measures the
+collision start time and online z-vertex via the east–west TDC time difference.
+Multi-hit qualifiers and per-side earliest-TDC words are also stored.
+
+\section stvpdtriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StVpdTriggerDetector
+\endcode
+
+\section stvpdtriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| unsigned short[2][16] | mADC | ADC: [0]=east, [1]=west, 16 tubes |
+| unsigned short[2][16] | mTDC | TDC: [0]=east, [1]=west, 16 tubes |
+| unsigned short[2][16] | mADCmxq | Multi-hit ADC qualifiers |
+| unsigned short[2][16] | mTDCmxq | Multi-hit TDC qualifiers |
+| unsigned short[2] | mEarliestTDC | Earliest TDC per side |
+| unsigned short | mTimeDifference | East–west time difference |
+
+\section stvpdtriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned short ADC(StBeamDirection dir, int pmt) const` | ADC for direction/tube |
+| `unsigned short TDC(StBeamDirection dir, int pmt) const` | TDC for direction/tube |
+| `unsigned short EarliestTDC(StBeamDirection dir) const` | Earliest TDC per side |
+| `unsigned short TimeDifference() const` | East–west time difference |
+| `int numberOfVpdCounters() const` | Tubes per side (16) |
+
+\section stvpdtriggerdetector_usage Usage Example
+\code{.cpp}
+StVpdTriggerDetector& vpd = event->triggerDetectorCollection()->vpd();
+cout << "VPD time diff = " << vpd.TimeDifference() << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stzdctriggerdetector
+*/

@@ -1,0 +1,79 @@
+/*!
+\page page_stfttrawhit StFttRawHit
+
+\brief Raw digitised signal from a single FTT (Forward sTGC) strip channel.
+
+\section fttrawhit_overview Overview
+
+StFttRawHit stores the VMM ASIC output for one strip of the **Forward sTGC Tracker (FTT)**.
+It holds both raw electronics coordinates (sector, RDO, FEB, VMM, channel) and the
+mapped detector coordinates (plane, quadrant, row, strip, orientation) from the channel map.
+
+**Detector**: Forward sTGC Tracker (FTT)  
+**Stage**: Raw DAQ (VMM output) → channel mapping
+
+\section fttrawhit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFttRawHit
+\endcode
+
+Stored in \c StFttCollection via \c StPtrVecFttRawHit.
+
+\section fttrawhit_geometry FTT Geometry
+
+| Term | Description |
+|------|-------------|
+| Plane | One of 4 sTGC detector planes |
+| Quadrant | A (0), B (1), C (2), D (3) per plane |
+| Row | Strip row within a quadrant |
+| Strip | Individual strip within a row |
+| Orientation | Horizontal(0), Vertical(1), DiagonalH(2), DiagonalV(3), Unknown(4) |
+
+\section fttrawhit_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c UChar_t | \c mSector | Electronics sector |
+| \c UChar_t | \c mRDO | RDO board number |
+| \c UChar_t | \c mFEB | Front-End Board number |
+| \c UChar_t | \c mVMM | VMM ASIC chip number |
+| \c UChar_t | \c mChannel | VMM channel (0–63) |
+| \c UShort_t | \c mADC | Raw pulse height |
+| \c UShort_t | \c mBCID | Bunch-crossing ID |
+| \c Short_t | \c mTB | Time bin relative to trigger |
+| \c Short_t | \c mBCIDDelta | BCID delta from trigger |
+| \c Short_t | \c mTime | Calibrated time (ns) |
+| \c UChar_t | \c mPlane | Mapped plane (0–3) |
+| \c UChar_t | \c mQuadrant | Mapped quadrant (0–3) |
+| \c UChar_t | \c mRow | Mapped strip row |
+| \c UChar_t | \c mStrip | Mapped strip index |
+| \c UChar_t | \c mOrientation | Strip orientation code |
+| \c UShort_t | \c mIdTruth | MC truth GEANT track ID |
+| \c UShort_t | \c mQaTruth | MC truth quality (%) |
+
+\section fttrawhit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c plane(), \c quadrant(), \c row(), \c strip() | Mapped detector coordinates |
+| \c orientation() | Strip orientation code |
+| \c adc() | Raw ADC pulse height |
+| \c time() | Calibrated hit time (ns) |
+| \c bcid(), \c dbcid(), \c tb() | Timing information |
+| \c setRaw(...) | Set electronics readout fields |
+| \c setMapping(...) | Set mapped detector coordinate fields |
+
+\section fttrawhit_example Usage Example
+
+\code{.cpp}
+for (const StFttRawHit* rh : fttColl->rawHits()) {
+    UChar_t  plane = rh->plane();
+    UChar_t  quad  = rh->quadrant();
+    UShort_t adc   = rh->adc();
+    Short_t  t     = rh->time(); // calibrated (ns)
+}
+\endcode
+
+\see StFttCluster, StFttPoint, StFttCollection
+*/

@@ -1,0 +1,51 @@
+/*!
+\page page_stFcsPoint StFcsPoint
+
+\brief Photon point reconstructed from an FCS cluster.
+
+\section fcsPoint_overview Overview
+
+StFcsPoint is the highest-level FCS object, representing a single photon (or
+other EM particle) whose shower profile has been fitted to an StFcsCluster.
+The position is available in local tower-grid units (x,y) and in global STAR
+coordinates (xyz).  The four-momentum is stored for invariant-mass analyses.
+
+\section fcsPoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFcsPoint
+\endcode
+
+Stored in \ref page_stFcsCollection "StFcsCollection" and cross-linked to
+\ref page_stFcsCluster "StFcsCluster".
+
+\section fcsPoint_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetectorId | Sub-detector ID: 0=ECAL-N, 1=ECAL-S, 2=HCAL-N, 3=HCAL-S, 4=PrsH-N, 5=PrsH-S. |
+| Float_t | mEnergy | Fitted photon energy [GeV]. |
+| Float_t | mX | Local x-position in tower-grid column units. |
+| Float_t | mY | Local y-position in tower-grid row units. |
+| Int_t | mNParentClusterPhotons | Number of photons in the parent cluster. |
+| StFcsCluster* | mCluster | Parent cluster (non-owning). |
+| StLorentzVectorD | mFourMomentum | Photon four-momentum. |
+| StThreeVectorD | mXYZ | Photon position in global STAR coordinates [cm]. |
+
+\section fcsPoint_methods Key Methods
+
+- \c detectorId() — sub-detector ID.
+- \c energy() — fitted photon energy [GeV].
+- \c x(), \c y() — local tower-grid position.
+- \c xyz() — global STAR position [cm].
+- \c fourMomentum() — photon four-momentum.
+- \c cluster() — parent cluster.
+- \c parentClusterId(), \c nParentClusterPhotons() — cluster context.
+- \c set*() — corresponding setters.
+- \c print() — print summary.
+
+\section fcsPoint_seealso See Also
+
+\ref page_stFcsCluster "StFcsCluster",
+\ref page_stFcsHit "StFcsHit"
+*/

@@ -1,0 +1,56 @@
+/*!
+\page page_steventinfo StEventInfo
+
+\brief Per-event metadata: run/event numbers, timestamp, L0 trigger mask, RHIC bunch-crossing ID, event size.
+
+\section steventinfo_overview Overview
+\c StEventInfo stores the identifying metadata for a single recorded collision event.
+It provides the run number, event number, Unix timestamp, the L0 hardware trigger bitmask,
+the 64-bit RHIC bunch-crossing identifier (stored as two 32-bit words), and the raw event
+size in bytes.  It is the first place to look when selecting specific trigger conditions,
+labelling histograms, or performing run-quality checks.
+
+\section steventinfo_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StEventInfo
+\endcode
+
+\section steventinfo_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| TString | mType | Event-type string (e.g. "physics", "laser", "pedestal") |
+| Int_t | mRunId | Run number |
+| Int_t | mId | Event number within the run |
+| Int_t | mTime | Unix timestamp of the event trigger |
+| UInt_t | mTriggerMask | Bitmask of fired L0 triggers |
+| UInt_t[2] | mBunchCrossingNumber | 64-bit RHIC bunch-crossing ID: [0]=lower 32 bits, [1]=upper 32 bits |
+| UInt_t | mEventSize | Raw event size in bytes |
+
+\section steventinfo_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `const char* type() const` | Event-type string |
+| `int id() const` | Event number within the run |
+| `int runId() const` | Run number |
+| `int time() const` | Unix timestamp |
+| `unsigned int triggerMask() const` | L0 trigger bitmask |
+| `unsigned int bunchCrossingNumber(unsigned int idx) const` | Lower (idx=0) or upper (idx=1) half of 64-bit bunch-crossing ID |
+| `unsigned int eventSize() const` | Raw event size in bytes |
+
+\section steventinfo_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+StEventInfo* info = event->info();
+cout << "Run: " << info->runId() << "  Event: " << info->id() << endl;
+cout << "Trigger mask: 0x" << hex << info->triggerMask() << dec << endl;
+unsigned long long bcid =
+    (unsigned long long)info->bunchCrossingNumber(1) << 32 | info->bunchCrossingNumber(0);
+\endcode
+
+\see \ref page_struninfo
+\see \ref page_steventsummary
+*/

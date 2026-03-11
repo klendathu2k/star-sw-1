@@ -1,0 +1,66 @@
+/*!
+\page page_stl0trigger StL0Trigger
+
+\brief Level-0 hardware trigger data: DSM outputs, CTB/MWC topology, bunch-crossing IDs, spin bits.
+
+\section stl0trigger_overview Overview
+\c StL0Trigger stores the Level-0 hardware trigger data for a single STAR event.
+L0 is the first trigger stage (~1 µs decision), driven entirely by DSM electronics.
+It holds the last-DSM array (Layer-2 outputs that made the final L0 decision),
+the bunch-crossing data array (spin/crossing information), the coarse CTB pixel map,
+MWC+CTB multiplicity/topology quantities, the trigger token, and several status bytes.
+Proton spin bits are extracted from the bunch-crossing data via dedicated accessors.
+
+\section stl0trigger_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StTrigger
+           └── StL0Trigger
+\endcode
+
+\section stl0trigger_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mMwcCtbMultiplicity | MWC+CTB combined multiplicity |
+| Int_t | mMwcCtbDipole | MWC+CTB dipole asymmetry |
+| Int_t | mMwcCtbTopology | MWC+CTB topology word |
+| Int_t | mMwcCtbMoment | MWC+CTB transverse moment |
+| Int_t[256] | mCoarsePixelArray | CTB coarse pixel map |
+| UShort_t | mDsmInput | DSM input word |
+| UChar_t | mDetectorBusy | Detector-busy status byte |
+| UShort_t | mTriggerToken | Trigger token |
+| UShort_t | mDsmAddress | DSM address word |
+| UChar_t | mAddBits | Additional DSM bits |
+| UShort_t[8] | mLastDsmArray | Last-DSM (Layer-2) output words |
+| UShort_t[16] | mBcDataArray | Bunch-crossing data array |
+| *(inherited)* | mTriggerWord | L0 hardware trigger word |
+| *(inherited)* | mTriggerActionWord | Trigger action word |
+
+\section stl0trigger_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int triggerWord() const` | L0 hardware trigger word |
+| `unsigned int triggerActionWord() const` | Trigger action word |
+| `int mwcCtbMultiplicity() const` | MWC+CTB combined multiplicity |
+| `unsigned short lastDsmArray(int i) const` | Last-DSM word at index i |
+| `unsigned short bcDataArray(int i) const` | Bunch-crossing data word at index i |
+| `int bunchCrossingId7bit(int beam) const` | 7-bit BCID for beam 0 (yellow) or 1 (blue) |
+| `unsigned long long bunchCrossingId() const` | Full bunch-crossing ID |
+| `bool spinBitYellowUp(int i) const` | Yellow spin-up flag |
+| `bool spinBitBlueUp(int i) const` | Blue spin-up flag |
+| `void set(const StTriggerData*)` | Populate from raw trigger data |
+
+\section stl0trigger_usage Usage Example
+\code{.cpp}
+StL0Trigger* l0 = event->l0Trigger();
+cout << "Trigger word: 0x" << hex << l0->triggerWord() << endl;
+cout << "7-bit BCID (yellow) = " << l0->bunchCrossingId7bit(0) << endl;
+\endcode
+
+\see \ref page_sttrigger
+\see \ref page_stl1trigger
+\see \ref page_sttriggerdata
+*/

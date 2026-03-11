@@ -1,0 +1,41 @@
+/*!
+\page page_stmtdtriggerdetector StMtdTriggerDetector
+
+\brief MTD trigger detector data: ADC and TDC values for east and west muon counters.
+
+\section stmtdtriggerdetector_overview Overview
+\c StMtdTriggerDetector stores ADC and TDC values from the Muon Telescope Detector (MTD),
+which uses multi-gap resistive-plate chambers behind the STAR magnet yoke to identify
+and trigger on muons.  Up to 8 counters per side (east and west) are stored.
+
+\section stmtdtriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StMtdTriggerDetector
+\endcode
+
+\section stmtdtriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| unsigned short[2][8] | mADC | ADC: [0]=east, [1]=west, index 0–7 |
+| unsigned short[2][8] | mTDC | TDC: [0]=east, [1]=west, index 0–7 |
+
+\section stmtdtriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned short adc(StBeamDirection dir, int pmt) const` | ADC for direction/counter |
+| `unsigned short tdc(StBeamDirection dir, int pmt) const` | TDC for direction/counter |
+| `int numberOfMtdCounters() const` | Counters per side (8) |
+
+\section stmtdtriggerdetector_usage Usage Example
+\code{.cpp}
+StMtdTriggerDetector& mtd = event->triggerDetectorCollection()->mtd();
+for (int i = 0; i < mtd.numberOfMtdCounters(); ++i)
+    cout << "east ADC[" << i << "]=" << mtd.adc(east,i) << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+*/

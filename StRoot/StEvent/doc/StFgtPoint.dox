@@ -1,0 +1,62 @@
+/*!
+\page page_stfgtpoint StFgtPoint
+
+\brief Reconstructed 2D space point in the FGT formed by pairing an R-strip and a phi-strip hit.
+
+\section fgtpoint_overview Overview
+
+StFgtPoint is a 2D space point in the **Forward GEM Tracker (FGT)** formed by pairing
+one R-strip hit (StFgtHit with layer 'R') with one phi-strip hit (layer 'P') on the
+same disc and quadrant.  Construction failure (null inputs, mismatched disc/quadrant,
+same-layer pair) sets \c mKey = −999; callers must verify \c getKey() != -999.
+
+**Detector**: Forward GEM Tracker (FGT)  
+**Stage**: 1D hit pairing → 2D space point
+
+\section fgtpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StHit → StFgtPoint
+\endcode
+
+Stored in the FGT point container within \c StFgtCollection.
+
+\section fgtpoint_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mKey | Unique point ID; −999 = construction error |
+| \c Float_t | \c mChargeAsymmetry | (Q_phi − Q_r) / (Q_phi + Q_r) |
+| \c Int_t | \c mRank | Quality rank for candidate ordering |
+| \c StFgtHit* | \c mHitR | Associated R-strip cluster (transient) |
+| \c StFgtHit* | \c mHitPhi | Associated phi-strip cluster (transient) |
+
+The combined charge \c mCharge (inherited from StHit) = Q_r + Q_phi.
+
+\section fgtpoint_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getKey() | Unique ID (−999 = invalid) |
+| \c getDisc() | FGT disc index (0–5) |
+| \c getQuad() | Quadrant index (0–3) |
+| \c getPositionR() | Radial position r (cm) |
+| \c getPositionPhi() | Azimuthal angle φ (rad) |
+| \c charge() | Combined cluster charge |
+| \c getChargeAsymmetry() | Phi/r charge asymmetry |
+| \c getRank() | Quality rank |
+| \c getHitR(), \c getHitPhi() | Pointers to the 1D cluster hits |
+
+\section fgtpoint_example Usage Example
+
+\code{.cpp}
+const StFgtPoint* pt = ptColl->point(ip);
+if (pt->getKey() == -999) continue;  // invalid
+float r   = pt->getPositionR();      // radial (cm)
+float phi = pt->getPositionPhi();    // azimuthal (rad)
+float x   = r * cos(phi);
+float y   = r * sin(phi);
+\endcode
+
+\see StFgtHit, StFgtStrip, StFgtCollection
+*/

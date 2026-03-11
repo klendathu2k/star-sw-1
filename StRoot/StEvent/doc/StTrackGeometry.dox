@@ -1,0 +1,59 @@
+/*!
+\page page_sttrackgeometry StTrackGeometry
+
+\brief Abstract interface for track helix geometry at a reference point.
+
+\section sttrackgeometry_overview Overview
+
+\ref StTrackGeometry is the abstract base class for all helix-parameter representations
+of reconstructed charged-particle tracks in STAR.  It defines a uniform accessor API —
+charge, curvature, dip angle, momentum, origin — without committing to a specific
+parameterisation.  The concrete implementation is \ref StHelixModel.
+
+Every \c StTrack holds two \c StTrackGeometry* pointers: one at the innermost measured
+point (inner helix) and one at the outermost point (outer helix).
+
+\section sttrackgeometry_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackGeometry   (abstract)
+           └── StHelixModel
+\endcode
+
+\section sttrackgeometry_interface Pure Virtual Interface
+
+| Method | Description |
+|---|---|
+| \c model() | Geometry model identifier (\c kHelixModel). |
+| \c charge() | Electric charge (+1 or −1). |
+| \c helicity() | Helix sense: h = −sign(qB). |
+| \c curvature() | Signed curvature κ (cm⁻¹). |
+| \c psi() | Azimuthal momentum angle ψ at the origin (rad). |
+| \c dipAngle() | Dip angle λ = arctan(p_z/p_T) (rad). |
+| \c origin() | Reference point on the helix (cm). |
+| \c momentum() | Momentum vector at the origin (GeV/c). |
+| \c helix() | Full \c StPhysicalHelixD parameterisation. |
+| \c copy() | Virtual copy constructor. |
+
+\section sttrackgeometry_bad Validity Check
+
+\c bad() returns non-zero when the helix is geometrically invalid (origin outside STAR
+acceptance, zero momentum).
+
+\section sttrackgeometry_example Usage Example
+
+\code{.cpp}
+const StTrackGeometry* geo = track->geometry();
+if (!geo || geo->bad()) return;
+
+double pt  = geo->momentum().perp();   // p_T [GeV/c]
+double eta = /* from dipAngle */;
+
+StPhysicalHelixD helix = geo->helix();
+double s = helix.pathLength(/* target */);
+\endcode
+
+\see StHelixModel
+\see StTrack
+*/

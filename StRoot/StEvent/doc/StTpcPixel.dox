@@ -1,0 +1,78 @@
+/*!
+\page page_stTpcPixel StTpcPixel
+
+\brief Single ADC pixel (one pad × one time-bin sample) from the TPC readout.
+
+\ref StTpcPixel represents a single ADC sample at one pad × one time-bin location in the STAR
+TPC readout. It is the fundamental unit of raw TPC data below the cluster level. Pixels are
+not normally stored persistently during standard reconstruction; they are created transiently by
+\ref StTpcRawData::getVecOfPixels "StTpcRawData::getVecOfPixels()" into a caller-supplied
+<tt>StVectPixel</tt> vector for embedding diagnostics, cluster visualisation, and hit-finding
+studies.
+
+\section sec_pixel_hierarchy Class Hierarchy
+
+\verbatim
+TObject
+└── StObject
+    └── StTpcPixel       (concrete — this class)
+\endverbatim
+
+\c StTpcPixel objects are produced by \ref StTpcRawData::getVecOfPixels into a
+<tt>std::vector<StTpcPixel></tt> and owned by value in that vector.
+
+\section sec_pixel_members Data Members
+
+- <tt>UChar_t mDetector</tt> — Detector identifier (\c StDetectorId cast to byte). For standard
+  TPC: \c kTpcId (1); for iTPC sectors: \c kiTpcId (39).
+- <tt>UChar_t mSector</tt> — TPC sector number 1–24. Sectors 1–12 are East; 13–24 are West.
+- <tt>UChar_t mRow</tt> — Padrow number within the sector (standard TPC: up to 90 rows; iTPC:
+  up to 72 rows).
+- <tt>UChar_t mPad</tt> — Pad number within the padrow (1-based).
+- <tt>UShort_t mTimeBin</tt> — Time-bin index within the TPC drift window (0–511 corresponding
+  to ~100 ns per bin, ~51.2 µs total window).
+- <tt>UShort_t mAdc</tt> — Raw 10-bit ADC value (0–1023) after 8→10 bit expansion. Zero
+  indicates no signal above the zero-suppression threshold.
+- <tt>Int_t mIdTruth</tt> — <em>Simulation only.</em> Geant track ID of the primary energy
+  deposit. Zero for real data.
+- <tt>Short_t mId</tt> — Cluster identifier assigned by the cluster finder; zero if not yet
+  assigned.
+
+\section sec_pixel_methods Key Methods
+
+- <tt>unsigned char detector() const</tt> — Returns detector ID byte.
+- <tt>unsigned char sector() const</tt> — Sector number (1–24).
+- <tt>unsigned char padrow() const</tt> — Padrow number.
+- <tt>unsigned char pad() const</tt> — Pad number within the padrow.
+- <tt>unsigned short timebin() const</tt> — Time-bin index (0–511).
+- <tt>unsigned short adc() const</tt> — Raw ADC value (0–1023).
+- <tt>int idTruth() const</tt> — MC truth Geant track ID.
+- <tt>short id() const</tt> — Cluster assignment ID.
+- <tt>virtual void Print(Option_t*) const</tt> — Prints pixel information to stdout.
+
+\section sec_pixel_ownership Object Ownership
+
+\c StTpcPixel is a plain value type with no heap-allocated members. Pixels from
+\ref StTpcRawData::getVecOfPixels are stored by value in a <tt>std::vector<StTpcPixel></tt>
+and destroyed when the vector goes out of scope. No special deletion is needed.
+
+\section sec_pixel_usage Usage Example
+
+\code{.cpp}
+StTpcRawData* rawData = event->tpcRawData();
+if (!rawData) return;
+
+StVectPixel pixels;
+rawData->getVecOfPixels(pixels, 5 /*sector*/, 20 /*row*/);
+
+for (const StTpcPixel& px : pixels) {
+    std::cout << "sec=" << (int)px.sector()
+              << " row=" << (int)px.padrow()
+              << " pad=" << (int)px.pad()
+              << " tb="  << px.timebin()
+              << " adc=" << px.adc() << "\n";
+}
+\endcode
+
+\sa \ref page_stTpcRawData, \ref page_stTpcHit
+*/

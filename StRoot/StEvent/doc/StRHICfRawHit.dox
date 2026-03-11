@@ -1,0 +1,69 @@
+/*!
+\page page_strhicfrawhit StRHICfRawHit
+
+\brief Raw ADC, TDC, and trigger signal data from the RHICf detector front-end electronics.
+
+\section rhicfrawhit_overview Overview
+
+StRHICfRawHit stores the raw front-end output of the **RHICf very-forward calorimeter**
+before energy calibration.  It holds per-channel ADC values for the GSO sampling plates
+(in two gain ranges each, plus a delayed pedestal sample), GSO position bar ADCs,
+TDC timing values, and CAD0/GPI0/GPI1 trigger words.
+
+**Detector**: RHICf very-forward calorimeter (η > 6)  
+**Stage**: Raw front-end electronics (pre-calibration)
+
+\section rhicfrawhit_hierarchy Class Hierarchy
+
+\code
+TObject → StRHICfRawHit
+\endcode
+
+Stored in \c StRHICfCollection.
+
+\section rhicfrawhit_gain Gain Ranges
+
+| \c range index | Name | Use |
+|---------------|------|-----|
+| 0 | Wide range | High-energy deposits |
+| 1 | Narrow range | Low-energy / high sensitivity |
+
+Pedestal is estimated from the delayed sample (\c mPlateADCDelay).
+
+\section rhicfrawhit_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c UShort_t[2][16][2] | \c mPlateADC | Primary plate ADC [tower][plate][range] |
+| \c UShort_t[2][16][2] | \c mPlateADCDelay | Delayed (pedestal) plate ADC |
+| \c UShort_t[4][2][20] | \c mGSOSmallADC | Small-tower bar ADC [layer][xy][bar] |
+| \c UShort_t[4][2][40] | \c mGSOLargeADC | Large-tower bar ADC [layer][xy][bar] |
+| \c UInt_t[256] | \c mTDC | TDC timing values |
+| \c UInt_t[5] | \c mCAD0 | CAD0 trigger words |
+| \c UInt_t[19] | \c mGPI0 | GPI0 flag words |
+| \c UInt_t[17] | \c mGPI1 | GPI1 flag words |
+
+\section rhicfrawhit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getPlateADC(tower,plate,range) | Primary plate ADC |
+| \c getPlateADCDelay(tower,plate,range) | Delayed (pedestal) plate ADC |
+| \c getGSOBarADC(tower,layer,xy,bar) | GSO bar ADC |
+| \c getTDC(idx) | TDC channel value |
+| \c getCAD0/GPI0/GPI1(idx) | Trigger words |
+| \c clear() | Reset all data to zero |
+
+\section rhicfrawhit_example Usage Example
+
+\code{.cpp}
+StRHICfRawHit* raw = rhicfColl->rawHit();
+// Pedestal-subtract narrow range (range=1)
+for (int plate = 0; plate < kRHICfNplate; ++plate) {
+    int signal = raw->getPlateADC(0, plate, 1) - raw->getPlateADCDelay(0, plate, 1);
+}
+UShort_t barAdc = raw->getGSOBarADC(0, 0, 0, 0); // small tower, layer 0, x, bar 0
+\endcode
+
+\see StRHICfHit, StRHICfPoint, StRHICfCollection
+*/

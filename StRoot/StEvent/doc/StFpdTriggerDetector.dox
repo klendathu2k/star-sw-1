@@ -1,0 +1,51 @@
+/*!
+\page page_stfpdtriggerdetector StFpdTriggerDetector
+
+\brief FPD trigger detector data: east/west ADC arrays and DSM layer outputs for forward π⁰ detection.
+
+\section stfpdtriggerdetector_overview Overview
+\c StFpdTriggerDetector stores data from the Forward Pion Detector (FPD), the
+predecessor of the FMS.  The FPD had east and west lead-glass modules in north, south,
+top, bottom, and pre-shower configurations.  Raw ADC values per tower and DSM
+Layer-1/Layer-2 outputs are stored for each sub-module and beam direction.
+
+\section stfpdtriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StFpdTriggerDetector
+\endcode
+
+\section stfpdtriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| UChar_t[49] | mEN | East North ADC values |
+| UChar_t[49] | mES | East South ADC values |
+| UChar_t[25] | mET | East Top ADC values |
+| UChar_t[25] | mEB | East Bottom ADC values |
+| UChar_t[7] | mEPN | East pre-shower North ADC |
+| UChar_t[7] | mEPS | East pre-shower South ADC |
+| *(similar)* | mWN..mWPS | West-side counterparts |
+| UShort_t[] | layer1 | DSM Layer-1 output words |
+| UShort_t[] | layer2 | DSM Layer-2 output words |
+
+\section stfpdtriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int adc(StBeamDirection, int nstbps, int tower) const` | ADC for direction/sub-module/tower |
+| `unsigned short layer1(StBeamDirection, int nstbps, int board) const` | Layer-1 DSM word |
+| `unsigned short layer2(StBeamDirection, int nstbps) const` | Layer-2 DSM word |
+| `int numberOfTowers(int nstbps) const` | Towers in sub-module |
+| `int numberOfModules() const` | Total FPD modules |
+
+\section stfpdtriggerdetector_usage Usage Example
+\code{.cpp}
+StFpdTriggerDetector& fpd = event->triggerDetectorCollection()->fpd();
+cout << "FPD east-north tower 0: " << fpd.adc(east, 0, 0) << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stfmstriggerdetector
+*/

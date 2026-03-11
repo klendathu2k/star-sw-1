@@ -1,0 +1,56 @@
+/*!
+\page page_stEmcPoint StEmcPoint
+
+\brief Reconstructed energy-deposition point in the STAR EMC, combining clusters from multiple sub-detectors.
+
+\section emcpoint_overview Overview
+
+StEmcPoint is the highest-level EMC reconstruction object.  It represents the
+best estimate of where a single photon or electron deposited energy, formed by
+combining shower clusters from up to four EMC sub-detectors (tower,
+pre-shower, SMD-η/U, SMD-φ/V) into a single position measurement with
+associated energy, χ², and track-residual information.
+
+\section emcpoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StMeasuredPoint → StHit → StEmcPoint
+\endcode
+
+Points are stored in the \c StEmcPointCollection hanging off
+\ref page_stEmcCollection "StEmcCollection".
+
+\section emcpoint_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| Float_t | mEnergy | Total energy [GeV]. |
+| Float_t | mChiSquare | χ² of the point-fitting algorithm. |
+| StThreeVectorF | mSize | Spatial shower-size vector. |
+| Float_t[4] | mEnergyInDetector | Energy per sub-detector slot [GeV] (0=tower, 1=preshower, 2=SMD-η/U, 3=SMD-φ/V). |
+| Float_t[4] | mSizeAtDetector | Transverse size at each sub-detector. |
+| Float_t[2] | mDelta | Track residuals: [0]=Δη (ΔU), [1]=Δφ (ΔV). |
+| StPtrVecEmcCluster[4] | mCluster | Cluster vectors, one per sub-detector slot. |
+| StPtrVecEmcPoint | mNeighbors | Adjacent EMC points (non-owning). |
+| StPtrVecTrack | mTracks | Matched tracks (non-owning). |
+| int | myQuality | Reconstruction quality flag. |
+
+\section emcpoint_methods Key Methods
+
+- \c energy() — total energy [GeV].
+- \c chiSquare() — reconstruction χ².
+- \c size() — shower-size 3-vector.
+- \c energyInDetector(StDetectorId) — energy in a specific sub-detector.
+- \c sizeAtDetector(StDetectorId) — transverse size at a sub-detector.
+- \c deltaEta(), \c deltaPhi() — track–point residuals.
+- \c cluster(StDetectorId) — clusters from a sub-detector.
+- \c addCluster(), \c addNeighbor(), \c addTrack() — population helpers.
+- \c detector() — sub-detector ID.
+- \c Print() — print summary to stdout.
+
+\section emcpoint_seealso See Also
+
+\ref page_stEmcCluster "StEmcCluster",
+\ref page_stEmcRawHit "StEmcRawHit",
+\ref page_stEmcDetector "StEmcDetector"
+*/

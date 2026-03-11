@@ -1,0 +1,45 @@
+/*!
+\page page_stctbtriggerdetector StCtbTriggerDetector
+
+\brief CTB trigger detector data: MIP counts for 60 trays × 4 slats × 11 time samples.
+
+\section stctbtriggerdetector_overview Overview
+\c StCtbTriggerDetector stores data from the Central Trigger Barrel (CTB), a 240-slat
+scintillator surrounding the TPC at midrapidity.  MIP counts are recorded for each of
+60 trays, 4 slats per tray, and up to 11 bunch-crossing time samples to allow pile-up
+rejection.  The CTB provides midrapidity multiplicity and topology inputs to the L0
+trigger DSMs.
+
+\section stctbtriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StCtbTriggerDetector
+\endcode
+
+\section stctbtriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Float_t[60][4][11] | mMips | MIP counts [tray][slat][time sample] |
+| Float_t[32][11] | mAux | Auxiliary DSM words [word][time sample] |
+
+\section stctbtriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `float mips(int tray, int slat, int evt=0) const` | MIP count for tray/slat/sample |
+| `float mips(int evt=0) const` | Total MIP sum for sample evt |
+| `float aux(int i, int evt=0) const` | Auxiliary word i at sample evt |
+| `int numberOfTrays() const` | 60 |
+| `int numberOfSlats() const` | 4 |
+
+\section stctbtriggerdetector_usage Usage Example
+\code{.cpp}
+StCtbTriggerDetector& ctb = event->triggerDetectorCollection()->ctb();
+cout << "CTB total MIPs: " << ctb.mips() << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stmwctriggerdetector
+*/

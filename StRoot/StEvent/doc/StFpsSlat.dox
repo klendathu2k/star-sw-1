@@ -1,0 +1,58 @@
+/*!
+\page page_stFpsSlat StFpsSlat
+
+\brief Single scintillator slat in the FPS (FPD Pre-Shower) preshower detector.
+
+\section fpsSlat_overview Overview
+
+StFpsSlat stores the MIP signal and associated FMS photon points for one
+scintillator slat in the FPS (Forward Pion Spectrometer) pre-shower detector,
+which sits directly in front of the FMS lead-glass calorimeter (2.5 < η < 4.0).
+
+The FPS has four quadrants, three scintillator layers each, and 21 slats per
+layer, giving 252 slats total (\c kFpsMaxSlat=252).  Slat IDs encode quadrant,
+layer, and slat number within the layer:
+
+\code
+slatId = (quad-1)*63 + (layer-1)*21 + (slat-1)
+\endcode
+
+Each FMS photon point is projected onto the FPS; matching slat MIP signals
+are used to classify photon/electron/hadron via the FPS PID flag in
+\ref page_stFmsPoint "StFmsPoint".
+
+All data members are transient (not persistified).
+
+\section fpsSlat_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFpsSlat
+\endcode
+
+Stored in \ref page_stFmsCollection "StFmsCollection" as a transient vector.
+
+\section fpsSlat_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| Int_t | mSlatId | FPS slat ID [0, 251] (transient). |
+| Float_t | mMip | MIP signal in this slat (transient). |
+| UInt_t[5] | mNPoint | Associated point counts by proximity rank: [0]=closest, [4]=total (transient). |
+| StPtrVecFmsPoint | mPoint1..4 | FMS photon points at proximity ranks 0–3 (transient). |
+
+\section fpsSlat_methods Key Methods
+
+- \c slatId() — slat ID.
+- \c mip() — MIP signal.
+- \c nPoint(int type) — count of associated FMS points at proximity rank type.
+- \c point(int type) — vector of FMS points at proximity rank type.
+- \c addPoint(StFmsPoint*, int type) — associate an FMS point.
+- \c setSlatId(), \c setMip() — setters.
+- \c print() — print summary.
+
+\section fpsSlat_seealso See Also
+
+\ref page_stFmsPoint "StFmsPoint",
+\ref page_stFmsPointPair "StFmsPointPair",
+\ref page_stFmsCluster "StFmsCluster"
+*/

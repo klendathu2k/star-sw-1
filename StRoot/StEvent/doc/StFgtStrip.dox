@@ -1,0 +1,71 @@
+/*!
+\page page_stfgtstrip StFgtStrip
+
+\brief Raw ADC samples, pedestal, and reconstructed charge for one FGT readout strip.
+
+\section fgtstrip_overview Overview
+
+StFgtStrip holds the full per-strip information for the **Forward GEM Tracker (FGT)**.
+The FGT has six disc-shaped GEM detectors; each disc/quadrant has two strip layers:
+phi-strips (azimuthal coordinate) and r-strips (radial coordinate).  Each strip is
+read out by an APV25 chip sampling 15 time bins (~25 ns each).
+
+**Detector**: Forward GEM Tracker (FGT)  
+**Stage**: Raw DAQ → pedestal subtraction → charge reconstruction
+
+\section fgtstrip_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFgtStrip
+\endcode
+
+Stored in the FGT strip container (map keyed by geoId) within \c StFgtCollection.
+
+\section fgtstrip_ids Geometry and Electronics IDs
+
+| ID | Description |
+|----|-------------|
+| \c mGeoId | Geometric strip ID (disc × quadrant × layer × strip); range [0, \c kFgtNumGeoIds) |
+| \c mRdo/mArm/mApv/mChan | Electronics coordinates from DAQ (RDO, ARM, APV, channel) |
+
+Strip layer: 'P' = phi-measuring (up to 360/octant), 'R' = radial-measuring (up to 280/octant).
+
+\section fgtstrip_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mGeoId | Geometric strip ID |
+| \c Short_t[15] | \c mAdc | ADC time samples (15 bins, ~25 ns each) |
+| \c Short_t | \c mMaxAdc | Maximum ADC across all time bins |
+| \c Short_t | \c mClusterSeedType | Cluster seed classification (\c kFgtSeedType*) |
+| \c Float_t | \c mCharge | Reconstructed charge (calibration units) |
+| \c Float_t | \c mChargeUncert | Charge uncertainty |
+| \c Int_t | \c mRdo, \c mArm, \c mApv, \c mChan | Electronics coordinates from DAQ |
+| \c Float_t | \c mPed | Pedestal (ADC counts) |
+| \c Float_t | \c mPedErr | Pedestal statistical uncertainty |
+
+\section fgtstrip_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getGeoId() | Geometric strip ID |
+| \c getAdc(tb) | ADC at time bin \c tb |
+| \c getMaxAdc() | Peak ADC across all time bins |
+| \c getCharge() | Reconstructed charge |
+| \c getPed() | Pedestal value |
+| \c chargeValid() | True if charge is a valid value |
+| \c getElecCoords(rdo,arm,apv,chan) | Fill electronics coordinates |
+
+\section fgtstrip_example Usage Example
+
+\code{.cpp}
+StFgtStrip* strip = ...; // from FGT strip collection
+if (!strip->chargeValid()) continue;
+float charge = strip->getCharge();
+short maxAdc = strip->getMaxAdc();
+for (int tb = 0; tb < kFgtNumTimeBins; ++tb)
+    short adc = strip->getAdc(tb);
+\endcode
+
+\see StFgtHit, StFgtPoint, StFgtCollection
+*/

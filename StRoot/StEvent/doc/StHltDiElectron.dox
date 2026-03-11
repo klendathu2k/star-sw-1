@@ -1,0 +1,69 @@
+/*!
+\page page_sthltdielectron StHltDiElectron
+
+\brief HLT di-electron pair candidate selected online; built from two electron tracks with optional BTOF and BEMC matching.
+
+\section overview Overview
+
+`StHltDiElectron` represents an e⁺e⁻ (or e⁻e⁻) pair candidate selected online by the STAR HLT.
+Di-electron pairs are a key signature for J/ψ, Υ, and thermal dilepton radiation. The HLT
+identifies them by combining two tracks passing electron criteria (TPC dE/dx, BTOF β, BEMC energy).
+All track and hit data are stored by value, making the object self-contained. As a
+\ref StHltTriggerReasonCapable, it can be the trigger object in an \ref StHltTriggerReason record.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTriggerReasonCapable
+        └── StHltDiElectron
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `float` | `mInvariantMass` | Di-electron invariant mass (GeV/c²) |
+| `float` | `mPt` | Pair transverse momentum (GeV/c) |
+| `float` | `mPsi` | Pair azimuthal angle (rad) |
+| `float` | `mTanl` | Pair tan λ = pz/pT |
+| `StHltTrack` | `mDaughter1PrimaryTrack` | Daughter 1 primary track (by value) |
+| `StHltTrack` | `mDaughter1GlobalTrack` | Daughter 1 global track (by value) |
+| `StHltBTofHit` | `mDaughter1BTofHit` | Daughter 1 BTOF hit (by value) |
+| `StHltBEmcTowerHit` | `mDaughter1BEmcTowerHit` | Daughter 1 BEMC tower hit (by value) |
+| `int` | `mDaughter1SelectionBit` | Daughter 1 selection bit flags |
+| `float` | `mDaughter1Beta` | Daughter 1 velocity β |
+| *(same)* | `mDaughter2...` | Identical set for daughter 2 |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `float invariantMass() const` | Pair invariant mass (GeV/c²) |
+| `float pt() const` | Pair transverse momentum (GeV/c) |
+| `float psi() const` | Pair azimuthal angle (rad) |
+| `float tanl() const` | Pair tan λ |
+| `const StHltTrack& daughter1primaryTrack() const` | Daughter 1 primary track |
+| `const StHltTrack& daughter2primaryTrack() const` | Daughter 2 primary track |
+| `const StHltBTofHit& daughter1bTofHit() const` | Daughter 1 BTOF hit |
+| `const StHltBEmcTowerHit& daughter1bEmcTowerHit() const` | Daughter 1 BEMC hit |
+| `int daughter1SelectionBit() const` | Daughter 1 selection bits |
+| `int daughter2SelectionBit() const` | Daughter 2 selection bits |
+
+\section example Usage Example
+
+\code{.cpp}
+for (size_t i = 0; i < hlt->diElectron().size(); ++i) {
+    const StHltDiElectron* de = hlt->diElectron()[i];
+    cout << "M=" << de->invariantMass() << " GeV/c2  pT=" << de->pt() << endl;
+}
+\endcode
+
+\see StHltEvent
+\see StHltTrack
+\see StHltBTofHit
+\see StHltBEmcTowerHit
+\see StHltTriggerReasonCapable
+\see StHltTriggerReason
+*/

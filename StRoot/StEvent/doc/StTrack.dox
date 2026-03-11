@@ -1,0 +1,65 @@
+/*!
+\page page_sttrack StTrack
+
+\brief Abstract base class for a reconstructed charged-particle track.
+
+\section sttrack_overview Overview
+StTrack is the abstract base for all STAR reconstructed tracks.
+Concrete types are \ref page_stglobaltrack "StGlobalTrack",
+\ref page_stprimarytrack "StPrimaryTrack", and
+\ref page_sttpttrack "StTptTrack".
+All StTrack objects are owned by \ref page_sttracknode "StTrackNode"
+containers stored in StEvent::trackNodes().
+
+\section sttrack_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StTrack (abstract)
+    ├── StGlobalTrack
+    ├── StPrimaryTrack
+    └── StTptTrack
+\endcode
+
+\section sttrack_datamembers Data Members (selected)
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mKey | Int_t | Unique track key within the event. |
+| mFlag | Short_t | Quality flag: zxyy (z=pile-up, x=detector combo, yy=fit status). |
+| mFlagExtension | UInt_t | Fast-detector matching bitmask (CTB, TOF, BEMC, EEMC). |
+| mEncodedMethod | UShort_t | Packed finder+fitter method code. |
+| mImpactParameter | Float_t | Signed DCA to primary vertex (cm). |
+| mLength | Float_t | Helix arc length (cm). |
+| mGeometry | StTrackGeometry* | Inner helix geometry (owned). |
+| mOuterGeometry | StTrackGeometry* | Outer helix geometry (owned). |
+| mTopologyMap | StTrackTopologyMap | Detector-layer hit bitmap. |
+| mFitTraits | StTrackFitTraits | χ², fit points, dE/dx. |
+| mDetectorInfo | StTrackDetectorInfo* | Hit summary (non-owning, shared). |
+| mPidTraitsVec | StSPtrVecTrackPidTraits | Owned PID trait objects. |
+| mNode | StTrackNode* | Owning node (non-owning back-pointer). |
+
+\section sttrack_methods Key Methods
+
+\code{.cpp}
+// Access inner helix state (momentum, origin, charge)
+const StTrackGeometry* g = track->geometry();
+StThreeVectorD p = g->momentum();
+
+// Fit quality
+const StTrackFitTraits& ft = track->fitTraits();
+int nFitPts = ft.numberOfFitPoints();
+double chi2 = ft.chi2(0);
+
+// PID from dE/dx
+StPtrVecTrackPidTraits tpcPid = track->pidTraits(kTpcId);
+
+// Detector topology
+bool hasSvtHit = track->topologyMap().hasHitInDetector(kSvtId);
+\endcode
+
+\section sttrack_flag Flag Word
+The mFlag word encodes: pile-up (z), detector combination (x),
+and fit status (yy). Positive = good, negative = bad.
+
+\sa \ref page_stglobaltrack, \ref page_stprimarytrack,
+    \ref page_sttpttrack, \ref page_sttracknode
+*/

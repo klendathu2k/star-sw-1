@@ -1,0 +1,66 @@
+/*!
+\page page_sttriggerdata StTriggerData
+
+\brief Abstract base class for year-specific STAR trigger data; uniform interface to all sub-detectors.
+
+\section sttriggerdata_overview Overview
+\c StTriggerData is a <b>pure abstract base class</b> providing a uniform,
+year-independent interface to all STAR trigger sub-detector data.
+Concrete subclasses (e.g. \c StTriggerData2019) decode the raw trigger banks for
+a specific run year.  The \c prepost argument selects a RHIC bunch crossing
+relative to the triggered one: 0=triggered, negative=pre, positive=post (range −5 to +5).
+
+\note This class cannot be instantiated directly.  Access it via \c StEvent::triggerData().
+
+\section sttriggerdata_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StTriggerData          ← pure abstract
+           ├── StTriggerData2003
+           ├── ...
+           └── StTriggerData2019
+\endcode
+
+\section sttriggerdata_members Data Members
+No concrete data members.  All data resides in year-specific subclasses.
+
+\section sttriggerdata_methods Key Methods (virtual interface)
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int version() const` | Data format version |
+| `unsigned int token() const` | Trigger token |
+| `unsigned int triggerWord() const` | L0 hardware trigger word |
+| `unsigned int actionWord() const` | Trigger action word |
+| `unsigned int numberOfPreXing() const` | Pre-crossings available |
+| `unsigned int numberOfPostXing() const` | Post-crossings available |
+| `unsigned int bunchId48Bit() const` | 48-bit bunch-crossing ID |
+| `unsigned int bunchId7Bit() const` | 7-bit bunch-crossing ID |
+| `unsigned int bbcAdcEast(int pmt, int prepost=0) const` | BBC east ADC |
+| `unsigned int bbcAdcWest(int pmt, int prepost=0) const` | BBC west ADC |
+| `unsigned int bbcTacEast(int pmt, int prepost=0) const` | BBC east TAC/TDC |
+| `unsigned int bbcTacWest(int pmt, int prepost=0) const` | BBC west TAC/TDC |
+| `unsigned int zdcSumEast(int prepost=0) const` | ZDC east ADC sum |
+| `unsigned int zdcSumWest(int prepost=0) const` | ZDC west ADC sum |
+| `unsigned int ctbSum() const` | Total CTB multiplicity |
+| `unsigned int vpdEarliestTDCEast(int prepost=0) const` | VPD earliest TDC east |
+| `unsigned int vpdEarliestTDCWest(int prepost=0) const` | VPD earliest TDC west |
+| `unsigned long long l2sum() const` | 64-bit L2 trigger summary |
+| `bool isL2Triggered(StL2TriggerResultType) const` | Check L2 result type |
+| `unsigned int errorFlag() const` | Data-integrity flag (0=OK) |
+| `virtual void dump() const = 0` | Pure virtual debug dump |
+
+\section sttriggerdata_usage Usage Example
+\code{.cpp}
+StTriggerData* td = event->triggerData();
+cout << "Token=" << td->token() << endl;
+for (int pmt = 0; pmt < 16; ++pmt)
+    cout << "BBC east ADC[" << pmt << "]=" << td->bbcAdcEast(pmt) << endl;
+cout << "ZDC east sum (pre-1)=" << td->zdcSumEast(-1) << endl;
+\endcode
+
+\see \ref page_stl0trigger
+\see \ref page_stbbctriggerdetector
+\see \ref page_stzdctriggerdetector
+*/

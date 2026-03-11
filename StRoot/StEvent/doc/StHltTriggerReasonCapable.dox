@@ -1,0 +1,54 @@
+/*!
+\page page_sthlttriggerreasoncapable StHltTriggerReasonCapable
+
+\brief Abstract marker base class for HLT physics objects that can serve as the reason for an online trigger decision.
+
+\section overview Overview
+
+`StHltTriggerReasonCapable` is an abstract base class (marker interface) that tags HLT physics
+objects as capable of serving as a trigger reason. By inheriting from this class,
+\ref StHltHighPt, \ref StHltHeavyFragment, \ref StHltDiElectron, and \ref StHltTrackNode can all
+be pointed to polymorphically by \ref StHltTriggerReason via its `mReason` link. This design
+allows trigger-reason code to operate through a single base-class pointer regardless of the
+concrete trigger type.
+
+The class adds no data members or methods beyond `StObject`. Its role is purely to provide a
+common base type for polymorphic dispatch in the HLT trigger-reason chain.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltTriggerReasonCapable
+        ├── StHltHighPt
+        ├── StHltHeavyFragment
+        ├── StHltDiElectron
+        └── StHltTrackNode
+\endcode
+
+\section datamembers Data Members
+
+None beyond those inherited from `StObject`.
+
+\section keymethods Key Methods
+
+None beyond those inherited from `StObject`.
+
+\section example Usage Example
+
+\code{.cpp}
+// Downcast from StHltTriggerReasonCapable* using reasonBit() to determine concrete type:
+StHltTriggerReasonCapable* obj = tr->reason();
+if (tr->reasonBit() == kHighPt) {
+    const StHltHighPt* hp = static_cast<const StHltHighPt*>(obj);
+    // use hp ...
+}
+\endcode
+
+\see StHltTriggerReason
+\see StHltHighPt
+\see StHltHeavyFragment
+\see StHltDiElectron
+\see StHltTrackNode
+*/

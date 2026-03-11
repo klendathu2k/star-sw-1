@@ -1,0 +1,103 @@
+/*!
+\page page_stfsthit StFstHit
+
+\ref StFstHit represents a single reconstructed hit (1-D strip cluster) in the STAR Forward
+Silicon Tracker (FST), a disk-based forward silicon detector with three disks, 12 wedges per
+disk, and 3 sensors per wedge.
+
+\see StFstHitCollection
+
+\section sec_fsthit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StFstHit
+\endverbatim
+
+Hits are collected in \ref StFstHitCollection.
+
+\section sec_fsthit_geometry FST Geometry Constants
+
+From <tt>StFstConsts.h</tt>:
+
+- <tt>kFstNumDisk = 3</tt>
+- <tt>kFstNumWedgePerDisk = 12</tt>
+- <tt>kFstNumWedges = 36</tt>
+- <tt>kFstNumSensorsPerWedge = 3</tt> (1 inner + 2 outer)
+- <tt>kFstNumRStripsPerSensor = 4</tt>
+- <tt>kFstNumPhiSegPerWedge = 128</tt>
+- <tt>kFstNumTimeBins = 9</tt>
+
+Hardware position: <tt>hwPos = 1 + (wedge-1)*3 + sensor</tt> (sensor is 0-based, 0–2).
+
+\section sec_fsthit_members Data Members
+
+\subsection subsec_fsthit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Encodes wedge and sensor index.
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ errors (cm). <em>Not persisted.</em>
+- <tt>Float_t mCharge</tt> — Cluster charge (ADC counts).
+- <tt>Int_t mId</tt> — Hit identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_fsthit_own Own Data Members
+
+- <tt>UChar_t mApv</tt> — APV chip ID (0-based; 8 APVs per wedge).
+- <tt>UChar_t mMaxTimeBin</tt> — Time bin index of the maximum ADC sample (0-based, 0–8).
+- <tt>Float_t mMeanRStrip</tt> — Mean R-strip index of the cluster centroid (continuous).
+- <tt>Float_t mMeanPhiStrip</tt> — Mean φ-strip index of the cluster centroid (continuous).
+- <tt>Float_t mChargeErr</tt> — Charge uncertainty (ADC counts).
+- <tt>UChar_t mNRawHits</tt> — Total cluster size (fired strips).
+- <tt>UChar_t mNRawHitsR</tt> — Cluster size in the R direction.
+- <tt>UChar_t mNRawHitsPhi</tt> — Cluster size in the φ direction.
+- <tt>Float_t mLocalPosition[3]</tt> — Local hit position (cm): [0] = R, [1] = φ, [2] = z.
+- <tt>StDetectorId mDetectorId</tt> — Detector identifier (<tt>kFstId</tt>).
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_fsthit_methods Key Methods
+
+- <tt>unsigned char getDisk() const</tt> — Disk number (1–3).
+- <tt>unsigned char getWedge() const</tt> — Wedge number (1–36).
+- <tt>unsigned char getSensor() const</tt> — Sensor index within wedge (0-based, 0–2).
+- <tt>unsigned char getApv() const</tt> — APV chip ID.
+- <tt>float getMeanRStrip() const</tt> — Mean R-strip centroid.
+- <tt>float getMeanPhiStrip() const</tt> — Mean φ-strip centroid.
+- <tt>float getChargeErr() const</tt> — Charge uncertainty.
+- <tt>unsigned char getNRawHits() const</tt> — Total cluster size.
+- <tt>float localPosition(unsigned int i) const</tt> — Local coordinate along axis <tt>i</tt> (cm).
+- <tt>void setDiskWedgeSensor(unsigned char, unsigned char, unsigned char)</tt> — Set geometry indices.
+- <tt>void setLocalPosition(float vR, float vPhi, float vZ)</tt> — Set local position (cm).
+- <tt>StDetectorId detector() const</tt> — Returns <tt>kFstId</tt>.
+
+\section sec_fsthit_ownership Object Ownership
+
+\ref StFstHit uses a custom <tt>StMemoryPool</tt> allocator.  Ownership transfers to the
+framework on insertion.
+\warning Do <b>not</b> <tt>delete</tt> \ref StFstHit pointers obtained from the collection.
+
+\section sec_fsthit_usage Usage Example
+
+\code{.cpp}
+StFstHitCollection* fstColl = event->fstHitCollection();
+if (!fstColl) return;
+
+for (unsigned int iDisk = 1; iDisk <= 3; ++iDisk) {
+    for (unsigned int iWedge = 1; iWedge <= 12; ++iWedge) {
+        const StSPtrVecFstHit& hits = fstColl->hits(iDisk, iWedge);
+        for (const StFstHit* hit : hits) {
+            unsigned char disk  = hit->getDisk();        // 1–3
+            unsigned char wedge = hit->getWedge();       // 1–36
+            float localR = hit->localPosition(0);        // R direction (cm)
+            float rStrip = hit->getMeanRStrip();
+        }
+    }
+}
+\endcode
+
+*/

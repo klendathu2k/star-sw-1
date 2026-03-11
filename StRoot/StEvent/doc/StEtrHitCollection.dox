@@ -1,0 +1,61 @@
+/*!
+\page page_stetrhitcollection StEtrHitCollection — Collection Documentation
+
+\section etr_overview Overview
+
+\ref StEtrHitCollection is the event-level container for hits from the
+<b>ETR (Endcap Tracking prototype)</b> detector.  The ETR was a prototype
+silicon-strip tracker studied for potential installation in the STAR endcap.
+
+Its geometry comprises <b>3 radial layers</b> and <b>12 azimuthal sectors</b>.
+Each \ref StEtrHit carries a 3-D position, sector (0–11), layer (0–2), pad
+section (0–29), and deposited charge.  \c addHit enforces valid layer and sector
+indices via \c assert.
+
+\section etr_ownership Object Ownership
+
+<b>mHits</b> (\c StSPtrVecEtrHit): <b>Owned</b>; elements deleted by \c StSPtrVec.
+The \ref StEtrHitCollection destructor is a <b>no-op</b>.  The collection itself
+is owned by the \c StEvent framework.
+
+\section etr_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecEtrHit | mHits | Collection of \ref StEtrHit objects with position, sector (0–11), layer (0–2), section (0–29), and charge. |
+
+Internal geometry constants (private enums):
+
+| Constant | Value |
+|----------|-------|
+| \c mNumberOfLayers | 3 |
+| \c mNumberOfSectors | 12 |
+
+\section etr_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c hits() | Reference to the hit collection (mutable and const overloads). |
+| \c addHit(StEtrHit*) | Appends a hit; \c assert checks layer < 3 and sector < 12. Returns \c kTRUE on success. |
+| \c numberOfHits() const | Total number of hits in the collection. |
+| \c numberOfLayers() const | Returns 3. |
+| \c numberOfSectors() const | Returns 12. |
+
+\section etr_example Usage Example
+
+\code{.cpp}
+StEtrHitCollection* etrColl = event->etrHitCollection();
+if (!etrColl || etrColl->numberOfHits() == 0) return;
+
+const StSPtrVecEtrHit& hits = etrColl->hits();
+for (size_t i = 0; i < hits.size(); ++i) {
+    StEtrHit* hit = hits[i];
+    int   layer   = hit->layer();    // 0-2
+    int   sector  = hit->sector();   // 0-11
+    int   section = hit->section();  // 0-29
+    float charge  = hit->charge();
+}
+\endcode
+
+\see StEtrHit
+*/

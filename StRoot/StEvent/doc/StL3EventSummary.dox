@@ -1,0 +1,58 @@
+/*!
+\page page_stl3eventsummary StL3EventSummary
+
+\brief Summary of L3 online trigger decisions: event counters, algorithm results, z-vertex and unbiased flags.
+
+\section stl3eventsummary_overview Overview
+\c StL3EventSummary records the result of L3 online trigger processing for one event.
+It stores run-segment counters (total processed, fully reconstructed), the online track
+count, the unbiased pass-through flag and prescale, the z-vertex trigger flag, a copy
+of the L0 trigger word, and two collections of \ref page_stl3algorithminfo objects:
+all algorithms and those that accepted the event.
+
+\section stl3eventsummary_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StL3EventSummary
+\endcode
+
+\section stl3eventsummary_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mNumberOfProcessedEvents | Events processed by L3 in this run segment |
+| Int_t | mNumberOfReconstructedEvents | Events with full online reconstruction |
+| UInt_t | mNumberOfTracks | Online tracks in this event |
+| Int_t | mUnbiasedTriggerPreScale | Unbiased trigger prescale factor |
+| Bool_t | mUnbiasedTrigger | Unbiased pass-through flag |
+| Bool_t | mZVertexTrigger | z-vertex trigger flag |
+| UInt_t | mL0TriggerWord | Copy of L0 trigger word |
+| StSPtrVecL3AlgorithmInfo | mAlgorithms | All configured algorithm infos (owned) |
+| StPtrVecL3AlgorithmInfo | mAlgorithmsAcceptingEvent | Algorithms that accepted this event |
+
+\section stl3eventsummary_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int numberOfProcessedEvents() const` | Total L3-processed events |
+| `int numberOfReconstructedEvents() const` | Fully reconstructed events |
+| `unsigned int numberOfTracks() const` | Online track count |
+| `int numberOfAlgorithms() const` | Number of configured algorithms |
+| `bool unbiasedTrigger() const` | Unbiased trigger flag |
+| `bool zVertexTrigger() const` | z-vertex trigger flag |
+| `unsigned int l0TriggerWord() const` | L0 trigger word copy |
+| `StPtrVecL3AlgorithmInfo& algorithmsAcceptingEvent()` | Accepting algorithms |
+| `StSPtrVecL3AlgorithmInfo& algorithms()` | All algorithms |
+
+\section stl3eventsummary_usage Usage Example
+\code{.cpp}
+StL3EventSummary* sum = event->l3Trigger()->l3EventSummary();
+cout << "z-vertex trigger: " << sum->zVertexTrigger() << endl;
+for (const auto* alg : sum->algorithmsAcceptingEvent())
+    cout << "  Alg " << alg->id() << " accepted" << endl;
+\endcode
+
+\see \ref page_stl3trigger
+\see \ref page_stl3algorithminfo
+*/

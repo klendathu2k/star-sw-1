@@ -1,0 +1,85 @@
+/*!
+\page page_sthltevent StHltEvent
+
+\brief Top-level container for all physics objects produced by the STAR High Level Trigger (HLT) online farm.
+
+\section overview Overview
+
+`StHltEvent` is the top-level container for all physics objects produced by the STAR High Level
+Trigger (HLT) online farm. The HLT runs on a Linux cluster that reconstructs each collision in
+real time and makes accept/reject decisions before data are written to tape. It is embedded in
+\ref StEvent and holds the primary vertex position, timing, dE/dx gain calibration, and collections
+of HLT-selected tracks, calorimeter hits, TOF hits, VPD hits, and physics candidates (high-pT,
+heavy fragment, di-electron). The `triggerReasonBitOred` field is a bitmask summary of which
+physics triggers fired.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltEvent
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `unsigned int` | `mVersion` | HLT data format version number |
+| `unsigned int` | `mTriggerReasonBitOred` | Bitwise OR of all fired `StHltTriggerReasonType` bits |
+| `StThreeVectorF` | `mVertex` | HLT primary vertex position (cm) |
+| `StThreeVectorF` | `mLowMultVertex` | Low-multiplicity algorithm vertex position (cm) |
+| `float` | `mVpdVertexZ` | VPD-based vertex z position (cm) |
+| `float` | `mT0` | Event start time t₀ from VPD (ns) |
+| `float` | `mInnerSecGain` | Online dE/dx gain for TPC inner sectors |
+| `float` | `mOuterSecGain` | Online dE/dx gain for TPC outer sectors |
+| `StSPtrVecHltTrack` | `mGlobalTrack` | HLT global tracks |
+| `StSPtrVecHltTrack` | `mPrimaryTrack` | HLT primary tracks |
+| `StSPtrVecHltTrackNode` | `mTrackNode` | HLT track nodes |
+| `StSPtrVecHltBEmcTowerHit` | `mBEmcTowerHits` | HLT BEMC tower hits |
+| `StSPtrVecHltBTofHit` | `mBTofHit` | HLT BTOF hits |
+| `StSPtrVecHltVpdHit` | `mVpdHit` | HLT VPD hits |
+| `StSPtrVecHltHighPt` | `mHighPt` | HLT high-pT candidates |
+| `StSPtrVecHltHeavyFragment` | `mHeavyFragment` | HLT heavy fragment candidates |
+| `StSPtrVecHltDiElectron` | `mDiElectron` | HLT di-electron candidates |
+| `StSPtrVecHltTriggerReason` | `mTriggerReason` | Trigger reason records |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `unsigned int version() const` | HLT data format version |
+| `unsigned int triggerReasonBitOred() const` | Bitmask of fired trigger reasons |
+| `const StThreeVectorF& vertex() const` | HLT primary vertex (cm) |
+| `const StThreeVectorF& lowMultVertex() const` | Low-multiplicity vertex (cm) |
+| `float vpdVertexZ() const` | VPD vertex z (cm) |
+| `float t0() const` | Event start time from VPD (ns) |
+| `StSPtrVecHltHighPt& highPt()` | High-pT candidate collection |
+| `StSPtrVecHltHeavyFragment& heavyFragment()` | Heavy fragment candidate collection |
+| `StSPtrVecHltDiElectron& diElectron()` | Di-electron candidate collection |
+| `StSPtrVecHltTriggerReason& triggerReason()` | Trigger reason record collection |
+
+\section example Usage Example
+
+\code{.cpp}
+StHltEvent* hlt = event->hltEvent();
+if (!hlt) return;
+
+cout << "HLT vertex z = " << hlt->vertex().z() << " cm" << endl;
+cout << "Trigger bits = 0x" << hex << hlt->triggerReasonBitOred() << dec << endl;
+
+for (size_t i = 0; i < hlt->highPt().size(); ++i) {
+    StHltHighPt* hp = hlt->highPt()[i];
+    cout << "HighPt pT=" << hp->primaryTrack().pt() << " beta=" << hp->beta() << endl;
+}
+\endcode
+
+\see StEvent
+\see StHltTrack
+\see StHltTrackNode
+\see StHltHighPt
+\see StHltHeavyFragment
+\see StHltDiElectron
+\see StHltTriggerReason
+\see StHltTriggerReasonCapable
+*/

@@ -1,0 +1,114 @@
+/**
+\page page_strhicfcollection StRHICfCollection — RHICf Event Data Collection
+
+\section rhicf_overview Overview
+
+\ref StRHICfCollection is the event-level container for data from the
+<b>RHICf</b> detector, a small-angle forward calorimeter that measures neutral
+particles (photons and neutrons) at very forward pseudorapidities (η > 6) produced
+at the RHIC interaction point.  RHICf is an independent experiment whose detector
+is attached to STAR and read out in coincidence; it carries its own internal run and
+event numbering that is independent of the STAR run/event numbers.
+
+The collection bundles three data tiers:
+
+| Tier | Class | Accessor |
+|---|---|---|
+| Raw ADC/TDC data | \ref StRHICfRawHit | \ref StRHICfCollection::rawHitCollection() |
+| Calibrated hit data | \ref StRHICfHit | \ref StRHICfCollection::hitCollection() |
+| Reconstructed shower points | \ref StRHICfPoint | \ref StRHICfCollection::pointCollection() |
+
+\note \ref StRHICfHit is only allocated after \ref StRHICfCollection::isAllSave()
+is called; \ref StRHICfCollection::hitCollection() returns \c nullptr before that.
+
+\section rhicf_ownership Object Ownership
+
+\ref StRHICfCollection <b>owns</b> all three data objects.  The destructor
+\c delete's \c mRHICfRawHitColl, \c mRHICfHitColl, and every \ref StRHICfPoint in
+\c mRHICfPointColl.  <b>Do not call \c delete</b> on any pointer retrieved from
+this collection.
+
+\c mRHICfRawHitColl is always heap-allocated by \ref StRHICfCollection::clear()
+(called from the constructor).  \c mRHICfHitColl is only allocated when
+\ref StRHICfCollection::isAllSave() is invoked.
+
+The collection itself is owned by \ref StEvent, managed by the
+\c St_DataSet/StXRefMain framework.
+
+\section rhicf_constants RHICf Detector Constants (\c StRHICfConstants)
+
+| Constant | Value | Description |
+|---|---|---|
+| \c kRHICfNtower | 2 | Towers: 0 = small, 1 = large |
+| \c kRHICfNplate | 16 | Longitudinal sampling plates per tower |
+| \c kRHICfNrange | 2 | Gain ranges (wide / narrow) |
+| \c kRHICfNlayer | 4 | Scintillator bar layers (longitudinal) |
+| \c kRHICfNxy | 2 | Coordinate index: 0 = x, 1 = y |
+| \c kRHICfNbarSmall | 20 | Bars in the small tower |
+| \c kRHICfNbarLarge | 40 | Bars in the large tower |
+| \c kRHICfNorder | 2 | Particle ordering indices (also size of \c mRunTime[]) |
+| \c kRHICfNtdc | 256 | TDC channel count |
+
+\section rhicf_datamembers Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| \c StRHICfRawHit* | \c mRHICfRawHitColl | Raw ADC/TDC data; always non-null after construction. |
+| \c StRHICfHit* | \c mRHICfHitColl | Calibrated hit data; null until \c isAllSave() is called. |
+| \c vector<StRHICfPoint*> | \c mRHICfPointColl | Reconstructed shower points (owned). |
+| \c UInt_t | \c mRHICfRunNumber | RHICf-internal run number (independent of STAR). |
+| \c UInt_t | \c mRHICfEventNumber | RHICf-internal event number. |
+| \c UInt_t | \c mBunchNumber | Bunch crossing number. |
+| \c UInt_t | \c mRunType | Run type flag (default 999 = unset). |
+| \c UInt_t | \c mRHICfTrigger | RHICf trigger number. |
+| \c UInt_t[\c kRHICfNorder] | \c mRunTime | Per-slot run timestamps (2 entries). |
+| \c UInt_t | \c mRunTRGM | Trigger mask (TRGM) value. |
+
+\section rhicf_methods Key Methods
+
+| Method | Description |
+|---|---|
+| \ref StRHICfCollection::clear "clear()" | Reset all data and re-allocate \c mRHICfRawHitColl. |
+| \ref StRHICfCollection::rawHitCollection "rawHitCollection()" | Pointer to raw-hit data (always non-null). |
+| \ref StRHICfCollection::hitCollection "hitCollection()" | Pointer to calibrated-hit data (may be \c nullptr). |
+| \ref StRHICfCollection::addPoint "addPoint(pt)" | Append a reconstructed shower point. |
+| \ref StRHICfCollection::addPointCollection "addPointCollection(coll)" | Replace the point collection outright. |
+| \ref StRHICfCollection::pointCollection "pointCollection()" | Reference to the shower-point vector. |
+| \ref StRHICfCollection::numberOfPoints "numberOfPoints()" | Number of reconstructed shower points. |
+| \ref StRHICfCollection::isAllSave "isAllSave()" | Mark data as saved; allocates \c mRHICfHitColl. |
+| \ref StRHICfCollection::setRHICfRunNumber "setRHICfRunNumber(v)" / \ref StRHICfCollection::getRHICfRunNumber "getRHICfRunNumber()" | RHICf-internal run number. |
+| \ref StRHICfCollection::setRHICfEventNumber "setRHICfEventNumber(v)" / \ref StRHICfCollection::getRHICfEventNumber "getRHICfEventNumber()" | RHICf-internal event number. |
+| \ref StRHICfCollection::setBunchNumber "setBunchNumber(v)" / \ref StRHICfCollection::getBunchNumber "getBunchNumber()" | Bunch crossing number. |
+| \ref StRHICfCollection::setRunType "setRunType(v)" / \ref StRHICfCollection::getRunType "getRunType()" | Run type flag. |
+| \ref StRHICfCollection::setTriggerNumber "setTriggerNumber(v)" / \ref StRHICfCollection::getTriggerNumber "getTriggerNumber()" | RHICf trigger number. |
+| \ref StRHICfCollection::setRunTime "setRunTime(idx,v)" / \ref StRHICfCollection::getRunTime "getRunTime(idx)" | Per-slot run timestamp. |
+| \ref StRHICfCollection::setRunTRGM "setRunTRGM(v)" / \ref StRHICfCollection::getRunTRGM "getRunTRGM()" | Trigger mask. |
+
+\section rhicf_example Usage Example
+
+\code{.cpp}
+#include "StEvent/StRHICfCollection.h"
+#include "StEvent/StRHICfRawHit.h"
+#include "StEvent/StRHICfPoint.h"
+
+StRHICfCollection* rhicfColl = event->rhicfCollection();
+if (!rhicfColl) return;
+
+// Access raw ADC/TDC data
+StRHICfRawHit* rawHit = rhicfColl->rawHitCollection();
+if (rawHit) {
+    // use rawHit ...
+}
+
+// Iterate over reconstructed shower points
+for (unsigned int i = 0; i < rhicfColl->numberOfPoints(); ++i) {
+    StRHICfPoint* pt = rhicfColl->pointCollection()[i];
+    // use pt ...
+}
+
+printf("RHICf run %u  event %u  bunch %u\n",
+       rhicfColl->getRHICfRunNumber(),
+       rhicfColl->getRHICfEventNumber(),
+       rhicfColl->getBunchNumber());
+\endcode
+*/

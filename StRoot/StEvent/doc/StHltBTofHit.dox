@@ -1,0 +1,58 @@
+/*!
+\page page_sthltbtofhit StHltBTofHit
+
+\brief HLT Barrel Time-of-Flight (BTOF) detector hit with timing and channel information.
+
+\section overview Overview
+
+`StHltBTofHit` stores timing and channel information for a single BTOF hit recorded by the HLT.
+The BTOF system has 120 trays of MRPC modules arranged around the TPC. The raw TDC time is
+corrected for slewing via the time-over-threshold (TOT), yielding the calibrated TOF. Together
+with path length from \ref StHltTrackNode, it enables particle identification via β = L/(c·tof).
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltBTofHit
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `short` | `mTrayId` | BTOF tray identifier (1–120) |
+| `short` | `mChannel` | Encoded channel: nModule×6 + nCell |
+| `float` | `mTdc` | Raw TDC time (ns) |
+| `float` | `mTot` | Time-over-threshold (ns); used for slewing correction |
+| `float` | `mTof` | Calibrated time-of-flight (ns) |
+| `float` | `mTriggerTime` | Trigger reference time (ns) |
+| *(StLink)* | `mTrackNode` | Parent track node |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `short trayId() const` | BTOF tray (1–120) |
+| `short channel() const` | Encoded channel index |
+| `int module() const` | Module index (channel/6) |
+| `int cell() const` | Cell index (channel%6) |
+| `float tdc() const` | Raw TDC time (ns) |
+| `float tot() const` | Time-over-threshold (ns) |
+| `float tof() const` | Calibrated time-of-flight (ns) |
+| `float triggerTime() const` | Trigger reference time (ns) |
+| `StHltTrackNode* trackNode() const` | Parent track node |
+
+\section example Usage Example
+
+\code{.cpp}
+const StSPtrVecHltBTofHit& hits = hlt->bTofHit();
+for (size_t i = 0; i < hits.size(); ++i)
+    cout << "tof=" << hits[i]->tof() << " ns" << endl;
+\endcode
+
+\see StHltEvent
+\see StHltTrackNode
+\see StHltVpdHit
+*/

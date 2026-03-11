@@ -1,0 +1,57 @@
+/*!
+\page page_sttrackfittraits StTrackFitTraits
+
+\brief Track-fit quality quantities: fit-point counts, chi-squared, and covariance matrix.
+
+\section sttrackfittraits_overview Overview
+
+\ref StTrackFitTraits is embedded directly in every \c StTrack.  It stores:
+- The particle-hypothesis GEANT ID used in the fit.
+- Per-detector counts of hits included in the fit.
+- χ² of the fit and the vertex-constraint contribution.
+- A flag indicating whether the primary vertex was used as a constraint.
+- The packed 5×5 track-parameter covariance matrix (15 upper-triangle floats).
+
+\section sttrackfittraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackFitTraits
+\endcode
+
+\section sttrackfittraits_members Data Members
+
+| Member | Description |
+|---|---|
+| \c mPidHypothesis | GEANT particle ID of the fit hypothesis. |
+| \c mNumberOfFitPointsTpc | TPC fit-point count. |
+| \c mNumberOfFitPointsFtpcWest | FTPC west fit points. |
+| \c mNumberOfFitPointsFtpcEast | FTPC east fit points. |
+| \c mNumberOfFitPointsSvt | SVT fit points. |
+| \c mNumberOfFitPointsSsd | SSD fit points. |
+| \c mNumberOfFitPointsSst | SST fit points. |
+| \c mNumberOfFitPointsPxl | PXL fit points. |
+| \c mNumberOfFitPointsIst | IST fit points. |
+| \c mPrimaryVertexUsedInFit | Vertex-constraint flag. |
+| \c mChi2[2] | χ²[0] = total, χ²[1] = vertex contribution. |
+| \c mCovariantMatrix | 15-element packed upper-triangle covariance (TArrayF). |
+
+\section sttrackfittraits_cov Covariance Matrix
+
+The 5×5 symmetric covariance matrix is packed as 15 upper-triangle elements
+in the order: (y,y), (y,z), (y,tanλ), (y,ψ), (y,1/p_T), (z,z), …, (1/p_T,1/p_T).
+
+\section sttrackfittraits_example Usage Example
+
+\code{.cpp}
+const StTrackFitTraits& fit = track->fitTraits();
+double chi2   = fit.chi2();
+bool   vtxUsed = fit.primaryVertexUsedInFit();
+unsigned short nFit = fit.numberOfFitPoints();
+
+StMatrixF cov  = fit.covariantMatrix();
+double sigPti  = std::sqrt(cov(5,5));  // 1-based index
+\endcode
+
+\see StTrack
+*/

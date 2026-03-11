@@ -1,0 +1,47 @@
+/*!
+\page page_stprimarytrack StPrimaryTrack
+
+\brief Reconstructed primary track — helix refitted through the primary vertex.
+
+\section stprimarytrack_overview Overview
+StPrimaryTrack is the vertex-constrained refit of an StGlobalTrack.
+Adding the primary vertex as an extra measurement improves momentum
+resolution for prompt particles.  Each StPrimaryTrack carries a link
+back to the StPrimaryVertex it was fitted to.
+
+Primary tracks are stored inside StPrimaryVertex::daughters() and are
+referenced (non-owned) by the parent \ref page_sttracknode "StTrackNode".
+
+\section stprimarytrack_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StTrack → StPrimaryTrack
+\endcode
+
+\section stprimarytrack_datamembers Additional Data Member
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mVertex | StLink<StPrimaryVertex> | Non-owning link to the refitting primary vertex. |
+
+\section stprimarytrack_methods Key Methods
+
+\code{.cpp}
+// Loop primary tracks at the primary vertex
+const StPrimaryVertex* vtx = event->primaryVertex();
+for (unsigned int i = 0; i < vtx->numberOfDaughters(); ++i) {
+    const StPrimaryTrack* t =
+        static_cast<const StPrimaryTrack*>(vtx->daughter(i));
+    if (!t || t->flag() <= 0) continue;
+
+    StThreeVectorD p = t->geometry()->momentum();
+    double pt = p.perp();   // GeV/c
+
+    // Get sibling global track
+    const StGlobalTrack* g =
+        static_cast<const StGlobalTrack*>(t->node()->track(global));
+}
+\endcode
+
+\sa \ref page_sttrack, \ref page_stglobaltrack,
+    \ref page_stprimaryvertex, \ref page_sttracknode
+*/

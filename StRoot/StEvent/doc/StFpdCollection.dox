@@ -1,0 +1,111 @@
+/**
+\page page_stfpdcollection StFpdCollection — FPD Legacy Raw-Data Collection
+
+\section fpd_overview Overview
+
+\ref StFpdCollection is the legacy raw-data container for the
+<b>Forward Pion Detector (FPD)</b>, the predecessor to the FMS.  The FPD consisted
+of four lead-glass calorimeter modules (North, South, Top, Bottom), shower-maximum
+detectors (SMD x and y strip arrays), pre-shower scintillator layers, and a set of
+PMTs shared with the EEMC.
+
+Unlike the more recent collection classes, \ref StFpdCollection stores raw hardware-
+level quantities — ADC counts, TDC values, pedestals, scalers, and an event token —
+rather than reconstructed physics objects.  All arrays are fixed-size members; there
+is no dynamic allocation.
+
+\section fpd_ownership Object Ownership
+
+\ref StFpdCollection contains no heap-allocated objects.  All data arrays are plain
+C arrays embedded in the object.  The collection is owned by \ref StEvent, managed
+by the \c St_DataSet/StXRefMain framework.
+
+\section fpd_arraycaps Array Capacities
+
+| Constant | Value | Description |
+|---|---|---|
+| \c mMaxAdc | 256 | Total ADC channels (all sub-detectors multiplexed). |
+| \c mMaxTdc | 8 | TDC channels. |
+| \c mMaxRegisters | 3 | Hardware register values. |
+| \c mMaxPedestal | 256 | Pedestal values. |
+| \c mMaxPMTpEEMC | 12 | PMTs shared with EEMC (North, PreShower1/2). |
+| \c mMaxPMTPbg | 16 | Lead-glass PMTs (South, Top, Bottom). |
+| \c mMaxPMTSmdX | 60 | SMD x-strip PMTs. |
+| \c mMaxPMTSmdY | 100 | SMD y-strip PMTs. |
+| \c mMaxScalers | 128 | Scaler channels. |
+
+\section fpd_mapping ADC Channel Mapping (offsets into \c mAdc[])
+
+Named accessor functions translate 1-based logical indices to physical ADC array
+positions:
+
+| Sub-detector | Logical range | ADC offset |
+|---|---|---|
+| Top (Pb-glass) | 1–16 | \c mAdc[n-1] |
+| Bottom (Pb-glass) | 1–16 | \c mAdc[n+15] |
+| South (Pb-glass) | 1–16 | \c mAdc[n+31] |
+| North (EEMC-shared) | 1–12 | \c mAdc[n+47] |
+| SMD x-strips | 1–60 | \c mAdc[n+59] |
+| SMD y-strips | 1–100 | \c mAdc[n+119] |
+| Pre-shower layer 1 | 1–12 | \c mAdc[n+219] |
+| Pre-shower layer 2 | 1–12 | \c mAdc[n+235] |
+| South veto | — | \c mAdc[253] |
+
+\section fpd_datamembers Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| \c UShort_t[256] | \c mAdc | Raw ADC values for all 256 channels. |
+| \c UShort_t[8] | \c mTdc | TDC values. |
+| \c UShort_t[3] | \c mReg | Hardware register values. |
+| \c UShort_t[256] | \c mPed | Pedestal values. |
+| \c UInt_t[128] | \c mScl | Scaler values. |
+| \c UShort_t | \c mToken | DAQ event token. |
+
+\section fpd_methods Key Methods
+
+| Method | Description |
+|---|---|
+| \ref StFpdCollection::adc "adc()" | Pointer to the 256-element ADC array. |
+| \ref StFpdCollection::tdc "tdc()" | Pointer to the 8-element TDC array. |
+| \ref StFpdCollection::pedestal "pedestal()" | Pointer to the 256-element pedestal array. |
+| \ref StFpdCollection::north "north(n)" | ADC for North channel \a n (1-based). |
+| \ref StFpdCollection::south "south(n)" | ADC for South channel \a n (1-based). |
+| \ref StFpdCollection::top "top(n)" | ADC for Top channel \a n (1-based). |
+| \ref StFpdCollection::bottom "bottom(n)" | ADC for Bottom channel \a n (1-based). |
+| \ref StFpdCollection::smdx "smdx(n)" | ADC for SMD x-strip \a n (1-based). |
+| \ref StFpdCollection::smdy "smdy(n)" | ADC for SMD y-strip \a n (1-based). |
+| \ref StFpdCollection::pres1 "pres1(n)" | ADC for pre-shower layer 1, channel \a n. |
+| \ref StFpdCollection::pres2 "pres2(n)" | ADC for pre-shower layer 2, channel \a n. |
+| \ref StFpdCollection::southVeto "southVeto()" | ADC for the south veto counter. |
+| \ref StFpdCollection::sumAdcNorth "sumAdcNorth()" … \ref StFpdCollection::sumAdcSmdY "sumAdcSmdY()" | Summed ADC over all channels per sub-detector. |
+| \ref StFpdCollection::scaler "scaler(i)" | Scaler value at index \a i. |
+| \ref StFpdCollection::registers "registers(i)" | Hardware register value at index \a i. |
+| \ref StFpdCollection::token "token()" / \ref StFpdCollection::setToken "setToken(v)" | Get/set the DAQ event token. |
+| \ref StFpdCollection::dump "dump()" | Print all channel values for debugging. |
+
+\section fpd_example Usage Example
+
+\code{.cpp}
+#include "StEvent/StFpdCollection.h"
+
+StFpdCollection* fpdColl = event->fpdCollection();
+if (!fpdColl) return;
+
+// Print raw ADC sums for main modules
+printf("North=%u South=%u Top=%u Bottom=%u\n",
+       fpdColl->sumAdcNorth(),
+       fpdColl->sumAdcSouth(),
+       fpdColl->sumAdcTop(),
+       fpdColl->sumAdcBottom());
+
+// Access individual SMD x-strips (1-based)
+for (unsigned int ch = 1; ch <= fpdColl->numberOfPMTSmdX(); ++ch) {
+    unsigned short val = fpdColl->smdx(ch);
+    // use val ...
+}
+
+// Full raw dump for debugging
+fpdColl->dump();
+\endcode
+*/

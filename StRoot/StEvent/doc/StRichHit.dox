@@ -1,0 +1,67 @@
+/*!
+\page page_strichhit StRichHit
+
+\brief \ref page_strichhit "StRichHit" — reconstructed Cherenkov photon or MIP impact point in the RICH detector.
+
+\section strichhit_overview Overview
+StRichHit is the reconstructed hit object for the RICH detector. Each hit
+represents either a Cherenkov photon impact on the pad plane or the
+minimum-ionising particle (MIP) track impact point. Hits are derived from
+\ref page_strichcluster "StRichCluster" objects and carry position information
+in three coordinate frames: global (inherited from StHit), local pad-plane,
+and internal detector coordinates. The ring of photon hits around the MIP
+position is used to measure the Cherenkov angle θ_C for particle identification.
+
+\section strichhit_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StMeasuredPoint
+        └── StHit
+            └── StRichHit
+\endcode
+
+\section strichhit_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| StThreeVectorF | mLocal | Hit position in local pad-plane coordinates (cm) |
+| StThreeVectorF | mLError | Position error in local pad-plane coordinates (cm) |
+| StThreeVectorF | mInternal | Hit position in internal detector coordinates (cm) |
+| StThreeVectorF | mSigma | Position uncertainty in internal detector coordinates (cm) |
+| Float_t | mMaxAmplitude | Maximum ADC amplitude in the parent cluster |
+| Int_t | mClusterNumber | Index of the parent cluster |
+| UInt_t | mTrack | Associated track identifier |
+| UInt_t | mReservedLong | Hit-status flag bit field (StRichHitFlag) |
+| Float_t | mReservedFloat | Reserved for future use |
+| UInt_t | mNumberOfPads | Number of pads contributing to this hit |
+
+\section strichhit_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| StThreeVectorF local() const | Local pad-plane hit position |
+| StThreeVectorF internal() const | Internal detector hit position |
+| float maxAmplitude() const | Maximum cluster ADC amplitude |
+| int clusterNumber() const | Parent cluster index |
+| unsigned int track() const | Associated track identifier |
+| unsigned int numberOfPads() const | Number of contributing pads |
+| bool isSet(StRichHitFlag) const | Test a hit-status flag bit |
+| void setBit(StRichHitFlag) | Set a hit-status flag bit |
+| void unSetBit(StRichHitFlag) | Clear a hit-status flag bit |
+| unsigned int flags() const | Raw flag bit field |
+| StDetectorId detector() const | Returns kRichId |
+
+\section strichhit_example Usage Example
+\code{.cpp}
+StRichCollection* rich = event->richCollection();
+StSPtrVecRichHit& hits = rich->getRichHits();
+for (const auto& hit : hits) {
+    StThreeVectorF pos = hit->local();
+    float amp = hit->maxAmplitude();
+}
+\endcode
+
+\section strichhit_related Related Classes
+\ref page_strichcluster "StRichCluster" — parent cluster. \n
+\ref page_strichmchit "StRichMCHit" — MC truth extension. \n
+\ref page_strichpidtraits "StRichPidTraits" — PID traits that reference the MIP hit.
+*/

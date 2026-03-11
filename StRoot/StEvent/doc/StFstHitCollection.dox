@@ -1,0 +1,166 @@
+/*!
+\page page_stfsthitcollection StFstHitCollection — FST Hit Collection Documentation
+
+\section fst_overview Overview
+
+The Forward Silicon Tracker (FST) is a disk-based silicon-strip detector that reconstructs
+charged-particle tracks at forward rapidities.  Reconstructed hits (1D strip clusters) are
+organised in a four-level hierarchy of collection classes.  \ref StFstHitCollection is the
+top-level object persisted in \c StEvent.  A companion class, \ref StFstEvtCollection,
+stores the \e raw (pre-clustering) hit data from the same event.
+
+\section fst_classes Classes in this group
+
+| Class | Role |
+|-------|------|
+| \ref StFstHitCollection | Top-level event container for all FST reconstructed hits |
+| \ref StFstWedgeHitCollection | Per-wedge container (one per wedge) |
+| \ref StFstSensorHitCollection | Per-sensor container (one per sensor) |
+| \ref StFstEvtCollection | Top-level event container for all FST \b raw hits |
+
+\section fst_geometry Geometry constants (StFstConsts.h)
+
+| Constant | Value | Meaning |
+|----------|-------|---------|
+| \c kFstNumDisk | 3 | Number of FST disks |
+| \c kFstNumWedgePerDisk | 12 | Wedges per disk |
+| \c kFstNumWedges | 36 | Total wedges (3 × 12) |
+| \c kFstNumSensorsPerWedge | 3 | Sensors per wedge |
+| \c kFstNumSensors | 108 | Total sensors (3 × 36) |
+
+\section fst_hierarchy Containment hierarchy
+
+\code{.unparsed}
+StFstHitCollection                              (1 per event, in StEvent)
+└── mWedges[kFstNumWedges = 36]                 (StFstWedgeHitCollection, stack-allocated)
+    └── mSensors[kFstNumSensorsPerWedge = 3]    (StFstSensorHitCollection, stack-allocated)
+        └── mHits                               (StSPtrVecFstHit — owns StFstHit objects)
+
+StFstEvtCollection                              (1 per event, in StEvent, raw hits)
+└── mRawHits                                    (StSPtrVecFstRawHit — owns StFstRawHit objects)
+\endcode
+
+\ref StFstHitCollection::addHit routes an incoming \ref StFstHit to the correct wedge
+and sensor sub-collection using \c hit->getWedge()-1 (0-based wedge index) and
+\c hit->getSensor() (0-based sensor index).
+
+\section fst_ownership Object Ownership
+
+\subsection fst_own_hit StFstHitCollection
+\c mWedges[36] is a \b stack-allocated C-array of \ref StFstWedgeHitCollection objects —
+no explicit destructor is required; they are destroyed with the parent.
+
+\subsection fst_own_wedge StFstWedgeHitCollection
+\c mSensors[3] is a \b stack-allocated C-array of \ref StFstSensorHitCollection objects —
+same automatic lifetime as the parent.
+
+\subsection fst_own_sensor StFstSensorHitCollection
+\c mHits is a \c StSPtrVecFstHit (owning smart-pointer vector from \c StStrArray).
+The destructor \b explicitly iterates over the vector and calls \c delete on each element.
+This is required because \ref StFstHit provides a custom memory-pool \c operator
+\c new / \c delete that is not compatible with the default \c StStrArray cleanup.
+\warning Do not delete \ref StFstHit objects obtained from \ref StFstSensorHitCollection::hits.
+The collection destructor owns them.
+
+\subsection fst_own_evt StFstEvtCollection
+\c mRawHits is a \c StSPtrVecFstRawHit (owning vector via \c StStrArray).
+\c StStrArray automatically deletes the \ref StFstRawHit objects.  The
+\ref StFstEvtCollection destructor is an explicit no-op.
+\warning Do not delete \c StFstRawHit objects obtained from \ref StFstEvtCollection::rawHits.
+
+\section fst_members Data Members
+
+\subsection fst_mem_hit StFstHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StFstWedgeHitCollection[36] | \c mWedges | Hit sub-collections, one per wedge (stack-allocated) |
+| \c UChar_t | \c mClusteringType | Clustering algorithm type identifier |
+
+\subsection fst_mem_wedge StFstWedgeHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StFstSensorHitCollection[3] | \c mSensors | Hit sub-collections, one per sensor (stack-allocated) |
+
+\subsection fst_mem_sensor StFstSensorHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecFstHit | \c mHits | Owned vector of reconstructed hits on this sensor |
+
+\subsection fst_mem_evt StFstEvtCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecFstRawHit | \c mRawHits | Owned vector of raw hits for the event |
+
+\section fst_methods Key Methods
+
+\subsection fst_meth_hit StFstHitCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c bool addHit(StFstHit*) | Add a reconstructed hit; routes it to the correct wedge/sensor. Returns \c false if indices are out of range. |
+| \c unsigned \c int \c numberOfHits() \c const | Total hits summed over all wedges and sensors |
+| \c StFstWedgeHitCollection* \c wedge(unsigned \c int) | Wedge collection at 0-based index; \c nullptr if out of range |
+| \c unsigned \c char \c getClusteringType() \c const | Clustering algorithm identifier |
+| \c void \c setClusteringType(unsigned \c char) | Set clustering algorithm identifier |
+
+\subsection fst_meth_wedge StFstWedgeHitCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c unsigned \c int \c numberOfHits() \c const | Hits summed over all sensors in this wedge |
+| \c StFstSensorHitCollection* \c sensor(unsigned \c int) | Sensor collection at 0-based index; \c nullptr if out of range |
+
+\subsection fst_meth_sensor StFstSensorHitCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c unsigned \c int \c numberOfHits() \c const | Number of hits on this sensor |
+| \c StSPtrVecFstHit& \c hits() | Mutable reference to the hit vector |
+| \c const \c StSPtrVecFstHit& \c hits() \c const | Read-only reference to the hit vector |
+
+\subsection fst_meth_evt StFstEvtCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c void \c addRawHit(StFstRawHit*) | Add a raw hit; validates channel ID and wedge index |
+| \c unsigned \c int \c numberOfRawHits() \c const | Total raw hits in the event |
+| \c StSPtrVecFstRawHit& \c rawHits() | Mutable reference to the raw-hit vector |
+| \c void \c print(int) | Print a summary of the collection |
+
+\section fst_example Usage Example
+
+\code{.cpp}
+// Iterate over reconstructed FST hits
+const StFstHitCollection* fstColl = event->fstHitCollection();
+if (!fstColl) return;
+
+for (unsigned int iWedge = 0; iWedge < kFstNumWedges; ++iWedge) {
+    const StFstWedgeHitCollection* wedge = fstColl->wedge(iWedge);
+    if (!wedge) continue;
+
+    for (unsigned int iSensor = 0; iSensor < kFstNumSensorsPerWedge; ++iSensor) {
+        const StFstSensorHitCollection* sensor = wedge->sensor(iSensor);
+        if (!sensor) continue;
+
+        const StSPtrVecFstHit& hits = sensor->hits();
+        for (const StFstHit* hit : hits) {
+            // hit->position(), hit->getWedge(), hit->getSensor(), etc.
+        }
+    }
+}
+
+// Iterate over FST raw hits
+const StFstEvtCollection* fstEvt = event->fstEvtCollection();
+if (!fstEvt) return;
+
+const StSPtrVecFstRawHit& rawHits = fstEvt->rawHits();
+for (const StFstRawHit* rh : rawHits) {
+    // rh->getWedge(), rh->getChannelId(), etc.
+}
+\endcode
+
+*/

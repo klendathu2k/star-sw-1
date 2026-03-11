@@ -1,0 +1,101 @@
+/*!
+\page page_stisthit StIstHit
+
+\ref StIstHit represents a single reconstructed hit (1-D strip cluster) in the STAR
+Intermediate Silicon Tracker (IST), the middle layer of the HFT.  The IST is a pad-based silicon
+strip detector on 24 ladders, each with 6 sensors, providing primarily r–φ position information.
+
+\see StIstHitCollection
+
+\section sec_isthit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StIstHit
+\endverbatim
+
+Hits are collected in \ref StIstHitCollection.
+
+\section sec_isthit_geometry IST Geometry Constants
+
+From the <tt>StIstConsts</tt> namespace in <tt>StEnumerations.h</tt>:
+
+- <tt>kIstNumLadders = 24</tt>
+- <tt>kIstNumSensorsPerLadder = 6</tt>
+- <tt>kIstNumSensors = 144</tt>
+- <tt>kIstNumPadsPerSensor = 768</tt>
+- <tt>kIstNumRowsPerSensor = 64</tt> (r–φ direction)
+- <tt>kIstNumColumnsPerSensor = 12</tt> (z direction)
+
+Hardware position encoding: <tt>hwPos = (ladder-1) × 6 + sensor</tt> (both 1-based).
+
+\section sec_isthit_members Data Members
+
+\subsection subsec_isthit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Encodes ladder and sensor: <tt>(ladder-1)*6 + sensor</tt>.
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ errors (cm). <em>Not persisted.</em>
+- <tt>Float_t mCharge</tt> — Cluster charge (ADC counts).
+- <tt>Int_t mId</tt> — Hit identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_isthit_own Own Data Members
+
+- <tt>UChar_t mMaxTimeBin</tt> — Time bin index with maximum charge (0-based).
+- <tt>Float_t mChargeErr</tt> — Charge uncertainty (ADC counts).
+- <tt>UChar_t mNRawHits</tt> — Total cluster size (number of fired pads).
+- <tt>UChar_t mNRawHitsZ</tt> — Cluster size in the z direction.
+- <tt>UChar_t mNRawHitsRPhi</tt> — Cluster size in the r–φ direction.
+- <tt>Float_t mLocalPosition[3]</tt> — Local hit position (cm): [0] = r–φ, [1] = y (sensor normal), [2] = z.
+- <tt>StDetectorId mDetectorId</tt> — Detector identifier (<tt>kIstId</tt>).
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_isthit_methods Key Methods
+
+- <tt>unsigned char getLadder() const</tt> — Ladder (1–24) from <tt>mHardwarePosition</tt>.
+- <tt>unsigned char getSensor() const</tt> — Sensor (1–6) from <tt>mHardwarePosition</tt>.
+- <tt>unsigned char getMaxTimeBin() const</tt> — Max-charge time bin index.
+- <tt>float getChargeErr() const</tt> — Charge uncertainty (ADC).
+- <tt>unsigned char getNRawHits() const</tt> — Total cluster size.
+- <tt>unsigned char getNRawHitsZ() const</tt> — Cluster size in z.
+- <tt>unsigned char getNRawHitsRPhi() const</tt> — Cluster size in r–φ.
+- <tt>float localPosition(unsigned int i) const</tt> — Local coordinate along axis <tt>i</tt> (cm).
+- <tt>void setLocalPosition(float vRPhi, float vY, float vZ)</tt> — Set local position (cm).
+- <tt>StDetectorId detector() const</tt> — Returns <tt>kIstId</tt>.
+
+\section sec_isthit_ownership Object Ownership
+
+\ref StIstHit uses a custom <tt>StMemoryPool</tt> allocator.  Ownership transfers to the
+framework on insertion.
+\warning Do <b>not</b> <tt>delete</tt> \ref StIstHit pointers obtained from the collection.
+
+\section sec_isthit_usage Usage Example
+
+\code{.cpp}
+StIstHitCollection* istColl = event->istHitCollection();
+if (!istColl) return;
+
+for (unsigned int iLadder = 1; iLadder <= 24; ++iLadder) {
+    const StIstLadderHitCollection* ladder = istColl->ladder(iLadder - 1);
+    if (!ladder) continue;
+    for (unsigned int iSensor = 1; iSensor <= 6; ++iSensor) {
+        const StIstSensorHitCollection* sensor = ladder->sensor(iSensor - 1);
+        if (!sensor) continue;
+        const StSPtrVecIstHit& hits = sensor->hits();
+        for (const StIstHit* hit : hits) {
+            float rPhi  = hit->localPosition(0); // r-phi direction (cm)
+            float z     = hit->localPosition(2); // z direction (cm)
+            unsigned char lad = hit->getLadder(); // 1–24
+            unsigned char sen = hit->getSensor(); // 1–6
+        }
+    }
+}
+\endcode
+
+*/

@@ -1,0 +1,64 @@
+/*!
+\page page_stEmcRawHit StEmcRawHit
+
+\brief Raw ADC hit in a single cell of one STAR EMC sub-detector.
+
+\section emcrawhit_overview Overview
+
+StEmcRawHit stores the raw digitised signal from a single readout cell of the
+STAR Electromagnetic Calorimeter.  Each hit identifies the cell by a packed
+integer (\c mId) encoding the sub-detector, module, η-bin, and φ sub-division,
+together with the raw ADC count and the calibrated energy in GeV.
+
+The class is used for all eight EMC sub-detectors (BEMC/EEMC towers,
+pre-showers, and SMD strips):
+
+| Sub-detector | StDetectorId |
+|---|---|
+| BEMC Tower | kBarrelEmcTowerId |
+| BEMC Pre-shower | kBarrelEmcPreShowerId |
+| BEMC SMD-η | kBarrelSmdEtaStripId |
+| BEMC SMD-φ | kBarrelSmdPhiStripId |
+| EEMC Tower | kEndcapEmcTowerId |
+| EEMC Pre-shower | kEndcapEmcPreShowerId |
+| EEMC SMD-U | kEndcapSmdUStripId |
+| EEMC SMD-V | kEndcapSmdVStripId |
+
+\section emcrawhit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StEmcRawHit
+\endcode
+
+Instances are owned by \ref page_stEmcModule "StEmcModule" and accessed via
+\c StEmcDetector → \c StEmcModule → \c StEmcRawHit.
+
+\section emcrawhit_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UInt_t | mId | Packed cell address: bits 31–24 calibration type, 23–20 detector offset, 19–13 module, 12–4 eta-bin, 3–0 sub. |
+| UInt_t | mAdc | Raw ADC count from the readout electronics. |
+| Float_t | mEnergy | Calibrated energy deposit [GeV]. |
+| StEmcGeom* | mGeom | Shared EMC geometry singleton (static). |
+
+\section emcrawhit_methods Key Methods
+
+- \c detector() — return the StDetectorId for this hit.
+- \c module() — module number (bits 19–13).
+- \c eta() — η-bin index within the module (bits 12–4).
+- \c sub() — φ sub-division index; returns 1 for SMD strips.
+- \c softId(int det) — convert to the software ID used by StEmcGeom.
+- \c modEtaSub(int&,int&,int&) — unpack all three address fields.
+- \c adc() — raw ADC count.
+- \c energy() — calibrated energy [GeV].
+- \c calibrationType() — calibration-type flag (bits 31–24).
+- \c setId(), \c setAdc(), \c setEnergy() — setters.
+- \c Print() — print summary to stdout.
+
+\section emcrawhit_seealso See Also
+
+\ref page_stEmcModule "StEmcModule",
+\ref page_stEmcDetector "StEmcDetector",
+\ref page_stEmcCluster "StEmcCluster"
+*/

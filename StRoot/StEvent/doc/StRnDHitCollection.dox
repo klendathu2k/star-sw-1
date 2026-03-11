@@ -1,0 +1,57 @@
+/*!
+\page page_strndmhitcollection StRnDHitCollection — Collection Documentation
+
+\section rnd_overview Overview
+
+\ref StRnDHitCollection is a generic hit collection for
+<b>Research and Development (R&D)</b> detector prototyping in STAR.  It is not
+tied to any specific production sub-detector; instead it provides a flexible,
+polymorphic container for \ref StRnDHit objects.
+
+\ref StRnDHit extends \ref StHit with layer/ladder/wafer indices, up to eight
+user-defined \c double values, and a custom error matrix, making it suitable for
+prototyping new detector geometries and reconstruction algorithms without
+requiring a dedicated collection class.
+
+\section rnd_ownership Object Ownership
+
+<b>mHits</b> (\c StSPtrVecRnDHit) is <b>owned</b>.  Unlike most other STAR
+collections, the destructor <b>explicitly iterates and deletes</b> each element
+individually.  This is necessary because \ref StRnDHit provides its own
+\c operator \c new / \c operator \c delete via \c StMemoryPool, and the
+container is polymorphic.
+
+The collection itself is owned by the \c StEvent framework.
+
+\section rnd_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecRnDHit | mHits | Container of \ref StRnDHit pointers.  Each hit carries: 3-D position and error, hardware position, charge, track reference count, MC truth ID/quality, detector ID (\c StDetectorId), layer/ladder/wafer indices, and up to eight prototype-specific \c double values. |
+
+\section rnd_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c hits() | Reference to the hit collection (mutable and const overloads). |
+| \c addHit(StRnDHit*) | Appends a hit; returns \c true on success, \c false if null. |
+| \c numberOfHits() const | Returns the number of hits in the collection. |
+
+\section rnd_example Usage Example
+
+\code{.cpp}
+StRnDHitCollection* rndColl = event->rndHitCollection();
+if (!rndColl || rndColl->numberOfHits() == 0) return;
+
+const StSPtrVecRnDHit& hits = rndColl->hits();
+for (size_t i = 0; i < hits.size(); ++i) {
+    StRnDHit* hit = hits[i];
+    unsigned int layer  = hit->layer();
+    unsigned int ladder = hit->ladder();
+    unsigned int wafer  = hit->wafer();
+    float        charge = hit->charge();
+}
+\endcode
+
+\see StRnDHit, StHit
+*/

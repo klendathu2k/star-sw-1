@@ -1,0 +1,117 @@
+/*!
+\page page_stsvthit StSvtHit
+
+\ref StSvtHit represents a single reconstructed space-point hit in the STAR Silicon Vertex
+Tracker (SVT), a barrel silicon detector consisting of three concentric barrels (six layers)
+arranged around the interaction region.  Each hit records the STAR global 3-D position (cm),
+local sensor-frame coordinates in the anode and drift directions, the cluster's peak ADC value,
+and the cluster's extent in anodes and time-buckets.
+
+\see StSvtHitCollection
+
+\section sec_svthit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StSvtHit
+\endverbatim
+
+Hits are collected in \ref StSvtHitCollection, organised as a four-level hierarchy:
+
+\verbatim
+StSvtHitCollection
+└── StSvtBarrelHitCollection   (3 barrels)
+    └── StSvtLadderHitCollection
+        └── StSvtWaferHitCollection  (holds StSvtHit* via StSPtrVecSvtHit)
+\endverbatim
+
+\section sec_svthit_members Data Members
+
+\subsection subsec_svthit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Packed hardware address.  Bits 4–12 encode a flat hybrid
+  index (0–431) identifying barrel, ladder, wafer, and hybrid.
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ position errors in the STAR global frame (cm).
+  <em>Not persisted.</em>
+- <tt>Float_t mCharge</tt> — Integrated cluster charge (ADC counts).
+- <tt>Int_t mId</tt> — Cluster identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID of the primary contributor (simulation only).
+- <tt>UShort_t mQuality</tt> — Fraction of charge from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_svthit_own Own Data Members
+
+- <tt>Float_t mPeak</tt> — Peak ADC value of the hit cluster.
+- <tt>Float_t mAnode</tt> — Anode centroid position in units of ¼ anode pitch.
+- <tt>Float_t mTimebucket</tt> — Drift-direction centroid position in units of ¼ time-bucket.
+- <tt>Float_t mLocalPosition[2]</tt> — Local hit position (cm): [0] = anode direction, [1] = drift direction.
+- <tt>UShort_t mNumberOfAnodes</tt> — Number of anode strips in the cluster.
+- <tt>UShort_t mNumberOfPixels</tt> — Total pixels (anode × time-bucket) in the cluster.
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_svthit_geometry Geometry Decoding
+
+The flat hybrid index in <tt>mHardwarePosition</tt> (bits 4–12) is the primary geometry key:
+
+| Barrel | Active ladders | Hybrids/ladder | Wafers/ladder | Layer numbers |
+|--------|---------------|----------------|---------------|---------------|
+| 1      | 8             | 8              | 4             | 1 (even), 2 (odd) |
+| 2      | 12            | 12             | 6             | 3 (even), 4 (odd) |
+| 3      | 16            | 14             | 7             | 5 (even), 6 (odd) |
+
+<b>volumeID</b> = <tt>10000 × shell + 1000 × layer + 100 × wafer + ladder</tt>.
+
+\section sec_svthit_methods Key Methods
+
+- <tt>unsigned int barrel() const</tt> — Barrel number (1–3).
+- <tt>unsigned int ladder() const</tt> — Ladder number within the barrel.
+- <tt>unsigned int wafer() const</tt> — Wafer number on the ladder.
+- <tt>unsigned int hybrid() const</tt> — Hybrid number (1 or 2).
+- <tt>unsigned int layer() const</tt> — SVT layer number (1–6).
+- <tt>unsigned int shell() const</tt> — Shell: 1 = East, 2 = West.
+- <tt>float anode() const</tt> — Anode centroid (¼ anode pitch).
+- <tt>float timebucket() const</tt> — Drift centroid (¼ time-bucket).
+- <tt>float peakADC() const</tt> — Peak ADC value.
+- <tt>float localPosition(unsigned int i) const</tt> — Local position along axis <tt>i</tt> (cm).
+- <tt>int numberOfAnodes() const</tt> — Cluster size in anodes.
+- <tt>int numberOfPixels() const</tt> — Cluster size in pixels.
+- <tt>virtual int volumeID() const</tt> — Packed geometry ID.
+- <tt>StDetectorId detector() const</tt> — Returns <tt>kSvtId</tt>.
+
+\section sec_svthit_ownership Object Ownership
+
+\ref StSvtHit uses a custom <tt>StMemoryPool</tt> allocator.  Once added to
+\ref StSvtHitCollection, ownership belongs to the framework.
+\warning Do <b>not</b> <tt>delete</tt> \ref StSvtHit pointers obtained from the collection.
+
+\section sec_svthit_usage Usage Example
+
+\code{.cpp}
+StSvtHitCollection* svtColl = event->svtHitCollection();
+if (!svtColl) return;
+
+for (unsigned int iBarrel = 0; iBarrel < svtColl->numberOfBarrels(); ++iBarrel) {
+    const StSvtBarrelHitCollection* barrel = svtColl->barrel(iBarrel);
+    if (!barrel) continue;
+    for (unsigned int iLadder = 0; iLadder < barrel->numberOfLadders(); ++iLadder) {
+        const StSvtLadderHitCollection* ladder = barrel->ladder(iLadder);
+        if (!ladder) continue;
+        for (unsigned int iWafer = 0; iWafer < ladder->numberOfWafers(); ++iWafer) {
+            const StSvtWaferHitCollection* wafer = ladder->wafer(iWafer);
+            if (!wafer) continue;
+            const StSPtrVecSvtHit& hits = wafer->hits();
+            for (const StSvtHit* hit : hits) {
+                float localAnode = hit->localPosition(0); // anode dir (cm)
+                float localDrift = hit->localPosition(1); // drift dir (cm)
+                unsigned int layer = hit->layer();        // 1–6
+            }
+        }
+    }
+}
+\endcode
+
+*/

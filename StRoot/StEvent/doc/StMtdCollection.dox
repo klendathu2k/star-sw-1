@@ -1,0 +1,66 @@
+/*!
+\page page_stmtdcollection StMtdCollection — Collection Documentation
+
+\section mtd_overview Overview
+
+\ref StMtdCollection is the event-level container for data from the
+<b>Muon Telescope Detector (MTD)</b>.  The MTD is an array of MRPC modules
+mounted on the outside of the STAR magnet return yoke at mid-rapidity,
+identifying muons by detecting penetrating particles beyond the magnet steel.
+It enables measurements of di-muon resonances (J/ψ, Υ) and open heavy-flavour
+decays.
+
+The collection holds reconstructed hits (\ref StMtdHit), raw TDC hits
+(\ref StMtdRawHit), and an event-wise header (\ref StMtdHeader).
+\ref StMtdPidTraits live on the associated track, not here.
+
+\section mtd_ownership Object Ownership
+
+- <b>mMtdHeader</b> (\ref StMtdHeader*): Owned. Assigned via \c setHeader() and
+  <b>deleted by the destructor</b>.
+- <b>mMtdHits</b> (\c StSPtrVecMtdHit): Owned; elements deleted by \c StSPtrVec.
+- <b>mMtdRawHits</b> (\c StSPtrVecMtdRawHit): Owned; same semantics.
+- The collection itself is owned by the \c StEvent framework.
+
+\section mtd_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \ref StMtdHeader* | mMtdHeader | Event-wise MTD header: fiber header/trigger words, TPC sector mask, quality flags. Owned and deleted by this class. |
+| \c StSPtrVecMtdHit | mMtdHits | Reconstructed \ref StMtdHit objects (backleg 1–30, module 1–5, cell, leading/trailing edges, ToT, calibrated tof). |
+| \c StSPtrVecMtdRawHit | mMtdRawHits | Raw TDC \ref StMtdRawHit objects from the DAQ stream (fiber ID, backleg, channel, TDC count). |
+
+\section mtd_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c mtdHeader() | Pointer to the MTD event header (mutable and const overloads). |
+| \c mtdHits() | Reference to the reconstructed hit collection. |
+| \c mtdRawHits() | Reference to the raw TDC hit collection. |
+| \c setHeader(StMtdHeader*) | Assigns the header; collection takes ownership. |
+| \c addHit(const StMtdHit*) | Appends a reconstructed hit (null-safe). |
+| \c addRawHit(const StMtdRawHit*) | Appends a raw hit (null-safe). |
+| \c hitsPresent() const | Returns \c true if the hit collection is non-empty. |
+| \c rawHitsPresent() const | Returns \c true if the raw hit collection is non-empty. |
+| \c IsFolder() const | Returns \c true; enables folder display in a ROOT \c TBrowser. |
+| \c Browse(TBrowser*) | Populates a \c TBrowser with the hit and raw-hit collections. |
+
+\section mtd_example Usage Example
+
+\code{.cpp}
+StMtdCollection* mtdColl = event->mtdCollection();
+if (!mtdColl) return;
+
+if (mtdColl->hitsPresent()) {
+    const StSPtrVecMtdHit& hits = mtdColl->mtdHits();
+    for (size_t i = 0; i < hits.size(); ++i) {
+        StMtdHit* hit = hits[i];
+        int backleg = hit->backleg();  // 1-30
+        int module  = hit->module();   // 1-5
+        double tof  = hit->tof();      // calibrated [ns]
+    }
+}
+\endcode
+
+\see StMtdHit, StMtdRawHit, StMtdHeader
+*/

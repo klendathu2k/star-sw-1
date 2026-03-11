@@ -1,0 +1,134 @@
+/*!
+\page page_stTpcRawData StTpcRawData
+
+\brief Top-level container for raw TPC ADC data from all sectors in one event.
+
+\ref StTpcRawData is the top-level container for raw ADC data from the STAR TPC for one event.
+It organises data as <b>event → sector → padrow → pad → time-bin sequences</b> and serves as
+the primary structure passed between the DAQ decoder, simulation embedder, and TPC cluster
+finder. Two supporting classes, \ref StTpcDigitalSector and \c StDigitalPair, implement the
+lower levels of this hierarchy.
+
+\section sec_rawdata_hierarchy Class Hierarchy and Containment
+
+\verbatim
+StObject
+└── StTpcRawData                      (event-level, 24 sector slots)
+    └── StTpcDigitalSector            (one per sector; padrow × pad × sequences)
+        └── StDigitalPadRow           std::vector<StDigitalTimeBins>
+            └── StDigitalTimeBins     std::vector<StDigitalPair>
+                └── StDigitalPair     contiguous ADC run for one pad
+\endverbatim
+
+\ref StTpcRawData is owned by the StEvent framework (accessible via <tt>StEvent::tpcRawData()</tt>).
+
+\section sec_rawdata_digitalpair StDigitalPair
+
+A contiguous run of ADC samples on one pad, starting at a given time bin.
+
+\subsection subsec_dp_members Data Members
+- <tt>UShort_t mTime</tt> — Starting time-bin index (0-based, range 0–511).
+- <tt>StVectorADC mAdc</tt> — <tt>std::vector<Short_t></tt> of ADC samples for consecutive
+  time bins. Each sample covers one 100-ns drift time bin.
+- <tt>StVectorIDT mIdt</tt> — <tt>std::vector<UShort_t></tt> of MC truth track IDs (one per ADC
+  sample); only populated for simulation.
+
+\subsection subsec_dp_methods Key Methods
+- <tt>void add(Short_t adc)</tt> — Appends one ADC sample (real data).
+- <tt>void add(Short_t adc, Int_t idt)</tt> — Appends one ADC sample plus MC truth ID (simulation).
+- <tt>Short_t* adc() const</tt> — Pointer to the first ADC sample.
+- <tt>Bool_t isIdt() const</tt> — True when the MC truth ID array is populated.
+- <tt>UShort_t* idt() const</tt> — Pointer to the MC truth ID array, or null.
+- <tt>Int_t size() const</tt> — Number of ADC samples.
+- <tt>UShort_t time() const</tt> — Starting time-bin index.
+
+\section sec_rawdata_sector StTpcDigitalSector
+
+Holds all raw ADC data for one TPC sector as a 3-D array
+<tt>mData[padrow-1][pad-1]</tt> of \c StDigitalTimeBins.
+
+\subsection subsec_ds_members Data Members
+- <tt>StDigitalSector mData</tt> — 3-D ADC data: [padrow][pad][time-bin sequences].
+- <tt>Int_t mSector</tt> — TPC sector number (1–24).
+- <tt>StVecPads mPadList</tt> — Scratch buffer for <tt>getPadList()</tt>.
+- <tt>StVecSequence mSequence</tt> — Scratch buffer for <tt>getSequences()</tt>.
+- <tt>StVecIds mIds</tt> — Scratch buffer for MC truth ID queries.
+- <tt>Int_t mNoRows</tt> — Number of padrows from <tt>St_tpcPadConfigC</tt>.
+
+\subsection subsec_ds_methods Key Methods
+- <tt>const StDigitalTimeBins* timeBinsOfRowAndPad(Int_t row, Int_t pad) const</tt> — Time-bin
+  sequences for the given padrow and pad (both 1-based).
+- <tt>Int_t getSequences(row, pad, nSeq, seq, Ids)</tt> — Returns \c StSequence objects for the
+  cluster finder, plus MC truth ID pointer array.
+- <tt>Int_t getPadList(Int_t row, UChar_t** padList)</tt> — List of active 1-based pad numbers.
+- <tt>Int_t getTimeAdc(row, pad, Short_t ADCs[512], UShort_t IDTs[512])</tt> — Flat expansion,
+  no ADC conversion.
+- <tt>Int_t getTimeAdc(row, pad, UChar_t ADCs[512], UShort_t IDTs[512])</tt> — Flat expansion
+  with 10→8 bit log compression.
+- <tt>Int_t putTimeAdc(row, pad, Short_t* ADCs, UShort_t* IDTs=0)</tt> — Store with 10→8
+  compression.
+- <tt>Int_t putTimeAdc(row, pad, UChar_t* ADCs, UShort_t* IDTs=0)</tt> — Store with 8→10
+  expansion.
+- <tt>void assignTimeBins(row, pad, StDigitalTimeBins*)</tt> — Replace sequences (1-based,
+  swap semantics).
+- <tt>void clear()</tt> — Clear all sequences; preserve row/pad structure.
+- <tt>Int_t cleanup()</tt> — Remove entries with < 7 samples and empty rows.
+- <tt>StTpcDigitalSector& operator+=(StTpcDigitalSector&)</tt> — Merge ADC data.
+
+\section sec_rawdata_top StTpcRawData
+
+\subsection subsec_tr_members Data Members
+- <tt>std::vector<StTpcDigitalSector*> mSectors</tt> — Per-sector raw ADC data; null entries
+  indicate sectors with no data.
+
+\subsection subsec_tr_methods Key Methods
+- <tt>StTpcDigitalSector* GetSector(UInt_t sector)</tt> — Returns sector pointer for 1-based
+  sector number, or null.
+- <tt>void setSector(UInt_t sector, StTpcDigitalSector*)</tt> — Store sector (transfers
+  ownership; deletes previous entry).
+- <tt>Int_t getVecOfPixels(StVectPixel&, sector, row, padMin, padMax, tMin, tMax)</tt> — Fills
+  a vector of \ref StTpcPixel objects from the specified ranges.
+- <tt>void Clear(const Option_t*)</tt> — Releases and deletes all owned sector objects.
+- <tt>StTpcRawData& operator+=(StTpcRawData&)</tt> — Merges data sector-by-sector.
+
+\section sec_rawdata_adc ADC Compression Tables
+
+Two look-up tables from <tt>StRoot/StDaqLib/TPC/trans_table.hh</tt>:
+- <tt>log10to8_table[1024]</tt> — 10-bit linear → 8-bit log-compressed.
+- <tt>log8to10_table[256]</tt> — 8-bit log-compressed → 10-bit linear.
+
+\section sec_rawdata_ownership Object Ownership
+
+\ref StTpcRawData owns all \ref StTpcDigitalSector objects; <tt>Clear()</tt> deletes them.
+<b>Do not delete StTpcDigitalSector* pointers obtained from GetSector().</b>
+
+\section sec_rawdata_usage Usage Example
+
+\code{.cpp}
+StTpcRawData* rawData = event->tpcRawData();
+if (!rawData) return;
+
+for (UInt_t iSec = 1; iSec <= 24; ++iSec) {
+    StTpcDigitalSector* sec = rawData->GetSector(iSec);
+    if (!sec) continue;
+
+    for (Int_t iRow = 1; iRow <= sec->numberOfRows(); ++iRow) {
+        UChar_t* padList = nullptr;
+        Int_t nPads = sec->getPadList(iRow, &padList);
+
+        for (Int_t iPadIdx = 0; iPadIdx < nPads; ++iPadIdx) {
+            Int_t iPad = padList[iPadIdx];
+            Short_t  adcs[512] = {};
+            UShort_t idts[512] = {};
+            sec->getTimeAdc(iRow, iPad, adcs, idts);
+            for (Int_t tb = 0; tb < 512; ++tb) {
+                if (adcs[tb] > 0)
+                    processPixel(iSec, iRow, iPad, tb, adcs[tb]);
+            }
+        }
+    }
+}
+\endcode
+
+\sa \ref page_stTpcPixel, \ref page_stTpcHit, \ref page_stTpcHitCollection
+*/

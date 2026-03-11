@@ -1,0 +1,63 @@
+/*!
+\page page_stpsd StPsd
+
+\brief Base class for Physics Summary Data (PSD) objects; extended by each Physics Working Group to store group-specific summary quantities in StEvent.
+
+\section overview Overview
+
+`StPsd` is the base class for Physics Summary Data objects in STAR. PSD objects are
+physics-working-group-specific summary quantities computed during offline reconstruction and stored
+persistently in \ref StEvent via the `StPsdCollection`. Each PWG subclasses `StPsd` and adds its
+own physics quantities. The `mPwg` field identifies the owning PWG; `mId` distinguishes multiple
+PSD types within a group. This mechanism allows lightweight, group-specific summaries to be
+appended to the event record without modifying core \ref StEvent structures.
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StPsd
+        └── (PWG-specific subclasses)
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StPwg` | `mPwg` | Physics Working Group identifier (e.g. `kStar`, `kAuAu`) |
+| `Int_t` | `mId` | PWG-assigned PSD type identifier |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StPwg pwg() const` | Returns the PWG identifier |
+| `Int_t id() const` | Returns the PWG PSD type identifier |
+| `void setPwg(StPwg pwg)` | Sets the PWG identifier |
+| `void setId(int id)` | Sets the PSD type identifier |
+
+\section example Usage Example
+
+\code{.cpp}
+// Concrete subclass pattern:
+// class MyPwgPsd : public StPsd {
+//   float mJetEnergy {0.f};
+// public:
+//   MyPwgPsd() : StPsd(kMyPwg, 1) {}
+//   float jetEnergy() const { return mJetEnergy; }
+//   ClassDef(MyPwgPsd, 1)
+// };
+
+StPsdCollection* psdc = event->psdCollection();
+if (psdc) {
+    for (size_t i = 0; i < psdc->size(); ++i) {
+        StPsd* psd = (*psdc)[i];
+        if (psd->pwg() == kMyPwg && psd->id() == 1)
+            cout << "jet E=" << static_cast<MyPwgPsd*>(psd)->jetEnergy() << endl;
+    }
+}
+\endcode
+
+\see StEvent
+*/

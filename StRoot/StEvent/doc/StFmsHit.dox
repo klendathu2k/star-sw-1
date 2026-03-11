@@ -1,0 +1,48 @@
+/*!
+\page page_stFmsHit StFmsHit
+
+\brief Raw tower hit in the STAR Forward Meson Spectrometer (FMS).
+
+\section fmsHit_overview Overview
+
+StFmsHit stores the raw ADC/TDC readout and calibrated energy for a single
+lead-glass tower channel in the STAR FMS (2.5 < η < 4.0).  The FMS has four
+sub-detectors: NorthLarge (ID=8), SouthLarge (ID=9), NorthSmall (ID=10),
+SouthSmall (ID=11).  The readout uses QT (charge-integrating ADC) boards;
+the packed word \c mQTCrtSlotCh encodes crate, slot, and channel.
+
+\section fmsHit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFmsHit
+\endcode
+
+Stored in \ref page_stFmsCollection "StFmsCollection".
+
+\section fmsHit_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetectorId | Sub-detector ID: 8=NLarge, 9=SLarge, 10=NSmall, 11=SSmall. |
+| UShort_t | mChannel | Tower channel number within the detector (0-based). |
+| UShort_t | mQTCrtSlotCh | Packed QT address: bits15-12=crate, bits11-8=slot, bits7-0=channel. |
+| UShort_t | mAdc | Raw ADC count. |
+| UShort_t | mTdc | TDC value. |
+| Float_t | mEnergy | Calibrated energy [GeV]. |
+
+\section fmsHit_methods Key Methods
+
+- \c detectorId() — sub-detector ID (8–11).
+- \c channel() — tower channel.
+- \c qtCrate(), \c qtSlot(), \c qtChannel() — QT board address.
+- \c adc() — raw ADC count.
+- \c tdc() — TDC value.
+- \c energy() — calibrated energy [GeV].
+- \c setFmsHit() — set all fields at once.
+- \c print() — print summary.
+
+\section fmsHit_seealso See Also
+
+\ref page_stFmsCluster "StFmsCluster",
+\ref page_stFmsPoint "StFmsPoint"
+*/

@@ -1,0 +1,55 @@
+/*!
+\page page_sttriggerid StTriggerId
+
+\brief Container for STAR trigger IDs that fired; stores up to 64 IDs with version information.
+
+\section sttriggerid_overview Overview
+\c StTriggerId holds the set of trigger IDs that fired for an event, together with
+name, threshold, and prescale version numbers that uniquely identify the trigger
+configuration.  A 64-bit bitmask enables fast membership tests.  It is normally
+accessed via \ref page_sttriggeridcollection which provides nominal, prescaled, and
+sampled variants.
+
+\section sttriggerid_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StTriggerId
+\endcode
+
+\section sttriggerid_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| ULong64_t | mMask | 64-bit bitmask of fired trigger IDs |
+| UInt_t[64] | mId | Trigger ID for each stored entry |
+| UInt_t[64] | mVersion | Combined version per entry |
+| UInt_t[64] | mNameVersion | Name version per entry |
+| UInt_t[64] | mThresholdVersion | Threshold version per entry |
+| UInt_t[64] | mPrescaleVersion | Prescale version per entry |
+
+\section sttriggerid_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `ULong64_t mask() const` | 64-bit fired-trigger bitmask |
+| `bool isTrigger(unsigned int id) const` | True if trigger id fired |
+| `std::vector<unsigned int> triggerIds() const` | All fired trigger IDs |
+| `unsigned int triggerId(int idx) const` | Trigger ID at index idx |
+| `unsigned int nameVersion(unsigned int id) const` | Name version for trigger id |
+| `unsigned int thresholdVersion(unsigned int id) const` | Threshold version |
+| `unsigned int prescaleVersion(unsigned int id) const` | Prescale version |
+| `void addTrigger(unsigned int id, ...)` | Add a fired trigger |
+| `void setMask(ULong64_t)` | Set the bitmask |
+
+\section sttriggerid_usage Usage Example
+\code{.cpp}
+StTriggerId* trig = event->triggerIdCollection()->nominal();
+if (trig->isTrigger(15007))
+    cout << "MinBias fired!" << endl;
+std::vector<unsigned int> ids = trig->triggerIds();
+\endcode
+
+\see \ref page_stl0trigger
+\see \ref page_sttrigger
+*/

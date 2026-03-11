@@ -1,0 +1,61 @@
+/*!
+\page page_stvertex StVertex
+
+\brief Abstract base class for all reconstructed vertices in StEvent.
+
+\section stvertex_overview Overview
+StVertex provides the common interface for every reconstructed vertex:
+3-D position (cm), 3×3 covariance, chi-squared, parent-track link, and
+Monte Carlo truth.  Concrete sub-classes cover the primary collision
+vertex, V0/Xi/kink decay vertices, and calibration vertices.
+
+Vertex lists are owned by StEvent:
+- StEvent::primaryVertex() / primaryVertices()
+- StEvent::v0Vertices()
+- StEvent::xiVertices()
+- StEvent::kinkVertices()
+- StEvent::calVertices()
+
+\section stvertex_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StMeasuredPoint → StVertex (abstract)
+    ├── StPrimaryVertex
+    ├── StV0Vertex
+    ├── StXiVertex
+    ├── StKinkVertex
+    └── StCalibrationVertex
+\endcode
+
+\section stvertex_datamembers Selected Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mPosition (inherited) | StThreeVectorF | Vertex position (cm). |
+| mType | StVertexId | Vertex type enum. |
+| mFlag | Int_t | Type/status bitmask. |
+| mCovariantMatrix[6] | Float_t | Packed upper-triangle covariance (cm²). |
+| mChiSquared | Float_t | Fit chi-squared. |
+| mProbChiSquared | Float_t | Fit chi-squared probability. |
+| mParent | StLink<StTrack> | Non-owning parent track link. |
+
+\section stvertex_methods Key Methods
+
+\code{.cpp}
+// Position and error
+StThreeVectorF pos = vtx->position();   // cm
+StThreeVectorF err = vtx->positionError();
+
+// Quality
+float chi2 = vtx->chiSquared();
+float prob  = vtx->probChiSquared();
+
+// Daughter iteration (sub-class)
+for (unsigned int i = 0; i < vtx->numberOfDaughters(); ++i) {
+    const StTrack* d = vtx->daughter(i);
+}
+\endcode
+
+\sa \ref page_stprimaryvertex, \ref page_stv0vertex,
+    \ref page_stxivertex, \ref page_stkinkvertex,
+    \ref page_stcalibrationvertex
+*/

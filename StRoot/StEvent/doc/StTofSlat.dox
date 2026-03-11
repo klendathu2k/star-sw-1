@@ -1,0 +1,63 @@
+/*!
+\page page_sttofslat StTofSlat
+
+\brief Legacy STAR TOF scintillator slat matched to a reconstructed track.
+
+\section tofslat_overview Overview
+
+StTofSlat represents a scintillator slat from the earliest STAR TOF programme (TOFr slats,
+approximately Runs 1–4), before the MRPC-based detectors were deployed.
+Each slat is a plastic scintillator strip read from one end by a photomultiplier,
+providing a single ADC amplitude and TDC timing value.
+
+\note Fully superseded by \ref StTofCell (MRPC era) and then \ref StBTofHit (BTOF, Run 8+).
+
+Objects are stored in \ref StTofCollection via StEvent::tofCollection().
+
+\section tofslat_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StTofSlat
+\endcode
+
+\section tofslat_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mSlatIndex | UShort_t | Global slat identifier |
+| mAdc | UShort_t | Raw ADC value (pulse height) |
+| mTdc | UShort_t | Raw TDC value (timing count) |
+| mAssociatedTrack | StLink<StTrack> | Matched reconstructed track |
+| mZhit | Float_t | z-position of hit [cm] |
+| mHitProf | UShort_t | Hit profile bitmask |
+| mMatchFlag | UShort_t | Track-to-slat matching quality flag |
+| mPosition | StThreeVectorF | Full 3D hit position [cm] |
+
+\section tofslat_methods Key Methods
+
+- slatIndex() — global slat index
+- adc() — raw ADC value
+- tdc() — raw TDC value
+- associatedTrack() — pointer to matched StTrack
+- zHit() — z-position of hit [cm]
+- hitProf() — hit profile bitmask
+- matchFlag() — match quality flag
+- position() — 3D hit position [cm]
+
+\section tofslat_example Usage Example
+
+\code{.cpp}
+// Early STAR run data (scintillator-slat TOFr era, Runs 1–4)
+StTofCollection* coll = event->tofCollection();
+if (coll) {
+    const StSPtrVecTofSlat& slats = coll->tofSlats();
+    for (const auto& s : slats) {
+        unsigned short idx  = s->slatIndex();
+        unsigned short adc  = s->adc();
+        float          zHit = s->zHit();
+    }
+}
+\endcode
+
+\see StTofCell, StTofHit, StTofCollection
+*/

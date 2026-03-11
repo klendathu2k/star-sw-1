@@ -1,0 +1,56 @@
+/*!
+\page page_sthltvpdhit StHltVpdHit
+
+\brief HLT Vertex Position Detector (VPD) hit with timing and channel information for online vertex-z reconstruction.
+
+\section overview Overview
+
+`StHltVpdHit` stores timing and channel information for a single VPD hit recorded by the HLT.
+The VPD has two assemblies at z ≈ ±5.6 m (east/west), each with 19 PMT channels. The east–west
+time difference gives the online vertex z; the average gives the event start time t₀ stored in
+\ref StHltEvent. Raw TDC values are slewing-corrected using the time-over-threshold (TOT).
+
+\section hierarchy Class Hierarchy
+
+\code
+TObject
+└── StObject
+    └── StHltVpdHit
+\endcode
+
+\section datamembers Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StBeamDirection` | `mDirection` | VPD side: east (0) or west (1) |
+| `short` | `mChannel` | Channel index (0–18) |
+| `float` | `mTdc` | Raw TDC time (ns) |
+| `float` | `mTot` | Time-over-threshold (ns) |
+| `float` | `mTof` | Calibrated time (ns) |
+| `float` | `mTriggerTime` | Trigger reference time (ns) |
+
+\section keymethods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `StBeamDirection direction() const` | East or west side |
+| `short channel() const` | Channel index (0–18) |
+| `int module() const` | Module index (channel/6) |
+| `int cell() const` | Cell index (channel%6) |
+| `float tdc() const` | Raw TDC (ns) |
+| `float tot() const` | Time-over-threshold (ns) |
+| `float tof() const` | Calibrated time (ns) |
+| `float triggerTime() const` | Trigger reference time (ns) |
+
+\section example Usage Example
+
+\code{.cpp}
+const StSPtrVecHltVpdHit& vpdHits = hlt->vpdHit();
+for (size_t i = 0; i < vpdHits.size(); ++i)
+    cout << (vpdHits[i]->direction()==east ? "E" : "W")
+         << " tof=" << vpdHits[i]->tof() << " ns" << endl;
+\endcode
+
+\see StHltEvent
+\see StHltBTofHit
+*/

@@ -1,0 +1,104 @@
+/**
+\page page_stfcscollection StFcsCollection — FCS Event Data Collection
+
+\section fcs_overview Overview
+
+\ref StFcsCollection is the event-level container for all data produced by the
+<b>Forward Calorimeter System (FCS)</b> of the STAR experiment (introduced in the
+Run 22 era).  The FCS covers forward pseudorapidities 2.5 < η < 4 and consists of:
+
+- Electromagnetic calorimeters (W-Shashlyk ECAL) — North and South
+- Hadronic calorimeters (HCAL) — North and South
+- Pre-shower scintillator detectors — North and South
+
+For each event the collection stores three tiers of reconstructed objects indexed by
+sub-detector ID (see \ref StFcsDetectorId):
+
+| Tier | Class | Accessor |
+|---|---|---|
+| Raw tower hits | \ref StFcsHit | \ref StFcsCollection::hits() |
+| Shower clusters | \ref StFcsCluster | \ref StFcsCollection::clusters() |
+| Photon points | \ref StFcsPoint | \ref StFcsCollection::points() |
+
+\section fcs_ownership Object Ownership
+
+\warning This collection <b>owns</b> every \ref StFcsHit, \ref StFcsCluster, and
+\ref StFcsPoint it contains.  The internal \c StSPtrVec containers manage memory
+automatically. <b>Do not call \c delete</b> on any pointer retrieved from this
+collection — doing so causes a double-free.  Conversely, every object passed to an
+\c add*() method <b>must</b> be heap-allocated with \c new and must not be owned
+anywhere else.
+
+The collection itself is owned by \ref StEvent, which is managed by the
+\c St_DataSet/StXRefMain framework.  \c StEvent's destructor is a no-op; the
+framework performs the final cleanup.
+
+\section fcs_detids Sub-Detector IDs
+
+All per-detector methods accept an \c unsigned \c int detector index from the
+\ref StFcsDetectorId enumeration:
+
+| Constant | Value | Description |
+|---|---|---|
+| \c kFcsEcalNorthDetId | 0 | ECAL (W-Shashlyk) North |
+| \c kFcsEcalSouthDetId | 1 | ECAL South |
+| \c kFcsHcalNorthDetId | 2 | HCAL North |
+| \c kFcsHcalSouthDetId | 3 | HCAL South |
+| \c kFcsPresNorthDetId | 4 | Pre-shower North |
+| \c kFcsPresSouthDetId | 5 | Pre-shower South |
+| \c kFcsNDet = 6        | 6 | Sentinel / total sub-detector count |
+
+Hit arrays have size \c kFcsNDet+1 (index 6 is a spare for overflow); cluster and
+point arrays have size \c kFcsNDet.  Index access is always guarded by a modulo
+operation.
+
+\section fcs_datamembers Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| \c StSPtrVecFcsHit[kFcsNDet+1] | \c mHits | Hit arrays, one per sub-detector. |
+| \c StSPtrVecFcsCluster[kFcsNDet] | \c mClusters | Cluster arrays, one per sub-detector. |
+| \c StSPtrVecFcsPoint[kFcsNDet] | \c mPoints | Photon-point arrays, one per sub-detector. |
+| \c Int_t | \c mFcsReconstructionFlag | Packed reconstruction-algorithm flags. |
+| \c Int_t | \c mDataExist | Non-zero if FCS data were present in the DAQ file. |
+
+\section fcs_methods Key Methods
+
+| Method | Description |
+|---|---|
+| \ref StFcsCollection::addHit "addHit(det, hit)" | Append a hit for sub-detector \a det. |
+| \ref StFcsCollection::hits "hits(det)" | Return reference to the hit vector for \a det. |
+| \ref StFcsCollection::numberOfHits "numberOfHits(det)" | Number of hits for \a det. |
+| \ref StFcsCollection::addCluster "addCluster(det, cl)" | Append a cluster. |
+| \ref StFcsCollection::clusters "clusters(det)" | Reference to the cluster vector. |
+| \ref StFcsCollection::numberOfClusters "numberOfClusters(det)" | Cluster count. |
+| \ref StFcsCollection::addPoint "addPoint(det, pt)" | Append a photon point. |
+| \ref StFcsCollection::points "points(det)" | Reference to the point vector. |
+| \ref StFcsCollection::numberOfPoints "numberOfPoints(det)" | Point count. |
+| \ref StFcsCollection::isDataExist "isDataExist()" | Returns 1 if FCS DAQ data present. |
+| \ref StFcsCollection::setDataExist "setDataExist(v)" | Set the DAQ-data-present flag. |
+| \ref StFcsCollection::fcsReconstructionFlag "fcsReconstructionFlag()" | Packed flags. |
+| \ref StFcsCollection::setFcsReconstructionFlag "setFcsReconstructionFlag(v)" | Set packed flags. |
+| \ref StFcsCollection::print "print(option)" | Print summary (option ≥ 1 = points, ≥ 2 = clusters, ≥ 3 = hits). |
+
+\section fcs_example Usage Example
+
+\code{.cpp}
+#include "StEvent/StFcsCollection.h"
+#include "StEvent/StFcsHit.h"
+#include "StEnumerations.h"
+
+StFcsCollection* fcsColl = event->fcsCollection();
+if (!fcsColl || !fcsColl->isDataExist()) return;
+
+// Iterate over ECAL-North photon points
+for (unsigned int i = 0; i < fcsColl->numberOfPoints(kFcsEcalNorthDetId); ++i) {
+    StFcsPoint* pt = fcsColl->points(kFcsEcalNorthDetId)[i];
+    // use pt ...
+}
+
+// Add a new hit (heap-allocated; ownership transfers to the collection)
+StFcsHit* h = new StFcsHit();
+fcsColl->addHit(kFcsHcalSouthDetId, h);
+\endcode
+*/

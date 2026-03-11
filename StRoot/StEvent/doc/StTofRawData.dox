@@ -1,0 +1,58 @@
+/*!
+\page page_sttofrawdata StTofRawData
+
+\brief Raw TDC hit record from the STAR legacy TOF detector electronics (Run 5+).
+
+\section tofrawdata_overview Overview
+
+StTofRawData stores a single raw TDC hit from the STAR legacy TOF detector electronics
+introduced in Run 5 (2004).
+Unlike the earlier \ref StTofData format, this class records whether the edge is leading or
+trailing (\c mLeTeFlag), the tray number, and an optional trigger-time TDC count.
+
+\note For Run 8 and later BTOF data, use \ref StBTofRawHit instead.
+
+Objects are stored in \ref StTofCollection via StEvent::tofCollection().
+
+\section tofrawdata_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StTofRawData
+\endcode
+
+\section tofrawdata_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mLeTeFlag | UShort_t | Edge flag: 1 = leading, 2 = trailing |
+| mTray | UShort_t | Tray number (0 = unassigned) |
+| mChannel | UShort_t | TDC channel number |
+| mTdc | UInt_t | Raw TDC count |
+| mTriggertime | UInt_t | Trigger time TDC count (event offset) |
+| mQuality | UShort_t | Data quality flag |
+
+\section tofrawdata_methods Key Methods
+
+- leteFlag() — leading/trailing edge flag (1=leading, 2=trailing)
+- tray() — tray number
+- channel() — TDC channel number
+- tdc() — raw TDC count
+- triggertime() — trigger time TDC count
+- quality() — data quality flag
+
+\section tofrawdata_example Usage Example
+
+\code{.cpp}
+StTofCollection* coll = event->tofCollection();
+if (coll) {
+    const StSPtrVecTofRawData& raw = coll->tofRawData();
+    for (const auto& r : raw) {
+        bool isLE   = (r->leteFlag() == 1);
+        unsigned short chan = r->channel();
+        unsigned int   tdc  = r->tdc();
+    }
+}
+\endcode
+
+\see StTofData, StTofCell, StBTofRawHit, StTofCollection
+*/

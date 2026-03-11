@@ -1,0 +1,118 @@
+/*!
+\page page_stssdHitCollection StSsdHitCollection — Collection Documentation
+
+\ref StSsdHitCollection is the top-level container for all reconstructed Silicon
+Strip Detector (SSD) hits in a single STAR event.  The SSD was the fourth layer
+of the STAR inner tracker, providing double-sided silicon strip measurements.
+Hits are organised in a three-level hierarchy: detector → ladder → wafer.
+
+\see StSsdHitCollection
+\see StSsdLadderHitCollection
+\see StSsdWaferHitCollection
+\see StSsdHit
+
+---
+
+\section ssd_hierarchy Class Hierarchy
+
+\code
+StSsdHitCollection                 (top-level, one per event)
+└── StSsdLadderHitCollection         [20 ladders, indices 0–19]
+    └── StSsdWaferHitCollection        [up to 16 wafers per ladder, indices 0–15]
+        └── StSPtrVecSsdHit              (owns the StSsdHit objects)
+\endcode
+
+All sub-collection nodes are embedded (stack-allocated) inside their parent;
+no heap allocation is used for collection nodes.
+
+\section ssd_containment Containment Model
+
+| Level    | Class                       | Contents                                 |
+|----------|-----------------------------|------------------------------------------|
+| Detector | \ref StSsdHitCollection     | 20 \ref StSsdLadderHitCollection objects |
+| Ladder   | \ref StSsdLadderHitCollection | 16 \ref StSsdWaferHitCollection objects |
+| Wafer    | \ref StSsdWaferHitCollection | `StSPtrVecSsdHit` of `StSsdHit*`         |
+
+\section ssd_ownership Object Ownership
+
+\ref StSsdWaferHitCollection holds its hits in a member of type
+\c StSPtrVecSsdHit, which is a **smart-pointer vector** that **owns** the
+\ref StSsdHit objects it contains.  The \ref StSsdWaferHitCollection destructor
+explicitly deletes every hit in the vector (necessary because \ref StSsdHit
+provides its own pool-allocated \c new/delete).
+
+Ladder and wafer sub-collections are embedded members of their parent classes
+and are destroyed automatically with the parent.  \ref StSsdHitCollection itself
+is owned by the StEvent framework (\c St_DataSet / \c StXRefMain).
+
+\warning Do **not** delete individual \ref StSsdHit pointers obtained from the
+collection.  The collection manages their lifetimes.
+
+\section ssd_members Data Members
+
+\subsection ssd_members_top StSsdHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSsdLadderHitCollection[20]` | `mLadders` | Fixed-size array of 20 ladder sub-collections. |
+
+\subsection ssd_members_ladder StSsdLadderHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSsdWaferHitCollection[16]` | `mWafers` | Fixed-size array of up to 16 wafer sub-collections. |
+
+\subsection ssd_members_wafer StSsdWaferHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| `StSPtrVecSsdHit` | `mHits` | Smart-pointer vector of `StSsdHit*`; owns all contained hits. |
+
+\section ssd_methods Key Methods
+
+\subsection ssd_methods_top StSsdHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `addHit(StSsdHit*)` | `bool` | Routes hit to correct ladder/wafer. Returns `false` if indices are out of range. |
+| `numberOfHits() const` | `unsigned int` | Total hits across all ladders and wafers. |
+| `numberOfLadders() const` | `unsigned int` | Always 20. |
+| `ladder(unsigned int)` | `StSsdLadderHitCollection*` | 0-based ladder access; returns `nullptr` if out of range. |
+
+\subsection ssd_methods_ladder StSsdLadderHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `numberOfHits() const` | `unsigned int` | Total hits on this ladder. |
+| `numberOfWafers() const` | `unsigned int` | Always 16. |
+| `wafer(unsigned int)` | `StSsdWaferHitCollection*` | 0-based wafer access; returns `nullptr` if out of range. |
+
+\subsection ssd_methods_wafer StSsdWaferHitCollection
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `hits()` | `StSPtrVecSsdHit&` | Mutable reference to the hit vector. |
+| `hits() const` | `const StSPtrVecSsdHit&` | Const reference to the hit vector. |
+
+\section ssd_example Usage Example
+
+\code{.cpp}
+const StSsdHitCollection* ssdColl = event->ssdHitCollection();
+if (!ssdColl) return;
+
+for (unsigned int iLad = 0; iLad < ssdColl->numberOfLadders(); ++iLad) {
+    const StSsdLadderHitCollection* ladderColl = ssdColl->ladder(iLad);
+    if (!ladderColl) continue;
+
+    for (unsigned int iWaf = 0; iWaf < ladderColl->numberOfWafers(); ++iWaf) {
+        const StSsdWaferHitCollection* waferColl = ladderColl->wafer(iWaf);
+        if (!waferColl) continue;
+
+        const StSPtrVecSsdHit& hits = waferColl->hits();
+        for (const StSsdHit* hit : hits) {
+            // process hit ...
+        }
+    }
+}
+\endcode
+*/

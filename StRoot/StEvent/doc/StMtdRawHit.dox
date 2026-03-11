@@ -1,0 +1,62 @@
+/*!
+\page page_stmtdrawhit StMtdRawHit
+
+\brief Raw TDC hit from the STAR Muon Telescope Detector (MTD) DAQ stream.
+
+\section mtdrawhit_overview Overview
+
+StMtdRawHit stores a single raw TDC hit from the MTD DAQ stream before any calibration.
+Each object corresponds to one TDC edge (leading or trailing) recorded by the HPTDC electronics
+on a given MTD backleg fiber.
+
+The MTD became fully operational in Run 12 (2012) and uses the same TDIG/HPTDC electronics chain
+as the BTOF; StMtdRawHit mirrors the structure of \ref StBTofRawHit, with "tray" replaced by "backleg".
+
+The edge type is encoded in the sign of \c mFlag (positive = leading, negative = trailing);
+the magnitude minus one gives the fiber ID.
+
+Raw hits are stored in \ref StMtdCollection via StEvent::mtdCollection().
+
+\section mtdrawhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StMtdRawHit
+\endcode
+
+\section mtdrawhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mFlag | Char_t | Edge flag: +ve = leading, −ve = trailing; \|flag\|−1 = fiberId |
+| mBackLeg | UChar_t | Backleg number (1–30) |
+| mChannel | UChar_t | TDC channel number |
+| mTdc | UInt_t | Raw TDC count (~24.4 ps/bin) |
+
+\section mtdrawhit_methods Key Methods
+
+- flag() — raw flag byte
+- leadingEdge() — true if leading-edge hit
+- trailingEdge() — true if trailing-edge hit
+- fiberId() — fiber ID (0-based)
+- backleg() — backleg number (1–30)
+- channel() — TDC channel number
+- tdc() — raw TDC count
+
+\section mtdrawhit_example Usage Example
+
+\code{.cpp}
+StMtdCollection* coll = event->mtdCollection();
+if (coll) {
+    const StSPtrVecMtdRawHit& rawHits = coll->mtdRawHits();
+    for (const auto& r : rawHits) {
+        int  backleg = r->backleg();
+        int  chan    = r->channel();
+        bool isLE   = r->leadingEdge();
+        int  fiber  = r->fiberId();
+        double approxNs = r->tdc() * 24.4e-3; // [ns]
+    }
+}
+\endcode
+
+\see StMtdHit, StMtdHeader, StMtdCollection, StBTofRawHit
+*/

@@ -1,0 +1,69 @@
+/*!
+\page page_steventsummary StEventSummary
+
+\brief Aggregate event-level quantities: multiplicities, mean kinematics, vertex position, binned distributions.
+
+\section steventsummary_overview Overview
+\c StEventSummary collects event-level quantities computed during reconstruction:
+track multiplicities (total, good, primary, positive, negative, exotic, pile-up),
+mean kinematic variables (⟨p_T⟩, ⟨p_T²⟩, ⟨η⟩, RMS η), the primary vertex position,
+and binned histograms of tracks and calorimeter energy in η, φ, and p_T.
+
+\section steventsummary_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StEventSummary
+\endcode
+
+\section steventsummary_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Int_t | mNumberOfTracks | Total reconstructed tracks |
+| Int_t | mNumberOfGoodTracks | Tracks passing quality cuts |
+| Int_t | mNumberOfGoodPrimaryTracks | Good primary tracks at primary vertex |
+| Int_t | mNumberOfPositiveTracks | Positively charged good tracks |
+| Int_t | mNumberOfNegativeTracks | Negatively charged good tracks |
+| Int_t | mNumberOfExoticTracks | Exotic/secondary tracks (V0, kink) |
+| Int_t | mNumberOfVertices | Total reconstructed vertices |
+| TArrayL | mNumberOfVertexTypes | Counts by StVertexId enum |
+| Int_t | mNumberOfPileupVertices | Pile-up vertex count |
+| Float_t | mMeanPt | Mean p_T (GeV/c) |
+| Float_t | mMeanPt2 | Mean p²_T (GeV²/c²) |
+| Float_t | mMeanEta | Mean pseudorapidity |
+| Float_t | mRmsEta | RMS pseudorapidity |
+| StThreeVectorF | mPrimaryVertexPos | Primary vertex (cm) |
+| Double_t | mMagneticFieldZ | Magnetic field along z (kGauss) |
+| TArrayF | mEtaBins / mPtBins / mPhiBins | Histogram bin edges |
+| TArrayL | mEtaOfTracksHisto / mPtOfTracksHisto / mPhiOfTracksHisto | Track counts per bin |
+| TArrayF | mEneryVsEtaHisto / mEnergyVsPhiHisto | Energy per bin |
+
+\section steventsummary_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `int numberOfTracks() const` | Total reconstructed tracks |
+| `int numberOfGoodTracks() const` | Tracks passing quality cuts |
+| `int numberOfGoodTracks(StChargeSign) const` | Good tracks by charge sign |
+| `float meanPt() const` | Mean p_T (GeV/c) |
+| `float meanPt2() const` | Mean p²_T (GeV²/c²) |
+| `float meanEta() const` | Mean pseudorapidity |
+| `float rmsEta() const` | RMS pseudorapidity |
+| `StThreeVectorF primaryVertexPosition() const` | Primary vertex (cm) |
+| `double magneticField() const` | B along z (kGauss) |
+| `unsigned int numberOfBins() const` | Histogram bin count |
+| `long tracksInEtaBin(int i) const` | Track count in η bin i |
+| `float energyInEtaBin(int i) const` | Energy deposit in η bin i |
+
+\section steventsummary_usage Usage Example
+\code{.cpp}
+StEventSummary* sum = event->summary();
+cout << "Good tracks: "  << sum->numberOfGoodTracks() << endl;
+cout << "<pT> = "        << sum->meanPt()  << " GeV/c" << endl;
+cout << "Vertex z = "    << sum->primaryVertexPosition().z() << " cm" << endl;
+\endcode
+
+\see \ref page_steventinfo
+\see \ref page_struninfo
+*/

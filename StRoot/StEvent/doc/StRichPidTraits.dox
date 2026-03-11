@@ -1,0 +1,67 @@
+/*!
+\page page_strichpidtraits StRichPidTraits
+
+\brief \ref page_strichpidtraits "StRichPidTraits" — RICH PID traits attached to a reconstructed track.
+
+\section strichpidtraits_overview Overview
+StRichPidTraits aggregates all RICH particle-identification information for one
+reconstructed track. It holds a collection of per-species
+\ref page_strichpid "StRichPid" hypotheses (pion, kaon, proton), a link to the
+MIP \ref page_strichhit "StRichHit", track–MIP residuals, DCAs, and a pointer
+to the \ref page_strichspectra "StRichSpectra" Cherenkov summary. It is stored
+in the track's pidTraits() collection.
+
+\section strichpidtraits_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StTrackPidTraits
+        └── StRichPidTraits
+\endcode
+
+\section strichpidtraits_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| StSPtrVecRichPid | mThePids | Owned per-species PID hypothesis collection |
+| Int_t | mProductionVersion | Reconstruction production version tag |
+| Int_t | mId | Track identifier |
+| Float_t | mProbability | Best-hypothesis overall PID probability |
+| StLink<StRichHit> | mAssociatedMip | Pointer to the MIP hit |
+| StThreeVectorF | mMipResidual | MIP position residual (cm) |
+| StThreeVectorF | mRefitResidual | Refit extrapolation residual (cm) |
+| Float_t | mSigned3dDca | Signed 3-D DCA to primary vertex (cm) |
+| Float_t | mSigned2dDca | Signed 2-D (transverse) DCA to primary vertex (cm) |
+| StRichSpectra* | mRichSpectra | Cherenkov spectra summary (not owned) |
+
+\section strichpidtraits_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| void addPid(StRichPid*) | Append a per-species hypothesis |
+| StSPtrVecRichPid& getAllPids() | All per-species hypotheses |
+| StRichPid* getPid(StParticleDefinition*) | Hypothesis for a given species |
+| StRichSpectra* getRichSpectra() const | Cherenkov spectra summary |
+| void setAssociatedMip(StRichHit*) | Set the MIP hit pointer |
+| StRichHit* getAssociatedMip() const | Return the MIP hit |
+| float probability() const | Best-hypothesis PID probability |
+| StThreeVectorF mipResidual() const | MIP position residual (cm) |
+| StThreeVectorF refitResidual() const | Refit extrapolation residual (cm) |
+| float signedDca2d() const | Signed 2-D DCA (cm) |
+| float signedDca3d() const | Signed 3-D DCA (cm) |
+
+\section strichpidtraits_example Usage Example
+\code{.cpp}
+StSPtrVecTrackPidTraits& pidVec = track->pidTraits();
+for (unsigned int i = 0; i < pidVec.size(); ++i) {
+    StRichPidTraits* rpt = dynamic_cast<StRichPidTraits*>(pidVec[i]);
+    if (!rpt) continue;
+    StRichSpectra* s = rpt->getRichSpectra();
+    if (s)
+        std::cout << "theta_C = " << s->getCherenkovAngle() << "\n";
+}
+\endcode
+
+\section strichpidtraits_related Related Classes
+\ref page_strichpid "StRichPid" — per-species hypothesis stored in this object. \n
+\ref page_strichspectra "StRichSpectra" — Cherenkov ring summary. \n
+\ref page_strichhit "StRichHit" — MIP hit referenced by this object.
+*/

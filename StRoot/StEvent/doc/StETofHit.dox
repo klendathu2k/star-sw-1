@@ -1,0 +1,77 @@
+/*!
+\page page_stetofhit StETofHit
+
+\brief Reconstructed hit in the STAR Endcap Time-of-Flight (eTOF) detector.
+
+\section etofhit_overview Overview
+
+StETofHit represents a fully reconstructed hit in the STAR Endcap TOF (eTOF) detector,
+introduced for the BES-II programme in Run 19 (2019).
+The eTOF covers 1.4 < |η| < 1.7 on the west endcap using MRPC technology.
+
+An eTOF hit is formed by merging two \ref StETofDigi objects from opposite ends (sides) of
+the same MRPC strip.
+- The hit time is the calibrated average of the two digi times.
+- The local Y position along the strip is determined from the time difference between the two ends.
+- The cluster size records how many strips contributed.
+
+Geometry: 3 sectors (STAR sectors 7–9) × 3 z-planes × 3 counters = 27 MRPC modules,
+each with 32 strips.
+
+Hits are stored in \ref StETofCollection via StEvent::etofCollection().
+
+\section etofhit_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StETofHit
+\endcode
+
+\section etofhit_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mSector | UInt_t | STAR sector number (e.g., 7, 8, 9) |
+| mZPlane | UInt_t | z-plane number within sector (1–3) |
+| mCounter | UInt_t | Counter (MRPC module) number (1–3) |
+| mTime | Double_t | Calibrated hit time [ns] |
+| mTotalTot | Double_t | Summed time-over-threshold from both digis [ns] |
+| mClusterSize | UInt_t | Number of contributing strips |
+| mLocalX | Double_t | Local X position on counter [cm] |
+| mLocalY | Double_t | Local Y position from timing difference [cm] |
+| mAssociatedTrack | StTrack* | Matched reconstructed track |
+| mIdTruth | UShort_t | MC truth track ID |
+| mQuality | UShort_t | MC truth quality (% charge from truth) |
+
+\section etofhit_methods Key Methods
+
+- sector() — STAR sector number
+- zPlane() — z-plane number (1–3)
+- counter() — counter (MRPC) number (1–3)
+- time() — calibrated hit time [ns]
+- totalTot() — summed time-over-threshold [ns]
+- clusterSize() — strip cluster multiplicity
+- localX(), localY() — local position on counter face [cm]
+- associatedTrack() — pointer to matched StTrack
+- idTruth(), qaTruth() — MC truth information
+- operator<, compare() — sort/compare by time
+- setHwAddress(sector, zPlane, counter) — set geometry in one call
+
+\section etofhit_example Usage Example
+
+\code{.cpp}
+StETofCollection* coll = event->etofCollection();
+if (coll) {
+    const StSPtrVecETofHit& hits = coll->etofHits();
+    for (const auto& h : hits) {
+        unsigned int sector  = h->sector();
+        unsigned int zPlane  = h->zPlane();
+        unsigned int counter = h->counter();
+        double       time    = h->time();
+        double       tot     = h->totalTot();
+        double       localY  = h->localY(); // position from timing difference
+    }
+}
+\endcode
+
+\see StETofDigi, StETofHeader, StETofCollection
+*/

@@ -1,0 +1,56 @@
+/*!
+\page page_stetofpidtraits StETofPidTraits
+
+\brief Endcap TOF (eTOF) particle identification traits for a matched track.
+
+\section stetofpidtraits_overview Overview
+
+\ref StETofPidTraits stores PID information for a track matched to a hit in the STAR
+Endcap Time-of-Flight detector (2.05 < |η| < 2.50, introduced in Run 19).  The eTOF
+extends STAR's time-of-flight PID reach to the backward end-cap region.
+
+Compared to \ref StBTofPidTraits, this class adds local-coordinate residuals (ΔX, ΔY)
+and uses a 16-bit match flag.  Per-species nσ values were not yet implemented in the
+initial version.
+
+\section stetofpidtraits_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackPidTraits
+           └── StETofPidTraits
+\endcode
+
+\section stetofpidtraits_members Key Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| \c mMatchFlag | \c UShort_t | Matching quality flag (0 = unmatched). |
+| \c mLocalX / \c mLocalY | \c Float_t | Local coordinates at the counter (cm). |
+| \c mDeltaX / \c mDeltaY | \c Float_t | Track–hit residuals (cm). |
+| \c mThetaLocal | \c Float_t | Local incident angle (rad). |
+| \c mPosition | \c StThreeVectorF | Global extrapolated position (cm). |
+| \c mTimeOfFlight | \c Float_t | Measured TOF (ns); −999 if unset. |
+| \c mPathLength | \c Float_t | Path length from vertex (cm); −999 if unset. |
+| \c mBeta | \c Float_t | β = v/c; −999 if unset. |
+
+\section stetofpidtraits_example Usage Example
+
+\code{.cpp}
+const StETofPidTraits* etof = nullptr;
+for (const StTrackPidTraits* p : track->pidTraits()) {
+    etof = dynamic_cast<const StETofPidTraits*>(p);
+    if (etof) break;
+}
+
+if (etof && etof->matchFlag() > 0) {
+    double beta = etof->beta();
+    double p    = track->geometry()->momentum().mag();
+    double m2   = p*p*(1./(beta*beta) - 1.);
+}
+\endcode
+
+\see StTrackPidTraits
+\see StETofCollection
+\see StTrack
+*/

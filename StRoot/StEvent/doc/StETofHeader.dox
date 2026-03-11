@@ -1,0 +1,70 @@
+/*!
+\page page_stetofheader StETofHeader
+
+\brief Event-level timing and status data for the STAR Endcap TOF (eTOF) detector.
+
+\section etofheader_overview Overview
+
+StETofHeader stores per-event header data for the STAR eTOF detector,
+operational since Run 19 (2019).
+
+The header records synchronisation information between the eTOF DAQ (gDPB — general Data Processing Board)
+and the STAR global trigger system:
+- \c mTrgGdpbFullTime: absolute gDPB trigger timestamp [ns] (eTOF local clock).
+- \c mTrgStarFullTime: STAR global trigger timestamp [ns].
+
+Per-ROC timestamp maps allow clock-synchronisation diagnostics.
+Quality vectors (\c mMissMatchFlagVec, \c mGoodEventFlagVec, \c mHasPulsersVec) carry
+per-Get4 and per-counter health indicators for each event.
+
+The object is held by \ref StETofCollection via StEvent::etofCollection()->etofHeader().
+
+\section etofheader_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StETofHeader
+\endcode
+
+\section etofheader_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mTrgGdpbFullTime | Double_t | gDPB trigger timestamp [ns] |
+| mTrgStarFullTime | Double_t | STAR trigger timestamp [ns] |
+| mRocGdpbTs | map<UInt_t, ULong64_t> | Per-ROC gDPB timestamps |
+| mRocStarTs | map<UInt_t, ULong64_t> | Per-ROC STAR timestamps |
+| mStarToken | UInt_t | STAR trigger token |
+| mStarDaqCmdIn | UInt_t | STAR DAQ command input |
+| mStarTrgCmdIn | UInt_t | STAR trigger command input |
+| mEventStatusFlag | ULong64_t | 64-bit event status bitmask |
+| mMissMatchFlagVec | vector<Bool_t> | Per-Get4 TDC mismatch flags |
+| mGoodEventFlagVec | vector<Bool_t> | Per-counter good-event flags |
+| mHasPulsersVec | vector<Bool_t> | Per-counter has-pulsers flags |
+
+\section etofheader_methods Key Methods
+
+- trgGdpbFullTime() — gDPB trigger timestamp [ns]
+- trgStarFullTime() — STAR trigger timestamp [ns]
+- rocGdpbTs(), rocStarTs() — per-ROC timestamp maps
+- starToken() — STAR trigger token
+- eventStatusFlag() — event status bitmask
+- missMatchFlagVec() — per-Get4 mismatch flags
+- goodEventFlagVec() — per-counter good-event flags
+- hasPulsersVec() — per-counter has-pulsers flags
+
+\section etofheader_example Usage Example
+
+\code{.cpp}
+StETofCollection* coll = event->etofCollection();
+if (coll) {
+    StETofHeader* hdr = coll->etofHeader();
+    if (hdr) {
+        double dt    = hdr->trgGdpbFullTime() - hdr->trgStarFullTime();
+        auto goodVec = hdr->goodEventFlagVec();
+        // goodVec[i] == true: counter i had no mismatches and has pulsers
+    }
+}
+\endcode
+
+\see StETofHit, StETofDigi, StETofCollection
+*/

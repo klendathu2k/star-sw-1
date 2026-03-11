@@ -1,0 +1,110 @@
+/*!
+\page page_strndhit StRnDHit
+
+\ref StRnDHit is a generic, flexible hit class for Research and Development (R&D) detector
+prototype studies within the STAR framework.  It provides the full base-class functionality of
+\ref StHit plus a set of spare data members — layer/ladder/wafer indices, two integer slots,
+five double-precision slots, and a full 3×3 position covariance matrix — that can be mapped to
+the needs of any prototype detector.
+
+The detector identity is stored explicitly in <tt>mDetectorId</tt> (defaults to
+<tt>kUnknownId</tt>) and can be overridden via <tt>setDetectorId()</tt>.
+
+\see StRnDHitCollection
+
+\section sec_rndhit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StRnDHit
+\endverbatim
+
+Hits are collected in \ref StRnDHitCollection.
+
+\section sec_rndhit_members Data Members
+
+\subsection subsec_rndhit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Packed hardware address (meaning detector-specific).
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ position errors (cm). May not be persisted.
+- <tt>Float_t mCharge</tt> — Integrated charge.
+- <tt>Int_t mId</tt> — Hit identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_rndhit_own Own Data Members
+
+- <tt>Short_t mLayer</tt> — Detector layer index (detector-specific; initialized to −1).
+- <tt>Short_t mLadder</tt> — Detector ladder index (initialized to −1).
+- <tt>Short_t mWafer</tt> — Detector wafer index (initialized to −1).
+- <tt>Int_t mExtraByte0</tt> — Spare integer slot 0 (initialized to 0).
+- <tt>Int_t mExtraByte1</tt> — Spare integer slot 1 (initialized to 0).
+- <tt>Int_t mKey</tt> — Key index from the associated <tt>StMcHit</tt> for MC truth back-reference (initialized to −1).
+- <tt>Int_t mVolumeId</tt> — Volume ID from the associated <tt>StMcHit</tt> (initialized to −1).
+- <tt>Double_t mDouble0</tt> – <tt>mDouble4</tt> — Five spare double-precision slots for
+  detector-specific data (all initialized to 0).
+- <tt>StDetectorId mDetectorId</tt> — Detector identifier (default <tt>kUnknownId</tt>).
+- <tt>float mErrorMatrix[9]</tt> — Full 3×3 position covariance matrix (row-major flat array).
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_rndhit_methods Key Methods
+
+- <tt>unsigned int layer() const</tt> — Layer index.
+- <tt>unsigned int ladder() const</tt> — Ladder index.
+- <tt>unsigned int wafer() const</tt> — Wafer index.
+- <tt>int extraByte0() const</tt>, <tt>int extraByte1() const</tt> — Spare integer slots.
+- <tt>int key() const</tt> — StMcHit key for MC truth.
+- <tt>int volumeId() const</tt> — StMcHit volume ID for MC truth.
+- <tt>double double0() const</tt> – <tt>double double4() const</tt> — Spare double slots 0–4.
+- <tt>void setLayer(short)</tt>, <tt>void setLadder(short)</tt>, <tt>void setWafer(short)</tt>.
+- <tt>void setExtraByte0(int)</tt>, <tt>void setExtraByte1(int)</tt>.
+- <tt>void setKey(int)</tt>, <tt>void setVolumeId(int)</tt>.
+- <tt>void setDouble0(double)</tt> – <tt>void setDouble4(double)</tt>.
+- <tt>void setDetectorId(StDetectorId)</tt> — Override detector identifier.
+- <tt>void setErrorMatrix(const float* M)</tt> — Copy a 9-element flat array into <tt>mErrorMatrix</tt>.
+- <tt>StMatrixF covariantMatrix() const</tt> — Return the 3×3 covariance as <tt>StMatrixF</tt>.
+- <tt>StDetectorId detector() const</tt> — Returns <tt>mDetectorId</tt>.
+
+\section sec_rndhit_ownership Object Ownership
+
+\ref StRnDHit uses a custom <tt>StMemoryPool</tt> allocator.  Once added to
+\ref StRnDHitCollection, ownership belongs to the framework.
+\warning Do <b>not</b> <tt>delete</tt> \ref StRnDHit pointers obtained from the collection.
+
+\section sec_rndhit_usage Usage Example
+
+\code{.cpp}
+float errMatrix[9] = {
+    0.01f, 0.0f, 0.0f,
+    0.0f,  0.01f, 0.0f,
+    0.0f,  0.0f,  0.04f
+};
+
+StThreeVectorF pos(x, y, z);
+StThreeVectorF err(0.1f, 0.1f, 0.2f);
+StRnDHit* hit = new StRnDHit(pos, err, /*hwPos=*/0, /*charge=*/100.f,
+                              /*trackRefCount=*/0, /*idTruth=*/0,
+                              /*quality=*/0, /*id=*/0, kRndId);
+hit->setLayer(2);
+hit->setLadder(5);
+hit->setDouble0(localX);  // local u-coordinate (cm)
+hit->setDouble1(localY);  // local v-coordinate (cm)
+hit->setErrorMatrix(errMatrix);
+
+rndColl->addHit(hit);
+
+// Reading back
+const StSPtrVecRnDHit& hits = event->rndHitCollection()->hits();
+for (const StRnDHit* h : hits) {
+    unsigned int layer = h->layer();
+    double localU = h->double0();
+    StMatrixF cov = h->covariantMatrix();
+}
+\endcode
+
+*/

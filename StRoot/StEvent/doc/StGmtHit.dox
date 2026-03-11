@@ -1,0 +1,64 @@
+/*!
+\page page_stgmthit StGmtHit
+
+\brief One-dimensional cluster (hit) in a GMT module, providing local X/Y position and ADC charge.
+
+\section gmthit_overview Overview
+
+StGmtHit is a 1D cluster in the **GEM-based Muon Tracker (GMT)** — the GMT analogue
+of StFgtHit.  It stores the ADC sums and local positions in both X (strip) and Y (pad)
+directions for a single module cluster, along with position uncertainties and a unique key.
+
+**Detector**: GEM-based Muon Tracker (GMT)  
+**Stage**: Strip clustering → 1D cluster position
+
+\section gmthit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StHit → StGmtHit
+\endcode
+
+Stored in the GMT hit container within \c StGmtCollection.
+
+\section gmthit_coordinates Coordinate Convention
+
+The module index is stored as \c mHardwarePosition = module + 1.
+- \c mPosition.x() / \c getLocalX(): position along X-strips (cm)
+- \c mPosition.y() / \c getLocalY(): position along Y-pads (cm)
+- \c mSigmaX / \c mSigmaY: alternative position estimates
+
+\section gmthit_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mKey | Unique cluster ID |
+| \c Float_t | \c mAdcX, \c mAdcY | Integrated ADC charge in X and Y |
+| \c Float_t | \c mdAdcX, \c mdAdcY | ADC charge uncertainties |
+| \c Float_t | \c mSigmaX, \c mErrSigmaX | Alternative X position and its uncertainty |
+| \c Float_t | \c mSigmaY, \c mErrSigmaY | Alternative Y position and its uncertainty |
+
+Inherited \c mPosition.x()/y() holds the primary local X/Y; \c mPositionError.x()/y() holds uncertainties.
+
+\section gmthit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getKey() | Unique cluster ID |
+| \c getModule() | Module index (0–7) |
+| \c getAdcX(), \c getAdcY() | ADC charge sums |
+| \c getLocalX(), \c getLocalY() | Local position (cm) |
+| \c getErrorLocalX(), \c getErrorLocalY() | Position uncertainties |
+| \c getSigmaX(), \c getSigmaY() | Alternative position estimates |
+
+\section gmthit_example Usage Example
+
+\code{.cpp}
+const StGmtHit* hit = hitColl->hit(ih);
+int   mod  = hit->getModule();    // 0-7
+float x    = hit->getLocalX();    // cm
+float y    = hit->getLocalY();    // cm
+float adcX = hit->getAdcX();
+\endcode
+
+\see StGmtStrip, StGmtPoint, StGmtCollection
+*/

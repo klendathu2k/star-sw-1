@@ -1,0 +1,50 @@
+/*!
+\page page_stzdctriggerdetector StZdcTriggerDetector
+
+\brief ZDC trigger detector data: ADC/TDC for forward neutron calorimeters, SMD strips, vertex z.
+
+\section stzdctriggerdetector_overview Overview
+\c StZdcTriggerDetector stores data from the Zero Degree Calorimeter (ZDC), which
+detects spectator neutrons at ±18 m.  Raw ADC and TDC values, east/west ADC sums, an
+online z-vertex estimate from east–west timing, and Shower Maximum Detector (SMD) strip
+energies for transverse position are all stored.  The ZDC is central to centrality
+determination, luminosity monitoring, and spin asymmetry measurements.
+
+\section stzdctriggerdetector_hierarchy Class Hierarchy
+\code
+TObject
+ └── StObject
+      └── StZdcTriggerDetector
+\endcode
+
+\section stzdctriggerdetector_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| Float_t[16] | mAdc | Raw ADC values (east 0–7, west 8–15) |
+| Float_t[16] | mTdc | Raw TDC values |
+| Float_t[2] | mSumAdc | East[0] and west[1] ADC sums |
+| Float_t[2][2][8] | ZdcSmd | SMD energies [east/west][vert/horiz][strip] |
+
+\section stzdctriggerdetector_methods Key Methods
+
+| Signature | Description |
+|-----------|-------------|
+| `float adc(int i) const` | Raw ADC at channel i |
+| `float tdc(int i) const` | Raw TDC at channel i |
+| `float adcSum(StBeamDirection dir) const` | ADC sum east or west |
+| `float adcSum() const` | Combined ADC sum |
+| `float vertexZ() const` | Online vertex z (cm) |
+| `float zdcSmd(StBeamDirection, int verthori, int strip) const` | SMD strip energy |
+| `int numberOfZdcWords() const` | Raw data word count |
+
+\section stzdctriggerdetector_usage Usage Example
+\code{.cpp}
+StZdcTriggerDetector& zdc = event->triggerDetectorCollection()->zdc();
+cout << "ZDC east sum = " << zdc.adcSum(east) << endl;
+cout << "ZDC vertex z = " << zdc.vertexZ() << " cm" << endl;
+\endcode
+
+\see \ref page_sttriggerdetectorcollection
+\see \ref page_stbbctriggerdetector
+*/

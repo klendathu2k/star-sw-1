@@ -1,0 +1,67 @@
+/**
+\page page_sttriggerdata2007 StTriggerData2007
+
+\brief Concrete StTriggerData implementation for STAR Run 7 (year 2007) trigger data.
+
+\section sec2007_overview Overview
+
+StTriggerData2007 is the concrete implementation of the StTriggerData abstract interface for
+<b>STAR Run 7 (year 2007)</b> raw trigger data.  It wraps a \c TrgDataType2007 structure and
+exposes its content through the common StTriggerData accessor API.
+
+Compared to StTriggerData2005, Run 7 adds VPD, MTD (prototype), and FMS QT readout; it
+also provides a full set of FMS DSM layer accessors.
+
+\section sec2007_hierarchy Class Hierarchy
+\code
+StObject
+  └── StTriggerData          (abstract interface)
+        └── StTriggerData2007
+\endcode
+
+\section sec2007_runyear Run Year
+Run 7, calendar year 2007 &mdash; Au+Au collisions at &radic;s = 200 GeV.
+
+\section sec2007_datamembers Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mData  | TrgDataType2007* | Pointer to the raw Run 7 trigger bank in memory. |
+
+\section sec2007_new New Compared to 2005
+
+<b>VPD (Vertex Position Detector):</b>
+- vpdADC(StBeamDirection eastwest, int pmt, int prepost=0)
+- vpdTDC(StBeamDirection eastwest, int pmt, int prepost=0)
+- vpdEarliestTDC(StBeamDirection eastwest, int prepost=0)
+- vpdTimeDifference()
+
+<b>MTD (Muon Telescope Detector, prototype):</b>
+- mtdAtAddress(int address, int prepost=0)
+- mtdAdc(StBeamDirection eastwest, int pmt, int prepost=0)
+- mtdTdc(StBeamDirection eastwest, int pmt, int prepost=0)
+
+<b>FMS (Forward Meson Spectrometer) QT readout:</b>
+- nQTdata(int prepost=0)
+- QTdata(int prepost=0)
+
+<b>FMS DSM accessors:</b>
+- getDsm_FMS(), getDsm01_FMS(), getDsm02_FMS(), getDsm1_FMS(), getDsm2_FMS()
+
+getDsm0_BEMCE(), getDsm0_BEMCW(), and getDsm1_BEMC() return \c nullptr for this format.
+
+\section sec2007_usage Usage Example
+\code{.cpp}
+StEvent* event = static_cast<StEvent*>(GetInputDS("StEvent"));
+const StTriggerData* trgData = event->triggerData();
+if (trgData) {
+    unsigned short vpdDT  = trgData->vpdTimeDifference();
+    unsigned short mtdAdc = trgData->mtdAdc(west, 0, 0);
+    unsigned short nFMS   = trgData->nQTdata(0);
+}
+\endcode
+
+\see StTriggerData
+\see StTriggerData2005
+\see StTriggerData2008
+*/

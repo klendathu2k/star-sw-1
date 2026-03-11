@@ -1,0 +1,188 @@
+/**
+\page page_stfgtcollection StFgtCollection — FGT Collection Documentation
+
+\brief Top-level event container for all Forward GEM Tracker (FGT) data in StEvent.
+
+\section fgt_overview Overview
+
+\ref StFgtCollection is the root-level container that aggregates all Forward GEM Tracker
+(FGT) data for a single STAR event.  The FGT comprised six gas-electron-multiplier disc
+detectors in the forward region.  Each disc independently records GEM strip signals.
+Three levels of reconstruction are represented:
+
+- **Strip** (\ref StFgtStrip) — individual 1D readout channel carrying raw ADC samples
+  and calibration flags.
+- **Hit** (\ref StFgtHit) — a 1D cluster of adjacent strips formed within one disc.
+- **Point** (\ref StFgtPoint) — a 2D reconstructed space-point formed by intersecting
+  an X-layer cluster and a Y-layer cluster.
+
+\section fgt_hierarchy Class Hierarchy
+
+All four collection classes derive directly from \c StObject:
+
+\code
+StObject
+└── StFgtCollection           (top-level event container)
+    ├── StFgtStripCollection  (embedded array[kFgtNumDiscs=6])
+    ├── StFgtHitCollection    (embedded array[kFgtNumDiscs=6])
+    └── StFgtPointCollection  (single embedded instance)
+\endcode
+
+\section fgt_containment Containment Model
+
+\code
+StFgtCollection
+│   mNumTimeBins : size_t          default 7
+│
+├── mStripCollection[6]  : StFgtStripCollection
+│   ├── mDisc              : Short_t
+│   ├── mStripVec          : StSPtrVecFgtStrip   (owns StFgtStrip objects)
+│   └── mStripElecIdVec    : StPtrVecFgtStrip    (transient, not streamed)
+│
+├── mHitCollection[6]    : StFgtHitCollection
+│   ├── mDisc              : Short_t
+│   └── mHitVec            : StSPtrVecFgtHit     (owns StFgtHit objects)
+│
+└── mPointCollection     : StFgtPointCollection
+    └── mPointVec          : StSPtrVecFgtPoint   (owns StFgtPoint objects)
+\endcode
+
+The constant \c kFgtNumDiscs = 6 is defined in \c StEnumerations.h.
+
+\section fgt_ownership Object Ownership
+
+- All sub-collections (\ref StFgtStripCollection, \ref StFgtHitCollection,
+  \ref StFgtPointCollection) are **stack-allocated** (embedded) inside
+  \ref StFgtCollection; callers must not delete them.
+- Each sub-collection holds an \c StSPtrVec (smart-pointer vector) that **owns** its
+  leaf objects.  The vector's destructor and \c clear() both delete the pointed-to
+  objects.
+- \ref StFgtStripCollection additionally holds a transient plain-pointer vector
+  \c mStripElecIdVec (keyed by electronics ID) for fast lookup.  It is marked \c //!
+  and is not written to the persistent store.  It does not own strips.
+- \ref StFgtCollection itself is owned by the StEvent framework (St_DataSet /
+  StXRefMain); its destructor is a no-op.
+- **Do not delete** any pointer returned by getStripCollection(), getHitCollection(),
+  getPointCollection(), getStrip(), or any element from the \c StSPtrVec vectors.
+
+\section fgt_datamembers Data Members
+
+\subsection fgt_dm_top StFgtCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StFgtStripCollection[6] | \c mStripCollection | Strip collections, one per disc (0-based) |
+| \c StFgtHitCollection[6]   | \c mHitCollection   | Hit collections, one per disc |
+| \c StFgtPointCollection    | \c mPointCollection | 2D point collection for all discs |
+| \c size_t                  | \c mNumTimeBins     | ADC time bins sampled per strip (default: 7) |
+
+\subsection fgt_dm_strip StFgtStripCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c Short_t             | \c mDisc           | FGT disc index (0–5) |
+| \c StSPtrVecFgtStrip   | \c mStripVec       | Persistent, owned strip vector |
+| \c StPtrVecFgtStrip    | \c mStripElecIdVec | Transient lookup by electronics ID (not streamed) |
+
+\subsection fgt_dm_hit StFgtHitCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c Short_t         | \c mDisc   | FGT disc index (0–5) |
+| \c StSPtrVecFgtHit | \c mHitVec | Persistent, owned hit vector |
+
+\subsection fgt_dm_point StFgtPointCollection
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecFgtPoint | \c mPointVec | Persistent, owned 2D-point vector |
+
+\section fgt_methods Key Methods
+
+\subsection fgt_meth_top StFgtCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getNumDiscs() const | Returns \c kFgtNumDiscs (6) |
+| \c getNumStrips() const | Total strips across all discs |
+| \c getNumStrips(unsigned\ short\ disc) const | Strips on one disc |
+| \c getNumHits() const | Total hits across all discs |
+| \c getNumHits(unsigned\ short\ disc) const | Hits on one disc |
+| \c getNumPoints() const | Total 2D points |
+| \c getNumTimeBins() const | Number of ADC time bins |
+| \c setNumTimeBins(size_t) | Set the number of ADC time bins |
+| \c getStripCollection(unsigned\ short) | Strip collection for disc; \c nullptr if out of range |
+| \c getHitCollection(unsigned\ short) | Hit collection for disc; \c nullptr if out of range |
+| \c getPointCollection() | Pointer to the point collection |
+| \c Clear(Option_t*) | Clears all sub-collections (framework callback) |
+
+\subsection fgt_meth_strip StFgtStripCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getStrip(int\ elecId) | Returns or creates the strip for an electronics ID — the only way to add strips |
+| \c getStripVec() | Direct access to the persistent strip vector |
+| \c sortByGeoId() | Sorts the strip vector by geometry ID |
+| \c removeFlagged() | Removes strips with negative geoIds or \c kFgtDeadStrip seed type |
+| \c getNumStrips() const | Number of strips |
+| \c getDisc() / setDisc() | Get/set disc index |
+
+\subsection fgt_meth_hit StFgtHitCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getHitVec() | Reference to the owned hit vector |
+| \c getNumHits() const | Number of hits |
+| \c getDisc() / setDisc() | Get/set disc index |
+
+\subsection fgt_meth_point StFgtPointCollection
+
+| Signature | Description |
+|-----------|-------------|
+| \c getPointVec() | Reference to the owned point vector |
+| \c getNumPoints() const | Number of 2D points |
+
+\section fgt_example Usage Example
+
+\code{.cpp}
+// Obtain StFgtCollection from StEvent
+StFgtCollection* fgtColl = event->fgtCollection();
+if (!fgtColl) return;
+
+// --- Strips ---
+for (unsigned short disc = 0; disc < fgtColl->getNumDiscs(); ++disc) {
+    const StFgtStripCollection* sc = fgtColl->getStripCollection(disc);
+    if (!sc) continue;
+    const StSPtrVecFgtStrip& strips = sc->getStripVec();
+    for (const StFgtStrip* strip : strips) {
+        if (!strip) continue;
+        // strip->getGeoId(), strip->getPedSubtractedAdc(), ...
+    }
+}
+
+// --- Hits ---
+for (unsigned short disc = 0; disc < fgtColl->getNumDiscs(); ++disc) {
+    const StFgtHitCollection* hc = fgtColl->getHitCollection(disc);
+    if (!hc) continue;
+    const StSPtrVecFgtHit& hits = hc->getHitVec();
+    for (const StFgtHit* hit : hits) {
+        if (!hit) continue;
+        // hit->charge(), hit->position(), ...
+    }
+}
+
+// --- 2D Points ---
+const StFgtPointCollection* pc = fgtColl->getPointCollection();
+if (pc) {
+    const StSPtrVecFgtPoint& points = pc->getPointVec();
+    for (const StFgtPoint* pt : points) {
+        if (!pt) continue;
+        // pt->getPositionX(), pt->getPositionY(), ...
+    }
+}
+\endcode
+
+\warning Never call \c push_back() on the vector returned by \c getStripVec().
+         Always use \ref StFgtStripCollection::getStrip(int) to insert new strips.
+
+*/

@@ -1,0 +1,81 @@
+/*!
+\page page_strpscollection StRpsCollection — Collection Documentation
+
+\section rps_overview Overview
+
+\ref StRpsCollection is the top-level event-level container for the
+<b>Roman Pot System (RPS)</b>, used in the pp2pp experiment to detect
+forward-scattered protons in elastic and diffractive p+p collisions at RHIC.
+
+The system comprises eight Roman Pot detector stations (0–7) placed along both
+RHIC beam lines.  Each station houses four silicon strip detector planes and two
+PMT-based scintillator timing detectors.
+
+The collection provides access to:
+- The eight \ref StRpsRomanPot detector stations (stored by value).
+- Reconstructed track points (\ref StRpsTrackPoint) — one per station.
+- Reconstructed global forward proton tracks (\ref StRpsTrack).
+
+\section rps_ownership Object Ownership
+
+- <b>mRomanPots[8]</b>: Stored <b>by value</b> inside the collection.  Their
+  silicon planes and clusters are nested objects; no separate heap allocation.
+- <b>mTrackPoints</b> (\c StSPtrVecRpsTrackPoint): Owned; deleted by \c StSPtrVec.
+- <b>mTracks</b> (\c StSPtrVecRpsTrack): Owned; same semantics.
+- The collection destructor is a <b>no-op</b>; cleanup by \c StSPtrVec and the
+  \c StEvent framework.
+
+\section rps_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StRpsRomanPot[8] | mRomanPots | Array of eight Roman Pot stations, indexed 0–7. Each contains 4 silicon planes (\ref StRpsPlane) and 2 PMT timing detectors. |
+| \c UChar_t | mSiliconBunch | Silicon detector bunch crossing number (default 0). |
+| \c StSPtrVecRpsTrackPoint | mTrackPoints | Reconstructed track points (\ref StRpsTrackPoint), owned. |
+| \c StSPtrVecRpsTrack | mTracks | Reconstructed forward proton tracks (\ref StRpsTrack), owned. |
+
+\section rps_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c numberOfRomanPots() const | Always returns 8. |
+| \c romanPot(unsigned int i) | Pointer to Roman Pot at index \c i (0–7); \c nullptr if out of range. |
+| \c clusters() const | Flat list of all clusters from all planes of all pots (assembled on the fly). |
+| \c trackPoints() const | Non-owning list of all reconstructed track points. |
+| \c tracks() const | Non-owning list of all reconstructed forward proton tracks. |
+| \c siliconBunch() const | Returns the silicon bunch crossing number. |
+| \c setSiliconBunch(unsigned char) | Sets the silicon bunch crossing number. |
+| \c addTrackPoint(const StRpsTrackPoint*) | Appends a track point. |
+| \c addTrack(const StRpsTrack*) | Appends a forward proton track. |
+
+\section rps_layout Roman Pot Layout
+
+The eight pots are split: four on each beam side (east/west), numbered from the
+IP outward.  Each pot holds:
+- 4 silicon strip detector planes (accessed via \c plane(0)–\c plane(3)).
+- 2 PMT scintillator timing detectors: \c adc(0/1) and \c tac(0/1).
+
+\section rps_example Usage Example
+
+\code{.cpp}
+StRpsCollection* rpsColl = event->rpsCollection();
+if (!rpsColl) return;
+
+for (unsigned int i = 0; i < rpsColl->numberOfRomanPots(); ++i) {
+    const StRpsRomanPot* rp = rpsColl->romanPot(i);
+    if (!rp) continue;
+    for (unsigned int j = 0; j < rp->numberOfPlanes(); ++j) {
+        const StRpsPlane* plane = rp->plane(j);
+        // use plane->cluster(k) ...
+    }
+}
+
+StPtrVecRpsTrack tracks = rpsColl->tracks();
+for (size_t i = 0; i < tracks.size(); ++i) {
+    const StRpsTrack* trk = tracks[i];
+    // use trk->...
+}
+\endcode
+
+\see StRpsRomanPot, StRpsPlane, StRpsTrackPoint, StRpsTrack
+*/

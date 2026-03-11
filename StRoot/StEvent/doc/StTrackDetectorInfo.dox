@@ -1,0 +1,54 @@
+/*!
+\page page_sttrackdetectorinfo StTrackDetectorInfo
+
+\brief Hit references and per-detector hit-count summaries for a reconstructed track.
+
+\section sttrackdetectorinfo_overview Overview
+
+\ref StTrackDetectorInfo is shared between an \c StGlobalTrack and its sibling
+\c StPrimaryTrack objects.  It stores:
+- Non-owning pointers to all \c StHit objects associated with the track.
+- Per-detector counts of measured hits.
+- Global positions of the innermost and outermost hits.
+
+\section sttrackdetectorinfo_hierarchy Class Hierarchy
+
+\code{.txt}
+StObject
+  └── StTrackDetectorInfo
+\endcode
+
+\section sttrackdetectorinfo_members Data Members
+
+| Member | Description |
+|---|---|
+| \c mFirstPoint | Global position of the innermost hit (cm). |
+| \c mLastPoint | Global position of the outermost hit (cm). |
+| \c mNumberOfPointsTpc | TPC hit count (ITTF encoding). |
+| \c mNumberOfPointsFtpcWest | FTPC west hit count. |
+| \c mNumberOfPointsFtpcEast | FTPC east hit count. |
+| \c mNumberOfPointsSvt | SVT hit count. |
+| \c mNumberOfPointsSsd | SSD/SST hit count. |
+| \c mNumberOfPointsOth | Other-detector hit count. |
+| \c mNumberOfPointsIst | IST hit count. |
+| \c mNumberOfPointsPxl | PXL hit count. |
+| \c mHits | \c StPtrVecHit — all associated hit pointers. |
+
+\section sttrackdetectorinfo_ittf ITTF Encoding Note
+
+When \c mNumberOfPoints == 0, the individual per-detector members are authoritative.
+When \c mNumberOfPoints != 0, legacy packed encoding (TPC%1000 + SVT/1000%10 + SSD/10000)
+is active.  Both are decoded transparently by \c numberOfPoints(StDetectorId).
+
+\section sttrackdetectorinfo_example Usage Example
+
+\code{.cpp}
+const StTrackDetectorInfo* info = track->detectorInfo();
+unsigned short nTpc = info->numberOfPoints(kTpcId);
+StPtrVecHit tpcHits = info->hits(kTpcId);
+for (StHit* hit : tpcHits) { /* process hit */ }
+\endcode
+
+\see StTrack
+\see StHit
+*/

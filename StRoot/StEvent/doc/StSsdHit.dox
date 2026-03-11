@@ -1,0 +1,97 @@
+/*!
+\page page_stssdhit StSsdHit
+
+\ref StSsdHit represents a single reconstructed space-point hit in the STAR Silicon Strip
+Detector (SSD), a double-sided silicon strip detector providing P-side and N-side strip
+measurements.  A hit arises from the coincidence of a cluster on each side.
+
+\see StSsdHitCollection
+
+\section sec_ssdhit_hierarchy Class Hierarchy
+
+\verbatim
+StObject
+└── StMeasuredPoint
+    └── StHit
+        └── StSsdHit
+\endverbatim
+
+Hits are collected in \ref StSsdHitCollection.
+
+\section sec_ssdhit_members Data Members
+
+\subsection subsec_ssdhit_inherited Inherited from StHit
+
+- <tt>UInt_t mHardwarePosition</tt> — Packed hardware word.  Bits 4–12: flat wafer index.
+  Bits 13–22: N-side central strip.  Bits 23–27: P-side offset relative to N-side.
+  Bits 28–29: N-side cluster size − 1.  Bits 30–31: P-side cluster size − 1.
+- <tt>StThreeVectorF mPositionError</tt> — 1-σ errors in STAR global frame (cm). <em>Not persisted.</em>
+- <tt>Float_t mCharge</tt> — Cluster charge (ADC counts).
+- <tt>Int_t mId</tt> — Cluster identifier.
+- <tt>Int_t mIdTruth</tt> — Geant track ID (simulation only).
+- <tt>UShort_t mQuality</tt> — Charge fraction from <tt>mIdTruth</tt> (percent).
+- <tt>UChar_t mFitFlag</tt> — Non-zero if used in a track fit.
+- <tt>UChar_t mTrackRefCount</tt> — Number of tracks referencing this hit.
+- <tt>UShort_t mFlag</tt> — Hit status flag bitmask.
+
+\subsection subsec_ssdhit_own Own Data Members
+
+- <tt>Float_t mLocalPosition[2]</tt> — Local hit position (cm): [0] = P-side strip direction,
+  [1] = N-side strip direction.
+- <tt>static StMemoryPool mPool</tt> — Per-class memory pool. <em>Not persisted.</em>
+
+\section sec_ssdhit_geometry Geometry
+
+The SSD has 20 ladders (1–20), each with 16 wafers (1–16), grouped into 4 sectors:
+
+| Ladders   | Sector |
+|-----------|--------|
+| 1–2, 20   | 1      |
+| 3–9       | 2      |
+| 10–12     | 3      |
+| 13–19     | 4      |
+
+<b>volumeID</b> = <tt>10000 × sector + 7000 + 100 × wafer + ladder</tt>.
+
+\section sec_ssdhit_methods Key Methods
+
+- <tt>unsigned int ladder() const</tt> — Ladder number (1–20).
+- <tt>unsigned int wafer() const</tt> — Wafer number (1–16).
+- <tt>unsigned int sector() const</tt> — Sector (1–4).
+- <tt>unsigned int centralStripNSide() const</tt> — N-side central strip index.
+- <tt>unsigned int centralStripPSide() const</tt> — P-side central strip index.
+- <tt>unsigned int clusterSizeNSide() const</tt> — N-side cluster size.
+- <tt>unsigned int clusterSizePSide() const</tt> — P-side cluster size.
+- <tt>float localPosition(unsigned int i) const</tt> — Local coordinate along axis <tt>i</tt> (cm).
+- <tt>void setLocalPosition(float u, float v)</tt> — Set local position (cm).
+- <tt>virtual int volumeID() const</tt> — Packed geometry ID.
+- <tt>StDetectorId detector() const</tt> — Returns the detector ID from bits 0–3 of <tt>mHardwarePosition</tt>.
+
+\section sec_ssdhit_ownership Object Ownership
+
+\ref StSsdHit uses a custom <tt>StMemoryPool</tt> allocator.  Once added to
+\ref StSsdHitCollection, ownership belongs to the framework.
+\warning Do <b>not</b> <tt>delete</tt> \ref StSsdHit pointers obtained from the collection.
+
+\section sec_ssdhit_usage Usage Example
+
+\code{.cpp}
+StSsdHitCollection* ssdColl = event->ssdHitCollection();
+if (!ssdColl) return;
+
+for (unsigned int iLadder = 0; iLadder < ssdColl->numberOfLadders(); ++iLadder) {
+    const StSsdLadderHitCollection* ladder = ssdColl->ladder(iLadder);
+    if (!ladder) continue;
+    for (unsigned int iWafer = 0; iWafer < ladder->numberOfWafers(); ++iWafer) {
+        const StSsdWaferHitCollection* wafer = ladder->wafer(iWafer);
+        if (!wafer) continue;
+        const StSPtrVecSsdHit& hits = wafer->hits();
+        for (const StSsdHit* hit : hits) {
+            float localP = hit->localPosition(0);   // P-side (cm)
+            float localN = hit->localPosition(1);   // N-side (cm)
+        }
+    }
+}
+\endcode
+
+*/

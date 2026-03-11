@@ -1,0 +1,66 @@
+/*!
+\page page_stetofcollection StETofCollection — Collection Documentation
+
+\section etof_overview Overview
+
+\ref StETofCollection is the event-level container for all data produced by the
+<b>Endcap Time-of-Flight (eTOF)</b> detector — an array of Multi-gap Resistive
+Plate Chamber (MRPC) modules at forward rapidity extending STAR particle
+identification beyond mid-rapidity.
+
+Each event's collection holds:
+- \ref StETofDigi — electronic digitisations from individual MRPC strip-ends.
+- \ref StETofHit  — reconstructed hits formed from coincident digis on both sides of a counter.
+- \ref StETofHeader — event-wise header with trigger timestamps and front-end status.
+
+\ref StETofPidTraits live on the associated track, not in this collection.
+
+\section etof_ownership Object Ownership
+
+- <b>mETofHeader</b> (\ref StETofHeader*): Owned. Assigned via \c setHeader() and
+  <b>deleted by the destructor</b>.
+- <b>mETofDigis</b> (\c StSPtrVecETofDigi): Owned; \c StSPtrVec deletes elements on destruction.
+- <b>mETofHits</b> (\c StSPtrVecETofHit): Owned; same semantics.
+- The collection itself is owned by the \c StEvent framework.
+
+\section etof_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \ref StETofHeader* | mETofHeader | Event header: trigger timestamps, bTOF clock reset time, front-end mismatch patterns. Owned and deleted by this class. |
+| \c StSPtrVecETofDigi | mETofDigis | Raw digitisations from individual MRPC strip-ends (\ref StETofDigi). |
+| \c StSPtrVecETofHit | mETofHits | Reconstructed MRPC hits (\ref StETofHit) formed from ≥2 digis. |
+
+\section etof_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c etofHeader() | Pointer to the eTOF event header (mutable and const overloads). |
+| \c etofDigis() | Reference to the digi collection (mutable and const overloads). |
+| \c etofHits() | Reference to the reconstructed hit collection (mutable and const overloads). |
+| \c setHeader(StETofHeader*) | Assigns the header pointer; collection takes ownership. |
+| \c addDigi(const StETofDigi*) | Appends a digi (null-safe). |
+| \c addHit(const StETofHit*) | Appends a reconstructed hit (null-safe). |
+| \c digisPresent() const | Returns \c true if the digi collection is non-empty. |
+| \c hitsPresent() const | Returns \c true if the hit collection is non-empty. |
+
+\section etof_example Usage Example
+
+\code{.cpp}
+StETofCollection* etofColl = event->etofCollection();
+if (!etofColl) return;
+
+if (etofColl->hitsPresent()) {
+    const StSPtrVecETofHit& hits = etofColl->etofHits();
+    for (size_t i = 0; i < hits.size(); ++i) {
+        StETofHit* hit = hits[i];
+        unsigned int sector  = hit->sector();
+        unsigned int zPlane  = hit->zPlane();
+        unsigned int counter = hit->counter();
+        double       time    = hit->time();
+    }
+}
+\endcode
+
+\see StETofHit, StETofDigi, StETofHeader
+*/

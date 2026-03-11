@@ -1,0 +1,78 @@
+/*!
+\page page_stfgthit StFgtHit
+
+\brief One-dimensional strip cluster (hit) on a single FGT readout layer.
+
+\section fgthit_overview Overview
+
+StFgtHit is a 1D cluster on one strip layer of the **Forward GEM Tracker (FGT)**.
+Each FGT disc quadrant has two strip orientations: R-strips (measure radius r) and
+P-strips (measure azimuthal angle φ).  A hit records the position along one of these
+axes, the total cluster charge, Landau-fit parameters, and a transient strip weight map.
+
+**Detector**: Forward GEM Tracker (FGT)  
+**Stage**: Strip clustering → 1D hit position reconstruction
+
+\section fgthit_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StHit → StFgtHit
+\endcode
+
+Stored in the FGT hit container within \c StFgtCollection.
+
+\section fgthit_layer Layer Convention
+
+| \c getLayer() | Coordinate measured |
+|---------------|---------------------|
+| 'R' | Radial position r (cm) |
+| 'P' | Azimuthal angle φ (rad) |
+
+\section fgthit_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mKey | Unique cluster ID |
+| \c Float_t | \c mR, \c mErrR | Radial position and uncertainty (cm) |
+| \c Float_t | \c mPhi, \c mErrPhi | Azimuthal position and uncertainty (rad) |
+| \c Int_t | \c mCentralStripGeoId | GeoId of the central (peak) strip |
+| \c Float_t | \c mChargeUncert | Cluster charge uncertainty |
+| \c Short_t | \c mMaxAdc | Peak ADC across strips and time bins |
+| \c Float_t | \c mLandauNorm/Mpv/Sigma/Chi2 | Landau fit parameters |
+| \c Int_t | \c mNstrip | Number of contributing strips |
+| \c Int_t | \c mMaxTimeBin | Time bin of peak ADC |
+| \c Int_t | \c mSeedType | Cluster seed type (\c kFgtSeedType*) |
+| \c Float_t | \c mEvenOddChargeAsy | Even/odd strip charge asymmetry |
+| \c stripWeightMap_t | \c mStripWeightMap | Transient strip→weight map (not persisted) |
+
+\section fgthit_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getKey() | Unique cluster ID |
+| \c getDisc() | FGT disc index (0–5) |
+| \c getQuad() | Quadrant index (0–3) |
+| \c getLayer() | Strip layer ('R' or 'P') |
+| \c getPositionR() | Radial position (cm) |
+| \c getPositionPhi() | Azimuthal position (rad) |
+| \c getErrorR(), \c getErrorPhi() | Position uncertainties |
+| \c charge() | Total cluster charge (inherited from StHit) |
+| \c getNstrip() | Number of strips in the cluster |
+| \c getSeedType() | Cluster seed classification |
+
+\section fgthit_example Usage Example
+
+\code{.cpp}
+const StFgtHit* hit = hitColl->hit(ih);
+char layer = hit->getLayer();   // 'R' or 'P'
+if (layer == 'R') {
+    float r = hit->getPositionR(); // radial position (cm)
+} else {
+    float phi = hit->getPositionPhi(); // azimuthal angle (rad)
+}
+int nStr = hit->getNstrip();
+float charge = hit->charge();
+\endcode
+
+\see StFgtStrip, StFgtPoint, StFgtCollection
+*/

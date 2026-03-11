@@ -1,0 +1,69 @@
+/*!
+\page page_stfttcluster StFttCluster
+
+\brief Strip cluster on one FTT plane/row with charge moments and associated hits/points.
+
+\section fttcluster_overview Overview
+
+StFttCluster groups adjacent sTGC strips above threshold into a 1D cluster.
+It stores the total ADC charge (0th moment), charge-weighted centroid (1st moment),
+RMS width (2nd moment), and links to contributing raw hits, neighbouring clusters,
+and fitted space points.
+
+**Detector**: Forward sTGC Tracker (FTT)  
+**Stage**: Raw-hit clustering → strip centroid
+
+\section fttcluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFttCluster
+\endcode
+
+Stored in \c StFttCollection via \c StPtrVecFttCluster.
+
+\section fttcluster_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mId | Event-unique cluster ID |
+| \c UChar_t | \c mPlane | Detector plane (0–3) |
+| \c UChar_t | \c mQuadrant | Quadrant A–D (0–3) |
+| \c UChar_t | \c mRow | Strip row within quadrant |
+| \c UChar_t | \c mOrientation | Strip orientation code |
+| \c Int_t | \c mNStrips | Number of strips |
+| \c Float_t | \c mSumAdc | Total ADC charge (0th moment) |
+| \c Float_t | \c mX | Charge-weighted centroid, strip units (1st moment) |
+| \c Float_t | \c mSigma | RMS width, strip units (2nd moment) |
+| \c StPtrVecFttRawHit | \c mRawHits | Contributing raw hits |
+| \c StPtrVecFttCluster | \c mNeighbors | Adjacent clusters |
+| \c StPtrVecFttPoint | \c mPoints | Associated space points |
+| \c UShort_t | \c mIdTruth, \c mQaTruth | MC truth ID and quality |
+
+\section fttcluster_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c id() | Cluster ID |
+| \c plane(), \c quadrant(), \c row() | Detector coordinates |
+| \c orientation() | Strip orientation code |
+| \c nStrips() | Number of contributing strips |
+| \c sumAdc() | Total ADC charge |
+| \c x() | Centroid in strip units |
+| \c sigma() | RMS width in strip units |
+| \c rawHits(), \c neighbor(), \c points() | Access associated objects |
+| \c addRawHit(), \c addNeighbor(), \c addPoint() | Add associations |
+
+\section fttcluster_example Usage Example
+
+\code{.cpp}
+for (const StFttCluster* cl : fttColl->clusters()) {
+    UChar_t plane = cl->plane();
+    float   sumAdc = cl->sumAdc();
+    float   x      = cl->x();     // centroid (strip units)
+    float   sigma  = cl->sigma();
+    int     nPts   = cl->nPoints();
+}
+\endcode
+
+\see StFttRawHit, StFttPoint, StFttCollection
+*/

@@ -1,0 +1,118 @@
+/*!
+\page page_stTpcHit StTpcHit
+
+\brief Reconstructed hit (cluster) in the STAR Time Projection Chamber.
+
+\ref StTpcHit represents a single reconstructed cluster in the STAR TPC or its inner upgrade
+(iTPC). It is produced by the TPC cluster-finder (FCF or TCL) during the reconstruction chain
+and stored in \ref StTpcHitCollection. In addition to the position, charge, and hardware address
+inherited from \ref StHit, \ref StTpcHit stores the cluster extent in pad and time-bucket
+coordinates, the raw ADC sum, and optional recalibration data used by the dE/dx analysis.
+
+\section sec_tpchit_hierarchy Class Hierarchy
+
+\verbatim
+TObject
+└── StObject
+    └── StMeasuredPoint
+        └── StHit
+            └── StTpcHit         (concrete — this class)
+\endverbatim
+
+Objects are stored in \c StSPtrVecTpcHit inside \ref StTpcPadrowHitCollection →
+\ref StTpcSectorHitCollection → \ref StTpcHitCollection → StEvent framework.
+
+\section sec_tpchit_hwpack Hardware Address Packing (mHardwarePosition)
+
+The 32-bit \c mHardwarePosition field is packed as follows:
+
+| Bits | Width | Meaning | Accessor |
+|---|---|---|---|
+| 1 | 1 | iTPC flag (1 = iTPC sector) | detector() |
+| 4–8 | 5 | Sector number (1–24) | sector() |
+| 9–15 | 7 | Padrow number (1–128) | padrow() |
+| 22–31 | 10 | Pixel count (TCL) / time-bucket count (FCF) | pixelsInHit() |
+
+\section sec_tpchit_members Data Members
+
+\subsection subsec_tpchit_inherited Inherited (selected)
+- <tt>UInt_t mHardwarePosition</tt> — Packed sector/padrow/iTPC flag (see table above).
+- <tt>StThreeVectorF mPosition</tt> — 3-D hit centroid in STAR global frame (cm).
+- <tt>StThreeVectorF mPositionError</tt> — 1-sigma position uncertainties in cm.
+- <tt>Float_t mCharge</tt> — Calibrated cluster charge from the gain tables.
+- <tt>UShort_t mFlag</tt> — FCF cluster status flags (see <tt>FCF_flags</tt> in
+  <tt>StRoot/StDaqLib/TPC/trans_table.hh</tt>).
+
+\subsection subsec_tpchit_own StTpcHit-specific
+- <tt>UChar_t mMinpad</tt> — Offset from centroid pad to the lowest pad in the cluster.
+  Absolute pad: <tt>round(mMcl_x/64) − mMinpad</tt>.
+- <tt>UChar_t mMaxpad</tt> — Offset from centroid pad to the highest pad.
+  Absolute pad: <tt>round(mMcl_x/64) + mMaxpad</tt>.
+- <tt>UChar_t mMintmbk</tt> — Offset from centroid time bucket to the first time bucket.
+- <tt>UChar_t mMaxtmbk</tt> — Offset from centroid time bucket to the last time bucket.
+- <tt>Short_t mMcl_x</tt> — Cluster centroid pad position × 64 (fixed-point, 1/64 pad
+  resolution). Use <tt>pad()</tt> for the floating-point value.
+- <tt>Short_t mMcl_t</tt> — Cluster centroid time bucket × 64 (fixed-point, 1/64 bin
+  resolution). Use <tt>timeBucket()</tt> for the floating-point value.
+- <tt>UShort_t mAdc</tt> — Raw ADC sum of all pixels in the cluster.
+- <tt>Float_t mChargeModified</tt> — <b>Transient</b> (<tt>//!</tt>). Recalibrated charge from
+  \c StdEdxY2Maker; zero if not set.
+- <tt>StThreeVectorF mPositionU</tt> — <b>Transient</b>. Upper pad-row edge position
+  (y_local + padlength/2) in global frame (cm).
+- <tt>StThreeVectorF mPositionL</tt> — <b>Transient</b>. Lower pad-row edge position
+  (y_local − padlength/2) in global frame (cm).
+- <tt>Float_t mdX</tt> — <b>Transient</b>. Track path length through pad row for dE/dx (cm).
+
+\section sec_tpchit_methods Key Methods
+
+- <tt>StDetectorId detector() const</tt> — Returns \c kiTpcId or \c kTpcId based on bit 1 of
+  the hardware position.
+- <tt>UInt_t sector() const</tt> — Sector number 1–24 (bits 4–8).
+- <tt>UInt_t padrow() const</tt> — Padrow number 1–128 (bits 9–15).
+- <tt>UInt_t padsInHit() const</tt> — Number of pads fired.
+- <tt>UChar_t minPad() / maxPad() const</tt> — Lowest/highest pad in cluster.
+- <tt>Short_t minTmbk() / maxTmbk() const</tt> — First/last time bucket in cluster.
+- <tt>Short_t timeBucketsInHit() const</tt> — Number of time buckets fired.
+- <tt>Float_t pad() const</tt> — Centroid pad (floating-point): <tt>mMcl_x / 64.0</tt>.
+- <tt>Float_t timeBucket() const</tt> — Centroid time bucket (floating-point):
+  <tt>mMcl_t / 64.0</tt>.
+- <tt>UShort_t adc() const</tt> — Raw ADC sum.
+- <tt>Float_t chargeModified() const</tt> — Transient recalibrated charge.
+- <tt>Float_t dX()</tt> — Transient dE/dx path length (cm).
+- <tt>Int_t volumeID() const</tt> — Combined ID: <tt>100 × sector() + padrow()</tt>.
+- <tt>void setExtends(cl_x, cl_t, mnpad, mxpad, mntmbk, mxtmbk)</tt> — Sets centroid and
+  extent fields from absolute min/max values.
+- <tt>Bool_t IsSortable() / Int_t Compare(const TObject*) const</tt> — Supports sorting by
+  sector, padrow, then |z|.
+
+\section sec_tpchit_ownership Object Ownership
+
+\ref StTpcHit uses a custom memory pool (\c StMemoryPool) via overloaded \c new/delete.
+Objects are owned by \ref StTpcPadrowHitCollection which explicitly deletes them in its
+destructor. <b>Do not delete StTpcHit* pointers obtained from the collection.</b>
+
+\section sec_tpchit_usage Usage Example
+
+\code{.cpp}
+StTpcHitCollection* tpcColl = event->tpcHitCollection();
+if (!tpcColl) return;
+
+// Iterate sector 1 (0-based index 0), padrow 13 (0-based index 12)
+const StTpcSectorHitCollection* sec = tpcColl->sector(0);
+if (!sec) return;
+const StTpcPadrowHitCollection* row = sec->padrow(12);
+if (!row) return;
+
+for (const StTpcHit* hit : row->hits()) {
+    if (!hit->usedInFit()) continue;
+    std::cout << "sec=" << hit->sector()
+              << " row=" << hit->padrow()
+              << " pad=" << hit->pad()
+              << " t=" << hit->timeBucket()
+              << " q=" << hit->charge()
+              << " adc=" << hit->adc() << "\n";
+}
+\endcode
+
+\sa \ref page_sthit, \ref page_stmeasuredpoint, \ref page_stTpcHitCollection
+*/

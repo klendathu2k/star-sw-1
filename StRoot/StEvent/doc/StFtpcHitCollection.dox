@@ -1,0 +1,125 @@
+/*!
+\page page_stFtpcHitCollection StFtpcHitCollection
+
+\ref StFtpcHitCollection is the top-level container for all reconstructed hits in the STAR Forward
+Time Projection Chambers (FTPC). Hits are stored in a three-level hierarchy —
+<b>plane → sector → hit</b> — reflecting the FTPC readout geometry of radial drift planes each
+divided into azimuthal sectors. The two supporting classes, \ref StFtpcPlaneHitCollection and
+\ref StFtpcSectorHitCollection, are internal nodes of that hierarchy and are not used
+independently.
+
+\section sec_ftpc_hierarchy Class Hierarchy
+
+\verbatim
+StFtpcHitCollection          (top level, 20 planes)
+└── StFtpcPlaneHitCollection     (one per plane, 6 sectors each)
+    └── StFtpcSectorHitCollection    (one per sector, holds StFtpcHit* pointers)
+\endverbatim
+
+All three classes inherit from StObject.
+
+\section sec_ftpc_containment Containment Model
+
+- \ref StFtpcHitCollection holds an embedded array of 20 \ref StFtpcPlaneHitCollection objects
+  (<tt>mPlanes[20]</tt>).
+- Each \ref StFtpcPlaneHitCollection holds an embedded array of 6 \ref StFtpcSectorHitCollection
+  objects (<tt>mSectors[6]</tt>).
+- Each \ref StFtpcSectorHitCollection holds a dynamic <tt>StSPtrVecFtpcHit mHits</tt> vector of
+  pointers to \ref StFtpcHit objects.
+
+\ref StFtpcHitCollection::addHit "addHit(StFtpcHit*)" routes an \ref StFtpcHit into the correct
+<tt>mHits</tt> vector using the hit's own 1-based <tt>plane()</tt> and <tt>sector()</tt>
+accessors, converting internally to 0-based array indices. The public accessor methods
+<tt>plane()</tt> and <tt>sector()</tt> use <b>0-based</b> indices.
+
+\section sec_ftpc_ownership Object Ownership
+
+\subsection subsec_ftpc_subcoll Sub-collection Storage
+\ref StFtpcPlaneHitCollection and \ref StFtpcSectorHitCollection objects are
+<b>stack-allocated as plain arrays</b> inside their parent. They are not heap-allocated and must
+not be deleted by the caller.
+
+\subsection subsec_ftpc_hits Hit Storage — StSPtrVecFtpcHit
+The per-sector hit vector is of type <tt>StSPtrVecFtpcHit</tt>, a <em>smart-pointer vector</em>.
+\ref StFtpcSectorHitCollection::~StFtpcSectorHitCollection "~StFtpcSectorHitCollection()" iterates
+over the vector and explicitly <tt>delete</tt>s each <tt>StFtpcHit*</tt>. This explicit deletion
+is required because \ref StFtpcHit uses a custom <tt>new</tt>/<tt>delete</tt> via
+<tt>StMemoryPool</tt>.
+
+\warning Do <b>not</b> <tt>delete</tt> \ref StFtpcHit pointers obtained from the collection.
+Ownership belongs to \ref StFtpcSectorHitCollection; external deletion will cause a double-free.
+
+\subsection subsec_ftpc_framework Framework Ownership
+\ref StFtpcHitCollection itself is owned by the StEvent framework (via the
+<tt>St_DataSet</tt>/<tt>StXRefMain</tt> mechanism). When registered with StEvent via
+<tt>StEvent::setFtpcHitCollection()</tt>, ownership transfers to the framework, which handles
+cleanup. <tt>StFtpcHitCollection::~StFtpcHitCollection()</tt> and
+<tt>StFtpcPlaneHitCollection::~StFtpcPlaneHitCollection()</tt> are no-ops; only
+\ref StFtpcSectorHitCollection performs explicit hit cleanup.
+
+\section sec_ftpc_members Data Members
+
+\subsection subsec_ftpc_members_top StFtpcHitCollection
+- <tt>enum { mNumberOfPlanes = 20 }</tt> — Fixed number of FTPC readout planes.
+- <tt>StFtpcPlaneHitCollection mPlanes[20]</tt> — Embedded array of per-plane collections.
+
+\subsection subsec_ftpc_members_plane StFtpcPlaneHitCollection
+- <tt>enum { mNumberOfSectors = 6 }</tt> — Number of azimuthal sectors per plane.
+- <tt>StFtpcSectorHitCollection mSectors[6]</tt> — Embedded array of per-sector collections.
+
+\subsection subsec_ftpc_members_sector StFtpcSectorHitCollection
+- <tt>StSPtrVecFtpcHit mHits</tt> — Dynamic vector of pointers to \ref StFtpcHit objects in this
+  sector.
+
+\section sec_ftpc_methods Key Methods
+
+\subsection subsec_ftpc_methods_top StFtpcHitCollection
+- <tt>bool addHit(StFtpcHit*)</tt> — Routes a hit into the correct plane/sector sub-collection.
+  Returns <tt>false</tt> if the hit is null or its indices are out of range.
+- <tt>unsigned int numberOfHits() const</tt> — Total hits across all planes and sectors.
+- <tt>unsigned int numberOfPlanes() const</tt> — Returns 20.
+- <tt>StFtpcPlaneHitCollection* plane(unsigned int)</tt> — Sub-collection at 0-based index, or
+  <tt>nullptr</tt> if out of range.
+
+\subsection subsec_ftpc_methods_plane StFtpcPlaneHitCollection
+- <tt>unsigned int numberOfHits() const</tt> — Total hits in this plane.
+- <tt>unsigned int numberOfSectors() const</tt> — Returns 6.
+- <tt>StFtpcSectorHitCollection* sector(unsigned int)</tt> — Sub-collection at 0-based index.
+
+\subsection subsec_ftpc_methods_sector StFtpcSectorHitCollection
+- <tt>StSPtrVecFtpcHit& hits()</tt> — Mutable reference to the hit vector.
+- <tt>const StSPtrVecFtpcHit& hits() const</tt> — Const reference to the hit vector.
+
+\section sec_ftpc_usage Usage Examples
+
+\subsection subsec_ftpc_usage_iter Iterate Over All Hits
+
+\code{.cpp}
+StFtpcHitCollection* ftpcColl = event->ftpcHitCollection();
+if (!ftpcColl) return;
+
+for (unsigned int iPlane = 0; iPlane < ftpcColl->numberOfPlanes(); ++iPlane) {
+    const StFtpcPlaneHitCollection* plane = ftpcColl->plane(iPlane);
+    if (!plane) continue;
+
+    for (unsigned int iSec = 0; iSec < plane->numberOfSectors(); ++iSec) {
+        const StFtpcSectorHitCollection* sec = plane->sector(iSec);
+        if (!sec) continue;
+
+        const StSPtrVecFtpcHit& hits = sec->hits();
+        for (const StFtpcHit* hit : hits) {
+            // process hit -- do NOT delete hit
+        }
+    }
+}
+\endcode
+
+\subsection subsec_ftpc_usage_add Add a Hit (e.g. from a Maker)
+
+\code{.cpp}
+StFtpcHit* hit = new StFtpcHit(/*...*/);  // allocated via StFtpcHit::operator new
+ftpcColl->addHit(hit);                    // ownership transferred to the collection
+// Do not delete 'hit' after this call.
+\endcode
+
+*/

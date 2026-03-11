@@ -1,0 +1,74 @@
+/*!
+\page page_stgmtstrip StGmtStrip
+
+\brief Raw ADC samples, pedestal, and reconstructed charge for one GMT readout strip.
+
+\section gmtstrip_overview Overview
+
+StGmtStrip holds per-channel data for the **GEM-based Muon Tracker (GMT)**.
+The GMT has 8 modules, each with two orthogonal layers: X-strips and Y-pads.
+Each channel is read out by APV25 (15 time bins).  The class stores raw and
+pedestal-subtracted ADC arrays, calibration values, and electronics coordinates.
+
+**Detector**: GEM-based Muon Tracker (GMT)  
+**Stage**: Raw DAQ → pedestal subtraction → charge reconstruction
+
+\section gmtstrip_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StGmtStrip
+\endcode
+
+\section gmtstrip_geometry Geometry
+
+| Constant | Value |
+|----------|-------|
+| \c kGmtNumModules | 8 |
+| \c kGmtNumStrips | 128 channels/layer |
+| \c kGmtNumTimeBins | 15 time bins |
+
+\c mIsY = 0: X-strip (spatial coordinate); \c mIsY = 1: Y-pad (orthogonal).
+
+\section gmtstrip_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Int_t | \c mGeoId | Geometric strip ID (module × layer × strip) |
+| \c Int_t | \c mModule | Module index (0–7) |
+| \c Int_t | \c mCoordNum | Coordinate number within layer (0–127) |
+| \c Int_t | \c mIsY | 0 = X-strip, 1 = Y-pad |
+| \c Float_t | \c mPosition | Physical position relative to module origin |
+| \c Short_t[15] | \c mAdc | Raw ADC time samples |
+| \c Short_t[15] | \c mPedSubtractedAdc | Pedestal-subtracted ADC time samples |
+| \c Short_t | \c mMaxAdc | Peak raw ADC |
+| \c Short_t | \c mMaxPedSubtractedAdc | Peak ped-subtracted ADC |
+| \c Float_t | \c mCharge | Reconstructed charge (C) |
+| \c Float_t | \c mPed, \c mPedStdDev, \c mPedErr | Pedestal and uncertainties |
+| \c Int_t | \c mIsC | 1 if strip is used in a cluster |
+
+\section gmtstrip_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c getGeoId() | Geometric strip ID |
+| \c getModule() | Module index |
+| \c getCoordNum() | Coordinate index |
+| \c isY() | 1 = Y-pad, 0 = X-strip |
+| \c getAdc(tb) | Raw ADC at time bin \c tb |
+| \c getPedSubtractedAdc(tb) | Ped-subtracted ADC at time bin \c tb |
+| \c getMaxAdc() | Peak raw ADC |
+| \c getCharge() | Reconstructed charge |
+| \c chargeValid() | True if charge is valid |
+
+\section gmtstrip_example Usage Example
+
+\code{.cpp}
+StGmtStrip* strip = ...; // from GMT strip collection
+if (!strip->chargeValid()) continue;
+int   module  = strip->getModule();
+float charge  = strip->getCharge();
+short maxPedSub = strip->getMaxPedSubtractedAdc();
+\endcode
+
+\see StGmtHit, StGmtPoint, StGmtCollection
+*/

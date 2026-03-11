@@ -1,0 +1,49 @@
+/*!
+\page page_stEmcDetector StEmcDetector
+
+\brief One sub-detector plane of the STAR Electromagnetic Calorimeter.
+
+\section emcdetector_overview Overview
+
+StEmcDetector is the top-level container for one EMC sub-detector (e.g. the
+BEMC tower layer, the BEMC pre-shower, an SMD plane, or an EEMC layer).  It
+owns an array of up to 120 StEmcModule objects holding raw hits, an
+StEmcClusterCollection for reconstructed clusters, and an array of crate
+status flags.
+
+\section emcdetector_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StEmcDetector
+\endcode
+
+Accessed via \ref page_stEmcCollection "StEmcCollection".
+
+\section emcdetector_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| StDetectorId | mDetectorId | Sub-detector identifier (e.g. kBarrelEmcTowerId). |
+| UInt_t | mNumberOfModules | Number of active readout modules (up to 120). |
+| StEmcModule*[120] | mModules | Array of owned module objects (1-based). |
+| StEmcClusterCollection* | mClusters | Owned cluster collection. |
+| StEmcCrateStatus[36] | mCrateStatusFlag | Health flags for each readout crate. |
+
+\section emcdetector_methods Key Methods
+
+- \c detectorId() — sub-detector identifier.
+- \c numberOfModules() — number of active modules.
+- \c addHit(StEmcRawHit*) — route a hit to the correct module.
+- \c numberOfHits() — total hit count.
+- \c getEnergy() — total energy sum [GeV].
+- \c module(uint) — access a module by 1-based index.
+- \c cluster() — access the cluster collection.
+- \c crateStatus(int) — crate health flag.
+- \c setCluster(), \c setModule(), \c setCrateStatus() — setters.
+
+\section emcdetector_seealso See Also
+
+\ref page_stEmcModule "StEmcModule",
+\ref page_stEmcRawHit "StEmcRawHit",
+\ref page_stEmcCluster "StEmcCluster"
+*/

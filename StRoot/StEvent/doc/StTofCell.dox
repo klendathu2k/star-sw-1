@@ -1,0 +1,73 @@
+/*!
+\page page_sttofcell StTofCell
+
+\brief Matched cell in the legacy STAR Time-of-Flight (TOF) detector.
+
+\section tofcell_overview Overview
+
+StTofCell represents a matched cell in the legacy STAR TOF detector —
+the MRPC-based barrel TOF system active from approximately Run 3 through Run 7.
+A cell is the smallest readout unit of the MRPC and is associated with a single reconstructed track.
+
+It stores raw electronic data (ADC, TDC, leading/trailing edge times) and spatial information
+(3D hit position, z-hit), together with the track-match quality flag.
+
+\note This class belongs to the legacy TOF system, superseded by \ref StBTofHit for Run 8+.
+
+Cells are stored in \ref StTofCollection via StEvent::tofCollection().
+
+\section tofcell_hierarchy Class Hierarchy
+
+\code{.txt}
+TObject → StObject → StTofCell
+\endcode
+
+\section tofcell_members Data Members
+
+| Member | Type | Description |
+|---|---|---|
+| mTrayIndex | Int_t | Tray index |
+| mModuleIndex | Int_t | Module index within tray |
+| mCellIndex | Int_t | Cell index within module |
+| mDaqIndex | Int_t | DAQ channel index |
+| mAdc | Int_t | Raw ADC value |
+| mTdc | Int_t | Raw TDC value |
+| mLeadingEdgeTime | Double_t | Calibrated leading-edge time [ns] |
+| mTrailingEdgeTime | Double_t | Calibrated trailing-edge time [ns] |
+| mAssociatedTrack | StLink<StTrack> | Matched reconstructed track |
+| mZhit | Float_t | z-position of hit [cm] |
+| mMatchFlag | Int_t | Track-to-cell matching quality flag |
+| mPosition | StThreeVectorD | Full 3D hit position [cm] |
+
+tot() returns trailing − leading edge time [ns] (time-over-threshold).
+
+\section tofcell_methods Key Methods
+
+- trayIndex(), moduleIndex(), cellIndex() — geometry indices
+- adc() — raw ADC value
+- tdc() — raw TDC value
+- leadingEdgeTime() — calibrated leading-edge time [ns]
+- trailingEdgeTime() — calibrated trailing-edge time [ns]
+- tot() — time-over-threshold [ns]
+- associatedTrack() — pointer to matched StTrack
+- zHit() — z-coordinate of hit [cm]
+- matchFlag() — match quality flag
+- position() — 3D hit position [cm]
+
+\section tofcell_example Usage Example
+
+\code{.cpp}
+StTofCollection* coll = event->tofCollection();
+if (coll) {
+    const StSPtrVecTofCell& cells = coll->tofCells();
+    for (const auto& c : cells) {
+        double leTime = c->leadingEdgeTime();
+        double teTime = c->trailingEdgeTime();
+        float  tot    = c->tot();
+        float  zHit   = c->zHit();
+    }
+}
+\endcode
+
+\see StTofHit, StTofData, StTofCollection
+*/

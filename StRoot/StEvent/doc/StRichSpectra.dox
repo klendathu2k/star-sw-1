@@ -1,0 +1,79 @@
+/*!
+\page page_strichspectra StRichSpectra
+
+\brief \ref page_strichspectra "StRichSpectra" — per-track Cherenkov ring summary for uDST storage.
+
+\section strichspectra_overview Overview
+StRichSpectra is the per-track output object written by StRichSpectraMaker for
+uDST storage. It summarises the Cherenkov ring reconstruction for one track:
+the mean angle θ_C, its sigma, photon counts, reconstructed mass², and
+per-species ring-distance metrics. It is accessed via
+\ref page_strichpidtraits "StRichPidTraits::getRichSpectra()".
+
+\section strichspectra_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichSpectra
+\endcode
+
+\section strichspectra_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| Float_t | mExtrapolatedX | Extrapolated track X on RICH pad plane (cm) |
+| Float_t | mExtrapolatedY | Extrapolated track Y on RICH pad plane (cm) |
+| Float_t | mDx | MIP residual ΔX (cm) |
+| Float_t | mDy | MIP residual ΔY (cm) |
+| Float_t | mCdx | Corrected residual X (cm) |
+| Float_t | mCdy | Corrected residual Y (cm) |
+| Float_t | mCherenkovAngle | Mean Cherenkov angle θ_C (rad) |
+| Float_t | mCherenkovAngleSigma | Sigma of θ_C distribution (rad) |
+| Int_t | mNumberOfPhotons | Photons used in θ_C reconstruction |
+| Float_t | mPeakAngle | Peak angle in photon distribution (rad) |
+| Int_t | mPeakPhotons | Photons at peak angle |
+| Int_t | mTotalPhotons | Total photon candidates on ring |
+| Float_t | mMassSquared | Reconstructed mass² (GeV²/c⁴) |
+| Float_t | mLineIntegralRatio | Cherenkov ring line-integral ratio |
+| Float_t | mLineIntegral | Cherenkov ring line integral |
+| Float_t | mAlpha | Photon-yield correction factor |
+| Int_t | mFlag | Status flag word |
+| Float_t | mReserved | Reserved float |
+| Float_t | mDpi | Mean distance to pion ring (cm) |
+| Float_t | mDk | Mean distance to kaon ring (cm) |
+| Float_t | mDp | Mean distance to proton ring (cm) |
+| Int_t | mNDpi | Photons used in pion mean-D |
+| Int_t | mNDk | Photons used in kaon mean-D |
+| Int_t | mNDp | Photons used in proton mean-D |
+| Int_t | mVersion | Production version tag |
+
+\section strichspectra_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| float getCherenkovAngle() const | Mean Cherenkov angle (rad) |
+| float getCherenkovAngleSigma() const | Sigma of Cherenkov angle (rad) |
+| int getNumberOfPhotons() const | Number of photons used |
+| float getMassSquared() const | Reconstructed mass² (GeV²/c⁴) |
+| float getMeanDpi() const | Mean distance to pion ring (cm) |
+| float getMeanDk() const | Mean distance to kaon ring (cm) |
+| float getMeanDp() const | Mean distance to proton ring (cm) |
+| float getExtrapolatedX() const | Track X on pad plane (cm) |
+| float getExtrapolatedY() const | Track Y on pad plane (cm) |
+| int getFlag() const | Status flag word |
+| int getVersion() const | Production version tag |
+
+\section strichspectra_example Usage Example
+\code{.cpp}
+StRichPidTraits* richPid = dynamic_cast<StRichPidTraits*>(pidVec[i]);
+if (richPid) {
+    StRichSpectra* s = richPid->getRichSpectra();
+    if (s) {
+        float theta = s->getCherenkovAngle();
+        float mass2 = s->getMassSquared();
+    }
+}
+\endcode
+
+\section strichspectra_related Related Classes
+\ref page_strichpidtraits "StRichPidTraits" — parent PID traits object that owns this spectra. \n
+\ref page_strichpid "StRichPid" — per-species PID hypothesis stored alongside this object.
+*/

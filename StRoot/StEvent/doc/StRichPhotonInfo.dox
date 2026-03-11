@@ -1,0 +1,40 @@
+/*!
+\page page_strichphotoninfo StRichPhotonInfo
+
+\brief \ref page_strichphotoninfo "StRichPhotonInfo" — per-photon geometry record for one Cherenkov photon candidate.
+
+\section strichphotoninfo_overview Overview
+StRichPhotonInfo stores the geometry of a single Cherenkov photon candidate on
+a ring hypothesis. For each photon hit it records the distance from the
+predicted ring centre, the uncertainty on that distance, and the azimuthal
+angle on the pad plane. These values support the truncated ring statistics and
+likelihood-based PID in \ref page_strichpid "StRichPid".
+
+\section strichphotoninfo_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichPhotonInfo
+\endcode
+
+\section strichphotoninfo_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| Float_t | mD | Distance from ring centre to photon hit (cm) |
+| Float_t | mSigma | Uncertainty on mD (cm) |
+| Float_t | mAzimuth | Azimuthal angle of photon hit on pad plane (rad) |
+
+\section strichphotoninfo_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| float d() const | Ring-centre distance (cm) |
+| float sigma() const | Uncertainty on distance (cm) |
+| float azimuth() const | Azimuthal angle (rad) |
+| void setD(float) | Set ring-centre distance |
+| void setSigma(float) | Set distance uncertainty |
+| void setAzimuth(float) | Set azimuthal angle |
+
+\section strichphotoninfo_related Related Classes
+\ref page_strichpid "StRichPid" — owns the collection of StRichPhotonInfo objects. \n
+\ref page_strichhit "StRichHit" — photon hit whose geometry is described here.
+*/

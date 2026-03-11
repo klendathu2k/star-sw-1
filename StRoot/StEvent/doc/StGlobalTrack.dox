@@ -1,0 +1,50 @@
+/*!
+\page page_stglobaltrack StGlobalTrack
+
+\brief Reconstructed global track — helix fit without vertex constraint.
+
+\section stglobaltrack_overview Overview
+StGlobalTrack stores the result of the unconstrained helix fit through
+TPC (and silicon) hits.  It is the primary input to vertex finding and
+secondary-vertex analyses.  It additionally carries an StDcaGeometry
+object — the compact 5-parameter representation of the track state at
+the beam-line point of closest approach — used for precise impact-parameter
+measurements.
+
+Global tracks live inside \ref page_sttracknode "StTrackNode" objects
+in StEvent::trackNodes().
+
+\section stglobaltrack_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StTrack → StGlobalTrack
+\endcode
+
+\section stglobaltrack_datamembers Additional Data Member
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDcaGeometry | StDcaGeometry* | Track state at beam-line DCA (owned, may be null). |
+
+\section stglobaltrack_methods Key Methods
+
+\code{.cpp}
+// Get the global track from a node
+StGlobalTrack* g = static_cast<StGlobalTrack*>(node->track(global));
+
+// Momentum from inner geometry
+StThreeVectorD p = g->geometry()->momentum();
+
+// DCA geometry (precision impact parameter)
+const StDcaGeometry* dca = g->dcaGeometry();
+if (dca) {
+    double imp = dca->impact();       // transverse DCA (cm)
+    double z   = dca->z();            // longitudinal DCA (cm)
+}
+
+// Fit quality
+int   nFit = g->fitTraits().numberOfFitPoints(kTpcId);
+float chi2 = g->fitTraits().chi2(0);
+\endcode
+
+\sa \ref page_sttrack, \ref page_stprimarytrack, \ref page_sttracknode
+*/

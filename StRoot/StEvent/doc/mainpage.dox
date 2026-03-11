@@ -159,6 +159,53 @@
  * | FGT     | Forward GEM Tracker                    | StFgtCollection           |
  * | RICH    | Ring Imaging Cherenkov                 | StRichCollection          |
  *
+ * \section collections_sec Collection Documentation
+ *
+ * Detailed documentation for each detector collection is available on the following pages:
+ *
+ * \par Tracking Detectors (Central)
+ * - \ref page_stTpcHitCollection "StTpcHitCollection"
+ * - \ref page_stFtpcHitCollection "StFtpcHitCollection"
+ * - \ref page_stSvtHitCollection "StSvtHitCollection"
+ * - \ref page_stssdHitCollection "StSsdHitCollection"
+ * - \ref page_stsstHitCollection "StSstHitCollection"
+ * - \ref page_stpxlHitCollection "StPxlHitCollection"
+ * - \ref page_stistHitCollection "StIstHitCollection"
+ * - \ref page_stetrhitcollection "StEtrHitCollection"
+ *
+ * \par Forward Tracking Detectors
+ * - \ref page_stfsthitcollection "StFstHitCollection"
+ * - \ref page_stfgtcollection "StFgtCollection"
+ * - \ref page_stgmtcollection "StGmtCollection"
+ * - \ref page_stfttcollection "StFttCollection"
+ * - \ref page_stfwdtrackcollection "StFwdTrackCollection"
+ * - \ref page_strpscollection "StRpsCollection"
+ *
+ * \par Calorimeters
+ * - \ref page_stemccollection "StEmcCollection"
+ * - \ref page_stfmscollection "StFmsCollection"
+ * - \ref page_stfpdcollection "StFpdCollection"
+ * - \ref page_stfcscollection "StFcsCollection"
+ * - \ref page_stphmdcollection "StPhmdCollection"
+ * - \ref page_strhicfcollection "StRHICfCollection"
+ *
+ * \par Timing / PID Detectors
+ * - \ref page_stbtofcollection "StBTofCollection"
+ * - \ref page_stoftofcollection "StTofCollection"
+ * - \ref page_stetofcollection "StETofCollection"
+ * - \ref page_stmtdcollection "StMtdCollection"
+ * - \ref page_strichcollection "StRichCollection"
+ *
+ * \par Event Plane / Multiplicity
+ * - \ref page_stepdcollection "StEpdCollection"
+ *
+ * \par Trigger
+ * - \ref page_sttriggerdetectorcollection "StTriggerDetectorCollection"
+ * - \ref page_sttriggeridcollection "StTriggerIdCollection"
+ *
+ * \par Utility
+ * - \ref page_strndmhitcollection "StRnDHitCollection"
+ *
  * \sa StEvent, StTrack, StGlobalTrack, StPrimaryTrack,
  *     StVertex, StPrimaryVertex, StHit, StRunInfo, StEventInfo
  */

@@ -1,0 +1,58 @@
+/*!
+\page page_stfwdtrack StFwdTrack
+
+\brief Reconstructed forward-rapidity track from FST + FTT + GenFit.
+
+\section stfwdtrack_overview Overview
+StFwdTrack stores the output of the STAR forward-tracking reconstruction
+for the pseudorapidity range ~2.5 < η < 4.  Hits from the Forward Silicon
+Tracker (FST) and Forward sTGC Tracker (FTT) are combined in a GenFit
+Kalman fit.  Projections to individual detector planes and optional
+associations to FCS calorimeter clusters are also stored.
+
+StFwdTrack objects are stored in StFwdTrackCollection, accessible via
+StEvent::fwdTrackCollection().
+
+\section stfwdtrack_hierarchy Class Hierarchy
+\code{.cpp}
+TObject → StObject → StFwdTrack
+\endcode
+
+\section stfwdtrack_datamembers Selected Data Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| mDidFitConverge | bool | GenFit convergence flag. |
+| mNumberOfFitPoints | short | Number of hits in the final fit. |
+| mChi2 | float | Fit chi-squared. |
+| mNDF | float | Degrees of freedom. |
+| mPval | float | P-value of the fit. |
+| mCharge | short | Electric charge (−1, 0, +1). |
+| mPrimaryMomentum | StThreeVectorD | Momentum at primary vertex (GeV/c). |
+| mDCA[3] | float | DCA to primary vertex (cm). |
+| mVtxIndex | UChar_t | Packed: vertex index (bits 7–2) + track type (bits 1–0). |
+| mProjections | vector<StFwdTrackProjection> | Projections to sub-detector surfaces. |
+
+\section stfwdtrack_tracktype Track Type
+\code{.cpp}
+enum StFwdTrackType {
+    kGlobal = 0, kBeamlineConstrained = 1,
+    kPrimaryVertexConstrained = 2, kForwardVertexConstrained = 3
+};
+\endcode
+
+\section stfwdtrack_methods Key Methods
+
+\code{.cpp}
+const StFwdTrackCollection* coll = event->fwdTrackCollection();
+for (const StFwdTrack* t : coll->tracks()) {
+    if (!t->didFitConverge()) continue;
+    StThreeVectorD p = t->momentum();
+    double pt = p.perp();
+    // Projection at a specific detector
+    StFwdTrackProjection proj = t->getProjectionFor(kFttId, 0);
+}
+\endcode
+
+\sa StFwdTrackCollection
+*/

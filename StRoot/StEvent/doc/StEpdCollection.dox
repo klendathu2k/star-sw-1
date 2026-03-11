@@ -1,0 +1,55 @@
+/*!
+\page page_stepdcollection StEpdCollection — Collection Documentation
+
+\section epd_overview Overview
+
+\ref StEpdCollection is the event-level container for hits in the
+<b>Event Plane Detector (EPD)</b>.
+
+The EPD is a pair of scintillator-tile wheels at forward rapidity
+(2.14 < |η| < 5.09) — one on each side of the STAR interaction point.
+Each wheel has 12 supersectors × 31 tiles, read out via SiPMs and QT boards.
+It provides high-multiplicity forward signals used for event-plane determination,
+centrality estimation, and ZDC-SMD cross-calibration.
+
+One \ref StEpdHit is created for each tile that registers a valid signal.
+
+\section epd_ownership Object Ownership
+
+- <b>mEpdHits</b> (\c StSPtrVecEpdHit): Owned; \c StSPtrVec deletes elements on
+  destruction.  The \ref StEpdCollection destructor is a <b>no-op</b>; cleanup is
+  handled by \c StSPtrVec and the \c StEvent framework.
+
+\section epd_members Data Members
+
+| Type | Name | Description |
+|------|------|-------------|
+| \c StSPtrVecEpdHit | mEpdHits | Collection of \ref StEpdHit objects — one per good tile hit. Each stores: tile ID (supersector 1–12, tile 1–31, east/west side ±1), QT ADC, TDC, TAC values, TAC presence flag, gain-corrected energy loss in MIP MPV units, and database quality flag. |
+
+\section epd_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c epdHits() | Reference to the EPD hit collection (mutable and const overloads). |
+| \c addHit(const StEpdHit*) | Appends an EPD tile hit (null-safe). |
+| \c hitsPresent() const | Returns \c true if at least one hit is present. |
+
+\section epd_example Usage Example
+
+\code{.cpp}
+StEpdCollection* epdColl = event->epdCollection();
+if (!epdColl || !epdColl->hitsPresent()) return;
+
+const StSPtrVecEpdHit& hits = epdColl->epdHits();
+for (size_t i = 0; i < hits.size(); ++i) {
+    StEpdHit* hit = hits[i];
+    int   position = hit->position();  // supersector 1-12
+    int   tile     = hit->tile();      // tile 1-31
+    int   side     = hit->side();      // +1 West, -1 East
+    float nMIP     = hit->nMIP();      // gain-calibrated energy loss in MIP units
+    bool  good     = hit->isGood();    // database quality flag
+}
+\endcode
+
+\see StEpdHit
+*/

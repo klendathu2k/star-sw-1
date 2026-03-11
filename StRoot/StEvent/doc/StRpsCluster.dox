@@ -1,0 +1,70 @@
+/*!
+\page page_strpscluster StRpsCluster
+
+\brief Reconstructed hit cluster in a Roman Pot silicon strip detector plane.
+
+\section rpscluster_overview Overview
+
+StRpsCluster is a single reconstructed hit cluster in one silicon strip detector plane
+of the **Roman Pot System (RPS)**.  A cluster is formed from one or more adjacent strips
+with charge above threshold.  It records position along the strip axis, RMS spread,
+strip count, deposited energy (ADC counts), transverse coordinate, and a quality flag.
+
+**Detector**: Roman Pot System (RPS / pp2pp)  
+**Stage**: silicon ADC → cluster finding → position reconstruction
+
+\section rpscluster_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StRpsCluster
+\endcode
+
+StRpsCluster objects are stored in StRpsPlane and belong to the hierarchy:
+
+\code
+StRpsCollection → StRpsRomanPot[0..7] → StRpsPlane[0..3] → StRpsCluster
+\endcode
+
+The parent plane sets \c mPlaneId and \c mRomanPotId automatically via
+\c StRpsPlane::addCluster().
+
+\section rpscluster_members Data Members
+
+| Type | Member | Description |
+|------|--------|-------------|
+| \c Double_t | \c mPosition | Hit position along the strip-sensitive axis (cm) |
+| \c Double_t | \c mPositionRMS | RMS spread of the cluster position (cm) |
+| \c Short_t | \c mLength | Number of strips in the cluster |
+| \c Double_t | \c mEnergy | Total deposited charge (ADC counts) |
+| \c Double_t | \c mXY | Coordinate perpendicular to the strip direction (cm) |
+| \c UChar_t | \c mQuality | Cluster quality flag (0 = good) |
+| \c UChar_t | \c mPlaneId | Parent plane index (0–3) within the Roman Pot |
+| \c UChar_t | \c mRomanPotId | Parent Roman Pot index (0–7) |
+
+\section rpscluster_methods Key Methods
+
+| Method | Description |
+|--------|-------------|
+| \c position() | Hit position along strip direction (cm) |
+| \c positionRMS() | RMS spread of position (cm) |
+| \c length() | Number of strips |
+| \c energy() | Total ADC charge |
+| \c xy() | Transverse coordinate (cm) |
+| \c quality() | Quality flag |
+| \c planeId() | Parent plane index |
+| \c romanPotId() | Parent Roman Pot index |
+
+\section rpscluster_example Usage Example
+
+\code{.cpp}
+const StRpsPlane* plane = rp->plane(ip);
+for (unsigned int ic = 0; ic < plane->numberOfClusters(); ++ic) {
+    const StRpsCluster* cl = plane->cluster(ic);
+    double pos  = cl->position();    // strip-axis hit (cm)
+    short  nStr = cl->length();      // strip count
+    double e    = cl->energy();      // ADC sum
+}
+\endcode
+
+\see StRpsPlane, StRpsRomanPot, StRpsCollection
+*/

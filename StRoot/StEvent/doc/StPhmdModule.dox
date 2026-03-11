@@ -1,0 +1,37 @@
+/*!
+\page page_stPhmdModule StPhmdModule
+
+\brief Supermodule of the STAR PHMD, holding pad-cell hits.
+
+\section phmdModule_overview Overview
+
+StPhmdModule groups the StPhmdHit objects from one supermodule of a
+STAR PHMD plane (PMD or CPV).  Each PHMD plane has 12 supermodules covering
+different azimuthal sectors; each supermodule contains a honeycomb pad array.
+
+\section phmdModule_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StPhmdModule
+\endcode
+
+Owned by \ref page_stPhmdDetector "StPhmdDetector"; accessed via
+\c StPhmdDetector::module(uint).
+
+\section phmdModule_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| StSPtrVecPhmdHit | mHits | Strongly-owned collection of pad-cell hits in this supermodule. |
+
+\section phmdModule_methods Key Methods
+
+- \c numberOfHits() — number of fired cells.
+- \c hits() — mutable/const access to the hit vector.
+
+\section phmdModule_seealso See Also
+
+\ref page_stPhmdHit "StPhmdHit",
+\ref page_stPhmdDetector "StPhmdDetector",
+\ref page_stPhmdCluster "StPhmdCluster"
+*/

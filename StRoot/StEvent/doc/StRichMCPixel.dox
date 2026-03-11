@@ -1,0 +1,52 @@
+/*!
+\page page_strichmcpixel StRichMCPixel
+
+\brief \ref page_strichmcpixel "StRichMCPixel" — MC RICH pad pixel augmented with per-particle truth records.
+
+\section strichmcpixel_overview Overview
+StRichMCPixel extends \ref page_strichpixel "StRichPixel" with a collection of
+\ref page_strichmcinfo "StRichMCInfo" truth records. Multiple simulated particles
+can contribute charge to a single pad; each contribution is recorded separately,
+enabling reconstruction algorithms to trace pad signals back to their
+generator-level origin.
+
+\section strichmcpixel_hierarchy Class Hierarchy
+\code
+TObject
+└── StObject
+    └── StRichPixel
+        └── StRichMCPixel
+\endcode
+
+\section strichmcpixel_members Data Members
+| Type | Name | Description |
+|------|------|-------------|
+| StSPtrVecRichMCInfo | mInfo | Owned collection of MC truth records, one per contributing particle |
+
+All data members of \ref page_strichpixel "StRichPixel" are also inherited.
+
+\section strichmcpixel_methods Key Methods
+| Signature | Description |
+|-----------|-------------|
+| int contributions() const | Number of contributing MC particles |
+| void addInfo(StRichMCInfo*) | Append an MC truth record |
+| void setInfo(StSPtrVecRichMCInfo&) | Replace the entire MC truth collection |
+| StSPtrVecRichMCInfo& getMCInfo() | Return the MC truth collection |
+
+\section strichmcpixel_example Usage Example
+\code{.cpp}
+StRichCollection* rich = event->richCollection();
+StSPtrVecRichPixel& pixels = rich->getRichPixels();
+for (const auto& pix : pixels) {
+    StRichMCPixel* mcPix = dynamic_cast<StRichMCPixel*>(pix);
+    if (!mcPix) continue;
+    for (const auto& info : mcPix->getMCInfo())
+        std::cout << "  GEANT PID=" << info->gid() << "\n";
+}
+\endcode
+
+\section strichmcpixel_related Related Classes
+\ref page_strichpixel "StRichPixel" — base raw pixel. \n
+\ref page_strichmcinfo "StRichMCInfo" — individual truth record. \n
+\ref page_strichmchit "StRichMCHit" — MC truth at the reconstructed-hit level.
+*/

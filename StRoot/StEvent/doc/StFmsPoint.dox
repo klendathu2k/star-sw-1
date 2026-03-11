@@ -1,0 +1,68 @@
+/*!
+\page page_stFmsPoint StFmsPoint
+
+\brief Photon point reconstructed from an FMS cluster, with FPS pre-shower PID.
+
+\section fmsPoint_overview Overview
+
+StFmsPoint represents a single photon (or other EM particle) fitted to an
+FMS lead-glass cluster (2.5 < η < 4.0).  Beyond position and four-momentum,
+it carries FPS (Forward Pion Spectrometer) pre-shower layer hit patterns
+that are used to classify the point as a photon, electron, MIP, or unknown
+via the \c mFpsPid particle-ID flag.  Up to four candidate FPS slats per
+layer are stored, sorted by projected distance from nearest to farthest.
+
+\section fmsPoint_hierarchy Class Hierarchy
+
+\code
+TObject → StObject → StFmsPoint
+\endcode
+
+Stored in \ref page_stFmsCollection "StFmsCollection";
+cross-linked to \ref page_stFmsCluster "StFmsCluster".
+
+\section fmsPoint_members Data Members
+
+| Type | Name | Description |
+|---|---|---|
+| UShort_t | mDetectorId | Sub-detector: 8=NLarge, 9=SLarge, 10=NSmall, 11=SSmall. |
+| Float_t | mEnergy | Fitted photon energy [GeV]. |
+| Float_t | mX | Local x-position [cm]. |
+| Float_t | mY | Local y-position [cm]. |
+| Int_t | mId | Event-wide photon ID. |
+| Int_t | mParentClusterId | Parent cluster ID. |
+| Int_t | mNParentClusterPhotons | Photon count in parent cluster. |
+| StLorentzVectorF | mFourMomentum | Photon four-momentum. |
+| StThreeVectorF | mXYZ | Global STAR position [cm]. |
+| Int_t | mFpsPid | FPS PID classification (see StFmsPointPidFlag enum). |
+| Int_t[3] | mFpsNCandidate | Candidate slat count per FPS layer. |
+| Float_t[3][4] | mFpsMip | MIP signal per layer/candidate. |
+| Int_t[3][4] | mFpsSlatId | Slat ID per layer/candidate. |
+| Float_t[3][4] | mFpsDistance | Edge distance per layer/candidate. |
+
+\section fmsPoint_pidflags FPS PID Flags (StFmsPointPidFlag)
+
+| Value | Meaning |
+|---|---|
+| 0 | No FPS coverage |
+| 10 | Non-converting photon (L1=L2=L3=0) |
+| 11 | Golden photon (L3 hit only) |
+| 20 | MIP (L1=L2=L3=1) |
+| 30 | Golden electron (L1=L2=1, L3≥5) |
+
+\section fmsPoint_methods Key Methods
+
+- \c energy(), \c x(), \c y(), \c XYZ() — photon energy and position.
+- \c fourMomentum() — four-momentum.
+- \c detectorId(), \c id(), \c parentClusterId() — identification.
+- \c cluster() — parent cluster.
+- \c fpsPid(), \c fpsNCandidate(), \c fpsMip(), \c fpsSlatId(), \c fpsDistance() — FPS pre-shower data.
+- \c setFps(), \c resetFps(), \c setFpsPid() — FPS setters.
+- \c print() — print summary.
+
+\section fmsPoint_seealso See Also
+
+\ref page_stFmsCluster "StFmsCluster",
+\ref page_stFmsPointPair "StFmsPointPair",
+\ref page_stFpsSlat "StFpsSlat"
+*/
