@@ -1,0 +1,333 @@
+/**
+ * @defgroup PamsGlobal pams/global — Global Event and DST Tables
+ * @ingroup Pams
+ *
+ * @brief IDL table definitions for global, event-level DST data and event
+ *        classification tag tables used throughout the STAR offline analysis.
+ *
+ * All table definitions live in <tt>pams/global/idl/</tt>.  The IDL files are
+ * processed by the STAR table-generation tools to produce C structs and
+ * ROOT-compatible table classes.  The resulting tables are filled during BFC
+ * production and consumed by StEventMaker, StAnalysisMaker, and related
+ * makers in StRoot.
+ *
+ * ## Table groups
+ *
+ * ### Event and run identification
+ * - @ref event_header  — minimal, immutable per-event identification
+ * - @ref run_header    — BFC production-run identification
+ * - @ref gen_header    — Monte-Carlo event-generator header
+ *
+ * ### Trigger tables
+ * - @ref dst_L0_Trigger — Level-0 hardware trigger words and CTB/MWC data
+ * - @ref dst_L1_Trigger — Level-1 trigger result array
+ * - @ref dst_L2_Trigger — Level-2 trigger result array
+ * - @ref dst_TrgDet     — Trigger-detector (CTB, MWC, VPD, ZDC, BBC, EMC) summary
+ *
+ * ### Reconstruction parameters
+ * - @ref exi_exipar         — Cascade (Ξ) reconstruction cuts
+ * - @ref tkf_tkfpar         — Track-finder (kink) parameter set
+ * - @ref particle_dst_param — DST particle-filler acceptance cuts
+ *
+ * ### Secondary vertices
+ * - @ref smdst_v0 — V0 (K⁰_S, Λ, Λ̄) secondary-vertex DST
+ *
+ * ### Event classification tag tables
+ * - @ref HbtTag     — HBT per-species moment tag
+ * - @ref HeavyTag   — Heavy-flavour event tag
+ * - @ref HighPtTag  — High-pT and spin-group event tag
+ * - @ref ScaTag     — Scale-correlation analysis tag
+ * - @ref StrangeTag — Strangeness event tag
+ */
+
+/**
+ * @struct event_header
+ * @ingroup PamsGlobal
+ * @brief Minimal, immutable per-event identification.
+ *
+ * Contains information that uniquely identifies a single event and does not
+ * depend on any offline reconstruction result.  One row per event.  Valid
+ * for both simulation and experimental data.
+ *
+ * @var event_header::event_type
+ *   Descriptive string: "collision", "cosmic", "lasers", etc.
+ * @var event_header::n_event
+ *   Unique event ID number.
+ * @var event_header::exp_run_id
+ *   Reference to the experiment run ID.
+ * @var event_header::time
+ *   Unique Unix timestamp for the event.
+ * @var event_header::trig_mask
+ *   Hardware trigger mask word.
+ * @var event_header::bunch_cross
+ *   Beam-beam bunch-crossing number (legacy; superseded by @c bunchXing).
+ * @var event_header::bunchXing
+ *   64-bit bunch-crossing number stored as two 32-bit words (lo, hi).
+ */
+
+/**
+ * @struct run_header
+ * @ingroup PamsGlobal
+ * @brief BFC offline production-run identification.
+ *
+ * Characterises one BFC production run.  All events in a production run must
+ * share the same event type, trigger mask, and magnetic field map.  One row
+ * per BFC run.
+ *
+ * @var run_header::bfc_run_id
+ *   Unique BFC production-run ID.
+ * @var run_header::exp_run_id
+ *   Reference to the corresponding experimental run ID.
+ * @var run_header::trig_mask
+ *   Trigger mask common to all events in this production run.
+ * @var run_header::east_a
+ *   Mass number A of the eastward-moving beam ion.
+ * @var run_header::east_z
+ *   Atomic number Z of the eastward-moving beam ion.
+ * @var run_header::west_a
+ *   Mass number A of the westward-moving beam ion.
+ * @var run_header::west_z
+ *   Atomic number Z of the westward-moving beam ion.
+ * @var run_header::sqrt_s
+ *   CM total energy per nucleon–nucleon pair (GeV).
+ * @var run_header::field
+ *   Solenoidal magnetic field at (x,y,z) = (0,0,0) in tesla.
+ */
+
+/**
+ * @struct gen_header
+ * @ingroup PamsGlobal
+ * @brief Monte-Carlo event-generator header.
+ *
+ * Carries the generator-level kinematic and bookkeeping information for
+ * simulated events.
+ *
+ * @var gen_header::bimp
+ *   Impact parameter (fm).
+ * @var gen_header::phi
+ *   Reaction-plane azimuthal angle (rad).
+ * @var gen_header::ecms
+ *   CM energy of the nucleon–nucleon system (GeV).
+ * @var gen_header::genid
+ *   Integer code identifying the event generator.
+ * @var gen_header::awest
+ *   Mass number of the westward-moving projectile (1 for p, 197 for Au).
+ * @var gen_header::aeast
+ *   Mass number of the eastward-moving projectile.
+ */
+
+/**
+ * @struct dst_L0_Trigger
+ * @ingroup PamsGlobal
+ * @brief Level-0 hardware trigger data.
+ *
+ * Stores the raw outputs of the L0 trigger electronics: the Coarse Pixel
+ * Array (CPA) counts, CTB/MWC multiplicity and topology words, the Trigger
+ * Action Word, the Trigger Word, and additional bookkeeping fields added in
+ * 2000–2001.
+ *
+ * @var dst_L0_Trigger::CPA
+ *   Coarse Pixel Array counts (32 words).
+ * @var dst_L0_Trigger::TriggerActionWd
+ *   Trigger Action Word from the L0 processor.
+ * @var dst_L0_Trigger::TriggerWd
+ *   Trigger Word.
+ * @var dst_L0_Trigger::TrgToken
+ *   Trigger token number (added July 2001).
+ */
+
+/**
+ * @struct dst_L1_Trigger
+ * @ingroup PamsGlobal
+ * @brief Level-1 trigger analysis results.
+ * @var dst_L1_Trigger::L1_result
+ *   32-element array of unsigned 32-bit L1 analysis result words.
+ */
+
+/**
+ * @struct dst_L2_Trigger
+ * @ingroup PamsGlobal
+ * @brief Level-2 trigger analysis results.
+ * @var dst_L2_Trigger::L2_result
+ *   32-element array of unsigned 32-bit L2 analysis result words.
+ */
+
+/**
+ * @struct dst_TrgDet
+ * @ingroup PamsGlobal
+ * @brief Trigger-detector summary.
+ *
+ * Aggregates calibrated hit and timing data from all trigger detectors:
+ * CTB, MWC, VPD, ZDC, BBC, and the barrel/endcap EMC trigger patches.
+ * Arrays are dimensioned [channel][side][sample] where applicable;
+ * the @c npre and @c npost fields give the number of pre- and post-samples
+ * around the triggered bunch crossing.
+ *
+ * @var dst_TrgDet::nCtb
+ *   CTB counter MIP counts [120 counters][2 sides][up to 11 samples].
+ * @var dst_TrgDet::nMwc
+ *   MWC sector MIP counts [24 sectors][4 views][up to 11 samples].
+ * @var dst_TrgDet::vertexZ
+ *   Collision vertex Z position estimated from VPD timing (cm).
+ * @var dst_TrgDet::adcZDCEast
+ *   Sum of attenuated east ZDC ADC counts.
+ * @var dst_TrgDet::adcZDCWest
+ *   Sum of attenuated west ZDC ADC counts.
+ * @var dst_TrgDet::BBC
+ *   BBC data array (80 words, added January 2003).
+ */
+
+/**
+ * @struct exi_exipar
+ * @ingroup PamsGlobal
+ * @brief Cascade (Ξ) reconstruction control parameters.
+ *
+ * @var exi_exipar::use_pid
+ *   Flag: if non-zero, global PID information is used.
+ * @var exi_exipar::dca_max
+ *   Maximum DCA between the two daughter tracks (cm).
+ * @var exi_exipar::bxi_max
+ *   Maximum impact parameter of the Ξ candidate from the primary vertex (cm).
+ * @var exi_exipar::rv_xi
+ *   Minimum decay radius of the Ξ from the primary vertex (cm).
+ * @var exi_exipar::rv_v0
+ *   Minimum decay radius of the V0 daughter from the primary vertex (cm).
+ * @var exi_exipar::dmass
+ *   Half-width of the V0 mass acceptance window (GeV/c²).
+ * @var exi_exipar::pchisq
+ *   Minimum chi² probability for the vertex fit.
+ */
+
+/**
+ * @struct tkf_tkfpar
+ * @ingroup PamsGlobal
+ * @brief Track-finder (kink) reconstruction parameters.
+ *
+ * Input cut values and starting parameters for the kink track-finder (tkf).
+ *
+ * @var tkf_tkfpar::dcaParentDaughterMax
+ *   Maximum DCA between parent and daughter tracks (cm).
+ * @var tkf_tkfpar::parentPtMin
+ *   Minimum parent track transverse momentum (GeV/c).
+ * @var tkf_tkfpar::vertexRMax2D
+ *   Maximum 2-D kink vertex radius (cm).
+ * @var tkf_tkfpar::vertexRMin2D
+ *   Minimum 2-D kink vertex radius (cm).
+ * @var tkf_tkfpar::numOfPadRows
+ *   Number of TPC pad rows used in the finder.
+ */
+
+/**
+ * @struct particle_dst_param
+ * @ingroup PamsGlobal
+ * @brief Acceptance-filter parameters for the DST particle filler.
+ *
+ * @var particle_dst_param::switch_neutrals
+ *   If 0, neutral particles are excluded from the DST track table.
+ * @var particle_dst_param::pt_min
+ *   Minimum transverse momentum acceptance (GeV/c).
+ * @var particle_dst_param::pt_max
+ *   Maximum transverse momentum acceptance (GeV/c).
+ * @var particle_dst_param::eta_min
+ *   Minimum pseudorapidity acceptance.
+ * @var particle_dst_param::eta_max
+ *   Maximum pseudorapidity acceptance.
+ * @var particle_dst_param::phi_min
+ *   Minimum azimuthal angle acceptance (degrees).
+ * @var particle_dst_param::phi_max
+ *   Maximum azimuthal angle acceptance (degrees).
+ */
+
+/**
+ * @struct smdst_v0
+ * @ingroup PamsGlobal
+ * @brief V0 secondary-vertex DST table.
+ *
+ * Stores the reconstructed kinematics and topology of V0 candidates
+ * (K⁰_S, Λ, Λ̄) from two-track vertex fitting.
+ *
+ * @var smdst_v0::alpha
+ *   Armenteros–Podolanski α variable.
+ * @var smdst_v0::ptarm
+ *   Armenteros–Podolanski p_T variable (GeV/c).
+ * @var smdst_v0::mala
+ *   Invariant mass under the Λ hypothesis (GeV/c²).
+ * @var smdst_v0::malb
+ *   Invariant mass under the Λ̄ hypothesis (GeV/c²).
+ * @var smdst_v0::mak0
+ *   Invariant mass under the K⁰_S hypothesis (GeV/c²).
+ * @var smdst_v0::dca
+ *   DCA of the two daughter tracks at the V0 vertex (cm).
+ * @var smdst_v0::bv0
+ *   Impact parameter of the V0 from the primary vertex (cm).
+ * @var smdst_v0::dv0
+ *   3-D distance of the V0 decay vertex from the primary vertex (cm).
+ */
+
+/**
+ * @struct HbtTag
+ * @ingroup PamsGlobal
+ * @brief HBT event-classification tag.
+ *
+ * Stores per-species (charged, π±, K±, p, p̄) distribution mean and sigma
+ * arrays (each of length 5) computed during DST production.  Used by the HBT
+ * Physics Working Group for fast event pre-selection.
+ */
+
+/**
+ * @struct HeavyTag
+ * @ingroup PamsGlobal
+ * @brief Heavy-flavour event-classification tag.
+ *
+ * @var HeavyTag::mNumberOfTracksAboveThres
+ *   Number of primary tracks with momentum above charm, bottom, and 7 GeV/c
+ *   thresholds (3-element array).
+ * @var HeavyTag::mNumberOfTrackToTowerMatches
+ *   Number of primary tracks with p > 2 GeV/c pointing to a calorimeter
+ *   tower with ADC > 100.
+ * @var HeavyTag::mLargestPairMass
+ *   Largest unlike-sign track-pair invariant mass in the event (GeV/c²).
+ */
+
+/**
+ * @struct HighPtTag
+ * @ingroup PamsGlobal
+ * @brief High-pT and spin-group event-classification tag.
+ *
+ * @var HighPtTag::HighPtTrack
+ *   Transverse momentum of the highest-pT track (GeV/c).
+ * @var HighPtTag::MaxRawEtBEMCTower
+ *   Maximum raw transverse energy in a single BEMC tower (GeV).
+ * @var HighPtTag::MaxRawEtEEMCTower
+ *   Maximum raw transverse energy in a single EEMC tower (GeV).
+ */
+
+/**
+ * @struct ScaTag
+ * @ingroup PamsGlobal
+ * @brief Scale-correlation analysis event tag.
+ *
+ * @var ScaTag::scaAnalysisMatrix
+ *   3×4×12 multi-scale analysis result matrix.
+ * @var ScaTag::chargedParticles_Means
+ *   Ten-element array of charged-particle distribution means.
+ * @var ScaTag::chargedParticles_Sigmas
+ *   Ten-element array of charged-particle distribution sigmas.
+ */
+
+/**
+ * @struct StrangeTag
+ * @ingroup PamsGlobal
+ * @brief Strangeness event-classification tag.
+ *
+ * Provides V0, cascade, and kink candidate counts in mass windows below,
+ * near, and above each strange-particle hypothesis (K⁰_S, Λ, Λ̄, Ξ, Ξ̄, Ω,
+ * Ω̄), together with the maximum pT for each species.  The @c range field
+ * defines the fractional half-width of the "near" mass window.
+ *
+ * @var StrangeTag::NV0
+ *   Total number of reconstructed V0 candidates.
+ * @var StrangeTag::range
+ *   Fractional half-width used to define the below/near/above mass windows:
+ *   near = [mass·(1−range), mass·(1+range)].
+ */

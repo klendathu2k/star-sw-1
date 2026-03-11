@@ -1,0 +1,752 @@
+/**
+ * @defgroup PamsSim pams/sim — Simulation Interface Layer
+ * @ingroup Pams
+ * @{
+ *
+ * @brief GEANT-to-STAF bridge: converts raw GEANT banks into STAF tables
+ *        and drives the GSTAR AGE geometry/physics engine.
+ *
+ * @details
+ * `pams/sim/` is the simulation interface layer within the STAF (STAR Analysis
+ * Framework).  It lives between the GEANT 3.21 / AGE simulation back-end and the
+ * STAF table-based reconstruction chain.  Its main responsibilities are:
+ *
+ *  - Driving the GSTAR AGE geometry and physics engine (`gstar/`).
+ *  - Controlling event flow, filtering, and HBOOK diagnostics (`control/`).
+ *  - Converting raw GEANT hit banks into STAF table rows for every STAR detector
+ *    via the GEANT-to-Table (g2t) converters (`g2t/`).
+ *  - Digitising TPC pad signals in AGE (`dig/`).
+ *  - Bridging the FORTRAN `agustep` step hook to the C++ maker infrastructure
+ *    (`flux/`).
+ *  - Supplying physics cross-section data files used by FLUKA, CALOR, and GHEISHA
+ *    (`gphysdata/`).
+ *  - Defining the shared IDL schemas for all simulation output tables (`idl/`).
+ *
+ * @par Subdirectories
+ *
+ * | Directory    | Contents                                                     |
+ * |:-------------|:-------------------------------------------------------------|
+ * | `g2t/`       | 40 FORTRAN converter functions, matching IDL schemas, helpers |
+ * | `gstar/`     | `gstar.g` core, extra particles, input utility, pseudo-physics generator |
+ * | `control/`   | `control.g` — `AGUDIGI` event filter and HBOOK histograms    |
+ * | `dig/`       | `tpcedig.g` — TPC pad-response digitiser                     |
+ * | `flux/`      | `agustep.cxx` — C++ bridge from FORTRAN `agustep` hook       |
+ * | `gphysdata/` | `bertaf.dat`, `chetc.dat`, `flukaaf.dat`, `xsneut96.dat`     |
+ * | `idl/`       | 36 shared IDL table schemas for simulation output            |
+ *
+ * @par Data flow
+ *
+ * @code
+ * St_geant_Maker (C++)
+ *   |
+ *   +-- agustep() [FORTRAN hook] --> flux/agustep.cxx --> St_geant_Maker::usflux()
+ *   |
+ *   +-- AGUDIGI (AGE) --> control/control.g  [event filter, histograms]
+ *   |
+ *   +-- G2T_GET_KINE()  --> g2t_track, g2t_vertex
+ *   +-- G2T_GET_EVENT() --> g2t_event, g2t_pythia
+ *   +-- G2T_PARTICLE()  --> g2t_gepart
+ *   +-- G2T_TPC()       --> g2t_tpc_hit   (+ tpcedig digitisation)
+ *   +-- G2T_SVT()       --> g2t_svt_hit
+ *   +-- G2T_EMC()       --> g2t_emc_hit
+ *   ... (one call per detector)
+ *   |
+ *   v
+ * STAF tables consumed by reconstruction makers
+ * @endcode
+ */
+
+/* =========================================================================
+ * FORTRAN functions — g2t/
+ * =========================================================================*/
+
+/**
+ * @fn INTEGER G2T_GET_KINE(p_vert_h, p_vert, g2t_track_h, g2t_track, g2t_vertex_h, g2t_vertex)
+ * @brief Convert GEANT kinematic banks into the track and vertex tables.
+ *
+ * @param[in]  p_vert_h        Header of the primary-vertex input table
+ * @param[in]  p_vert          Primary-vertex input table array
+ * @param[out] g2t_track_h     Header of the output g2t_track table
+ * @param[out] g2t_track       Output g2t_track table array (one row per GEANT track)
+ * @param[out] g2t_vertex_h    Header of the output g2t_vertex table
+ * @param[out] g2t_vertex      Output g2t_vertex table array (one row per vertex)
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Iterates over all GEANT tracks (`GCKINE`), resolves track/vertex linkage, and
+ * fills kinematic quantities (`p`, `pt`, `e`, `charge`, `eta`, `rapidity`).
+ * Close secondary vertices are grouped to suppress artificially split vertices.
+ * The function also resolves linked-list pointers between tracks and vertices
+ * (`start_vertex_p`, `stop_vertex_p`, `daughter_p`, `parent_p`).
+ */
+
+/**
+ * @fn INTEGER G2T_GET_EVENT(g2t_event_h, g2t_event, g2t_pythia_h, g2t_pythia)
+ * @brief Fill the per-event header table from GEANT and PYTHIA common blocks.
+ *
+ * @param[out] g2t_event_h     Header of the output g2t_event table
+ * @param[out] g2t_event       Output g2t_event table (one row per event)
+ * @param[out] g2t_pythia_h    Header of the output g2t_pythia table
+ * @param[out] g2t_pythia      Output g2t_pythia table (one row per event, if PYTHIA)
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Reads GEANT random seeds, event and run numbers, primary-vertex pointer, and
+ * heavy-ion geometry (`b_impact`, `phi_impact`, participant nucleon counts).
+ * When a PYTHIA subprocess is present the hard-scattering kinematics (Mandelstam
+ * variables, Bjorken-x, `subprocess_id`, `MSTU72`, `MSTU73`, `MSTP111`) are
+ * written to `g2t_pythia`.
+ */
+
+/**
+ * @fn INTEGER G2T_GET_PYTHIA(g2t_pythia_h, g2t_pythia)
+ * @brief Fill the PYTHIA hard-subprocess table from PYTHIA common blocks.
+ *
+ * @param[out] g2t_pythia_h    Header of the output g2t_pythia table
+ * @param[out] g2t_pythia      Output g2t_pythia table array
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Reads PYSUBS/PYDAT common blocks to store Mandelstam invariants, Bjorken-x
+ * values, pT of the hard subprocess, and selected MSTU/MSTP variables.
+ */
+
+/**
+ * @fn INTEGER G2T_PARTICLE(particle_h, particle)
+ * @brief Fill the particle-property table from GEANT particle definitions.
+ *
+ * @param[out] particle_h  Header of the output g2t_gepart table
+ * @param[out] particle    Output g2t_gepart table array (one row per particle type)
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Iterates over all defined GEANT particles and copies name, GEANT PID, PDG PID,
+ * event-generator PID, mass, charge, and lifetime into `g2t_gepart`.
+ */
+
+/**
+ * @fn SUBROUTINE G2R_GET_SYS(Cset, Cdet, Iprin, Idigi)
+ * @brief Query AGE hit-set flags to retrieve print and digitisation control codes.
+ *
+ * @param[in]  Cset   Four-character AGE set name (e.g. `'TPCE'`)
+ * @param[in]  Cdet   Four-character AGE detector name (e.g. `'TPAD'`)
+ * @param[out] Iprin  Print verbosity level; negative value means skip this detector
+ * @param[out] Idigi  Digitisation mode flag (0 = global coords, ≥2 = local coords)
+ *
+ * @details
+ * Calls `ISLFLAG` and `AgHITSET` to look up whether the hit set is active.
+ * Returns `Iprin < 0` when the set is disabled so that callers can return early.
+ */
+
+/**
+ * @fn INTEGER G2T_TPC(g2t_track_h, g2t_track, g2t_tpc_hit_h, g2t_tpc_hit)
+ * @brief GEANT-to-Table converter for the Time Projection Chamber.
+ *
+ * @param[in]  g2t_track_h      Header of the input g2t_track table
+ * @param[in]  g2t_track        Input g2t_track array (for per-track linkage)
+ * @param[out] g2t_tpc_hit_h    Header of the output g2t_tpc_hit table
+ * @param[out] g2t_tpc_hit      Output g2t_tpc_hit array (one row per pad-row crossing)
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Iterates over GEANT steps in the TPC via `G2R_GET_HIT('tpc')`.  Applies a
+ * magnetic-field correction to the straight-line parametrisation when
+ * `Idigi < 2`.  Short after-steps on the same track/volume are suppressed.
+ * Fills `volume_id` as `100000*isdet + 100*sector + row` and stores energy
+ * deposition, path length, global coordinates, momentum, TOF, track length,
+ * and `lgam = log10(E_kin/m)`.
+ */
+
+/**
+ * @fn INTEGER G2T_SVT(g2t_track_h, g2t_track, g2t_svt_hit_h, g2t_svt_hit)
+ * @brief GEANT-to-Table converter for the Silicon Vertex Tracker.
+ *
+ * @param[in]  g2t_track_h    Header of the input g2t_track table
+ * @param[in]  g2t_track      Input g2t_track array
+ * @param[out] g2t_svt_hit_h  Header of the output g2t_svt_hit table
+ * @param[out] g2t_svt_hit    Output g2t_svt_hit array
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Reads SVT GEANT hits and fills position, local momentum, energy loss, step
+ * size, and TOF.  Local coordinate mode is active by default (`Local=.true.`).
+ */
+
+/**
+ * @fn INTEGER G2T_EMC(g2t_track_h, g2t_track, g2t_emc_hit_h, g2t_emc_hit)
+ * @brief GEANT-to-Table converter for the Barrel Electromagnetic Calorimeter.
+ *
+ * @param[in]  g2t_track_h    Header of the input g2t_track table
+ * @param[in]  g2t_track      Input g2t_track array
+ * @param[out] g2t_emc_hit_h  Header of the output g2t_emc_hit table
+ * @param[out] g2t_emc_hit    Output g2t_emc_hit array
+ * @returns STAFCV_OK on success.
+ *
+ * @details
+ * Fills global (x, y, z) hit position and energy deposition.  Uses local
+ * coordinates internally (`Local=.true.`).
+ */
+
+/**
+ * @fn INTEGER G2T_BBC(g2t_track_h, g2t_track, g2t_bbc_hit_h, g2t_bbc_hit)
+ * @brief GEANT-to-Table converter for the Beam-Beam Counter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_bbc_hit_h  Output hit table header
+ * @param[out] g2t_bbc_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_CTB(g2t_track_h, g2t_track, g2t_ctb_hit_h, g2t_ctb_hit)
+ * @brief GEANT-to-Table converter for the Central Trigger Barrel.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_ctb_hit_h  Output hit table header
+ * @param[out] g2t_ctb_hit    Output hit table (g2t_ctf_hit schema: de, ds, p[3], s_track, tof, x[3])
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_EEM(g2t_track_h, g2t_track, g2t_eem_hit_h, g2t_eem_hit)
+ * @brief GEANT-to-Table converter for the Endcap Electromagnetic Calorimeter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_eem_hit_h  Output hit table header
+ * @param[out] g2t_eem_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_EPD(g2t_track_h, g2t_track, g2t_epd_hit_h, g2t_epd_hit)
+ * @brief GEANT-to-Table converter for the Event Plane Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_epd_hit_h  Output hit table header
+ * @param[out] g2t_epd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_ESM(g2t_track_h, g2t_track, g2t_esm_hit_h, g2t_esm_hit)
+ * @brief GEANT-to-Table converter for the Endcap Shower Maximum detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_esm_hit_h  Output hit table header
+ * @param[out] g2t_esm_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_ETO(g2t_track_h, g2t_track, g2t_eto_hit_h, g2t_eto_hit)
+ * @brief GEANT-to-Table converter for the Endcap Time of Flight (eTOF).
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_eto_hit_h  Output hit table header
+ * @param[out] g2t_eto_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_ETR(g2t_track_h, g2t_track, g2t_etr_hit_h, g2t_etr_hit)
+ * @brief GEANT-to-Table converter for the E-tracker.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_etr_hit_h  Output hit table header
+ * @param[out] g2t_etr_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FGT(g2t_track_h, g2t_track, g2t_fgt_hit_h, g2t_fgt_hit)
+ * @brief GEANT-to-Table converter for the Forward GEM Tracker.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_fgt_hit_h  Output hit table header
+ * @param[out] g2t_fgt_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FPD(g2t_track_h, g2t_track, g2t_fpd_hit_h, g2t_fpd_hit)
+ * @brief GEANT-to-Table converter for the Forward Pion Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_fpd_hit_h  Output hit table header
+ * @param[out] g2t_fpd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FSC(g2t_track_h, g2t_track, g2t_fsc_hit_h, g2t_fsc_hit)
+ * @brief GEANT-to-Table converter for the Forward Shower Counter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_fsc_hit_h  Output hit table header
+ * @param[out] g2t_fsc_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FST(g2t_track_h, g2t_track, g2t_fst_hit_h, g2t_fst_hit)
+ * @brief GEANT-to-Table converter for the Forward Silicon Tracker.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_fst_hit_h  Output hit table header
+ * @param[out] g2t_fst_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FTP(g2t_track_h, g2t_track, g2t_ftp_hit_h, g2t_ftp_hit)
+ * @brief GEANT-to-Table converter for the Forward TPC.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_ftp_hit_h  Output hit table header
+ * @param[out] g2t_ftp_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_FTS(g2t_track_h, g2t_track, g2t_fts_hit_h, g2t_fts_hit)
+ * @brief GEANT-to-Table converter for the Forward Tracking System.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_fts_hit_h  Output hit table header
+ * @param[out] g2t_fts_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_GEM(g2t_track_h, g2t_track, g2t_gem_hit_h, g2t_gem_hit)
+ * @brief GEANT-to-Table converter for the GEM Barrel.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_gem_hit_h  Output hit table header
+ * @param[out] g2t_gem_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_HCA(g2t_track_h, g2t_track, g2t_hca_hit_h, g2t_hca_hit)
+ * @brief GEANT-to-Table converter for the Hadronic Calorimeter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_hca_hit_h  Output hit table header
+ * @param[out] g2t_hca_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_HPD(g2t_track_h, g2t_track, g2t_hpd_hit_h, g2t_hpd_hit)
+ * @brief GEANT-to-Table converter for the HPD (R&D detector).
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_hpd_hit_h  Output hit table header
+ * @param[out] g2t_hpd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_IGT(g2t_track_h, g2t_track, g2t_igt_hit_h, g2t_igt_hit)
+ * @brief GEANT-to-Table converter for the Inner GEM Tracker.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_igt_hit_h  Output hit table header
+ * @param[out] g2t_igt_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_IST(g2t_track_h, g2t_track, g2t_ist_hit_h, g2t_ist_hit)
+ * @brief GEANT-to-Table converter for the Inner Silicon Tracker.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_ist_hit_h  Output hit table header
+ * @param[out] g2t_ist_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_MTD(g2t_track_h, g2t_track, g2t_mtd_hit_h, g2t_mtd_hit)
+ * @brief GEANT-to-Table converter for the Muon Telescope Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_mtd_hit_h  Output hit table header
+ * @param[out] g2t_mtd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_MWC(g2t_track_h, g2t_track, g2t_mwc_hit_h, g2t_mwc_hit)
+ * @brief GEANT-to-Table converter for the Multi-Wire Chamber.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_mwc_hit_h  Output hit table header
+ * @param[out] g2t_mwc_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_PIX(g2t_track_h, g2t_track, g2t_pix_hit_h, g2t_pix_hit)
+ * @brief GEANT-to-Table converter for the Pixel Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_pix_hit_h  Output hit table header
+ * @param[out] g2t_pix_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_PMD(g2t_track_h, g2t_track, g2t_pmd_hit_h, g2t_pmd_hit)
+ * @brief GEANT-to-Table converter for the Pre-shower Mip Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_pmd_hit_h  Output hit table header
+ * @param[out] g2t_pmd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_PRE(g2t_track_h, g2t_track, g2t_pre_hit_h, g2t_pre_hit)
+ * @brief GEANT-to-Table converter for the West EM Calorimeter Preshower.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_pre_hit_h  Output hit table header
+ * @param[out] g2t_pre_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_RCH(g2t_track_h, g2t_track, g2t_rch_hit_h, g2t_rch_hit)
+ * @brief GEANT-to-Table converter for the RICH detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_rch_hit_h  Output hit table header
+ * @param[out] g2t_rch_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_SMD(g2t_track_h, g2t_track, g2t_smd_hit_h, g2t_smd_hit)
+ * @brief GEANT-to-Table converter for the Barrel Shower Maximum Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_smd_hit_h  Output hit table header
+ * @param[out] g2t_smd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_SSD(g2t_track_h, g2t_track, g2t_ssd_hit_h, g2t_ssd_hit)
+ * @brief GEANT-to-Table converter for the Silicon Strip Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_ssd_hit_h  Output hit table header
+ * @param[out] g2t_ssd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_STG(g2t_track_h, g2t_track, g2t_stg_hit_h, g2t_stg_hit)
+ * @brief GEANT-to-Table converter for the Forward sTGC.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_stg_hit_h  Output hit table header
+ * @param[out] g2t_stg_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_TFR(g2t_track_h, g2t_track, g2t_tfr_hit_h, g2t_tfr_hit)
+ * @brief GEANT-to-Table converter for the TFR (forward).
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_tfr_hit_h  Output hit table header
+ * @param[out] g2t_tfr_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_TOF(g2t_track_h, g2t_track, g2t_tof_hit_h, g2t_tof_hit)
+ * @brief GEANT-to-Table converter for the barrel Time of Flight.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_tof_hit_h  Output hit table header
+ * @param[out] g2t_tof_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_VPD(g2t_track_h, g2t_track, g2t_vpd_hit_h, g2t_vpd_hit)
+ * @brief GEANT-to-Table converter for the Vertex Position Detector.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_vpd_hit_h  Output hit table header
+ * @param[out] g2t_vpd_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_WCA(g2t_track_h, g2t_track, g2t_wca_hit_h, g2t_wca_hit)
+ * @brief GEANT-to-Table converter for the West Calorimeter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_wca_hit_h  Output hit table header
+ * @param[out] g2t_wca_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/**
+ * @fn INTEGER G2T_ZDC(g2t_track_h, g2t_track, g2t_zdc_hit_h, g2t_zdc_hit)
+ * @brief GEANT-to-Table converter for the Zero Degree Calorimeter.
+ * @param[in]  g2t_track_h    Input track table header
+ * @param[in]  g2t_track      Input track table
+ * @param[out] g2t_zdc_hit_h  Output hit table header
+ * @param[out] g2t_zdc_hit    Output hit table
+ * @returns STAFCV_OK on success.
+ */
+
+/* =========================================================================
+ * IDL table structs — idl/
+ * =========================================================================*/
+
+/**
+ * @struct g2t_track
+ * @brief One row per GEANT track; central table of the simulation output.
+ *
+ * Defined in `idl/g2t_track.idl`.
+ *
+ * @var g2t_track::id
+ *   Primary key (1-based track index).
+ * @var g2t_track::eg_label
+ *   Event-generator label; 0 for pure GEANT secondary tracks.
+ * @var g2t_track::eg_pid
+ *   Event-generator particle identifier.
+ * @var g2t_track::ge_pid
+ *   GEANT particle identifier.
+ * @var g2t_track::p
+ *   3-momentum vector (GeV/c).
+ * @var g2t_track::pt
+ *   Transverse momentum (GeV/c).
+ * @var g2t_track::ptot
+ *   Total momentum magnitude (GeV/c).
+ * @var g2t_track::e
+ *   Total energy (GeV).
+ * @var g2t_track::charge
+ *   Electric charge in units of the elementary charge.
+ * @var g2t_track::eta
+ *   Pseudorapidity.
+ * @var g2t_track::rapidity
+ *   Rapidity.
+ * @var g2t_track::is_shower
+ *   1 if this is a shower track, 0 otherwise.
+ * @var g2t_track::start_vertex_p
+ *   Pointer to the production vertex in @ref g2t_vertex.
+ * @var g2t_track::stop_vertex_p
+ *   Pointer to the absorption/decay vertex in @ref g2t_vertex.
+ * @var g2t_track::next_parent_p
+ *   Next track that shares the same parent vertex.
+ * @var g2t_track::next_vtx_trk_p
+ *   Next sibling track from the same start vertex.
+ * @var g2t_track::itrmd_vertex_p
+ *   Head of the linked list of intermediate vertices on this track.
+ * @var g2t_track::hit_tpc_p
+ *   Head of the linked list of TPC hits in @ref g2t_tpc_hit.
+ * @var g2t_track::n_tpc_hit
+ *   Number of TPC hits; upper bits (after shift by 8) encode the TpcRS
+ *   real-hit count.
+ * @var g2t_track::hit_svt_p
+ *   Head of the linked list of SVT hits (and similarly for every other
+ *   detector: hit_emc_p, hit_tof_p, …, hit_epd_p).
+ */
+
+/**
+ * @struct g2t_vertex
+ * @brief One row per GEANT production or decay vertex.
+ *
+ * Defined in `idl/g2t_vertex.idl`.
+ *
+ * @var g2t_vertex::id
+ *   Primary key.
+ * @var g2t_vertex::ge_x
+ *   GEANT vertex position in cm (Cartesian global).
+ * @var g2t_vertex::ge_tof
+ *   GEANT vertex production time in seconds.
+ * @var g2t_vertex::ge_medium
+ *   GEANT medium number at the vertex.
+ * @var g2t_vertex::ge_proc
+ *   GEANT process code; 0 indicates an event-generator vertex.
+ * @var g2t_vertex::ge_volume
+ *   Four-character GEANT volume name at the vertex.
+ * @var g2t_vertex::eg_x
+ *   Event-generator vertex coordinates in cm.
+ * @var g2t_vertex::eg_tof
+ *   Event-generator vertex production time in seconds.
+ * @var g2t_vertex::eg_label
+ *   Generator label (0 if this is a pure GEANT vertex).
+ * @var g2t_vertex::eg_proc
+ *   Generator production mechanism code.
+ * @var g2t_vertex::n_daughter
+ *   Number of outgoing (daughter) tracks.
+ * @var g2t_vertex::n_parent
+ *   Number of incoming (parent) tracks.
+ * @var g2t_vertex::daughter_p
+ *   Pointer to the first daughter track in @ref g2t_track.
+ * @var g2t_vertex::parent_p
+ *   Pointer to the first parent track in @ref g2t_track.
+ * @var g2t_vertex::is_itrmd
+ *   Flags this as an intermediate (secondary) vertex.
+ * @var g2t_vertex::next_prim_v_p
+ *   Next primary vertex in the linked list.
+ * @var g2t_vertex::next_itrmd_p
+ *   Next intermediate vertex in the linked list.
+ * @var g2t_vertex::event_p
+ *   Pointer to the owning row in @ref g2t_event.
+ */
+
+/**
+ * @struct g2t_tpc_hit
+ * @brief One row per TPC pad-row crossing (GEANT step in a TPC pad volume).
+ *
+ * Defined in `idl/g2t_tpc_hit.idl`.
+ *
+ * @var g2t_tpc_hit::id
+ *   Primary key.
+ * @var g2t_tpc_hit::track_p
+ *   Pointer to the parent track in @ref g2t_track.
+ * @var g2t_tpc_hit::next_tr_hit_p
+ *   Next TPC hit on the same track (linked list).
+ * @var g2t_tpc_hit::volume_id
+ *   Encoded as @c 100000*isdet + 100*sector + row, where isdet = 1 (inner)
+ *   or 2 (outer TPC).
+ * @var g2t_tpc_hit::x
+ *   Global hit position in cm.
+ * @var g2t_tpc_hit::p
+ *   Global track momentum at the hit in GeV/c.
+ * @var g2t_tpc_hit::de
+ *   Energy deposition from GEANT in GeV.
+ * @var g2t_tpc_hit::ds
+ *   Path length within the pad row in cm.
+ * @var g2t_tpc_hit::tof
+ *   Time of flight from the primary interaction vertex in seconds.
+ * @var g2t_tpc_hit::length
+ *   Track length from its origin to this hit in cm.
+ * @var g2t_tpc_hit::lgam
+ *   log₁₀(E_kin / m); used for Bethe–Bloch dE/dx evaluation.
+ * @var g2t_tpc_hit::np
+ *   Number of primary ionisation clusters.
+ * @var g2t_tpc_hit::ne
+ *   Number of conducting electrons.
+ * @var g2t_tpc_hit::adc
+ *   Digitised ADC signal after `tpcedig` pad-response digitisation.
+ * @var g2t_tpc_hit::pad
+ *   Pad position used in the digitisation.
+ * @var g2t_tpc_hit::timebucket
+ *   Time-bucket position used in the digitisation.
+ * @var g2t_tpc_hit::adcs
+ *   ADC signal in the three neighbouring rows: row−1, row, row+1.
+ * @var g2t_tpc_hit::dNdx
+ *   dN/dx at the local track momentum, filled by TpcRS.
+ * @var g2t_tpc_hit::dSSum
+ *   Accumulated dx in the TpcRS simulation in cm.
+ * @var g2t_tpc_hit::dESum
+ *   Accumulated dE in the TpcRS simulation in GeV.
+ */
+
+/**
+ * @struct g2t_event
+ * @brief Per-event metadata and heavy-ion geometry.
+ *
+ * Defined in `idl/g2t_event.idl`.  One row per simulated event.
+ *
+ * @var g2t_event::n_event
+ *   Event number within the run.
+ * @var g2t_event::n_run
+ *   Run number.
+ * @var g2t_event::b_impact
+ *   Impact parameter in fm.
+ * @var g2t_event::phi_impact
+ *   Azimuthal angle of the reaction plane in radians.
+ * @var g2t_event::prim_vertex_p
+ *   Pointer to the first primary vertex in @ref g2t_vertex.
+ * @var g2t_event::n_track_prim
+ *   Number of primary tracks (tracks with no parent).
+ * @var g2t_event::n_track_eg_fs
+ *   Number of final-state event-generator tracks.
+ * @var g2t_event::ge_rndm
+ *   GEANT random seeds at the start of the event (two integers).
+ * @var g2t_event::event_type
+ *   Classifies the event: trigger, pileup, cosmic, or laser.
+ * @var g2t_event::subprocess_id
+ *   PYTHIA subprocess identifier (0 if not a PYTHIA event).
+ * @var g2t_event::n_binary
+ *   Number of binary nucleon–nucleon collisions (heavy-ion).
+ * @var g2t_event::n_wounded_east
+ *   Number of wounded nucleons in the east nucleus.
+ * @var g2t_event::n_wounded_west
+ *   Number of wounded nucleons in the west nucleus.
+ * @var g2t_event::n_rejected
+ *   Number of events rejected prior to this one (by control.g filter).
+ */
+
+/**
+ * @struct g2t_gepart
+ * @brief GEANT particle property table (one row per particle type).
+ *
+ * Defined in `idl/g2t_gepart.idl`.
+ *
+ * @var g2t_gepart::pid
+ *   GEANT particle identifier.
+ * @var g2t_gepart::pdg_pid
+ *   PDG Monte Carlo particle identifier.
+ * @var g2t_gepart::eg_pid
+ *   Event-generator particle identifier.
+ * @var g2t_gepart::napart
+ *   32-character particle name.
+ * @var g2t_gepart::amass
+ *   Mass in GeV/c².
+ * @var g2t_gepart::charge
+ *   Charge in units of e.
+ * @var g2t_gepart::tlife
+ *   Lifetime in seconds.
+ */
+
+/**
+ * @struct g2t_svt_hit
+ * @brief One row per SVT GEANT hit.
+ *
+ * Defined in `idl/g2t_svt_hit.idl`.  Canonical silicon hit schema reused
+ * (with minor variations) by IST, SSD, PIX, IGT, and FST converters.
+ *
+ * @var g2t_svt_hit::id            Primary key.
+ * @var g2t_svt_hit::track_p       Parent track pointer in @ref g2t_track.
+ * @var g2t_svt_hit::next_tr_hit_p Next SVT hit on the same track.
+ * @var g2t_svt_hit::volume_id     STAR volume identifier.
+ * @var g2t_svt_hit::x             Hit position in local coordinates (cm).
+ * @var g2t_svt_hit::p             Local track momentum (GeV/c).
+ * @var g2t_svt_hit::de            Energy loss (GeV).
+ * @var g2t_svt_hit::ds            Step size within the volume (cm).
+ * @var g2t_svt_hit::tof           Time of flight (s).
+ */
+
+/**
+ * @struct g2t_pythia
+ * @brief PYTHIA hard-subprocess kinematics; one row per PYTHIA event.
+ *
+ * Defined in `idl/g2t_pythia.idl`.
+ *
+ * @var g2t_pythia::subprocess_id  PYTHIA subprocess identifier.
+ * @var g2t_pythia::mand_s         Mandelstam s of the hard subprocess (GeV²).
+ * @var g2t_pythia::mand_t         Mandelstam t (GeV²).
+ * @var g2t_pythia::mand_u         Mandelstam u (GeV²).
+ * @var g2t_pythia::hard_p         pT of the hard subprocess in the partonic CM frame (GeV/c).
+ * @var g2t_pythia::cos_th         cos θ of the hard subprocess in the partonic CM frame.
+ * @var g2t_pythia::bjor_1         Bjorken x of the first parton after initial-state radiation.
+ * @var g2t_pythia::bjor_2         Bjorken x of the second parton after initial-state radiation.
+ * @var g2t_pythia::mstu72         PYTHIA internal variable MSTU(72).
+ * @var g2t_pythia::mstu73         PYTHIA internal variable MSTU(73).
+ * @var g2t_pythia::mstp111        PYTHIA internal variable MSTP(111).
+ */
+
+/** @} */ /* end group PamsSim */

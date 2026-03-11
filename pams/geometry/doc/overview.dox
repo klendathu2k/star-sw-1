@@ -1,0 +1,318 @@
+/**
+ * @defgroup PamsGeometry pams/geometry — Detector Geometry Modules
+ * @ingroup Pams
+ *
+ * @brief AGE-language geometry definitions for the full STAR detector.
+ *
+ * Each sub-directory contains one or more `.g` files written in the **AGE**
+ * macro language and processed by the `agetof` preprocessor into FORTRAN.
+ * The resulting code is linked with STARSIM/GEANT3 to provide the detector
+ * geometry used in the STAR Monte-Carlo simulation.
+ *
+ * The master assembler is geometry/geometry.g.  It is invoked by STARSIM
+ * when a `DETP GEOM <tag>` command is issued, and selects the appropriate
+ * versioned sub-module for every detector based on the tag string.
+ *
+ * ### AGE file structure
+ * Every `.g` file typically contains:
+ *   - **Module** declaration — top-level namespace
+ *   - **Structure** blocks — named parameter banks (Zebra)
+ *   - **Fill** … **EndFill** blocks — default parameter values
+ *   - **Content** list — all GEANT volume names created by the module
+ *   - **Create** / **Position** calls — volume instantiation and placement
+ *   - **Hits** blocks — sensitive-volume hit variable definitions
+ *
+ * ### Geometry tag system
+ * The `geometry` module parses a tag string (e.g. `y2014a`) via a chain of
+ * `Case` statements.  Each case sets on/off switches (e.g. `TPCE=on`) and
+ * integer version codes (e.g. `TpceConfig=4`) that select sub-module files
+ * and numeric parameter sets.  Official production tags span `y2000`–`y2016`;
+ * development tags include `dev2020`, `devE`, `estar1`, etc.
+ *
+ * @see geometry/geometry.g  Master steering module (~3 000 lines).
+ * @see doc/README.md         Human-readable overview and geometry-tag table.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometryTPC TPC Geometry
+ * @ingroup PamsGeometry
+ *
+ * @brief Time Projection Chamber — the main tracking detector.
+ *
+ * Located in `tpcegeo/`.  Versions:
+ *   - `tpcegeo.g`   — TPCE00/TPCE01 (original)
+ *   - `tpcegeo1.g`  — TPCE02 (new backplane)
+ *   - `tpcegeo2.g`  — TPCE03
+ *   - `tpcegeo3.g`  — TPCE04 / TPCE04r (current best model, used from y2005h)
+ *   - `tpcegeo5.g`  — TPCE31 (sub-version 1)
+ *   - `tpcxgeo1.g`  — experimental TPC (tpcxgeo)
+ *
+ * Key volumes: `TPCE` (envelope), `TIFC` (inner field cage), `TSEC` (sector),
+ * `TMWC` (multi-wire chamber), `TMSE` (sensitive pad plane).
+ *
+ * Authors: Pavel Nevski (MEPhI); original by P. Jacobs (LBL), March 1995.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometrySVT SVT / SSD Inner Tracker
+ * @ingroup PamsGeometry
+ *
+ * @brief Silicon Vertex Tracker and Silicon Strip Detector.
+ *
+ * @par SVT — `svttgeo/`
+ * Versions `svttgeo.g` through `svttgeo11.g` (12 files).  Describes the
+ * 3-layer (6-barrel) SVT with beryllium support structure, water cooling
+ * manifolds, and electronics.
+ * Key volumes: `SVTT` (envelope), `SLYD` (layer), `SLSD` (sensitive wafer).
+ * Authors: Pavel Nevski, Ken Wilson; original by Claude Pruneau (WSU), 1993.
+ *
+ * @par SSD — `sisdgeo/`
+ * Versions `sisdgeo.g` through `sisdgeo7.g` (8 files).  Silicon Strip
+ * Detector (outer layer of the inner tracker).
+ * Key volumes: `SISD`, `SSVL` (sensitive strip ladder).
+ *
+ * @par SVT cone support — `scongeo/`
+ * Module SCONGEO.  Describes the SVT support cone structures (and read-out
+ * cables) placed directly inside the cave.
+ * Key volumes: `SCON`, `SROD`.  Author: Victor Perev.
+ *
+ * @par HFT pixel detector — `pixlgeo/`
+ * Versions `pixlgeo00.g` through `PixlGeo6.g` plus support-structure files.
+ * Pixel detector (PXL) for the Heavy Flavor Tracker; used from y2013.
+ * Key volumes: `PIXL`, `PLAC` (sensitive pixel array).
+ * Authors: Maxim Potekhin, Sevil Salur.
+ *
+ * @par IST (simplified) — `istbgeo/`
+ * Versions `istbgeo00.g` through `istbgeo6.g` (8 files).
+ * Simplified Inner Silicon Tracker used from y2013.
+ * Key volumes: `ISTB`, `ISVL`.  Author: Maxim Potekhin.
+ *
+ * @par IST (detailed) — `istdgeo/`
+ * Versions `istdgeo0.g`, `istdgeo1.g`.  Detailed IST stub; geometry handled
+ * by AgML (`xgeometry.so`) at run time.
+ *
+ * @par Inner Tracker Support — `itspgeo/`
+ * Module ITSPGEO.  Structural support tube for the HFT inner tracker.
+ * Key volumes: `ITSP`.
+ *
+ * @par HPIX pixel detector — `hpdtgeo/`
+ * Module HPDTGEO.  Earlier prototype pixel detector (HPIX).
+ * Key volumes: `YPXM`, `YPLM`, `YPLA` (sensitive).  Author: Sevil Salur.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometryEMC Calorimetry
+ * @ingroup PamsGeometry
+ *
+ * @brief Barrel and Endcap EM calorimeters and ZDC.
+ *
+ * @par BEMC — `calbgeo/`
+ * Module CALBGEO.  Versions: `calbgeo.g`, `calbgeo1.g`, `calbgeo2.g`.
+ * Describes the 120-module lead-scintillator barrel calorimeter including
+ * the Shower Maximum Detector (SMD).
+ * Key volumes: `CALB` (envelope), `CHLV` (half-barrel), `CPHI` (module),
+ * `CSCI` (scintillator, sensitive), `CSMD` (SMD strip, sensitive).
+ * Authors: K. Shestermanov (IHEP); W. Llope.
+ * IDL: `idl/calb_calg.idl`, `idl/calb_calr.idl`.
+ *
+ * @par EEMC — `ecalgeo/`
+ * Module ECALGEO.  Versions: `ecalgeo.g`, `ecalgeo6.g`.
+ * Endcap EM Calorimeter (west wheel), lead-scintillator sampling.
+ * Key volumes: `ECAL` (envelope), `ECHC` (module), `EAGA`, `EHMS` (sensitive).
+ * Author: Rashid Mehdiyev.
+ *
+ * @par ZDC — `zcalgeo/`
+ * Module ZCALGEO.  Zero-Degree Calorimeter.
+ * Key volumes: `ZCAL`, `QCAL` (module), `QSCI` (scintillator, sensitive).
+ * Author: W.B. Christie.
+ *
+ * @par PHMD — `phmdgeo/`
+ * Module PHMDGEO.  Pre-shower / Photon Multiplicity Detector.
+ * Key volumes: `PHMD`, `PHMS`, `PHMT` (sensitive sectors).
+ * Authors: Subhasis Chattopadhyay, Y.P. Viyogi, Bedanga Mohanty, Tapan Nayak,
+ * Dipak Mishra.
+ *
+ * @par Hadron Calorimeter — `hcalgeo/`
+ * Module HCALGEO.  HCAL geometry is handled entirely by AgML
+ * (`xgeometry.so`); this file is a run-time stub.  Used in `dev2016`,
+ * `dev15b`, `hctest`.
+ *
+ * @par Forward Hadron Modules — `fhcmgeo/`
+ * Module FHCMGEO.  Key volumes: `FHCM`.  Author: Jason C. Webb.
+ *
+ * @par Fiber Sampling Calorimeter — `fscegeo/`
+ * Module FSCEGEO.  Forward fiber-sampling calorimeter.
+ * Key volumes: `FSCE`.  Author: D. Arkhipkin.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometryForward Forward Detectors
+ * @ingroup PamsGeometry
+ *
+ * @brief FMS, FPD, BBC, FTPC, FGT, and forward tracking.
+ *
+ * @par BBC — `bbcmgeo/`
+ * Module BBCMGEO.  Beam-Beam Counter Modules (scintillating tiles at ±374 cm).
+ * Key volumes: `BBCM`, `BBCA`, `BPOL`.  Author: Yiqun Wang.
+ *
+ * @par FTPC — `ftpcgeo/`
+ * Module FTPCGEO.  Versions: `ftpcgeo.g`, `ftpcgeo1.g`.
+ * Two forward radial-drift TPCs at ±160 cm.
+ * Key volumes: `FTPC` (envelope), `FGAS` (gas volume), `FSEN` (sensitive),
+ * `FSEC` (sector).
+ * Authors: Michael Konrad, Andreas Schuettauf, Holm Huemmler, Janet Seyboth.
+ *
+ * @par FTPC readout — `ftro/`
+ * Module FTROGEO.  Readout cage structure of the FTPC.
+ * Key volumes: `FTRO`.  Author: Holm Huemmler.
+ *
+ * @par FTPC support — `supogeo/`
+ * Module SUPOGEO.  Versions: `supogeo.g`, `supogeo1.g`.
+ * Support structures that hold the FTPC cylinders inside CAVE.
+ * Key volumes: `SUPO`.  Author: Holm Huemmler.
+ *
+ * @par FPD / FMS — `fpdmgeo/`
+ * Module FPDMGEO.  Versions: `fpdmgeo.g` through `fpdmgeo3.g`.
+ * Forward Pion Detector / FMS lead-glass calorimeter modules.
+ * Key volumes: `FPDM`, `FCAR`.  Author: Jason C. Webb.
+ *
+ * @par FGT — `fgtdgeo/`
+ * Module FGTDGEO.  Versions: `fgtdgeo.g` through `fgtdgeo3.g`.
+ * Forward GEM Tracking Detector (6-disk GEM tracker); used from y2012/upgr2012.
+ * Key volumes: `FGTD`, `FGVL`, `FGST` (sensitive).  Author: Maxim Potekhin.
+ *
+ * @par Forward Silicon Tracker — `fstdgeo/`
+ * Module FSTDGEO.  Forward Silicon Tracker pixel disks; used in `dev2020`.
+ * Key volumes: `FSTD`.
+ *
+ * @par Inner GEM Tracker — `igtdgeo/`
+ * Module IGTDGEO.  Inner GEM Tracking Detector (barrel GEM disks).
+ * Key volumes: `IGTD`, `IGVL`.  Author: QINGHUA XU.
+ *
+ * @par GEM B — `gembgeo/`
+ * Module GEMBGEO.  GEM B barrel tracking detector.
+ * Key volumes: `GEMB`.  Authors: Nikolai Smirnov, G. Van Buren.
+ *
+ * @par EIDD — `eiddgeo/`
+ * Module EIDDGEO.  East-side TRD/TOF/Calo for eStar studies; geometry
+ * handled entirely by AgML.
+ *
+ * @par RICH — `richgeo/`
+ * Module RICHGEO.  Ring Imaging Cherenkov detector.
+ * Key volumes: `RICH`, `SRIC`, `RCSI` (CsI photocathode, sensitive).
+ * Author: Gerd Kunde.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometryTOF TOF and VPD
+ * @ingroup PamsGeometry
+ *
+ * @brief Time-of-Flight systems.
+ *
+ * @par BTOF — `btofgeo/`
+ * Module BTOFGEO.  Versions: `btofgeo.g` through `btofgeo8.g` (9 files).
+ * Barrel Time-of-Flight system (TOFp trays → full TOFr barrel).  In early
+ * tags acts as Central Trigger Barrel (CTB).
+ * Key volumes: `BTOF`, `BSEC`, `BTRA`.  Author: Frank Geurts.
+ *
+ * @par VPDD — `vpddgeo/`
+ * Module VPDDGEO.  Versions: `vpddgeo.g`, `vpddgeo1.g`, `vpddgeo2.g`.
+ * Pseudo-Vertex Position Detector (VETO scintillator discs at ±560 cm).
+ * Key volumes: `VPDD`.  Author: Yiqun Wang.
+ *
+ * @par MTD — `mutdgeo/`
+ * Module MUTDGEO.  Versions: `mutdgeo.g` through `mutdgeo4.g` (5 files).
+ * Muon Telescope Detector (long MRPC trays outside the magnet return yoke);
+ * used from y2012.
+ * Key volumes: `MUTD`, `MUSC`, `MTRA`, `MPMT`.  Author: Maxim Potekhin.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometryMagnets Magnets and Field
+ * @ingroup PamsGeometry
+ *
+ * @brief Solenoidal magnet, upstream magnets, and B-field map.
+ *
+ * @par STAR Magnet — `magpgeo/`
+ * Module MAGPGEO.  Describes the solenoidal coil (`COIL`, `MTCL`, trim coils)
+ * and the iron return yoke (`MRET`, `MRGV`, `MSEC`, `MBAR`).
+ * Outer radius 364 cm, full length 715 cm.
+ * Authors: Pavel Nevski; original by W.B. Christie, Nov 1993.
+ *
+ * @par B-field map — `mfldgeo/`
+ * Module MFLDDAT / MFLDGEO.  Provides the GUFLD routine that returns the
+ * magnetic field vector at any point.  The realistic map (Bessel-function
+ * parameterisation) is selected when `MfldConfig=2` (default from y2000).
+ * Auxiliary file `bessel.F` supplies the Bessel function evaluations.
+ * IDL: `idl/mfld_mflg.idl`.  Author: Pavel Nevski.
+ *
+ * @par Upstream magnets — `quadgeo/`
+ * Module QUADGEO.  D0 dipole and quadrupole magnets upstream of the STAR hall.
+ * Key volumes: `QUAD`.  Author: W.B. Christie.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @defgroup PamsGeometrySupport Support Structures and Infrastructure
+ * @ingroup PamsGeometry
+ *
+ * @brief Cave, beam pipe, shielding, and other passive structures.
+ *
+ * @par Cave / hall — `cavegeo/`
+ * Module CAVEGEO.  Versions: `cavegeo.g`, `CaveGeo2.g`; also `CaveConfig 3–5`
+ * embedded in `geometry.g`.  Defines the experimental hall walls, platform,
+ * and cable trays.
+ * Key volumes: `CAVE`.  Author: W.B. Christie.
+ *
+ * @par Beam pipe — `pipegeo/`
+ * Module PIPEGEO.  Versions: `pipegeo.g`, `pipegeo00.g`, `pipegeo1–3.g`
+ * (5 files).  Beryllium / aluminium beam pipe with vacuum insert and MLI
+ * insulation; pipe radius narrows for HFT insertion from y2013.
+ * Key volumes: `PIPE`, `PIPC`, `PVAC`.  Author: W.B. Christie.
+ *
+ * @par Shielding — `shldgeo/`
+ * Module SHLDGEO.  Beam shielding absorbers.
+ * Key volumes: `SHLD`.  Author: Maxim Potekhin.
+ *
+ * @par Wall / cave walls — `wallgeo/`
+ * Module WALLGEO.  Concrete walls, floors, ceilings, and tunnel shield walls.
+ * Key volumes: `WALL`.
+ *
+ * @par Upstream area — `upstgeo/`
+ * Module UPSTGEO.  Structures in the upstream (west) area.
+ * Key volumes: `UPST`.  Author: W.B. Christie.
+ *
+ * @par Dummy material balance — `dummgeo/`
+ * Module DUMMGEO.  Placeholder for unmodelled material.
+ * Key volumes: `DUMM`.
+ */
+
+// ---------------------------------------------------------------------------
+
+/**
+ * @fn geometry(void)
+ * @ingroup PamsGeometry
+ * @brief Master STAR geometry steering routine.
+ *
+ * Reads the geometry tag string from the `GEOM` DETP bank, sets detector
+ * on/off switches and integer version codes for all sub-systems, then
+ * instantiates each active sub-module via `AgSModule` (or direct FORTRAN
+ * call).  Stores the tag and field scale factor in the `GDAT` Zebra bank.
+ *
+ * Located in `geometry/geometry.g`.
+ * Authors: Pavel Nevski; created August 1998.
+ * CVS revisions: ~300 (last: r1.297, 2016-07-29, J. Webb).
+ */

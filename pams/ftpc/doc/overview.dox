@@ -1,0 +1,79 @@
+/**
+ * @defgroup PamsFtpc Forward TPC (FTPC)
+ * @ingroup Pams
+ * @brief IDL table definitions for the STAR Forward Time Projection Chambers.
+ *
+ * @details
+ * The FTPC subsystem covers the two Forward TPCs (east and west),
+ * which instrument the pseudorapidity range 2.5 < |η| < 4.0.
+ * Two groups of tables are defined:
+ *
+ * - **FCL** (`fcl_`) — raw ADC data and indexing tables consumed by the
+ *   FTPC cluster finder.
+ * - **FFS** (`ffs_`) — GEANT-level space points produced by the FTPC
+ *   fast simulator.
+ *
+ * @{
+ */
+
+/**
+ * @struct fcl_ftpcadc
+ * @brief Raw ADC data stream from the FTPC pad plane.
+ *
+ * One row per 8-bit ADC pixel.  The complete raw data for one event is stored
+ * as a flat sequence of these rows; @c fcl_ftpcndx and @c fcl_ftpcsqndx
+ * provide the chamber and sequence boundaries respectively.
+ *
+ * @var fcl_ftpcadc::data
+ *   One pixel of 8-bit ADC output (logically unsigned char).
+ */
+
+/**
+ * @struct fcl_ftpcndx
+ * @brief Chamber index into the FTPC raw ADC table.
+ *
+ * Contains one row per chamber.  The @c index field gives the offset of the
+ * first ADC pixel row belonging to the first or second FTPC chamber.
+ *
+ * @var fcl_ftpcndx::index
+ *   Unsigned-short offset to the first row of a chamber in @c fcl_ftpcadc
+ *   (logically unsigned int).
+ */
+
+/**
+ * @struct fcl_ftpcsqndx
+ * @brief Sequence index into the FTPC raw ADC table.
+ *
+ * Contains one row per zero-suppressed sequence.  The @c index field gives
+ * the offset of the first ADC pixel row of each sequence within @c fcl_ftpcadc.
+ *
+ * @var fcl_ftpcsqndx::index
+ *   Unsigned-short offset to the first row of a zero-suppressed sequence
+ *   in @c fcl_ftpcadc.
+ */
+
+/**
+ * @struct ffs_gepoint
+ * @brief Output space point from the FTPC fast simulator.
+ *
+ * Each row corresponds to one GEANT hit that has been processed by the fast
+ * simulator into a reconstructable space point.
+ *
+ * @var ffs_gepoint::ge_track_p
+ *   GEANT track pointer (row index into @c g2t_ftp_hit).
+ * @var ffs_gepoint::ge_pid
+ *   GEANT particle ID.
+ * @var ffs_gepoint::prim_tag
+ *   Production tag: 1 = primary, 2 = secondary, 3 = shower;
+ *   sign encodes the particle charge.
+ * @var ffs_gepoint::p_v
+ *   Momentum at the GEANT vertex (GeV/c), 3-vector.
+ * @var ffs_gepoint::p_g
+ *   Momentum in the local GEANT frame (GeV/c), 3-vector.
+ * @var ffs_gepoint::vertex
+ *   Position of the production vertex (cm), 3-vector.
+ * @var ffs_gepoint::ge_proc
+ *   GEANT process code for secondary particle production.
+ */
+
+/** @} */

@@ -1,0 +1,29 @@
+/**
+ * @defgroup PamsTables pams/tables — Table Build Infrastructure
+ * @ingroup Pams
+ * @{
+ *
+ * @brief Build infrastructure that links all PAMS table libraries into St_Tables.so.
+ *
+ * @details
+ * The `pams/tables/` package contains no source code.  It provides two build-system
+ * files:
+ *
+ * - **`Conscript`** — Perl build script for the `cons` build system.  Collects the
+ *   per-subsystem `*_Tables` shared libraries (gen, emc, ctf, ftpc, global, sim, svt,
+ *   geometry, StDb) and links them into the unified `St_Tables.so` library that is
+ *   installed in `$STAR/lib/`.
+ *
+ * - **`makeIdls.sh`** — Utility shell script that regenerates IDL table schema files
+ *   from the STAR conditions database (StarDB) using `dbMakeFiles.pl`.  Accepts the
+ *   database name and server name as arguments.
+ *
+ * ## Build graph
+ * ```
+ * pams/<pkg>/idl/*.idl  →  <pkg>_Tables.so  ─┐
+ *                                              ├──► St_Tables.so
+ * (all subsystems)                            ─┘
+ * ```
+ *
+ * @}
+ */

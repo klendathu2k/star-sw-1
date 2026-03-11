@@ -1,0 +1,118 @@
+/**
+ * @defgroup PamsGen Event Generator Tables (GEN)
+ * @ingroup Pams
+ * @brief IDL table definitions for the STAR event-generator interface.
+ *
+ * @details
+ * The GEN subsystem defines the common tables through which all STAR
+ * event generators (VENUS, HIJING, PYTHIA, FRITIOF, RQMD, STARLIGHT,
+ * VNI, and others) pass their output to the GEANT/GSTAR detector
+ * simulation.  Five tables are defined:
+ *
+ * - @c eg_event  — per-event kinematics summary.
+ * - @c eg_track  — per-track kinematic and topology data.
+ * - @c eg_vertex — per-vertex space point and topology data.
+ * - @c eg_gener  — generator identity and run parameters.
+ * - @c particle  — HEPEVT-format particle record used by generators that
+ *   write their internal particle stack directly.
+ *
+ * @{
+ */
+
+/**
+ * @struct eg_event
+ * @brief Per-event kinematics summary from the event generator.
+ *
+ * Derived from VENUS internal variables; field names in parentheses
+ * give the corresponding VENUS variable where applicable.
+ *
+ * @var eg_event::n_event
+ *   Event number within the generator run (VENUS: nrevt).
+ * @var eg_event::b_impact
+ *   Actual impact parameter for this event (fm) (VENUS: bimevt).
+ * @var eg_event::phi_impact
+ *   Reaction-plane azimuthal angle (rad) (VENUS: phievt).
+ * @var eg_event::n_track
+ *   Total number of tracks in @c eg_track for this event (VENUS: nptls).
+ * @var eg_event::n_vertex
+ *   Total number of vertices in @c eg_vertex for this event (VENUS: ivtxs).
+ */
+
+/**
+ * @struct eg_track
+ * @brief Per-track data from the event generator.
+ *
+ * @var eg_track::ge_pid
+ *   GEANT particle ID (VENUS: idtype).
+ * @var eg_track::p
+ *   Three-momentum vector (GeV/c) (VENUS: pptl[3]).
+ * @var eg_track::itrack
+ *   Track number within this event (not a VENUS variable; added for GSTAR).
+ * @var eg_track::ivertex
+ *   Row index of the start vertex in @c eg_vertex (not a VENUS variable).
+ * @var eg_track::iz
+ *   Internal generator index (not a VENUS variable).
+ */
+
+/**
+ * @struct eg_vertex
+ * @brief Per-vertex space point from the event generator.
+ *
+ * @var eg_vertex::x
+ *   Vertex position (mm), 3-vector (VENUS: xstrx, xstry, xstrz).
+ * @var eg_vertex::t
+ *   Vertex time coordinate (mm/c) (VENUS: xstrt).
+ * @var eg_vertex::ivstor
+ *   Internal generator storage index (VENUS: ivstor).
+ * @var eg_vertex::iz
+ *   Internal generator index (not a VENUS variable).
+ * @var eg_vertex::npstor
+ *   Number of particles stored at this vertex (VENUS: npstor).
+ */
+
+/**
+ * @struct eg_gener
+ * @brief Generator identity and run-level parameters.
+ *
+ * @var eg_gener::eg_name
+ *   Event generator name (32-character string).
+ * @var eg_gener::eg_version
+ *   Generator version number.
+ * @var eg_gener::sqrts
+ *   Centre-of-mass energy √s (GeV) (VENUS: engy).
+ * @var eg_gener::b_max
+ *   Maximum impact parameter used in this run (fm) (VENUS: bmaxim).
+ * @var eg_gener::east_a
+ *   Projectile (east beam) mass number A (VENUS: maproj).
+ * @var eg_gener::east_z
+ *   Projectile (east beam) atomic number Z (VENUS: laproj).
+ * @var eg_gener::west_a
+ *   Target (west beam) mass number A (VENUS: matarg).
+ * @var eg_gener::west_z
+ *   Target (west beam) atomic number Z (VENUS: latarg).
+ */
+
+/**
+ * @struct particle
+ * @brief HEPEVT-format particle record.
+ *
+ * Generators that expose their internal particle stack via the HEPEVT
+ * common block write one row per particle.  The first row encodes run
+ * metadata from the @c HEADPSS common block (impact parameter, generator
+ * code, √s, beam species, run number, event number, date, time).
+ *
+ * @var particle::isthep
+ *   Status code of the entry (e.g. 1 = final state, 2 = decayed).
+ * @var particle::idhep
+ *   Particle identity according to the PDG numbering scheme.
+ * @var particle::jmohep
+ *   Pointers (row indices) to the one or two mother particles; 0 if none.
+ * @var particle::jdahep
+ *   Pointers to the first and last daughter particles; 0 if none.
+ * @var particle::phep
+ *   Four-momentum (px, py, pz, E) and mass (GeV); 5-element array.
+ * @var particle::vhep
+ *   Production vertex (x, y, z in mm) and time (mm/c); 4-element array.
+ */
+
+/** @} */

@@ -1,0 +1,668 @@
+/**
+ * @defgroup PamsEmc Electromagnetic Calorimeter (EMC)
+ * @ingroup Pams
+ * @brief IDL table definitions for the STAR Electromagnetic Calorimeters.
+ *
+ * @details
+ * The EMC subsystem covers two detectors:
+ *
+ * - **BEMC** (`emc_*`) — Barrel Electromagnetic Calorimeter (|η| < 1):
+ *   towers, shower-maximum detector (SMD), calibration, clusters,
+ *   energy matrix, photon/electron/π⁰ candidates, and jet finding.
+ * - **EEMC** (`ems_*`) — Endcap Electromagnetic Calorimeter
+ *   (1.09 < η < 2.0): simulation hit maps per sub-detector (BEMC, BSMD,
+ *   EEMC, ESMD), calibration control, electron/jet lists, and Level-0
+ *   trigger simulation.
+ * - **Cross-system** — energy-to-ADC conversion (`control_toadc`) and
+ *   TPC–BEMC track matching (`tpc_bemc`).
+ *
+ * @{
+ */
+
+/* ------------------------------------------------------------------ */
+/*  BEMC tables (emc_*)                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @struct emc_hits
+ * @brief Raw tower hits for BEMC or EEMC.
+ *
+ * @var emc_hits::det
+ *   Detector number (see emc_def.h).
+ * @var emc_hits::module
+ *   Module number within the detector.
+ * @var emc_hits::eta
+ *   Pseudorapidity bin number.
+ * @var emc_hits::sub
+ *   Sub-division index within the η bin.
+ * @var emc_hits::adc
+ *   Raw ADC channel value.
+ * @var emc_hits::energy
+ *   Energy converted from ADC (GeV).
+ */
+
+/**
+ * @struct emc_cluster
+ * @brief Reconstructed EMC cluster.
+ *
+ * @var emc_cluster::det
+ *   Detector number (see emc_def.h).
+ * @var emc_cluster::nhits
+ *   Number of tower hits forming the cluster.
+ * @var emc_cluster::eta
+ *   Cluster centroid pseudorapidity.
+ * @var emc_cluster::phi
+ *   Cluster centroid azimuthal angle (rad).
+ * @var emc_cluster::energy_emc
+ *   Raw EMC energy (GeV).
+ * @var emc_cluster::energy
+ *   Corrected cluster energy (GeV).
+ * @var emc_cluster::s_energy
+ *   Uncertainty on the corrected energy (GeV).
+ * @var emc_cluster::ratio_isol
+ *   Isolation ratio: (ET(r < r_isol) − ET(em)) / ET(em).
+ * @var emc_cluster::sigma_eta
+ *   Cluster shower width in pseudorapidity.
+ * @var emc_cluster::sigma_phi
+ *   Cluster shower width in φ.
+ */
+
+/**
+ * @struct emc_cluster_index
+ * @brief Hit-to-cluster mapping.
+ *
+ * @var emc_cluster_index::det
+ *   Detector number (see emc_def.h).
+ * @var emc_cluster_index::hit_id
+ *   Row index into the hit table.
+ * @var emc_cluster_index::cluster_id
+ *   Row index of the parent cluster in emc_cluster.
+ * @var emc_cluster_index::neighbour_cluster_id
+ *   Row index of the nearest-neighbour cluster; -1 if none.
+ */
+
+/**
+ * @struct emc_cluster_par
+ * @brief Parameters for the EMC cluster finder.
+ *
+ * @var emc_cluster_par::energy_cut
+ *   Minimum tower energy to enter clustering (GeV).
+ * @var emc_cluster_par::et_seed
+ *   Seed transverse energy for the clustering algorithm (GeV).
+ * @var emc_cluster_par::r_shower
+ *   Shower radius in the η–φ plane.
+ * @var emc_cluster_par::r_isol
+ *   Isolation cone radius in the η–φ plane.
+ * @var emc_cluster_par::emc_res_a
+ *   Energy-resolution constant term a in σ/E = a + b/E + c/√E.
+ * @var emc_cluster_par::emc_res_b
+ *   Energy-resolution noise term b.
+ * @var emc_cluster_par::emc_res_c
+ *   Energy-resolution stochastic term c.
+ */
+
+/**
+ * @struct emc_energy
+ * @brief Full energy matrix combining EMC tower and tracking information.
+ *
+ * @var emc_energy::det
+ *   Detector number: > 0 BEMC/EEMC, 0 = gap, -1 = outside acceptance.
+ * @var emc_energy::module
+ *   Module number.
+ * @var emc_energy::ebin
+ *   η tower index.
+ * @var emc_energy::sub
+ *   Sub-division index.
+ * @var emc_energy::eta
+ *   Pseudorapidity of bin centre.
+ * @var emc_energy::phi
+ *   φ of bin centre (rad).
+ * @var emc_energy::energy
+ *   Total energy: tower + tracking − charged estimate (GeV).
+ * @var emc_energy::energy_twr
+ *   Energy from the EMC tower (GeV).
+ * @var emc_energy::energy_trk
+ *   Energy from charged tracking (GeV).
+ * @var emc_energy::energy_chg
+ *   Estimated charged-particle deposit in the tower (GeV).
+ * @var emc_energy::n_track
+ *   Number of charged tracks assigned to this bin.
+ * @var emc_energy::n_charge
+ *   Number of charged tracks whose extrapolation hits this tower.
+ */
+
+/**
+ * @struct emc_pedestal
+ * @brief ADC pedestal per calorimeter channel.
+ *
+ * @var emc_pedestal::ped
+ *   Pedestal value (ADC counts).
+ */
+
+/**
+ * @struct emc_adcslope
+ * @brief ADC gain (slope) per calorimeter channel.
+ *
+ * @var emc_adcslope::p0
+ *   Linear ADC slope (GeV per ADC count).
+ */
+
+/**
+ * @struct emc_calib_header
+ * @brief Header record for an EMC calibration run.
+ *
+ * @var emc_calib_header::date
+ *   Date of calibration run (YYYYMMDD).
+ * @var emc_calib_header::time
+ *   Time of calibration run (HHMMSS).
+ * @var emc_calib_header::flag
+ *   Quality flag.
+ * @var emc_calib_header::func
+ *   Calibration function: 0 = pedestal, 1 = linear.
+ * @var emc_calib_header::det
+ *   Detector identifier (see emc_def.h).
+ * @var emc_calib_header::nmodule
+ *   Number of modules in this calibration.
+ * @var emc_calib_header::neta
+ *   Number of η bins.
+ * @var emc_calib_header::nsub
+ *   Number of sub-divisions per η bin.
+ */
+
+/**
+ * @struct emc_egrid_par
+ * @brief Energy-grid parameters for the combined BEMC/EEMC energy matrix.
+ *
+ * @var emc_egrid_par::chrg_eta_min
+ *   Minimum η for charged-track acceptance.
+ * @var emc_egrid_par::chrg_eta_max
+ *   Maximum η for charged-track acceptance.
+ * @var emc_egrid_par::ideal_eta_nbin
+ *   Number of η bins in the ideal energy matrix.
+ * @var emc_egrid_par::ideal_phi_nbin
+ *   Number of φ bins in the ideal energy matrix.
+ */
+
+/**
+ * @struct emc_elect
+ * @brief Electron candidate reconstructed from BEMC clusters.
+ *
+ * @var emc_elect::p_cluster
+ *   Row pointer into emc_cluster.
+ * @var emc_elect::energy
+ *   Cluster energy (GeV).
+ * @var emc_elect::eta
+ *   Cluster pseudorapidity.
+ * @var emc_elect::phi
+ *   Cluster φ (rad).
+ * @var emc_elect::width_z
+ *   SMD shower width in the z (η) direction.
+ * @var emc_elect::width_rphi
+ *   SMD shower width in the r·φ direction.
+ * @var emc_elect::hi2_z
+ *   χ² for transverse shower shape in SMD z strips.
+ * @var emc_elect::hi2_rphi
+ *   χ² for transverse shower shape in SMD φ strips.
+ * @var emc_elect::r_isol
+ *   Isolation ratio (ET(r < r_isol) − ET(em)) / ET(em).
+ */
+
+/**
+ * @struct emc_gam
+ * @brief Photon candidate reconstructed from BEMC clusters.
+ *   Identical structure to emc_elect; distinguished at the analysis level.
+ *
+ * @var emc_gam::p_cluster
+ *   Row pointer into emc_cluster.
+ * @var emc_gam::energy
+ *   Photon energy (GeV).
+ * @var emc_gam::eta
+ *   Photon pseudorapidity.
+ * @var emc_gam::phi
+ *   Photon φ (rad).
+ * @var emc_gam::width_z
+ *   SMD shower width in z.
+ * @var emc_gam::width_rphi
+ *   SMD shower width in r·φ.
+ */
+
+/**
+ * @struct emc_gamma
+ * @brief Photon candidate including preshower and SMD energy deposits.
+ *
+ * @var emc_gamma::eta
+ *   Photon pseudorapidity.
+ * @var emc_gamma::phi
+ *   Photon φ (rad).
+ * @var emc_gamma::energy
+ *   Total photon energy (GeV).
+ * @var emc_gamma::sigma_eta
+ *   Shower width in η.
+ * @var emc_gamma::sigma_phi
+ *   Shower width in φ.
+ * @var emc_gamma::energy_presh
+ *   Preshower energy deposit (GeV).
+ * @var emc_gamma::energy_smd
+ *   Combined SMD (η + φ plane) energy (GeV).
+ * @var emc_gamma::indx
+ *   Bit flags: bit 0 = η SMD used, bit 1 = φ SMD used, etc.
+ */
+
+/**
+ * @struct emc_pizero
+ * @brief π⁰ candidate reconstructed from two photons.
+ *
+ * @var emc_pizero::p_gamma1
+ *   Row pointer to the first photon in emc_gam.
+ * @var emc_pizero::p_gamma2
+ *   Row pointer to the second photon in emc_gam.
+ * @var emc_pizero::egam1
+ *   Energy of the first photon (GeV).
+ * @var emc_pizero::egam2
+ *   Energy of the second photon (GeV).
+ * @var emc_pizero::cosa
+ *   Cosine of the opening angle between the two photons.
+ * @var emc_pizero::pt
+ *   Transverse momentum of the π⁰ (GeV/c).
+ * @var emc_pizero::mass
+ *   Invariant mass of the two-photon system (GeV/c²).
+ * @var emc_pizero::sigma_mass
+ *   Uncertainty on the invariant mass (GeV/c²).
+ * @var emc_pizero::eta
+ *   Pseudorapidity of the π⁰.
+ * @var emc_pizero::phi
+ *   φ angle of the π⁰ (rad).
+ */
+
+/**
+ * @struct emc_jet_eval
+ * @brief Jet-finder evaluation: generator-level vs. full-simulation comparison.
+ *
+ * @var emc_jet_eval::njet1
+ *   Number of jets found at the generator level.
+ * @var emc_jet_eval::njet2
+ *   Number of jets found after full GEANT simulation.
+ * @var emc_jet_eval::et1
+ *   ET of each generator-level jet (GeV), up to 4.
+ * @var emc_jet_eval::eta1
+ *   η of each generator-level jet.
+ * @var emc_jet_eval::phi1
+ *   φ of each generator-level jet (rad).
+ * @var emc_jet_eval::et2
+ *   ET of each post-GEANT jet (GeV).
+ * @var emc_jet_eval::det
+ *   ET difference (generator − GEANT) per jet.
+ * @var emc_jet_eval::deta
+ *   η difference per jet.
+ * @var emc_jet_eval::dphi
+ *   φ difference per jet.
+ */
+
+/**
+ * @struct emc_jetpar
+ * @brief Jet-finder parameters for the BEMC path.
+ *
+ * @var emc_jetpar::jetmethod
+ *   Jet-finding algorithm selector (only 1 currently implemented).
+ * @var emc_jetpar::cone_rad
+ *   Jet cone radius in the η–φ plane.
+ * @var emc_jetpar::et_seed
+ *   Seed transverse energy (GeV).
+ * @var emc_jetpar::et_min
+ *   Minimum cell ET to include in jet finding (GeV).
+ * @var emc_jetpar::ej_min
+ *   Minimum jet energy for post-algorithm analysis (GeV).
+ * @var emc_jetpar::eta_min
+ *   Minimum η for jet acceptance.
+ * @var emc_jetpar::eta_max
+ *   Maximum η for jet acceptance.
+ * @var emc_jetpar::mode_bg
+ *   Background subtraction: 0 = off, 1 = on.
+ */
+
+/**
+ * @struct emc_part_id_par
+ * @brief Particle-identification parameters for BEMC shower-shape analysis.
+ *
+ * @var emc_part_id_par::n_shower_e
+ *   Number of SMD η strips used for shower localisation.
+ * @var emc_part_id_par::n_shower_p
+ *   Number of SMD φ strips used for shower localisation.
+ * @var emc_part_id_par::r_shower
+ *   Shower radius in the EMC (cm).
+ * @var emc_part_id_par::e_smd_cut
+ *   Minimum SMD energy deposit (GeV).
+ * @var emc_part_id_par::wid_z_cut
+ *   Maximum shower width in z (η direction).
+ * @var emc_part_id_par::wid_rphi_cut
+ *   Maximum shower width in r·φ.
+ * @var emc_part_id_par::e_p_min
+ *   Minimum E/p ratio for electron identification.
+ * @var emc_part_id_par::e_p_max
+ *   Maximum E/p ratio for electron identification.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  EEMC simulation and analysis tables (ems_*)                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @struct ems_hits
+ * @brief Simulated EMC tower hits (both BEMC and EEMC).
+ *
+ * @var ems_hits::det
+ *   Detector number (see emc_def.h).
+ * @var ems_hits::module
+ *   Module number.
+ * @var ems_hits::eta
+ *   Pseudorapidity bin number.
+ * @var ems_hits::sub
+ *   Sub-division index.
+ * @var ems_hits::energy
+ *   Total simulated energy deposit (GeV).
+ * @var ems_hits::e_neut
+ *   Simulated energy from neutral particles (GeV).
+ */
+
+/**
+ * @struct ems_control
+ * @brief Master simulation-control table for the EMC fast simulator.
+ *
+ * @var ems_control::bemc_on
+ *   BEMC simulation enable flag: 1 = on.
+ * @var ems_control::bsmd_on
+ *   BSMD simulation enable flag: 1 = on.
+ * @var ems_control::eemc_on
+ *   EEMC simulation enable flag: 1 = on.
+ * @var ems_control::esmd_on
+ *   ESMD simulation enable flag: 1 = on.
+ * @var ems_control::sampfrac
+ *   Sampling fractions (8 sub-detectors) converting observed to incident energy.
+ * @var ems_control::nmodule
+ *   Number of modules per sub-detector (8 entries).
+ * @var ems_control::neta
+ *   Number of η bins per sub-detector (8 entries).
+ * @var ems_control::nsub
+ *   Number of sub-divisions per η bin (8 entries).
+ * @var ems_control::adcbits
+ *   ADC word width in bits per sub-detector (8 entries).
+ * @var ems_control::ideal_jet_mode
+ *   Ideal jet-finder mode: 1 = ideal, 2 = one-neutrino, 3 = charged-only.
+ */
+
+/**
+ * @struct ems_cal_control
+ * @brief Calibration-simulation control parameters.
+ *
+ * @var ems_cal_control::det
+ *   Detector number (see emc_def.h).
+ * @var ems_cal_control::iseed
+ *   Random-number seed; 0 = use default.
+ * @var ems_cal_control::ped_channel
+ *   Mean pedestal value for fake-pedestal generation (ADC counts).
+ * @var ems_cal_control::ped_var
+ *   Channel-to-channel pedestal variation.
+ * @var ems_cal_control::toy_sim_mode
+ *   Toy-simulator mode: 0 = pedestal noise, 1 = Gaussian signal.
+ * @var ems_cal_control::noise_level
+ *   Noise level for toy-simulator mode 0.
+ */
+
+/**
+ * @struct ems_electron
+ * @brief W-boson electron candidate.
+ *
+ * @var ems_electron::charge
+ *   Charge of the electron track (+1 or −1).
+ * @var ems_electron::e_elect
+ *   Electron energy from EMC cluster (GeV).
+ * @var ems_electron::edep
+ *   Energy deposited by the electron in the EMC (GeV).
+ * @var ems_electron::eta
+ *   Electron pseudorapidity.
+ * @var ems_electron::phi
+ *   Electron φ (rad).
+ * @var ems_electron::pt
+ *   Electron transverse momentum (GeV/c).
+ * @var ems_electron::p_elect
+ *   Electron momentum vector (GeV/c).
+ * @var ems_electron::n_cells
+ *   Number of EMC towers in the cluster.
+ * @var ems_electron::id_b
+ *   Number of back-to-back structures found.
+ */
+
+/**
+ * @struct ems_emecor
+ * @brief CPR-corrected BEMC tower energies.
+ *
+ * @var ems_emecor::eta_bin
+ *   Pseudorapidity bin number (−20 to 20).
+ * @var ems_emecor::phi_bin
+ *   φ module number (0 to 60).
+ * @var ems_emecor::echar_vert
+ *   Energy from charged tracks at the primary vertex (GeV).
+ * @var ems_emecor::eneut_cpr
+ *   Neutral energy inferred by CPR subtraction (GeV).
+ * @var ems_emecor::eneut_mct
+ *   Neutral energy from Monte Carlo truth (GeV).
+ * @var ems_emecor::etot_sim
+ *   Total simulated energy (charged tracks + neutral via CPR) (GeV).
+ */
+
+/**
+ * @struct ems_hits_bemc
+ * @brief BEMC hit map from the EMC fast simulator.
+ *
+ * @var ems_hits_bemc::eta_bin
+ *   η bin number (1–20).
+ * @var ems_hits_bemc::phi_bin
+ *   φ module number (1–120).
+ * @var ems_hits_bemc::phi_sub
+ *   φ tower sub-number (1–2).
+ * @var ems_hits_bemc::tower_dep
+ *   Depth section: 1 = preshower, 2 = full tower.
+ * @var ems_hits_bemc::e_sum
+ *   Total energy with Birk's Law correction (GeV).
+ * @var ems_hits_bemc::e_neut
+ *   Neutral-particle energy with Birk's Law correction (GeV).
+ */
+
+/**
+ * @struct ems_hits_bsmd
+ * @brief BSMD (Barrel Shower-Maximum Detector) hit map.
+ *
+ * @var ems_hits_bsmd::eta_bin
+ *   η bin number (−10 to 10).
+ * @var ems_hits_bsmd::phi_bin
+ *   φ module number (1–60).
+ * @var ems_hits_bsmd::type
+ *   SMD type (1–3).
+ * @var ems_hits_bsmd::strip
+ *   Strip number: 1–75 for types 1–2, 1–15 for type 3.
+ * @var ems_hits_bsmd::e_sum
+ *   Energy deposited in this strip (GeV).
+ */
+
+/**
+ * @struct ems_hits_eemc
+ * @brief EEMC hit map from the EMC fast simulator.
+ *
+ * @var ems_hits_eemc::eta_bin
+ *   η bin number (−12 to 12).
+ * @var ems_hits_eemc::phi_bin
+ *   φ module number (1–60).
+ * @var ems_hits_eemc::tower_dep
+ *   Depth section: 1 = preshower, 2 = full tower.
+ * @var ems_hits_eemc::e_sum
+ *   Total energy with Birk's Law correction (GeV).
+ * @var ems_hits_eemc::e_neut
+ *   Neutral-particle energy with Birk's Law correction (GeV).
+ */
+
+/**
+ * @struct ems_hits_esmd
+ * @brief ESMD (Endcap Shower-Maximum Detector) hit map.
+ *
+ * @var ems_hits_esmd::rl
+ *   East/west flag: 1 = Z < 0, 2 = Z > 0.
+ * @var ems_hits_esmd::phi_mod
+ *   φ module number (1–60).
+ * @var ems_hits_esmd::phi_strip
+ *   φ sub-cell strip number.
+ * @var ems_hits_esmd::eta_strip
+ *   η sub-cell strip number.
+ * @var ems_hits_esmd::e_sum
+ *   Total deposited energy (GeV).
+ */
+
+/**
+ * @struct ems_jetlist
+ * @brief Reconstructed jets from the EMC jet finder.
+ *
+ * @var ems_jetlist::id
+ *   Jet number within this event.
+ * @var ems_jetlist::n_cells
+ *   Number of energy cells forming the jet.
+ * @var ems_jetlist::n_jet
+ *   Total number of jets found in this event.
+ * @var ems_jetlist::e_j
+ *   Jet energy as returned by the jet finder (GeV).
+ * @var ems_jetlist::eta
+ *   Jet centroid pseudorapidity.
+ * @var ems_jetlist::eta_w
+ *   Energy-weighted jet η.
+ * @var ems_jetlist::phi
+ *   Jet centroid φ (rad).
+ * @var ems_jetlist::phi_w
+ *   Energy-weighted jet φ (rad).
+ * @var ems_jetlist::jet_m
+ *   Jet invariant mass; 0 if E² − p² < 0 (GeV/c²).
+ * @var ems_jetlist::p_j
+ *   Jet momentum vector (GeV/c).
+ */
+
+/**
+ * @struct ems_jetpar
+ * @brief Jet-finder parameters for the EEMC path.
+ *
+ * @var ems_jetpar::jetmethod
+ *   Algorithm selector (only 1 currently implemented).
+ * @var ems_jetpar::cone_rad
+ *   Jet cone radius in the η–φ plane.
+ * @var ems_jetpar::et_seed
+ *   Seed transverse energy (GeV).
+ * @var ems_jetpar::et_min
+ *   Minimum cell ET (GeV).
+ * @var ems_jetpar::ej_min
+ *   Minimum jet energy for post-algorithm analysis (GeV).
+ * @var ems_jetpar::phi_dev
+ *   Maximum back-to-back φ deviation for di-jet identification.
+ */
+
+/**
+ * @struct ems_lvl0_adcs
+ * @brief Level-0 trigger ADC values per isospin patch.
+ *
+ * @var ems_lvl0_adcs::eta_bin
+ *   η bin of the isospin patch.
+ * @var ems_lvl0_adcs::phi_bin
+ *   φ bin of the isospin patch.
+ * @var ems_lvl0_adcs::iso_adc
+ *   ADC value (proportional to energy) for the patch.
+ */
+
+/**
+ * @struct ems_lvl0_bits
+ * @brief Level-0 trigger decision bits.
+ *
+ * @var ems_lvl0_bits::one_tow
+ *   Single-tower trigger bits (3 words).
+ * @var ems_lvl0_bits::four_tow
+ *   4-tower trigger bits (3 words).
+ * @var ems_lvl0_bits::sixteen_tow
+ *   16-tower trigger bits (3 words).
+ * @var ems_lvl0_bits::glob_bits
+ *   Global energy trigger bits (3 words).
+ * @var ems_lvl0_bits::lum_bits
+ *   Luminosity-monitoring trigger bits (3 words).
+ * @var ems_lvl0_bits::glob_adc
+ *   Global Level-0 ADC sum.
+ */
+
+/**
+ * @struct ems_lvl0_thres
+ * @brief Level-0 trigger thresholds.
+ *
+ * @var ems_lvl0_thres::one_tow_thres
+ *   Three threshold values for the single-tower trigger.
+ * @var ems_lvl0_thres::four_tow_thres
+ *   Three threshold values for the 4-tower trigger.
+ * @var ems_lvl0_thres::sixteen_tow_thres
+ *   Three threshold values for the 16-tower trigger.
+ * @var ems_lvl0_thres::glob_thres
+ *   Three threshold values for the global energy trigger.
+ * @var ems_lvl0_thres::lum_thres
+ *   Four threshold values for the luminosity-monitoring trigger.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  Cross-system tables                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @struct control_toadc
+ * @brief Energy-to-ADC conversion coefficients for BEMC sub-detectors.
+ *
+ * @var control_toadc::mode
+ *   Conversion mode per sub-detector (8 entries):
+ *   0 = no conversion, 1 = without photo-statistics, 2 = with photo-statistics.
+ * @var control_toadc::zero_sup
+ *   Zero-suppression flag per sub-detector (8 entries): 0 = off, 1 = on.
+ * @var control_toadc::energy
+ *   Maximum tower energy per sub-detector (~60 GeV, 8 entries).
+ * @var control_toadc::dep_mip
+ *   MIP deposit energy in scintillator layers at zero angle (8 entries).
+ * @var control_toadc::nphe_mip
+ *   Number of photoelectrons for a MIP at zero angle (8 entries).
+ * @var control_toadc::c1
+ *   Coefficient: (sampfrac × ADC_bits) / energy.
+ * @var control_toadc::c2
+ *   Coefficient: nphe_mip / dep_mip.
+ * @var control_toadc::c3
+ *   Coefficient: (sampfrac × ADC_bits × dep_mip) / (energy × nphe_mip).
+ */
+
+/**
+ * @struct tpc_bemc
+ * @brief TPC track to BEMC tower matching record.
+ *
+ * @var tpc_bemc::eta_bin
+ *   Tower η bin number.
+ * @var tpc_bemc::phi_bin
+ *   Tower φ module number.
+ * @var tpc_bemc::adc
+ *   Tower ADC value.
+ * @var tpc_bemc::ntpc
+ *   Number of TPC tracks matched to this tower.
+ * @var tpc_bemc::flag
+ *   Quality flag for the best-matched TPC track.
+ * @var tpc_bemc::pq
+ *   Momentum × charge of the best-matched TPC track (GeV/c).
+ * @var tpc_bemc::dl
+ *   Track path length inside the tower (cm).
+ * @var tpc_bemc::x1
+ *   x coordinate of the track entry point into the tower (cm).
+ * @var tpc_bemc::y1
+ *   y coordinate of the track entry point (cm).
+ * @var tpc_bemc::z1
+ *   z coordinate of the track entry point (cm).
+ * @var tpc_bemc::x2
+ *   x coordinate of the track exit point from the tower (cm).
+ * @var tpc_bemc::y2
+ *   y coordinate of the track exit point (cm).
+ * @var tpc_bemc::z2
+ *   z coordinate of the track exit point (cm).
+ */
+
+/** @} */

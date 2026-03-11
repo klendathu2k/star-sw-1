@@ -1,0 +1,204 @@
+/**
+ * @defgroup PamsCtf Central Trigger Facility (CTF)
+ * @ingroup Pams
+ * @brief IDL table definitions for the STAR Central Trigger Facility.
+ *
+ * @details
+ * The CTF subsystem provides geometry, simulation, and hit-data tables for
+ * the STAR Central Trigger Barrel (CTB, detector=1) and Time-of-Flight
+ * (TOF, detector=2) detectors.  Three sub-systems are defined:
+ *
+ * - **CTG** (`ctg_`) — geometry and per-slat calibration constants.
+ * - **CTS** (`cts_`) — digitisation parameters and simulated hit output.
+ * - **CTU** (`ctu_`) — raw and calibration-corrected hit data.
+ *
+ * @{
+ */
+
+/**
+ * @struct ctg_geo
+ * @brief Global CTF geometry parameters.
+ *
+ * @var ctg_geo::init
+ *   Initialisation control flag.
+ * @var ctg_geo::detector
+ *   Detector type: 1 = CTB (Central Trigger Barrel), 2 = TOF.
+ * @var ctg_geo::i_eta_max
+ *   Maximum η index.
+ * @var ctg_geo::i_eta_min
+ *   Minimum η index.
+ * @var ctg_geo::i_phi_max
+ *   Maximum φ index.
+ * @var ctg_geo::i_phi_min
+ *   Minimum φ index.
+ * @var ctg_geo::n_counter_eta
+ *   Number of counters per tray along the rapidity (z) direction.
+ * @var ctg_geo::n_counter_phi
+ *   Number of counters per tray along φ.
+ * @var ctg_geo::n_tray_eta
+ *   Number of trays in rapidity.
+ * @var ctg_geo::n_tray_phi
+ *   Number of trays in polar angle φ.
+ * @var ctg_geo::r
+ *   Mean counter inner radius (cm).
+ * @var ctg_geo::tray_phi_zero
+ *   φ angle of the centre of the first tray (rad).
+ */
+
+/**
+ * @struct ctg_slat
+ * @brief Per-slat calibration constants, indexed by η and φ bin.
+ *
+ * @var ctg_slat::i_eta
+ *   η (rapidity) index of this slat.
+ * @var ctg_slat::i_phi
+ *   φ index of this slat.
+ * @var ctg_slat::cc_adc
+ *   ADC calibration constant (scale factor) for the scintillator.
+ * @var ctg_slat::cc_tdc
+ *   TDC calibration constant (scale factor).
+ * @var ctg_slat::offset_adc
+ *   ADC pedestal offset.
+ * @var ctg_slat::offset_tdc
+ *   TDC time offset.
+ * @var ctg_slat::ods_adc
+ *   ADC dispersion offset (channel-to-channel spread).
+ * @var ctg_slat::ods_tdc
+ *   TDC dispersion offset.
+ */
+
+/**
+ * @struct ctg_slat_eta
+ * @brief Per-η-bin geometry: pseudorapidity coverage and radial/longitudinal position.
+ *
+ * @var ctg_slat_eta::ieta
+ *   η index.
+ * @var ctg_slat_eta::eta
+ *   Central pseudorapidity of this slat.
+ * @var ctg_slat_eta::eta_min
+ *   Minimum pseudorapidity covered by this slat.
+ * @var ctg_slat_eta::eta_max
+ *   Maximum pseudorapidity covered by this slat.
+ * @var ctg_slat_eta::cosang
+ *   Cosine of the slat angle with respect to the beam axis.
+ * @var ctg_slat_eta::r
+ *   Radial position of the slat centre (cm).
+ * @var ctg_slat_eta::z
+ *   Longitudinal (z) position of the slat centre (cm).
+ * @var ctg_slat_eta::z_min
+ *   Minimum z covered by this slat (cm).
+ * @var ctg_slat_eta::z_max
+ *   Maximum z covered by this slat (cm).
+ */
+
+/**
+ * @struct ctg_slat_phi
+ * @brief Per-φ-bin geometry: azimuthal coverage per tray.
+ *
+ * @var ctg_slat_phi::iphi
+ *   φ index.
+ * @var ctg_slat_phi::phi
+ *   Central φ angle of this tray (rad).
+ * @var ctg_slat_phi::phi_min
+ *   Minimum φ covered by this tray (rad).
+ * @var ctg_slat_phi::phi_max
+ *   Maximum φ covered by this tray (rad).
+ */
+
+/**
+ * @struct cts_event
+ * @brief CTF simulation event summary.
+ *
+ * @var cts_event::adc_sum
+ *   Sum of all ADC signals over the event.
+ * @var cts_event::n_ctf
+ *   Total number of particles traversing the CTF.
+ * @var cts_event::n_ctf_prim
+ *   Total number of primary particles traversing the CTF.
+ * @var cts_event::n_prim
+ *   Total number of primaries in the event.
+ */
+
+/**
+ * @struct cts_mpara
+ * @brief CTF simulation module parameters.
+ *
+ * @var cts_mpara::geo_from_geant
+ *   If 1, geometry is read from GEANT; otherwise from ctg_* tables.
+ * @var cts_mpara::attlen
+ *   Scintillator light attenuation length (cm).
+ * @var cts_mpara::time_res
+ *   Slat assembly time resolution (ns).
+ * @var cts_mpara::gate_width
+ *   ADC integration gate width (ns).
+ * @var cts_mpara::GeV_2_n_photons
+ *   Conversion factor from deposited energy (GeV) to number of photons.
+ * @var cts_mpara::nphe_to_adc
+ *   Photoelectron-to-ADC conversion factor.
+ * @var cts_mpara::slat_response
+ *   100-element lookup table of slat response vs. z and transverse position.
+ * @var cts_mpara::time_response
+ *   100-element lookup table of integrated amplitude vs. time.
+ * @var cts_mpara::zero_suppression
+ *   Zero-suppression flag.
+ */
+
+/**
+ * @struct cts_mslat
+ * @brief Per-slat simulation output.
+ *
+ * @var cts_mslat::i_eta
+ *   η index of this slat.
+ * @var cts_mslat::i_phi
+ *   φ index of this slat.
+ * @var cts_mslat::adc
+ *   Digitised ADC signal.
+ * @var cts_mslat::tdc
+ *   Digitised TDC signal.
+ * @var cts_mslat::mc_trk_id
+ *   Monte Carlo track identifier of the hit particle.
+ * @var cts_mslat::n_hits
+ *   Number of hits on this slat in the event.
+ * @var cts_mslat::de
+ *   Total deposited energy in the slat (GeV).
+ * @var cts_mslat::n_phe
+ *   Number of photoelectrons produced in the scintillator.
+ * @var cts_mslat::tof
+ *   Time of flight of the first particle to strike this slat (ns).
+ * @var cts_mslat::time
+ *   TOF plus propagation delay of the first particle (ns).
+ * @var cts_mslat::mtime
+ *   @c time plus length-dependent time resolution smearing (ns).
+ * @var cts_mslat::mtimel
+ *   @c mtime plus length-dependent propagation delay (ns).
+ */
+
+/**
+ * @struct ctu_raw
+ * @brief Raw slat hit data.
+ *
+ * @var ctu_raw::i_eta
+ *   η index of the fired slat.
+ * @var ctu_raw::i_phi
+ *   φ index of the fired slat.
+ * @var ctu_raw::adc
+ *   Raw ADC value from the scintillator.
+ * @var ctu_raw::tdc
+ *   Raw TDC value from the scintillator.
+ */
+
+/**
+ * @struct ctu_cor
+ * @brief Calibration-corrected slat hit data.
+ *
+ * @var ctu_cor::i_eta
+ *   η (z) index of the slat.
+ * @var ctu_cor::i_phi
+ *   φ index of the slat.
+ * @var ctu_cor::n
+ *   Calibrated number of particles through the counter.
+ * @var ctu_cor::time
+ *   Corrected time relative to t0 (ns).
+ */
+
+/** @} */

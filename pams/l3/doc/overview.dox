@@ -1,0 +1,165 @@
+/**
+ * @defgroup PamsL3 pams/l3 — Level-3 Trigger Track Support
+ * @ingroup Pams
+ *
+ * @brief TPC coordinate transformer and DAQ/L3 data-format headers supporting
+ *        the STAR Level-3 online trigger track finder.
+ *
+ * `pams/l3/` contains the building blocks used by the L3 online trigger to
+ * perform real-time TPC track reconstruction.  The core component is the
+ * coordinate transformer class St_l3_Coordinate_Transformer, which converts
+ * between raw detector-electronics coordinates, sector-local Cartesian
+ * coordinates, and the global STAR coordinate system.
+ *
+ * The header files in `inc/` define the DAQ raw-data bank structures
+ * (daqFormats.h), the L3 trigger output track and cluster formats
+ * (L3Formats.h), TPC sector geometry constants (sector.h), and the coordinate
+ * helper classes (St_l3_Coordinates.h).
+ *
+ * The offline equivalent of this code is in StRoot/StL3Maker.
+ *
+ * ## Coordinate systems
+ *
+ * Three coordinate systems are used:
+ *
+ * - **Raw** (`St_l3_ptrs_Coordinate`): pad, timebucket, row, sector —
+ *   the native detector-electronics representation.
+ * - **Local** (`St_l3_xyz_Coordinate` in sector frame): right-handed Cartesian
+ *   system aligned with a single TPC sector; y points radially outward,
+ *   x along pads, z along the drift direction.
+ * - **Global** (`St_l3_xyz_Coordinate` in STAR frame): standard STAR
+ *   coordinate system; sectors are rotated in 30° steps, with an x-mirror and
+ *   z-flip for the east end-cap (sectors 13–24).
+ *
+ * @see St_l3_Coordinate_Transformer
+ * @see St_l3_xyz_Coordinate
+ * @see St_l3_ptrs_Coordinate
+ */
+
+/**
+ * @class St_l3_xyz_Coordinate
+ * @ingroup PamsL3
+ * @brief Cartesian coordinate point (x, y, z) in either local or global frame.
+ *
+ * Stores three `double` components and provides inline setters and getters.
+ * Used as both local-sector and global-STAR coordinate containers by
+ * St_l3_Coordinate_Transformer.
+ *
+ * @fn St_l3_xyz_Coordinate::St_l3_xyz_Coordinate()
+ *   Default constructor: initialises all three components to 0.
+ *
+ * @fn St_l3_xyz_Coordinate::St_l3_xyz_Coordinate(double X, double Y, double Z)
+ *   Constructs a coordinate point at (X, Y, Z).
+ */
+
+/**
+ * @class St_l3_ptrs_Coordinate
+ * @ingroup PamsL3
+ * @brief Raw detector-electronics coordinate: (pad, timebucket, row, sector).
+ *
+ * All four components are stored as `double` to support sub-bin positions.
+ * Sector numbers run 1–24; row numbers run 1–45 (13 inner + 32 outer rows).
+ *
+ * @fn St_l3_ptrs_Coordinate::St_l3_ptrs_Coordinate()
+ *   Default constructor: initialises all four components to 0.
+ *
+ * @fn St_l3_ptrs_Coordinate::St_l3_ptrs_Coordinate(double P, double T, double R, double S)
+ *   Constructs a coordinate point at (pad=P, timebucket=T, row=R, sector=S).
+ */
+
+/**
+ * @class St_l3_Coordinate_Transformer
+ * @ingroup PamsL3
+ * @brief Transforms TPC hit coordinates between raw, local, and global frames.
+ *
+ * This class encapsulates the full TPC geometry (pad counts per row, radial
+ * distances, sector rotation angles) as static tables and provides conversion
+ * methods in both the raw→global and global→raw directions.
+ *
+ * ### Geometry tables (static)
+ * - `numberOfPadsAtRow[45]`: number of pads in each of the 45 pad rows.
+ * - `radialDistanceAtRow[45]`: radial distance of the pad-row centre from the
+ *   beam axis (cm).  Inner rows are spaced 4.80 cm (rows 1–7) and 5.20 cm
+ *   (rows 8–13); outer rows are spaced 2.00 cm (rows 14–45).
+ * - `SectorSin[24]`, `SectorCos[24]`: sine and cosine of the sector rotation
+ *   angles in 30° steps.
+ * - `innerSectorPadPitch`: 0.335 cm (rows 1–13).
+ * - `outerSectorPadPitch`: 0.67 cm (rows 14–45).
+ *
+ * ### Drift parameters
+ * Three methods are available to initialise the z↔timebucket conversion:
+ * - `Set_parameters_by_hand()`: uses hard-coded values (0.584 cm/tb, 201 cm
+ *   drift length for both inner and outer sectors).
+ * - `Get_parameters_from_db()`: reads drift velocity and geometry from the
+ *   STAR TPC conditions database (offline only; requires `L3OFFLINE` build).
+ * - `Use_transformation_provided_by_db()`: derives parameters by calling the
+ *   official StTpcCoordinateTransform for representative inner/outer rows.
+ *
+ * @fn St_l3_Coordinate_Transformer::St_l3_Coordinate_Transformer()
+ *   Default constructor.  Calls `Set_parameters_by_hand()` to initialise
+ *   drift parameters with hard-coded values.
+ *
+ * @fn St_l3_Coordinate_Transformer::raw_to_global(const St_l3_ptrs_Coordinate&, St_l3_xyz_Coordinate&)
+ *   Converts a raw (pad, timebucket, row, sector) coordinate to the global
+ *   STAR frame via an intermediate local-sector conversion.
+ *
+ * @fn St_l3_Coordinate_Transformer::raw_to_local(const St_l3_ptrs_Coordinate&, St_l3_xyz_Coordinate&)
+ *   Converts a raw coordinate to the local sector frame.
+ *   Uses `innerSectorPadPitch` for rows ≤ 13 and `outerSectorPadPitch`
+ *   otherwise; converts timebucket to z using the appropriate drift length.
+ *
+ * @fn St_l3_Coordinate_Transformer::local_to_global(const St_l3_ptrs_Coordinate&, const St_l3_xyz_Coordinate&, St_l3_xyz_Coordinate&)
+ *   Rotates a local-sector coordinate into the global frame using the
+ *   pre-computed SectorSin/SectorCos tables.  Applies an x-mirror and z-flip
+ *   for east end-cap sectors (sector > 12).
+ *
+ * @fn St_l3_Coordinate_Transformer::global_to_raw(const St_l3_xyz_Coordinate&, St_l3_ptrs_Coordinate&)
+ *   Converts a global coordinate to raw by determining the sector, rotating
+ *   back to local frame, then computing pad and timebucket.
+ *
+ * @fn St_l3_Coordinate_Transformer::global_to_raw(int sector, int row, const St_l3_xyz_Coordinate&, St_l3_ptrs_Coordinate&)
+ *   Overload that uses a known sector and row to bypass the sector-search step.
+ *
+ * @fn St_l3_Coordinate_Transformer::global_to_local(const St_l3_xyz_Coordinate&, St_l3_xyz_Coordinate&, St_l3_ptrs_Coordinate&)
+ *   Determines the sector by rotating the global x–y point in 30° steps
+ *   until it falls within the first-sector wedge, then sets the local
+ *   coordinate and the sector field of the raw coordinate.
+ *
+ * @fn St_l3_Coordinate_Transformer::global_to_local(int sector, int row, const St_l3_xyz_Coordinate&, St_l3_xyz_Coordinate&)
+ *   Overload that directly applies the inverse rotation matrix for a known
+ *   sector and row without the iterative sector search.
+ *
+ * @fn St_l3_Coordinate_Transformer::local_to_raw(const St_l3_xyz_Coordinate&, const St_l3_xyz_Coordinate&, St_l3_ptrs_Coordinate&)
+ *   Converts a local coordinate to raw by searching for the matching pad row
+ *   (nearest radial distance within 0.5 cm), then computing pad number and
+ *   timebucket.
+ *
+ * @fn St_l3_Coordinate_Transformer::local_to_raw(int row, const St_l3_xyz_Coordinate&, St_l3_ptrs_Coordinate&)
+ *   Overload that uses a known pad-row number, avoiding the row search.
+ *
+ * @fn St_l3_Coordinate_Transformer::Set_parameters_by_hand()
+ *   Sets drift parameters to hard-coded values:
+ *   `lengthPerTb` = 0.584 cm, `drift_length_inner` = `drift_length_outer` = 201 cm.
+ *
+ * @fn St_l3_Coordinate_Transformer::Set_parameters_by_hand(double, double, double)
+ *   Sets drift parameters explicitly: cm per timebucket, inner drift length
+ *   (cm), outer drift length (cm).
+ *
+ * @fn St_l3_Coordinate_Transformer::Get_parameters_from_db()
+ *   Reads drift velocity, gating-grid position, T0 corrections, and
+ *   electronics parameters from the STAR TPC conditions database to compute
+ *   `lengthPerTb`, `drift_length_inner`, and `drift_length_outer`.
+ *   Only functional in offline builds with `L3OFFLINE` defined.
+ *
+ * @fn St_l3_Coordinate_Transformer::Use_transformation_provided_by_db()
+ *   Derives transformation parameters by calling the official
+ *   `StTpcCoordinateTransform` for representative inner (row 5) and outer
+ *   (row 30) pad rows at timebuckets 0 and 100.
+ *
+ * @fn St_l3_Coordinate_Transformer::Print_parameters()
+ *   Prints the current drift parameters to stdout.
+ *
+ * @fn St_l3_Coordinate_Transformer::Get_transformation_errors()
+ *   Returns the count of out-of-range timebucket values encountered during
+ *   coordinate conversion.
+ */

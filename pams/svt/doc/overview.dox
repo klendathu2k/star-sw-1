@@ -1,0 +1,117 @@
+/**
+ * @defgroup PamsSvt pams/svt — Silicon Vertex Tracker Tables
+ * @ingroup Pams
+ * @{
+ *
+ * @brief IDL table definitions for the STAR Silicon Vertex Tracker (SVT).
+ *
+ * @details
+ * The `pams/svt/` package provides the Interface Definition Language (IDL) schemas
+ * for all persistent data structures associated with the SVT — the inner-barrel
+ * silicon drift detector that operated in STAR from Run 2 (2001) through Run 7 (2007).
+ *
+ * Tables cover the full SVT data chain:
+ * - **Geometry** — wafer positions and orientations (`svg_geom`, `svg_shape`)
+ * - **Raw strips** — ADC counts per strip after zero-suppression (`spa_strip`)
+ * - **Calibration** — per-strip pedestal and noise (`sdm_calib_db`, `sdm_calib_par`)
+ * - **Conditions** — active/dead channel maps (`sdm_condition_db`, `sdm_condition_par`)
+ * - **Reconstructed strips** — signal strips with noise subtraction (`sls_strip`)
+ * - **Space points** — 3-D hit positions from cluster finding/fitting (`scs_spt`, `scm_spt`)
+ * - **SSD clusters** — Silicon Strip Detector cluster finder output (`scf_cluster`)
+ * - **Simulation parameters** — resolution and digitisation settings (`srs_srspar`, `sdm_geom_par`)
+ *
+ * @}
+ */
+
+/**
+ * @struct scf_cluster
+ * @brief SSD Cluster Finder output (60 bytes).
+ * @ingroup PamsSvt
+ * @var scf_cluster::id             Cluster index in the table.
+ * @var scf_cluster::id_cluster     Cluster address (encoded strip/wafer).
+ * @var scf_cluster::first_strip    First strip in the cluster.
+ * @var scf_cluster::n_strip        Number of strips in the cluster.
+ * @var scf_cluster::adc_count      Sum of ADC counts over all strips.
+ * @var scf_cluster::first_adc_count ADC count of the leading strip.
+ * @var scf_cluster::last_adc_count  ADC count of the trailing strip.
+ * @var scf_cluster::noise_count    Sum of noise counts.
+ * @var scf_cluster::strip_mean     Charge-weighted centroid strip position.
+ * @var scf_cluster::flag           Flag bits (split cluster, etc.).
+ * @var scf_cluster::id_mchit[5]   MC hit keys (evaluation).
+ * @var scf_cluster::id_mctrack[5] MC track IDs (evaluation).
+ */
+
+/**
+ * @struct scm_spt
+ * @brief SSD Cluster Matcher space point (148 bytes).
+ * @ingroup PamsSvt
+ * @var scm_spt::id         Reconstructed space point identifier.
+ * @var scm_spt::x[3]       3-D coordinates in the STAR global frame (cm).
+ * @var scm_spt::xl[3]      3-D coordinates in the wafer local frame (cm).
+ * @var scm_spt::cov[3]     Diagonal position errors.
+ * @var scm_spt::de[2]      dE in silicon and its error.
+ * @var scm_spt::res[3]     Fit residuals.
+ * @var scm_spt::id_wafer   Wafer ID (index into svg_geom).
+ * @var scm_spt::id_globtrk Link to global reconstructed track.
+ * @var scm_spt::id_mchit[5]   MC hit keys.
+ * @var scm_spt::id_mctrack[5] MC track IDs.
+ */
+
+/**
+ * @struct svg_geom
+ * @brief SVT wafer geometry — position and orientation.
+ * @ingroup PamsSvt
+ * @var svg_geom::id        Wafer identifier.
+ * @var svg_geom::id_shape  Wafer shape type (index into svg_shape).
+ * @var svg_geom::layer     Layer number (1–3 for SVT barrel).
+ * @var svg_geom::ladder    Ladder number within layer.
+ * @var svg_geom::num_chip  Chip position within ladder.
+ * @var svg_geom::d[3]      Drift direction unit vector.
+ * @var svg_geom::n[3]      Surface normal unit vector.
+ * @var svg_geom::t[3]      Transverse direction unit vector (= n × d).
+ * @var svg_geom::x[3]      Wafer centre position in global STAR frame (cm).
+ */
+
+/**
+ * @struct svg_shape
+ * @brief SVT wafer shape parameters.
+ * @ingroup PamsSvt
+ * @var svg_shape::id       Shape type index.
+ * @var svg_shape::n_shape  Number of shape parameters used.
+ * @var svg_shape::active[10] Active area dimensions.
+ * @var svg_shape::shape[10]  Custom shape parameters.
+ */
+
+/**
+ * @struct sls_strip
+ * @brief Reconstructed SVT strip with signal (88 bytes).
+ * @ingroup PamsSvt
+ * @var sls_strip::id_strip   Encoded strip identifier: 10000*(10*strip_num+side)+wafer_id.
+ * @var sls_strip::adc_count  ADC count after pedestal subtraction.
+ * @var sls_strip::noise_count Noise level in ADC counts.
+ * @var sls_strip::de         Deposited charge (calibrated, in units of e⁻).
+ * @var sls_strip::id_mchit[5]   MC hit keys (evaluation).
+ * @var sls_strip::id_mctrack[5] MC track IDs (evaluation).
+ */
+
+/**
+ * @struct sdm_calib_db
+ * @brief Per-strip calibration from the database.
+ * @ingroup PamsSvt
+ * @var sdm_calib_db::id_strip   Strip identifier.
+ * @var sdm_calib_db::n_pedestal Pedestal value.
+ * @var sdm_calib_db::n_sigma    Noise sigma.
+ */
+
+/**
+ * @struct srs_srspar
+ * @brief SVT resolution simulator parameters.
+ * @ingroup PamsSvt
+ * @var srs_srspar::vd      Drift velocity (cm/μs).
+ * @var srs_srspar::shaper  Gaussian shaper time constant (s).
+ * @var srs_srspar::enc     Equivalent noise charge per time bucket (electrons).
+ * @var srs_srspar::pitch   Anode-to-anode distance (cm).
+ * @var srs_srspar::bucket  Time-bucket spatial extent (cm).
+ * @var srs_srspar::thickness SVT wafer thickness (cm).
+ * @var srs_srspar::merge   Enable hit merging (1=yes).
+ */
