@@ -1,3 +1,7 @@
+/// @file StiSstDetectorBuilder1.h
+/// @brief Earlier SST detector builder retained for backward compatibility. @deprecated Use StiSstDetectorBuilder.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSstDetectorBuilder1_H
 #define StiSstDetectorBuilder1_H
 

@@ -1,3 +1,9 @@
+/// @file StiPixelDetectorBuilder.h
+/// @brief Prototype pixel detector builder (HFT R&D, superseded by StiPxlDetectorBuilder).
+///
+/// @deprecated This is a prototype pixel (HFT) detector builder in `StiRnD/Hft/`.
+///             Production reconstruction uses `StRoot/StiPxl/StiPxlDetectorBuilder.h`.
+/// @ingroup StiDetectorGeometry
 #ifndef StiPixelDetectorBuilder_H
 #define StiPixelDetectorBuilder_H
 #include "Sti/StiDetectorBuilder.h"

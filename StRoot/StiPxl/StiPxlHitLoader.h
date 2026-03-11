@@ -1,3 +1,7 @@
+/// @file StiPxlHitLoader.h
+/// @brief Loads PXL hits from StPxlHitCollection into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiPxlHitLoader_h
 #define StiPxlHitLoader_h
 
@@ -17,6 +21,11 @@ This class is substantially morphed from the class StiHitFiller
 originally written by Mike Miller.
 \author Claude A Pruneau (Wayne)
 */
+/// @class StiPxlHitLoader
+/// @brief Loads PXL hits from StPxlHitCollection into StiHitContainer.
+///
+/// Converts StPxlHit positions to STI local coordinates for Sti tracking.
+/// @ingroup StiHitLoading
 class StiPxlHitLoader : public StiHitLoader<StEvent, StiDetectorBuilder>
 {
 public:

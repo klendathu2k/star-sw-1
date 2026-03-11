@@ -1,3 +1,7 @@
+/// @file StiSvtHitLoader.h
+/// @brief Loads SVT hits into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiSvtHitLoader_H
 #define StiSvtHitLoader_H
 
@@ -16,6 +20,11 @@ class StiDetectorBuilder;
 
   \author Claude A Pruneau (Wayne) and M.L. Miller (Yale Software)
  */
+/// @class StiSvtHitLoader
+/// @brief Loads SVT hits into StiHitContainer.
+///
+/// Legacy loader; SVT was decommissioned after Run 13.
+/// @ingroup StiHitLoading
 class StiSvtHitLoader : public StiHitLoader<StEvent,StiDetectorBuilder>
 {
 public:

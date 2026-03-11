@@ -1,3 +1,7 @@
+/// @file StiIstDetectorGroup.h
+/// @brief Detector group aggregating IST builder and hit loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiIstDetectorGroup_h
 #define StiIstDetectorGroup_h
 

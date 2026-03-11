@@ -1,3 +1,7 @@
+/// @file StiTpcHitLoader.h
+/// @brief Loads TPC hits from StTpcHitCollection into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiTpcHitLoader_H
 #define StiTpcHitLoader_H
 #include "Sti/StiHitLoader.h"
@@ -16,6 +20,11 @@ class StTpcHit;
   originally written by Mike Miller.
   \author Claude A Pruneau (Wayne) 
  */
+/// @class StiTpcHitLoader
+/// @brief Loads TPC hits from StTpcHitCollection into StiHitContainer.
+///
+/// Converts StTpcHit positions to STI local coordinates for Sti tracking.
+/// @ingroup StiHitLoading
 class StiTpcHitLoader : public StiHitLoader<StEvent,StiDetectorBuilder>
 {
  public:

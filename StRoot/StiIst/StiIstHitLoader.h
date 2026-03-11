@@ -1,3 +1,7 @@
+/// @file StiIstHitLoader.h
+/// @brief Loads IST hits from StIstHitCollection into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiIstHitLoader_h
 #define StiIstHitLoader_h
 
@@ -19,6 +23,11 @@ written by Mike Miller.
 \author Claude A Pruneau (Wayne)
 \author Yaping Wang (UIC)
 */
+/// @class StiIstHitLoader
+/// @brief Loads IST hits from StIstHitCollection into StiHitContainer.
+///
+/// Converts StIstHit positions to STI local coordinates for Sti tracking.
+/// @ingroup StiHitLoading
 class StiIstHitLoader : public StiHitLoader<StEvent, StiDetectorBuilder>
 {
 public:

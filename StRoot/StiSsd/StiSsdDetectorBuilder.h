@@ -29,6 +29,10 @@
 
 This class is the description of the StiSsdDetectorBuilder
 */
+/// @file StiSsdDetectorBuilder.h
+/// @brief Builds STI geometry for the STAR Silicon Strip Detector (SSD).
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSsdDetectorBuilder_H
 #define StiSsdDetectorBuilder_H
 #include "Sti/StiDetectorBuilder.h"
@@ -36,6 +40,11 @@ This class is the description of the StiSsdDetectorBuilder
 #include "StThreeVector.hh"
 class ssdWafersPosition_st;
 class St_ssdWafersPosition;
+/// @class StiSsdDetectorBuilder
+/// @brief Builds STI geometry for the STAR Silicon Strip Detector (SSD).
+///
+/// Inherits StiDetectorBuilder. Constructs SSD wafer volumes for Sti tracking.
+/// @ingroup StiDetectorGeometry
 class StiSsdDetectorBuilder : public StiDetectorBuilder
 {
 

@@ -1,3 +1,7 @@
+/// @file StiTpcDetectorGroup.h
+/// @brief Detector group aggregating TPC builder and hit loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiTpcDetectorGroup_H_INCLUDED
 #define StiTpcDetectorGroup_H_INCLUDED
 

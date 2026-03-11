@@ -1,3 +1,7 @@
+/// @file StiPxlDetectorGroup.h
+/// @brief Detector group aggregating PXL (HFT pixel) builder and hit loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiPxlDetectorGroup_h
 #define StiPxlDetectorGroup_h
 

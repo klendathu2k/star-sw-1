@@ -1,3 +1,7 @@
+/// @file StiSstDetectorGroup.h
+/// @brief Detector group aggregating SST/SSD builder and hit loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSstDetectorGroup_h
 #define StiSstDetectorGroup_h
 

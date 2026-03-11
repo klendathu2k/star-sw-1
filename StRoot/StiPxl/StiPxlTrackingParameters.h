@@ -1,3 +1,7 @@
+/// @file StiPxlTrackingParameters.h
+/// @brief Tracking-parameter configuration for the PXL detector.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiPxlTrackingParameters_h
 #define StiPxlTrackingParameters_h
 #include "StDetectorDbMaker/StiTrackingParameters.h"

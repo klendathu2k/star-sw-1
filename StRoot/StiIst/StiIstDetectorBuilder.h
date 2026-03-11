@@ -1,3 +1,7 @@
+/// @file StiIstDetectorBuilder.h
+/// @brief Builds STI geometry for the STAR Intermediate Silicon Tracker (IST) ladders.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiIstDetectorBuilder_h
 #define StiIstDetectorBuilder_h
 
@@ -21,6 +25,12 @@ class StiMaterial;
  *
  * \author Dmitri Smirnov, BNL
  */
+/// @class StiIstDetectorBuilder
+/// @brief Builds STI geometry for the STAR IST ladders.
+///
+/// Inherits StiDetectorBuilder. Constructs sensitive and inactive Sti volumes
+/// describing the material of the IST detector.
+/// @ingroup StiDetectorGeometry
 class StiIstDetectorBuilder : public StiDetectorBuilder
 {
 public:

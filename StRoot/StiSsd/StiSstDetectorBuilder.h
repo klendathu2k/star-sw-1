@@ -1,3 +1,7 @@
+/// @file StiSstDetectorBuilder.h
+/// @brief STI geometry builder for the STAR Silicon Strip Tracker (SST/SSD).
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSstDetectorBuilder_H
 #define StiSstDetectorBuilder_H
 

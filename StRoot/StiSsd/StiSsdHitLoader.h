@@ -13,6 +13,10 @@
 /*!
  * \author Christelle Roy
 */
+/// @file StiSsdHitLoader.h
+/// @brief Loads SSD hits from StSsdHitCollection into StiHitContainer.
+///
+/// @ingroup StiHitLoading
 #ifndef StiSsdHitLoader_H
 #define StiSsdHitLoader_H
 
@@ -33,6 +37,11 @@ class StiDetectorBuilder;
 
   \author Claude A Pruneau (Wayne) and M.L. Miller (Yale Software)
  */
+/// @class StiSsdHitLoader
+/// @brief Loads SSD hits from StSsdHitCollection into StiHitContainer.
+///
+/// Converts StSsdHit positions to STI local coordinates for Sti tracking.
+/// @ingroup StiHitLoading
 class StiSsdHitLoader : public StiHitLoader<StEvent,StiDetectorBuilder>
 {
 public:

@@ -1,3 +1,7 @@
+/// @file StiPxlHitErrorCalculator.h
+/// @brief Hit-error parameterisation for PXL detector hits.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiPxlHitErrorCalculator_h
 #define StiPxlHitErrorCalculator_h
 #include "StDetectorDbMaker/StiHitErrorCalculator.h"

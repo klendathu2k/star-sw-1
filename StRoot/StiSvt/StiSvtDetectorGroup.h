@@ -1,3 +1,7 @@
+/// @file StiSvtDetectorGroup.h
+/// @brief Detector group aggregating SVT builder and hit loader (legacy; SVT decommissioned after Run 13).
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSvtDetectorGroup_H_INCLUDED
 #define StiSvtDetectorGroup_H_INCLUDED
 

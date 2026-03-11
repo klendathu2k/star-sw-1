@@ -1,3 +1,7 @@
+/// @file StiSvtDetectorBuilder.h
+/// @brief Builds STI geometry for the STAR Silicon Vertex Tracker (SVT) barrel ladders.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSvtDetectorBuilder_H
 #define StiSvtDetectorBuilder_H
 #include "StSvtClassLibrary/StSvtConfig.hh"
@@ -6,6 +10,11 @@
 #include "Sti/StiDetectorBuilder.h"
 #include "StDetectorDbMaker/StiHitErrorCalculator.h"
 
+/// @class StiSvtDetectorBuilder
+/// @brief Builds STI geometry for the STAR SVT barrel ladders.
+///
+/// SVT was decommissioned after Run 13. Inherits StiDetectorBuilder.
+/// @ingroup StiDetectorGeometry
 class StiSvtDetectorBuilder : public StiDetectorBuilder
 {
  public:

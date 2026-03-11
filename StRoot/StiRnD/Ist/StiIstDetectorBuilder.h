@@ -37,6 +37,10 @@
  * \date 02/27/04
 
 This class is the description of the StiIstDetectorBuilder
+
+@deprecated This is a prototype IST detector builder located in `StiRnD/Ist/`.
+            It has been superseded by `StRoot/StiIst/StiIstDetectorBuilder.h`,
+            which is the version used in production reconstruction.
 */
 #ifndef StiIstDetectorBuilder_H
 #define StiIstDetectorBuilder_H

@@ -1,3 +1,7 @@
+/// @file StiPxlDetectorBuilder.h
+/// @brief Builds STI geometry for the STAR HFT Pixel (PXL) detector.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiPxlDetectorBuilder_h
 #define StiPxlDetectorBuilder_h
 
@@ -13,6 +17,11 @@ class StPxlDb;
  *
  * \author Dmitri Smirnov, BNL
  */
+/// @class StiPxlDetectorBuilder
+/// @brief Builds STI geometry for the STAR HFT Pixel (PXL) detector.
+///
+/// Constructs two concentric silicon pixel barrel layers for Sti tracking.
+/// @ingroup StiDetectorGeometry
 class StiPxlDetectorBuilder : public StiDetectorBuilder
 {
 public:

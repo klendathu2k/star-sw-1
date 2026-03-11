@@ -10,6 +10,10 @@
 // Revision 1.5  2005/06/21 15:31:47  lmartin
 // CVS tags added
 //
+/// @file StiSsdDetectorGroup.h
+/// @brief Detector group aggregating SSD builder and hit loader.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiSsdDetectorGroup_H_INCLUDED
 #define StiSsdDetectorGroup_H_INCLUDED
 

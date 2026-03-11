@@ -1,3 +1,7 @@
+/// @file StiTpcDetectorBuilder.h
+/// @brief Builds STI detector geometry for all 45 TPC pad-plane rows and 12 sectors.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef StiTpcDetectorBuilder_H
 #define StiTpcDetectorBuilder_H
 
@@ -8,6 +12,12 @@
 
 
 
+/// @class StiTpcDetectorBuilder
+/// @brief Builds STI detector geometry for TPC pad-plane rows and sectors.
+///
+/// Inherits StiDetectorBuilder. Creates StiCylindricalShape objects for each pad row
+/// and registers the resulting StiDetectors.
+/// @ingroup StiDetectorGeometry
 class StiTpcDetectorBuilder : public StiDetectorBuilder
 {
 
