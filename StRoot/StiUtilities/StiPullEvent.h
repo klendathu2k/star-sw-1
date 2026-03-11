@@ -1,3 +1,7 @@
+/// @file StiPullEvent.h
+/// @brief Data class holding pull distributions (residual/error) for track-fit quality monitoring.
+///
+/// @ingroup StiUtilities
 /*!
  * \class StiPullEvent 
  * \author Victor Perev, Jan 2006
@@ -52,7 +56,9 @@
 #include "TClonesArray.h"
 #include "TDatime.h"
 
-
+/// @class StiPullTrk
+/// @brief Track-level pull record storing per-track fit-quality information.
+/// @ingroup StiUtilities
 class StiPullTrk : public TObject {
 public:
     StiPullTrk();
@@ -91,6 +97,9 @@ char mEnd[1];			//|NoIO
   ClassDef(StiPullTrk,3);
 };
 
+/// @class StiPullHit
+/// @brief Hit-level pull record storing residual and error for each hit on a fitted track.
+/// @ingroup StiUtilities
 class StiPullHit : public TObject {
 public:
     StiPullHit();
@@ -176,6 +185,10 @@ char mEnd[1];
   ClassDef(StiPullHit,3);
 };
 
+/// @class StiPullEvent
+/// @brief Event-level container for pull distributions written to a ROOT tree for track-fit quality monitoring.
+///
+/// @ingroup StiUtilities
 class StiPullEvent : public TObject {
 public:
    StiPullEvent();
