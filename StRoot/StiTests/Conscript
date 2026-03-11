@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+# Conscript for STI track-finding unit tests.
+#
+# Builds one test executable per functional category:
+#   test_Sti_MM   — Base Memory Model
+#   test_Sti_DG   — Detector Geometry
+#   test_Sti_HT   — Hits & Track Representation
+#   test_Sti_TF   — Track Finding
+#   test_Sti_FT   — Track Fitting
+#   test_Sti_HL   — Hit Loading
+#   test_Sti_VF   — Vertex Finding
+#   test_Sti_WF   — Workflow / Steering
+#   test_Sti_UT   — Utilities & Infrastructure
+#
+# Catch2 implementation object is compiled once and shared by all executables.
+# The catch_amalgamated.hpp/cpp sources are taken from tests/unit/ in the
+# repository root.
+
+Import qw ( env INCLUDE LIB BIN BUILD OBJ warnoff_dirs );
+
+( my $build = $OBJ ) =~ s/\#//g;
+$build =~ s/\\/\//g;
+( my $obj_dir = DirPath '.' ) =~ s/\\/\//g;
+( my $Dir = $obj_dir ) =~ s/$build\///g;
+my $ObjDir = "#" . $obj_dir;
+
+my $ROOTSYS   = $env->{ENV}->{ROOTSYS};
+my $STAR_ROOT = $env->{ENV}->{STAR} || ".";
+
+# ---- include paths -------------------------------------------------------
+# The StiTests directory itself + all STI source trees + Catch2 location.
+my $CPPPATH = $ObjDir
+    . $main::PATH_SEPARATOR . "#StRoot"
+    . $main::PATH_SEPARATOR . "#StRoot/Sti"
+    . $main::PATH_SEPARATOR . "#StRoot/Sti/Base"
+    . $main::PATH_SEPARATOR . "#StRoot/StiUtilities"
+    . $main::PATH_SEPARATOR . "#StRoot/StiMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StEvent"
+    . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
+    . $main::PATH_SEPARATOR . "#StRoot/StarMagField"
+    . $main::PATH_SEPARATOR . "#StRoot/St_base"
+    . $main::PATH_SEPARATOR . "#StRoot/StChain"
+    . $main::PATH_SEPARATOR . $INCLUDE
+    . $main::PATH_SEPARATOR . "#tests/unit"
+    . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
+
+# ---- libraries -----------------------------------------------------------
+my $LIBPATH = $LIB
+    . $main::PATH_SEPARATOR . $ROOTSYS . "/lib";
+
+my $ROOTLIBS = $env->{ROOTLIBS} || "-lCore -lCint -lRIO -lThread -lMathCore";
+
+# Full set of STI libraries plus their STAR dependencies.
+my $STI_LIBS = "-lSti -lStiMaker -lStiUtilities "
+             . "-lStiTpc -lStiIst -lStiPxl -lStiSsd -lStiSvt "
+             . "-lStEvent -lSt_base -lStChain -lStarClassLibrary ";
+
+my $LIBS = $STI_LIBS . $ROOTLIBS . " " . $env->{CLIBS};
+
+# ---- compiler flags ------------------------------------------------------
+my $CXXFLAGS = $env->{CXXFLAGS};
+$CXXFLAGS =~ s/-Werror\b//g;
+$CXXFLAGS .= " -std=c++14";
+
+my $CPPFLAGS = $env->{CPPFLAGS};
+
+# ---- cloned environment --------------------------------------------------
+my $envSti = $env->clone(
+    'CPPPATH'  => $CPPPATH,
+    'CXXFLAGS' => $CXXFLAGS,
+    'CPPFLAGS' => $CPPFLAGS,
+    'LIBPATH'  => $LIBPATH,
+    'LIBS'     => $LIBS,
+    'ObjDir'   => $obj_dir,
+);
+
+# ---- Catch2 implementation object ----------------------------------------
+# Build the Catch2 amalgamated implementation once.  The source lives in
+# tests/unit/ which is on the CPPPATH; we reference it via an absolute path
+# so Conscript can find it regardless of the build directory.
+my @catch_obj = Objects $envSti "#tests/unit/catch_amalgamated.cpp";
+
+# ---- MockDetectorBuilder object -----------------------------------------
+# The Detector/ fixtures are compiled once and linked into every test that
+# exercises geometry (DG, HT, TF, FT, HL).
+my @mock_obj = Objects $envSti "Detector/MockDetectorBuilder.cxx";
+
+# ---- helper: build a test executable ------------------------------------
+sub build_test {
+    my ($name, @srcs) = @_;
+    my @objs = Objects $envSti @srcs;
+    Program $envSti $name, (@catch_obj, @mock_obj, @objs);
+    Install $envSti $BIN, $name;
+}
+
+# ---- test executables — one per category ---------------------------------
+build_test( "test_Sti_MM",  "MM/test_memory_model.cxx"    );
+build_test( "test_Sti_DG",  "DG/test_detector_geometry.cxx" );
+build_test( "test_Sti_HT",  "HT/test_hits_tracks.cxx"     );
+build_test( "test_Sti_TF",  "TF/test_track_finding.cxx"   );
+build_test( "test_Sti_FT",  "FT/test_track_fitting.cxx"   );
+build_test( "test_Sti_HL",  "HL/test_hit_loading.cxx"     );
+build_test( "test_Sti_VF",  "VF/test_vertex_finding.cxx"  );
+build_test( "test_Sti_WF",  "WF/test_workflow.cxx"        );
+build_test( "test_Sti_UT",  "UT/test_utilities.cxx"       );
