@@ -129,8 +129,29 @@ TEST_CASE("StLorentzVectorD theta, phi, cosTheta", "[StLorentzVectorD]") {
 }
 
 TEST_CASE("StLorentzVectorD pseudoRapidity in transverse plane is zero", "[StLorentzVectorD]") {
+    // eta = -ln( tan(theta/2) ); delegates to the three-vector's pseudoRapidity().
     StLorentzVectorD lv(1.0, 0.0, 0.0, 5.0);
     CHECK(lv.pseudoRapidity() == Catch::Approx(0.0).margin(kEps));
+}
+
+TEST_CASE("StLorentzVectorD pseudoRapidity at fixed theta values", "[StLorentzVectorD]") {
+    // eta = -ln( tan(theta/2) ); energy component does not affect the result.
+    SECTION("theta = 45 deg (pi/4): eta = ln(1 + sqrt(2)) ~ 0.8814") {
+        StLorentzVectorD lv(1.0, 0.0, 1.0, 10.0);  // theta = pi/4
+        const double expected = std::log(1.0 + std::sqrt(2.0));
+        CHECK(lv.pseudoRapidity() == Catch::Approx(expected).epsilon(1e-10));
+    }
+
+    SECTION("theta = 90 deg (pi/2): eta = 0") {
+        StLorentzVectorD lv(1.0, 0.0, 0.0, 10.0);
+        CHECK(lv.pseudoRapidity() == Catch::Approx(0.0).margin(kEps));
+    }
+
+    SECTION("theta = 135 deg (3*pi/4): eta = -ln(1 + sqrt(2)) ~ -0.8814") {
+        StLorentzVectorD lv(1.0, 0.0, -1.0, 10.0);  // theta = 3*pi/4
+        const double expected = -std::log(1.0 + std::sqrt(2.0));
+        CHECK(lv.pseudoRapidity() == Catch::Approx(expected).epsilon(1e-10));
+    }
 }
 
 // ---------------------------------------------------------------------------

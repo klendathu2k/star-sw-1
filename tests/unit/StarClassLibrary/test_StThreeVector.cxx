@@ -135,15 +135,39 @@ TEST_CASE("StThreeVectorD unit vector", "[StThreeVectorD]") {
 }
 
 TEST_CASE("StThreeVectorD pseudoRapidity", "[StThreeVectorD]") {
-    SECTION("along z-axis (theta=0) gives large positive eta") {
-        // pseudoRapidity returns 1e20 when tan(theta/2) <= 0.
+    // eta = -ln( tan(theta/2) ); as theta -> 0, eta -> +inf.
+    // The implementation returns the sentinel 1e20 when tan(theta/2) <= 0.
+    SECTION("along z-axis (theta=0) gives sentinel 1e20") {
         StThreeVectorD v(0.0, 0.0, 1.0);
-        CHECK(v.pseudoRapidity() > 10.0);
+        CHECK(v.pseudoRapidity() == Catch::Approx(1e20).epsilon(1e-10));
     }
 
     SECTION("in transverse plane (theta=pi/2) gives eta=0") {
         StThreeVectorD v(1.0, 0.0, 0.0);
         CHECK(v.pseudoRapidity() == Catch::Approx(0.0).margin(kEps));
+    }
+}
+
+TEST_CASE("StThreeVectorD pseudoRapidity at fixed theta values", "[StThreeVectorD]") {
+    // eta = -ln( tan(theta/2) )
+    // Vectors are chosen so that theta is exact: v = (sin(theta), 0, cos(theta)).
+    SECTION("theta = 45 deg (pi/4): eta = ln(1 + sqrt(2)) ~ 0.8814") {
+        // tan(pi/8) = sqrt(2) - 1  =>  eta = ln(1 + sqrt(2))
+        StThreeVectorD v(1.0, 0.0, 1.0);  // theta = atan2(1,1) = pi/4
+        const double expected = std::log(1.0 + std::sqrt(2.0));
+        CHECK(v.pseudoRapidity() == Catch::Approx(expected).epsilon(1e-10));
+    }
+
+    SECTION("theta = 90 deg (pi/2): eta = 0") {
+        StThreeVectorD v(1.0, 0.0, 0.0);
+        CHECK(v.pseudoRapidity() == Catch::Approx(0.0).margin(kEps));
+    }
+
+    SECTION("theta = 135 deg (3*pi/4): eta = -ln(1 + sqrt(2)) ~ -0.8814") {
+        // tan(3*pi/8) = 1 + sqrt(2)  =>  eta = -ln(1 + sqrt(2))
+        StThreeVectorD v(1.0, 0.0, -1.0);  // theta = atan2(1,-1) = 3*pi/4
+        const double expected = -std::log(1.0 + std::sqrt(2.0));
+        CHECK(v.pseudoRapidity() == Catch::Approx(expected).epsilon(1e-10));
     }
 }
 

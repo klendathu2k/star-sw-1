@@ -23,7 +23,17 @@ my $CPPPATH = $ObjDir
     . $main::PATH_SEPARATOR . "#StRoot/StarClassLibrary"
     . $main::PATH_SEPARATOR . "#StRoot/StarRoot"
     . $main::PATH_SEPARATOR . "#StRoot/StEvent"
+    . $main::PATH_SEPARATOR . "#StRoot/StFstSimMaker"
     . $main::PATH_SEPARATOR . "#StRoot/StMcEvent"
+    . $main::PATH_SEPARATOR . "#StRoot/StFmsFastSimulatorMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StFcsFastSimulatorMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StTofSimMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StTofUtil"
+    . $main::PATH_SEPARATOR . "#StRoot/StEmcSimulatorMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StEmcRawMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StEmcUtil"
+    . $main::PATH_SEPARATOR . "#StRoot/StDaqLib"
+    . $main::PATH_SEPARATOR . "#StRoot/StMuDSTMaker"
     . $main::PATH_SEPARATOR . "#StRoot/Table"
     . $main::PATH_SEPARATOR . $ROOTSYS . "/include";
 
@@ -203,3 +213,332 @@ build_mcevent_test( "test_StMcEvent_hft",
 
 build_mcevent_test( "test_StMcEvent_other",
     "StMcEvent/test_other.cxx" );
+
+# ---- StVpdSimMaker unit tests -----------------------------------------------
+# StVpdSimMaker depends on StBTofUtil (StVpdSimConfig), St_db_Maker (pulled in
+# via StVpdSimConfig.h), StMcEvent, and StEvent.  The structural tests do not
+# call Init() or Make(), so no TApplication or STAR runtime is required.
+my $envVpdSim = $envTest->clone(
+    'CPPPATH' => $CPPPATH
+        . $main::PATH_SEPARATOR . "#StRoot/StVpdSimMaker"
+        . $main::PATH_SEPARATOR . "#StRoot/StBTofUtil"
+        . $main::PATH_SEPARATOR . "#StRoot/St_db_Maker",
+    'LIBS' => "-lStVpdSimMaker -lStBTofUtil -lSt_db_Maker -lStMcEvent -lStEvent "
+            . $envTest->{LIBS},
+);
+my @vpdsim_objs = Objects $envVpdSim "StVpdSimMaker/test_StVpdSimMaker.cxx";
+Program $envVpdSim "test_StVpdSimMaker", (@catch_obj, @vpdsim_objs);
+Install $envVpdSim $BIN, "test_StVpdSimMaker";
+
+# ---- StFgtSimulatorMaker unit tests --------------------------------------
+# StFgtSlowSimuMaker inherits from StMaker; its constructor allocates a
+# TRandom3 but does NOT call Init() or Make(), so no TApplication is
+# required.  Additional include paths expose the maker header and its
+# dependencies (StFgtUtil, StFgtDbMaker).
+my $fgtSimCppPath = $CPPPATH
+    . $main::PATH_SEPARATOR . "#StRoot/StFgtSimulatorMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StFgtDbMaker"
+    . $main::PATH_SEPARATOR . "#StRoot/StFgtUtil"
+    . $main::PATH_SEPARATOR . "#StRoot/StFgtUtil/geometry";
+
+my $envFgtSim = $envTest->clone(
+    'CPPPATH' => $fgtSimCppPath,
+    'LIBS'    => "-lStFgtSimulatorMaker -lStFgtDbMaker -lStFgtUtil "
+               . $envTest->{LIBS},
+);
+
+my @fgtSim_objs = Objects $envFgtSim
+    "StFgtSimulatorMaker/test_StFgtSimulatorMaker.cxx";
+Program $envFgtSim "test_StFgtSimulatorMaker", (@catch_obj, @fgtSim_objs);
+Install $envFgtSim $BIN, "test_StFgtSimulatorMaker";
+
+# ---- StBTofSimMaker unit tests ----------------------------------------------
+# Structural tests (construction, naming, default flags, CalcCellId decoding,
+# TrackHit value-initialisation, setter round-trips) work without a TApplication
+# or database.  Integration-test stubs are tagged [integration] but commented out.
+my $envBTofSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StBTofSimMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StBTofUtil"
+              . $main::PATH_SEPARATOR . "#StRoot/StTofUtil"
+              . $main::PATH_SEPARATOR . "#StRoot/StVpdSimMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StVpdCalibMaker",
+    'LIBS' => "-lStBTofSimMaker -lStBTofUtil -lStTofUtil "
+            . "-lStVpdSimMaker -lStVpdCalibMaker "
+            . "-lStMcEvent -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @btofsim_objs = Objects $envBTofSim
+    "StBTofSimMaker/test_StBTofSimMaker.cxx";
+Program $envBTofSim "test_StBTofSimMaker", (@catch_obj, @btofsim_objs);
+Install $envBTofSim $BIN, "test_StBTofSimMaker";
+
+# ---- StFmsFastSimulatorMaker unit tests ------------------------------------
+# Tests that do not touch StFmsDbMaker, g2t tables, or TApplication are
+# structural (construction, naming, setter round-trips, geometry constants).
+# Integration-test stubs are tagged [integration] but kept commented out.
+my $envFmsSim = $envTest->clone(
+    'LIBS' => "-lStFmsFastSimulatorMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @fmssim_objs = Objects $envFmsSim
+    "StFmsFastSimulatorMaker/test_StFmsFastSimulatorMaker.cxx";
+Program $envFmsSim "test_StFmsFastSimulatorMaker", (@catch_obj, @fmssim_objs);
+Install $envFmsSim $BIN, "test_StFmsFastSimulatorMaker";
+
+# ---- StSsdFastSimMaker unit tests -------------------------------------------
+# Structural tests (construction, naming, geometry helpers) do not require a
+# TApplication or database.  Integration-test stubs are tagged [integration]
+# and kept as comments in the test source.
+my $envSsdSim = $envTest->clone(
+    'LIBS' => "-lStSsdFastSimMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @ssdsim_objs = Objects $envSsdSim
+    "StSsdFastSimMaker/test_StSsdFastSimMaker.cxx";
+Program $envSsdSim "test_StSsdFastSimMaker", (@catch_obj, @ssdsim_objs);
+Install $envSsdSim $BIN, "test_StSsdFastSimMaker";
+
+# ---- StFcsFastSimulatorMaker unit tests ------------------------------------
+# Tests that do not touch StFcsDbMaker, g2t tables, or TApplication are
+# structural (construction, naming, setter round-trips, geometry constants).
+# Integration-test stubs are tagged [integration] but kept commented out.
+my $envFcsSim = $envTest->clone(
+    'LIBS' => "-lStFcsFastSimulatorMaker -lStFcsDbMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @fcssim_objs = Objects $envFcsSim
+    "StFcsFastSimulatorMaker/test_StFcsFastSimulatorMaker.cxx";
+Program $envFcsSim "test_StFcsFastSimulatorMaker", (@catch_obj, @fcssim_objs);
+Install $envFcsSim $BIN, "test_StFcsFastSimulatorMaker";
+
+# ---- StTofSimMaker unit tests ----------------------------------------------
+# Tests for the early TOFp (scintillator-slat) simulation maker and its utility
+# classes StTofSimParam and StTofCalibration.  Structural tests (construction,
+# naming, parameter defaults, setter round-trips) run without TApplication.
+# Integration-test stubs are tagged [integration].
+my $envTofSim = $envTest->clone(
+    'LIBS' => "-lStTofSimMaker -lStTofUtil -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @tofsim_objs = Objects $envTofSim
+    "StTofSimMaker/test_StTofSimMaker.cxx";
+Program $envTofSim "test_StTofSimMaker", (@catch_obj, @tofsim_objs);
+Install $envTofSim $BIN, "test_StTofSimMaker";
+
+# ---- StMtdSimMaker unit tests ----------------------------------------------
+# Tests for the Muon Telescope Detector simulation maker.
+# Structural tests (construction, CalcCellId arithmetic, default flags) run
+# without TApplication.  Integration-test stubs are tagged [integration].
+my $envMtdSim = $envTest->clone(
+    'LIBS' => "-lStMtdSimMaker -lStEvent -lStMcEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @mtdsim_objs = Objects $envMtdSim
+    "StMtdSimMaker/test_StMtdSimMaker.cxx";
+Program $envMtdSim "test_StMtdSimMaker", (@catch_obj, @mtdsim_objs);
+Install $envMtdSim $BIN, "test_StMtdSimMaker";
+
+# ---- StPmdSimulatorMaker unit tests ----------------------------------------
+# Tests for the PMD (Photon Multiplicity Detector) slow simulator.
+# Structural tests (construction, naming, SetResFlag, Decode_VolId arithmetic,
+# keV_ADC calibration polynomial, ADC_Readout non-negativity, geometry
+# constants) run without a TApplication.  The constructor allocates StPmdGeom
+# and StPmdMapUtil (both ROOT-registered classes) but does not require a full
+# STAR runtime.  Integration-test stubs are tagged [integration].
+my $envPmdSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StPmdSimulatorMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StPmdUtil",
+    'LIBS' => "-lStPmdSimulatorMaker -lStPmdUtil -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @pmdsim_objs = Objects $envPmdSim
+    "StPmdSimulatorMaker/test_StPmdSimulatorMaker.cxx";
+Program $envPmdSim "test_StPmdSimulatorMaker", (@catch_obj, @pmdsim_objs);
+Install $envPmdSim $BIN, "test_StPmdSimulatorMaker";
+
+# ---- StTpcRSMaker unit tests -----------------------------------------------
+# Structural (construction, EMode enums) and pure-math (Gatti, polya, Ec, fei)
+# tests run without a TApplication or database connection.
+# Integration-test stubs are tagged [integration] but kept commented out.
+my $envTpcRS = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StTpcRSMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StTpcDb"
+              . $main::PATH_SEPARATOR . "#StRoot/StDetectorDbMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StBichsel"
+              . $main::PATH_SEPARATOR . "#StRoot/StdEdxY2Maker"
+              . $main::PATH_SEPARATOR . "#StRoot/StDbUtilities"
+              . $main::PATH_SEPARATOR . "#StRoot/StMagF",
+    'LIBS' => "-lStTpcRSMaker -lStTpcDb -lStDetectorDbMaker "
+            . "-lStBichsel -lStdEdxY2Maker -lStDbUtilities -lStarMagField "
+            . "-lStEvent -lStChain -lMathMore "
+            . $envTest->{LIBS},
+);
+my @tpcrs_objs = Objects $envTpcRS
+    "StTpcRSMaker/test_StTpcRSMaker.cxx";
+Program $envTpcRS "test_StTpcRSMaker", (@catch_obj, @tpcrs_objs);
+Install $envTpcRS $BIN, "test_StTpcRSMaker";
+
+# ---- StSvtSimulationMaker unit tests ---------------------------------------
+# Tests for the SVT (Silicon Vertex Tracker) slow simulation package.
+# Covered classes:
+#   StSvtElectronCloud  (StObject-based, physics constants + CalcExpansion)
+#   StSvtEnergySim      (plain C++, particle generator utilities)
+#   StSvtSimulation     (TObject-based, per-hybrid signal builder)
+#   StSvtSimulationMaker       (StMaker-based, construction + setters)
+#   StSvtOnlineSeqAdjSimMaker  (StMaker-based, all getter/setter round-trips)
+#   StSvtEmbeddingMaker        (StMaker-based, construction + setters)
+#   StSvtHybridNoise           (pure-math noise utilities)
+#
+# StSvtOnlineSeqAdjSimMaker::ctor calls GetConfig() + SetRawData() (both use
+# gMessMgr and StSvtClassLibrary); linking against -lStSvtSimulationMaker and
+# -lStSvtClassLibrary ensures the singletons are initialised by static ctors.
+my $envSvtSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StSvtSimulationMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StSvtClassLibrary"
+              . $main::PATH_SEPARATOR . "#StRoot/StDbUtilities",
+    'LIBS' => "-lStSvtSimulationMaker -lStSvtClassLibrary -lStDbUtilities "
+            . "-lStEvent -lStMcEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @svtsim_objs = Objects $envSvtSim
+    "StSvtSimulationMaker/test_StSvtSimulationMaker.cxx";
+Program $envSvtSim "test_StSvtSimulationMaker", (@catch_obj, @svtsim_objs);
+Install $envSvtSim $BIN, "test_StSvtSimulationMaker";
+
+# ---- StFstSimMaker unit tests -----------------------------------------------
+# Tests for StFstFastSimMaker (Forward Silicon Tracker fast simulator) and
+# the FstGlobal helper namespace.  Links against StFstSimMaker and StEvent
+# (for StHit / StRnDHit used in the Hack1to6 pure-math tests).
+my $envFstSim = $envTest->clone(
+    'LIBS' => "-lStFstSimMaker -lStEvent "
+            . $envTest->{LIBS},
+);
+my @fstsim_objs = Objects $envFstSim
+    "StFstSimMaker/test_StFstSimMaker.cxx";
+Program $envFstSim "test_StFstSimMaker", (@catch_obj, @fstsim_objs);
+Install $envFstSim $BIN, "test_StFstSimMaker";
+
+# ---- StEmcSimulatorMaker unit tests ----------------------------------------
+# Tests for the BEMC slow-simulator stack:
+#   StEmcVirtualSimulator  (abstract base – enum values)
+#   StPmtSignal            (PMT signal model, construction, accessors)
+#   StEmcSimpleSimulator   (simple energy→ADC, standalone construction)
+#   StEmcPmtSimulator      (PMT-aware energy→ADC, standalone construction)
+#   StEmcSimulatorMaker    (StMaker orchestrator, [integration]-tagged tests)
+#
+# StEmcSimulatorMaker ctor calls GetParentChain(); a StChain must exist first.
+# StBemcTables defers DB access to LoadTables(), so the ctor is safe without
+# a live database.  StEmcGeom uses only hardcoded tables (no file I/O).
+my $envEmcSim = $envTest->clone(
+    'LIBS' => "-lStEmcSimulatorMaker -lStEmcUtil -lStMuDSTMaker -lSt_db_Maker "
+            . "-lStMcEvent -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @emcsim_objs = Objects $envEmcSim
+    "StEmcSimulatorMaker/test_StEmcSimulatorMaker.cxx";
+Program $envEmcSim "test_StEmcSimulatorMaker", (@catch_obj, @emcsim_objs);
+Install $envEmcSim $BIN, "test_StEmcSimulatorMaker";
+
+# ---- StBbcSimulationMaker unit tests ---------------------------------------
+my $envBbcSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StBbcSimulationMaker",
+    'LIBS' => "-lStBbcSimulationMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @bbcsim_objs = Objects $envBbcSim
+    "StBbcSimulationMaker/test_StBbcSimulationMaker.cxx";
+Program $envBbcSim "test_StBbcSimulationMaker", (@catch_obj, @bbcsim_objs);
+Install $envBbcSim $BIN, "test_StBbcSimulationMaker";
+
+# ---- StEEmcSimulatorMaker unit tests ---------------------------------------
+my $envEEmcSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StEEmcSimulatorMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StEEmcUtil",
+    'LIBS' => "-lStEEmcSimulatorMaker -lStEEmcUtil -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @eemc_objs = Objects $envEEmcSim
+    "StEEmcSimulatorMaker/test_StEEmcSimulatorMaker.cxx";
+Program $envEEmcSim "test_StEEmcSimulatorMaker", (@catch_obj, @eemc_objs);
+Install $envEEmcSim $BIN, "test_StEEmcSimulatorMaker";
+
+# ---- StEtrFastSimMaker unit tests ------------------------------------------
+my $envEtrSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StEtrFastSimMaker",
+    'LIBS' => "-lStEtrFastSimMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @etrsim_objs = Objects $envEtrSim
+    "StEtrFastSimMaker/test_StEtrFastSimMaker.cxx";
+Program $envEtrSim "test_StEtrFastSimMaker", (@catch_obj, @etrsim_objs);
+Install $envEtrSim $BIN, "test_StEtrFastSimMaker";
+
+# ---- StFtpcSlowSimMaker unit tests -----------------------------------------
+my $envFtpcSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StFtpcSlowSimMaker",
+    'LIBS' => "-lStFtpcSlowSimMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @ftpcsim_objs = Objects $envFtpcSim
+    "StFtpcSlowSimMaker/test_StFtpcSlowSimMaker.cxx";
+Program $envFtpcSim "test_StFtpcSlowSimMaker", (@catch_obj, @ftpcsim_objs);
+Install $envFtpcSim $BIN, "test_StFtpcSlowSimMaker";
+
+# ---- StFttSimMaker unit tests -----------------------------------------------
+my $envFttSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StFttSimMaker",
+    'LIBS' => "-lStFttSimMaker -lStEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @fttsim_objs = Objects $envFttSim
+    "StFttSimMaker/test_StFttSimMaker.cxx";
+Program $envFttSim "test_StFttSimMaker", (@catch_obj, @fttsim_objs);
+Install $envFttSim $BIN, "test_StFttSimMaker";
+
+# ---- StIstSimMaker unit tests (fast + slow) --------------------------------
+my $envIstSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StIstSimMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StIstUtil",
+    'LIBS' => "-lStIstSimMaker -lStIstUtil -lStEvent -lStMcEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @istsim_objs = Objects $envIstSim
+    "StIstSimMaker/test_StIstSimMaker.cxx";
+Program $envIstSim "test_StIstSimMaker", (@catch_obj, @istsim_objs);
+Install $envIstSim $BIN, "test_StIstSimMaker";
+
+# ---- StPxlSimMaker unit tests -----------------------------------------------
+my $envPxlSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StPxlSimMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StPxlDbMaker",
+    'LIBS' => "-lStPxlSimMaker -lStPxlDbMaker -lStEvent -lStMcEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @pxlsim_objs = Objects $envPxlSim
+    "StPxlSimMaker/test_StPxlSimMaker.cxx";
+Program $envPxlSim "test_StPxlSimMaker", (@catch_obj, @pxlsim_objs);
+Install $envPxlSim $BIN, "test_StPxlSimMaker";
+
+# ---- StSsdSimulationMaker unit tests ---------------------------------------
+my $envSsdFullSim = $envTest->clone(
+    'CPPPATH' => $envTest->{CPPPATH}
+              . $main::PATH_SEPARATOR . "#StRoot/StSsdSimulationMaker"
+              . $main::PATH_SEPARATOR . "#StRoot/StSsdUtil",
+    'LIBS' => "-lStSsdSimulationMaker -lStSsdUtil -lStEvent -lStMcEvent -lStChain "
+            . $envTest->{LIBS},
+);
+my @ssdfullsim_objs = Objects $envSsdFullSim
+    "StSsdSimulationMaker/test_StSsdSimulationMaker.cxx";
+Program $envSsdFullSim "test_StSsdSimulationMaker", (@catch_obj, @ssdfullsim_objs);
+Install $envSsdFullSim $BIN, "test_StSsdSimulationMaker";
