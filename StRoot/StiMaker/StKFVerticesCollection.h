@@ -1,3 +1,7 @@
+/// @file StKFVerticesCollection.h
+/// @brief Container of StKFVertex objects from one KF vertex-finding pass.
+///
+/// @ingroup StiWorkflow
 #ifndef __StKFVerticesCollection_h__
 // $Id: StKFVerticesCollection.h,v 2.2 2012/06/11 15:33:41 fisyak Exp $
 #define __StKFVerticesCollection_h__

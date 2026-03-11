@@ -1,3 +1,7 @@
+/// @file StMuDstVtxT.h
+/// @brief Vertex DTO for writing results to MuDst output.
+///
+/// @ingroup StiWorkflow
 #ifndef __StMuDstVtxT_h__
 #define __StMuDstVtxT_h__
 #include "Riostream.h"

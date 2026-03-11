@@ -1,3 +1,7 @@
+/// @file StAnneling.h
+/// @brief Simulated-annealing track merger for resolving clone tracks.
+///
+/// @ingroup StiWorkflow
 #ifndef __StAnneling_h__
 #define __StAnneling_h__
 // $Id: StAnneling.h,v 2.1 2012/05/07 14:56:14 fisyak Exp $

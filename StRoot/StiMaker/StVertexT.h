@@ -1,3 +1,7 @@
+/// @file StVertexT.h
+/// @brief Track data for the primary-vertex fitter.
+///
+/// @ingroup StiWorkflow
 #ifndef __StVertexT_h__
 #define __StVertexT_h__
 #include "StMuDstVtxT.h"

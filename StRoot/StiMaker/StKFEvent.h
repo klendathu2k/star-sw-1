@@ -1,3 +1,7 @@
+/// @file StKFEvent.h
+/// @brief Kalman-filter event data class for vertex-fit quality monitoring.
+///
+/// @ingroup StiWorkflow
 #ifndef __StKFEvent__
 #define __StKFEvent__
 #include "Riostream.h"

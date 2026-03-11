@@ -1,3 +1,7 @@
+/// @file StPhiEtaHitList.h
+/// @brief phi-eta binned hit list for fast nearest-hit search in vertex finding.
+///
+/// @ingroup StiWorkflow
 #ifndef StPhiEtaHitList_h
 #define StPhiEtaHitList_h
 #include "TMath.h"

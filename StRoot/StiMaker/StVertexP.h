@@ -1,3 +1,7 @@
+/// @file StVertexP.h
+/// @brief Prong (daughter track) data for the primary-vertex fitter.
+///
+/// @ingroup StiWorkflow
 #ifndef __StVertexP_h__
 #define __StVertexP_h__
 

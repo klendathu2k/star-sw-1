@@ -1,3 +1,7 @@
+/// @file StKFVertex.h
+/// @brief Kalman-filter vertex representation from the KF vertex fitter.
+///
+/// @ingroup StiWorkflow
 #ifndef __StKFVertex_h__
 #define __StKFVertex_h__
 // $Id: StKFVertex.h,v 2.4 2013/04/10 22:14:20 fisyak Exp $

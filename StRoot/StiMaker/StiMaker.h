@@ -1,3 +1,7 @@
+/// @file StiMaker.h
+/// @brief Top-level STAR maker driving the full STI track reconstruction.
+///
+/// @ingroup StiWorkflow
 //StiMaker.h
 
 #ifndef StiMaker_HH
@@ -26,7 +30,23 @@ class StiToolkit;
 class StiVertexFinder;
 template<class FILTERED> class EditableFilter;
 
-
+/// @class StiMaker
+/// @brief STAR maker that orchestrates the full STI track-reconstruction chain.
+///
+/// **Lifecycle (called by the StChain event loop):**
+/// 1. `Init()` — creates `StiToolkit`, instantiates all `StiDetectorBuilder`
+///    subclasses and `StiHitLoader` subclasses registered in `StiDetectorGroups`,
+///    builds the detector tree, allocates object factories (hits, nodes, tracks),
+///    and creates the `StiKalmanTrackFinder` and `StiKalmanTrackFitter`.
+/// 2. `Make()` — for each event:
+///    a. Calls `StiMasterHitLoader::loadEvent()` to populate `StiHitContainer`.
+///    b. Calls `StiKalmanTrackFinder::findTracks()`.
+///    c. Calls `StiKalmanTrackFitter::fit()` on each found track.
+///    d. Calls `StiVertexFinder::fit()` to find primary vertices.
+///    e. Calls `StiStEventFiller` to copy results back to `StEvent`.
+/// 3. `Finish()` — writes debug histograms if enabled.
+///
+/// @ingroup StiWorkflow
 class StiMaker : public StMaker 
 {
  public:

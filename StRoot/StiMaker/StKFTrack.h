@@ -1,3 +1,7 @@
+/// @file StKFTrack.h
+/// @brief Kalman-filter track representation used by the KF vertex fitter.
+///
+/// @ingroup StiWorkflow
 #ifndef __StKFTrack_h__
 #define __StKFTrack_h__
 // $Id: StKFTrack.h,v 2.2 2012/06/11 15:33:41 fisyak Exp $

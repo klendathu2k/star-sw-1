@@ -1,3 +1,7 @@
+/// @file StiDetectorVolume.h
+/// @brief ROOT TGeo volume/node description for visualising an StiDetector.
+///
+/// @ingroup StiDetectorGeometry
 #ifndef STAR_StiGeomMake
 #define STAR_StiGeomMake
 // $Id: StiDetectorVolume.h,v 2.6 2018/01/16 22:46:15 smirnovd Exp $
