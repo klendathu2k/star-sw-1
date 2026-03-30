@@ -19,8 +19,31 @@ public:
   // Applies to btog.version = 8 with btog.choice =13 (run 13 onwards)
   
   virtual int id( int* numbv ) const { 
-
-    int _id = 1000 * numbv[0] + 100 * numbv[1] + 10 * numbv[2] + numbv[3];
+    
+    int _id;
+    if (StarGeometry::HasDetector("BBCMin")){
+      // New geometry (2018 onwards, after the EPD upgrade):
+      // BBC large tiles were removed, so BBCA is only placed once (small tiles only).
+      // As a result, the effective indices in numbv shift left by one:
+      //   numbv[0] = BBCM (West/East: 1 or 2)
+      //   numbv[1] = THXM (Triple Module: 1 to 6)
+      //   numbv[2] = SHXT (Single Module: 1 to 3)
+      //   numbv[3] = 0 (unused)
+      //
+      // We encode the (single) annulus placement with a fixed "1" in the hundreds place.
+      _id = 1000 * numbv[0] + 100 * 1 + 10 * numbv[1] + numbv[2];
+    }
+    else {
+      // Old geometry (before the 2018 EPD upgrade):
+      // BBC large tiles were included, so the BBCA volume (Annulus) was placed twice
+      // (small and large). This made it a multi-placed volume, so it was included
+      // explicitly in the numbv array:
+      //   numbv[0] = BBCM (West/East: 1 or 2)
+      //   numbv[1] = BBCA (Annulus Small/Large: 1 or 2)
+      //   numbv[2] = THXM (Triple Module: 1 to 6)
+      //   numbv[3] = SHXT (Single Module: 1 to 3)
+      _id = 1000 * numbv[0] + 100 * numbv[1] + 10 * numbv[2] + numbv[3];
+    }
 
     return _id;
 
