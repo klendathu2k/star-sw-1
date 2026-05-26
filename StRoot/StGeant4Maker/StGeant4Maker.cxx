@@ -48,6 +48,7 @@
 #include "tables/St_g2t_event_Table.h"
 #include "tables/St_g2t_vertex_Table.h"
 #include "tables/St_g2t_track_Table.h"
+#include "tables/St_g2t_geant4star_Table.h"
 //________________________________________________________________________________________________
 #include "g2t/St_g2t_tpc_Module.h"
 #include "g2t/St_g2t_hca_Module.h"
@@ -1097,6 +1098,99 @@ int StGeant4Maker::InitHits() {
   return kStOK;
 }
 //________________________________________________________________________________________________
+void StGeant4Maker::FillGeant4StarTable(){
+  St_g2t_geant4star* g2t_g4cfg = new St_g2t_geant4star("g2t_geant4star", 1);
+  g2t_geant4star_st cfg;
+  memset(&cfg, 0, sizeof(g2t_geant4star_st));
+  
+  auto copy_engine = [](char* dest, size_t dest_size, const char* src) {
+    if (!dest || dest_size == 0) return;
+    if (!src || src[0] == '\0') {
+      dest[0] = '\0';
+      return;
+    }
+    std::string src_str(src);
+    size_t copy_len = std::min(src_str.length(), dest_size - 1);
+    src_str.copy(dest, copy_len);
+    dest[copy_len] = '\0';
+  };
+  
+  copy_engine(cfg.application_engine, sizeof(cfg.application_engine), SAttr("application:engine"));
+  copy_engine(cfg.all_engine,         sizeof(cfg.all_engine),         SAttr("all:engine"));
+  copy_engine(cfg.wcal_engine,        sizeof(cfg.wcal_engine),        SAttr("wcal:engine"));
+  copy_engine(cfg.hcal_engine,        sizeof(cfg.hcal_engine),        SAttr("hcal:engine"));
+  copy_engine(cfg.physics_list,       sizeof(cfg.physics_list),       SAttr("G4VmcOpt:Phys"));
+
+  // Physics cuts
+  cfg.cutgam = DAttr("cutgam");
+  cfg.cutele = DAttr("cutele");
+  cfg.cuthad = DAttr("cuthad");
+  cfg.cutneu = DAttr("cutneu");
+  cfg.cutmuo = DAttr("cutmuo");
+  cfg.bcute  = DAttr("bcute");
+  cfg.bcutm  = DAttr("bcutm");
+  cfg.dcute  = DAttr("dcute");
+  cfg.dcutm  = DAttr("dcutm");
+  cfg.ppcutm = DAttr("ppcutm");
+  cfg.tofmax = DAttr("tofmax");
+
+  // Physics process flags
+  cfg.pair = IAttr("pair");
+  cfg.comp = IAttr("comp");
+  cfg.phot = IAttr("phot");
+  cfg.pfis = IAttr("pfis");
+  cfg.dray = IAttr("dray");
+  cfg.anni = IAttr("anni");
+  cfg.brem = IAttr("brem");
+  cfg.hadr = IAttr("hadr");
+  cfg.munu = IAttr("munu");
+  cfg.dcay = IAttr("dcay");
+  cfg.loss = IAttr("loss");
+  cfg.muls = IAttr("muls");
+  cfg.ckov = IAttr("ckov");
+  cfg.rayl = IAttr("rayl");
+  cfg.labs = IAttr("labs");
+  cfg.sync = IAttr("sync");
+
+  // Magnetic field
+  cfg.field = DAttr("field");
+
+  // Random seed
+  cfg.random_seed = IAttr("random:g4");
+
+  // Application limits
+  cfg.zmax = DAttr("application:zmax");
+  cfg.rmax = DAttr("application:rmax");
+
+  // Primary vertex
+  cfg.vertex_x      = DAttr("vertex:x");
+  cfg.vertex_y      = DAttr("vertex:y");
+  cfg.vertex_z      = DAttr("vertex:z");
+  cfg.vertex_sigmax = DAttr("vertex:sigmax");
+  cfg.vertex_sigmay = DAttr("vertex:sigmay");
+  cfg.vertex_sigmaz = DAttr("vertex:sigmaz");
+
+  // Stepping/Punchout options
+  cfg.punchout_stop = IAttr("stepping:punchout:stop");
+  cfg.punchout_rmin = DAttr("stepping:punchout:rmin");
+  cfg.punchout_zmin = DAttr("stepping:punchout:zmin");
+
+  // Scoring limits
+  cfg.scoring_rmax = DAttr("scoring:rmax");
+  cfg.scoring_zmax = DAttr("scoring:zmax");
+  cfg.scoring_emin = DAttr("scoring:emin");
+
+  // Embedding mode
+  cfg.embedding_mode = IAttr("embedding:mode");
+
+  // Run number
+  cfg.run_number = IAttr("runnumber");
+ 
+  g2t_g4cfg->AddAt(&cfg);
+  AddData(g2t_g4cfg);   
+  LOG_INFO << "Filled geant4star configuration in g2t_geant4star table" << endm;
+}
+//________________________________________________________________________________________________
 struct A { };
 struct B { };
 int StGeant4Maker::Make() {
@@ -1168,6 +1262,8 @@ int StGeant4Maker::Make() {
   LOG_INFO << "N tracks   = " << g2t_track_table->GetNRows() << endm;
 
   gGeoManager = mGeometry;
+
+  FillGeant4StarTable();
 
   return result; 
 }
