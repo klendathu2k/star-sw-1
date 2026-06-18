@@ -308,6 +308,8 @@ protected:
 
   TGeoManager* mGeometry;
   TGeoManager* mGeometryG4;
+  
+  StMaker* mIsolatedReader;
 
   ClassDef(StGeant4Maker,0);
 

@@ -31,6 +31,7 @@
 
 #include <functional>
 
+#include <TROOT.h>
 //_______________________________________________________________________________________________
 #include <AgMLVolumeIdFactory.h>
 //_______________________________________________________________________________________________
@@ -686,7 +687,8 @@ StGeant4Maker::StGeant4Maker( const char* nm ) :
   mDefaultEngine(0),
   mPostSteppingActions(),
   mGeometry(0),
-  mGeometryG4(0)
+  mGeometryG4(0),
+  mIsolatedReader(nullptr)
 { 
 
 
@@ -791,7 +793,14 @@ StGeant4Maker::StGeant4Maker( const char* nm ) :
 
 
   AddOption("tpchitaction",1,"0: keep all hits, 1: filter bad hits, 2: assert on bad hits");
-    
+
+
+  // Defer geometry and VMC initialization until InitRun (default=0).
+  // Set g4:initAtInitRun=1 to build geometry during InitRun, set to 0 to build geometry during Init (default).
+  AddOption("g4:initAtInitRun", 0, "Defer geometry/VMC init until InitRun: 1=yes , 0=init at Init (default)");
+  AddOption("ReadMode", 0, "0 = run Geant4 normally, 1 = read g2t tables directly from file");
+  AddOption("InputFile", "", "Path to the .geant.root file for ReadMode");
+
   // Naughty
   _g4maker = this; // Provide a global pointer to the G4 maker  
 
@@ -825,10 +834,42 @@ bool CreateGeometry(const Char_t *name="y2011") {
 }
 
 int StGeant4Maker::Init() {
-#ifndef INITIALIZE_VMC_AT_INITRUN
-  InitGeom();
-  InitVmcApp();
-#endif
+  
+  if (IAttr("ReadMode")) {
+    TString inFile = SAttr("InputFile");
+    if (inFile == "") {
+      LOG_FATAL << "ReadMode is enabled but InputFile is empty!" << endm;
+      return kStFatal;
+    }
+
+    LOG_INFO << "StGeant4Maker ReadMode: Setting up isolated StIOMaker for " << inFile << endm;
+
+    // create an StIOMaker to unpack the StIOEvent objects.
+    // SetActive(kFALSE) hides it from the global Event Loop so we can trigger it manually
+    gROOT->ProcessLine(Form(
+      "StIOMaker* _iso = new StIOMaker(\"g4IsolatedReader\", \"r\", \"%s\", \"bfcTree\");\n"
+      "_iso->SetActive(kFALSE);\n" 
+      "_iso->SetBranch(\"geantBranch\", 0, \"r\");\n"
+      "_iso->SetBranch(\"histBranch\", 0, \"0\");\n"
+      "_iso->SetBranch(\"runcoBranch\", 0, \"0\");\n"
+      "_iso->SetBranch(\"eventBranch\", 0, \"0\");\n"
+      "_iso->Init();\n"
+      , inFile.Data()
+    ));
+
+    mIsolatedReader = GetTopChain()->GetMaker("g4IsolatedReader");
+    if (!mIsolatedReader) {
+      LOG_FATAL << "Failed to initialize isolated reader!" << endm;
+      return kStFatal;
+    }
+    
+    return kStOK; // Skip initialization entirely
+  }
+
+  if ( !IAttr("g4:initAtInitRun") ){
+    InitGeom();
+    InitVmcApp();
+  }
   return StMaker::Init();
 }
 int StGeant4Maker::InitVmcApp() {
@@ -984,13 +1025,14 @@ int StGeant4Maker::InitVmcApp() {
 //________________________________________________________________________________________________
 int StGeant4Maker::InitRun( int /* run */ ){
 
+  if (IAttr("ReadMode")) return kStOK; // Skip all VMC/Field setup
   // One time initialization of the application
-#ifdef INITIALIZE_VMC_AT_INITRUN
-  if ( 0 == mVmcApplication ) {
-    InitGeom();
-    InitVmcApp();
+  if( IAttr("g4:initAtInitRun") ) {
+    if ( 0 == mVmcApplication ) {
+      InitGeom();
+      InitVmcApp();
+    }
   }
-#endif
 
   gGeoManager = mGeometryG4; assert(gGeoManager);
 
@@ -1236,6 +1278,65 @@ void StGeant4Maker::FillGeant4StarTable(){
 struct A { };
 struct B { };
 int StGeant4Maker::Make() {
+  
+  if (IAttr("ReadMode")) {
+    if (!mIsolatedReader) return kStErr;
+
+    // HACK: for embedding chains, we have many chains, 
+    //       the top chain is the DAQ chain with the correct
+    //       timestamp, but it doesn't have the g2t tables.
+    //       this is the reason we do an isolated reader.
+    //       we also nead the correct timestamp to properly restore  
+    //       the daq timestamp after creating the io maker.
+
+
+    // cache the DAQ timestamp
+    // don't ask why 20050402
+    int realDate = 20050402, realTime = 0, realRun = 1;
+    StEvtHddr* topHddr = (StEvtHddr*)GetTopChain()->GetDataSet("EvtHddr");
+    if (topHddr) {
+      realDate = topHddr->GetDate();
+      realTime = topHddr->GetTime();
+      realRun  = topHddr->GetRunNumber();
+    }
+
+    // IMPORTANT: clear the isolated reader to avoid it resetting the timestamp
+    mIsolatedReader->Clear("");
+    int ret = mIsolatedReader->Make();
+    // should not happen?
+    if (ret != kStOK) return ret;
+
+    TDataSet* geantDS = mIsolatedReader->GetDataSet("geant");
+    if (!geantDS) geantDS = GetTopChain()->GetDataSet("geant");
+    
+    int nTables = 0;
+    if (geantDS) {
+      TDataSetIter iter(geantDS);
+      TDataSet* ds;
+      std::vector<TDataSet*> tablesToMove;
+      while ((ds = iter.Next())) {
+        std::string dsName = ds->GetName();
+        tablesToMove.push_back(ds);
+      }
+      TDataSet* myDataDir = GetDataSet(".data");
+      for (auto* table : tablesToMove) {
+        table->Shunt(myDataDir);
+        nTables++;
+      }
+    }
+
+    // RESTORE THE DAQ TIMESTAMP
+    if (topHddr) {
+      topHddr->SetDateTime(realDate, realTime);
+      topHddr->SetRunNumber(realRun);
+      GetTopChain()->SetDateTime(realDate, realTime); // Force Database sync
+    }
+    
+    LOG_INFO << "ReadMode: Shunted " << nTables << " g2t tables. Restored DAQ Time: " 
+             << realDate << "." << realTime << endm;
+             
+    return kStOK;
+  }
 
   int result = kStOK;
 
@@ -1311,6 +1412,18 @@ int StGeant4Maker::Make() {
 }
 //________________________________________________________________________________________________
 void StGeant4Maker::Clear( const Option_t* opts ){
+
+  if (IAttr("ReadMode")) {
+    StMaker::Clear(opts);
+    // Because we stole ownership with Shunt(), we are now responsible for 
+    // freeing the memory at the end of the event. Delete() destroys 
+    // the shunted g2t tables so the next event starts clean.
+    TDataSet* myDataDir = GetDataSet(".data");
+    if (myDataDir) {
+      myDataDir->Delete();
+    }
+    return;
+  }
 
   gGeoManager = mGeometryG4;
 
@@ -2187,6 +2300,10 @@ void StGeant4Maker::PushPrimaries() {
 }
 //________________________________________________________________________________________________
 int StGeant4Maker::Finish() {
+
+  if (IAttr("ReadMode")) {
+    return kStOK;
+  }
 
   LOG_INFO << "Energy sums per sensitive volume" << endm;
   for ( auto kv : mHitSum ) {
