@@ -23,8 +23,8 @@ std::string   prepend = "";
 std::string   chain0opts = ( prepend + " " + chain1opts_ + chain2opts_ + " " + chain3opts_ + " " );
 
 std::string   chain1opts = chain1opts_ + " nooutput " ;
-std::string   chain2opts = chain2opts_ + " noinput nooutput " ;
-std::string   chain3opts = chain3opts_ + " -in noinput " ;
+std::string   chain2opts = chain2opts_ + " in ";// + " noinput nooutput " ;
+std::string   chain3opts = chain3opts_ + " in " ;
 
 
 const bool runchains[] = { false, true, true, true };
@@ -65,19 +65,13 @@ StBFChain*  chain1 = 0;
 StBFChain*  chain2 = 0;
 StBFChain*  chain3 = 0;
 
-int    nevents=1;
+int    nevents=2;
 std::string  daqfile="/gpfs01/star/embed/daq/2021/auau17_phys_chop/st_physics_adc_22158015_raw_5000016.daq";
 std::string  tagfile="/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22158015_raw_5000016.tags.root";
 std::string  simfile="/gpfs01/star/pwg/yelfeky/g4_hft/geant4out.geant.root";
-double pt_low=0.1;
-double pt_high=5.0;
-double eta_low=-1.5;
-double eta_high=1.5;
 double vzlow = -150.0;
 double vzhigh = 150.0;
 double vr = 2.0;
-int pid=9;
-double mult=100;
 std::vector<int> triggers = {870010};
 std::string prodName = "P23idAuAu17";
 std::string type = "FlatPT";
@@ -91,8 +85,8 @@ void SetTagFile( const char* tags ) {
   process(
     Form(
       "{"
-        "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
-        "if ( stembed ) stembed->SetAttr(\"tags\", \"%s\");"
+      "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
+      "if ( stembed ) stembed->SetAttr(\"tags\", \"%s\");"
       "}"
       ,
       tags
@@ -108,8 +102,8 @@ void SetTriggers( std::vector<int> triggers ) {
   process(
     Form(
       "{"
-        "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
-        "if ( stembed ) stembed->SetAttr(\"triggers\", \"%s\");"
+      "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
+      "if ( stembed ) stembed->SetAttr(\"triggers\", \"%s\");"
       "}"
       ,
       triglist.c_str()
@@ -258,7 +252,7 @@ void bfcMixer_HftG4(
   double vzhigh_,
   double vr_,
   std::vector<int> triggers_,
-  const char* prodName_  = "P23idAuAu17"
+  const char* prodName_
  )
 {
   nevents  = nevents_;
@@ -278,10 +272,21 @@ void bfcMixer_HftG4(
     
     chain0opts = opts.loadopts;
     chain1opts = opts.chain1 + " nooutput ";
-    chain2opts = opts.chain2 + " noinput nooutput ";
-    // we are giving the .geant.root file as input to chain3 for the McEvent maker.
-    // chain3opts = opts.chain3 + " -in noinput ";    
+    chain2opts = opts.chain2;
     chain3opts = opts.chain3;
+    
+   
+    while ( replace( chain2opts, "g4star:mk", "" ) );
+    while ( replace( chain2opts, "kinematics:embed", "" ) );
+
+    while ( replace( chain2opts, "noinput", "" ) );
+    while ( replace( chain2opts, "-in", "" ) );
+    while ( replace( chain3opts, "noinput", "" ) );
+    while ( replace( chain3opts, "-in", "" ) );
+
+    chain2opts += " in "; // ensure that the last chain has an input
+    chain3opts += " in "; // ensure that the last chain has an input
+
     bfcMixer_HftG4();
 
   }
@@ -302,14 +307,14 @@ void bfcMixer_HftG4( const char* dbg ) {
   if ( dbg_ == "test1" ) {
 
     const int   nevents_     = 10; 
-    const char* mydaqfile_   = "/gpfs01/star/embed/daq/2021/auau17_phys_chop/st_physics_adc_22155034_raw_5500004.daq"   ;
-    const char* mytagfile_   = "/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22155034_raw_5500004.tags.root" ;
+    const char* mydaqfile_   = "/star/data03/daq/2019/057/20057049/st_physics_adc_20057049_raw_2000003.daq"   ;
+    const char* mytagfile_   = "/gpfs01/star/embed/tags/2019/auau19_phys/st_physics_adc_20057049_raw_2000003.tags.root" ;
     const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/geant4out.geant.root" ;
-    double myvzmn_           =  -145.0       ; 
-    double myvzmx_           = 145.0         ; 
-    double myvr_             = 2.0           ; 
-    std::vector<int> mytriggers_  = {870010} ; 
-    const char* myprodname  = "P23idAuAu17" ; 
+    double myvzmn_           = -9999.0        ; 
+    double myvzmx_           = 9999.0         ; 
+    double myvr_             = 9999.0           ; 
+    std::vector<int> mytriggers_  = {640001,640011,640021,640031,640041,640051} ; 
+    const char* myprodname  = "P21icAuAu19" ; 
     bfcMixer_HftG4( nevents_, mydaqfile_, mytagfile_, mysimfile_, myvzmn_, myvzmx_, myvr_, mytriggers_, myprodname );
 
   };

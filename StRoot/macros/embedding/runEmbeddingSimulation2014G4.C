@@ -58,7 +58,7 @@ double _eventtime = 0;
 double _prodtime  = 0;
 double _magfield  = -5.005;
 int     _npart = 5;  // floor number of tracks per event
-float   _fpart = 0.1;  // fraction of track multiplicity to embed
+float   _fpart = 0.05;  // fraction of track multiplicity to embed
 float   _ptmn  = 5.0 - 0.0001  ;  // min pT to simulate [GeV]
 float   _ptmx  = 5.0 + 0.0001  ; // max pT to simulate [GeV]
 float   _etamn =  0.25 - 0.0001;   // min eta to simulate
@@ -70,9 +70,9 @@ TString SDT;
 std::string _dbv="DbV20230818";
 std::string _geom="y2021a";
 // tagfile, geantfile, ne
-std::string _tagfileName = "tags.root";
+std::string _tagfileName = "/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22158015_raw_5000016.tags.root";
 std::string _geantfileName = "geant4out.geant.root";
-int         _nevents = 10;
+int         _nevents = 2;
 //______________________________________________________________________________________
 void process( const char* line ){
   gMessMgr->Info(line);
@@ -146,7 +146,7 @@ void runEmbeddingSimulation2014G4()
   );
 
   g4star->SetAttr( "runnumber",_runnumber );
-  // THIS IS THE WHOLE POINT. def not kiling me self lol
+
   g4star->SetAttr( "g4:initAtInitRun" , 1 ); // Defer geometry and VMC initialization until InitRun
 
   top->ls(5);
@@ -177,7 +177,6 @@ void runEmbeddingSimulation2014G4()
     }
 
     top->SetDateTime( int(_eventtime), int( 100000*(_eventtime-int(_eventtime)) ) );
-    // top->SetIventNumber(_evtnumber-1);
 
     g4star->SetAttr( "runnumber",_runnumber );
     g4star->SetAttr( "vertex:x", _vxyz[0] );
@@ -237,3 +236,22 @@ void runEmbeddingSimulation2014G4(
 }
 //______________________________________________________________________________________
 
+void runEmbeddingSimulation2014G4(const char* dbg)
+{
+  std::string dbg_ = dbg;
+  if ( dbg_ == "test1" ) {
+   _nevents = 10;
+    _tagfileName = "/gpfs01/star/embed/tags/2019/auau19_phys/st_physics_adc_20057049_raw_2000003.tags.root";
+    _geantfileName = "geant4out.geant.root";
+    _fpart = 0.05;
+    _ptmn  = 0.;
+    _ptmx  = 6.;
+    _etamn = -1.;
+    _etamx =  1.;
+    _pid   = 45;
+    _dbv   = "DbV20210827";
+    _geom  = "y2019a";
+    runEmbeddingSimulation2014G4();
+
+  }
+}

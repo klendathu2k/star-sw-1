@@ -160,8 +160,7 @@ struct EmbeddingChains {
     chain3Opt =  config.prod;
     chain2Opt += config.geom;
     chain1Opt += config.geomMode;
-    // removed ,-in,NoInput from chain3 for the HFT embedding, we will add them in bfcMixer_TpxG4.C
-    chain3Opt += ",TpcMixer,GeantOut,MiniMcMk,McAna,useInTracker,emcSim,BEmcMixer,EEfs,EEmcMixer,EEss";
+    chain3Opt += ",TpcMixer,GeantOut,MiniMcMk,McAna,NoInput,useInTracker,emcSim,BEmcMixer,EEfs,EEmcMixer,EEss";
     
     // Append first
     chain1Opt += chain1Mods[ simEngine ].append;
