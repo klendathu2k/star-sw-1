@@ -251,10 +251,9 @@ struct SD2Table_PIX {
     // Iterate over all hits
     for ( auto hit : collection->hits() ) {
       
-      g2t_fts_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_fts_hit_st)); 
+      g2t_pix_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_pix_hit_st)); 
       
       g2t_hit.id        = hit->id;
-      // TODO: add pointer to next hit on the track 
       g2t_hit.track_p   = hit->idtruth;
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
@@ -268,9 +267,9 @@ struct SD2Table_PIX {
       int idtruth = hit->idtruth;
       g2t_track_st* g2t_track = (g2t_track_st*)track->At(idtruth-1);
 
-      g2t_hit.next_tr_hit_p = g2t_track->hit_fts_p; // store next hit on the linked list
-      g2t_track->hit_fts_p = hit->id;            // this hit becomes the head of the linked list
-      g2t_track->n_fts_hit++;
+      g2t_hit.next_tr_hit_p = g2t_track->hit_pix_p;
+      g2t_track->hit_pix_p = hit->id;
+      g2t_track->n_pix_hit++;
 
       table -> AddAt( &g2t_hit );     
 
@@ -285,10 +284,9 @@ struct SD2Table_IST {
     // Iterate over all hits
     for ( auto hit : collection->hits() ) {
       
-      g2t_fts_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_fts_hit_st)); 
+      g2t_ist_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_ist_hit_st)); 
       
       g2t_hit.id        = hit->id;
-      // TODO: add pointer to next hit on the track 
       g2t_hit.track_p   = hit->idtruth;
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
@@ -302,9 +300,9 @@ struct SD2Table_IST {
       int idtruth = hit->idtruth;
       g2t_track_st* g2t_track = (g2t_track_st*)track->At(idtruth-1);
 
-      g2t_hit.next_tr_hit_p = g2t_track->hit_fts_p; // store next hit on the linked list
-      g2t_track->hit_fts_p = hit->id;            // this hit becomes the head of the linked list
-      g2t_track->n_fts_hit++;
+      g2t_hit.next_tr_hit_p = g2t_track->hit_pix_p;
+      g2t_track->hit_pix_p = hit->id;
+      g2t_track->n_pix_hit++;
 
       table -> AddAt( &g2t_hit );     
 
@@ -319,10 +317,9 @@ struct SD2Table_SSD {
     // Iterate over all hits
     for ( auto hit : collection->hits() ) {
       
-      g2t_fts_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_fts_hit_st)); 
+      g2t_ssd_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_ssd_hit_st)); 
       
       g2t_hit.id        = hit->id;
-      // TODO: add pointer to next hit on the track 
       g2t_hit.track_p   = hit->idtruth;
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
@@ -336,9 +333,9 @@ struct SD2Table_SSD {
       int idtruth = hit->idtruth;
       g2t_track_st* g2t_track = (g2t_track_st*)track->At(idtruth-1);
 
-      g2t_hit.next_tr_hit_p = g2t_track->hit_fts_p; // store next hit on the linked list
-      g2t_track->hit_fts_p = hit->id;            // this hit becomes the head of the linked list
-      g2t_track->n_fts_hit++;
+      g2t_hit.next_tr_hit_p = g2t_track->hit_ssd_p;
+      g2t_track->hit_ssd_p = hit->id;
+      g2t_track->n_ssd_hit++;
 
       table -> AddAt( &g2t_hit );     
 
