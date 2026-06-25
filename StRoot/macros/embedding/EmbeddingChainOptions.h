@@ -116,7 +116,10 @@ struct EmbeddingChains {
       {"P21icAuAu19",  {"DbV20210827 DbV20220204_TPC_Calibrations P2019a StiCA,-beamline3D,btof,mtd,mtdCalib,ImpBToFt0Mode,BEmcChkStat,CorrY,-OPr13,ODistoSmear,EbyET0,PicoVtxDefault,PicoCovMtxWrite,VFMCE,TpxClu,-VFMinuit -hitfilt", "ry2019a", "usexgeom"}},
       {"P23idAuAu17",  {"DbV20230818 P2021a StiCA BEmcChkStat EbyET0 ODistoSmear VFMCE TpxClu -VFMinuit -hitfilt ", "ry2021a", "useXgeom "}},
 
-      {"P21idIsobar200",  {"DbV20211206 P2018a StiCA -beamline3D btof etofDat mtdsim mtd mtdCalib BEmcChkStat CorrX OPr40 -OPr13 OSpaceZ2 OGridLeakFull -hitfilt -picoWrite McEvOut", "ry2018a", "useXgeom "}}
+      {"P21idIsobar200",  {"DbV20211206 P2018a StiCA -beamline3D btof etofDat mtdsim mtd mtdCalib BEmcChkStat CorrX OPr40 -OPr13 OSpaceZ2 OGridLeakFull -hitfilt -picoWrite McEvOut", "ry2018a", "useXgeom "}},
+
+
+      {"P17iddAu200hft",  {"DbV20161216 P2016a StiCA mtd mtdCalib btof PxlHit IstHit BEmcChkStat CorrX OSpaceZ2 OGridLeak3D ODistoSmear -hitfilt -vfminuit vfmce tpxclu pxlslowsim istslowsim nosvtit nossdit McEvOut", "ry2016x", ""}}
 
 
     };
@@ -160,7 +163,7 @@ struct EmbeddingChains {
     chain3Opt =  config.prod;
     chain2Opt += config.geom;
     chain1Opt += config.geomMode;
-    chain3Opt += ",TpcMixer,GeantOut,MiniMcMk,McAna,NoInput,useInTracker,emcSim,BEmcMixer,EEfs,EEmcMixer,EEss";
+    chain3Opt += ",TpcMixer,GeantOut,MiniMcMk,McAna,-in,NoInput,useInTracker,emcSim,BEmcMixer,EEfs,EEmcMixer,EEss";
     
     // Append first
     chain1Opt += chain1Mods[ simEngine ].append;
