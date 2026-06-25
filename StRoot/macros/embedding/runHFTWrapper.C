@@ -31,7 +31,7 @@ void runHFTWrapper(
     if (!dir.EndsWith("/") && dir.Length() > 0) {
         dir += "/";
     }
-    TString simMacro = dir + "runEmbeddingSimulation2014G4.C";
+    TString simMacro = dir + "runEmbeddingSimulationHftG4.C";
     TString embMacro = dir + "bfcMixer_HftG4.C";
 
     EmbeddingChains<geant4star> getChainOptions;

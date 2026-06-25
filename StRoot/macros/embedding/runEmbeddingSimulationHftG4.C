@@ -78,7 +78,7 @@ void process( const char* line ){
   gMessMgr->Info(line);
   gInterpreter->ProcessLine( Form("%s", line) );
 };
-void runEmbeddingSimulation2014G4()
+void runEmbeddingSimulationHftG4()
 {
 
   //________________________________________________________
@@ -113,7 +113,7 @@ void runEmbeddingSimulation2014G4()
   // Determine maximum number of events to process
   if ( _nevents < 0 ) _nevents = _tags->GetEntries();
 
-  std::string chainopts =  "nodefault " + _geom + " " + _dbv + " agml simu sim_T gen_T stargen:mk kinematics:mk g4star:mk noinput geant4out ";
+  std::string chainopts =  "nodefault " + _geom + " " + _dbv + " agml misalign simu sim_T gen_T stargen:mk kinematics:mk g4star:mk noinput geant4out ";
   // chainopts += SDT; chainopts += " ";
   // chainopts += DBV; chainopts += " ";
   top->SetDebug(1);
@@ -146,7 +146,7 @@ void runEmbeddingSimulation2014G4()
   );
 
   g4star->SetAttr( "runnumber",_runnumber );
-
+  
   g4star->SetAttr( "g4:initAtInitRun" , 1 ); // Defer geometry and VMC initialization until InitRun
 
   top->ls(5);
@@ -206,7 +206,7 @@ void runEmbeddingSimulation2014G4()
 //______________________________________________________________________________________
 
 
-void runEmbeddingSimulation2014G4(
+void runEmbeddingSimulationHftG4(
 			    const int ne,
 			    const char* geantfile,
 			    const char* tagfile,
@@ -231,12 +231,12 @@ void runEmbeddingSimulation2014G4(
   _dbv   = dbv;
   _geom  = geom;
   
-  runEmbeddingSimulation2014G4();
+  runEmbeddingSimulationHftG4();
 
 }
 //______________________________________________________________________________________
 
-void runEmbeddingSimulation2014G4(const char* dbg)
+void runEmbeddingSimulationHftG4(const char* dbg)
 {
   std::string dbg_ = dbg;
   if ( dbg_ == "test1" ) {
@@ -251,7 +251,36 @@ void runEmbeddingSimulation2014G4(const char* dbg)
     _pid   = 45;
     _dbv   = "DbV20210827";
     _geom  = "y2019a";
-    runEmbeddingSimulation2014G4();
+    runEmbeddingSimulationHftG4();
 
+  }
+
+  if ( dbg_ == "test2" ) {
+    _nevents = 100;
+    _tagfileName = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
+    _geantfileName = "geant4out.geant.root";
+    _fpart = 1;
+    _ptmn  = 0.;
+    _ptmx  = 5.;
+    _etamn = -1.;
+    _etamx =  1.;
+    _pid   = 8;
+    _dbv   = "DbV20161216";
+    _geom  = "y2016x";
+    runEmbeddingSimulationHftG4();
+  }
+  if ( dbg_ == "test3" ) {
+    _nevents = 10;
+    _tagfileName = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
+    _geantfileName = "geant4out.geant.root";
+    _fpart = 10;
+    _ptmn  = 5.-0.0001;
+    _ptmx  = 5.+0.0001;
+    _etamn = 0.-0.0001;
+    _etamx = 0.+0.0001;
+    _pid   = 8;
+    _dbv   = "DbV20161216";
+    _geom  = " y2016x FieldOff ";
+    runEmbeddingSimulationHftG4();
   }
 }
