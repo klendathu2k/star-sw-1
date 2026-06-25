@@ -116,7 +116,11 @@ struct EmbeddingChains {
       {"P21icAuAu19",  {"DbV20210827 DbV20220204_TPC_Calibrations P2019a StiCA,-beamline3D,btof,mtd,mtdCalib,ImpBToFt0Mode,BEmcChkStat,CorrY,-OPr13,ODistoSmear,EbyET0,PicoVtxDefault,PicoCovMtxWrite,VFMCE,TpxClu,-VFMinuit -hitfilt", "ry2019a", "usexgeom"}},
       {"P23idAuAu17",  {"DbV20230818 P2021a StiCA BEmcChkStat EbyET0 ODistoSmear VFMCE TpxClu -VFMinuit -hitfilt ", "ry2021a", "useXgeom "}},
 
-      {"P21idIsobar200",  {"DbV20211206 P2018a StiCA -beamline3D btof etofDat mtdsim mtd mtdCalib BEmcChkStat CorrX OPr40 -OPr13 OSpaceZ2 OGridLeakFull -hitfilt -picoWrite McEvOut", "ry2018a", "useXgeom "}}
+      {"P21idIsobar200",  {"DbV20211206 P2018a StiCA -beamline3D btof etofDat mtdsim mtd mtdCalib BEmcChkStat CorrX OPr40 -OPr13 OSpaceZ2 OGridLeakFull -hitfilt -picoWrite McEvOut", "ry2018a", "useXgeom "}},
+      
+      {"P23ieAuAu200",  {"DbV20231208 P2019a StiCA -beamline3D PicoVtxDefault PicoCovMtxWrite BEmcChkStat CorrY -OPr13 VFMCE TpxClu evout -VFMinuit -hitfilt mtdsim", "ry2019a", "useXgeom "}},
+
+      {"P23icOO200",  {"DbV20230413 P2021a StiCA EbyET0 BEmcChkStat ImpBToFt0Mode VFMCE TpxClu evout -VFMinuit -hitfilt mtdsim", "ry2021a", "useXgeom "}}
 
 
     };
