@@ -246,6 +246,14 @@ struct SD2Table_FST {
 
 struct SD2Table_PIX {
   void operator()( StSensitiveDetector* sd, St_g2t_pix_hit* table, St_g2t_track* track ) {
+    
+    TGeoNavigator* nav = gGeoManager->GetCurrentNavigator();
+    if( !nav ) {
+      LOG_FATAL << "No Pointer to Navigator" << endm;
+      assert(0);
+    }      
+    nav->PushPath();    
+
     // Retrieve the hit collection 
     StTrackerHitCollection* collection = (StTrackerHitCollection *)sd->hits();
     // Iterate over all hits
@@ -253,15 +261,43 @@ struct SD2Table_PIX {
       
       g2t_pix_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_pix_hit_st)); 
       
+      bool success = nav->cd( hit->path );
+      if ( 0 == success ) {
+	LOG_FATAL << "Unable to cd to " << hit->path.Data() << ".  Terminating." << endm;
+	assert(0);
+      }
+
+
       g2t_hit.id        = hit->id;
       g2t_hit.track_p   = hit->idtruth;
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
       g2t_hit.ds        = hit->ds;
+
+      double xglobal[3] = {
+        0.5 * ( hit->position_in[0] + hit->position_out[0] ),
+        0.5 * ( hit->position_in[1] + hit->position_out[1] ),
+        0.5 * ( hit->position_in[2] + hit->position_out[2] )
+      };
+
+      // yes, p is also converted
+      double pglobal[3] = {
+        0.5 * ( hit->momentum_in[0] + hit->momentum_out[0] ),
+        0.5 * ( hit->momentum_in[1] + hit->momentum_out[1] ),
+        0.5 * ( hit->momentum_in[2] + hit->momentum_out[2] )
+      };
+      double xlocal[3];
+      double plocal[3];
+      
+      nav->MasterToLocal( xglobal, xlocal );
+
+      nav->MasterToLocalVect( pglobal, plocal );
+
       for ( int i=0; i<3; i++ ) {
-	g2t_hit.p[i]  = 0.5 * ( hit->momentum_in[i] + hit->momentum_out[i] );
-	g2t_hit.x[i]  = 0.5 * ( hit->position_in[i] + hit->position_out[i] );
+        g2t_hit.x[i] = xlocal[i];
+        g2t_hit.p[i] = plocal[i];
       }
+
       g2t_hit.tof       = 0.5 * ( hit->position_in[3] + hit->position_out[3] ); 
      
       int idtruth = hit->idtruth;
@@ -274,27 +310,64 @@ struct SD2Table_PIX {
       table -> AddAt( &g2t_hit );     
 
     }
+
+    // Restore navigator state
+    nav->PopPath();
   } 
 } sd2table_pix; 
 
 struct SD2Table_IST {
   void operator()( StSensitiveDetector* sd, St_g2t_ist_hit* table, St_g2t_track* track ) {
+    
+    TGeoNavigator* nav = gGeoManager->GetCurrentNavigator();
+    if( !nav ) {
+      LOG_FATAL << "No Pointer to Navigator" << endm;
+      assert(0);
+    }      
+    nav->PushPath();    
+
     // Retrieve the hit collection 
     StTrackerHitCollection* collection = (StTrackerHitCollection *)sd->hits();
     // Iterate over all hits
     for ( auto hit : collection->hits() ) {
       
       g2t_ist_hit_st g2t_hit; memset(&g2t_hit,0,sizeof(g2t_ist_hit_st)); 
-      
+
+      bool success = nav->cd( hit->path );
+      if ( 0 == success ) {
+	LOG_FATAL << "Unable to cd to " << hit->path.Data() << ".  Terminating." << endm;
+	assert(0);
+      }
+
       g2t_hit.id        = hit->id;
       g2t_hit.track_p   = hit->idtruth;
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
       g2t_hit.ds        = hit->ds;
+
+      double xglobal[3] = {
+        0.5 * ( hit->position_in[0] + hit->position_out[0] ),
+        0.5 * ( hit->position_in[1] + hit->position_out[1] ),
+        0.5 * ( hit->position_in[2] + hit->position_out[2] )
+      };
+
+      // yes, p is also converted
+      double pglobal[3] = {
+        0.5 * ( hit->momentum_in[0] + hit->momentum_out[0] ),
+        0.5 * ( hit->momentum_in[1] + hit->momentum_out[1] ),
+        0.5 * ( hit->momentum_in[2] + hit->momentum_out[2] )
+      };
+      double xlocal[3];
+      double plocal[3];
+
+      nav->MasterToLocal( xglobal, xlocal );
+      nav->MasterToLocalVect( pglobal, plocal );
+
       for ( int i=0; i<3; i++ ) {
-	g2t_hit.p[i]  = 0.5 * ( hit->momentum_in[i] + hit->momentum_out[i] );
-	g2t_hit.x[i]  = 0.5 * ( hit->position_in[i] + hit->position_out[i] );
+        g2t_hit.x[i] = xlocal[i];
+        g2t_hit.p[i] = plocal[i];
       }
+
       g2t_hit.tof       = 0.5 * ( hit->position_in[3] + hit->position_out[3] ); 
      
       int idtruth = hit->idtruth;
@@ -307,11 +380,21 @@ struct SD2Table_IST {
       table -> AddAt( &g2t_hit );     
 
     }
+    // Restore navigator state
+    nav->PopPath();
   } 
 } sd2table_ist; 
 
 struct SD2Table_SSD {
   void operator()( StSensitiveDetector* sd, St_g2t_ssd_hit* table, St_g2t_track* track ) {
+    
+    TGeoNavigator* nav = gGeoManager->GetCurrentNavigator();
+    if( !nav ) {
+      LOG_FATAL << "No Pointer to Navigator" << endm;
+      assert(0);
+    }      
+    nav->PushPath();    
+
     // Retrieve the hit collection 
     StTrackerHitCollection* collection = (StTrackerHitCollection *)sd->hits();
     // Iterate over all hits
@@ -324,10 +407,30 @@ struct SD2Table_SSD {
       g2t_hit.volume_id = hit->volId;
       g2t_hit.de        = hit->de;
       g2t_hit.ds        = hit->ds;
+
+      double xglobal[3] = {
+        0.5 * ( hit->position_in[0] + hit->position_out[0] ),
+        0.5 * ( hit->position_in[1] + hit->position_out[1] ),
+        0.5 * ( hit->position_in[2] + hit->position_out[2] )
+      };
+
+      // yes, p is also converted
+      double pglobal[3] = {
+        0.5 * ( hit->momentum_in[0] + hit->momentum_out[0] ),
+        0.5 * ( hit->momentum_in[1] + hit->momentum_out[1] ),
+        0.5 * ( hit->momentum_in[2] + hit->momentum_out[2] )
+      };
+      double xlocal[3];
+      double plocal[3];
+
+      nav->MasterToLocal( xglobal, xlocal );
+      nav->MasterToLocalVect( pglobal, plocal );
+
       for ( int i=0; i<3; i++ ) {
-	g2t_hit.p[i]  = 0.5 * ( hit->momentum_in[i] + hit->momentum_out[i] );
-	g2t_hit.x[i]  = 0.5 * ( hit->position_in[i] + hit->position_out[i] );
+        g2t_hit.x[i] = xlocal[i];
+        g2t_hit.p[i] = plocal[i];
       }
+      
       g2t_hit.tof       = 0.5 * ( hit->position_in[3] + hit->position_out[3] ); 
      
       int idtruth = hit->idtruth;
@@ -340,6 +443,8 @@ struct SD2Table_SSD {
       table -> AddAt( &g2t_hit );     
 
     }
+    // Restore navigator state
+    nav->PopPath();
   } 
 } sd2table_ssd; 
 
