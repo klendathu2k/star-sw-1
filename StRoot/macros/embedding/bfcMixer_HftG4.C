@@ -212,16 +212,15 @@ void bfcMixer_HftG4()
        tpxmixer->SetInput("Input2", "TpcRS/Event");
     }
 
-    // IST slow simulator setup for futuer HFT embedding
-    // gInterpreter->ProcessLine(
-    //   "auto* ist = dynamic_cast<StIstRawHitMaker*>( StMaker::GetTopChain()->GetMaker(\"ist_raw_hit\") );"
-    //   "if ( ist ) { ist->setDataType(1); ist->setDoEmbedding(kTRUE); }"
-    // );
-
     auto* eefs_ = chain3->Maker("eefs");
     auto* eess_ = chain3->Maker("eess");
     if ( eefs_ ) eefs_->SetAttr("embedding", 1);
     if ( eess_ ) eess_->SetAttr("embedding", 1);
+
+    if (chain3->GetMaker("ist_raw_hit")) { // not to crash for non-hft productions
+      process("auto* ist = dynamic_cast<StIstRawHitMaker*>( StMaker::GetTopChain()->GetMaker(\"ist_raw_hit\") );");
+      process("if ( ist ) { ist->setDataType(1); ist->setDoEmbedding(kTRUE); }");
+    }
   }
 
   top->cd();
@@ -315,6 +314,22 @@ void bfcMixer_HftG4( const char* dbg ) {
     double myvr_             = 9999.0           ; 
     std::vector<int> mytriggers_  = {640001,640011,640021,640031,640041,640051} ; 
     const char* myprodname  = "P21icAuAu19" ; 
+    bfcMixer_HftG4( nevents_, mydaqfile_, mytagfile_, mysimfile_, myvzmn_, myvzmx_, myvr_, mytriggers_, myprodname );
+
+  };
+
+  if ( dbg_ == "test2" ) {
+
+    // https://drupal.star.bnl.gov/STAR/starsimrequests/2018/sep/06/pi-pi-k-k-p-p-dau-run16-hft
+    const int   nevents_     = 100; 
+    const char* mydaqfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq"   ;
+    const char* mytagfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root"   ;
+    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/geant4out.geant.root" ;
+    double myvzmn_           = -6.0        ; 
+    double myvzmx_           = 6.0         ; 
+    double myvr_             = 9999.0           ; 
+    std::vector<int> mytriggers_  = {530003} ; 
+    const char* myprodname  = "P17iddAu200hft" ; 
     bfcMixer_HftG4( nevents_, mydaqfile_, mytagfile_, mysimfile_, myvzmn_, myvzmx_, myvr_, mytriggers_, myprodname );
 
   };
