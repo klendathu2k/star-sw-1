@@ -35,7 +35,6 @@ class StMessMgr;
 #include "TROOT.h"
 #include "TAttr.h"
 #include "Rtypes.h"
-
 #endif
 
 
@@ -46,86 +45,102 @@ StBFChain* top = new StBFChain("physicssim");
 
 StMaker* g4star = 0;
 
-
-TFile* _tagfile = 0; // file containing the tags
-TTree* _tags    = 0; // tree containing the tags
-double _vxyz[3] = { 0, 0, 0 }; // event vertex
-double _sxyz[3] = { 0, 0, 0 }; // additional smearing
-int    _runnumber = 0;
-int    _evtnumber = 0;
-UInt_t _unprimaries = 0;
-double _eventtime = 0;
-double _prodtime  = 0;
-double _magfield  = -5.005;
-int     _npart = 5;  // floor number of tracks per event
-float   _fpart = 0.05;  // fraction of track multiplicity to embed
-float   _ptmn  = 5.0 - 0.0001  ;  // min pT to simulate [GeV]
-float   _ptmx  = 5.0 + 0.0001  ; // max pT to simulate [GeV]
-float   _etamn =  0.25 - 0.0001;   // min eta to simulate
-float   _etamx =  0.25 + 0.0001;   // max eta to simulate
-int     _pid   = 14; // default to proton
+float   mult = 0.05;  // fraction of track multiplicity to embed
+float   pt_low  = 5.0 - 0.0001  ;  // min pT to simulate [GeV]
+float   pt_high  = 5.0 + 0.0001  ; // max pT to simulate [GeV]
+float   eta_low =  0.25 - 0.0001;   // min eta to simulate
+float   eta_high =  0.25 + 0.0001;   // max eta to simulate
+float   vzlow = -150.0; // min z vertex to simulate
+float   vzhigh = 150.0; // max z vertex to simulate
+float   vr = 2.0; // max r vertex to simulate
+std::vector<int> triggers{530003}; // triggers to simulate
+int     pid   = 14; // default to proton
 int     npart  = 0;
-TString DBV;     // If unset, will fill from tag file  "DbV20161018";
-TString SDT;
-std::string _dbv="DbV20230818";
-std::string _geom="y2021a";
-// tagfile, geantfile, ne
-std::string _tagfileName = "/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22158015_raw_5000016.tags.root";
-std::string _geantfileName = "geant4out.geant.root";
-int         _nevents = 2;
+std::string dbv="DbV20230818";
+std::string geom="y2021a";
+std::string tagfile = "/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22158015_raw_5000016.tags.root";
+std::string daqfile = "/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq";
+int         nevents = 2;
 //______________________________________________________________________________________
 void process( const char* line ){
   gMessMgr->Info(line);
   gInterpreter->ProcessLine( Form("%s", line) );
 };
+void SetTagFile( const char* tags ) {
+  //  process( "#pragma cling add_include_path(\"StRoot\")               ");
+  //  process( "#include \"St_geant_Maker/Embed/StPrepEmbedMaker.h\"     ");
+  //  process( "auto* embmk = dynamic_cast<StPrepEmbedMaker*>( StMaker::GetTopChain()->Maker(\"PrepEmbed\") );");
+  //  process( "assert(embmk);                                           ");
+  //  process( Form( "embmk->SetTagFile(\"%s\");                         ", tags ) );
+  process( "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );");
+  process( Form("stembed->SetAttr(\"tags\",\"%s\");",tags) );
+  //  process( Form("stembed->SetInputFile(\"%s\");", tags ) );
+
+}
+void SetOpt( double ptmn, double ptmx, double etamn, double etamx, double phimn, double phimx ) {
+  //  process( Form( "embmk->SetOpt( %f, %f, %f, %f, %f, %f, \"%s\" );   ", ptmn, ptmx, etamn, etamx, phimn, phimx, type_ ) );
+  auto* kine = top->Maker("StarKine");
+  kine->SetAttr("ptlow", ptmn);
+  kine->SetAttr("pthigh", ptmx);
+  kine->SetAttr("etalow", etamn);
+  kine->SetAttr("etahigh", etamx);
+  kine->SetAttr("philow", phimn);
+  kine->SetAttr("phihigh", phimx);
+  kine->SetAttr("mode", "FlatPT" );
+}
+void SetPartOpt( int pid, double mult ) {
+  // Map PID onto particle name
+  auto* kine = top->Maker("StarKine");
+  kine->SetAttr("pid",int(pid));
+  kine->SetAttr("ntrack", double(mult));
+  if ( mult < 1.0 ) {
+    auto* embed = top->Maker("StarEmbed");
+    LOG_INFO << "Setting eventmult=" << mult << endm;
+    embed->SetAttr("eventmult",double(mult));
+  }
+}
+void SetTriggers( std::vector<int> triggers ) {
+  auto* kine = top->Maker("StarEmbed");
+  std::string triglist = "";
+  for ( int t : triggers ) {
+    //    process( Form( "embmk->SetTriOpt(%i);",t ) );
+    triglist += Form( "%i ", t );
+  }
+  kine->SetAttr("triggers", triglist.c_str());
+}
+void SetZVertexCut( double vzmn, double vzmx, double vr=-1.0 ) {
+  //  process( Form( "embmk->SetZVertexCut(%f, %f);", vzmn, vzmx ) );
+  //  if ( vr>0.0 )   
+  //    process( Form( "embmk->SetVrCut(%f);", vr ) );
+
+  auto* embed = top->Maker("StarEmbed");  
+  embed->SetAttr("vzmin", vzmn);
+  embed->SetAttr("vzmax", vzmx);
+  embed->SetAttr("vrmax", vr );
+  embed->SetAttr("minMult", 1.);
+
+};
 void runEmbeddingSimulationHftG4()
 {
 
-  //________________________________________________________
-  //
-  // Open tagfile from where we will obtain the event vertex
-  //
-  // We do not have access to the embedding maker for now do this the hacky way and set the vertex directly in the primary maker
-  _tagfile = TFile::Open(_tagfileName.c_str());
-  _tags    = (TTree*) _tagfile -> Get("Tag");
-  //
-  _tags->SetBranchAddress( "EvtHddr.mRunNumber",       &_runnumber );
-  _tags->SetBranchAddress( "EvtHddr.mEventNumber",     &_evtnumber );
-  _tags->SetBranchAddress( "GlobalTag.primaryVertexX", &_vxyz[0] );
-  _tags->SetBranchAddress( "GlobalTag.primaryVertexY", &_vxyz[1] );
-  _tags->SetBranchAddress( "GlobalTag.primaryVertexZ", &_vxyz[2] );
-  _tags->SetBranchAddress( "GlobalTag.sigmaPVX", &_sxyz[0] );
-  _tags->SetBranchAddress( "GlobalTag.sigmaPVY", &_sxyz[1] );
-  _tags->SetBranchAddress( "GlobalTag.sigmaPVZ", &_sxyz[2] );
-
-  _tags->SetBranchAddress( "GlobalTag.uncorrectedNumberOfPrimaries", &_unprimaries );
-
-  _tags->SetBranchAddress( "EvtHddr.mEventTime",       &_eventtime );
-  _tags->SetBranchAddress( "EvtHddr.mProdTime",        &_prodtime );
-  // _tags->SetBranchAddress( "magField",        &_magfield );
-
-
-  _tags->GetEntry(0); // read in first event
-
-  SDT = Form("sdt%i",int(_eventtime));
-  if ( DBV == "" )  DBV = Form("dbv%i",int(_prodtime));
-
-  // Determine maximum number of events to process
-  if ( _nevents < 0 ) _nevents = _tags->GetEntries();
-
-  std::string chainopts =  "nodefault " + _geom + " " + _dbv + " agml misalign simu sim_T gen_T stargen:mk kinematics:mk g4star:mk noinput geant4out ";
-  // chainopts += SDT; chainopts += " ";
-  // chainopts += DBV; chainopts += " ";
+  std::string chainopts =  "in nodefault " + geom + " " + dbv + " agml misalign simu sim_T gen_T stargen:embed kinematics:embed g4star:mk geant4out daq ";
   top->SetDebug(1);
   top->SetFlags(chainopts.c_str());
-  top->Set_IO_Files(0, _geantfileName.c_str());
+  TString outfile = gSystem->BaseName( daqfile.c_str() );
+  outfile.ReplaceAll(".daq", "_HftG4_sim.root");
+  top->Set_IO_Files(daqfile.c_str(), outfile);
   top->Load();
   top->Instantiate();
 
-  process( "auto* primary_ = dynamic_cast<StarPrimaryMaker*>( StMaker::GetTopChain()->Maker(\"PrimaryMaker\") );" );
+  process( "auto* primary_ = dynamic_cast<StarPrimaryMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );" );
   process( "auto* kine_    = dynamic_cast<StarKinematics*>( StMaker::GetTopChain()->Maker(\"StarKine\") );" );
   process( "kine_->SetAttr(\"rapidity\",1);" );
   process( "primary_ -> AddGenerator( kine_ );");
+  SetTagFile( tagfile.c_str() );
+  SetOpt( pt_low, pt_high, eta_low, eta_high, 0.0, TMath::TwoPi() );
+  SetPartOpt( pid, 1.0 );
+  SetZVertexCut( vzlow, vzhigh, vr );
+  SetTriggers( triggers );
 
 
 
@@ -145,59 +160,30 @@ void runEmbeddingSimulationHftG4()
       "/mcCrossSection/setMaxMomentum 250 GeV " ";"
   );
 
-  g4star->SetAttr( "runnumber",_runnumber );
-  
   g4star->SetAttr( "g4:initAtInitRun" , 1 ); // Defer geometry and VMC initialization until InitRun
+  g4star->SetAttr( "embedding:mode", 1 ); 
+  // g4star->SetAttr( "embedding:mode:hft", 1 ); // don't want to explain, go read code.
 
+  std::cout << "========================================================" << std::endl;
+  auto* input = top->Maker("inputStream");
+  top->AddBefore("StarEmbed", input);
   top->ls(5);
 
   gInterpreter->ProcessLine("{Geometry* __hack = new Geometry(); delete __hack;}");
   
   top->Init();
-
+  
   gSystem->SetFPEMask( kNoneMask );
-  // top->EventLoop(_nevents, top->Maker("outputStream"));
-  for( int i=0; i<_nevents; i++ ) {
-    top->Clear();    
-    _tags->GetEntry(i);
+  
+  TAttr::SetDebug(0);
+  top->SetAttr(".Privilege", 0, "*");
+  top->SetAttr(".Privilege", 1, "StBFChain::*");
+  top->SetAttr(".Privilege", 1, "StIOInterFace::*");
+  top->SetAttr(".Privilege", 1, "StGeant4Maker::*"); // ??
+  top->SetAttr(".Privilege", 1, "StarEmbedMaker::*"); 
 
-    process(Form("primary_->SetVertex( %f, %f, %f );", _vxyz[0], _vxyz[1], _vxyz[2]));
-    process(Form("primary_->SetSigma( %f, %f, %f );", _sxyz[0], _sxyz[1], _sxyz[2]));
+  top->EventLoop( nevents, top->Maker("outputStream") );
 
-    
-    printf("run=%i event=%i mult=%i vxyz=%f %f %f sxyz=%f %f %f\n",     
-      _runnumber, _evtnumber, _unprimaries, _vxyz[0], _vxyz[1], _vxyz[2], _sxyz[0], _sxyz[1], _sxyz[2] );
-
-    npart = 0;
-    if ( _fpart < 1.0 ) {
-	    npart = int(_unprimaries * _fpart);
-      if ( npart < _npart ) npart = _npart;
-    } else {
-      npart = int(_fpart);
-    }
-
-    top->SetDateTime( int(_eventtime), int( 100000*(_eventtime-int(_eventtime)) ) );
-
-    g4star->SetAttr( "runnumber",_runnumber );
-    g4star->SetAttr( "vertex:x", _vxyz[0] );
-    g4star->SetAttr( "vertex:y", _vxyz[1] );
-    g4star->SetAttr( "vertex:z", _vxyz[2] );
-    g4star->SetAttr( "vertex:sigmax", _sxyz[0] );
-    g4star->SetAttr( "vertex:sigmay", _sxyz[1] );
-    g4star->SetAttr( "vertex:sigmaz", _sxyz[2] );
-
-    process(" kine_->SetAttr(\"mode\",    \"FlatPT\"); ");
-    process(Form(" kine_->SetAttr(\"ptlow\",   %f ); ", _ptmn) );
-    process(Form(" kine_->SetAttr(\"pthigh\",  %f ); ", _ptmx) );
-    process(Form(" kine_->SetAttr(\"etalow\",  %f ); ", _etamn) );
-    process(Form(" kine_->SetAttr(\"etahigh\", %f ); ", _etamx) );
-    process(Form(" kine_->SetAttr(\"phimn\",   %f ); ", 0.0) );
-    process(Form(" kine_->SetAttr(\"phimx\",   %f ); ", TMath::TwoPi()) );
-    process(Form(" kine_->SetAttr(\"pid\",     %d ); ", _pid ) );
-    process(Form(" kine_->SetAttr(\"ntrack\",  %d ); ", npart ) );
-
-    top->Make();
-  }
   top->Finish();
 
 
@@ -207,29 +193,38 @@ void runEmbeddingSimulationHftG4()
 
 
 void runEmbeddingSimulationHftG4(
-			    const int ne,
-			    const char* geantfile,
-			    const char* tagfile,
-			    const float mult,
-			    const int   pid,
-			    const float ptmn,
-			    const float ptmx,
-			    const float etamn,
-			    const float etamx,
-          const char* dbv,
-          const char* geom)
+		    const int   nevents_ , 
+		    const char* daqfile_, 
+		    const char* tagfile_, 
+		    double ptmn_, 
+		    double ptmx_,
+		    double etamn_, 
+		    double etamx_, 
+		    double vzmn_, 
+		    double vzmx_, 
+		    double vr_, 
+		    int pid_,
+		    double mult_, 
+		    std::vector<int> triggers_, 
+        const char* dbv_,
+        const char* geom_)
 {
-  _nevents = ne;
-  _tagfileName = tagfile;
-  _geantfileName = geantfile;
-  _fpart = mult;
-  _ptmn  = ptmn;
-  _ptmx  = ptmx;
-  _etamn = etamn;
-  _etamx = etamx;
-  _pid   = pid;
-  _dbv   = dbv;
-  _geom  = geom;
+
+  nevents = nevents_;
+  pt_low  = ptmn_;
+  pt_high  = ptmx_;
+  eta_low = etamn_;
+  eta_high = etamx_;
+  vzlow = vzmn_;
+  vzhigh = vzmx_;
+  vr = vr_;
+  pid   = pid_;
+  mult = mult_;
+  triggers = triggers_;
+  daqfile = daqfile_;
+  tagfile = tagfile_;
+  dbv   = dbv_;
+  geom  = geom_;
   
   runEmbeddingSimulationHftG4();
 
@@ -239,48 +234,51 @@ void runEmbeddingSimulationHftG4(
 void runEmbeddingSimulationHftG4(const char* dbg)
 {
   std::string dbg_ = dbg;
+
   if ( dbg_ == "test1" ) {
-   _nevents = 10;
-    _tagfileName = "/gpfs01/star/embed/tags/2019/auau19_phys/st_physics_adc_20057049_raw_2000003.tags.root";
-    _geantfileName = "geant4out.geant.root";
-    _fpart = 0.05;
-    _ptmn  = 0.;
-    _ptmx  = 6.;
-    _etamn = -1.;
-    _etamx =  1.;
-    _pid   = 45;
-    _dbv   = "DbV20210827";
-    _geom  = "y2019a";
+   nevents = 10;
+    tagfile = "/gpfs01/star/embed/tags/2019/auau19_phys/st_physics_adc_20057049_raw_2000003.tags.root";
+    mult = 0.05;
+    pt_low  = 0.;
+    pt_high  = 6.;
+    eta_low = -1.;
+    eta_high =  1.;
+    pid   = 45;
+    dbv   = "DbV20210827";
+    geom  = "y2019a";
     runEmbeddingSimulationHftG4();
-
   }
-
   if ( dbg_ == "test2" ) {
-    _nevents = 100;
-    _tagfileName = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
-    _geantfileName = "geant4out.geant.root";
-    _fpart = 1;
-    _ptmn  = 0.;
-    _ptmx  = 5.;
-    _etamn = -1.;
-    _etamx =  1.;
-    _pid   = 8;
-    _dbv   = "DbV20161216";
-    _geom  = "y2016x";
+    nevents = 10;
+    tagfile = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
+    daqfile = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq";
+    mult = 3;
+    pid   = 8;
+    pt_low  = 0.;
+    pt_high  = 5.;
+    eta_low = -1.;
+    eta_high =  1.;
+    vzlow = -6.;
+    vzhigh = 6.;
+    vr = 9999.0 ;
+    triggers = {530003};
+    dbv   = "DbV20161216";
+    geom  = "y2016x";
     runEmbeddingSimulationHftG4();
   }
   if ( dbg_ == "test3" ) {
-    _nevents = 10;
-    _tagfileName = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
-    _geantfileName = "geant4out.geant.root";
-    _fpart = 10;
-    _ptmn  = 5.-0.0001;
-    _ptmx  = 5.+0.0001;
-    _etamn = 0.-0.0001;
-    _etamx = 0.+0.0001;
-    _pid   = 8;
-    _dbv   = "DbV20161216";
-    _geom  = " y2016x FieldOff ";
+    nevents = 10;
+    tagfile = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root";
+    daqfile = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq";
+    mult = 10;
+    pt_low  = 5.-0.0001;
+    pt_high  = 5.+0.0001;
+    eta_low = 0.-0.0001;
+    eta_high = 0.+0.0001;
+    pid   = 8;
+    dbv   = "DbV20161216";
+    geom  = " y2016x";
+    triggers = {530003};
     runEmbeddingSimulationHftG4();
   }
 }

@@ -9,19 +9,19 @@
 
 void runHFTWrapper(
     const int   nevents_ , 
-    const char* daqfile_   = "/gpfs01/star/embed/daq/2021/auau17_phys_chop/st_physics_adc_22155034_raw_5500004.daq", 
-    const char* tagfile_   = "/gpfs01/star/embed/tags/2021/auau17_phys/st_physics_adc_22155034_raw_5500004.tags.root" , 
-    double ptmn_           =  5.0 - 0.0001 , 
-    double ptmx_           =  5.0 + 0.0001 ,
-    double etamn_          =  0.25 - 0.0001, 
-    double etamx_          =  0.25 + 0.0001, 
-    double vzmn_           = -145.0        , 
-    double vzmx_           = 145.0         , 
-    double vr_             = 2.0           , 
-    int pid_               = 14            ,
-    double mult_           = 0.1           , 
-    std::vector<int> triggers_  = {870010} , 
-    const char* prodname_  = "P23idAuAu17" , 
+    const char* daqfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq", 
+    const char* tagfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root" , 
+    double ptmn_           = 0. , 
+    double ptmx_           = 5. ,
+    double etamn_          = -1., 
+    double etamx_          = 1. , 
+    double vzmn_           = -6., 
+    double vzmx_           = 6. , 
+    double vr_             = 99., 
+    int pid_               = 8,
+    double mult_           = 1, 
+    std::vector<int> triggers_  = {530003} , 
+    const char* prodname_  = "P17iddAu200hft" , 
     const char* kintype_   = "FlatPT"      ,
     bool simIn_            = false         ,
     const char* macroDir_  = "StRoot/macros/embedding"  
@@ -52,7 +52,7 @@ void runHFTWrapper(
         if (tok.BeginsWith("dbv")) {
             dbv = tok;
         } else if (tok.BeginsWith("ry2") || tok.BeginsWith("y2")) {
-            // remove the r, crashs in StGeant4Maker::ConstructGeometry?
+            // TODO: report that removing the r crashs in StGeant4Maker::ConstructGeometry
             if (tok.BeginsWith("ry2")) tok.Remove(0, 1);
             geom = tok;
         }
@@ -65,7 +65,7 @@ void runHFTWrapper(
     }
 
     TString simfile_ = gSystem->BaseName(daqfile_);
-    simfile_.ReplaceAll(".daq", "_HftG4.geant.root");
+    simfile_.ReplaceAll(".daq", "_HftG4_sim.geant.root");
 
     TString trigStr = "{";
     for (size_t i = 0; i < triggers_.size(); ++i) {
@@ -81,8 +81,9 @@ void runHFTWrapper(
     std::cout << " PROD:    " << prodname_ << " (DbV: " << dbv << ", Geom: " << geom << ")\n";
     std::cout << "========================================================\n";
 
-    TString cmdSim = Form("root -l -b -q \'%s(%d, \"%s\", \"%s\", %f, %d, %f, %f, %f, %f, \"%s\", \"%s\")\'",
-                          simMacro.Data(), nevents_, simfile_.Data(), tagfile_, mult_, pid_, ptmn_, ptmx_, etamn_, etamx_, dbv.Data(), geom.Data());
+
+    TString cmdSim = Form("root -l -b -q \'%s(%d, \"%s\", \"%s\", %f,  %f, %f, %f, %f, %f, %f, %d, %f, %s, \"%s\", \"%s\")\'",
+                          simMacro.Data(), nevents_, daqfile_, tagfile_, ptmn_, ptmx_, etamn_, etamx_, vzmn_, vzmx_, vr_, pid_, mult_, trigStr.Data(), dbv.Data(), geom.Data());
     
     std::cout << "\n---> Running Simulation Macro:\n" << cmdSim << "\n";
 

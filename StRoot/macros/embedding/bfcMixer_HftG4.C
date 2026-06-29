@@ -40,6 +40,7 @@ const bool runchains[] = { false, true, true, true };
 #pragma cling load("StStarLogger.so")
 #pragma cling load("StarClassLibrary.so")
 #pragma cling load("libmysqlclient.so")
+// #pragma cling load("libStIOMaker.so")
 //#pragma cling load("libStarMiniCern.so")
 
 #if !(defined(__CINT__) || defined(__CLING__)) || defined(__MAKECINT__)
@@ -84,10 +85,8 @@ void process( const char* line ){
 void SetTagFile( const char* tags ) {
   process(
     Form(
-      "{"
-      "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
-      "if ( stembed ) stembed->SetAttr(\"tags\", \"%s\");"
-      "}"
+      "{\n auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );\n"
+      "if ( stembed ) stembed->SetAttr(\"tags\", \"%s\");\n }"
       ,
       tags
     )
@@ -101,10 +100,8 @@ void SetTriggers( std::vector<int> triggers ) {
   }
   process(
     Form(
-      "{"
-      "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
-      "if ( stembed ) stembed->SetAttr(\"triggers\", \"%s\");"
-      "}"
+      "{\n auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );\n"
+      "if ( stembed ) stembed->SetAttr(\"triggers\", \"%s\");\n }"
       ,
       triglist.c_str()
     )
@@ -114,17 +111,15 @@ void SetTriggers( std::vector<int> triggers ) {
 void SetZVertexCut( double vzmn, double vzmx, double vr=-1.0 ) {
   process(
     Form(
-      "{"
-        "auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );"
+      "{\n auto* stembed = dynamic_cast<StarEmbedMaker*>( StMaker::GetTopChain()->Maker(\"StarEmbed\") );\n"
         "if ( stembed ) {"
-        "  stembed->SetAttr(\"vzmin\", %f);"
-        "  stembed->SetAttr(\"vzmax\", %f);"
-        "  stembed->SetAttr(\"ZMIN\", %f);"
-        "  stembed->SetAttr(\"ZMAX\", %f);"
-        "  stembed->SetAttr(\"vrmax\", %f);"
-        "  stembed->SetAttr(\"output\", \"genevents.root\");"
-        "}"
-      "}"
+        "  stembed->SetAttr(\"vzmin\", %f);\n"
+        "  stembed->SetAttr(\"vzmax\", %f);\n"
+        "  stembed->SetAttr(\"ZMIN\", %f);\n"
+        "  stembed->SetAttr(\"ZMAX\", %f);\n"
+        "  stembed->SetAttr(\"vrmax\", %f);\n"
+        "  stembed->SetAttr(\"output\", \"genevents.root\");\n"
+        "}\n}"
       ,
       vzmn, vzmx, vzmn, vzmx, vr
     )
@@ -173,7 +168,7 @@ void bfcMixer_HftG4()
     chain3->SetName("Three");
     TString outfile = gSystem->BaseName( daqfile.c_str() );
     outfile.ReplaceAll(".daq", "_HftG4.root");
-    chain3->Set_IO_Files( simfile.c_str(), outfile );
+    chain3->Set_IO_Files( nullptr , outfile );
   }
 
   chain0->cd();
@@ -186,14 +181,11 @@ void bfcMixer_HftG4()
   top->cd();
 
   if ( chain2 ) {
-    auto* g4star = chain2->Maker("geant4star");
-    if ( g4star ) {
-      g4star->SetAttr("ReadMode", 1);
-      g4star->SetAttr("InputFile", simfile.c_str());
-    }
+    
+
     auto* tpcrs = chain2->Maker("TpcRS");
     if ( tpcrs ) {
-      tpcrs->SetAttr("inputds", "geant4star");
+      tpcrs->SetAttr("inputds", "geantBranch");
     }
 
     // StarEmbedMaker configuration
@@ -201,17 +193,22 @@ void bfcMixer_HftG4()
     SetZVertexCut( vzlow, vzhigh, vr );
     SetTriggers( triggers );
 
+    
   }
+  
+  top->cd();
 
   if ( chain3 ) {
     chain3->cd();
 
+
     auto* tpxmixer = chain3->Maker("TpcMixer");
     if (tpxmixer) {
-       tpxmixer->SetInput("Input1", "TpxRaw/.data/Event");
-       tpxmixer->SetInput("Input2", "TpcRS/Event");
+      tpxmixer->SetInput("Input1", "TpxRaw/.data/Event");
+      tpxmixer->SetInput("Input2", "TpcRS/Event");
     }
 
+  
     auto* eefs_ = chain3->Maker("eefs");
     auto* eess_ = chain3->Maker("eess");
     if ( eefs_ ) eefs_->SetAttr("embedding", 1);
@@ -221,6 +218,14 @@ void bfcMixer_HftG4()
       process("auto* ist = dynamic_cast<StIstRawHitMaker*>( StMaker::GetTopChain()->GetMaker(\"ist_raw_hit\") );");
       process("if ( ist ) { ist->setDataType(1); ist->setDoEmbedding(kTRUE); }");
     }
+    // we are settitng an alais to chain2, we do not want to run many input 
+    // streams because we have to deal with skiping the events in them, a job
+    // that is done by the embed maker not us :)
+    // ok i do not need to do this anymore, i am using the embed maker
+    // in the simulation step which by definition fixes this problem
+    // but it is 5 am....
+    chain3->SetInput("geant", "Two/inputStream/geantBranch");
+    chain3->SetInput("geant4star", "Two/inputStream/geantBranch");
   }
 
   top->cd();
@@ -238,6 +243,7 @@ void bfcMixer_HftG4()
   top->ls(10);
 
   gSystem->SetFPEMask( kNoneMask );
+  chain2->ls(3);
   top->EventLoop( nevents, top->Maker("outputStream") );
   top->Finish();
 }
@@ -274,17 +280,15 @@ void bfcMixer_HftG4(
     chain2opts = opts.chain2;
     chain3opts = opts.chain3;
     
-   
+
     while ( replace( chain2opts, "g4star:mk", "" ) );
     while ( replace( chain2opts, "kinematics:embed", "" ) );
-
     while ( replace( chain2opts, "noinput", "" ) );
     while ( replace( chain2opts, "-in", "" ) );
-    while ( replace( chain3opts, "noinput", "" ) );
-    while ( replace( chain3opts, "-in", "" ) );
+    // while ( replace( chain0opts, "geantout", "" ) );
+    // while ( replace( chain3opts, "geantout", "" ) );
 
     chain2opts += " in "; // ensure that the last chain has an input
-    chain3opts += " in "; // ensure that the last chain has an input
 
     bfcMixer_HftG4();
 
@@ -303,28 +307,13 @@ void bfcMixer_HftG4( const char* dbg ) {
 
   std::string dbg_ = dbg;
 
-  if ( dbg_ == "test1" ) {
-
-    const int   nevents_     = 10; 
-    const char* mydaqfile_   = "/star/data03/daq/2019/057/20057049/st_physics_adc_20057049_raw_2000003.daq"   ;
-    const char* mytagfile_   = "/gpfs01/star/embed/tags/2019/auau19_phys/st_physics_adc_20057049_raw_2000003.tags.root" ;
-    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/geant4out.geant.root" ;
-    double myvzmn_           = -9999.0        ; 
-    double myvzmx_           = 9999.0         ; 
-    double myvr_             = 9999.0           ; 
-    std::vector<int> mytriggers_  = {640001,640011,640021,640031,640041,640051} ; 
-    const char* myprodname  = "P21icAuAu19" ; 
-    bfcMixer_HftG4( nevents_, mydaqfile_, mytagfile_, mysimfile_, myvzmn_, myvzmx_, myvr_, mytriggers_, myprodname );
-
-  };
-
   if ( dbg_ == "test2" ) {
 
     // https://drupal.star.bnl.gov/STAR/starsimrequests/2018/sep/06/pi-pi-k-k-p-p-dau-run16-hft
-    const int   nevents_     = 100; 
+    const int   nevents_     = 10; 
     const char* mydaqfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq"   ;
     const char* mytagfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root"   ;
-    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/geant4out.geant.root" ;
+    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/st_physics_adc_17137017_raw_4000057_HftG4.sim.geant.root" ;
     double myvzmn_           = -6.0        ; 
     double myvzmx_           = 6.0         ; 
     double myvr_             = 9999.0           ; 

@@ -932,7 +932,6 @@ bool CreateGeometry(const Char_t *name="y2011") {
 }
 
 int StGeant4Maker::Init() {
-  
   if ( !IAttr("g4:initAtInitRun") ){
     InitGeom();
     InitVmcApp();
@@ -1344,6 +1343,8 @@ void StGeant4Maker::FillGeant4StarTable(){
 struct A { };
 struct B { };
 int StGeant4Maker::Make() {
+
+  
 
   int result = kStOK;
 
@@ -2295,7 +2296,7 @@ void StGeant4Maker::PushPrimaries() {
 }
 //________________________________________________________________________________________________
 int StGeant4Maker::Finish() {
-
+  
   LOG_INFO << "Energy sums per sensitive volume" << endm;
   for ( auto kv : mHitSum ) {
 
