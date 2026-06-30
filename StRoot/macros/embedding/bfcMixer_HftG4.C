@@ -313,7 +313,7 @@ void bfcMixer_HftG4( const char* dbg ) {
     const int   nevents_     = 10; 
     const char* mydaqfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.daq"   ;
     const char* mytagfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/hft_files/st_physics_adc_17137017_raw_4000057.tags.root"   ;
-    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/st_physics_adc_17137017_raw_4000057_HftG4.sim.geant.root" ;
+    const char* mysimfile_   = "/gpfs/mnt/gpfs01/star/pwg/yelfeky/g4_hft/st_physics_adc_17137017_raw_4000057_HftG4_sim.geant.root" ;
     double myvzmn_           = -6.0        ; 
     double myvzmx_           = 6.0         ; 
     double myvr_             = 9999.0           ; 
