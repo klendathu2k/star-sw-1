@@ -8,16 +8,25 @@
 #include <StMessMgr.h>
 #include <TGeoManager.h>
 #include <TGeoMatrix.h>
+#include <assert.h>
+
+/**
+ * @class AgMLBsmdVolumeId
+ * @brief A volume identifier for the Barrel Shower Maximum Detector (BSMD).
+ *
+ * This class provides a unique integer identifier for each sensitive volume
+ * in the BSMD. The ID is calculated based on the barrel side (East/West),
+ * phi bin, eta bin, layer, and strip number, mapping these to a standard STAR
+ * numbering scheme.
+ */
 
 class AgMLBsmdVolumeId : public AgMLVolumeId {
 
-  const double width_eta1 {1.53668}; // 2 * (0.7277 + 0.04064)
-  const double width_eta2 {1.96088}; // 2 * (0.9398 + 0.04064)
-  const double width_phi  {1.49348}; // 2 * (0.6680 + 0.07874)
-
-  const int n_strip_eta1 {75};
-  const int n_strip_eta2 {75};
-  const int n_strip_phi  {15};
+  const double width_eta1 {1.53668};
+  const double width_eta2 {1.96088};
+  const double width_phi {1.49348};
+  const int max_strip {75};
+  const int n_strip_phi {15};
 
 public:
   
@@ -25,30 +34,19 @@ public:
 
   virtual int id( int* numbv ) const { 
     
-
-    int rileft    = numbv[0]; // 1 west, 2 east
-    int phi_mod   = numbv[1]; // 1-60 phi module
-    int layer     = numbv[3]; // smd layer 1-4
-    //Note: in the g2t_volume_id.g layer is numbv(3), which is numbv[2] in C++
-    // but for some reason, numbv[2] is always 2. I think geant4 treats the mother 
+    int rileft = numbv[0];
+    int phi_mod = numbv[1];
+    
+    // Note: in the g2t_volume_id.g layer is numbv[2]
+    // but numbv[2] is always 2. I think geant4 treats the mother 
     // volume CSDA as a separate volume, so the layer info is shifted by 1.
+    int layer = numbv[3];
+    
     int phi_encoded {0};
     if (rileft == 1) {
       phi_encoded = 60 - phi_mod + 1;
     } else {
-      //Note: StEmcGeom does this differently than g2t_volume_id.g
-      //StEmcGeom: phi    = smdChid[2];  // module phi [1,60]
-      //g2t_volume_id.g
-      /*
-        If (rileft==1) then
-          phi=60-phi+1
-        else
-          phi=60+phi
-        endif     
-      */
-     //keeping the StEmcGeom logic because we are using
-     //it to generate bsmd cells in gen_bsmd_cells.C
-      phi_encoded = phi_mod;
+      phi_encoded = 60 + phi_mod;
     }
 
     TLorentzVector _direction(0,0,0,0);
@@ -59,26 +57,23 @@ public:
     TVirtualMC::GetMC()->Gmtod( xg, xl, 1 );
 
 
-    int strip     {  0  };
-    int eta_bin   {  0  };
+    int strip {0};
+    int eta_bin {0};
     int forw_back {layer};
 
-    if (forw_back == 4) forw_back = 3;  //from g2t_volume_id.g
+    if (forw_back == 4) forw_back = 3;
 
     // the SMD-Eta is treated as one big gas volume (by the geometry definition)
     // so we have to segment it ourself from the local z position of the hit.
     if (forw_back <= 2) { //smde
 
       double start_z_pos {0.0};
-      double width       {0.0};
-      int    max_strip   { 0 };
+      double width {0.0};
       
       if (forw_back == 1) {
-        max_strip = n_strip_eta1;//same for both layers
-        width     = width_eta1;
+        width = width_eta1;
       } else {
-        max_strip = n_strip_eta2;//same for both layers
-        width     = width_eta2;
+        width = width_eta2;
       }
 
       // Center alignment
@@ -88,24 +83,19 @@ public:
       // Strip = (LocalZ - Start) / Width
       strip = static_cast<int>(floor( (xl[2] - start_z_pos) / width )) + 1;
 
-      // In East (rileft=2), the module is rotated 180 degrees.
-      // Strip 1 is still at Eta=0 (which is now Max Local Z).
-      // So we must invert the calculated strip index.
-      if (rileft == 2) {
-        strip = max_strip - strip + 1;
-      }
-      //for smde, calculate eta bin from strip
       int global_strip {strip};
       if (forw_back == 2) global_strip += 75; 
+
+      // SMDE does not care about eta bin, but we need to calculate it anyways
       eta_bin = (global_strip - 1) / 15 + 1;
-    }
-    else { //smdp
+    
+    } else { //smdp
 
       TGeoNavigator* nav = gGeoManager->GetCurrentNavigator();
 
       if( !nav ) {
-        LOG_FATAL << "No Pointer to Navigator" << endm;
-        return -1;
+        LOG_FATAL << "No Pointer to Navigator, how did we get here?" << endm;
+        assert(0);
       }
 
       // SAVE CURRENT NAVIGATOR STATE
@@ -114,7 +104,7 @@ public:
       nav->CdUp();//go to csme
       nav->CdUp();//go to csda
 
-      
+
       double masterPos[3] = {xg[0], xg[1], xg[2]}; //global hit position
       double localPos[3];
       //smdp is rotated 180 in phi 90 theta wrt tower
@@ -125,7 +115,7 @@ public:
       nav->PopPath();
 
       double total_width {n_strip_phi * width_phi}; // ~22.4022
-      double start_y     {  -total_width / 2.0   };
+      double start_y {-total_width / 2.0};
 
       strip = static_cast<int>(floor( (localPos[1] - start_y) / width_phi ) ) + 1;      
       eta_bin = static_cast<int>( TMath::Abs(_direction.Eta()) * 10.0) + 1;
@@ -136,6 +126,7 @@ public:
                   + 1000      * phi_encoded
                   + 100       * forw_back
                   + strip;
+
     return volume_id;
   };
 };
