@@ -122,8 +122,11 @@ struct EmbeddingChains {
       
       {"P23ieAuAu200",  {"DbV20231208 P2019a StiCA -beamline3D PicoVtxDefault PicoCovMtxWrite BEmcChkStat CorrY -OPr13 VFMCE TpxClu evout -VFMinuit -hitfilt mtdsim", "ry2019a", "useXgeom "}},
 
-      {"P23icOO200",  {"DbV20230413 P2021a StiCA EbyET0 BEmcChkStat ImpBToFt0Mode VFMCE TpxClu evout -VFMinuit -hitfilt mtdsim", "ry2021a", "useXgeom "}}
+      {"P23icOO200",  {"DbV20230413 P2021a StiCA EbyET0 BEmcChkStat ImpBToFt0Mode VFMCE TpxClu evout -VFMinuit -hitfilt mtdsim", "ry2021a", "useXgeom "}},
 
+      {"P24iyFXT4p59",  {"DbV20241104 P2019a StiCA FXT -beamline3D btof CorrZ BEmcChkStat picoVtxFXT PicoCovMtxWrite VFFV TpxClu -VFMinuit -hitfilt mtdsim", "ry2019b", "useXgeom "}},
+
+      {"P24iyAuAu19",  {"DbV20250115 P2019b StiCA ImpBToFt0Mode EbyET0 CorrZ picoVtxDefault picoCovMtxWrite BEmcChkStat VFMCE TpxClu -VFMinuit -hitfilt mtdsim", "ry2019b", "useXgeom "}}
 
     };
 
