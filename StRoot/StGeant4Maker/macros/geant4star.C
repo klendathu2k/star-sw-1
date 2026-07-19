@@ -86,7 +86,6 @@ void loadStar(TString mytag="dev2021", Bool_t agml = true  )
   gROOT->ProcessLine("chain->cd();");
   gROOT->ProcessLine("chain->SetDebug(1);");  
 
-
   TString chainOpts = "agml geant4 geant4vmc stargen geant4mk kinematics -emc_t -ftpcT mysql nodefault ";
   // pickup command line options ala "--" and add them as a chain option
 
