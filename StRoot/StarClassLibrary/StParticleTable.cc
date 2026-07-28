@@ -156,6 +156,8 @@ long _undefined_particle_id = 2000000000; /* Unique PDG ID for each undefined pa
 #include "StHDibaryon.hh"
 #include "StHyperNuclei.hh"
 
+std::map<int,int> geant_id_from_pdg;
+
 StParticleTable* StParticleTable::mParticleTable = 0;
 
 StParticleTable::~StParticleTable() {/* noop */}
@@ -192,6 +194,9 @@ StParticleTable::StParticleTable()
       /** PDG ID:   Y	*/				\
       /** */						\
       mGeantPdgMap.insert(geantPdgPairType(X,Y));	\
+      if ( geant_id_from_pdg[ Y ] == 0 ) {              \
+	geant_id_from_pdg[ Y ] = X;                     \
+      }                                                 \
     }
 
 
@@ -434,6 +439,8 @@ StParticleTable::StParticleTable()
 #undef Geant2Pdg
 
 }
+
+int StParticleTable::geantId( const int pdgid ) { return geant_id_from_pdg[ pdgid ]; }
 
 StParticleTable::StParticleTable(const StParticleTable &) {/* private */}
    
