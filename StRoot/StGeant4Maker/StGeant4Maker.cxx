@@ -2077,7 +2077,7 @@ void StGeant4Maker::Stepping(){
 
   // Score interaction vertices on entrance / exit of a tracking region
   bool transitCheck = (0!=transit)&&IAttr("Scoring:Transit");
-  if ( 2==mCurrentTrackingRegion || transitCheck ) {
+  if ( truth && ( 2==mCurrentTrackingRegion || transitCheck ) ) {
 
     int nsec  = mc->NSecondaries();
 
