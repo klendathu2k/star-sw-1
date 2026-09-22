@@ -328,7 +328,7 @@ void bfcMixer_TpxAll()
       seed1=std::atoi( ss1.Data() );
     }
     if ( gSystem->Getenv("JOBINDEX") ) {
-      seed1 = std::atoi( gSystem->Getenv("JOB_INDEX") );
+      seed1 = std::atoi( gSystem->Getenv("JOBINDEX") );
     }
     else {
       auto ss2 = gSystem->GetFromPipe("od -An -N4 -tu4 /dev/urandom");
